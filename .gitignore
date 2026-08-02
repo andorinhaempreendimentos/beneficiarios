@@ -1,0 +1,8 @@
+node_modules
+.next
+.env
+.env.local
+.env.production
+data/auth_info
+dist
+*.log

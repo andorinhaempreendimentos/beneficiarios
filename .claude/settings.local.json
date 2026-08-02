@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm -v)",
+      "Bash(npm install *)",
+      "Bash(cd \"C:\\\\projetos\\\\andorinha\\\\cadastro de beneficiarios\\\\web\\\\src\" && mkdir -p lib/mock components/ui components/layout components/charts app/nucleos/novo \"app/nucleos/[id]/editar\" \"app/nucleos/[id]/beneficiarios\" app/beneficiarios/novo \"app/beneficiarios/[id]/editar\" app/funcionarios/novo \"app/funcionarios/[id]/editar\" app/atividades/novo \"app/atividades/[id]/editar\")",
+      "Bash(npm run *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:57187/beneficiarios/b1/editar)",
+      "Bash(netstat -ano)",
+      "Bash(taskkill //PID 1748 //F)",
+      "Bash(npx ctx7@latest library \"Tremor\" \"React dashboard components charts\")",
+      "Bash(rm -rf \"C:\\\\projetos\\\\andorinha\\\\cadastro de beneficiarios\\\\web\\\\.next\" && df -h /)",
+      "Bash(npm cache *)",
+      "Bash(npx ctx7@latest docs /tremorlabs/tremor \"BarChart DonutChart AreaChart installation setup Tailwind\")",
+      "Bash(npx ctx7@latest docs /tremorlabs/tremor \"DonutChart installation npm package name import\")",
+      "Bash(npx ctx7@latest docs /tremorlabs/tremor \"ProgressCircle radial gauge percentage\")",
+      "Bash(npm ls *)",
+      "Bash(npm uninstall *)",
+      "Bash(mkdir -p \"C:/projetos/andorinha/cadastro de beneficiarios/web/src/app/objetos/novo\" \"C:/projetos/andorinha/cadastro de beneficiarios/web/src/app/objetos/[id]/editar\" \"C:/projetos/andorinha/cadastro de beneficiarios/web/src/components/objetos\")",
+      "Bash(taskkill /PID 15672 /F)",
+      "Bash(cmd //c \"taskkill /PID 15672 /F\")",
+      "Bash(git init *)",
+      "Bash(git checkout *)",
+      "Bash(git remote *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)"
+    ]
+  }
+}
