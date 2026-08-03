@@ -12,17 +12,6 @@
   --font-mono: var(--font-geist-mono);
 }
 
-/* Remapeia sky para brand — ThemeProvider sobrescreve em runtime */
-@theme {
-  --color-sky-50:  #eeeef9;
-  --color-sky-100: #d5d5f0;
-  --color-sky-200: #ababdf;
-  --color-sky-400: #5555cb;
-  --color-sky-500: #3535bc;
-  --color-sky-600: #1b1db8;
-  --color-sky-700: #1515a0;
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
