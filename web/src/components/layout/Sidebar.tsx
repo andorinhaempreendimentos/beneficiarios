@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import {
@@ -24,6 +23,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/components/providers/ThemeProvider";
+import { Logo } from "@/components/ui/Logo";
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -76,15 +76,7 @@ export function Sidebar() {
       >
         <div className="flex h-16 items-center justify-between border-b border-zinc-200 px-4">
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="relative h-8 w-8 shrink-0">
-              <Image
-                src="/logo.png"
-                alt={config.nomeSistema}
-                fill
-                className="object-contain"
-                onError={() => {}}
-              />
-            </div>
+            <Logo className="h-8 w-8 shrink-0" />
             <span className="truncate text-sm font-semibold text-zinc-900">{config.nomeSistema}</span>
           </div>
           <button

@@ -1,9 +1,9 @@
 "use client";
 
 import { Suspense, useState } from "react";
-import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ChevronDown, Eye, EyeOff } from "lucide-react";
+import { Logo } from "@/components/ui/Logo";
 import { autenticar, autenticarBeneficiario, demoCredenciais, demoBeneficiario } from "@/lib/mock/credenciais";
 import { rotaInicial } from "@/lib/auth";
 import { useAuth } from "@/components/providers/AuthProvider";
@@ -77,16 +77,7 @@ function LoginForm() {
 
         {/* Logo + nome */}
         <div className="mb-8 flex flex-col items-center gap-3">
-          <div className="relative h-20 w-20">
-            <Image
-              src="/logo.png"
-              alt={nomeSistema}
-              fill
-              className="object-contain drop-shadow-sm"
-              priority
-              onError={() => {}}
-            />
-          </div>
+          <Logo className="h-20 w-20 drop-shadow-sm" />
           <div className="text-center">
             <h1 className="text-2xl font-bold tracking-tight text-zinc-900">{nomeSistema}</h1>
             <p className="mt-1 text-sm text-zinc-500">Acesso restrito. Faça login para continuar.</p>
@@ -265,7 +256,7 @@ function LoginForm() {
         </div>
 
         <p className="mt-6 text-center text-xs text-zinc-400">
-          {nomeSistema} &copy; 2024
+          {nomeSistema}{" "}&copy; 2024
         </p>
       </div>
     </div>
