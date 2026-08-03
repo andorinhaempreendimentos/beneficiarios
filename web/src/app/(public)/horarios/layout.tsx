@@ -23,7 +23,6 @@ export default function HorariosLayout({ children }: { children: React.ReactNode
 
   function handleLogout() {
     logout();
-    document.cookie = "auth_type=; path=/; max-age=0";
     router.push("/login");
   }
 

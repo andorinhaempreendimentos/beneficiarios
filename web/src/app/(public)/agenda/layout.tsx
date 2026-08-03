@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { LogOut, User } from "lucide-react";
-import { limparSessao } from "@/lib/auth";
 
 export default function AgendaLayout({ children }: { children: React.ReactNode }) {
   const { user, loading, logout } = useAuth();
@@ -21,7 +20,6 @@ export default function AgendaLayout({ children }: { children: React.ReactNode }
 
   function handleLogout() {
     logout();
-    document.cookie = "auth_type=; path=/; max-age=0";
     router.push("/login");
   }
 

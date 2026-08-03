@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import {
   Box,
@@ -14,6 +14,7 @@ import {
   GraduationCap,
   Landmark,
   LayoutDashboard,
+  LogOut,
   Menu,
   Settings,
   ShieldCheck,
@@ -24,13 +25,21 @@ import {
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { Logo } from "@/components/ui/Logo";
+import { useAuth } from "@/components/providers/AuthProvider";
 
 export function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { logout } = useAuth();
   const [open, setOpen] = useState(false);
   const turmasAtivo = pathname.startsWith("/turmas");
   const [turmasAberto, setTurmasAberto] = useState(turmasAtivo);
   const { config } = useTheme();
+
+  function handleLogout() {
+    logout();
+    router.push("/login");
+  }
 
   function navLink(href: string, label: string, Icon: React.ElementType) {
     const active = href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(href + "/");
@@ -147,6 +156,17 @@ export function Sidebar() {
           {navLink("/usuarios", "Usuários", ShieldCheck)}
           {navLink("/configuracoes", "Configurações", Settings)}
         </nav>
+
+        <div className="border-t border-zinc-100 px-3 py-3">
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-500 transition-colors hover:bg-red-50 hover:text-red-600"
+          >
+            <LogOut className="h-4 w-4 shrink-0" />
+            Sair
+          </button>
+        </div>
       </aside>
     </>
   );

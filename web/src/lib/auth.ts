@@ -30,6 +30,8 @@ export function carregarSessao(): AuthUser | null {
 export function limparSessao(): void {
   if (typeof window === "undefined") return;
   localStorage.removeItem(STORAGE_KEY);
+  // Expira o cookie auth_type usado pelo proxy
+  document.cookie = "auth_type=; path=/; max-age=0";
 }
 
 // Rota de destino após login por tipo
