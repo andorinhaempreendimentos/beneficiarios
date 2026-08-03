@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ChevronDown, Eye, EyeOff, LayoutDashboard } from "lucide-react";
 import { autenticar, autenticarBeneficiario, demoCredenciais, demoBeneficiario } from "@/lib/mock/credenciais";
@@ -13,7 +13,7 @@ function setCookie(name: string, value: string) {
 
 type Modo = "sistema" | "beneficiario";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { login } = useAuth();
@@ -209,5 +209,13 @@ export default function LoginPage() {
         Andorinha &copy; 2024 — Sistema de Gestão de Beneficiários
       </p>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginForm />
+    </Suspense>
   );
 }
