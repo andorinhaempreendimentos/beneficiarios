@@ -149,3 +149,7 @@ export function getBeneficiariosByTurma(turmaId: string): Beneficiario[] {
     b.turmas.some((vt) => vt.turmaId === turmaId && vt.status === "Ativo"),
   );
 }
+
+export function getBeneficiarioByMatricula(matricula: string): Beneficiario | undefined {
+  return beneficiarios.find((b) => b.matricula.toLowerCase() === matricula.toLowerCase());
+}
