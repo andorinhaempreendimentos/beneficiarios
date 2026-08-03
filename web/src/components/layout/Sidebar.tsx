@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import {
@@ -22,12 +23,14 @@ import {
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTheme } from "@/components/providers/ThemeProvider";
 
 export function Sidebar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const turmasAtivo = pathname.startsWith("/turmas");
   const [turmasAberto, setTurmasAberto] = useState(turmasAtivo);
+  const { config } = useTheme();
 
   function navLink(href: string, label: string, Icon: React.ElementType) {
     const active = href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(href + "/");
@@ -71,10 +74,18 @@ export function Sidebar() {
           open ? "left-0" : "-left-60"
         )}
       >
-        <div className="flex h-16 items-center justify-between border-b border-zinc-200 px-5">
-          <div className="flex items-center gap-2">
-            <LayoutDashboard className="h-5 w-5 text-sky-600" />
-            <span className="text-base font-semibold text-zinc-900">Andorinha</span>
+        <div className="flex h-16 items-center justify-between border-b border-zinc-200 px-4">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="relative h-8 w-8 shrink-0">
+              <Image
+                src="/logo.png"
+                alt={config.nomeSistema}
+                fill
+                className="object-contain"
+                onError={() => {}}
+              />
+            </div>
+            <span className="truncate text-sm font-semibold text-zinc-900">{config.nomeSistema}</span>
           </div>
           <button
             type="button"

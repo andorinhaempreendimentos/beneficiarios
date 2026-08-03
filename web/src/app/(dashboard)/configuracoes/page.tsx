@@ -5,24 +5,26 @@ import { PageHeader } from "@/components/ui";
 import { AbaPermissoes } from "@/components/configuracoes/AbaPermissoes";
 import { AbaDicionario } from "@/components/configuracoes/AbaDicionario";
 import { AbaStorage } from "@/components/configuracoes/AbaStorage";
+import { AbaAparencia } from "@/components/configuracoes/AbaAparencia";
 import { cn } from "@/lib/utils";
 
-type Aba = "permissoes" | "dicionario" | "storage";
+type Aba = "aparencia" | "permissoes" | "dicionario" | "storage";
 
 const ABAS: { id: Aba; label: string }[] = [
+  { id: "aparencia",  label: "Aparência" },
   { id: "permissoes", label: "Permissões / RBAC" },
   { id: "dicionario", label: "Dicionário de Termos" },
-  { id: "storage", label: "Armazenamento" },
+  { id: "storage",    label: "Armazenamento" },
 ];
 
 export default function ConfiguracoesPage() {
-  const [aba, setAba] = useState<Aba>("permissoes");
+  const [aba, setAba] = useState<Aba>("aparencia");
 
   return (
     <div className="flex flex-col gap-6">
       <PageHeader
         title="Configurações"
-        description="Permissões de acesso, terminologia e armazenamento de arquivos"
+        description="Aparência, permissões de acesso, terminologia e armazenamento"
       />
 
       <div className="border-b border-zinc-200">
@@ -45,9 +47,10 @@ export default function ConfiguracoesPage() {
         </nav>
       </div>
 
+      {aba === "aparencia"  && <AbaAparencia />}
       {aba === "permissoes" && <AbaPermissoes />}
       {aba === "dicionario" && <AbaDicionario />}
-      {aba === "storage" && <AbaStorage />}
+      {aba === "storage"    && <AbaStorage />}
     </div>
   );
 }
