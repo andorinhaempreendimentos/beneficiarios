@@ -4,7 +4,13 @@ import Link from "next/link";
 import { useState } from "react";
 import { Check, Copy, ExternalLink } from "lucide-react";
 
-export function LinkRow({ label, tipo, path }: { label: string; tipo: string; path: string }) {
+interface LinkRowProps {
+  label: string;
+  sub?: string;
+  path: string;
+}
+
+export function LinkRow({ label, sub, path }: LinkRowProps) {
   const [copiado, setCopiado] = useState(false);
 
   async function copiar() {
@@ -15,26 +21,17 @@ export function LinkRow({ label, tipo, path }: { label: string; tipo: string; pa
   }
 
   return (
-    <div className="flex flex-col gap-1 px-5 py-3 sm:flex-row sm:items-center sm:justify-between">
-      <div className="flex flex-col gap-0.5">
-        <span className="font-medium text-zinc-800">{label}</span>
-        <span className="text-xs text-zinc-400">{tipo}</span>
+    <div className="flex items-center justify-between gap-3 px-5 py-3">
+      <div className="min-w-0">
+        <p className="truncate text-sm font-medium text-zinc-800">{label}</p>
+        {sub && <p className="truncate text-xs text-zinc-400">{sub}</p>}
       </div>
-      <div className="flex items-center gap-2">
-        <code className="rounded bg-zinc-100 px-2 py-0.5 text-xs text-zinc-600">{path}</code>
-        <Link
-          href={path}
-          target="_blank"
-          className="flex items-center gap-1 text-sky-600 hover:underline text-sm"
-        >
-          <ExternalLink className="h-3.5 w-3.5" />
-          Abrir
-        </Link>
+      <div className="flex shrink-0 items-center gap-1">
         <button
           type="button"
-          title="Copiar link"
+          title={copiado ? "Copiado!" : "Copiar link"}
           onClick={copiar}
-          className="flex items-center gap-1 text-zinc-400 hover:text-zinc-700 transition-colors"
+          className="flex h-7 w-7 items-center justify-center rounded-md text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700 transition-colors"
         >
           {copiado ? (
             <Check className="h-3.5 w-3.5 text-green-500" />
@@ -42,6 +39,14 @@ export function LinkRow({ label, tipo, path }: { label: string; tipo: string; pa
             <Copy className="h-3.5 w-3.5" />
           )}
         </button>
+        <Link
+          href={path}
+          target="_blank"
+          title="Abrir link"
+          className="flex h-7 w-7 items-center justify-center rounded-md text-zinc-400 hover:bg-zinc-100 hover:text-sky-600 transition-colors"
+        >
+          <ExternalLink className="h-3.5 w-3.5" />
+        </Link>
       </div>
     </div>
   );
