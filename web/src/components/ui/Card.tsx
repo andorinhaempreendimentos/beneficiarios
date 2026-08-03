@@ -16,3 +16,11 @@ export function CardHeader({ className, children }: { className?: string; childr
 export function CardBody({ className, children }: { className?: string; children: ReactNode }) {
   return <div className={cn("px-5 py-4", className)}>{children}</div>;
 }
+
+export function CardTitle({ className, children }: { className?: string; children: ReactNode }) {
+  return (
+    <h3 className={cn("text-sm font-semibold tracking-tight text-zinc-800", className)}>
+      {children}
+    </h3>
+  );
+}

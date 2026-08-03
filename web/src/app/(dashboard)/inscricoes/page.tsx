@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Copy, ExternalLink } from "lucide-react";
 import { Badge, Card, PageHeader } from "@/components/ui";
 import { inscricoes } from "@/lib/mock/inscricoes";
 import { turmas } from "@/lib/mock/turmas";
@@ -7,6 +6,7 @@ import { atividades } from "@/lib/mock/atividades";
 import { nucleos } from "@/lib/mock/nucleos";
 import { formatarData } from "@/lib/utils";
 import type { StatusInscricao } from "@/lib/mock/inscricoes";
+import { LinkRow } from "@/components/inscricoes/LinkRow";
 
 const TONE: Record<StatusInscricao, "amber" | "green" | "sky" | "red"> = {
   pendente: "amber",
@@ -21,35 +21,6 @@ const LABEL: Record<StatusInscricao, string> = {
   fila_espera: "Fila de espera",
   cancelada: "Cancelada",
 };
-
-function LinkRow({ label, tipo, path }: { label: string; tipo: string; path: string }) {
-  return (
-    <div className="flex flex-col gap-1 px-5 py-3 sm:flex-row sm:items-center sm:justify-between">
-      <div className="flex flex-col gap-0.5">
-        <span className="font-medium text-zinc-800">{label}</span>
-        <span className="text-xs text-zinc-400">{tipo}</span>
-      </div>
-      <div className="flex items-center gap-2">
-        <code className="rounded bg-zinc-100 px-2 py-0.5 text-xs text-zinc-600">{path}</code>
-        <Link
-          href={path}
-          target="_blank"
-          className="flex items-center gap-1 text-sky-600 hover:underline text-sm"
-        >
-          <ExternalLink className="h-3.5 w-3.5" />
-          Abrir
-        </Link>
-        <button
-          type="button"
-          title="Copiar link"
-          className="flex items-center gap-1 text-zinc-400 hover:text-zinc-700"
-        >
-          <Copy className="h-3.5 w-3.5" />
-        </button>
-      </div>
-    </div>
-  );
-}
 
 export default function InscricoesPage() {
   return (

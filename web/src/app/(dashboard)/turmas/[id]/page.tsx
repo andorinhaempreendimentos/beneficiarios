@@ -21,6 +21,7 @@ export default async function DetalhesTurmaPage({ params }: { params: Promise<{ 
         description={`Início: ${formatarData(t.dataInicio)}`}
         actions={
           <div className="flex items-center gap-2">
+            <LinkButton href={`/turmas/${t.id}/inscricoes`} variant="outline">Inscrições</LinkButton>
             <LinkButton href={`/turmas/${t.id}/presenca`} variant="outline">Lista de presença</LinkButton>
             <LinkButton href={`/turmas/${t.id}/editar`} variant="outline">Editar</LinkButton>
           </div>

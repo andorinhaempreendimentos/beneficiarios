@@ -21,13 +21,13 @@ export function StatCard({ label, value, tone = "zinc", icon: Icon }: StatCardPr
   return (
     <div className={cn("flex items-center gap-4 rounded-xl border border-zinc-200 bg-white p-4")}>
       {Icon && (
-        <div className={cn("flex h-11 w-11 items-center justify-center rounded-lg", toneClasses[tone])}>
+        <div className={cn("flex h-11 w-11 shrink-0 items-center justify-center rounded-lg", toneClasses[tone])}>
           <Icon className="h-5 w-5" />
         </div>
       )}
-      <div>
-        <p className="text-2xl font-semibold text-zinc-900">{value}</p>
-        <p className="text-sm text-zinc-500">{label}</p>
+      <div className="min-w-0">
+        <p className="text-2xl font-bold tracking-tight text-zinc-900">{value}</p>
+        <p className="truncate text-xs text-zinc-500">{label}</p>
       </div>
     </div>
   );

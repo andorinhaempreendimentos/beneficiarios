@@ -1,4 +1,4 @@
-import { Building2, ClipboardList, Dumbbell, Plus, UserCheck, UserPlus, Users, UsersRound } from "lucide-react";
+import { Building2, ClipboardList, Dumbbell, FileBarChart, Plus, UserCheck, UserPlus, Users, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { Badge, Card, CardBody, CardHeader, StatCard } from "@/components/ui";
 import { nucleos } from "@/lib/mock/nucleos";
@@ -40,26 +40,22 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="rounded-2xl bg-gradient-to-r from-sky-600 to-sky-400 px-8 py-6 text-white">
-        <h1 className="text-2xl font-bold">Painel Geral</h1>
-        <p className="mt-1 text-sm text-sky-100">Visão consolidada do projeto Andorinha</p>
-      </div>
 
-      {/* StatCards principais */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="Beneficiários" value={totalBeneficiarios} icon={Users} tone="sky" />
-        <StatCard label="Núcleos Ativos" value={nucleosAtivos} icon={Building2} tone="green" />
-        <StatCard label="Funcionários Ativos" value={funcionariosAtivos} icon={UsersRound} tone="sky" />
+      {/* Métricas principais — 4 colunas, sem hero redundante */}
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <StatCard label="Beneficiários ativos" value={beneficiariosAtivos} icon={Users} tone="sky" />
+        <StatCard label="Núcleos em operação" value={nucleosAtivos} icon={Building2} tone="green" />
+        <StatCard label="Funcionários" value={funcionariosAtivos} icon={UsersRound} tone="sky" />
         <StatCard label="Modalidades" value={atividades.length} icon={Dumbbell} tone="green" />
       </div>
 
-      {/* Estatísticas detalhadas + ações rápidas */}
+      {/* Estatísticas detalhadas */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
 
         {/* Beneficiários */}
         <Card>
           <CardHeader className="flex items-center justify-between">
-            <h3 className="text-sm font-medium text-zinc-700">Beneficiários</h3>
+            <h3 className="text-sm font-semibold text-zinc-800">Beneficiários</h3>
             <Link href="/beneficiarios" className="text-xs text-sky-600 hover:underline">Ver todos</Link>
           </CardHeader>
           <CardBody className="flex flex-col gap-3">
@@ -75,7 +71,7 @@ export default function DashboardPage() {
             </div>
             <Link
               href="/beneficiarios/novo"
-              className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 bg-sky-50 px-3 py-2 text-sm font-medium text-sky-700 hover:bg-sky-100"
+              className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 bg-sky-50 px-3 py-2 text-sm font-medium text-sky-700 hover:bg-sky-100 transition-colors"
             >
               <UserPlus className="h-4 w-4" />
               Novo beneficiário
@@ -86,7 +82,7 @@ export default function DashboardPage() {
         {/* Turmas e vagas */}
         <Card>
           <CardHeader className="flex items-center justify-between">
-            <h3 className="text-sm font-medium text-zinc-700">Turmas e Vagas</h3>
+            <h3 className="text-sm font-semibold text-zinc-800">Turmas e Vagas</h3>
             <Link href="/turmas" className="text-xs text-sky-600 hover:underline">Ver turmas</Link>
           </CardHeader>
           <CardBody className="flex flex-col gap-3">
@@ -104,8 +100,7 @@ export default function DashboardPage() {
                 <p className="text-2xl font-bold text-sky-700">{ocupacaoGlobal}%</p>
               </div>
             </div>
-            {/* Barra de ocupação */}
-            <div className="h-2 w-full overflow-hidden rounded-full bg-zinc-100">
+            <div className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-100">
               <div
                 className="h-full rounded-full bg-sky-500 transition-all"
                 style={{ width: `${ocupacaoGlobal}%` }}
@@ -113,7 +108,7 @@ export default function DashboardPage() {
             </div>
             <Link
               href="/turmas/novo"
-              className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 bg-sky-50 px-3 py-2 text-sm font-medium text-sky-700 hover:bg-sky-100"
+              className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 bg-sky-50 px-3 py-2 text-sm font-medium text-sky-700 hover:bg-sky-100 transition-colors"
             >
               <Plus className="h-4 w-4" />
               Nova turma
@@ -124,7 +119,7 @@ export default function DashboardPage() {
         {/* Funcionários */}
         <Card>
           <CardHeader className="flex items-center justify-between">
-            <h3 className="text-sm font-medium text-zinc-700">Funcionários</h3>
+            <h3 className="text-sm font-semibold text-zinc-800">Pessoal</h3>
             <Link href="/funcionarios" className="text-xs text-sky-600 hover:underline">Ver todos</Link>
           </CardHeader>
           <CardBody className="flex flex-col gap-3">
@@ -140,7 +135,7 @@ export default function DashboardPage() {
             </div>
             <Link
               href="/funcionarios/novo"
-              className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 bg-sky-50 px-3 py-2 text-sm font-medium text-sky-700 hover:bg-sky-100"
+              className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 bg-sky-50 px-3 py-2 text-sm font-medium text-sky-700 hover:bg-sky-100 transition-colors"
             >
               <UserCheck className="h-4 w-4" />
               Novo funcionário
@@ -149,38 +144,31 @@ export default function DashboardPage() {
         </Card>
       </div>
 
-      {/* Ações rápidas */}
-      <Card>
-        <CardHeader>
-          <h3 className="text-sm font-medium text-zinc-700">Ações rápidas</h3>
-        </CardHeader>
-        <CardBody>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-            {[
-              { href: "/beneficiarios/novo",  label: "Novo beneficiário",  icon: UserPlus,      color: "sky"   },
-              { href: "/funcionarios/novo",   label: "Novo funcionário",   icon: UserCheck,     color: "green" },
-              { href: "/turmas/novo",         label: "Nova turma",         icon: Plus,          color: "sky"   },
-              { href: "/inscricoes",          label: "Inscrições",         icon: ClipboardList, color: "amber" },
-              { href: "/nucleos/novo",        label: "Novo núcleo",        icon: Building2,     color: "green" },
-              { href: "/relatorios",          label: "Relatórios",         icon: Dumbbell,      color: "zinc"  },
-            ].map(({ href, label, icon: Icon, color }) => (
-              <Link
-                key={href}
-                href={href}
-                className={`flex flex-col items-center gap-2 rounded-xl border px-3 py-4 text-center text-xs font-medium transition-colors ${
-                  color === "sky"   ? "border-sky-200   bg-sky-50   text-sky-700   hover:bg-sky-100"   :
-                  color === "green" ? "border-green-200 bg-green-50 text-green-700 hover:bg-green-100" :
-                  color === "amber" ? "border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100" :
-                                      "border-zinc-200  bg-zinc-50  text-zinc-600  hover:bg-zinc-100"
-                }`}
-              >
-                <Icon className="h-5 w-5" />
-                {label}
-              </Link>
-            ))}
-          </div>
-        </CardBody>
-      </Card>
+      {/* Ações rápidas — integradas numa linha, sem card wrapper desnecessário */}
+      <div className="grid grid-cols-3 gap-3 sm:grid-cols-6">
+        {[
+          { href: "/beneficiarios/novo", label: "Novo beneficiário", icon: UserPlus,      color: "sky"   },
+          { href: "/funcionarios/novo",  label: "Novo funcionário",  icon: UserCheck,     color: "green" },
+          { href: "/turmas/novo",        label: "Nova turma",        icon: Plus,          color: "sky"   },
+          { href: "/inscricoes",         label: "Inscrições",        icon: ClipboardList, color: "amber" },
+          { href: "/nucleos/novo",       label: "Novo núcleo",       icon: Building2,     color: "green" },
+          { href: "/relatorios",         label: "Relatórios",        icon: FileBarChart,  color: "zinc"  },
+        ].map(({ href, label, icon: Icon, color }) => (
+          <Link
+            key={href}
+            href={href}
+            className={`flex flex-col items-center gap-2 rounded-xl border px-3 py-4 text-center text-xs font-medium transition-colors ${
+              color === "sky"   ? "border-sky-100   bg-sky-50   text-sky-700   hover:bg-sky-100"   :
+              color === "green" ? "border-green-100 bg-green-50 text-green-700 hover:bg-green-100" :
+              color === "amber" ? "border-amber-100 bg-amber-50 text-amber-700 hover:bg-amber-100" :
+                                  "border-zinc-200  bg-white    text-zinc-600  hover:bg-zinc-50"
+            }`}
+          >
+            <Icon className="h-5 w-5" />
+            {label}
+          </Link>
+        ))}
+      </div>
 
       {/* Distribuição por modalidade */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
