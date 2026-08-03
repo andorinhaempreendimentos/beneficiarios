@@ -143,3 +143,9 @@ export function getBeneficiarioById(id: string): Beneficiario | undefined {
 export function getBeneficiariosByNucleo(nucleoId: string): Beneficiario[] {
   return beneficiarios.filter((b) => b.nucleoId === nucleoId);
 }
+
+export function getBeneficiariosByTurma(turmaId: string): Beneficiario[] {
+  return beneficiarios.filter((b) =>
+    b.turmas.some((vt) => vt.turmaId === turmaId && vt.status === "Ativo"),
+  );
+}

@@ -62,3 +62,7 @@ export const turmas: Turma[] = [
 export function getTurmasByNucleo(nucleoId: string): Turma[] {
   return turmas.filter((t) => t.nucleoId === nucleoId);
 }
+
+export function getTurmaById(id: string): Turma | undefined {
+  return turmas.find((t) => t.id === id);
+}

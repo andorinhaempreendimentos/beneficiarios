@@ -4,29 +4,48 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import {
+  Box,
   Building2,
+  ChevronDown,
+  ClipboardList,
   Dumbbell,
+  FileBarChart,
   FolderKanban,
+  GraduationCap,
+  Landmark,
   LayoutDashboard,
   Menu,
+  Settings,
+  ShieldCheck,
   Users,
   UsersRound,
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const links = [
-  { href: "/", label: "Painel", icon: LayoutDashboard },
-  { href: "/objetos", label: "Objetos", icon: FolderKanban },
-  { href: "/nucleos", label: "Núcleos", icon: Building2 },
-  { href: "/beneficiarios", label: "Beneficiários", icon: Users },
-  { href: "/funcionarios", label: "Pessoal", icon: UsersRound },
-  { href: "/atividades", label: "Atividades", icon: Dumbbell },
-];
-
 export function Sidebar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const turmasAtivo = pathname.startsWith("/turmas");
+  const [turmasAberto, setTurmasAberto] = useState(turmasAtivo);
+
+  function navLink(href: string, label: string, Icon: React.ElementType) {
+    const active = href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(href + "/");
+    return (
+      <Link
+        key={href}
+        href={href}
+        onClick={() => setOpen(false)}
+        className={cn(
+          "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+          active ? "bg-sky-50 text-sky-700" : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
+        )}
+      >
+        <Icon className="h-4 w-4 shrink-0" />
+        {label}
+      </Link>
+    );
+  }
 
   return (
     <>
@@ -66,26 +85,64 @@ export function Sidebar() {
             <X className="h-4 w-4 text-zinc-500" />
           </button>
         </div>
-        <nav className="flex-1 space-y-1 px-3 py-4">
-          {links.map(({ href, label, icon: Icon }) => {
-            const active = href === "/" ? pathname === "/" : pathname.startsWith(href);
-            return (
-              <Link
-                key={href}
-                href={href}
-                onClick={() => setOpen(false)}
-                className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                  active
-                    ? "bg-sky-50 text-sky-700"
-                    : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
-                )}
-              >
-                <Icon className="h-4 w-4" />
-                {label}
-              </Link>
-            );
-          })}
+
+        <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
+          {navLink("/", "Painel", LayoutDashboard)}
+          {navLink("/objetos", "Objetos", FolderKanban)}
+          {navLink("/organizacoes", "Organizações", Landmark)}
+          {navLink("/nucleos", "Núcleos", Building2)}
+
+          {/* Turmas com subitem */}
+          <div>
+            <button
+              type="button"
+              onClick={() => setTurmasAberto((v) => !v)}
+              className={cn(
+                "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                turmasAtivo ? "bg-sky-50 text-sky-700" : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
+              )}
+            >
+              <GraduationCap className="h-4 w-4 shrink-0" />
+              <span className="flex-1 text-left">Turmas</span>
+              <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", turmasAberto && "rotate-180")} />
+            </button>
+            {turmasAberto && (
+              <div className="ml-7 mt-1 space-y-1 border-l border-zinc-200 pl-3">
+                <Link
+                  href="/turmas"
+                  onClick={() => setOpen(false)}
+                  className={cn(
+                    "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors",
+                    pathname === "/turmas" ? "text-sky-700 font-medium" : "text-zinc-500 hover:text-zinc-900"
+                  )}
+                >
+                  Todas as turmas
+                </Link>
+                <Link
+                  href="/inscricoes"
+                  onClick={() => setOpen(false)}
+                  className={cn(
+                    "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors",
+                    pathname.startsWith("/inscricoes") ? "text-sky-700 font-medium" : "text-zinc-500 hover:text-zinc-900"
+                  )}
+                >
+                  <ClipboardList className="h-3.5 w-3.5" />
+                  Inscrições
+                </Link>
+              </div>
+            )}
+          </div>
+
+          {navLink("/atividades", "Atividades", Dumbbell)}
+          {navLink("/beneficiarios", "Beneficiários", Users)}
+          {navLink("/funcionarios", "Pessoal", UsersRound)}
+          {navLink("/equipamentos", "Equipamentos", Box)}
+
+          <div className="my-2 border-t border-zinc-100" />
+
+          {navLink("/relatorios", "Relatórios", FileBarChart)}
+          {navLink("/usuarios", "Usuários", ShieldCheck)}
+          {navLink("/configuracoes", "Configurações", Settings)}
         </nav>
       </aside>
     </>

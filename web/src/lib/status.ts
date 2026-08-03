@@ -1,4 +1,4 @@
-import type { StatusBeneficiario, StatusFuncionario, StatusObjeto } from "@/lib/types";
+import type { StatusBeneficiario, StatusFuncionario, StatusObjeto, StatusOrganizacao, ConservacaoEquipamento, StatusUsuario } from "@/lib/types";
 
 type Tone = "zinc" | "sky" | "green" | "red" | "amber" | "violet";
 
@@ -41,4 +41,42 @@ export const statusObjetoTone: Record<StatusObjeto, Tone> = {
   ativo: "green",
   encerrado: "zinc",
   planejado: "sky",
+};
+
+export const statusOrganizacaoLabel: Record<StatusOrganizacao, string> = {
+  ativa: "Ativa",
+  inativa: "Inativa",
+};
+
+export const statusOrganizacaoTone: Record<StatusOrganizacao, Tone> = {
+  ativa: "green",
+  inativa: "zinc",
+};
+
+export const conservacaoLabel: Record<ConservacaoEquipamento, string> = {
+  novo: "Novo",
+  bom: "Bom",
+  regular: "Regular",
+  ruim: "Ruim",
+  inservivel: "Inservível",
+};
+
+export const conservacaoTone: Record<ConservacaoEquipamento, Tone> = {
+  novo: "sky",
+  bom: "green",
+  regular: "amber",
+  ruim: "red",
+  inservivel: "zinc",
+};
+
+export const statusUsuarioLabel: Record<StatusUsuario, string> = {
+  ativo: "Ativo",
+  inativo: "Inativo",
+  bloqueado: "Bloqueado",
+};
+
+export const statusUsuarioTone: Record<StatusUsuario, Tone> = {
+  ativo: "green",
+  inativo: "zinc",
+  bloqueado: "red",
 };

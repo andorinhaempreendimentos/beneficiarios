@@ -1,5 +1,47 @@
 // Tipos centrais do domínio Andorinha (dados mockados nesta etapa estática)
 
+export type StatusUsuario = "ativo" | "inativo" | "bloqueado";
+
+export type AcaoPermissao = "visualizar" | "criar" | "editar" | "excluir";
+
+export type ModuloSistema =
+  | "objetos"
+  | "organizacoes"
+  | "nucleos"
+  | "turmas"
+  | "inscricoes"
+  | "atividades"
+  | "beneficiarios"
+  | "funcionarios"
+  | "equipamentos"
+  | "relatorios"
+  | "configuracoes"
+  | "usuarios";
+
+export interface PermissaoModulo {
+  modulo: ModuloSistema;
+  acoes: AcaoPermissao[];
+}
+
+export interface Perfil {
+  id: string;
+  nome: string;
+  descricao?: string;
+  permissoes: PermissaoModulo[];
+  criadoEm: string;
+}
+
+export interface Usuario {
+  id: string;
+  nome: string;
+  email: string;
+  perfilId: string;
+  status: StatusUsuario;
+  fotoUrl?: string;
+  criadoEm: string;
+  ultimoAcesso?: string;
+}
+
 export type StatusFuncionario =
   | "contratado"
   | "voluntario"
@@ -101,6 +143,32 @@ export interface Turma {
   duracao: string;
 }
 
+export type CategoriaEquipamento =
+  | "Esportivo"
+  | "Escritório"
+  | "Informática"
+  | "Mobiliário"
+  | "Vestuário"
+  | "Outros";
+
+export type ConservacaoEquipamento = "novo" | "bom" | "regular" | "ruim" | "inservivel";
+
+export interface Equipamento {
+  id: string;
+  nome: string;
+  categoria: CategoriaEquipamento;
+  quantidade: number;
+  conservacao: ConservacaoEquipamento;
+  nucleoId?: string;
+  objetoId?: string;
+  notaFiscal?: string;
+  dataAquisicao?: string;
+  valorUnitario?: number;
+  fotoUrl?: string;
+  observacao?: string;
+  criadoEm: string;
+}
+
 export type Turno = "manha" | "tarde" | "noite";
 
 export interface PerguntaAtividade {
@@ -141,6 +209,27 @@ export interface Objeto {
   criadoEm: string;
 }
 
+export type TipoOrganizacao = "Instituto" | "ONG" | "Associação" | "Fundação" | "Outro";
+
+export type StatusOrganizacao = "ativa" | "inativa";
+
+export interface Organizacao {
+  id: string;
+  nome: string;
+  tipo: TipoOrganizacao;
+  cnpj?: string;
+  nomeResponsavel?: string;
+  telefone?: string;
+  email?: string;
+  cep?: string;
+  endereco?: string;
+  cidade?: string;
+  estado?: string;
+  objetoId?: string;
+  status: StatusOrganizacao;
+  criadoEm: string;
+}
+
 export type StatusBeneficiario =
   | "Novo cadastro"
   | "Comparecer a sede"
@@ -166,6 +255,42 @@ export interface Anexo {
   id: string;
   descricao: string;
   arquivoUrl: string;
+}
+
+export type StatusPresenca = "presente" | "falta" | "falta_justificada";
+
+export interface RegistroPresenca {
+  id: string;
+  turmaId: string;
+  data: string; // ISO date "YYYY-MM-DD"
+  beneficiarioId: string;
+  status: StatusPresenca;
+  observacao?: string;
+  registradoPor?: string;
+  criadoEm: string;
+}
+
+export type StatusPonto = "presente" | "falta" | "falta_justificada" | "folga" | "feriado";
+
+export interface RegistroPonto {
+  id: string;
+  funcionarioId: string;
+  data: string; // ISO date "YYYY-MM-DD"
+  entradaReal?: string; // "HH:MM"
+  saidaReal?: string;   // "HH:MM"
+  status: StatusPonto;
+  observacao?: string;
+  criadoEm: string;
+}
+
+export interface ConfirmacaoAtividade {
+  id: string;
+  funcionarioId: string;
+  turmaId: string;
+  data: string; // ISO date "YYYY-MM-DD"
+  fotoUrl?: string;
+  observacao?: string;
+  confirmadoEm: string;
 }
 
 export interface Beneficiario {
