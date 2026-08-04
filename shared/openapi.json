@@ -1,0 +1,9 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Andorinha API",
+    "description": "Gerado automaticamente pelo NestJS Swagger. Commitar após cada alteração de contrato.",
+    "version": "1.0.0"
+  },
+  "paths": {}
+}

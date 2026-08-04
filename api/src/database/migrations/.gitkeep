@@ -1,0 +1,2 @@
+# As migrations são geradas pelo TypeORM CLI e não entram em branco.
+# Este arquivo garante que a pasta exista no repositório.
