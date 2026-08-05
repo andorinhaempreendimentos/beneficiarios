@@ -32,7 +32,7 @@ export class AuthService {
   async loginEmail(dto: LoginEmailDto, res: Response, meta: { ip: string; ua: string }) {
     const usuario = await this.usuarioRepo.findOne({
       where: { email: dto.email, ativo: true },
-      select: { id: true, email: true, senhaHash: true, tipo: true, perfilId: true, entidadeId: true, ativo: true },
+      select: { id: true, email: true, nomeCompleto: true, senhaHash: true, tipo: true, perfilId: true, entidadeId: true, ativo: true },
     });
     if (!usuario) throw new UnauthorizedException('Credenciais inválidas');
 
@@ -41,6 +41,7 @@ export class AuthService {
 
     const payload: JwtPayload = {
       sub: usuario.id,
+      nome: usuario.nomeCompleto,
       email: usuario.email,
       tipo: usuario.tipo,
       perfilId: usuario.perfilId,
@@ -52,7 +53,7 @@ export class AuthService {
   async loginBeneficiario(dto: LoginBeneficiarioDto, res: Response, meta: { ip: string; ua: string }) {
     const beneficiario = await this.beneficiarioRepo.findOne({
       where: { matricula: dto.matricula },
-      select: { id: true, matricula: true, dataNascimento: true, celular: true, deletedAt: true },
+      select: { id: true, matricula: true, nomeCompleto: true, dataNascimento: true, celular: true, deletedAt: true },
     });
 
     if (
@@ -65,6 +66,7 @@ export class AuthService {
 
     const payload: JwtPayload = {
       sub: beneficiario.id,
+      nome: beneficiario.nomeCompleto,
       email: '',
       tipo: TipoUsuario.BENEFICIARIO,
       perfilId: '',
@@ -135,7 +137,14 @@ export class AuthService {
     // auth_type não é httpOnly — lido pelo proxy.ts do Next.js
     res.cookie('auth_type', payload.tipo, { secure: cookieCfg.seguro, sameSite: 'lax', domain: cookieCfg.dominio, path: '/' });
 
-    return { tipo: payload.tipo };
+    return {
+      id: payload.sub,
+      nome: payload.nome,
+      email: payload.email,
+      tipo: payload.tipo,
+      perfilId: payload.perfilId,
+      entidadeId: payload.entidadeId,
+    };
   }
 
   private limparCookies(res: Response) {

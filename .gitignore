@@ -6,3 +6,6 @@ node_modules
 data/auth_info
 dist
 *.log
+.serena/
+.claude/
+web/.claude/

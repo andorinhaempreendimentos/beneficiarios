@@ -1,50 +1,40 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useCallback } from "react";
 import Link from "next/link";
 import { UserCheck, UserX } from "lucide-react";
 import { Badge, Card, Field, Input, LinkButton, PageHeader, Select, FilterBar, StatCard, Pagination } from "@/components/ui";
-import { beneficiarios } from "@/lib/mock/beneficiarios";
+import { useQuery } from "@/lib/hooks/useQuery";
+import { beneficiariosApi, nucleosApi, atividadesApi, type Paginated, type BeneficiarioApi, type NucleoApi, type AtividadeApi } from "@/lib/api/services";
 import { statusBeneficiarioTone } from "@/lib/status";
 import { calcularIdade } from "@/lib/utils";
-import { turmas } from "@/lib/mock/turmas";
-import { nucleos } from "@/lib/mock/nucleos";
-import { atividades } from "@/lib/mock/atividades";
 
 const PER_PAGE = 15;
-const EMPTY = { nome: "", matricula: "", cpf: "", status: "", atividade: "", tipoMatricula: "", nucleoId: "", idadeMin: "", idadeMax: "", ordenar: "" };
+const EMPTY = { nome: "", matricula: "", cpf: "", status: "", atividadeId: "", tipoMatricula: "", nucleoId: "", idadeMin: "", idadeMax: "" };
 
 export default function BeneficiariosPage() {
   const [filtros, setFiltros] = useState(EMPTY);
   const [ativos, setAtivos] = useState(EMPTY);
   const [pagina, setPagina] = useState(1);
 
-  const atv = beneficiarios.filter((b) => b.status === "Aprovado");
-  const evadidos = beneficiarios.flatMap((b) => b.turmas).filter((t) => t.status === "Evadido");
+  const { data: pageData, loading, refetch } = useQuery<Paginated<BeneficiarioApi>>(
+    "/api/v1/beneficiarios",
+    { ...ativos, page: pagina, limit: PER_PAGE },
+  );
 
-  const filtrados = useMemo(() => {
-    let lista = [...beneficiarios];
-    if (ativos.nome) lista = lista.filter((b) => b.nomeCompleto.toLowerCase().includes(ativos.nome.toLowerCase()));
-    if (ativos.matricula) lista = lista.filter((b) => b.matricula.includes(ativos.matricula));
-    if (ativos.cpf) lista = lista.filter((b) => (b.cpf ?? "").includes(ativos.cpf));
-    if (ativos.status) lista = lista.filter((b) => b.status === ativos.status);
-    if (ativos.tipoMatricula) lista = lista.filter((b) => b.tipoMatricula === ativos.tipoMatricula);
-    if (ativos.nucleoId) lista = lista.filter((b) => b.nucleoId === ativos.nucleoId);
-    if (ativos.atividade) lista = lista.filter((b) =>
-      b.turmas.some((v) => turmas.find((t) => t.id === v.turmaId)?.atividadeId === ativos.atividade)
-    );
-    if (ativos.idadeMin) lista = lista.filter((b) => calcularIdade(b.dataNascimento) >= Number(ativos.idadeMin));
-    if (ativos.idadeMax) lista = lista.filter((b) => calcularIdade(b.dataNascimento) <= Number(ativos.idadeMax));
-    if (ativos.ordenar === "alfa") lista.sort((a, b) => a.nomeCompleto.localeCompare(b.nomeCompleto));
-    return lista;
-  }, [ativos]);
+  const { data: nucleosData } = useQuery<Paginated<NucleoApi>>("/api/v1/nucleos", { limit: 200 });
+  const { data: atividadesData } = useQuery<Paginated<AtividadeApi>>("/api/v1/atividades", { limit: 200 });
 
-  const totalPages = Math.max(1, Math.ceil(filtrados.length / PER_PAGE));
-  const pagAtual = Math.min(pagina, totalPages);
-  const resultado = filtrados.slice((pagAtual - 1) * PER_PAGE, pagAtual * PER_PAGE);
+  const nucleos = nucleosData?.data ?? [];
+  const atividades = atividadesData?.data ?? [];
+  const resultado = pageData?.data ?? [];
+  const total = pageData?.total ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
 
-  function aplicar() { setPagina(1); setAtivos(filtros); }
-  function limpar() { setFiltros(EMPTY); setAtivos(EMPTY); setPagina(1); }
+  const aplicar = useCallback(() => { setPagina(1); setAtivos(filtros); }, [filtros]);
+  const limpar = useCallback(() => { setFiltros(EMPTY); setAtivos(EMPTY); setPagina(1); }, []);
+
+  const atv = pageData?.data.filter((b) => b.status === "Aprovado").length ?? 0;
 
   return (
     <div className="flex flex-col gap-6">
@@ -55,8 +45,8 @@ export default function BeneficiariosPage() {
       />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <StatCard label="Total de ativos" value={atv.length} tone="green" icon={UserCheck} />
-        <StatCard label="Total de evadidos" value={evadidos.length} tone="red" icon={UserX} />
+        <StatCard label="Total na página (ativos)" value={atv} tone="green" icon={UserCheck} />
+        <StatCard label="Total encontrado" value={total} tone="sky" icon={UserX} />
       </div>
 
       <FilterBar onFilter={aplicar} onClear={limpar}>
@@ -84,7 +74,7 @@ export default function BeneficiariosPage() {
           </Select>
         </Field>
         <Field label="Atividade">
-          <Select value={filtros.atividade} onChange={(e) => setFiltros((f) => ({ ...f, atividade: e.target.value }))}>
+          <Select value={filtros.atividadeId} onChange={(e) => setFiltros((f) => ({ ...f, atividadeId: e.target.value }))}>
             <option value="">Todas</option>
             {atividades.map((a) => <option key={a.id} value={a.id}>{a.nome}</option>)}
           </Select>
@@ -110,60 +100,55 @@ export default function BeneficiariosPage() {
           <Input type="number" min={0} value={filtros.idadeMax}
             onChange={(e) => setFiltros((f) => ({ ...f, idadeMax: e.target.value }))} />
         </Field>
-        <Field label="Ordenar por">
-          <Select value={filtros.ordenar} onChange={(e) => setFiltros((f) => ({ ...f, ordenar: e.target.value }))}>
-            <option value="">Data de criação (decrescente)</option>
-            <option value="alfa">Ordem alfabética</option>
-          </Select>
-        </Field>
       </FilterBar>
 
       <Card>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-zinc-200 text-left text-xs font-medium uppercase tracking-wide text-zinc-500">
-                <th className="px-5 py-3">Matrícula</th>
-                <th className="px-5 py-3">Status</th>
-                <th className="px-5 py-3">Nome</th>
-                <th className="px-5 py-3">Idade</th>
-                <th className="px-5 py-3">Atividades</th>
-                <th className="px-5 py-3 text-right">Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {resultado.length === 0 ? (
-                <tr><td colSpan={6} className="px-5 py-8 text-center text-sm text-zinc-400">Nenhum beneficiário encontrado.</td></tr>
-              ) : resultado.map((b) => (
-                <tr key={b.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
-                  <td className="px-5 py-3 text-zinc-500">{b.matricula}</td>
-                  <td className="px-5 py-3">
-                    <Badge tone={statusBeneficiarioTone[b.status]}>{b.status}</Badge>
-                  </td>
-                  <td className="px-5 py-3">
-                    <div className="flex items-center gap-2">
-                      <Link href={`/beneficiarios/${b.id}`} className="font-medium text-sky-600 hover:underline">{b.nomeCompleto}</Link>
-                      <Badge tone={b.tipoMatricula === "Online" ? "sky" : "violet"}>{b.tipoMatricula}</Badge>
-                    </div>
-                  </td>
-                  <td className="px-5 py-3 text-zinc-600">{calcularIdade(b.dataNascimento)} anos</td>
-                  <td className="px-5 py-3 text-zinc-600">
-                    {b.turmas.map((v) => turmas.find((t) => t.id === v.turmaId)?.nome).filter(Boolean).join(", ") || "—"}
-                  </td>
-                  <td className="px-5 py-3 text-right">
-                    <Link href={`/beneficiarios/${b.id}`} className="text-sky-600 hover:underline">Acessar</Link>
-                    <span className="mx-1.5 text-zinc-300">|</span>
-                    <Link href={`/beneficiarios/${b.id}/editar`} className="text-zinc-500 hover:underline">Editar</Link>
-                  </td>
+        {loading && (
+          <div className="px-5 py-8 text-center text-sm text-zinc-400">Carregando…</div>
+        )}
+        {!loading && (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-zinc-200 text-left text-xs font-medium uppercase tracking-wide text-zinc-500">
+                  <th className="px-5 py-3">Matrícula</th>
+                  <th className="px-5 py-3">Status</th>
+                  <th className="px-5 py-3">Nome</th>
+                  <th className="px-5 py-3">Idade</th>
+                  <th className="px-5 py-3 text-right">Ações</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {resultado.length === 0 ? (
+                  <tr><td colSpan={5} className="px-5 py-8 text-center text-sm text-zinc-400">Nenhum beneficiário encontrado.</td></tr>
+                ) : resultado.map((b) => (
+                  <tr key={b.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
+                    <td className="px-5 py-3 text-zinc-500">{b.matricula}</td>
+                    <td className="px-5 py-3">
+                      <Badge tone={statusBeneficiarioTone[b.status as keyof typeof statusBeneficiarioTone] ?? "zinc"}>{b.status}</Badge>
+                    </td>
+                    <td className="px-5 py-3">
+                      <div className="flex items-center gap-2">
+                        <Link href={`/beneficiarios/${b.id}`} className="font-medium text-sky-600 hover:underline">{b.nomeCompleto}</Link>
+                        <Badge tone={b.tipoMatricula === "Online" ? "sky" : "violet"}>{b.tipoMatricula}</Badge>
+                      </div>
+                    </td>
+                    <td className="px-5 py-3 text-zinc-600">{calcularIdade(b.dataNascimento)} anos</td>
+                    <td className="px-5 py-3 text-right">
+                      <Link href={`/beneficiarios/${b.id}`} className="text-sky-600 hover:underline">Acessar</Link>
+                      <span className="mx-1.5 text-zinc-300">|</span>
+                      <Link href={`/beneficiarios/${b.id}/editar`} className="text-zinc-500 hover:underline">Editar</Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
         <Pagination
-          currentPage={pagAtual}
+          currentPage={pagina}
           totalPages={totalPages}
-          totalItems={filtrados.length}
+          totalItems={total}
           itemsPerPage={PER_PAGE}
           onPageChange={setPagina}
         />

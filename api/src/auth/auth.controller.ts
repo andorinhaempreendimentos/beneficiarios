@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
@@ -70,6 +71,19 @@ export class AuthController {
       ip: req.ip ?? '',
       ua: req.headers['user-agent'] ?? '',
     });
+  }
+
+  @Get('me')
+  @ApiOperation({ summary: 'Retornar perfil do usuário autenticado' })
+  me(@CurrentUser() user: JwtPayload) {
+    return {
+      id: user.sub,
+      nome: user.nome,
+      email: user.email,
+      tipo: user.tipo,
+      perfilId: user.perfilId,
+      entidadeId: user.entidadeId,
+    };
   }
 
   @Post('logout')

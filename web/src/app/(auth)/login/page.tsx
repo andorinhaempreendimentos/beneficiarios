@@ -4,14 +4,10 @@ import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ChevronDown, Eye, EyeOff } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
-import { autenticar, autenticarBeneficiario, demoCredenciais, demoBeneficiario } from "@/lib/mock/credenciais";
+import { apiLogin, apiLoginBeneficiario } from "@/lib/api/auth";
+import { ApiError } from "@/lib/api/client";
 import { rotaInicial } from "@/lib/auth";
 import { useAuth } from "@/components/providers/AuthProvider";
-import { getAparencia } from "@/lib/mock/aparencia";
-
-function setCookie(name: string, value: string) {
-  document.cookie = `${name}=${value}; path=/; max-age=${60 * 60 * 24 * 7}`;
-}
 
 type Modo = "sistema" | "beneficiario";
 
@@ -19,7 +15,6 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { login } = useAuth();
-  const { nomeSistema } = getAparencia();
 
   const [modo, setModo] = useState<Modo>("sistema");
   const [erro, setErro] = useState("");
@@ -40,30 +35,38 @@ function LoginForm() {
     setShowDemo(false);
   }
 
-  function handleSistema(e: React.FormEvent) {
+  async function handleSistema(e: React.FormEvent) {
     e.preventDefault();
     setErro("");
     setLoading(true);
-    const user = autenticar(email.trim(), senha);
-    if (!user) { setErro("Email ou senha incorretos."); setLoading(false); return; }
-    finalizar(user);
+    try {
+      const profile = await apiLogin(email.trim(), senha);
+      finalizar(profile);
+    } catch (err) {
+      setErro(err instanceof ApiError ? err.message : "Erro ao conectar com o servidor.");
+    } finally {
+      setLoading(false);
+    }
   }
 
-  function handleBeneficiario(e: React.FormEvent) {
+  async function handleBeneficiario(e: React.FormEvent) {
     e.preventDefault();
     setErro("");
     setLoading(true);
-    const user = autenticarBeneficiario(matricula.trim(), dataNasc, celular.trim());
-    if (!user) { setErro("Dados não conferem. Verifique matrícula, data de nascimento e celular."); setLoading(false); return; }
-    finalizar(user);
+    try {
+      const profile = await apiLoginBeneficiario(matricula.trim(), dataNasc, celular.trim());
+      finalizar(profile);
+    } catch (err) {
+      setErro(err instanceof ApiError ? err.message : "Erro ao conectar com o servidor.");
+    } finally {
+      setLoading(false);
+    }
   }
 
-  function finalizar(user: ReturnType<typeof autenticar>) {
-    if (!user) return;
-    login(user);
-    setCookie("auth_type", user.tipo);
+  function finalizar(profile: Awaited<ReturnType<typeof apiLogin>>) {
+    login(profile);
     const next = searchParams.get("next");
-    router.push(next && next.startsWith("/") ? next : rotaInicial(user.tipo));
+    router.push(next && next.startsWith("/") ? next : rotaInicial(profile.tipo as Parameters<typeof rotaInicial>[0]));
   }
 
   return (
@@ -75,19 +78,16 @@ function LoginForm() {
     >
       <div className="w-full max-w-sm">
 
-        {/* Logo + nome */}
         <div className="mb-8 flex flex-col items-center gap-3">
           <Logo className="h-20 w-20 drop-shadow-sm" />
           <div className="text-center">
-            <h1 className="text-2xl font-bold tracking-tight text-zinc-900">{nomeSistema}</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-zinc-900">Andorinha</h1>
             <p className="mt-1 text-sm text-zinc-500">Acesso restrito. Faça login para continuar.</p>
           </div>
         </div>
 
-        {/* Cartão */}
         <div className="rounded-2xl border border-white/80 bg-white/90 shadow-xl shadow-zinc-200/60 backdrop-blur-sm">
 
-          {/* Toggle modo */}
           <div className="border-b border-zinc-100 p-4">
             <div className="flex rounded-xl bg-zinc-100 p-1">
               <button
@@ -115,7 +115,6 @@ function LoginForm() {
             </div>
           </div>
 
-          {/* Formulário sistema */}
           {modo === "sistema" && (
             <form onSubmit={handleSistema} className="flex flex-col gap-4 p-6">
               <div className="flex flex-col gap-1.5">
@@ -163,7 +162,6 @@ function LoginForm() {
             </form>
           )}
 
-          {/* Formulário beneficiário */}
           {modo === "beneficiario" && (
             <form onSubmit={handleBeneficiario} className="flex flex-col gap-4 p-6">
               <div className="flex flex-col gap-1.5">
@@ -211,7 +209,6 @@ function LoginForm() {
             </form>
           )}
 
-          {/* Demo */}
           <div className="border-t border-zinc-100">
             <button
               type="button"
@@ -222,33 +219,15 @@ function LoginForm() {
               <ChevronDown className={`h-3.5 w-3.5 transition-transform ${showDemo ? "rotate-180" : ""}`} />
             </button>
             {showDemo && (
-              <div className="divide-y divide-zinc-50 border-t border-zinc-100">
-                {modo === "sistema" && demoCredenciais.map((c) => (
-                  <button
-                    key={c.email}
-                    type="button"
-                    onClick={() => { setEmail(c.email); setSenha(c.senha); setShowDemo(false); setErro(""); }}
-                    className="flex w-full items-center justify-between px-5 py-2.5 text-left hover:bg-zinc-50 transition-colors"
-                  >
-                    <span className="text-xs font-medium text-zinc-700">{c.label}</span>
-                    <span className="font-mono text-xs text-zinc-400">{c.email}</span>
-                  </button>
-                ))}
-                {modo === "beneficiario" && demoBeneficiario && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMatricula(demoBeneficiario!.matricula);
-                      setDataNasc(demoBeneficiario!.dataNascimento);
-                      setCelular(demoBeneficiario!.celular);
-                      setShowDemo(false);
-                      setErro("");
-                    }}
-                    className="flex w-full items-center justify-between px-5 py-2.5 text-left hover:bg-zinc-50 transition-colors"
-                  >
-                    <span className="text-xs font-medium text-zinc-700">Beneficiário demo</span>
-                    <span className="font-mono text-xs text-zinc-400">{demoBeneficiario.matricula}</span>
-                  </button>
+              <div className="divide-y divide-zinc-50 border-t border-zinc-100 px-5 py-3 text-xs text-zinc-400">
+                {modo === "sistema" && (
+                  <>
+                    <p>admin@andorinha.app</p>
+                    <p className="mt-1">Senha: andorinha123</p>
+                  </>
+                )}
+                {modo === "beneficiario" && (
+                  <p>Use matrícula, data de nascimento e celular cadastrados.</p>
                 )}
               </div>
             )}
@@ -256,7 +235,7 @@ function LoginForm() {
         </div>
 
         <p className="mt-6 text-center text-xs text-zinc-400">
-          {nomeSistema}{" "}&copy; 2024
+          Andorinha &copy; 2024
         </p>
       </div>
     </div>
