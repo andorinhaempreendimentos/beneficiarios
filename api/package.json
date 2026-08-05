@@ -46,6 +46,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "3.1102.0",
     "@aws-sdk/s3-request-presigner": "3.1102.0",
+    "@nestjs/cli": "11.0.24",
     "@nestjs/common": "11.1.28",
     "@nestjs/config": "4.0.4",
     "@nestjs/core": "11.1.28",
@@ -71,7 +72,6 @@
     "typeorm": "1.1.0"
   },
   "devDependencies": {
-    "@nestjs/cli": "11.0.24",
     "@nestjs/schematics": "11.1.0",
     "@nestjs/testing": "11.1.28",
     "@types/cookie-parser": "1.4.10",
