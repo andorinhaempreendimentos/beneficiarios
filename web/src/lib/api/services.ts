@@ -21,7 +21,7 @@ async function getSupabase() {
 }
 
 function createClient() {
-  return createBrowserClient();
+  return getSupabase();
 }
 
 export interface Paginated<T> {
