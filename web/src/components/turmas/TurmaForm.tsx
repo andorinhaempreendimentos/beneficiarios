@@ -15,7 +15,7 @@ interface TurmaFormProps {
 export function TurmaForm({ turma: t, nucleos = [], atividades = [], backHref }: TurmaFormProps) {
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
-  const [exclusiva, setExclusiva] = useState(t?.exclusiva ?? false);
+  const [nucleoId, setNucleoId] = useState(t?.nucleoId ?? "");
   const [atividadeId, setAtividadeId] = useState(t?.atividadeId ?? "");
 
   const atividadeNome = atividades.find((a) => a.id === atividadeId)?.nome;
@@ -26,10 +26,24 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], backHref }:
     setErro(null);
 
     const formData = new FormData(event.currentTarget);
+    const nId = (formData.get("nucleoId") as string) || nucleoId;
+    const aId = (formData.get("atividadeId") as string) || atividadeId;
+
+    if (!nId) {
+      setErro("Por favor, selecione um núcleo.");
+      setLoading(false);
+      return;
+    }
+    if (!aId) {
+      setErro("Por favor, selecione uma atividade.");
+      setLoading(false);
+      return;
+    }
+
     const data = {
       nome: formData.get("nome") as string,
-      nucleoId: formData.get("nucleoId") as string,
-      atividadeId: formData.get("atividadeId") as string,
+      nucleoId: nId,
+      atividadeId: aId,
       vagasTotais: Number(formData.get("vagasTotais") || 30),
       exclusiva,
       dataInicio: (formData.get("dataInicio") as string) || null,
@@ -63,7 +77,7 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], backHref }:
             <Input name="nome" defaultValue={t?.nome} placeholder="Ex: Futebol Manhã A" />
           </Field>
           <Field label="Núcleo" required>
-            <Select name="nucleoId" defaultValue={t?.nucleoId ?? ""}>
+            <Select name="nucleoId" value={nucleoId} onChange={(e) => setNucleoId(e.target.value)}>
               <option value="" disabled>Selecione</option>
               {nucleos.map((n) => (
                 <option key={n.id} value={n.id}>{n.identificacao}</option>

@@ -507,7 +507,7 @@ function toOrganizacaoRow(b: Record<string, unknown>): Database['public']['Table
     endereco: b.endereco as string | null | undefined,
     cidade: b.cidade as string | null | undefined,
     estado: b.estado as string | null | undefined,
-    objeto_id: b.objetoId as string,
+    objeto_id: (b.objetoId as string | null | undefined) ?? null,
     status: b.status as string | undefined,
   };
 }
@@ -566,8 +566,8 @@ function toNucleoRow(b: Record<string, unknown>): Database['public']['Tables']['
     longitude: b.longitude as number | null | undefined,
     nome_responsavel: b.nomeResponsavel as string | null | undefined,
     telefone_contato: b.telefoneContato as string | null | undefined,
-    organizacao_id: b.organizacaoId as string,
-    data_inicio: b.dataInicio as string,
+    organizacao_id: (b.organizacaoId as string) || null,
+    data_inicio: (b.dataInicio as string) || new Date().toISOString().slice(0, 10),
     data_fechamento: b.dataFechamento as string | null | undefined,
     em_funcionamento: b.emFuncionamento as boolean | undefined,
     disponivel_pre_inscricao: b.disponivelPreInscricao as boolean | undefined,
@@ -622,7 +622,7 @@ function toAtividadeRow(b: Record<string, unknown>): Database['public']['Tables'
     tipo_aprovacao: b.tipoAprovacao as Database['public']['Enums']['tipo_aprovacao'] | undefined,
     idade_minima: b.idadeMinima as number | null | undefined,
     idade_maxima: b.idadeMaxima as number | null | undefined,
-    nucleo_id: b.nucleoId as string,
+    nucleo_id: (b.nucleoId as string) || null,
   };
 }
 
