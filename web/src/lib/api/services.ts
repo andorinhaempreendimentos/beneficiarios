@@ -2,29 +2,30 @@ import { createServerClient } from '@supabase/ssr';
 import { createClient as createBrowserClient } from '@/lib/supabase/client';
 import type { Database } from '@/lib/supabase/types';
 
-function createClient() {
+async function getSupabase() {
   if (typeof window === 'undefined') {
     try {
-      const cookieStore = require('next/headers').cookies();
+      const cookieStore = await require('next/headers').cookies();
       const url = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://qrzszjogxrrjqjkoowoi.supabase.co';
       const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'sb_publishable_AoXvaZk10chLPIIwIWIskA_s4z1xCUY';
       return createServerClient<Database>(url, key, {
         cookies: {
           getAll() {
-            return typeof cookieStore.getAll === 'function' ? cookieStore.getAll() : [];
+            return cookieStore.getAll();
           },
           setAll() {},
         },
       });
-    } catch {
+    } catch (e) {
+      console.error('[getSupabase SSR Error]', e);
       return createBrowserClient();
     }
   }
   return createBrowserClient();
 }
 
-async function getSupabase() {
-  return createClient();
+function createClient() {
+  return createBrowserClient();
 }
 
 export interface Paginated<T> {
@@ -404,7 +405,7 @@ function mapPerfil(r: any): PerfilApi {
 
 export const objetosApi = {
   async list(p?: QP): Promise<Paginated<ObjetoApi>> {
-    const sb = createClient();
+    const sb = await getSupabase();
     const { page, limit, from, to } = paginar(num(p?.page), num(p?.limit));
     let q = sb.from('objetos').select('*', { count: 'exact' }).is('deleted_at', null);
     if (p?.busca) q = q.ilike('nome', `%${p.busca}%`);
@@ -459,7 +460,7 @@ function toObjetoRow(b: Record<string, unknown>): Database['public']['Tables']['
 
 export const organizacoesApi = {
   async list(p?: QP): Promise<Paginated<OrganizacaoApi>> {
-    const sb = createClient();
+    const sb = await getSupabase();
     const { page, limit, from, to } = paginar(num(p?.page), num(p?.limit));
     let q = sb.from('organizacoes').select('*', { count: 'exact' }).is('deleted_at', null);
     if (p?.busca) q = q.ilike('nome', `%${p.busca}%`);
@@ -515,7 +516,7 @@ function toOrganizacaoRow(b: Record<string, unknown>): Database['public']['Table
 
 export const nucleosApi = {
   async list(p?: QP): Promise<Paginated<NucleoApi>> {
-    const sb = createClient();
+    const sb = await getSupabase();
     const { page, limit, from, to } = paginar(num(p?.page), num(p?.limit));
     let q = sb.from('nucleos').select('*', { count: 'exact' }).is('deleted_at', null);
     if (p?.busca) q = q.ilike('identificacao', `%${p.busca}%`);
@@ -577,7 +578,7 @@ function toNucleoRow(b: Record<string, unknown>): Database['public']['Tables']['
 
 export const atividadesApi = {
   async list(p?: QP): Promise<Paginated<AtividadeApi>> {
-    const sb = createClient();
+    const sb = await getSupabase();
     const { page, limit, from, to } = paginar(num(p?.page), num(p?.limit));
     const turnosJoin = p?.turno ? 'atividade_turnos!inner(*)' : 'atividade_turnos(*)';
     let q = sb.from('atividades').select(`*, ${turnosJoin}, atividade_perguntas(*)`, { count: 'exact' }).is('deleted_at', null);
@@ -631,7 +632,7 @@ const TURMA_SELECT = '*, nucleos(*), atividades(*), turma_responsaveis(*)';
 
 export const turmasApi = {
   async list(p?: QP): Promise<Paginated<TurmaApi>> {
-    const sb = createClient();
+    const sb = await getSupabase();
     const { page, limit, from, to } = paginar(num(p?.page), num(p?.limit));
     let q = sb.from('turmas').select(TURMA_SELECT, { count: 'exact' }).is('deleted_at', null);
     if (p?.busca) q = q.ilike('nome', `%${p.busca}%`);
@@ -706,7 +707,7 @@ function dataNascimentoMinima(idadeMaxima: number): string {
 
 export const beneficiariosApi = {
   async list(p?: QP): Promise<Paginated<BeneficiarioApi>> {
-    const sb = createClient();
+    const sb = await getSupabase();
     const { page, limit, from, to } = paginar(num(p?.page), num(p?.limit));
     let beneficiarioIds: string[] | null = null;
     if (p?.atividadeId) {
@@ -789,7 +790,7 @@ function toBeneficiarioRow(b: Record<string, unknown>): Database['public']['Tabl
 
 export const funcionariosApi = {
   async list(p?: QP): Promise<Paginated<FuncionarioApi>> {
-    const sb = createClient();
+    const sb = await getSupabase();
     const { page, limit, from, to } = paginar(num(p?.page), num(p?.limit));
     let q = sb.from('funcionarios').select('*', { count: 'exact' }).is('deleted_at', null);
     if (p?.busca) q = q.ilike('nome_completo', `%${p.busca}%`);
@@ -855,7 +856,7 @@ function toFuncionarioRow(b: Record<string, unknown>): Database['public']['Table
 
 export const equipamentosApi = {
   async list(p?: QP): Promise<Paginated<EquipamentoApi>> {
-    const sb = createClient();
+    const sb = await getSupabase();
     const { page, limit, from, to } = paginar(num(p?.page), num(p?.limit));
     let q = sb.from('equipamentos').select('*', { count: 'exact' }).is('deleted_at', null);
     if (p?.busca) q = q.ilike('nome', `%${p.busca}%`);
@@ -913,7 +914,7 @@ const INSCRICAO_SELECT = '*, turmas(*, nucleos(*), atividades(*)), beneficiarios
 
 export const inscricoesApi = {
   async list(p?: QP): Promise<Paginated<InscricaoApi>> {
-    const sb = createClient();
+    const sb = await getSupabase();
     const { page, limit, from, to } = paginar(num(p?.page), num(p?.limit));
     let q = sb.from('inscricoes').select(INSCRICAO_SELECT, { count: 'exact' });
     if (p?.status) q = q.eq('status', String(p.status) as Database['public']['Enums']['status_inscricao']);
@@ -962,7 +963,7 @@ export const inscricoesApi = {
 
 export const usuariosApi = {
   async list(p?: QP): Promise<Paginated<UsuarioApi>> {
-    const sb = createClient();
+    const sb = await getSupabase();
     const { page, limit, from, to } = paginar(num(p?.page), num(p?.limit));
     let q = sb.from('usuarios').select('*', { count: 'exact' }).is('deleted_at', null);
     if (p?.busca) q = q.or(`nome_completo.ilike.%${p.busca}%,email.ilike.%${p.busca}%`);
@@ -1019,7 +1020,7 @@ const PERFIL_SELECT = '*, perfil_permissoes(*)';
 
 export const perfisApi = {
   async list(p?: QP): Promise<Paginated<PerfilApi>> {
-    const sb = createClient();
+    const sb = await getSupabase();
     const { page, limit, from, to } = paginar(num(p?.page), num(p?.limit));
     let q = sb.from('perfis').select(PERFIL_SELECT, { count: 'exact' });
     if (p?.busca) q = q.ilike('nome', `%${p.busca}%`);
