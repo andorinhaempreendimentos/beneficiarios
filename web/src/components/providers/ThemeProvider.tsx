@@ -38,7 +38,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const sb = createClient();
-    sb.rpc("get_logo_url").then(({ data }) => {
+    void Promise.resolve(sb.rpc("get_logo_url")).then(({ data }) => {
       if (data && typeof data === "string") {
         setConfig((prev) => ({ ...prev, logoUrl: data }));
       }
