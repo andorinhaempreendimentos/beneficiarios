@@ -127,6 +127,7 @@ export interface NucleoApi {
   dataFechamento?: string;
   emFuncionamento: boolean;
   disponivelPreInscricao: boolean;
+  atividadeIds?: string[];
   criadoEm: string;
 }
 
@@ -298,6 +299,7 @@ function mapNucleo(r: any): NucleoApi {
     telefoneContato: r.telefone_contato ?? undefined, organizacaoId: r.organizacao_id,
     dataInicio: r.data_inicio, dataFechamento: r.data_fechamento ?? undefined,
     emFuncionamento: r.em_funcionamento, disponivelPreInscricao: r.disponivel_pre_inscricao,
+    atividadeIds: r.nucleo_atividades ? r.nucleo_atividades.map((na: any) => na.atividade_id) : undefined,
     criadoEm: r.created_at,
   };
 }
@@ -518,7 +520,7 @@ export const nucleosApi = {
   async list(p?: QP): Promise<Paginated<NucleoApi>> {
     const sb = await getSupabase();
     const { page, limit, from, to } = paginar(num(p?.page), num(p?.limit));
-    let q = sb.from('nucleos').select('*', { count: 'exact' }).is('deleted_at', null);
+    let q = sb.from('nucleos').select('*, nucleo_atividades(atividade_id)', { count: 'exact' }).is('deleted_at', null);
     if (p?.busca) q = q.ilike('identificacao', `%${p.busca}%`);
     if (bool(p?.emFuncionamento) !== undefined) q = q.eq('em_funcionamento', bool(p?.emFuncionamento)!);
     if (bool(p?.disponivelPreInscricao) !== undefined) q = q.eq('disponivel_pre_inscricao', bool(p?.disponivelPreInscricao)!);
@@ -528,21 +530,39 @@ export const nucleosApi = {
   },
   async get(id: string): Promise<NucleoApi> {
     const sb = await getSupabase();
-    const { data, error } = await sb.from('nucleos').select('*').eq('id', id).single();
+    const { data, error } = await sb.from('nucleos').select('*, nucleo_atividades(atividade_id)').eq('id', id).single();
     if (error) throw error;
     return mapNucleo(data);
   },
   async create(body: Record<string, unknown>): Promise<NucleoApi> {
     const sb = createClient();
-    const { data, error } = await sb.from('nucleos').insert(toNucleoRow(body)).select('*').single();
+    const atividadeIds = (body.atividadeIds as string[]) || [];
+    const { data, error } = await sb.from('nucleos').insert(toNucleoRow(body)).select('*, nucleo_atividades(atividade_id)').single();
     if (error) throw error;
-    return mapNucleo(data);
+
+    if (atividadeIds.length > 0) {
+      await sb.from('nucleo_atividades').insert(atividadeIds.map((aId) => ({ nucleo_id: data.id, atividade_id: aId })));
+    }
+    return mapNucleo({ ...data, nucleo_atividades: atividadeIds.map((aId) => ({ atividade_id: aId })) });
   },
   async update(id: string, body: Record<string, unknown>): Promise<NucleoApi> {
     const sb = createClient();
-    const { data, error } = await sb.from('nucleos').update(toNucleoRow(body)).eq('id', id).select('*').single();
+    const atividadeIds = body.atividadeIds as string[] | undefined;
+    const { data, error } = await sb.from('nucleos').update(toNucleoRow(body)).eq('id', id).select('*, nucleo_atividades(atividade_id)').single();
     if (error) throw error;
-    return mapNucleo(data);
+
+    if (atividadeIds !== undefined) {
+      await sb.from('nucleo_atividades').delete().eq('nucleo_id', id);
+      if (atividadeIds.length > 0) {
+        await sb.from('nucleo_atividades').insert(atividadeIds.map((aId) => ({ nucleo_id: id, atividade_id: aId })));
+      }
+    }
+    return mapNucleo({
+      ...data,
+      nucleo_atividades: atividadeIds !== undefined
+        ? atividadeIds.map((aId) => ({ atividade_id: aId }))
+        : data.nucleo_atividades,
+    });
   },
   async remove(id: string): Promise<void> {
     const sb = createClient();

@@ -3,19 +3,29 @@
 import { useState } from "react";
 import { MapPin } from "lucide-react";
 import { Button, Field, FormSection, Input, LinkButton, Switch } from "@/components/ui";
-import { nucleosApi, type NucleoApi, type OrganizacaoApi } from "@/lib/api/services";
+import { nucleosApi, type NucleoApi, type OrganizacaoApi, type AtividadeApi } from "@/lib/api/services";
 
 interface NucleoFormProps {
   nucleo?: NucleoApi;
   organizacoes?: OrganizacaoApi[];
+  atividades?: AtividadeApi[];
   backHref: string;
 }
 
-export function NucleoForm({ nucleo: n, organizacoes = [], backHref }: NucleoFormProps) {
+export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], backHref }: NucleoFormProps) {
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [emFuncionamento, setEmFuncionamento] = useState(n?.emFuncionamento ?? true);
   const [disponivelPreInscricao, setDisponivelPreInscricao] = useState(n?.disponivelPreInscricao ?? true);
+  const [atividadeIds, setAtividadeIds] = useState<string[]>(
+    n?.atividadeIds ?? atividades.map((a) => a.id)
+  );
+
+  function toggleAtividade(id: string) {
+    setAtividadeIds((prev) =>
+      prev.includes(id) ? prev.filter((aId) => aId !== id) : [...prev, id]
+    );
+  }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -37,6 +47,7 @@ export function NucleoForm({ nucleo: n, organizacoes = [], backHref }: NucleoFor
       complemento: (formData.get("complemento") as string) || null,
       emFuncionamento,
       disponivelPreInscricao,
+      atividadeIds,
     };
 
     try {
@@ -78,6 +89,34 @@ export function NucleoForm({ nucleo: n, organizacoes = [], backHref }: NucleoFor
             <Input name="telefoneContato" defaultValue={n?.telefoneContato} placeholder="(00) 00000-0000" />
           </Field>
         </div>
+      </FormSection>
+
+      <FormSection title="Atividades Disponíveis">
+        <p className="mb-3 text-xs text-zinc-500">
+          Selecione quais atividades este núcleo tem estrutura para disponibilizar aos beneficiários:
+        </p>
+        {atividades.length === 0 ? (
+          <p className="text-sm text-zinc-400">Nenhuma atividade cadastrada no sistema.</p>
+        ) : (
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {atividades.map((a) => {
+              const checked = atividadeIds.includes(a.id);
+              return (
+                <label
+                  key={a.id}
+                  className={`flex items-center justify-between rounded-lg border p-3 cursor-pointer transition-colors ${
+                    checked
+                      ? "border-sky-500 bg-sky-50/50 text-sky-900"
+                      : "border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50"
+                  }`}
+                >
+                  <span className="text-sm font-medium">{a.nome}</span>
+                  <Switch checked={checked} onChange={() => toggleAtividade(a.id)} />
+                </label>
+              );
+            })}
+          </div>
+        )}
       </FormSection>
 
       <FormSection title="Endereço">

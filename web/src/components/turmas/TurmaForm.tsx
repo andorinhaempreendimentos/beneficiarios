@@ -19,6 +19,21 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], backHref }:
   const [nucleoId, setNucleoId] = useState(t?.nucleoId ?? "");
   const [atividadeId, setAtividadeId] = useState(t?.atividadeId ?? "");
 
+  const nucleoSelecionado = nucleos.find((n) => n.id === nucleoId);
+  const atividadesDisponiveis = nucleoSelecionado
+    ? atividades.filter((a) => !nucleoSelecionado.atividadeIds || nucleoSelecionado.atividadeIds.includes(a.id))
+    : atividades;
+
+  function handleNucleoChange(novoNucleoId: string) {
+    setNucleoId(novoNucleoId);
+    const novoNucleo = nucleos.find((n) => n.id === novoNucleoId);
+    if (novoNucleo && novoNucleo.atividadeIds) {
+      if (atividadeId && !novoNucleo.atividadeIds.includes(atividadeId)) {
+        setAtividadeId("");
+      }
+    }
+  }
+
   const atividadeNome = atividades.find((a) => a.id === atividadeId)?.nome;
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -78,7 +93,7 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], backHref }:
             <Input name="nome" defaultValue={t?.nome} placeholder="Ex: Futebol Manhã A" />
           </Field>
           <Field label="Núcleo" required>
-            <Select name="nucleoId" value={nucleoId} onChange={(e) => setNucleoId(e.target.value)}>
+            <Select name="nucleoId" value={nucleoId} onChange={(e) => handleNucleoChange(e.target.value)}>
               <option value="" disabled>Selecione</option>
               {nucleos.map((n) => (
                 <option key={n.id} value={n.id}>{n.identificacao}</option>
@@ -86,9 +101,9 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], backHref }:
             </Select>
           </Field>
           <Field label="Atividade" required>
-            <Select name="atividadeId" value={atividadeId} onChange={(e) => setAtividadeId(e.target.value)}>
-              <option value="" disabled>Selecione</option>
-              {atividades.map((a) => (
+            <Select name="atividadeId" value={atividadeId} onChange={(e) => setAtividadeId(e.target.value)} disabled={!nucleoId}>
+              <option value="" disabled>{!nucleoId ? "Selecione primeiro o núcleo" : "Selecione"}</option>
+              {atividadesDisponiveis.map((a) => (
                 <option key={a.id} value={a.id}>{a.nome}</option>
               ))}
             </Select>
