@@ -7,11 +7,13 @@ import { Logo } from "@/components/ui/Logo";
 import { apiLogin, AuthError } from "@/lib/api/auth";
 import { rotaInicial } from "@/lib/auth";
 import { useAuth } from "@/components/providers/AuthProvider";
+import { useTheme } from "@/components/providers/ThemeProvider";
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { login } = useAuth();
+  const { config } = useTheme();
 
   const [erro, setErro] = useState("");
   const [loading, setLoading] = useState(false);
@@ -47,9 +49,19 @@ function LoginForm() {
     >
       <div className="w-full max-w-sm">
         <div className="mb-8 flex flex-col items-center gap-3">
-          <Logo className="h-20 w-20 drop-shadow-sm" />
+          <Logo
+            className={
+              config.logoUrl
+                ? "h-24 w-auto max-w-[220px] object-contain drop-shadow-sm"
+                : "h-20 w-20 drop-shadow-sm"
+            }
+          />
           <div className="text-center">
-            <h1 className="text-2xl font-bold tracking-tight text-zinc-900">Andorinha</h1>
+            {config.logoUrl ? (
+              <p className="text-sm font-medium text-zinc-400">{config.nomeSistema}</p>
+            ) : (
+              <h1 className="text-2xl font-bold tracking-tight text-zinc-900">{config.nomeSistema}</h1>
+            )}
             <p className="mt-1 text-sm text-zinc-500">Acesso restrito. Faça login para continuar.</p>
           </div>
         </div>

@@ -94,7 +94,7 @@ export function Sidebar() {
           </button>
           {config.logoUrl ? (
             <>
-              <Logo className="h-12 w-full object-contain" />
+              <Logo className="h-auto w-[70%] max-h-24 object-contain" />
               <span className="mt-1 truncate text-xs font-medium text-zinc-400">{config.nomeSistema}</span>
             </>
           ) : (
