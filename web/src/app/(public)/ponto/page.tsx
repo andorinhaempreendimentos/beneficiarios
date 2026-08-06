@@ -2,9 +2,8 @@
 
 import { useRef, useState } from "react";
 import { Camera, CheckCircle2, Clock, LogIn, LogOut, RotateCcw, User, X } from "lucide-react";
-import { funcionarios } from "@/lib/mock/funcionarios";
-import { getPontoByFuncionarioMes } from "@/lib/mock/ponto";
-import type { Funcionario, RegistroPonto } from "@/lib/types";
+import { funcionariosApi, type FuncionarioApi } from "@/lib/api/services";
+import type { RegistroPonto } from "@/lib/types";
 
 function isoHoje(): string {
   return new Date().toISOString().slice(0, 10);
@@ -17,7 +16,7 @@ function horaAgora(): string {
 
 type Etapa = "matricula" | "confirmar" | "atividade" | "sucesso";
 
-const isInstrutor = (f: Funcionario) =>
+const isInstrutor = (f: FuncionarioApi) =>
   f.funcao === "Instrutor" || f.funcao === "Monitor";
 
 // Modal de confirmação de atividade com foto
@@ -104,34 +103,28 @@ export default function PontoPublicoPage() {
   const [etapa, setEtapa] = useState<Etapa>("matricula");
   const [matricula, setMatricula] = useState("");
   const [erro, setErro] = useState("");
-  const [funcionario, setFuncionario] = useState<Funcionario | null>(null);
+  const [funcionario, setFuncionario] = useState<FuncionarioApi | null>(null);
   const [tipoBatida, setTipoBatida] = useState<"entrada" | "saida">("entrada");
   const [horaBatida, setHoraBatida] = useState("");
   const [atividadeConfirmada, setAtividadeConfirmada] = useState(false);
 
-  function buscarFuncionario() {
+  async function buscarFuncionario() {
     setErro("");
     const mat = matricula.trim().toUpperCase();
-    const f = funcionarios.find((fn) => fn.matricula.toUpperCase() === mat);
-    if (!f) {
-      setErro("Matrícula não encontrada.");
-      return;
+    try {
+      const res = await funcionariosApi.list({ busca: mat, limit: 10 });
+      const f = res.data.find((fn) => fn.matricula?.toUpperCase() === mat) ?? res.data[0];
+      if (!f) {
+        setErro("Matrícula não encontrada.");
+        return;
+      }
+      setFuncionario(f);
+      setTipoBatida("entrada");
+      setHoraBatida(horaAgora());
+      setEtapa("confirmar");
+    } catch {
+      setErro("Erro ao buscar funcionário.");
     }
-    if (f.status === "demitido") {
-      setErro("Funcionário inativo.");
-      return;
-    }
-
-    // Detecta se é entrada ou saída baseado no registro do dia
-    const hoje = isoHoje();
-    const registros = getPontoByFuncionarioMes(f.id, Number(hoje.slice(0, 4)), Number(hoje.slice(5, 7)));
-    const regHoje = registros.find((r) => r.data === hoje);
-    const tipo = regHoje?.entradaReal && !regHoje?.saidaReal ? "saida" : "entrada";
-
-    setFuncionario(f);
-    setTipoBatida(tipo);
-    setHoraBatida(horaAgora());
-    setEtapa("confirmar");
   }
 
   function confirmarPonto() {

@@ -1,9 +1,6 @@
 import { ChevronRight } from "lucide-react";
 import { redirect } from "next/navigation";
-import { atividades } from "@/lib/mock/atividades";
-import { turmas } from "@/lib/mock/turmas";
-import { organizacoes } from "@/lib/mock/organizacoes";
-import { objetos } from "@/lib/mock/objetos";
+import { atividadesApi, turmasApi } from "@/lib/api/services";
 import { SelecionarTurma } from "@/components/inscricao-publica/SelecionarTurma";
 
 interface InscricaoAtividadePageProps {
@@ -12,17 +9,15 @@ interface InscricaoAtividadePageProps {
 
 export default async function InscricaoAtividadePage({ params }: InscricaoAtividadePageProps) {
   const { atividadeId } = await params;
-  const atividade = atividades.find((a) => a.id === atividadeId);
+  const atividade = await atividadesApi.get(atividadeId).catch(() => null);
 
   if (!atividade) redirect("/");
 
-  const turmasDaAtividade = turmas.filter((t) => t.atividadeId === atividadeId);
-  const organizacao = organizacoes.find((o) => o.objetoId != null);
-  const objeto = organizacao ? objetos.find((obj) => obj.id === organizacao.objetoId) : undefined;
+  const turmasRes = await turmasApi.list({ limit: 100 }).catch(() => ({ data: [] }));
+  const turmasDaAtividade = turmasRes.data.filter((t) => t.atividadeId === atividadeId);
 
   const breadcrumb = [
-    objeto?.nome ?? "—",
-    organizacao?.nome ?? "—",
+    "Atividade",
     atividade.nome,
   ];
 
@@ -55,7 +50,7 @@ export default async function InscricaoAtividadePage({ params }: InscricaoAtivid
         )}
       </div>
 
-      <SelecionarTurma turmas={turmasDaAtividade} />
+      <SelecionarTurma turmas={turmasDaAtividade as any} />
     </div>
   );
 }

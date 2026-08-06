@@ -161,6 +161,16 @@ export interface FuncionarioApi {
   id: string;
   matricula: string;
   nomeCompleto: string;
+  cpf?: string;
+  cpfCnpj?: string;
+  celular?: string;
+  email?: string;
+  dataNascimento?: string;
+  remuneracao?: string;
+  conselho?: string;
+  registroConselho?: string;
+  observacao?: string;
+  jornada?: any[];
   fotoUrl?: string;
   status: string;
   funcao?: string;
@@ -306,6 +316,14 @@ function mapBeneficiario(r: any): BeneficiarioApi {
 function mapFuncionario(r: any): FuncionarioApi {
   return {
     id: r.id, matricula: r.matricula, nomeCompleto: r.nome_completo,
+    cpf: r.cpf ?? undefined, cpfCnpj: r.cpf_cnpj ?? undefined,
+    celular: r.celular ?? undefined, email: r.email ?? undefined,
+    dataNascimento: r.data_nascimento ?? undefined,
+    remuneracao: r.remuneracao ?? undefined,
+    conselho: r.conselho ?? undefined,
+    registroConselho: r.registro_conselho ?? undefined,
+    observacao: r.observacao ?? undefined,
+    jornada: r.jornada ?? [],
     fotoUrl: r.foto_url ?? undefined, status: r.status, funcao: r.funcao ?? undefined,
     professorResponsavel: r.professor_responsavel,
     dataAdmissao: r.data_admissao ?? undefined, dataDemissao: r.data_demissao ?? undefined,
@@ -397,17 +415,17 @@ export const objetosApi = {
 
 function toObjetoRow(b: Record<string, unknown>): Database['public']['Tables']['objetos']['Insert'] {
   return {
-    nome: b.nome as string,
-    descricao: b.descricao as string | null | undefined,
-    termo_de_fomento: b.termoDeFomento as string | null | undefined,
-    codigo_objeto: b.codigoObjeto as string | null | undefined,
-    codigo_programa: b.codigoPrograma as string | null | undefined,
-    nome_programa: b.nomePrograma as string | null | undefined,
-    tipo_duracao: b.tipoDuracao as Database['public']['Enums']['tipo_duracao_atividade'] | undefined,
-    data_evento: b.dataEvento as string | null | undefined,
-    data_inicio: b.dataInicio as string | null | undefined,
-    data_termino: b.dataTermino as string | null | undefined,
-    status: b.status as string | undefined,
+    nome: String(b.nome ?? ''),
+    descricao: (b.descricao as string | null | undefined) ?? null,
+    termo_de_fomento: (b.termoDeFomento as string | null | undefined) ?? null,
+    codigo_objeto: (b.codigoObjeto as string | null | undefined) ?? null,
+    codigo_programa: (b.codigoPrograma as string | null | undefined) ?? null,
+    nome_programa: (b.nomePrograma as string | null | undefined) ?? null,
+    tipo_duracao: (b.tipoDuracao as Database['public']['Enums']['tipo_duracao_atividade']) ?? 'periodo',
+    data_evento: (b.dataEvento as string | null | undefined) ?? null,
+    data_inicio: (b.dataInicio as string | null | undefined) ?? null,
+    data_termino: (b.dataTermino as string | null | undefined) ?? null,
+    status: (b.status as string) ?? 'ativo',
   };
 }
 
@@ -928,6 +946,21 @@ export const usuariosApi = {
   async get(id: string): Promise<UsuarioApi> {
     const sb = createClient();
     const { data, error } = await sb.from('usuarios').select('*').eq('id', id).single();
+    if (error) throw error;
+    return mapUsuario(data);
+  },
+  async create(body: Record<string, unknown>): Promise<UsuarioApi> {
+    const sb = createClient();
+    const row: Database['public']['Tables']['usuarios']['Insert'] = {
+      id: crypto.randomUUID(),
+      email: String(body.email ?? ''),
+      nome_completo: String(body.nomeCompleto ?? ''),
+      tipo: (body.tipo as Database['public']['Enums']['tipo_usuario']) ?? 'gestor',
+      ativo: body.ativo !== false,
+      perfil_id: (body.perfilId as string) ?? '',
+      entidade_id: (body.entidadeId as string | null) ?? null,
+    };
+    const { data, error } = await sb.from('usuarios').insert(row).select('*').single();
     if (error) throw error;
     return mapUsuario(data);
   },

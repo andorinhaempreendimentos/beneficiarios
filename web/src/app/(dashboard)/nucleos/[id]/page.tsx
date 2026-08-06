@@ -12,18 +12,24 @@ import {
   PageHeader,
 } from "@/components/ui";
 import { DonutChart } from "@/components/charts/DonutChart";
-import { getNucleoById } from "@/lib/mock/nucleos";
-import { getTurmasByNucleo } from "@/lib/mock/turmas";
-import { getBeneficiariosByNucleo } from "@/lib/mock/beneficiarios";
+import { nucleosApi, turmasApi, beneficiariosApi } from "@/lib/api/services";
 import { calcularIdade, formatarData } from "@/lib/utils";
 
 export default async function DetalhesNucleoPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const nucleo = getNucleoById(id);
+  const nucleo = await nucleosApi.get(id).catch(() => null);
   if (!nucleo) notFound();
 
-  const turmasDoNucleo = getTurmasByNucleo(nucleo.id);
-  const beneficiariosDoNucleo = getBeneficiariosByNucleo(nucleo.id);
+  const [turmasRes, beneficiariosRes] = await Promise.all([
+    turmasApi.list({ nucleoId: nucleo.id, limit: 100 }).catch(() => ({ data: [] })),
+    beneficiariosApi.list({ nucleoId: nucleo.id, limit: 100 }).catch(() => ({ data: [], total: 0 })),
+  ]);
+
+  const turmasDoNucleo = turmasRes.data;
+  const beneficiariosDoNucleo = beneficiariosRes.data;
+  const totalBeneficiarios = beneficiariosRes.total;
+  const beneficiariosAtivos = beneficiariosDoNucleo.filter((b) => b.status === "Aprovado" || b.status === "Novo cadastro").length;
+  const beneficiariosInativos = totalBeneficiarios - beneficiariosAtivos;
 
   return (
     <div className="flex flex-col gap-6">
@@ -47,7 +53,7 @@ export default async function DetalhesNucleoPage({ params }: { params: Promise<{
             </div>
             <div className="flex items-center gap-2 text-zinc-600">
               <Users2 className="h-4 w-4 text-zinc-400" />
-              <span>{nucleo.totalBeneficiarios} beneficiários cadastrados</span>
+              <span>{totalBeneficiarios} beneficiários cadastrados</span>
             </div>
             <p className="rounded-lg bg-zinc-50 px-3 py-2 text-xs text-zinc-500">
               Precisa de ajuda? Contate o suporte pelo canal interno de atendimento.
@@ -62,7 +68,7 @@ export default async function DetalhesNucleoPage({ params }: { params: Promise<{
           <CardBody className="flex justify-center">
             <DonutChart
               labels={["Ativos", "Inativos"]}
-              series={[nucleo.beneficiariosAtivos, nucleo.beneficiariosInativos]}
+              series={[beneficiariosAtivos, beneficiariosInativos]}
               colors={["#16a34a", "#dc2626"]}
               height={200}
             />
@@ -104,20 +110,18 @@ export default async function DetalhesNucleoPage({ params }: { params: Promise<{
             <tbody>
               {turmasDoNucleo.map((turma) => (
                 <tr key={turma.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
-                  <td className="px-5 py-3 text-zinc-500">{turma.id}</td>
+                  <td className="px-5 py-3 text-zinc-500">{turma.id.substring(0, 8)}</td>
                   <td className="px-5 py-3 font-medium text-zinc-900">{turma.nome}</td>
-                  <td className="px-5 py-3 text-zinc-600">{turma.responsaveis.join(", ")}</td>
-                  <td className="px-5 py-3 text-zinc-600">{turma.horario}</td>
-                  <td className="px-5 py-3 text-zinc-600">{turma.dias.join(", ")}</td>
+                  <td className="px-5 py-3 text-zinc-600">{(turma.responsaveis ?? []).join(", ") || "-"}</td>
+                  <td className="px-5 py-3 text-zinc-600">-</td>
+                  <td className="px-5 py-3 text-zinc-600">-</td>
                   <td className="px-5 py-3">
-                    <Badge tone="sky">{turma.qtdBeneficiarios}/{turma.vagasTotais}</Badge>
+                    <Badge tone="sky">0/{turma.vagasTotais}</Badge>
                   </td>
-                  <td className="px-5 py-3 text-zinc-600">{formatarData(turma.dataInicio)}</td>
-                  <td className="px-5 py-3 text-zinc-600">{turma.duracao}</td>
+                  <td className="px-5 py-3 text-zinc-600">{turma.dataInicio ? formatarData(turma.dataInicio) : "-"}</td>
+                  <td className="px-5 py-3 text-zinc-600">-</td>
                   <td className="px-5 py-3 text-right">
-                    <button className="text-sky-600 hover:underline">Acessar</button>
-                    <span className="mx-1.5 text-zinc-300">|</span>
-                    <button className="text-zinc-500 hover:underline">Exportar</button>
+                    <Link href={`/turmas/${turma.id}`} className="text-sky-600 hover:underline">Acessar</Link>
                   </td>
                 </tr>
               ))}
@@ -149,20 +153,16 @@ export default async function DetalhesNucleoPage({ params }: { params: Promise<{
                 <th className="px-5 py-3">ID</th>
                 <th className="px-5 py-3">Nome</th>
                 <th className="px-5 py-3">Idade</th>
-                <th className="px-5 py-3">Atividades</th>
+                <th className="px-5 py-3">Status</th>
               </tr>
             </thead>
             <tbody>
               {beneficiariosDoNucleo.map((b) => (
                 <tr key={b.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
-                  <td className="px-5 py-3 text-zinc-500">{b.matricula}</td>
+                  <td className="px-5 py-3 text-zinc-500">{b.matricula ?? b.id.substring(0, 8)}</td>
                   <td className="px-5 py-3 font-medium text-zinc-900">{b.nomeCompleto}</td>
                   <td className="px-5 py-3 text-zinc-600">{calcularIdade(b.dataNascimento)} anos</td>
-                  <td className="px-5 py-3 text-zinc-600">
-                    {b.turmas.length > 0
-                      ? turmasDoNucleo.find((t) => t.id === b.turmas[0]?.turmaId)?.nome ?? "-"
-                      : "-"}
-                  </td>
+                  <td className="px-5 py-3 text-zinc-600">{b.status}</td>
                 </tr>
               ))}
             </tbody>

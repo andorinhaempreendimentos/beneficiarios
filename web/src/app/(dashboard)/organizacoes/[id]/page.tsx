@@ -1,16 +1,18 @@
 import { notFound } from "next/navigation";
 import { Badge, Card, CardBody, CardHeader, LinkButton, PageHeader } from "@/components/ui";
-import { getOrganizacaoById } from "@/lib/mock/organizacoes";
-import { objetos } from "@/lib/mock/objetos";
+import { organizacoesApi, objetosApi } from "@/lib/api/services";
 import { statusOrganizacaoLabel, statusOrganizacaoTone } from "@/lib/status";
 import { formatarData, formatarTelefone } from "@/lib/utils";
+import type { StatusOrganizacao } from "@/lib/types";
 
 export default async function DetalhesOrganizacaoPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const o = getOrganizacaoById(id);
+  const o = await organizacoesApi.get(id).catch(() => null);
   if (!o) notFound();
 
-  const objeto = o.objetoId ? objetos.find((ob) => ob.id === o.objetoId) : null;
+  const objeto = o.objetoId ? await objetosApi.get(o.objetoId).catch(() => null) : null;
+  const tone = statusOrganizacaoTone[o.status as StatusOrganizacao] ?? "zinc";
+  const label = statusOrganizacaoLabel[o.status as StatusOrganizacao] ?? o.status;
 
   return (
     <div className="flex flex-col gap-6">
@@ -27,7 +29,7 @@ export default async function DetalhesOrganizacaoPage({ params }: { params: Prom
         <CardBody className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2 lg:grid-cols-3">
           <div>
             <p className="text-zinc-500">Status</p>
-            <Badge tone={statusOrganizacaoTone[o.status]}>{statusOrganizacaoLabel[o.status]}</Badge>
+            <Badge tone={tone}>{label}</Badge>
           </div>
           <div>
             <p className="text-zinc-500">Tipo</p>

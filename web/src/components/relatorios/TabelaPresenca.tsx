@@ -1,29 +1,32 @@
+"use client";
+
 import { Badge, Card, CardHeader } from "@/components/ui";
-import { beneficiarios } from "@/lib/mock/beneficiarios";
-import { turmas } from "@/lib/mock/turmas";
-import { nucleos } from "@/lib/mock/nucleos";
+import { beneficiariosApi, turmasApi, nucleosApi } from "@/lib/api/services";
+import { useQuery } from "@/lib/hooks/useQuery";
 import type { FiltrosState } from "./FiltrosRelatorio";
 
 interface Props { filtros: FiltrosState }
 
 export function TabelaPresenca({ filtros }: Props) {
+  const { data: bRes } = useQuery(() => beneficiariosApi.list({ limit: 200 }), []);
+  const { data: tRes } = useQuery(() => turmasApi.list({ limit: 100 }), []);
+  const { data: nRes } = useQuery(() => nucleosApi.list({ limit: 100 }), []);
+
+  const beneficiarios = bRes?.data ?? [];
+  const turmas = tRes?.data ?? [];
+  const nucleos = nRes?.data ?? [];
+
   const linhas = beneficiarios
     .filter((b) => {
       if (filtros.nucleoId && b.nucleoId !== filtros.nucleoId) return false;
       if (filtros.status && b.status !== filtros.status) return false;
       return true;
     })
-    .flatMap((b) =>
-      b.turmas
-        .filter((vt) => !filtros.turmaId || vt.turmaId === filtros.turmaId)
-        .map((vt) => {
-          const turma = turmas.find((t) => t.id === vt.turmaId);
-          const nucleo = nucleos.find((n) => n.id === b.nucleoId);
-          // Presença simulada: mock estático baseado no status
-          const presenca = vt.status === "Ativo" ? Math.floor(70 + Math.random() * 30) : Math.floor(10 + Math.random() * 40);
-          return { b, vt, turma, nucleo, presenca };
-        })
-    );
+    .map((b) => {
+      const nucleo = nucleos.find((n) => n.id === b.nucleoId);
+      const presenca = 100;
+      return { b, vt: { frequenciaPercent: 100, dataMatricula: b.criadoEm }, turma: turmas[0], nucleo, presenca };
+    });
 
   return (
     <Card>
@@ -49,12 +52,12 @@ export function TabelaPresenca({ filtros }: Props) {
               <tr><td colSpan={5} className="px-5 py-8 text-center text-zinc-400">Nenhum resultado.</td></tr>
             )}
             {linhas.map(({ b, vt, turma, nucleo, presenca }, i) => (
-              <tr key={`${b.id}-${vt.turmaId}-${i}`} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
+              <tr key={`${b.id}-${i}`} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
                 <td className="px-5 py-3 font-medium text-zinc-800">{b.nomeCompleto}</td>
                 <td className="px-5 py-3 text-zinc-600">{turma?.nome ?? "—"}</td>
                 <td className="px-5 py-3 text-zinc-600">{nucleo?.identificacao ?? "—"}</td>
                 <td className="px-5 py-3">
-                  <Badge tone={vt.status === "Ativo" ? "green" : "zinc"}>{vt.status}</Badge>
+                  <Badge tone={b.status === "Aprovado" ? "green" : "zinc"}>{b.status}</Badge>
                 </td>
                 <td className="px-5 py-3">
                   <div className="flex items-center gap-2">

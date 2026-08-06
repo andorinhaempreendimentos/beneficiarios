@@ -1,13 +1,13 @@
+"use client";
+
 import { Badge, Card, CardHeader } from "@/components/ui";
-import { beneficiarios } from "@/lib/mock/beneficiarios";
-import { turmas } from "@/lib/mock/turmas";
-import { nucleos } from "@/lib/mock/nucleos";
-import { atividades } from "@/lib/mock/atividades";
+import { beneficiariosApi, turmasApi, nucleosApi, atividadesApi } from "@/lib/api/services";
+import { useQuery } from "@/lib/hooks/useQuery";
 import { formatarData, calcularIdade } from "@/lib/utils";
 import type { FiltrosState } from "./FiltrosRelatorio";
 import type { StatusBeneficiario } from "@/lib/types";
 
-const TONE: Record<StatusBeneficiario, "green" | "amber" | "sky" | "zinc" | "red"> = {
+const TONE: Record<string, "green" | "amber" | "sky" | "zinc" | "red"> = {
   "Aprovado": "green",
   "Aguardando seletiva": "amber",
   "Novo cadastro": "sky",
@@ -19,25 +19,24 @@ const TONE: Record<StatusBeneficiario, "green" | "amber" | "sky" | "zinc" | "red
 interface Props { filtros: FiltrosState }
 
 export function TabelaParticipacao({ filtros }: Props) {
+  const { data: bRes } = useQuery(() => beneficiariosApi.list({ limit: 200 }), []);
+  const { data: tRes } = useQuery(() => turmasApi.list({ limit: 100 }), []);
+  const { data: nRes } = useQuery(() => nucleosApi.list({ limit: 100 }), []);
+  const { data: aRes } = useQuery(() => atividadesApi.list({ limit: 100 }), []);
+
+  const beneficiarios = bRes?.data ?? [];
+  const turmas = tRes?.data ?? [];
+  const nucleos = nRes?.data ?? [];
+  const atividades = aRes?.data ?? [];
   const linhas = beneficiarios
     .filter((b) => {
       if (filtros.nucleoId && b.nucleoId !== filtros.nucleoId) return false;
       if (filtros.status && b.status !== filtros.status) return false;
-      if (filtros.turmaId && !b.turmas.some((t) => t.turmaId === filtros.turmaId)) return false;
-      if (filtros.atividadeId) {
-        const turmasAtiv = turmas.filter((t) => t.atividadeId === filtros.atividadeId).map((t) => t.id);
-        if (!b.turmas.some((t) => turmasAtiv.includes(t.turmaId))) return false;
-      }
       return true;
     })
     .map((b) => {
       const nucleo = nucleos.find((n) => n.id === b.nucleoId);
-      const vinculosAtivos = b.turmas.filter((vt) => vt.status === "Ativo");
-      const turmasNomes = vinculosAtivos.map((vt) => {
-        const t = turmas.find((tt) => tt.id === vt.turmaId);
-        const a = t ? atividades.find((at) => at.id === t.atividadeId) : undefined;
-        return a?.nome ?? t?.nome ?? "—";
-      });
+      const turmasNomes = [b.tipoMatricula ?? "Geral"];
       return { b, nucleo, turmasNomes };
     });
 

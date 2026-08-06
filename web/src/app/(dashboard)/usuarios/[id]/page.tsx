@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Badge, Card, CardBody, CardHeader, LinkButton, PageHeader } from "@/components/ui";
-import { getUsuarioById, getPerfilById } from "@/lib/mock/usuarios";
+import { usuariosApi, perfisApi } from "@/lib/api/services";
 import { statusUsuarioLabel, statusUsuarioTone } from "@/lib/status";
 import { formatarData } from "@/lib/utils";
+import type { StatusUsuario } from "@/lib/types";
 
 const MODULO_LABEL: Record<string, string> = {
   objetos: "Objetos", organizacoes: "Organizações", nucleos: "Núcleos",
@@ -20,15 +21,17 @@ interface Props { params: Promise<{ id: string }> }
 
 export default async function UsuarioDetailPage({ params }: Props) {
   const { id } = await params;
-  const usuario = getUsuarioById(id);
+  const usuario = await usuariosApi.get(id).catch(() => null);
   if (!usuario) notFound();
 
-  const perfil = getPerfilById(usuario.perfilId);
+  const perfil = usuario.perfilId ? await perfisApi.get(usuario.perfilId).catch(() => null) : null;
+  const tone = statusUsuarioTone[usuario.ativo ? "ativo" : "inativo"] ?? "zinc";
+  const label = usuario.ativo ? "Ativo" : "Inativo";
 
   return (
     <div className="flex flex-col gap-6">
       <PageHeader
-        title={usuario.nome}
+        title={usuario.nomeCompleto}
         description={usuario.email}
         actions={
           <div className="flex gap-2">
@@ -44,7 +47,7 @@ export default async function UsuarioDetailPage({ params }: Props) {
           <CardBody className="flex flex-col gap-3 text-sm">
             <div className="flex justify-between">
               <span className="text-zinc-500">Status</span>
-              <Badge tone={statusUsuarioTone[usuario.status]}>{statusUsuarioLabel[usuario.status]}</Badge>
+              <Badge tone={tone}>{label}</Badge>
             </div>
             <div className="flex justify-between">
               <span className="text-zinc-500">Perfil</span>
@@ -53,10 +56,6 @@ export default async function UsuarioDetailPage({ params }: Props) {
             <div className="flex justify-between">
               <span className="text-zinc-500">Criado em</span>
               <span className="text-zinc-700">{formatarData(usuario.criadoEm)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-zinc-500">Último acesso</span>
-              <span className="text-zinc-700">{usuario.ultimoAcesso ? formatarData(usuario.ultimoAcesso) : "—"}</span>
             </div>
           </CardBody>
         </Card>

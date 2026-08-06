@@ -3,19 +3,63 @@
 import { useState } from "react";
 import { MapPin } from "lucide-react";
 import { Button, Field, FormSection, Input, LinkButton, Switch } from "@/components/ui";
-import type { Nucleo } from "@/lib/types";
+import { nucleosApi, type NucleoApi, type OrganizacaoApi } from "@/lib/api/services";
 
 interface NucleoFormProps {
-  nucleo?: Nucleo;
+  nucleo?: NucleoApi;
+  organizacoes?: OrganizacaoApi[];
   backHref: string;
 }
 
-export function NucleoForm({ nucleo: n, backHref }: NucleoFormProps) {
+export function NucleoForm({ nucleo: n, organizacoes = [], backHref }: NucleoFormProps) {
+  const [loading, setLoading] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
   const [emFuncionamento, setEmFuncionamento] = useState(n?.emFuncionamento ?? true);
   const [disponivelPreInscricao, setDisponivelPreInscricao] = useState(n?.disponivelPreInscricao ?? true);
 
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setLoading(true);
+    setErro(null);
+
+    const formData = new FormData(event.currentTarget);
+    const data = {
+      identificacao: formData.get("identificacao") as string,
+      nomeLocal: (formData.get("nomeLocal") as string) || null,
+      regiao: (formData.get("regiao") as string) || null,
+      nomeResponsavel: (formData.get("nomeResponsavel") as string) || null,
+      telefoneContato: (formData.get("telefoneContato") as string) || null,
+      cep: (formData.get("cep") as string) || null,
+      endereco: (formData.get("endereco") as string) || null,
+      numero: (formData.get("numero") as string) || null,
+      bairro: (formData.get("bairro") as string) || null,
+      cidade: (formData.get("cidade") as string) || null,
+      complemento: (formData.get("complemento") as string) || null,
+      emFuncionamento,
+      disponivelPreInscricao,
+    };
+
+    try {
+      if (n?.id) {
+        await nucleosApi.update(n.id, data);
+      } else {
+        await nucleosApi.create(data);
+      }
+      window.location.href = backHref;
+    } catch (err: any) {
+      setErro(err.message || "Erro ao salvar núcleo.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
-    <form className="flex flex-col gap-6">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+      {erro && (
+        <div className="rounded-lg bg-red-50 p-4 text-sm text-red-700">
+          {erro}
+        </div>
+      )}
       <FormSection title="Identificação">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="Identificação" required>

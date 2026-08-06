@@ -1,20 +1,24 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Badge, Card, Field, Input, LinkButton, PageHeader, Select, FilterBar, StatCard } from "@/components/ui";
-import { getNucleoById } from "@/lib/mock/nucleos";
-import { getBeneficiariosByNucleo } from "@/lib/mock/beneficiarios";
+import { nucleosApi, beneficiariosApi, turmasApi } from "@/lib/api/services";
 import { statusBeneficiarioTone } from "@/lib/status";
 import { calcularIdade } from "@/lib/utils";
-import { getTurmasByNucleo } from "@/lib/mock/turmas";
 import { Users } from "lucide-react";
+import type { StatusBeneficiario } from "@/lib/types";
 
 export default async function BeneficiariosDoNucleoPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const nucleo = getNucleoById(id);
+  const nucleo = await nucleosApi.get(id).catch(() => null);
   if (!nucleo) notFound();
 
-  const beneficiariosDoNucleo = getBeneficiariosByNucleo(nucleo.id);
-  const turmasDoNucleo = getTurmasByNucleo(nucleo.id);
+  const [beneficiariosRes, turmasRes] = await Promise.all([
+    beneficiariosApi.list({ nucleoId: nucleo.id, limit: 100 }).catch(() => ({ data: [], total: 0 })),
+    turmasApi.list({ nucleoId: nucleo.id, limit: 100 }).catch(() => ({ data: [] })),
+  ]);
+
+  const beneficiariosDoNucleo = beneficiariosRes.data;
+  const turmasDoNucleo = turmasRes.data;
 
   return (
     <div className="flex flex-col gap-6">
@@ -99,29 +103,30 @@ export default async function BeneficiariosDoNucleoPage({ params }: { params: Pr
               </tr>
             </thead>
             <tbody>
-              {beneficiariosDoNucleo.map((b) => (
-                <tr key={b.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
-                  <td className="px-5 py-3 text-zinc-500">{b.matricula}</td>
-                  <td className="px-5 py-3">
-                    <Badge tone={statusBeneficiarioTone[b.status]}>{b.status}</Badge>
-                  </td>
-                  <td className="px-5 py-3">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-zinc-900">{b.nomeCompleto}</span>
-                      <Badge tone={b.tipoMatricula === "Online" ? "sky" : "violet"}>{b.tipoMatricula}</Badge>
-                    </div>
-                  </td>
-                  <td className="px-5 py-3 text-zinc-600">{calcularIdade(b.dataNascimento)} anos</td>
-                  <td className="px-5 py-3 text-zinc-600">
-                    {b.turmas.map((v) => turmasDoNucleo.find((t) => t.id === v.turmaId)?.nome).filter(Boolean).join(", ") || "-"}
-                  </td>
-                  <td className="px-5 py-3 text-right">
-                    <Link href={`/beneficiarios/${b.id}`} className="text-sky-600 hover:underline">Acessar</Link>
-                    <span className="mx-1.5 text-zinc-300">|</span>
-                    <Link href={`/beneficiarios/${b.id}/editar`} className="text-zinc-500 hover:underline">Editar</Link>
-                  </td>
-                </tr>
-              ))}
+              {beneficiariosDoNucleo.map((b) => {
+                const tone = statusBeneficiarioTone[b.status as StatusBeneficiario] ?? "zinc";
+                return (
+                  <tr key={b.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
+                    <td className="px-5 py-3 text-zinc-500">{b.matricula ?? b.id.substring(0, 8)}</td>
+                    <td className="px-5 py-3">
+                      <Badge tone={tone}>{b.status}</Badge>
+                    </td>
+                    <td className="px-5 py-3">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-zinc-900">{b.nomeCompleto}</span>
+                        <Badge tone={b.tipoMatricula === "online" ? "sky" : "violet"}>{b.tipoMatricula}</Badge>
+                      </div>
+                    </td>
+                    <td className="px-5 py-3 text-zinc-600">{calcularIdade(b.dataNascimento)} anos</td>
+                    <td className="px-5 py-3 text-zinc-600">-</td>
+                    <td className="px-5 py-3 text-right">
+                      <Link href={`/beneficiarios/${b.id}`} className="text-sky-600 hover:underline">Acessar</Link>
+                      <span className="mx-1.5 text-zinc-300">|</span>
+                      <Link href={`/beneficiarios/${b.id}/editar`} className="text-zinc-500 hover:underline">Editar</Link>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

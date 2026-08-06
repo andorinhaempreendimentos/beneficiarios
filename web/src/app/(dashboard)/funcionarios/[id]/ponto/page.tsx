@@ -9,9 +9,8 @@ function horaAgora(): string {
   return `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
 }
 import { Badge, Button, Card, CardBody, CardHeader, LinkButton, PageHeader } from "@/components/ui";
-import { getFuncionarioById } from "@/lib/mock/funcionarios";
-import { getPontoByFuncionarioMes } from "@/lib/mock/ponto";
-import { getConfirmacoesByFuncionario } from "@/lib/mock/presencas";
+import { funcionariosApi } from "@/lib/api/services";
+import { useQuery } from "@/lib/hooks/useQuery";
 import type { ConfirmacaoAtividade, RegistroPonto, StatusPonto } from "@/lib/types";
 
 const MESES = [
@@ -159,8 +158,7 @@ function ModalConfirmacao({ data, onConfirmar, onFechar }: ModalConfirmacaoProps
 
 export default function FolhaPontoPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const funcionario = getFuncionarioById(id);
-  if (!funcionario) notFound();
+  const { data: funcionario } = useQuery(() => funcionariosApi.get(id), [id]);
 
   const hoje = new Date();
   const [ano, setAno] = useState(hoje.getFullYear());
@@ -168,20 +166,11 @@ export default function FolhaPontoPage({ params }: { params: Promise<{ id: strin
 
   const diasDoMes = getDiasDoMes(ano, mes);
 
-  // Registro de ponto (começa com dados mock, editável localmente)
-  const [registros, setRegistros] = useState<Record<string, RegistroPonto>>(() => {
-    const map: Record<string, RegistroPonto> = {};
-    const mock = getPontoByFuncionarioMes(id, ano, mes);
-    for (const r of mock) map[r.data] = r;
-    return map;
-  });
+  // Registro de ponto local
+  const [registros, setRegistros] = useState<Record<string, RegistroPonto>>({});
 
-  // Confirmações de atividade
-  const [confirmacoes, setConfirmacoes] = useState<Record<string, ConfirmacaoAtividade>>(() => {
-    const map: Record<string, ConfirmacaoAtividade> = {};
-    for (const c of getConfirmacoesByFuncionario(id)) map[c.data] = c;
-    return map;
-  });
+  // Confirmações de atividade local
+  const [confirmacoes, setConfirmacoes] = useState<Record<string, ConfirmacaoAtividade>>({});
 
   const [modalData, setModalData] = useState<string | null>(null);
   const [salvo, setSalvo] = useState(false);
@@ -211,7 +200,7 @@ export default function FolhaPontoPage({ params }: { params: Promise<{ id: strin
     setBatidaRegistrada(hora);
   }
 
-  const isInstrutor = funcionario.funcao === "Instrutor" || funcionario.funcao === "Monitor";
+  const isInstrutor = funcionario?.funcao === "Instrutor" || funcionario?.funcao === "Monitor";
 
   function navegarMes(delta: number) {
     setSalvo(false);
@@ -221,12 +210,7 @@ export default function FolhaPontoPage({ params }: { params: Promise<{ id: strin
     if (novoMes < 1)  { novoMes = 12; novoAno--; }
     setMes(novoMes);
     setAno(novoAno);
-
-    // Recarrega registros do novo mês
-    const mock = getPontoByFuncionarioMes(id, novoAno, novoMes);
-    const map: Record<string, RegistroPonto> = {};
-    for (const r of mock) map[r.data] = r;
-    setRegistros(map);
+    setRegistros({});
   }
 
   function atualizarCampo(data: string, campo: "entradaReal"|"saidaReal"|"observacao", valor: string) {
@@ -291,8 +275,8 @@ export default function FolhaPontoPage({ params }: { params: Promise<{ id: strin
       )}
 
       <PageHeader
-        title={`Folha de Ponto — ${funcionario.nomeCompleto}`}
-        description={`${funcionario.funcao} · Mat. ${funcionario.matricula}`}
+        title={`Folha de Ponto — ${funcionario?.nomeCompleto ?? ''}`}
+        description={`${funcionario?.funcao ?? ''} · Mat. ${funcionario?.matricula ?? ''}`}
         actions={<LinkButton href={`/funcionarios/${id}`} variant="outline">Voltar ao funcionário</LinkButton>}
       />
 
@@ -402,7 +386,7 @@ export default function FolhaPontoPage({ params }: { params: Promise<{ id: strin
                 const reg = registros[iso];
 
                 // Determina se é dia de trabalho na jornada
-                const diaJornada = funcionario.jornada.find(
+                const diaJornada = funcionario?.jornada?.find(
                   (j) => DIA_JORNADA[j.dia] === diaSemana,
                 );
                 const diaUtil = diaJornada?.trabalha ?? false;

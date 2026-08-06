@@ -13,9 +13,9 @@ import {
   Switch,
   Textarea,
 } from "@/components/ui";
-import type { DiaJornada, Funcionario, FuncaoFuncionario } from "@/lib/types";
+import type { DiaJornada, FuncaoFuncionario } from "@/lib/types";
 import { statusFuncionarioLabel } from "@/lib/status";
-import { nucleos } from "@/lib/mock/nucleos";
+import { funcionariosApi, type FuncionarioApi, type NucleoApi } from "@/lib/api/services";
 
 const FUNCOES: FuncaoFuncionario[] = [
   "Agente comunitário",
@@ -34,20 +34,56 @@ const DIAS_SEMANA: DiaJornada["dia"][] = [
 ];
 
 interface FuncionarioFormProps {
-  funcionario?: Funcionario;
+  funcionario?: FuncionarioApi;
+  nucleos?: NucleoApi[];
   backHref: string;
 }
 
-export function FuncionarioForm({ funcionario: f, backHref }: FuncionarioFormProps) {
-  const [funcao, setFuncao] = useState<FuncaoFuncionario | "">(f?.funcao ?? "");
+export function FuncionarioForm({ funcionario: f, nucleos = [], backHref }: FuncionarioFormProps) {
+  const [loading, setLoading] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
+  const [funcao, setFuncao] = useState<FuncaoFuncionario | "">((f?.funcao as FuncaoFuncionario) ?? "");
   const [professorResponsavel, setProfessorResponsavel] = useState(f?.professorResponsavel ?? false);
   const [jornada, setJornada] = useState<DiaJornada[]>(
-    f?.jornada ?? DIAS_SEMANA.map((dia) => ({ dia, trabalha: false }))
+    DIAS_SEMANA.map((dia) => ({ dia, trabalha: false }))
   );
   const [entradaPadrao, setEntradaPadrao] = useState("08:00");
   const [saidaPadrao, setSaidaPadrao] = useState("17:00");
 
   const exigeConselho = funcao === "Fisioterapeuta" || funcao === "Técnico de Enfermagem";
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setLoading(true);
+    setErro(null);
+
+    const formData = new FormData(event.currentTarget);
+    const data = {
+      nomeCompleto: formData.get("nomeCompleto") as string,
+      cpf: formData.get("cpf") as string,
+      rg: formData.get("rg") as string,
+      dataNascimento: formData.get("dataNascimento") as string,
+      celular: formData.get("celular") as string,
+      email: formData.get("email") as string,
+      funcao: formData.get("funcao") as string,
+      status: (formData.get("status") as string) || "contratado",
+      nucleoId: (formData.get("nucleoId") as string) || null,
+      professorResponsavel,
+    };
+
+    try {
+      if (f?.id) {
+        await funcionariosApi.update(f.id, data);
+      } else {
+        await funcionariosApi.create(data);
+      }
+      window.location.href = backHref;
+    } catch (err: any) {
+      setErro(err.message || "Erro ao salvar funcionário.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   function aplicarAosDiasAtivos() {
     setJornada((prev) =>
@@ -64,7 +100,12 @@ export function FuncionarioForm({ funcionario: f, backHref }: FuncionarioFormPro
   }
 
   return (
-    <form className="flex flex-col gap-6">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+      {erro && (
+        <div className="rounded-lg bg-red-50 p-4 text-sm text-red-700">
+          {erro}
+        </div>
+      )}
       <FormSection title="Dados Pessoais">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <Field label="Foto" className="lg:col-span-3 sm:max-w-xs">

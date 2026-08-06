@@ -2,10 +2,14 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { getTema, temas } from "@/lib/theme";
-import { getAparencia, setAparencia } from "@/lib/mock/aparencia";
 import { createClient } from "@/lib/supabase/client";
 import type { TemaId } from "@/lib/theme";
-import type { ConfigAparencia } from "@/lib/mock/aparencia";
+
+export interface ConfigAparencia {
+  temaId: TemaId;
+  nomeSistema: string;
+  logoUrl?: string;
+}
 
 interface ThemeContextValue {
   config: ConfigAparencia;
@@ -30,7 +34,10 @@ function injetarCores(temaId: TemaId) {
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [config, setConfig] = useState<ConfigAparencia>(getAparencia);
+  const [config, setConfig] = useState<ConfigAparencia>({
+    temaId: "andorinha",
+    nomeSistema: "Andorinha Beneficiários",
+  });
 
   useEffect(() => {
     injetarCores(config.temaId);
@@ -40,24 +47,22 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const sb = createClient();
     void Promise.resolve(sb.rpc("get_logo_url")).then(({ data }) => {
       if (data && typeof data === "string") {
-        setConfig((prev) => ({ ...prev, logoUrl: data }));
+        setConfig((prev: ConfigAparencia) => ({ ...prev, logoUrl: data }));
       }
     }).catch(() => {});
   }, []);
 
   function aplicarTema(id: TemaId) {
-    const next = setAparencia({ temaId: id });
-    setConfig(next);
+    setConfig((prev: ConfigAparencia) => ({ ...prev, temaId: id }));
     injetarCores(id);
   }
 
   function setNomeSistema(nome: string) {
-    const next = setAparencia({ nomeSistema: nome });
-    setConfig(next);
+    setConfig((prev: ConfigAparencia) => ({ ...prev, nomeSistema: nome }));
   }
 
   function setLogoUrl(url: string | undefined) {
-    setConfig((prev) => ({ ...prev, logoUrl: url }));
+    setConfig((prev: ConfigAparencia) => ({ ...prev, logoUrl: url }));
   }
 
   return (

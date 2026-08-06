@@ -1,12 +1,14 @@
 "use client";
 
+import { useState } from "react";
 import { Button, Field, FileUpload, FormSection, Input, LinkButton, Select } from "@/components/ui";
-import { nucleos } from "@/lib/mock/nucleos";
-import { objetos } from "@/lib/mock/objetos";
-import type { CategoriaEquipamento, ConservacaoEquipamento, Equipamento } from "@/lib/types";
+import type { CategoriaEquipamento, ConservacaoEquipamento } from "@/lib/types";
+import { equipamentosApi, type EquipamentoApi, type NucleoApi, type ObjetoApi } from "@/lib/api/services";
 
 interface EquipamentoFormProps {
-  equipamento?: Equipamento;
+  equipamento?: EquipamentoApi;
+  nucleos?: NucleoApi[];
+  objetos?: ObjetoApi[];
   backHref: string;
 }
 
@@ -19,9 +21,49 @@ const CONSERVACOES: { value: ConservacaoEquipamento; label: string }[] = [
   { value: "inservivel", label: "Inservível" },
 ];
 
-export function EquipamentoForm({ equipamento: e, backHref }: EquipamentoFormProps) {
+export function EquipamentoForm({ equipamento: e, nucleos = [], objetos = [], backHref }: EquipamentoFormProps) {
+  const [loading, setLoading] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setLoading(true);
+    setErro(null);
+
+    const formData = new FormData(event.currentTarget);
+    const data = {
+      nome: formData.get("nome") as string,
+      categoria: formData.get("categoria") as string,
+      quantidade: Number(formData.get("quantidade") || 1),
+      conservacao: formData.get("conservacao") as string,
+      valorUnitario: formData.get("valorUnitario") ? Number(formData.get("valorUnitario")) : null,
+      dataAquisicao: (formData.get("dataAquisicao") as string) || null,
+      nucleoId: (formData.get("nucleoId") as string) || null,
+      objetoId: (formData.get("objetoId") as string) || null,
+      notaFiscal: (formData.get("notaFiscal") as string) || null,
+    };
+
+    try {
+      if (e?.id) {
+        await equipamentosApi.update(e.id, data);
+      } else {
+        await equipamentosApi.create(data);
+      }
+      window.location.href = backHref;
+    } catch (err: any) {
+      setErro(err.message || "Erro ao salvar equipamento.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
-    <form className="flex flex-col gap-6">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+      {erro && (
+        <div className="rounded-lg bg-red-50 p-4 text-sm text-red-700">
+          {erro}
+        </div>
+      )}
       <FormSection title="Dados do Equipamento">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="Nome" required>

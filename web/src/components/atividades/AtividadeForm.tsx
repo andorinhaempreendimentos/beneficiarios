@@ -3,17 +3,47 @@
 import { useState } from "react";
 import { HelpCircle, Plus, Trash2 } from "lucide-react";
 import { Button, Field, FormSection, Input, LinkButton, Switch } from "@/components/ui";
-import type { Atividade, PerguntaAtividade, Turno } from "@/lib/types";
+import type { PerguntaAtividade, Turno } from "@/lib/types";
+import { atividadesApi, type AtividadeApi } from "@/lib/api/services";
 
 interface AtividadeFormProps {
-  atividade?: Atividade;
+  atividade?: AtividadeApi;
   backHref: string;
 }
 
 export function AtividadeForm({ atividade: a, backHref }: AtividadeFormProps) {
+  const [loading, setLoading] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
   const [disponivelPreInscricao, setDisponivelPreInscricao] = useState(a?.disponivelPreInscricao ?? false);
-  const [turnos, setTurnos] = useState<Set<Turno>>(new Set(a?.turnos ?? []));
+  const [turnos, setTurnos] = useState<Set<Turno>>(new Set((a?.turnos ?? []) as Turno[]));
   const [perguntas, setPerguntas] = useState<PerguntaAtividade[]>(a?.perguntas ?? []);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setLoading(true);
+    setErro(null);
+
+    const formData = new FormData(e.currentTarget);
+    const data = {
+      nome: formData.get("nome") as string,
+      disponivelPreInscricao,
+      turnos: Array.from(turnos),
+      perguntas,
+    };
+
+    try {
+      if (a?.id) {
+        await atividadesApi.update(a.id, data);
+      } else {
+        await atividadesApi.create(data);
+      }
+      window.location.href = backHref;
+    } catch (err: any) {
+      setErro(err.message || "Erro ao salvar atividade.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   function toggleTurno(turno: Turno, ativo: boolean) {
     setTurnos((prev) => {

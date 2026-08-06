@@ -1,19 +1,20 @@
 import { notFound } from "next/navigation";
 import { Badge, Card, CardBody, CardHeader, LinkButton, PageHeader } from "@/components/ui";
-import { getEquipamentoById } from "@/lib/mock/equipamentos";
-import { nucleos } from "@/lib/mock/nucleos";
-import { objetos } from "@/lib/mock/objetos";
+import { equipamentosApi, nucleosApi, objetosApi } from "@/lib/api/services";
 import { conservacaoLabel, conservacaoTone } from "@/lib/status";
 import { formatarData } from "@/lib/utils";
 import { FotosRecebimento } from "@/components/equipamentos/FotosRecebimento";
+import type { ConservacaoEquipamento } from "@/lib/types";
 
 export default async function DetalhesEquipamentoPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const e = getEquipamentoById(id);
+  const e = await equipamentosApi.get(id).catch(() => null);
   if (!e) notFound();
 
-  const nucleo = e.nucleoId ? nucleos.find((n) => n.id === e.nucleoId) : null;
-  const objeto = e.objetoId ? objetos.find((o) => o.id === e.objetoId) : null;
+  const nucleo = e.nucleoId ? await nucleosApi.get(e.nucleoId).catch(() => null) : null;
+  const objeto = e.objetoId ? await objetosApi.get(e.objetoId).catch(() => null) : null;
+  const tone = conservacaoTone[e.conservacao as ConservacaoEquipamento] ?? "zinc";
+  const label = conservacaoLabel[e.conservacao as ConservacaoEquipamento] ?? e.conservacao;
 
   return (
     <div className="flex flex-col gap-6">
@@ -38,7 +39,7 @@ export default async function DetalhesEquipamentoPage({ params }: { params: Prom
           </div>
           <div>
             <p className="text-zinc-500">Conservação</p>
-            <Badge tone={conservacaoTone[e.conservacao]}>{conservacaoLabel[e.conservacao]}</Badge>
+            <Badge tone={tone}>{label}</Badge>
           </div>
           {nucleo && (
             <div>

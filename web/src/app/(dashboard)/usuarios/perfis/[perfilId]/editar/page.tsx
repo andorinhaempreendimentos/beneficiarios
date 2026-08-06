@@ -1,13 +1,13 @@
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/ui";
 import { PerfilForm } from "@/components/usuarios/PerfilForm";
-import { getPerfilById } from "@/lib/mock/usuarios";
+import { perfisApi } from "@/lib/api/services";
 
 interface Props { params: Promise<{ perfilId: string }> }
 
 export default async function EditarPerfilPage({ params }: Props) {
   const { perfilId } = await params;
-  const perfil = getPerfilById(perfilId);
+  const perfil = await perfisApi.get(perfilId).catch(() => null);
   if (!perfil) notFound();
 
   return (

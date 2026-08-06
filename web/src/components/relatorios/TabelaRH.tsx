@@ -1,6 +1,8 @@
+"use client";
+
 import { Badge, Card, CardHeader } from "@/components/ui";
-import { funcionarios } from "@/lib/mock/funcionarios";
-import { nucleos } from "@/lib/mock/nucleos";
+import { funcionariosApi, nucleosApi } from "@/lib/api/services";
+import { useQuery } from "@/lib/hooks/useQuery";
 import type { FiltrosState } from "./FiltrosRelatorio";
 
 const STATUS_TONE: Record<string, "green" | "zinc" | "red" | "amber"> = {
@@ -26,13 +28,20 @@ const STATUS_LABEL: Record<string, string> = {
 interface Props { filtros: FiltrosState }
 
 export function TabelaRH({ filtros }: Props) {
+  const { data: funcRes } = useQuery(() => funcionariosApi.list({ limit: 200 }), []);
+  const { data: nucRes } = useQuery(() => nucleosApi.list({ limit: 100 }), []);
+
+  const funcionarios = funcRes?.data ?? [];
+  const nucleos = nucRes?.data ?? [];
+
   const linhas = funcionarios.filter((f) => {
     if (filtros.nucleoId && f.nucleoId !== filtros.nucleoId) return false;
     return true;
   }).map((f) => {
     const nucleo = nucleos.find((n) => n.id === f.nucleoId);
-    const diasTrabalhados = f.jornada.filter((d) => d.trabalha).length;
-    const horasDia = f.jornada
+    const jornada = f.jornada ?? [];
+    const diasTrabalhados = jornada.filter((d) => d.trabalha).length;
+    const horasDia = jornada
       .filter((d) => d.trabalha && d.entrada && d.saida)
       .reduce((acc, d) => {
         const [hE, mE] = (d.entrada ?? "0:0").split(":").map(Number);

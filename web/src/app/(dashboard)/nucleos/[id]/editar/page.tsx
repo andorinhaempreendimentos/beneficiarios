@@ -1,11 +1,11 @@
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/ui";
 import { NucleoForm } from "@/components/nucleos/NucleoForm";
-import { getNucleoById } from "@/lib/mock/nucleos";
+import { nucleosApi } from "@/lib/api/services";
 
 export default async function EditarNucleoPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const nucleo = getNucleoById(id);
+  const nucleo = await nucleosApi.get(id).catch(() => null);
   if (!nucleo) notFound();
 
   return (

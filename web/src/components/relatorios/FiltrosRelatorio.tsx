@@ -1,9 +1,8 @@
 "use client";
 
 import { Card, CardBody, CardHeader, Field, Select } from "@/components/ui";
-import { nucleos } from "@/lib/mock/nucleos";
-import { turmas } from "@/lib/mock/turmas";
-import { atividades } from "@/lib/mock/atividades";
+import { nucleosApi, atividadesApi, turmasApi } from "@/lib/api/services";
+import { useQuery } from "@/lib/hooks/useQuery";
 
 export interface FiltrosState {
   nucleoId: string;
@@ -20,6 +19,14 @@ interface FiltrosRelatorioProps {
 }
 
 export function FiltrosRelatorio({ filtros, onChange }: FiltrosRelatorioProps) {
+  const { data: nucleosRes } = useQuery(() => nucleosApi.list({ limit: 100 }), []);
+  const { data: atividadesRes } = useQuery(() => atividadesApi.list({ limit: 100 }), []);
+  const { data: turmasRes } = useQuery(() => turmasApi.list({ limit: 100 }), []);
+
+  const nucleos = nucleosRes?.data ?? [];
+  const atividades = atividadesRes?.data ?? [];
+  const turmas = turmasRes?.data ?? [];
+
   function set(key: keyof FiltrosState, value: string) {
     onChange({ ...filtros, [key]: value });
   }

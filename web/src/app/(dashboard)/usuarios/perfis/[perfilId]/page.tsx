@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { Badge, Card, CardBody, CardHeader, LinkButton, PageHeader } from "@/components/ui";
-import { getPerfilById, usuarios } from "@/lib/mock/usuarios";
+import { perfisApi, usuariosApi } from "@/lib/api/services";
 import { formatarData } from "@/lib/utils";
 
 const MODULO_LABEL: Record<string, string> = {
@@ -18,10 +18,11 @@ interface Props { params: Promise<{ perfilId: string }> }
 
 export default async function PerfilDetailPage({ params }: Props) {
   const { perfilId } = await params;
-  const perfil = getPerfilById(perfilId);
+  const perfil = await perfisApi.get(perfilId).catch(() => null);
   if (!perfil) notFound();
 
-  const usuariosDoPerfil = usuarios.filter((u) => u.perfilId === perfilId);
+  const usuariosRes = await usuariosApi.list({ limit: 100 }).catch(() => ({ data: [] }));
+  const usuariosDoPerfil = usuariosRes.data.filter((u) => u.perfilId === perfilId);
 
   return (
     <div className="flex flex-col gap-6">
@@ -83,7 +84,7 @@ export default async function PerfilDetailPage({ params }: Props) {
               <ul className="flex flex-col gap-2">
                 {usuariosDoPerfil.map((u) => (
                   <li key={u.id} className="flex items-center justify-between text-sm">
-                    <span className="text-zinc-700">{u.nome}</span>
+                    <span className="text-zinc-700">{u.nomeCompleto}</span>
                     <a href={`/usuarios/${u.id}`} className="text-xs text-sky-600 hover:underline">Ver</a>
                   </li>
                 ))}

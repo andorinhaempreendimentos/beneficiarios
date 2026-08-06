@@ -1,11 +1,11 @@
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/ui";
 import { ObjetoForm } from "@/components/objetos/ObjetoForm";
-import { getObjetoById } from "@/lib/mock/objetos";
+import { objetosApi } from "@/lib/api/services";
 
 export default async function EditarObjetoPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const o = getObjetoById(id);
+  const o = await objetosApi.get(id).catch(() => null);
   if (!o) notFound();
 
   return (

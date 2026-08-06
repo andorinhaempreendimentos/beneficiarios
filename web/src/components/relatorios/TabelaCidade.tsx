@@ -1,10 +1,16 @@
+"use client";
+
 import { Card, CardHeader } from "@/components/ui";
-import { beneficiarios } from "@/lib/mock/beneficiarios";
+import { beneficiariosApi } from "@/lib/api/services";
+import { useQuery } from "@/lib/hooks/useQuery";
 import type { FiltrosState } from "./FiltrosRelatorio";
 
 interface Props { filtros: FiltrosState }
 
 export function TabelaCidade({ filtros }: Props) {
+  const { data: res } = useQuery(() => beneficiariosApi.list({ limit: 200 }), []);
+  const beneficiarios = res?.data ?? [];
+
   const filtrados = beneficiarios.filter((b) => {
     if (filtros.nucleoId && b.nucleoId !== filtros.nucleoId) return false;
     if (filtros.status && b.status !== filtros.status) return false;
@@ -12,8 +18,9 @@ export function TabelaCidade({ filtros }: Props) {
   });
 
   const porCidade = filtrados.reduce<Record<string, { estado: string; total: number; aprovados: number; pcd: number }>>((acc, b) => {
-    const key = b.cidade;
-    if (!acc[key]) acc[key] = { estado: b.estado, total: 0, aprovados: 0, pcd: 0 };
+    const key = b.cidade ?? "Não informada";
+    const estado = b.estado ?? "UF";
+    if (!acc[key]) acc[key] = { estado, total: 0, aprovados: 0, pcd: 0 };
     acc[key].total++;
     if (b.status === "Aprovado") acc[key].aprovados++;
     if (b.pcd) acc[key].pcd++;

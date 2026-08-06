@@ -2,24 +2,61 @@
 
 import { useState } from "react";
 import { Button, Field, FormSection, Input, LinkButton, Select, Switch } from "@/components/ui";
-import { nucleos } from "@/lib/mock/nucleos";
-import { atividades } from "@/lib/mock/atividades";
 import { GradeSemanal } from "./GradeSemanal";
-import type { Turma } from "@/lib/types";
+import { turmasApi, type TurmaApi, type NucleoApi, type AtividadeApi } from "@/lib/api/services";
 
 interface TurmaFormProps {
-  turma?: Turma;
+  turma?: TurmaApi;
+  nucleos?: NucleoApi[];
+  atividades?: AtividadeApi[];
   backHref: string;
 }
 
-export function TurmaForm({ turma: t, backHref }: TurmaFormProps) {
+export function TurmaForm({ turma: t, nucleos = [], atividades = [], backHref }: TurmaFormProps) {
+  const [loading, setLoading] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
   const [exclusiva, setExclusiva] = useState(t?.exclusiva ?? false);
   const [atividadeId, setAtividadeId] = useState(t?.atividadeId ?? "");
 
   const atividadeNome = atividades.find((a) => a.id === atividadeId)?.nome;
 
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setLoading(true);
+    setErro(null);
+
+    const formData = new FormData(event.currentTarget);
+    const data = {
+      nome: formData.get("nome") as string,
+      nucleoId: formData.get("nucleoId") as string,
+      atividadeId: formData.get("atividadeId") as string,
+      vagasTotais: Number(formData.get("vagasTotais") || 30),
+      exclusiva,
+      dataInicio: (formData.get("dataInicio") as string) || null,
+      dataFim: (formData.get("dataFim") as string) || null,
+    };
+
+    try {
+      if (t?.id) {
+        await turmasApi.update(t.id, data);
+      } else {
+        await turmasApi.create(data);
+      }
+      window.location.href = backHref;
+    } catch (err: any) {
+      setErro(err.message || "Erro ao salvar turma.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
-    <form className="flex flex-col gap-6">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+      {erro && (
+        <div className="rounded-lg bg-red-50 p-4 text-sm text-red-700">
+          {erro}
+        </div>
+      )}
       <FormSection title="Dados da Turma">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="Nome" required>
@@ -42,7 +79,7 @@ export function TurmaForm({ turma: t, backHref }: TurmaFormProps) {
             </Select>
           </Field>
           <Field label="Responsável(is)">
-            <Input name="responsaveis" defaultValue={t?.responsaveis.join(", ")} placeholder="Nomes separados por vírgula" />
+            <Input name="responsaveis" defaultValue={(t?.responsaveis ?? []).join(", ")} placeholder="Nomes separados por vírgula" />
           </Field>
         </div>
       </FormSection>
@@ -56,7 +93,7 @@ export function TurmaForm({ turma: t, backHref }: TurmaFormProps) {
             <Input name="dataInicio" type="date" defaultValue={t?.dataInicio} />
           </Field>
           <Field label="Duração">
-            <Input name="duracao" defaultValue={t?.duracao} placeholder="Ex: 12 meses" />
+            <Input name="duracao" placeholder="Ex: 12 meses" />
           </Field>
         </div>
 

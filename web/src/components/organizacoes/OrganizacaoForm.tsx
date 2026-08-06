@@ -1,19 +1,64 @@
 "use client";
 
+import { useState } from "react";
 import { Button, Field, FormSection, Input, LinkButton, Select } from "@/components/ui";
-import { objetos } from "@/lib/mock/objetos";
-import type { Organizacao, TipoOrganizacao } from "@/lib/types";
+import type { TipoOrganizacao } from "@/lib/types";
+import { organizacoesApi, type OrganizacaoApi, type ObjetoApi } from "@/lib/api/services";
 
 interface OrganizacaoFormProps {
-  organizacao?: Organizacao;
+  organizacao?: OrganizacaoApi;
+  objetos?: ObjetoApi[];
   backHref: string;
 }
 
 const TIPOS: TipoOrganizacao[] = ["Instituto", "ONG", "Associação", "Fundação", "Outro"];
 
-export function OrganizacaoForm({ organizacao: o, backHref }: OrganizacaoFormProps) {
+export function OrganizacaoForm({ organizacao: o, objetos = [], backHref }: OrganizacaoFormProps) {
+  const [loading, setLoading] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setLoading(true);
+    setErro(null);
+
+    const formData = new FormData(event.currentTarget);
+    const data = {
+      nome: formData.get("nome") as string,
+      tipo: formData.get("tipo") as string,
+      cnpj: (formData.get("cnpj") as string) || null,
+      nomeResponsavel: (formData.get("nomeResponsavel") as string) || null,
+      telefone: (formData.get("telefone") as string) || null,
+      email: (formData.get("email") as string) || null,
+      objetoId: (formData.get("objetoId") as string) || null,
+      cep: (formData.get("cep") as string) || null,
+      endereco: (formData.get("endereco") as string) || null,
+      cidade: (formData.get("cidade") as string) || null,
+      estado: (formData.get("estado") as string) || null,
+      status: (formData.get("status") as string) || "ativa",
+    };
+
+    try {
+      if (o?.id) {
+        await organizacoesApi.update(o.id, data);
+      } else {
+        await organizacoesApi.create(data);
+      }
+      window.location.href = backHref;
+    } catch (err: any) {
+      setErro(err.message || "Erro ao salvar organização.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
-    <form className="flex flex-col gap-6">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+      {erro && (
+        <div className="rounded-lg bg-red-50 p-4 text-sm text-red-700">
+          {erro}
+        </div>
+      )}
       <FormSection title="Dados da Organização">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="Nome" required>

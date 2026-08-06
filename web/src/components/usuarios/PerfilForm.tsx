@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { Button, Field, FormSection, Input, LinkButton } from "@/components/ui";
-import type { Perfil, ModuloSistema, AcaoPermissao } from "@/lib/types";
+import type { ModuloSistema, AcaoPermissao } from "@/lib/types";
+import { perfisApi, type PerfilApi } from "@/lib/api/services";
 
 const MODULOS: { key: ModuloSistema; label: string }[] = [
   { key: "objetos",       label: "Objetos" },
@@ -29,22 +30,55 @@ const ACAO_LABEL: Record<AcaoPermissao, string> = {
 
 type PermMap = Record<ModuloSistema, Set<AcaoPermissao>>;
 
-function buildPermMap(perfil?: Perfil): PermMap {
+function buildPermMap(perfil?: PerfilApi): PermMap {
   const map = {} as PermMap;
   for (const m of MODULOS) {
     const found = perfil?.permissoes.find((p) => p.modulo === m.key);
-    map[m.key] = new Set(found?.acoes ?? []);
+    map[m.key] = new Set((found?.acoes as AcaoPermissao[]) ?? []);
   }
   return map;
 }
 
 interface PerfilFormProps {
-  perfil?: Perfil;
+  perfil?: PerfilApi;
   backHref: string;
 }
 
 export function PerfilForm({ perfil: p, backHref }: PerfilFormProps) {
+  const [loading, setLoading] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
   const [perms, setPerms] = useState<PermMap>(() => buildPermMap(p));
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setLoading(true);
+    setErro(null);
+
+    const formData = new FormData(event.currentTarget);
+    const permissoes = Object.entries(perms).map(([modulo, acoesSet]) => ({
+      modulo,
+      acoes: Array.from(acoesSet),
+    }));
+
+    const data = {
+      nome: formData.get("nome") as string,
+      descricao: (formData.get("descricao") as string) || undefined,
+      permissoes,
+    };
+
+    try {
+      if (p?.id) {
+        await perfisApi.update(p.id, data);
+      } else {
+        await perfisApi.create(data);
+      }
+      window.location.href = backHref;
+    } catch (err: any) {
+      setErro(err.message || "Erro ao salvar perfil.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   function toggle(modulo: ModuloSistema, acao: AcaoPermissao) {
     setPerms((prev) => {
@@ -70,7 +104,12 @@ export function PerfilForm({ perfil: p, backHref }: PerfilFormProps) {
   }
 
   return (
-    <form className="flex flex-col gap-6">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+      {erro && (
+        <div className="rounded-lg bg-red-50 p-4 text-sm text-red-700">
+          {erro}
+        </div>
+      )}
       <FormSection title="Dados do Perfil">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="Nome do perfil" required>

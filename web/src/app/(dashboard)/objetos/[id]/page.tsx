@@ -1,13 +1,17 @@
 import { notFound } from "next/navigation";
 import { Badge, Card, CardBody, CardHeader, LinkButton, PageHeader } from "@/components/ui";
-import { getObjetoById } from "@/lib/mock/objetos";
+import { objetosApi } from "@/lib/api/services";
 import { statusObjetoLabel, statusObjetoTone } from "@/lib/status";
 import { formatarData } from "@/lib/utils";
+import type { StatusObjeto } from "@/lib/types";
 
 export default async function DetalhesObjetoPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const o = getObjetoById(id);
+  const o = await objetosApi.get(id).catch(() => null);
   if (!o) notFound();
+
+  const tone = statusObjetoTone[o.status as StatusObjeto] ?? "zinc";
+  const label = statusObjetoLabel[o.status as StatusObjeto] ?? o.status;
 
   return (
     <div className="flex flex-col gap-6">
@@ -24,7 +28,7 @@ export default async function DetalhesObjetoPage({ params }: { params: Promise<{
         <CardBody className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2 lg:grid-cols-3">
           <div>
             <p className="text-zinc-500">Status</p>
-            <Badge tone={statusObjetoTone[o.status]}>{statusObjetoLabel[o.status]}</Badge>
+            <Badge tone={tone}>{label}</Badge>
           </div>
           <div>
             <p className="text-zinc-500">Tipo de duração</p>

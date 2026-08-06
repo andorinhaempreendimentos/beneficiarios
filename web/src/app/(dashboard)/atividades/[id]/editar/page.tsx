@@ -1,11 +1,11 @@
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/ui";
 import { AtividadeForm } from "@/components/atividades/AtividadeForm";
-import { getAtividadeById } from "@/lib/mock/atividades";
+import { atividadesApi } from "@/lib/api/services";
 
 export default async function EditarAtividadePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const atividade = getAtividadeById(id);
+  const atividade = await atividadesApi.get(id).catch(() => null);
   if (!atividade) notFound();
 
   return (

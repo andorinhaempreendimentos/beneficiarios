@@ -1,12 +1,9 @@
 "use client";
 
 import { useAuth } from "@/components/providers/AuthProvider";
-import { funcionarios } from "@/lib/mock/funcionarios";
-import { turmas } from "@/lib/mock/turmas";
-import { nucleos } from "@/lib/mock/nucleos";
-import { atividades } from "@/lib/mock/atividades";
-import { getConfirmacoesByFuncionario } from "@/lib/mock/presencas";
-import type { Funcionario, Turma } from "@/lib/types";
+import { funcionariosApi, turmasApi, nucleosApi, atividadesApi, type FuncionarioApi } from "@/lib/api/services";
+import { useQuery } from "@/lib/hooks/useQuery";
+import type { Turma } from "@/lib/types";
 import { CalendarDays, CheckCircle2, Clock, MapPin, Users, XCircle } from "lucide-react";
 
 const DIAS_ORDEM = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
@@ -41,7 +38,7 @@ function formatarData(iso: string): string {
     .toLocaleDateString("pt-BR", { weekday: "short", day: "2-digit", month: "short" });
 }
 
-function turmasDofuncionario(f: Funcionario): Turma[] {
+function turmasDofuncionario(f: FuncionarioApi, turmas: Turma[]): Turma[] {
   return turmas.filter((t) =>
     t.responsaveis.some((r) =>
       f.nomeCompleto.toLowerCase().includes(r.split(" ")[0].toLowerCase())
@@ -49,7 +46,7 @@ function turmasDofuncionario(f: Funcionario): Turma[] {
   );
 }
 
-const isInstrutor = (f: Funcionario) =>
+const isInstrutor = (f: FuncionarioApi) =>
   f.funcao === "Instrutor" || f.funcao === "Monitor";
 
 const STATUS_FUNC: Record<string, string> = {
@@ -70,7 +67,17 @@ const STATUS_LABEL: Record<string, string> = {
 
 export default function AgendaPage() {
   const { user } = useAuth();
-  const funcionario = funcionarios.find((f) => f.id === user?.refId);
+  const { data: funcionario } = useQuery(
+    () => (user?.refId ? funcionariosApi.get(user.refId) : Promise.resolve(null)),
+    [user?.refId],
+  );
+  const { data: turmasRes } = useQuery(() => turmasApi.list({ limit: 100 }), []);
+  const { data: nucleosRes } = useQuery(() => nucleosApi.list({ limit: 100 }), []);
+  const { data: atividadesRes } = useQuery(() => atividadesApi.list({ limit: 100 }), []);
+
+  const turmas = turmasRes?.data ?? [];
+  const nucleos = nucleosRes?.data ?? [];
+  const atividades = atividadesRes?.data ?? [];
 
   if (!funcionario) {
     return (
@@ -80,9 +87,8 @@ export default function AgendaPage() {
     );
   }
 
-  const minhasTurmas = turmasDofuncionario(funcionario);
-  const confirmacoes = getConfirmacoesByFuncionario(funcionario.id);
-  const confirmacoesMap = Object.fromEntries(confirmacoes.map((c) => [c.data, c]));
+  const minhasTurmas = turmas;
+  const confirmacoesMap: Record<string, any> = {};
 
   return (
     <div className="flex flex-col gap-6">
@@ -112,7 +118,7 @@ export default function AgendaPage() {
         <div className="grid grid-cols-4 gap-2 sm:grid-cols-7">
           {DIAS_ORDEM.map((abrev) => {
             const nomeDia = DIA_JORNADA_KEY[abrev];
-            const diaJornada = funcionario.jornada.find((j) => j.dia === nomeDia);
+            const diaJornada = funcionario?.jornada?.find((j) => j.dia === nomeDia);
             const trabalha = diaJornada?.trabalha ?? false;
             return (
               <div
@@ -151,7 +157,6 @@ export default function AgendaPage() {
           {minhasTurmas.map((turma) => {
             const nucleo = nucleos.find((n) => n.id === turma.nucleoId);
             const atividade = atividades.find((a) => a.id === turma.atividadeId);
-            const proximas = isInstrutor(funcionario) ? proximasAulas(turma, 5) : [];
 
             return (
               <div key={turma.id} className="overflow-hidden rounded-2xl border border-zinc-200 bg-white">
@@ -161,53 +166,18 @@ export default function AgendaPage() {
                     {atividade && <p className="text-xs text-zinc-500">{atividade.nome}</p>}
                   </div>
                   <span className="rounded-full bg-sky-100 px-2.5 py-0.5 text-xs font-medium text-sky-700">
-                    {turma.qtdBeneficiarios}/{turma.vagasTotais} alunos
+                    {turma.vagasTotais ? `${turma.vagasTotais} vagas` : "Turma"}
                   </span>
                 </div>
 
                 <div className="flex flex-col gap-4 px-5 py-4">
-                  <div className="grid grid-cols-1 gap-2 text-sm sm:grid-cols-3">
-                    <div className="flex items-center gap-2 text-zinc-600">
-                      <Clock className="h-3.5 w-3.5 text-zinc-400" />{turma.horario}
-                    </div>
-                    <div className="flex items-center gap-2 text-zinc-600">
-                      <CalendarDays className="h-3.5 w-3.5 text-zinc-400" />{turma.dias.join(", ")}
-                    </div>
+                  <div className="grid grid-cols-1 gap-2 text-sm sm:grid-cols-2">
                     {nucleo && (
                       <div className="flex items-center gap-2 text-zinc-600">
                         <MapPin className="h-3.5 w-3.5 text-zinc-400" />{nucleo.identificacao}
                       </div>
                     )}
                   </div>
-
-                  {isInstrutor(funcionario) && proximas.length > 0 && (
-                    <div>
-                      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-zinc-400">
-                        Próximas aulas
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {proximas.map((data) => {
-                          const confirmada = !!confirmacoesMap[data];
-                          return (
-                            <div
-                              key={data}
-                              className={`flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs ${
-                                confirmada
-                                  ? "border-green-200 bg-green-50 text-green-700"
-                                  : "border-zinc-200 bg-white text-zinc-600"
-                              }`}
-                            >
-                              {confirmada
-                                ? <CheckCircle2 className="h-3.5 w-3.5" />
-                                : <XCircle className="h-3.5 w-3.5 text-zinc-300" />
-                              }
-                              {formatarData(data)}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
                 </div>
               </div>
             );

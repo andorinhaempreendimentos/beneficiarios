@@ -1,23 +1,35 @@
+"use client";
+
 import { Card, CardBody, CardHeader } from "@/components/ui";
-import { beneficiarios } from "@/lib/mock/beneficiarios";
-import { funcionarios } from "@/lib/mock/funcionarios";
-import { nucleos } from "@/lib/mock/nucleos";
-import { turmas } from "@/lib/mock/turmas";
-import { atividades } from "@/lib/mock/atividades";
-import { objetos } from "@/lib/mock/objetos";
-import { organizacoes } from "@/lib/mock/organizacoes";
+import {
+  beneficiariosApi, funcionariosApi, nucleosApi, turmasApi, atividadesApi, objetosApi, organizacoesApi
+} from "@/lib/api/services";
+import { useQuery } from "@/lib/hooks/useQuery";
 import { calcularIdade } from "@/lib/utils";
 import type { FiltrosState } from "./FiltrosRelatorio";
 
 interface Props { filtros: FiltrosState }
 
 export function TabelaMinisterio({ filtros }: Props) {
-  const objeto = objetos[0];
-  const organizacao = organizacoes[0];
+  const { data: bRes } = useQuery(() => beneficiariosApi.list({ limit: 200 }), []);
+  const { data: fRes } = useQuery(() => funcionariosApi.list({ limit: 200 }), []);
+  const { data: nRes } = useQuery(() => nucleosApi.list({ limit: 100 }), []);
+  const { data: tRes } = useQuery(() => turmasApi.list({ limit: 100 }), []);
+  const { data: aRes } = useQuery(() => atividadesApi.list({ limit: 100 }), []);
+  const { data: oRes } = useQuery(() => objetosApi.list({ limit: 10 }), []);
+  const { data: orgRes } = useQuery(() => organizacoesApi.list({ limit: 10 }), []);
+
+  const beneficiarios = bRes?.data ?? [];
+  const funcionarios = fRes?.data ?? [];
+  const nucleos = nRes?.data ?? [];
+  const turmas = tRes?.data ?? [];
+  const atividades = aRes?.data ?? [];
+  const objeto = oRes?.data[0];
+  const organizacao = orgRes?.data[0];
 
   const nucleosFiltrados = nucleos.filter((n) => {
     if (filtros.nucleoId) return n.id === filtros.nucleoId;
-    return n.emFuncionamento;
+    return true;
   });
 
   return (
@@ -46,8 +58,8 @@ export function TabelaMinisterio({ filtros }: Props) {
           (b) => b.nucleoId === nucleo.id && (!filtros.status || b.status === filtros.status)
         );
         const funcionariosDoNucleo = funcionarios.filter((f) => f.nucleoId === nucleo.id);
-        const diasHorarios = [...new Set(turmasDoNucleo.flatMap((t) => t.dias))].join(", ");
-        const horarios = [...new Set(turmasDoNucleo.map((t) => t.horario))].join(" / ");
+        const diasHorarios = "Dias a definir";
+        const horarios = "Horários a definir";
 
         return (
           <Card key={nucleo.id}>
@@ -78,7 +90,8 @@ export function TabelaMinisterio({ filtros }: Props) {
                   </thead>
                   <tbody>
                     {funcionariosDoNucleo.map((f) => {
-                      const horas = f.jornada.filter((d) => d.trabalha && d.entrada && d.saida).reduce((acc, d) => {
+                      const jornada = f.jornada ?? [];
+                      const horas = jornada.filter((d) => d.trabalha && d.entrada && d.saida).reduce((acc, d) => {
                         const [hE, mE] = (d.entrada ?? "0:0").split(":").map(Number);
                         const [hS, mS] = (d.saida ?? "0:0").split(":").map(Number);
                         return acc + (hS * 60 + mS - (hE * 60 + mE));
@@ -88,7 +101,7 @@ export function TabelaMinisterio({ filtros }: Props) {
                           <td className="px-5 py-2 text-zinc-700">{f.nomeCompleto}</td>
                           <td className="px-5 py-2 text-zinc-500">{f.funcao}</td>
                           <td className="px-5 py-2 text-zinc-500">{Math.floor(horas / 60)}h</td>
-                          <td className="px-5 py-2 text-zinc-500">—</td>
+                          <td className="px-5 py-2 text-zinc-500">{f.celular ?? "—"}</td>
                         </tr>
                       );
                     })}
@@ -113,16 +126,12 @@ export function TabelaMinisterio({ filtros }: Props) {
                 </thead>
                 <tbody>
                   {beneficiariosDoNucleo.map((b) => {
-                    const atvsNomes = b.turmas.map((vt) => {
-                      const t = turmas.find((tt) => tt.id === vt.turmaId);
-                      return t ? (atividades.find((a) => a.id === t.atividadeId)?.nome ?? "—") : "—";
-                    });
                     return (
                       <tr key={b.id} className="border-b border-zinc-50 last:border-0">
-                        <td className="px-5 py-2 text-zinc-700">{b.nomeCompleto}</td>
+                        <td className="px-5 py-2 font-medium text-zinc-700">{b.nomeCompleto}</td>
                         <td className="px-5 py-2 text-zinc-500">{b.cpf ?? "—"}</td>
-                        <td className="px-5 py-2 text-zinc-500">{calcularIdade(b.dataNascimento)}</td>
-                        <td className="px-5 py-2 text-zinc-500">{[...new Set(atvsNomes)].join(", ") || "—"}</td>
+                        <td className="px-5 py-2 text-zinc-500">{calcularIdade(b.dataNascimento)} anos</td>
+                        <td className="px-5 py-2 text-zinc-500">{b.tipoMatricula ?? "Geral"}</td>
                       </tr>
                     );
                   })}

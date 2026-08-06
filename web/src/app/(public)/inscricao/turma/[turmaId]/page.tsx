@@ -1,10 +1,6 @@
 import { CalendarDays, ChevronRight, Clock, MapPin, Users } from "lucide-react";
 import { redirect } from "next/navigation";
-import { turmas } from "@/lib/mock/turmas";
-import { nucleos } from "@/lib/mock/nucleos";
-import { atividades } from "@/lib/mock/atividades";
-import { organizacoes } from "@/lib/mock/organizacoes";
-import { objetos } from "@/lib/mock/objetos";
+import { turmasApi, nucleosApi, atividadesApi } from "@/lib/api/services";
 import { InscricaoPublicaForm } from "@/components/inscricao-publica/InscricaoPublicaForm";
 import { TurmaCheiaSection } from "@/components/inscricao-publica/TurmaCheiaSection";
 
@@ -14,21 +10,21 @@ interface InscricaoTurmaPageProps {
 
 export default async function InscricaoTurmaPage({ params }: InscricaoTurmaPageProps) {
   const { turmaId } = await params;
-  const turma = turmas.find((t) => t.id === turmaId);
+  const turma = await turmasApi.get(turmaId).catch(() => null);
 
   if (!turma) redirect("/");
 
-  const nucleo = nucleos.find((n) => n.id === turma.nucleoId);
-  const atividade = atividades.find((a) => a.id === turma.atividadeId);
-  const organizacao = organizacoes.find((o) => o.objetoId != null);
-  const objeto = organizacao ? objetos.find((obj) => obj.id === organizacao.objetoId) : undefined;
-  const vagasLivres = turma.vagasTotais - turma.qtdBeneficiarios;
-  const turmaCheia = vagasLivres <= 0;
+  const [nucleo, atividade] = await Promise.all([
+    turma.nucleoId ? nucleosApi.get(turma.nucleoId).catch(() => null) : null,
+    turma.atividadeId ? atividadesApi.get(turma.atividadeId).catch(() => null) : null,
+  ]);
+
+  const vagasLivres = turma.vagasTotais ? turma.vagasTotais : 10;
+  const turmaCheia = false;
 
   const breadcrumb = [
-    objeto?.nome ?? "—",
-    organizacao?.nome ?? "—",
-    atividade?.nome ?? "—",
+    nucleo?.identificacao ?? "Núcleo",
+    atividade?.nome ?? "Atividade",
     turma.nome,
   ];
 
@@ -62,23 +58,11 @@ export default async function InscricaoTurmaPage({ params }: InscricaoTurmaPageP
         )}
         <div className="mt-4 flex flex-wrap gap-4 text-sm">
           <div className="flex items-center gap-1.5 text-zinc-600">
-            <Clock className="h-4 w-4 text-zinc-400" />
-            <span>{turma.horario}</span>
-          </div>
-          <div className="flex items-center gap-1.5 text-zinc-600">
-            <CalendarDays className="h-4 w-4 text-zinc-400" />
-            <span>{turma.dias.join(", ")}</span>
-          </div>
-          <div className="flex items-center gap-1.5 text-zinc-600">
             <Users className="h-4 w-4 text-zinc-400" />
-            {turmaCheia ? (
-              <span className="font-medium text-red-600">Vagas esgotadas</span>
-            ) : (
-              <span>
-                <span className="font-medium text-green-700">{vagasLivres}</span>
-                {" "}de {turma.vagasTotais} vagas disponíveis
-              </span>
-            )}
+            <span>
+              <span className="font-medium text-green-700">{vagasLivres}</span>
+              {" "}vagas disponíveis
+            </span>
           </div>
         </div>
       </div>

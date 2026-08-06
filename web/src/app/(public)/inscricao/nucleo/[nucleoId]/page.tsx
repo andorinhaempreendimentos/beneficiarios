@@ -1,10 +1,6 @@
 import { ChevronRight, MapPin } from "lucide-react";
 import { redirect } from "next/navigation";
-import { nucleos } from "@/lib/mock/nucleos";
-import { turmas } from "@/lib/mock/turmas";
-import { atividades } from "@/lib/mock/atividades";
-import { objetos } from "@/lib/mock/objetos";
-import { organizacoes } from "@/lib/mock/organizacoes";
+import { nucleosApi, turmasApi, atividadesApi } from "@/lib/api/services";
 import { SelecionarAtividade } from "@/components/inscricao-publica/SelecionarAtividade";
 
 interface InscricaoNucleoPageProps {
@@ -13,19 +9,21 @@ interface InscricaoNucleoPageProps {
 
 export default async function InscricaoNucleoPage({ params }: InscricaoNucleoPageProps) {
   const { nucleoId } = await params;
-  const nucleo = nucleos.find((n) => n.id === nucleoId);
+  const nucleo = await nucleosApi.get(nucleoId).catch(() => null);
 
   if (!nucleo) redirect("/");
 
-  const turmasDoNucleo = turmas.filter((t) => t.nucleoId === nucleoId);
-  const atividadesDoNucleo = atividades.filter((a) =>
+  const [turmasRes, atividadesRes] = await Promise.all([
+    turmasApi.list({ nucleoId, limit: 100 }).catch(() => ({ data: [] })),
+    atividadesApi.list({ limit: 100 }).catch(() => ({ data: [] })),
+  ]);
+
+  const turmasDoNucleo = turmasRes.data;
+  const atividadesDoNucleo = atividadesRes.data.filter((a) =>
     turmasDoNucleo.some((t) => t.atividadeId === a.id)
   );
 
-  const organizacao = organizacoes.find((o) => o.objetoId != null);
-  const objeto = organizacao ? objetos.find((obj) => obj.id === organizacao.objetoId) : undefined;
-
-  const breadcrumb = [objeto?.nome ?? "—", nucleo.identificacao];
+  const breadcrumb = ["Núcleo", nucleo.identificacao];
 
   return (
     <div className="flex flex-col gap-8">
@@ -54,8 +52,8 @@ export default async function InscricaoNucleoPage({ params }: InscricaoNucleoPag
       </div>
 
       <SelecionarAtividade
-        atividades={atividadesDoNucleo}
-        turmas={turmasDoNucleo}
+        atividades={atividadesDoNucleo as any}
+        turmas={turmasDoNucleo as any}
         nucleoId={nucleoId}
       />
     </div>

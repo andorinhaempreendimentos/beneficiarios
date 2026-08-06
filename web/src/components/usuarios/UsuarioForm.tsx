@@ -2,23 +2,56 @@
 
 import { useState } from "react";
 import { Button, Field, FormSection, Input, LinkButton, Select } from "@/components/ui";
-import { perfis } from "@/lib/mock/usuarios";
-import type { Usuario } from "@/lib/types";
+import { usuariosApi, type UsuarioApi, type PerfilApi } from "@/lib/api/services";
 
 interface UsuarioFormProps {
-  usuario?: Usuario;
+  usuario?: UsuarioApi;
+  perfis?: PerfilApi[];
   backHref: string;
 }
 
-export function UsuarioForm({ usuario: u, backHref }: UsuarioFormProps) {
-  const [status, setStatus] = useState(u?.status ?? "ativo");
+export function UsuarioForm({ usuario: u, perfis = [], backHref }: UsuarioFormProps) {
+  const [loading, setLoading] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setLoading(true);
+    setErro(null);
+
+    const formData = new FormData(event.currentTarget);
+    const data = {
+      nomeCompleto: formData.get("nome") as string,
+      email: formData.get("email") as string,
+      perfilId: formData.get("perfilId") as string,
+      ativo: formData.get("status") !== "inativo",
+    };
+
+    try {
+      if (u?.id) {
+        await usuariosApi.update(u.id, data);
+      } else {
+        await usuariosApi.create(data);
+      }
+      window.location.href = backHref;
+    } catch (err: any) {
+      setErro(err.message || "Erro ao salvar usuário.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
-    <form className="flex flex-col gap-6">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+      {erro && (
+        <div className="rounded-lg bg-red-50 p-4 text-sm text-red-700">
+          {erro}
+        </div>
+      )}
       <FormSection title="Dados do Usuário">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="Nome completo" required>
-            <Input name="nome" defaultValue={u?.nome} placeholder="Ex: Ana Beatriz Lima" />
+            <Input name="nome" defaultValue={u?.nomeCompleto} placeholder="Ex: Ana Beatriz Lima" />
           </Field>
           <Field label="E-mail" required>
             <Input name="email" type="email" defaultValue={u?.email} placeholder="usuario@andorinha.org" />
@@ -47,7 +80,7 @@ export function UsuarioForm({ usuario: u, backHref }: UsuarioFormProps) {
             </Select>
           </Field>
           <Field label="Status">
-            <Select name="status" value={status} onChange={(e) => setStatus(e.target.value as typeof status)}>
+            <Select name="status" defaultValue={u?.ativo ? "ativo" : "inativo"}>
               <option value="ativo">Ativo</option>
               <option value="inativo">Inativo</option>
               <option value="bloqueado">Bloqueado</option>

@@ -1,13 +1,13 @@
 import { notFound } from "next/navigation";
 import { Badge, Card, CardBody, CardHeader, LinkButton, PageHeader } from "@/components/ui";
-import { getAtividadeById } from "@/lib/mock/atividades";
+import { atividadesApi } from "@/lib/api/services";
 import { formatarData } from "@/lib/utils";
 
 const TURNO_LABEL: Record<string, string> = { manha: "Manhã", tarde: "Tarde", noite: "Noite" };
 
 export default async function DetalhesAtividadePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const a = getAtividadeById(id);
+  const a = await atividadesApi.get(id).catch(() => null);
   if (!a) notFound();
 
   return (
@@ -24,11 +24,10 @@ export default async function DetalhesAtividadePage({ params }: { params: Promis
         </CardHeader>
         <CardBody className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-3">
           <p className="text-zinc-600">Disponível na pré-inscrição: {a.disponivelPreInscricao ? "Sim" : "Não"}</p>
-          <p className="text-zinc-600">Turmas vinculadas: {a.qtdTurmas}</p>
           <div className="flex items-center gap-1 text-zinc-600">
             Turnos:
-            {a.turnos.map((t) => (
-              <Badge key={t} tone="zinc">{TURNO_LABEL[t]}</Badge>
+            {(a.turnos ?? []).map((t) => (
+              <Badge key={t} tone="zinc">{TURNO_LABEL[t] ?? t}</Badge>
             ))}
           </div>
         </CardBody>

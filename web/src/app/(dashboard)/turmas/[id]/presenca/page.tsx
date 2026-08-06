@@ -4,9 +4,8 @@ import { notFound } from "next/navigation";
 import { use, useState } from "react";
 import { CheckCircle2, Circle, AlertCircle, ChevronLeft, ChevronRight, Save } from "lucide-react";
 import { Badge, Button, Card, CardBody, CardHeader, LinkButton, PageHeader } from "@/components/ui";
-import { getTurmaById } from "@/lib/mock/turmas";
-import { getBeneficiariosByTurma } from "@/lib/mock/beneficiarios";
-import { getPresencasByTurmaData } from "@/lib/mock/presencas";
+import { turmasApi, beneficiariosApi } from "@/lib/api/services";
+import { useQuery } from "@/lib/hooks/useQuery";
 import type { StatusPresenca } from "@/lib/types";
 
 // Gera datas de aula retroativas (últimas 8 ocorrências) a partir de hoje
@@ -14,12 +13,11 @@ const DIA_ABREV: Record<string, number> = {
   Dom: 0, Seg: 1, Ter: 2, Qua: 3, Qui: 4, Sex: 5, Sáb: 6,
 };
 
-function gerarDatasAula(dias: string[], quantidade = 8): string[] {
+function gerarDatasAula(dias: string[] = ["Seg", "Qua", "Sex"], quantidade = 8): string[] {
   const hoje = new Date();
   const resultado: string[] = [];
   const cursor = new Date(hoje);
 
-  // Percorre para trás até coletar `quantidade` datas
   let tentativas = 0;
   while (resultado.length < quantidade && tentativas < 90) {
     const diaSemana = cursor.getDay();
@@ -29,6 +27,9 @@ function gerarDatasAula(dias: string[], quantidade = 8): string[] {
     }
     cursor.setDate(cursor.getDate() - 1);
     tentativas++;
+  }
+  if (resultado.length === 0) {
+    resultado.push(hoje.toISOString().slice(0, 10));
   }
   return resultado;
 }
@@ -50,29 +51,17 @@ type MapPresenca = Record<string, StatusPresenca>; // beneficiarioId → status
 
 export default function PresencaTurmaPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const turma = getTurmaById(id);
-  if (!turma) notFound();
-
-  const beneficiarios = getBeneficiariosByTurma(id);
-  const datas = gerarDatasAula(turma.dias, 8);
+  
+  const { data: turma } = useQuery(() => turmasApi.get(id), [id]);
+  const { data: beneficiariosRes } = useQuery(() => beneficiariosApi.list({ limit: 100 }), []);
+  
+  const beneficiarios = beneficiariosRes?.data ?? [];
+  const datas = gerarDatasAula([], 8);
 
   const [dataAtual, setDataAtual] = useState<string>(datas[datas.length - 1] ?? "");
   const [salvo, setSalvo] = useState(false);
 
-  // Inicializa mapa a partir dos dados mock
-  const [mapas, setMapas] = useState<Record<string, MapPresenca>>(() => {
-    const init: Record<string, MapPresenca> = {};
-    for (const d of datas) {
-      const registros = getPresencasByTurmaData(id, d);
-      const mapa: MapPresenca = {};
-      for (const b of beneficiarios) {
-        const reg = registros.find((r) => r.beneficiarioId === b.id);
-        mapa[b.id] = reg?.status ?? "falta";
-      }
-      init[d] = mapa;
-    }
-    return init;
-  });
+  const [mapas, setMapas] = useState<Record<string, MapPresenca>>({});
 
   const mapaAtual = mapas[dataAtual] ?? {};
   const idxAtual = datas.indexOf(dataAtual);
@@ -112,7 +101,7 @@ export default function PresencaTurmaPage({ params }: { params: Promise<{ id: st
   return (
     <div className="flex flex-col gap-6">
       <PageHeader
-        title={`Presença — ${turma.nome}`}
+        title={`Presença — ${turma?.nome ?? ''}`}
         description={`${beneficiarios.length} beneficiário(s) ativo(s)`}
         actions={<LinkButton href={`/turmas/${id}`} variant="outline">Voltar à turma</LinkButton>}
       />

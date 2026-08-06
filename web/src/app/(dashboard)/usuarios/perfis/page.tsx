@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { Badge, Card, LinkButton, PageHeader } from "@/components/ui";
-import { perfis } from "@/lib/mock/usuarios";
+import { perfisApi, type Paginated, type PerfilApi } from "@/lib/api/services";
+import { useQuery } from "@/lib/hooks/useQuery";
 import { formatarData } from "@/lib/utils";
 
 const ACAO_LABEL: Record<string, string> = {
@@ -10,6 +11,11 @@ const ACAO_LABEL: Record<string, string> = {
 };
 
 export default function PerfisPage() {
+  const { data: pageData, loading } = useQuery<Paginated<PerfilApi>>(
+    () => perfisApi.list({ limit: 100 }),
+    [],
+  );
+  const perfis = pageData?.data ?? [];
   return (
     <div className="flex flex-col gap-6">
       <PageHeader

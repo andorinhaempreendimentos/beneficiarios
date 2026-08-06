@@ -2,18 +2,60 @@
 
 import { useState } from "react";
 import { Button, Field, FormSection, Input, LinkButton, Select } from "@/components/ui";
-import type { Objeto, TipoDuracao } from "@/lib/types";
+import type { TipoDuracao } from "@/lib/types";
+import { objetosApi, type ObjetoApi } from "@/lib/api/services";
 
 interface ObjetoFormProps {
-  objeto?: Objeto;
+  objeto?: ObjetoApi;
   backHref: string;
 }
 
 export function ObjetoForm({ objeto: o, backHref }: ObjetoFormProps) {
-  const [tipoDuracao, setTipoDuracao] = useState<TipoDuracao>(o?.tipoDuracao ?? "periodo");
+  const [loading, setLoading] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
+  const [tipoDuracao, setTipoDuracao] = useState<TipoDuracao>((o?.tipoDuracao as TipoDuracao) ?? "periodo");
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setLoading(true);
+    setErro(null);
+
+    const formData = new FormData(event.currentTarget);
+    const data = {
+      nome: formData.get("nome") as string,
+      termoDeFomento: (formData.get("termoDeFomento") as string) || null,
+      codigoObjeto: (formData.get("codigoObjeto") as string) || null,
+      codigoPrograma: (formData.get("codigoPrograma") as string) || null,
+      nomePrograma: (formData.get("nomePrograma") as string) || null,
+      descricao: (formData.get("descricao") as string) || null,
+      tipoDuracao,
+      dataEvento: tipoDuracao === "pontual" ? ((formData.get("dataEvento") as string) || null) : null,
+      dataInicio: tipoDuracao === "periodo" ? ((formData.get("dataInicio") as string) || null) : null,
+      dataTermino: tipoDuracao === "periodo" ? ((formData.get("dataTermino") as string) || null) : null,
+      status: (formData.get("status") as string) || "ativo",
+    };
+
+    try {
+      if (o?.id) {
+        await objetosApi.update(o.id, data);
+      } else {
+        await objetosApi.create(data);
+      }
+      window.location.href = backHref;
+    } catch (err: any) {
+      setErro(err.message || "Erro ao salvar objeto.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
-    <form className="flex flex-col gap-6">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+      {erro && (
+        <div className="rounded-lg bg-red-50 p-4 text-sm text-red-700">
+          {erro}
+        </div>
+      )}
       <FormSection title="Dados do Objeto">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="Nome do Projeto" required>

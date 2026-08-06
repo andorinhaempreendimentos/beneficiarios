@@ -14,8 +14,7 @@ import {
   Textarea,
 } from "@/components/ui";
 import type { Anexo, Beneficiario, PerguntaParQ, VinculoTurma } from "@/lib/types";
-import { nucleos } from "@/lib/mock/nucleos";
-import { turmas } from "@/lib/mock/turmas";
+import { beneficiariosApi, type NucleoApi, type TurmaApi } from "@/lib/api/services";
 
 const PERGUNTAS_PARQ = [
   "Algum médico já disse que você possui um problema de coração e recomendou que você só praticasse atividade física supervisionado?",
@@ -32,17 +31,63 @@ const PERGUNTAS_PARQ = [
 
 interface BeneficiarioFormProps {
   beneficiario?: Beneficiario;
+  nucleos?: NucleoApi[];
+  turmas?: TurmaApi[];
   backHref: string;
 }
 
-export function BeneficiarioForm({ beneficiario: b, backHref }: BeneficiarioFormProps) {
+export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], backHref }: BeneficiarioFormProps) {
+  const [loading, setLoading] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
   const [pcd, setPcd] = useState(b?.pcd ?? false);
   const [vinculos, setVinculos] = useState<VinculoTurma[]>(b?.turmas ?? []);
   const [anexos, setAnexos] = useState<Anexo[]>(b?.anexos ?? []);
   const [parQ, setParQ] = useState<PerguntaParQ[]>(
-    b?.parQ.length ? b.parQ : PERGUNTAS_PARQ.map((p) => ({ pergunta: p }))
+    b?.parQ?.length ? b.parQ : PERGUNTAS_PARQ.map((p) => ({ pergunta: p }))
   );
   const algumaRespostaSim = parQ.some((p) => p.resposta === "Sim");
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setLoading(true);
+    setErro(null);
+
+    const formData = new FormData(e.currentTarget);
+    const data: Record<string, unknown> = {
+      nomeCompleto: formData.get("nomeCompleto"),
+      nomeSocial: formData.get("nomeSocial"),
+      dataNascimento: formData.get("dataNascimento"),
+      sexo: formData.get("sexo"),
+      cpf: formData.get("cpf"),
+      rg: formData.get("rg"),
+      orgaoEmissor: formData.get("orgaoEmissor"),
+      celular: formData.get("celular"),
+      telefoneRecado: formData.get("telefoneRecado"),
+      cep: formData.get("cep"),
+      logradouro: formData.get("logradouro"),
+      numero: formData.get("numero"),
+      bairro: formData.get("bairro"),
+      cidade: formData.get("cidade"),
+      estado: formData.get("estado"),
+      pcd,
+      tipoPcd: formData.get("tipoPcd"),
+      nucleoId: formData.get("nucleoId"),
+      status: formData.get("status") || "Novo cadastro",
+    };
+
+    try {
+      if (b?.id) {
+        await beneficiariosApi.update(b.id, data);
+      } else {
+        await beneficiariosApi.create(data);
+      }
+      window.location.href = backHref;
+    } catch (err: any) {
+      setErro(err.message || "Erro ao salvar beneficiário.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   function adicionarTurma() {
     setVinculos((v) => [...v, { turmaId: "", status: "Ativo", dataRegistro: "" }]);
@@ -61,7 +106,12 @@ export function BeneficiarioForm({ beneficiario: b, backHref }: BeneficiarioForm
   }
 
   return (
-    <form className="flex flex-col gap-6">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+      {erro && (
+        <div className="rounded-lg bg-red-50 p-4 text-sm text-red-700">
+          {erro}
+        </div>
+      )}
       <FormSection title="1. Identificação do Beneficiário">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <Field label="Foto" className="lg:col-span-3 sm:max-w-xs">
