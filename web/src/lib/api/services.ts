@@ -1,5 +1,16 @@
-import { createClient } from '@/lib/supabase/client';
+import { createClient as createBrowserClient } from '@/lib/supabase/client';
 import type { Database } from '@/lib/supabase/types';
+
+function createClient() {
+  if (typeof window === 'undefined') {
+    // No servidor (Server Components / SSR), cria um cliente desacoplado ou usa a anon key via browser client sem depender de cookies/headers
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+    const { createClient: createJSClient } = require('@supabase/supabase-js');
+    return createJSClient(url, key) as ReturnType<typeof createBrowserClient>;
+  }
+  return createBrowserClient();
+}
 
 export interface Paginated<T> {
   data: T[];
