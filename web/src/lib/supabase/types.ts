@@ -1496,6 +1496,7 @@ export type Database = {
       }
       current_entidade_id: { Args: never; Returns: string }
       current_tipo_usuario: { Args: never; Returns: string }
+      get_logo_url: { Args: never; Returns: string }
       has_permissao: {
         Args: { p_acao: string; p_modulo: string }
         Returns: boolean
