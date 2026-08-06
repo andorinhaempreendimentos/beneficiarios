@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { getTema, temas } from "@/lib/theme";
 import { getAparencia, setAparencia } from "@/lib/mock/aparencia";
-import { configuracoesApi } from "@/lib/api/services";
+import { createClient } from "@/lib/supabase/client";
 import type { TemaId } from "@/lib/theme";
 import type { ConfigAparencia } from "@/lib/mock/aparencia";
 
@@ -37,9 +37,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, [config.temaId]);
 
   useEffect(() => {
-    configuracoesApi.get("logo_url").then((row) => {
-      if (row?.valor && typeof row.valor === "string") {
-        setConfig((prev) => ({ ...prev, logoUrl: row.valor as string }));
+    const sb = createClient();
+    sb.rpc("get_logo_url").then(({ data }) => {
+      if (data && typeof data === "string") {
+        setConfig((prev) => ({ ...prev, logoUrl: data }));
       }
     }).catch(() => {});
   }, []);
