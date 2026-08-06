@@ -3,6 +3,7 @@ import type { TemaId } from "@/lib/theme";
 export interface ConfigAparencia {
   temaId: TemaId;
   nomeSistema: string;
+  logoUrl?: string;
 }
 
 // Mock em memória — em produção viria do banco via API

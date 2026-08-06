@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { getTema, temas } from "@/lib/theme";
 import { getAparencia, setAparencia } from "@/lib/mock/aparencia";
+import { configuracoesApi } from "@/lib/api/services";
 import type { TemaId } from "@/lib/theme";
 import type { ConfigAparencia } from "@/lib/mock/aparencia";
 
@@ -10,12 +11,14 @@ interface ThemeContextValue {
   config: ConfigAparencia;
   aplicarTema: (id: TemaId) => void;
   setNomeSistema: (nome: string) => void;
+  setLogoUrl: (url: string | undefined) => void;
 }
 
 const ThemeContext = createContext<ThemeContextValue>({
   config: { temaId: "andorinha", nomeSistema: "Andorinha" },
   aplicarTema: () => {},
   setNomeSistema: () => {},
+  setLogoUrl: () => {},
 });
 
 function injetarCores(temaId: TemaId) {
@@ -33,6 +36,14 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     injetarCores(config.temaId);
   }, [config.temaId]);
 
+  useEffect(() => {
+    configuracoesApi.get("logo_url").then((row) => {
+      if (row?.valor && typeof row.valor === "string") {
+        setConfig((prev) => ({ ...prev, logoUrl: row.valor as string }));
+      }
+    }).catch(() => {});
+  }, []);
+
   function aplicarTema(id: TemaId) {
     const next = setAparencia({ temaId: id });
     setConfig(next);
@@ -44,8 +55,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setConfig(next);
   }
 
+  function setLogoUrl(url: string | undefined) {
+    setConfig((prev) => ({ ...prev, logoUrl: url }));
+  }
+
   return (
-    <ThemeContext.Provider value={{ config, aplicarTema, setNomeSistema }}>
+    <ThemeContext.Provider value={{ config, aplicarTema, setNomeSistema, setLogoUrl }}>
       {children}
     </ThemeContext.Provider>
   );
