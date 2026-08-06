@@ -4,7 +4,7 @@ import { useState, useCallback } from "react";
 import Link from "next/link";
 import { Badge, Card, FilterBar, Field, Input, Select, LinkButton, PageHeader, Pagination } from "@/components/ui";
 import { useQuery } from "@/lib/hooks/useQuery";
-import { type Paginated, type OrganizacaoApi, type ObjetoApi } from "@/lib/api/services";
+import { organizacoesApi, objetosApi, type Paginated, type OrganizacaoApi, type ObjetoApi } from "@/lib/api/services";
 import { statusOrganizacaoLabel, statusOrganizacaoTone } from "@/lib/status";
 import { formatarData } from "@/lib/utils";
 
@@ -17,10 +17,10 @@ export default function OrganizacoesPage() {
   const [pagina, setPagina] = useState(1);
 
   const { data: pageData, loading } = useQuery<Paginated<OrganizacaoApi>>(
-    "/api/v1/organizacoes",
-    { ...ativos, page: pagina, limit: PER_PAGE },
+    () => organizacoesApi.list({ ...ativos, page: pagina, limit: PER_PAGE }),
+    [ativos, pagina],
   );
-  const { data: objetosData } = useQuery<Paginated<ObjetoApi>>("/api/v1/objetos", { limit: 200 });
+  const { data: objetosData } = useQuery<Paginated<ObjetoApi>>(() => objetosApi.list({ limit: 200 }), []);
 
   const resultado = pageData?.data ?? [];
   const total = pageData?.total ?? 0;

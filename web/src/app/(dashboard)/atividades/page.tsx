@@ -4,7 +4,7 @@ import { useState, useCallback } from "react";
 import Link from "next/link";
 import { Badge, Card, FilterBar, Field, Input, Select, LinkButton, PageHeader, Pagination } from "@/components/ui";
 import { useQuery } from "@/lib/hooks/useQuery";
-import { type Paginated, type AtividadeApi } from "@/lib/api/services";
+import { atividadesApi, type Paginated, type AtividadeApi } from "@/lib/api/services";
 import { formatarData } from "@/lib/utils";
 
 const TURNO_LABEL: Record<string, string> = { manha: "Manhã", tarde: "Tarde", noite: "Noite" };
@@ -17,8 +17,8 @@ export default function AtividadesPage() {
   const [pagina, setPagina] = useState(1);
 
   const { data: pageData, loading } = useQuery<Paginated<AtividadeApi>>(
-    "/api/v1/atividades",
-    { ...ativos, page: pagina, limit: PER_PAGE },
+    () => atividadesApi.list({ ...ativos, page: pagina, limit: PER_PAGE }),
+    [ativos, pagina],
   );
 
   const resultado = pageData?.data ?? [];

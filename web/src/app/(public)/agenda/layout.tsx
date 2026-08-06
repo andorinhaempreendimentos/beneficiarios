@@ -13,9 +13,6 @@ export default function AgendaLayout({ children }: { children: React.ReactNode }
     if (!loading && !user) {
       router.replace("/login?next=/agenda");
     }
-    if (!loading && user && user.tipo === "beneficiario") {
-      router.replace("/horarios");
-    }
   }, [user, loading, router]);
 
   function handleLogout() {

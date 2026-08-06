@@ -4,7 +4,7 @@ import { useState, useCallback } from "react";
 import Link from "next/link";
 import { Badge, Card, FilterBar, Field, Input, Select, LinkButton, PageHeader, Pagination } from "@/components/ui";
 import { useQuery } from "@/lib/hooks/useQuery";
-import { type Paginated, type EquipamentoApi, type NucleoApi } from "@/lib/api/services";
+import { equipamentosApi, nucleosApi, type Paginated, type EquipamentoApi, type NucleoApi } from "@/lib/api/services";
 import { conservacaoLabel, conservacaoTone } from "@/lib/status";
 import { formatarData } from "@/lib/utils";
 
@@ -17,10 +17,10 @@ export default function EquipamentosPage() {
   const [pagina, setPagina] = useState(1);
 
   const { data: pageData, loading } = useQuery<Paginated<EquipamentoApi>>(
-    "/api/v1/equipamentos",
-    { ...ativos, page: pagina, limit: PER_PAGE },
+    () => equipamentosApi.list({ ...ativos, page: pagina, limit: PER_PAGE }),
+    [ativos, pagina],
   );
-  const { data: nucleosData } = useQuery<Paginated<NucleoApi>>("/api/v1/nucleos", { limit: 200 });
+  const { data: nucleosData } = useQuery<Paginated<NucleoApi>>(() => nucleosApi.list({ limit: 200 }), []);
 
   const resultado = pageData?.data ?? [];
   const total = pageData?.total ?? 0;

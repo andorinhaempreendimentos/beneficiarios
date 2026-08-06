@@ -5,7 +5,7 @@ import Link from "next/link";
 import { UserCheck, UserX } from "lucide-react";
 import { Badge, Card, Field, Input, LinkButton, PageHeader, Select, FilterBar, StatCard, Pagination } from "@/components/ui";
 import { useQuery } from "@/lib/hooks/useQuery";
-import { type Paginated, type FuncionarioApi } from "@/lib/api/services";
+import { funcionariosApi, type Paginated, type FuncionarioApi } from "@/lib/api/services";
 import { statusFuncionarioLabel, statusFuncionarioTone } from "@/lib/status";
 import { formatarData } from "@/lib/utils";
 
@@ -18,11 +18,11 @@ export default function FuncionariosPage() {
   const [pagina, setPagina] = useState(1);
 
   const { data: pageData, loading } = useQuery<Paginated<FuncionarioApi>>(
-    "/api/v1/funcionarios",
-    { ...ativos, page: pagina, limit: PER_PAGE },
+    () => funcionariosApi.list({ ...ativos, page: pagina, limit: PER_PAGE }),
+    [ativos, pagina],
   );
-  const { data: statsAdm } = useQuery<Paginated<FuncionarioApi>>("/api/v1/funcionarios", { status: "contratado,voluntario", limit: 1 });
-  const { data: statsDes } = useQuery<Paginated<FuncionarioApi>>("/api/v1/funcionarios", { status: "demitido", limit: 1 });
+  const { data: statsAdm } = useQuery<Paginated<FuncionarioApi>>(() => funcionariosApi.list({ status: "contratado,voluntario", limit: 1 }), []);
+  const { data: statsDes } = useQuery<Paginated<FuncionarioApi>>(() => funcionariosApi.list({ status: "demitido", limit: 1 }), []);
 
   const resultado = pageData?.data ?? [];
   const total = pageData?.total ?? 0;
@@ -116,7 +116,7 @@ export default function FuncionariosPage() {
                       </Badge>
                     </td>
                     <td className="px-5 py-3 text-zinc-600">{f.funcao}</td>
-                    <td className="px-5 py-3 text-zinc-600">{formatarData(f.dataAdmissao)}</td>
+                    <td className="px-5 py-3 text-zinc-600">{f.dataAdmissao ? formatarData(f.dataAdmissao) : "—"}</td>
                     <td className="px-5 py-3 text-zinc-600">{f.alocadoEm}</td>
                     <td className="px-5 py-3 text-right">
                       <Link href={`/funcionarios/${f.id}`} className="text-sky-600 hover:underline">Detalhes</Link>

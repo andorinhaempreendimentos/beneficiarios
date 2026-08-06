@@ -4,7 +4,7 @@ import { useState, useCallback } from "react";
 import Link from "next/link";
 import { Badge, Card, FilterBar, Field, Input, Select, LinkButton, PageHeader, Pagination } from "@/components/ui";
 import { useQuery } from "@/lib/hooks/useQuery";
-import { type Paginated, type UsuarioApi, type PerfilApi } from "@/lib/api/services";
+import { usuariosApi, perfisApi, type Paginated, type UsuarioApi, type PerfilApi } from "@/lib/api/services";
 import { formatarData } from "@/lib/utils";
 
 const PER_PAGE = 15;
@@ -16,10 +16,10 @@ export default function UsuariosPage() {
   const [pagina, setPagina] = useState(1);
 
   const { data: pageData, loading } = useQuery<Paginated<UsuarioApi>>(
-    "/api/v1/usuarios",
-    { ...ativos, page: pagina, limit: PER_PAGE },
+    () => usuariosApi.list({ ...ativos, page: pagina, limit: PER_PAGE }),
+    [ativos, pagina],
   );
-  const { data: perfisData } = useQuery<Paginated<PerfilApi>>("/api/v1/usuarios/perfis", { limit: 100 });
+  const { data: perfisData } = useQuery<Paginated<PerfilApi>>(() => perfisApi.list({ limit: 100 }), []);
 
   const resultado = pageData?.data ?? [];
   const total = pageData?.total ?? 0;

@@ -4,7 +4,7 @@ import { useState, useCallback } from "react";
 import Link from "next/link";
 import { Badge, Card, FilterBar, Field, Input, Select, LinkButton, PageHeader, Pagination } from "@/components/ui";
 import { useQuery } from "@/lib/hooks/useQuery";
-import { type Paginated, type TurmaApi, type NucleoApi, type AtividadeApi } from "@/lib/api/services";
+import { turmasApi, nucleosApi, atividadesApi, type Paginated, type TurmaApi, type NucleoApi, type AtividadeApi } from "@/lib/api/services";
 
 const PER_PAGE = 15;
 const EMPTY = { busca: "", nucleoId: "", atividadeId: "", exclusiva: "" };
@@ -15,11 +15,11 @@ export default function TurmasPage() {
   const [pagina, setPagina] = useState(1);
 
   const { data: pageData, loading } = useQuery<Paginated<TurmaApi>>(
-    "/api/v1/turmas",
-    { ...ativos, page: pagina, limit: PER_PAGE },
+    () => turmasApi.list({ ...ativos, page: pagina, limit: PER_PAGE }),
+    [ativos, pagina],
   );
-  const { data: nucleosData } = useQuery<Paginated<NucleoApi>>("/api/v1/nucleos", { limit: 200 });
-  const { data: atividadesData } = useQuery<Paginated<AtividadeApi>>("/api/v1/atividades", { limit: 200 });
+  const { data: nucleosData } = useQuery<Paginated<NucleoApi>>(() => nucleosApi.list({ limit: 200 }), []);
+  const { data: atividadesData } = useQuery<Paginated<AtividadeApi>>(() => atividadesApi.list({ limit: 200 }), []);
 
   const resultado = pageData?.data ?? [];
   const total = pageData?.total ?? 0;

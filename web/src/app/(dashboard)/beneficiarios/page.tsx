@@ -18,12 +18,12 @@ export default function BeneficiariosPage() {
   const [pagina, setPagina] = useState(1);
 
   const { data: pageData, loading, refetch } = useQuery<Paginated<BeneficiarioApi>>(
-    "/api/v1/beneficiarios",
-    { ...ativos, page: pagina, limit: PER_PAGE },
+    () => beneficiariosApi.list({ ...ativos, page: pagina, limit: PER_PAGE }),
+    [ativos, pagina],
   );
 
-  const { data: nucleosData } = useQuery<Paginated<NucleoApi>>("/api/v1/nucleos", { limit: 200 });
-  const { data: atividadesData } = useQuery<Paginated<AtividadeApi>>("/api/v1/atividades", { limit: 200 });
+  const { data: nucleosData } = useQuery<Paginated<NucleoApi>>(() => nucleosApi.list({ limit: 200 }), []);
+  const { data: atividadesData } = useQuery<Paginated<AtividadeApi>>(() => atividadesApi.list({ limit: 200 }), []);
 
   const nucleos = nucleosData?.data ?? [];
   const atividades = atividadesData?.data ?? [];

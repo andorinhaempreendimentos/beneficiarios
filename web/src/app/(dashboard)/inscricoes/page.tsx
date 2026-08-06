@@ -5,27 +5,26 @@ import { useState, useCallback } from "react";
 import { CheckCircle2, XCircle } from "lucide-react";
 import { Badge, Card, PageHeader, Pagination } from "@/components/ui";
 import { useQuery } from "@/lib/hooks/useQuery";
-import { apiPatch } from "@/lib/api/client";
-import { type Paginated, type InscricaoApi, type NucleoApi, type AtividadeApi, type TurmaApi } from "@/lib/api/services";
+import { inscricoesApi, nucleosApi, atividadesApi, turmasApi, type Paginated, type InscricaoApi, type NucleoApi, type AtividadeApi, type TurmaApi } from "@/lib/api/services";
 import { formatarData } from "@/lib/utils";
 import { LinkRow } from "@/components/inscricoes/LinkRow";
 
 const PER_PAGE = 20;
-type StatusInscricao = "pendente" | "aprovada" | "fila_espera" | "cancelada";
+type StatusInscricao = "pendente" | "aprovada" | "reservada" | "cancelada";
 
 const TONE: Record<StatusInscricao, "amber" | "green" | "sky" | "red"> = {
-  pendente: "amber", aprovada: "green", fila_espera: "sky", cancelada: "red",
+  pendente: "amber", aprovada: "green", reservada: "sky", cancelada: "red",
 };
 const LABEL: Record<StatusInscricao, string> = {
-  pendente: "Pendente", aprovada: "Aprovada", fila_espera: "Fila de espera", cancelada: "Cancelada",
+  pendente: "Pendente", aprovada: "Aprovada", reservada: "Fila de espera", cancelada: "Cancelada",
 };
-const STATUS_ORDER: StatusInscricao[] = ["pendente", "fila_espera", "aprovada", "cancelada"];
+const STATUS_ORDER: StatusInscricao[] = ["pendente", "reservada", "aprovada", "cancelada"];
 
 type Filtro = StatusInscricao | "todas";
 const FILTROS: { value: Filtro; label: string }[] = [
   { value: "todas", label: "Todas" },
   { value: "pendente", label: "Pendentes" },
-  { value: "fila_espera", label: "Fila de espera" },
+  { value: "reservada", label: "Fila de espera" },
   { value: "aprovada", label: "Aprovadas" },
   { value: "cancelada", label: "Canceladas" },
 ];
@@ -35,25 +34,27 @@ export default function InscricoesPage() {
   const [pagina, setPagina] = useState(1);
 
   const { data: pageData, loading, refetch } = useQuery<Paginated<InscricaoApi>>(
-    "/api/v1/inscricoes",
-    { status: filtro !== "todas" ? filtro : undefined, page: pagina, limit: PER_PAGE },
+    () => inscricoesApi.list({ status: filtro !== "todas" ? filtro : undefined, page: pagina, limit: PER_PAGE }),
+    [filtro, pagina],
   );
-  const { data: statsData } = useQuery<Paginated<InscricaoApi>>("/api/v1/inscricoes", { limit: 1 });
-  const { data: pendData } = useQuery<Paginated<InscricaoApi>>("/api/v1/inscricoes", { status: "pendente", limit: 1 });
-  const { data: aprovData } = useQuery<Paginated<InscricaoApi>>("/api/v1/inscricoes", { status: "aprovada", limit: 1 });
-  const { data: filaData } = useQuery<Paginated<InscricaoApi>>("/api/v1/inscricoes", { status: "fila_espera", limit: 1 });
-  const { data: cancelData } = useQuery<Paginated<InscricaoApi>>("/api/v1/inscricoes", { status: "cancelada", limit: 1 });
+  const { data: pendData } = useQuery<Paginated<InscricaoApi>>(() => inscricoesApi.list({ status: "pendente", limit: 1 }), []);
+  const { data: aprovData } = useQuery<Paginated<InscricaoApi>>(() => inscricoesApi.list({ status: "aprovada", limit: 1 }), []);
+  const { data: filaData } = useQuery<Paginated<InscricaoApi>>(() => inscricoesApi.list({ status: "reservada", limit: 1 }), []);
+  const { data: cancelData } = useQuery<Paginated<InscricaoApi>>(() => inscricoesApi.list({ status: "cancelada", limit: 1 }), []);
 
-  const { data: nucleosData } = useQuery<Paginated<NucleoApi>>("/api/v1/nucleos", { emFuncionamento: "true", limit: 200 });
-  const { data: atividadesData } = useQuery<Paginated<AtividadeApi>>("/api/v1/atividades", { limit: 200 });
-  const { data: turmasData } = useQuery<Paginated<TurmaApi>>("/api/v1/turmas", { limit: 200 });
+  const { data: nucleosData } = useQuery<Paginated<NucleoApi>>(() => nucleosApi.list({ emFuncionamento: "true", limit: 200 }), []);
+  const { data: atividadesData } = useQuery<Paginated<AtividadeApi>>(() => atividadesApi.list({ limit: 200 }), []);
+  const { data: turmasData } = useQuery<Paginated<TurmaApi>>(() => turmasApi.list({ limit: 200 }), []);
 
   const [actionId, setActionId] = useState<string | null>(null);
 
-  async function handleAcao(id: string, status: "aprovada" | "cancelada") {
+  async function handleAcao(id: string, acao: "aprovada" | "cancelada") {
     setActionId(id);
-    try { await apiPatch(`/api/v1/inscricoes/${id}`, { status }); refetch(); }
-    finally { setActionId(null); }
+    try {
+      if (acao === "aprovada") await inscricoesApi.aprovar(id);
+      else await inscricoesApi.cancelar(id);
+      refetch();
+    } finally { setActionId(null); }
   }
 
   const lista = (pageData?.data ?? []).slice().sort(
@@ -69,7 +70,7 @@ export default function InscricoesPage() {
   const counts: Record<StatusInscricao, number> = {
     pendente: pendData?.total ?? 0,
     aprovada: aprovData?.total ?? 0,
-    fila_espera: filaData?.total ?? 0,
+    reservada: filaData?.total ?? 0,
     cancelada: cancelData?.total ?? 0,
   };
 

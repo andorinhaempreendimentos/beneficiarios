@@ -1,53 +1,35 @@
+"use client";
+
 import { Building2, ClipboardList, Dumbbell, FileBarChart, Plus, UserCheck, UserPlus, Users, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { Badge, Card, CardBody, CardHeader, StatCard } from "@/components/ui";
-import { nucleos } from "@/lib/mock/nucleos";
-import { beneficiarios } from "@/lib/mock/beneficiarios";
-import { funcionarios } from "@/lib/mock/funcionarios";
-import { atividades } from "@/lib/mock/atividades";
-import { turmas } from "@/lib/mock/turmas";
+import { useQuery } from "@/lib/hooks/useQuery";
+import { dashboardApi, type DashboardResumo } from "@/lib/api/services";
 import { formatarData } from "@/lib/utils";
 import { statusBeneficiarioTone } from "@/lib/status";
 
+const VAZIO: DashboardResumo = {
+  beneficiariosAtivos: 0, totalBeneficiarios: 0, nucleosAtivos: 0, funcionariosAtivos: 0,
+  funcionariosLicenca: 0, totalTurmas: 0, totalVagas: 0, totalOcupadas: 0, vagasLivres: 0,
+  ocupacaoGlobal: 0, totalModalidades: 0, topNucleos: [], distribuicaoPorModalidade: [], recentes: [],
+};
+
 export default function DashboardPage() {
-  const nucleosAtivos = nucleos.filter((n) => n.emFuncionamento).length;
-  const totalBeneficiarios = nucleos.reduce((acc, n) => acc + n.totalBeneficiarios, 0);
-  const beneficiariosAtivos = nucleos.reduce((acc, n) => acc + n.beneficiariosAtivos, 0);
-  const funcionariosAtivos = funcionarios.filter((f) => f.status === "contratado").length;
-  const funcionariosLicenca = funcionarios.filter((f) =>
-    f.status === "licenca_medica" || f.status === "licenca_maternidade" || f.status === "afastado_inss"
-  ).length;
-
-  const totalVagas = turmas.reduce((acc, t) => acc + t.vagasTotais, 0);
-  const totalOcupadas = turmas.reduce((acc, t) => acc + t.qtdBeneficiarios, 0);
-  const vagasLivres = totalVagas - totalOcupadas;
-  const ocupacaoGlobal = totalVagas > 0 ? Math.round((totalOcupadas / totalVagas) * 100) : 0;
-
-  const topNucleos = [...nucleos]
-    .sort((a, b) => b.beneficiariosAtivos - a.beneficiariosAtivos)
-    .slice(0, 5);
-
-  const distribuicaoPorModalidade = atividades
-    .map((a) => ({
-      nome: a.nome,
-      total: turmas.filter((t) => t.atividadeId === a.id).reduce((acc, t) => acc + t.qtdBeneficiarios, 0),
-    }))
-    .sort((a, b) => b.total - a.total);
-
-  const recentes = [...beneficiarios]
-    .sort((a, b) => b.dataCadastro.localeCompare(a.dataCadastro))
-    .slice(0, 5);
+  const { data, loading } = useQuery<DashboardResumo>(() => dashboardApi.resumo(), []);
+  const r = data ?? VAZIO;
 
   return (
     <div className="flex flex-col gap-6">
 
       {/* Métricas principais — 4 colunas, sem hero redundante */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <StatCard label="Beneficiários ativos" value={beneficiariosAtivos} icon={Users} tone="sky" />
-        <StatCard label="Núcleos em operação" value={nucleosAtivos} icon={Building2} tone="green" />
-        <StatCard label="Funcionários" value={funcionariosAtivos} icon={UsersRound} tone="sky" />
-        <StatCard label="Modalidades" value={atividades.length} icon={Dumbbell} tone="green" />
+        <StatCard label="Beneficiários ativos" value={r.beneficiariosAtivos} icon={Users} tone="sky" />
+        <StatCard label="Núcleos em operação" value={r.nucleosAtivos} icon={Building2} tone="green" />
+        <StatCard label="Funcionários" value={r.funcionariosAtivos} icon={UsersRound} tone="sky" />
+        <StatCard label="Modalidades" value={r.totalModalidades} icon={Dumbbell} tone="green" />
       </div>
+
+      {loading && <div className="px-1 text-sm text-zinc-400">Carregando…</div>}
 
       {/* Estatísticas detalhadas */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
@@ -61,12 +43,12 @@ export default function DashboardPage() {
           <CardBody className="flex flex-col gap-3">
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-lg bg-green-50 px-3 py-2.5">
-                <p className="text-xs text-green-700">Ativos</p>
-                <p className="text-2xl font-bold text-green-700">{beneficiariosAtivos}</p>
+                <p className="text-xs text-green-700">Aprovados</p>
+                <p className="text-2xl font-bold text-green-700">{r.beneficiariosAtivos}</p>
               </div>
               <div className="rounded-lg bg-zinc-50 px-3 py-2.5">
                 <p className="text-xs text-zinc-500">Total cadastrado</p>
-                <p className="text-2xl font-bold text-zinc-700">{totalBeneficiarios}</p>
+                <p className="text-2xl font-bold text-zinc-700">{r.totalBeneficiarios}</p>
               </div>
             </div>
             <Link
@@ -89,21 +71,21 @@ export default function DashboardPage() {
             <div className="grid grid-cols-3 gap-2">
               <div className="rounded-lg bg-zinc-50 px-3 py-2.5 text-center">
                 <p className="text-xs text-zinc-500">Turmas</p>
-                <p className="text-2xl font-bold text-zinc-700">{turmas.length}</p>
+                <p className="text-2xl font-bold text-zinc-700">{r.totalTurmas}</p>
               </div>
               <div className="rounded-lg bg-green-50 px-3 py-2.5 text-center">
                 <p className="text-xs text-green-700">Vagas livres</p>
-                <p className="text-2xl font-bold text-green-700">{vagasLivres}</p>
+                <p className="text-2xl font-bold text-green-700">{r.vagasLivres}</p>
               </div>
               <div className="rounded-lg bg-sky-50 px-3 py-2.5 text-center">
                 <p className="text-xs text-sky-700">Ocupação</p>
-                <p className="text-2xl font-bold text-sky-700">{ocupacaoGlobal}%</p>
+                <p className="text-2xl font-bold text-sky-700">{r.ocupacaoGlobal}%</p>
               </div>
             </div>
             <div className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-100">
               <div
                 className="h-full rounded-full bg-sky-500 transition-all"
-                style={{ width: `${ocupacaoGlobal}%` }}
+                style={{ width: `${r.ocupacaoGlobal}%` }}
               />
             </div>
             <Link
@@ -126,11 +108,11 @@ export default function DashboardPage() {
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-lg bg-green-50 px-3 py-2.5">
                 <p className="text-xs text-green-700">Contratados</p>
-                <p className="text-2xl font-bold text-green-700">{funcionariosAtivos}</p>
+                <p className="text-2xl font-bold text-green-700">{r.funcionariosAtivos}</p>
               </div>
               <div className="rounded-lg bg-amber-50 px-3 py-2.5">
                 <p className="text-xs text-amber-700">Em licença</p>
-                <p className="text-2xl font-bold text-amber-700">{funcionariosLicenca}</p>
+                <p className="text-2xl font-bold text-amber-700">{r.funcionariosLicenca}</p>
               </div>
             </div>
             <Link
@@ -177,8 +159,8 @@ export default function DashboardPage() {
             <h3 className="text-sm font-medium text-zinc-700">Beneficiários por modalidade</h3>
           </CardHeader>
           <CardBody className="flex flex-col gap-2">
-            {distribuicaoPorModalidade.map((m) => {
-              const pct = totalOcupadas > 0 ? Math.round((m.total / totalOcupadas) * 100) : 0;
+            {r.distribuicaoPorModalidade.map((m) => {
+              const pct = r.totalOcupadas > 0 ? Math.round((m.total / r.totalOcupadas) * 100) : 0;
               return (
                 <div key={m.nome} className="flex flex-col gap-1">
                   <div className="flex items-center justify-between text-sm">
@@ -201,8 +183,8 @@ export default function DashboardPage() {
             <Link href="/nucleos" className="text-xs text-sky-600 hover:underline">Ver todos</Link>
           </CardHeader>
           <CardBody className="flex flex-col gap-2">
-            {topNucleos.map((n, i) => {
-              const pct = beneficiariosAtivos > 0 ? Math.round((n.beneficiariosAtivos / beneficiariosAtivos) * 100) : 0;
+            {r.topNucleos.map((n, i) => {
+              const pct = r.beneficiariosAtivos > 0 ? Math.round((n.beneficiariosAtivos / r.beneficiariosAtivos) * 100) : 0;
               return (
                 <div key={n.id} className="flex items-center gap-3 text-sm">
                   <span className="w-5 text-right text-xs font-bold text-zinc-400">{i + 1}</span>
@@ -239,13 +221,12 @@ export default function DashboardPage() {
               </tr>
             </thead>
             <tbody>
-              {recentes.map((b) => {
-                const nucleo = nucleos.find((n) => n.id === b.nucleoId);
-                const tone = statusBeneficiarioTone[b.status] ?? "zinc";
+              {r.recentes.map((b) => {
+                const tone = statusBeneficiarioTone[b.status as keyof typeof statusBeneficiarioTone] ?? "zinc";
                 return (
                   <tr key={b.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
                     <td className="px-5 py-3 font-medium text-zinc-900">{b.nomeCompleto}</td>
-                    <td className="px-5 py-3 text-zinc-600">{nucleo?.identificacao ?? "—"}</td>
+                    <td className="px-5 py-3 text-zinc-600">{b.nucleo ?? "—"}</td>
                     <td className="px-5 py-3"><Badge tone={tone}>{b.status}</Badge></td>
                     <td className="px-5 py-3 text-zinc-600">{formatarData(b.dataCadastro)}</td>
                   </tr>

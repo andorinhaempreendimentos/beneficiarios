@@ -4,7 +4,7 @@ import { useState, useCallback } from "react";
 import Link from "next/link";
 import { Badge, Card, FilterBar, Field, Input, Select, LinkButton, PageHeader, Pagination } from "@/components/ui";
 import { useQuery } from "@/lib/hooks/useQuery";
-import { type Paginated, type ObjetoApi } from "@/lib/api/services";
+import { objetosApi, type Paginated, type ObjetoApi } from "@/lib/api/services";
 import { statusObjetoLabel, statusObjetoTone } from "@/lib/status";
 import { formatarData } from "@/lib/utils";
 
@@ -17,8 +17,8 @@ export default function ObjetosPage() {
   const [pagina, setPagina] = useState(1);
 
   const { data: pageData, loading } = useQuery<Paginated<ObjetoApi>>(
-    "/api/v1/objetos",
-    { ...ativos, page: pagina, limit: PER_PAGE },
+    () => objetosApi.list({ ...ativos, page: pagina, limit: PER_PAGE }),
+    [ativos, pagina],
   );
 
   const resultado = pageData?.data ?? [];

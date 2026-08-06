@@ -20,8 +20,8 @@ export default function NucleosPage() {
   const [pagina, setPagina] = useState(1);
 
   const { data: pageData, loading } = useQuery<Paginated<NucleoApi>>(
-    "/api/v1/nucleos",
-    { ...ativos, page: pagina, limit: PER_PAGE },
+    () => nucleosApi.list({ ...ativos, page: pagina, limit: PER_PAGE }),
+    [ativos, pagina],
   );
 
   const resultado = pageData?.data ?? [];

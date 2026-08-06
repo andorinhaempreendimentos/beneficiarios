@@ -2,9 +2,9 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { AuthProfile } from '@/lib/api/auth';
-import { apiMe, apiLogout } from '@/lib/api/auth';
+import { apiLogout, fetchProfile } from '@/lib/api/auth';
+import { createClient } from '@/lib/supabase/client';
 
-// AuthUser compatível com o resto do app
 export type AuthUser = AuthProfile & { refId: string };
 
 interface AuthContextValue {
@@ -21,25 +21,8 @@ const AuthContext = createContext<AuthContextValue>({
   loading: true,
 });
 
-const SESSION_KEY = 'andorinha_session';
-
 function toAuthUser(p: AuthProfile): AuthUser {
   return { ...p, refId: p.entidadeId ?? p.id };
-}
-
-function saveSession(u: AuthUser) {
-  try { sessionStorage.setItem(SESSION_KEY, JSON.stringify(u)); } catch { /* noop */ }
-}
-
-function loadSession(): AuthUser | null {
-  try {
-    const raw = sessionStorage.getItem(SESSION_KEY);
-    return raw ? (JSON.parse(raw) as AuthUser) : null;
-  } catch { return null; }
-}
-
-function clearSession() {
-  try { sessionStorage.removeItem(SESSION_KEY); } catch { /* noop */ }
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -47,36 +30,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Tentar restaurar sessão da memória de sessão primeiro (evita flash)
-    const cached = loadSession();
-    if (cached) {
-      setUser(cached);
-      setLoading(false);
-      return;
-    }
-    // Se não tiver em sessão, validar com a API
-    apiMe()
-      .then((profile) => {
-        const u = toAuthUser(profile);
-        saveSession(u);
-        setUser(u);
-      })
-      .catch(() => {
-        clearSession();
+    const supabase = createClient();
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
         setUser(null);
-      })
-      .finally(() => setLoading(false));
+        setLoading(false);
+        return;
+      }
+      fetchProfile(session.user.id)
+        .then((profile) => setUser(toAuthUser(profile)))
+        .catch(() => setUser(null))
+        .finally(() => setLoading(false));
+    });
+
+    const { data: subscription } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT' || !session) {
+        setUser(null);
+        return;
+      }
+      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
+        fetchProfile(session.user.id)
+          .then((profile) => setUser(toAuthUser(profile)))
+          .catch(() => setUser(null));
+      }
+    });
+
+    return () => subscription.subscription.unsubscribe();
   }, []);
 
   function login(profile: AuthProfile) {
-    const u = toAuthUser(profile);
-    saveSession(u);
-    setUser(u);
+    setUser(toAuthUser(profile));
   }
 
   async function logout() {
     try { await apiLogout(); } catch { /* ignora erro de rede */ }
-    clearSession();
     setUser(null);
     if (typeof window !== 'undefined') window.location.href = '/login';
   }
