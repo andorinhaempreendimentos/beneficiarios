@@ -4,8 +4,8 @@ import type { Database } from '@/lib/supabase/types';
 
 function createClient() {
   if (typeof window === 'undefined') {
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://qrzszjogxrrjqjkoowoi.supabase.co';
+    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'sb_publishable_AoXvaZk10chLPIIwIWIskA_s4z1xCUY';
     return createJSClient<Database>(url, key) as unknown as ReturnType<typeof createBrowserClient>;
   }
   return createBrowserClient();
@@ -720,7 +720,10 @@ export const beneficiariosApi = {
   async get(id: string): Promise<BeneficiarioApi> {
     const sb = createClient();
     const { data, error } = await sb.from('beneficiarios').select('*').eq('id', id).single();
-    if (error) throw error;
+    if (error) {
+      console.error('[beneficiariosApi.get Error]', error);
+      throw error;
+    }
     return mapBeneficiario(data);
   },
   async create(body: Record<string, unknown>): Promise<BeneficiarioApi> {
