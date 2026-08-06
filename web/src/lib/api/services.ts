@@ -1,13 +1,26 @@
-import { createClient as createJSClient } from '@supabase/supabase-js';
+import { createServerClient } from '@supabase/ssr';
 import { createClient as createBrowserClient } from '@/lib/supabase/client';
+import { cookies } from 'next/headers';
 import type { Database } from '@/lib/supabase/types';
 
-function createClient() {
+async function getSupabase() {
   if (typeof window === 'undefined') {
+    const cookieStore = await cookies();
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://qrzszjogxrrjqjkoowoi.supabase.co';
     const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'sb_publishable_AoXvaZk10chLPIIwIWIskA_s4z1xCUY';
-    return createJSClient<Database>(url, key) as unknown as ReturnType<typeof createBrowserClient>;
+    return createServerClient<Database>(url, key, {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll();
+        },
+        setAll() {},
+      },
+    });
   }
+  return createBrowserClient();
+}
+
+function createClient() {
   return createBrowserClient();
 }
 
@@ -399,7 +412,7 @@ export const objetosApi = {
     return { data: (data ?? []).map(mapObjeto), total: count ?? 0, page, limit };
   },
   async get(id: string): Promise<ObjetoApi> {
-    const sb = createClient();
+    const sb = await getSupabase();
     const { data, error } = await sb.from('objetos').select('*').eq('id', id).single();
     if (error) throw error;
     return mapObjeto(data);
@@ -454,7 +467,7 @@ export const organizacoesApi = {
     return { data: (data ?? []).map(mapOrganizacao), total: count ?? 0, page, limit };
   },
   async get(id: string): Promise<OrganizacaoApi> {
-    const sb = createClient();
+    const sb = await getSupabase();
     const { data, error } = await sb.from('organizacoes').select('*').eq('id', id).single();
     if (error) throw error;
     return mapOrganizacao(data);
@@ -510,7 +523,7 @@ export const nucleosApi = {
     return { data: (data ?? []).map(mapNucleo), total: count ?? 0, page, limit };
   },
   async get(id: string): Promise<NucleoApi> {
-    const sb = createClient();
+    const sb = await getSupabase();
     const { data, error } = await sb.from('nucleos').select('*').eq('id', id).single();
     if (error) throw error;
     return mapNucleo(data);
@@ -573,7 +586,7 @@ export const atividadesApi = {
     return { data: (data ?? []).map(mapAtividade), total: count ?? 0, page, limit };
   },
   async get(id: string): Promise<AtividadeApi> {
-    const sb = createClient();
+    const sb = await getSupabase();
     const { data, error } = await sb.from('atividades').select('*, atividade_turnos(*), atividade_perguntas(*)').eq('id', id).single();
     if (error) throw error;
     return mapAtividade(data);
@@ -627,7 +640,7 @@ export const turmasApi = {
     return { data: (data ?? []).map(mapTurma), total: count ?? 0, page, limit };
   },
   async get(id: string): Promise<TurmaApi> {
-    const sb = createClient();
+    const sb = await getSupabase();
     const { data, error } = await sb.from('turmas').select(TURMA_SELECT).eq('id', id).single();
     if (error) throw error;
     return mapTurma(data);
@@ -718,7 +731,7 @@ export const beneficiariosApi = {
     return { data: (data ?? []).map(mapBeneficiario), total: count ?? 0, page, limit };
   },
   async get(id: string): Promise<BeneficiarioApi> {
-    const sb = createClient();
+    const sb = await getSupabase();
     const { data, error } = await sb.from('beneficiarios').select('*').eq('id', id).single();
     if (error) {
       console.error('[beneficiariosApi.get Error]', error);
@@ -789,7 +802,7 @@ export const funcionariosApi = {
     return { data: (data ?? []).map(mapFuncionario), total: count ?? 0, page, limit };
   },
   async get(id: string): Promise<FuncionarioApi> {
-    const sb = createClient();
+    const sb = await getSupabase();
     const { data, error } = await sb.from('funcionarios').select('*').eq('id', id).single();
     if (error) throw error;
     return mapFuncionario(data);
@@ -851,7 +864,7 @@ export const equipamentosApi = {
     return { data: (data ?? []).map(mapEquipamento), total: count ?? 0, page, limit };
   },
   async get(id: string): Promise<EquipamentoApi> {
-    const sb = createClient();
+    const sb = await getSupabase();
     const { data, error } = await sb.from('equipamentos').select('*').eq('id', id).single();
     if (error) throw error;
     return mapEquipamento(data);
@@ -908,7 +921,7 @@ export const inscricoesApi = {
     return { data: (data ?? []).map(mapInscricao), total: count ?? 0, page, limit };
   },
   async get(id: string): Promise<InscricaoApi> {
-    const sb = createClient();
+    const sb = await getSupabase();
     const { data, error } = await sb.from('inscricoes').select(INSCRICAO_SELECT).eq('id', id).single();
     if (error) throw error;
     return mapInscricao(data);
@@ -957,7 +970,7 @@ export const usuariosApi = {
     return { data: (data ?? []).map(mapUsuario), total: count ?? 0, page, limit };
   },
   async get(id: string): Promise<UsuarioApi> {
-    const sb = createClient();
+    const sb = await getSupabase();
     const { data, error } = await sb.from('usuarios').select('*').eq('id', id).single();
     if (error) throw error;
     return mapUsuario(data);
@@ -1012,7 +1025,7 @@ export const perfisApi = {
     return { data: (data ?? []).map(mapPerfil), total: count ?? 0, page, limit };
   },
   async get(id: string): Promise<PerfilApi> {
-    const sb = createClient();
+    const sb = await getSupabase();
     const { data, error } = await sb.from('perfis').select(PERFIL_SELECT).eq('id', id).single();
     if (error) throw error;
     return mapPerfil(data);
