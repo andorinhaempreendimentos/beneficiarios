@@ -26,11 +26,13 @@ import { cn } from "@/lib/utils";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { Logo } from "@/components/ui/Logo";
 import { useAuth } from "@/components/providers/AuthProvider";
+import { useDicionario } from "@/components/providers/DictionaryProvider";
 
 export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { logout } = useAuth();
+  const { t } = useDicionario();
   const [open, setOpen] = useState(false);
   const turmasAtivo = pathname.startsWith("/turmas");
   const [turmasAberto, setTurmasAberto] = useState(turmasAtivo);
@@ -107,9 +109,9 @@ export function Sidebar() {
 
         <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
           {navLink("/", "Painel", LayoutDashboard)}
-          {navLink("/objetos", "Objetos", FolderKanban)}
-          {navLink("/organizacoes", "Organizações", Landmark)}
-          {navLink("/nucleos", "Núcleos", Building2)}
+          {navLink("/objetos", t("objeto", "Objeto", true), FolderKanban)}
+          {navLink("/organizacoes", t("organizacao", "Organização", true), Landmark)}
+          {navLink("/nucleos", t("local", "Núcleo", true), Building2)}
 
           {/* Turmas com subitem */}
           <div>
@@ -122,7 +124,7 @@ export function Sidebar() {
               )}
             >
               <GraduationCap className="h-4 w-4 shrink-0" />
-              <span className="flex-1 text-left">Turmas</span>
+              <span className="flex-1 text-left">{t("turma", "Turma", true)}</span>
               <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", turmasAberto && "rotate-180")} />
             </button>
             {turmasAberto && (
@@ -135,7 +137,7 @@ export function Sidebar() {
                     pathname === "/turmas" ? "text-sky-700 font-medium" : "text-zinc-500 hover:text-zinc-900"
                   )}
                 >
-                  Todas as turmas
+                  {`Todas as ${t("turma", "Turma", true).toLowerCase()}`}
                 </Link>
                 <Link
                   href="/inscricoes"
@@ -152,8 +154,8 @@ export function Sidebar() {
             )}
           </div>
 
-          {navLink("/atividades", "Atividades", Dumbbell)}
-          {navLink("/beneficiarios", "Beneficiários", Users)}
+          {navLink("/atividades", t("atividade", "Atividade", true), Dumbbell)}
+          {navLink("/beneficiarios", t("beneficiario", "Beneficiário", true), Users)}
           {navLink("/funcionarios", "Pessoal", UsersRound)}
           {navLink("/equipamentos", "Equipamentos", Box)}
 
