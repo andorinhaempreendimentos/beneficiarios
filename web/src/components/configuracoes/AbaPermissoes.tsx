@@ -93,7 +93,7 @@ export function AbaPermissoes() {
       <Card>
         <CardHeader>
           <h3 className="text-sm font-medium text-zinc-700">
-            Permissões — <span className="text-sky-700">{perfil.nome}</span>
+            Permissões — <span className="text-sky-700">{perfil?.nome ?? "Perfil"}</span>
           </h3>
         </CardHeader>
         <div className="overflow-x-auto">
