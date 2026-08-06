@@ -2,26 +2,27 @@ import { createServerClient } from '@supabase/ssr';
 import { createClient as createBrowserClient } from '@/lib/supabase/client';
 import type { Database } from '@/lib/supabase/types';
 
-async function getSupabase() {
+function createClient() {
   if (typeof window === 'undefined') {
     const { cookies } = require('next/headers');
-    const cookieStore = await cookies();
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://qrzszjogxrrjqjkoowoi.supabase.co';
-    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'sb_publishable_AoXvaZk10chLPIIwIWIskA_s4z1xCUY';
-    return createServerClient<Database>(url, key, {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll();
+    // Em contextos síncronos legados do servidor
+    try {
+      const cookieStore = require('next/headers').cookies();
+      const url = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://qrzszjogxrrjqjkoowoi.supabase.co';
+      const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'sb_publishable_AoXvaZk10chLPIIwIWIskA_s4z1xCUY';
+      return createServerClient<Database>(url, key, {
+        cookies: {
+          getAll() {
+            return typeof cookieStore.getAll === 'function' ? cookieStore.getAll() : [];
+          },
+          setAll() {},
         },
-        setAll() {},
-      },
-    });
+      });
+    } catch {
+      return createBrowserClient();
+    }
   }
   return createBrowserClient();
-}
-
-function createClient() {
-  return getSupabase();
 }
 
 export interface Paginated<T> {
