@@ -541,7 +541,7 @@ export const nucleosApi = {
     if (error) throw error;
 
     if (atividadeIds.length > 0) {
-      await sb.from('nucleo_atividades').insert(atividadeIds.map((aId) => ({ nucleo_id: data.id, atividade_id: aId })));
+      await sb.from('nucleo_atividades' as any).insert(atividadeIds.map((aId) => ({ nucleo_id: data.id, atividade_id: aId })));
     }
     return mapNucleo({ ...data, nucleo_atividades: atividadeIds.map((aId) => ({ atividade_id: aId })) });
   },
@@ -552,9 +552,9 @@ export const nucleosApi = {
     if (error) throw error;
 
     if (atividadeIds !== undefined) {
-      await sb.from('nucleo_atividades').delete().eq('nucleo_id', id);
+      await sb.from('nucleo_atividades' as any).delete().eq('nucleo_id', id);
       if (atividadeIds.length > 0) {
-        await sb.from('nucleo_atividades').insert(atividadeIds.map((aId) => ({ nucleo_id: id, atividade_id: aId })));
+        await sb.from('nucleo_atividades' as any).insert(atividadeIds.map((aId) => ({ nucleo_id: id, atividade_id: aId })));
       }
     }
     return mapNucleo({
