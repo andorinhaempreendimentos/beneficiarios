@@ -1,10 +1,10 @@
 import { createServerClient } from '@supabase/ssr';
 import { createClient as createBrowserClient } from '@/lib/supabase/client';
-import { cookies } from 'next/headers';
 import type { Database } from '@/lib/supabase/types';
 
 async function getSupabase() {
   if (typeof window === 'undefined') {
+    const { cookies } = require('next/headers');
     const cookieStore = await cookies();
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://qrzszjogxrrjqjkoowoi.supabase.co';
     const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'sb_publishable_AoXvaZk10chLPIIwIWIskA_s4z1xCUY';
