@@ -15,6 +15,7 @@ interface TurmaFormProps {
 export function TurmaForm({ turma: t, nucleos = [], atividades = [], backHref }: TurmaFormProps) {
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  const [exclusiva, setExclusiva] = useState(t?.exclusiva ?? false);
   const [nucleoId, setNucleoId] = useState(t?.nucleoId ?? "");
   const [atividadeId, setAtividadeId] = useState(t?.atividadeId ?? "");
 
