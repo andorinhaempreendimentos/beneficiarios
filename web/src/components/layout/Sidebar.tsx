@@ -83,19 +83,26 @@ export function Sidebar() {
           open ? "left-0" : "-left-60"
         )}
       >
-        <div className="flex h-16 items-center justify-between border-b border-zinc-200 px-4">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <Logo className="h-8 w-8 shrink-0" />
-            <span className="truncate text-sm font-semibold text-zinc-900">{config.nomeSistema}</span>
-          </div>
+        <div className="relative flex flex-col items-center justify-center border-b border-zinc-200 px-4 py-3">
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className="flex h-8 w-8 items-center justify-center rounded-md hover:bg-zinc-100 lg:hidden"
+            className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-md hover:bg-zinc-100 lg:hidden"
             aria-label="Fechar menu"
           >
             <X className="h-4 w-4 text-zinc-500" />
           </button>
+          {config.logoUrl ? (
+            <>
+              <Logo className="h-12 w-full object-contain" />
+              <span className="mt-1 truncate text-xs font-medium text-zinc-400">{config.nomeSistema}</span>
+            </>
+          ) : (
+            <div className="flex items-center gap-2.5">
+              <Logo className="h-8 w-8 shrink-0" />
+              <span className="truncate text-sm font-semibold text-zinc-900">{config.nomeSistema}</span>
+            </div>
+          )}
         </div>
 
         <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
