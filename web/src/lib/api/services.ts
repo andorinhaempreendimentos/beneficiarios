@@ -4,8 +4,6 @@ import type { Database } from '@/lib/supabase/types';
 
 function createClient() {
   if (typeof window === 'undefined') {
-    const { cookies } = require('next/headers');
-    // Em contextos síncronos legados do servidor
     try {
       const cookieStore = require('next/headers').cookies();
       const url = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://qrzszjogxrrjqjkoowoi.supabase.co';
@@ -23,6 +21,10 @@ function createClient() {
     }
   }
   return createBrowserClient();
+}
+
+async function getSupabase() {
+  return createClient();
 }
 
 export interface Paginated<T> {
