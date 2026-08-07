@@ -15,7 +15,7 @@ import {
 } from "@/components/ui";
 import type { Anexo, Beneficiario, PerguntaParQ, VinculoTurma } from "@/lib/types";
 import { beneficiariosApi, type NucleoApi, type TurmaApi } from "@/lib/api/services";
-import { validarCpf, validarCep } from "@/lib/mascaras";
+import { validarCpf, validarCep, validarEmail } from "@/lib/mascaras";
 
 const PERGUNTAS_PARQ = [
   "Algum médico já disse que você possui um problema de coração e recomendou que você só praticasse atividade física supervisionado?",
@@ -78,9 +78,16 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
     const formData = new FormData(e.currentTarget);
     const cpf = String(formData.get("cpf") || "");
     const cep = String(formData.get("cep") || "");
+    const email = String(formData.get("email") || "");
 
     if (cpf && !validarCpf(cpf)) {
       setErro("CPF inválido. Por favor, verifique o número digitado.");
+      setLoading(false);
+      return;
+    }
+
+    if (email && !validarEmail(email)) {
+      setErro("Endereço de e-mail inválido. Utilize o formato termo1@termo2.termo3.");
       setLoading(false);
       return;
     }
@@ -415,10 +422,10 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
             <Input name="nomeMae" />
           </Field>
           <Field label="CPF">
-            <Input name="cpf" defaultValue={b?.cpf} placeholder="000.000.000-00" />
+            <Input name="cpf" mask="cpf" defaultValue={b?.cpf} placeholder="000.000.000-00" />
           </Field>
           <Field label="Número do NIS">
-            <Input name="numeroNis" defaultValue={b?.numeroNis} />
+            <Input name="numeroNis" mask="numeros" defaultValue={b?.numeroNis} />
           </Field>
         </div>
 
@@ -447,7 +454,7 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
             <Input name="rgResponsavel" defaultValue={b?.rgResponsavel} />
           </Field>
           <Field label="CPF do responsável">
-            <Input name="cpfResponsavel" defaultValue={b?.cpfResponsavel} placeholder="000.000.000-00" />
+            <Input name="cpfResponsavel" mask="cpf" defaultValue={b?.cpfResponsavel} placeholder="000.000.000-00" />
           </Field>
         </div>
       </FormSection>
