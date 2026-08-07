@@ -1,32 +1,32 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface RadioGroupProps {
   name: string;
   options: string[];
   value?: string;
+  defaultValue?: string;
   onChange?: (value: string) => void;
 }
 
-export function RadioGroup({ name, options, value: propValue, onChange }: RadioGroupProps) {
-  const [selectedValue, setSelectedValue] = useState(propValue || "");
+export function RadioGroup({ name, options, value: externalValue, defaultValue, onChange }: RadioGroupProps) {
+  const [internalValue, setInternalValue] = useState(defaultValue || options[0] || "");
+  const selectedValue = externalValue !== undefined ? externalValue : internalValue;
 
-  useEffect(() => {
-    if (propValue !== undefined) {
-      setSelectedValue(propValue);
+  function handleSelect(val: string) {
+    if (externalValue === undefined) {
+      setInternalValue(val);
     }
-  }, [propValue]);
-
-  const handleSelect = (option: string) => {
-    setSelectedValue(option);
-    onChange?.(option);
-  };
+    onChange?.(val);
+  }
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap items-center gap-2">
+      {/* Campo hidden para garantir captura no FormData do formulario */}
       <input type="hidden" name={name} value={selectedValue} />
+
       {options.map((option) => {
         const isSelected = selectedValue === option;
         return (
@@ -35,10 +35,10 @@ export function RadioGroup({ name, options, value: propValue, onChange }: RadioG
             type="button"
             onClick={() => handleSelect(option)}
             className={cn(
-              "px-4 py-2 text-xs font-bold rounded-xl border transition-all duration-200 active:scale-95",
+              "flex items-center justify-center rounded-xl px-4 py-2 text-xs font-semibold transition-all transform active:scale-95 border",
               isSelected
-                ? "bg-sky-600 border-sky-600 text-white shadow-md shadow-sky-100"
-                : "bg-white border-zinc-200 text-zinc-700 hover:border-zinc-300 hover:bg-zinc-50"
+                ? "bg-sky-600 text-white border-sky-600 shadow-md ring-2 ring-sky-500/20"
+                : "bg-white text-zinc-600 border-zinc-200 hover:border-sky-300 hover:bg-sky-50/50"
             )}
           >
             {option}

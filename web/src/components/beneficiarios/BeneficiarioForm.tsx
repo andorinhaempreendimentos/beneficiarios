@@ -39,6 +39,7 @@ interface BeneficiarioFormProps {
 export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], backHref }: BeneficiarioFormProps) {
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  const [sexo, setSexo] = useState(b?.sexo || "Masculino");
   const [pcd, setPcd] = useState(b?.pcd ?? false);
   const [vinculos, setVinculos] = useState<VinculoTurma[]>(b?.turmas ?? []);
   const [anexos, setAnexos] = useState<Anexo[]>(b?.anexos ?? []);
@@ -165,7 +166,13 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
             </Select>
           </Field>
           <Field label="Sexo" required>
-            <RadioGroup name="sexo" options={["Masculino", "Feminino", "Não Informar"]} value={b?.sexo} />
+            <RadioGroup
+              name="sexo"
+              options={["Masculino", "Feminino", "Não Informar"]}
+              defaultValue={b?.sexo || "Masculino"}
+              value={sexo}
+              onChange={setSexo}
+            />
           </Field>
           <Field label="Data de cadastro" required>
             <Input type="date" name="dataCadastro" defaultValue={b?.dataCadastro} />

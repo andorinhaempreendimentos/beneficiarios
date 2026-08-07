@@ -33,6 +33,7 @@ interface InscricaoPublicaFormProps {
 }
 
 export function InscricaoPublicaForm({ turmaId, onSubmit }: InscricaoPublicaFormProps) {
+  const [sexo, setSexo] = useState("Masculino");
   const [pcd, setPcd] = useState(false);
   const [parQ, setParQ] = useState<PerguntaParQ[]>(
     PERGUNTAS_PARQ.map((p) => ({ pergunta: p }))
@@ -92,7 +93,12 @@ export function InscricaoPublicaForm({ turmaId, onSubmit }: InscricaoPublicaForm
             </Select>
           </Field>
           <Field label="Sexo" required>
-            <RadioGroup name="sexo" options={["Masculino", "Feminino", "Não Informar"]} />
+            <RadioGroup
+              name="sexo"
+              options={["Masculino", "Feminino", "Não Informar"]}
+              value={sexo}
+              onChange={setSexo}
+            />
           </Field>
           <Field label="Pessoa com deficiência (PCD)?" required>
             <RadioGroup
