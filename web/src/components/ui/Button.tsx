@@ -46,12 +46,13 @@ interface LinkButtonProps {
   variant?: Variant;
   size?: Size;
   className?: string;
+  onClick?: (e: React.MouseEvent) => void;
   children: React.ReactNode;
 }
 
-export function LinkButton({ href, variant = "primary", size = "md", className, children }: LinkButtonProps) {
+export function LinkButton({ href, variant = "primary", size = "md", className, onClick, children }: LinkButtonProps) {
   return (
-    <Link href={href} className={cn(base, variantClasses[variant], sizeClasses[size], className)}>
+    <Link href={href} onClick={onClick} className={cn(base, variantClasses[variant], sizeClasses[size], className)}>
       {children}
     </Link>
   );
