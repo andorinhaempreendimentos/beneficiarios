@@ -121,9 +121,10 @@ export function InscricaoPublicaForm({ turmaId, onSubmit }: InscricaoPublicaForm
       };
 
       const createdBeneficiario = await beneficiariosApi.create(data);
-      await inscricoesApi.criar(createdBeneficiario.id, turmaId, "Inscrição pública", { parQ });
+      const novaInscricao = await inscricoesApi.criar(createdBeneficiario.id, turmaId, "Inscrição pública", { parQ });
 
-      router.push(`/inscricao/confirmacao?turmaId=${turmaId}&tipo=aprovada`);
+      const tipoStatus = novaInscricao.status === "reservada" ? "fila" : novaInscricao.status;
+      router.push(`/inscricao/confirmacao?turmaId=${turmaId}&tipo=${tipoStatus}`);
     } catch (err: any) {
       console.error("Erro na inscrição pública:", err);
       setErro(err?.message || "Ocorreu um erro ao processar sua inscrição. Tente novamente.");

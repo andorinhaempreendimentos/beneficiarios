@@ -153,6 +153,7 @@ export interface TurmaApi {
   responsaveis: string[];
   vagasTotais: number;
   exclusiva: boolean;
+  statusInicial?: "aprovada" | "pendente" | "reservada";
   dataInicio?: string;
   dataFim?: string;
   criadoEm: string;
@@ -323,6 +324,7 @@ function mapTurma(r: any): TurmaApi {
     id: r.id, nome: r.nome, nucleoId: r.nucleo_id, atividadeId: r.atividade_id,
     responsaveis: (r.turma_responsaveis ?? []).map((tr: any) => tr.funcionario_id),
     vagasTotais: r.vagas_totais, exclusiva: r.exclusiva,
+    statusInicial: r.status_inicial ?? 'aprovada',
     dataInicio: r.data_inicio ?? undefined, dataFim: r.data_fim ?? undefined,
     criadoEm: r.created_at,
     nucleo: r.nucleos ? mapNucleo(r.nucleos) : undefined,
@@ -755,6 +757,7 @@ function toTurmaRow(b: Record<string, unknown>): Database['public']['Tables']['t
     atividade_id: b.atividadeId as string,
     vagas_totais: b.vagasTotais as number | undefined,
     exclusiva: b.exclusiva as boolean | undefined,
+    status_inicial: b.statusInicial as Database['public']['Enums']['status_inscricao'] | undefined,
     data_inicio: b.dataInicio as string | null | undefined,
     data_fim: b.dataFim as string | null | undefined,
   };

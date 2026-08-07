@@ -77,6 +77,7 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], backHref }:
       atividadeId: aId,
       vagasTotais: Number(formData.get("vagasTotais") || 30),
       exclusiva,
+      statusInicial: (formData.get("statusInicial") as any) || "aprovada",
       dataInicio: (formData.get("dataInicio") as string) || null,
       dataFim: (formData.get("dataFim") as string) || null,
     };
@@ -143,6 +144,13 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], backHref }:
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="Vagas totais" required>
             <Input name="vagasTotais" type="number" defaultValue={t?.vagasTotais?.toString()} placeholder="30" />
+          </Field>
+          <Field label="Status inicial da inscrição" required hint="Status que o beneficiário recebe ao se inscrever pelo link público">
+            <Select name="statusInicial" defaultValue={t?.statusInicial || "aprovada"}>
+              <option value="aprovada">Aprovado automaticamente</option>
+              <option value="pendente">Pendente de aprovação</option>
+              <option value="reservada">Fila de espera</option>
+            </Select>
           </Field>
           <Field label="Data de início">
             <Input name="dataInicio" type="date" defaultValue={t?.dataInicio} />

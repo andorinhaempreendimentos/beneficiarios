@@ -139,6 +139,7 @@ export interface Turma {
   vagasTotais: number;
   qtdBeneficiarios: number;
   exclusiva: boolean;
+  statusInicial?: "aprovada" | "pendente" | "reservada";
   dataInicio: string;
   duracao: string;
 }
