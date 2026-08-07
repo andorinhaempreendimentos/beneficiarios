@@ -247,64 +247,85 @@ export function DashboardProfessorHub({
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
-          {["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"].map((dia) => {
-            const ehHoje = diaSemanaAtual.startsWith(dia);
-            const turmasDoDia = turmas;
+          {(() => {
+            const diasOrdenados = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+            const diaHojeNome = diaSemanaAtual.split("-")[0];
+            const indiceHoje = diasOrdenados.findIndex((d) => diaHojeNome.startsWith(d));
+            
+            // Reordena colocando o dia de HOJE primeiro
+            const diasReordenados = indiceHoje !== -1
+              ? [diasOrdenados[indiceHoje], ...diasOrdenados.slice(0, indiceHoje), ...diasOrdenados.slice(indiceHoje + 1)]
+              : diasOrdenados;
 
-            return (
-              <Card
-                key={dia}
-                className={`p-4 flex flex-col justify-between gap-3 min-h-[170px] ${
-                  ehHoje ? "border-2 border-sky-500 bg-sky-50/50 shadow-md" : "bg-white"
-                }`}
-              >
-                <div className="flex items-center justify-between border-b border-zinc-100 pb-2">
-                  <span className={`text-xs font-extrabold uppercase ${ehHoje ? "text-sky-700" : "text-zinc-600"}`}>
-                    {dia}
-                  </span>
-                  {ehHoje && <Badge tone="sky">Hoje</Badge>}
-                </div>
+            return diasReordenados.map((dia) => {
+              const ehHoje = diaSemanaAtual.startsWith(dia);
+              const turmasDoDia = turmas;
 
-                {turmasDoDia.length > 0 ? (
-                  <div className="flex flex-col gap-2">
-                    {turmasDoDia.slice(0, 2).map((t) => {
-                      const st = statusAtividade[t.id];
-                      return (
-                        <button
-                          key={t.id}
-                          type="button"
-                          onClick={() => setTurmaModal(t)}
-                          className="w-full text-left rounded-xl bg-gradient-to-r from-sky-100/90 to-indigo-100/60 hover:from-sky-200/90 hover:to-indigo-200/80 p-3 text-xs border border-sky-200 shadow-sm transition-all active:scale-95 group"
-                        >
-                          <div className="flex items-center justify-between gap-1 mb-1">
-                            <span className="font-bold text-sky-900 truncate group-hover:text-sky-950">{t.nome}</span>
-                            <Clock className="h-3.5 w-3.5 text-sky-600 shrink-0" />
-                          </div>
-
-                          <div className="flex items-center justify-between text-[10px] font-mono text-sky-800 font-semibold">
-                            <span>08:00 às 09:30</span>
-                            {st === "em_andamento" && (
-                              <span className="text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded font-bold">Iniciada</span>
-                            )}
-                            {st === "concluido" && (
-                              <span className="text-blue-700 bg-blue-100 px-1.5 py-0.5 rounded font-bold">Concluída</span>
-                            )}
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center py-4 text-center">
-                    <AlertCircle className="h-5 w-5 text-zinc-300 mb-1" />
-                    <span className="text-[11px] font-medium text-zinc-400 leading-tight">
-                      Sem treino agendado
+              return (
+                <Card
+                  key={dia}
+                  className={`p-4 flex flex-col justify-between gap-3 min-h-[175px] transition-all ${
+                    ehHoje
+                      ? "border-2 border-sky-500 bg-gradient-to-b from-sky-50 via-sky-50/80 to-indigo-50/40 shadow-xl ring-2 ring-sky-500/30 sm:col-span-2 lg:col-span-1"
+                      : "bg-white border-zinc-200 hover:border-zinc-300"
+                  }`}
+                >
+                  <div className="flex items-center justify-between border-b border-zinc-100 pb-2">
+                    <span className={`text-xs font-black uppercase tracking-wider ${ehHoje ? "text-sky-800" : "text-zinc-600"}`}>
+                      {dia}
                     </span>
+                    {ehHoje && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-sky-600 px-2.5 py-0.5 text-[10px] font-extrabold text-white shadow-sm animate-pulse">
+                        ★ HOJE
+                      </span>
+                    )}
                   </div>
-                )}
-              </Card>
-            );
-          })}
+
+                  {turmasDoDia.length > 0 ? (
+                    <div className="flex flex-col gap-2">
+                      {turmasDoDia.slice(0, 2).map((t) => {
+                        const st = statusAtividade[t.id];
+                        return (
+                          <button
+                            key={t.id}
+                            type="button"
+                            onClick={() => setTurmaModal(t)}
+                            className={`w-full text-left rounded-xl p-3 text-xs border transition-all active:scale-95 group shadow-sm ${
+                              ehHoje
+                                ? "bg-white hover:bg-sky-50/80 border-sky-300 shadow-sky-100"
+                                : "bg-zinc-50/80 hover:bg-zinc-100 border-zinc-200"
+                            }`}
+                          >
+                            <div className="flex items-center justify-between gap-1 mb-1">
+                              <span className="font-extrabold text-zinc-900 truncate group-hover:text-sky-700">{t.nome}</span>
+                              <Clock className="h-3.5 w-3.5 text-sky-600 shrink-0" />
+                            </div>
+
+                            <div className="flex items-center justify-between text-[10px] font-mono text-zinc-600 font-bold">
+                              <span>08:00 às 09:30</span>
+                              {st === "em_andamento" && (
+                                <span className="text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded font-bold">Iniciada</span>
+                              )}
+                              {st === "concluido" && (
+                                <span className="text-blue-700 bg-blue-100 px-1.5 py-0.5 rounded font-bold">Concluída</span>
+                              )}
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center py-4 text-center">
+                      <AlertCircle className="h-5 w-5 text-zinc-300 mb-1" />
+                      <span className="text-[11px] font-medium text-zinc-400 leading-tight">
+                        Sem treino agendado
+                      </span>
+                    </div>
+                  )}
+                </Card>
+              );
+            });
+          })()}
         </div>
       </div>
 
