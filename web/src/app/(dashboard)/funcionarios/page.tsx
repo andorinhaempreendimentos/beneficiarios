@@ -5,7 +5,7 @@ import Link from "next/link";
 import { UserCheck, UserX } from "lucide-react";
 import { Badge, Card, Field, Input, LinkButton, PageHeader, Select, FilterBar, StatCard, Pagination } from "@/components/ui";
 import { useQuery } from "@/lib/hooks/useQuery";
-import { funcionariosApi, type Paginated, type FuncionarioApi } from "@/lib/api/services";
+import { funcionariosApi, funcoesApi, type Paginated, type FuncionarioApi, type FuncaoApi } from "@/lib/api/services";
 import { statusFuncionarioLabel, statusFuncionarioTone } from "@/lib/status";
 import { formatarData } from "@/lib/utils";
 
@@ -16,6 +16,9 @@ export default function FuncionariosPage() {
   const [filtros, setFiltros] = useState(EMPTY);
   const [ativos, setAtivos] = useState(EMPTY);
   const [pagina, setPagina] = useState(1);
+
+  const { data: funcoesRes } = useQuery<FuncaoApi[]>(() => funcoesApi.list(), []);
+  const funcoes = funcoesRes ?? [];
 
   const { data: pageData, loading } = useQuery<Paginated<FuncionarioApi>>(
     () => funcionariosApi.list({ ...ativos, page: pagina, limit: PER_PAGE }),
@@ -51,16 +54,10 @@ export default function FuncionariosPage() {
         </Field>
         <Field label="Função">
           <Select value={filtros.funcao} onChange={(e) => setFiltros((f) => ({ ...f, funcao: e.target.value }))}>
-            <option value="">Todas</option>
-            <option value="Agente comunitário">Agente comunitário</option>
-            <option value="Articulador social">Articulador social</option>
-            <option value="Coordenador de núcleo">Coordenador de núcleo</option>
-            <option value="Coordenador de projeto">Coordenador de projeto</option>
-            <option value="Coordenador de setor">Coordenador de setor</option>
-            <option value="Instrutor">Instrutor</option>
-            <option value="Monitor">Monitor</option>
-            <option value="Fisioterapeuta">Fisioterapeuta</option>
-            <option value="Técnico de Enfermagem">Técnico de Enfermagem</option>
+            <option value="">Todas as funções</option>
+            {funcoes.map((fn) => (
+              <option key={fn.id} value={fn.nome}>{fn.nome}</option>
+            ))}
           </Select>
         </Field>
         <Field label="Status">
