@@ -13,6 +13,7 @@ import {
   Textarea,
 } from "@/components/ui";
 import type { PerguntaParQ } from "@/lib/types";
+import { validarCpf, validarCep, validarEmail } from "@/lib/mascaras";
 
 const PERGUNTAS_PARQ = [
   "Algum médico já disse que você possui um problema de coração e recomendou que você só praticasse atividade física supervisionado?",
@@ -59,10 +60,34 @@ export function InscricaoPublicaForm({ turmaId, onSubmit }: InscricaoPublicaForm
     }
   }
 
+  const [erro, setErro] = useState<string | null>(null);
+
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setErro(null);
+
+    const formData = new FormData(e.currentTarget);
+    const cpf = String(formData.get("cpf") || "");
+    const email = String(formData.get("email") || "");
+    const cepVal = String(formData.get("cep") || "");
+
+    if (cpf && !validarCpf(cpf)) {
+      setErro("CPF do aluno inválido. Por favor, confira os números digitados.");
+      return;
+    }
+
+    if (email && !validarEmail(email)) {
+      setErro("Endereço de e-mail inválido. Utilize o formato nome@dominio.com.");
+      return;
+    }
+
+    if (cepVal && !validarCep(cepVal)) {
+      setErro("CEP inválido. Deve conter exatamente 8 dígitos.");
+      return;
+    }
+
     if (!termoAceito) return;
-    if (onSubmit) onSubmit(new FormData(e.currentTarget));
+    if (onSubmit) onSubmit(formData);
   }
 
   return (
@@ -133,10 +158,10 @@ export function InscricaoPublicaForm({ turmaId, onSubmit }: InscricaoPublicaForm
       <FormSection title="2. Contato">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <Field label="Celular" required>
-            <Input name="celular" placeholder="(00) 00000-0000" required />
+            <Input name="celular" mask="telefone" placeholder="(00) 00000-0000" required />
           </Field>
           <Field label="Telefone residencial">
-            <Input name="telefoneResidencial" placeholder="(00) 0000-0000" />
+            <Input name="telefoneResidencial" mask="telefone" placeholder="(00) 0000-0000" />
           </Field>
           <Field label="E-mail">
             <Input type="email" name="email" placeholder="seu@email.com" />
@@ -158,6 +183,7 @@ export function InscricaoPublicaForm({ turmaId, onSubmit }: InscricaoPublicaForm
           <Field label="CEP" required>
             <Input
               name="cep"
+              mask="cep"
               value={cep}
               onChange={(e) => setCep(e.target.value)}
               onBlur={handleCepBlur}
@@ -210,13 +236,13 @@ export function InscricaoPublicaForm({ turmaId, onSubmit }: InscricaoPublicaForm
       <FormSection title="4. Documentação" defaultOpen={false}>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <Field label="CPF">
-            <Input name="cpf" placeholder="000.000.000-00" />
+            <Input name="cpf" mask="cpf" placeholder="000.000.000-00" />
           </Field>
           <Field label="RG">
             <Input name="rg" />
           </Field>
           <Field label="Número do NIS">
-            <Input name="numeroNis" />
+            <Input name="numeroNis" mask="numeros" />
           </Field>
           <Field label="Nome do pai">
             <Input name="nomePai" />
@@ -249,7 +275,7 @@ export function InscricaoPublicaForm({ turmaId, onSubmit }: InscricaoPublicaForm
             <Input name="rgResponsavel" />
           </Field>
           <Field label="CPF do responsável">
-            <Input name="cpfResponsavel" placeholder="000.000.000-00" />
+            <Input name="cpfResponsavel" mask="cpf" placeholder="000.000.000-00" />
           </Field>
         </div>
       </FormSection>

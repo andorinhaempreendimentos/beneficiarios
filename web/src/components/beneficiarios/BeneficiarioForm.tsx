@@ -15,6 +15,7 @@ import {
 } from "@/components/ui";
 import type { Anexo, Beneficiario, PerguntaParQ, VinculoTurma } from "@/lib/types";
 import { beneficiariosApi, type NucleoApi, type TurmaApi } from "@/lib/api/services";
+import { validarCpf, validarCep } from "@/lib/mascaras";
 
 const PERGUNTAS_PARQ = [
   "Algum médico já disse que você possui um problema de coração e recomendou que você só praticasse atividade física supervisionado?",
@@ -75,17 +76,32 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
     setErro(null);
 
     const formData = new FormData(e.currentTarget);
+    const cpf = String(formData.get("cpf") || "");
+    const cep = String(formData.get("cep") || "");
+
+    if (cpf && !validarCpf(cpf)) {
+      setErro("CPF inválido. Por favor, verifique o número digitado.");
+      setLoading(false);
+      return;
+    }
+
+    if (cep && !validarCep(cep)) {
+      setErro("CEP inválido. Deve conter exatamente 8 dígitos.");
+      setLoading(false);
+      return;
+    }
+
     const data: Record<string, unknown> = {
       nomeCompleto: formData.get("nomeCompleto"),
       nomeSocial: formData.get("nomeSocial"),
       dataNascimento: formData.get("dataNascimento"),
       sexo: formData.get("sexo"),
-      cpf: formData.get("cpf"),
+      cpf,
       rg: formData.get("rg"),
       orgaoEmissor: formData.get("orgaoEmissor"),
       celular: formData.get("celular"),
       telefoneRecado: formData.get("telefoneRecado"),
-      cep: formData.get("cep"),
+      cep,
       logradouro: formData.get("logradouro"),
       numero: formData.get("numero"),
       bairro: formData.get("bairro"),
@@ -305,10 +321,10 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
 
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
           <Field label="Telefone residencial">
-            <Input name="telefoneResidencial" defaultValue={b?.telefoneResidencial} />
+            <Input name="telefoneResidencial" mask="telefone" defaultValue={b?.telefoneResidencial} />
           </Field>
           <Field label="Celular" required>
-            <Input name="celular" defaultValue={b?.celular} />
+            <Input name="celular" mask="telefone" defaultValue={b?.celular} />
           </Field>
           <Field label="Email">
             <Input type="email" name="email" defaultValue={b?.email} />
@@ -332,6 +348,7 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
           <Field label="CEP" required>
             <Input
               name="cep"
+              mask="cep"
               value={cep}
               onChange={(e) => setCep(e.target.value)}
               onBlur={handleCepBlur}

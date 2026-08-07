@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button, Field, FormSection, Input, LinkButton, Select } from "@/components/ui";
 import { usuariosApi, type UsuarioApi, type PerfilApi } from "@/lib/api/services";
+import { validarEmail } from "@/lib/mascaras";
 
 interface UsuarioFormProps {
   usuario?: UsuarioApi;
@@ -20,9 +21,17 @@ export function UsuarioForm({ usuario: u, perfis = [], backHref }: UsuarioFormPr
     setErro(null);
 
     const formData = new FormData(event.currentTarget);
+    const email = (formData.get("email") as string) || "";
+
+    if (email && !validarEmail(email)) {
+      setErro("Endereço de e-mail inválido. Utilize o formato termo1@termo2.termo3.");
+      setLoading(false);
+      return;
+    }
+
     const data = {
       nomeCompleto: formData.get("nome") as string,
-      email: formData.get("email") as string,
+      email,
       perfilId: formData.get("perfilId") as string,
       isProfessor: formData.get("isProfessor") === "on",
       ativo: formData.get("status") !== "inativo",

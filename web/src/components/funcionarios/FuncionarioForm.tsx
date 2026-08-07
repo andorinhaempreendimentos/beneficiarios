@@ -123,7 +123,7 @@ export function FuncionarioForm({ funcionario: f, nucleos = [], funcoes = [], ba
             <Input name="nomeCompleto" defaultValue={f?.nomeCompleto} />
           </Field>
           <Field label="Documento CPF/CNPJ">
-            <Input name="cpfCnpj" defaultValue={f?.cpfCnpj} placeholder="000.000.000-00" />
+            <Input name="cpfCnpj" mask="cpfCnpj" defaultValue={f?.cpfCnpj} placeholder="000.000.000-00 ou 00.000.000/0000-00" />
           </Field>
           <Field label="Data de Nascimento">
             <Input type="date" name="dataNascimento" defaultValue={f?.dataNascimento} />

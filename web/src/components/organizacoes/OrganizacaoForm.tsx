@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button, Field, FormSection, Input, LinkButton, Select } from "@/components/ui";
 import type { TipoOrganizacao } from "@/lib/types";
 import { organizacoesApi, type OrganizacaoApi, type ObjetoApi } from "@/lib/api/services";
+import { validarCnpj, validarCep, validarEmail } from "@/lib/mascaras";
 
 interface OrganizacaoFormProps {
   organizacao?: OrganizacaoApi;
@@ -40,6 +41,28 @@ export function OrganizacaoForm({ organizacao: o, objetos = [], backHref }: Orga
     setErro(null);
 
     const formData = new FormData(event.currentTarget);
+    const cnpj = (formData.get("cnpj") as string) || "";
+    const email = (formData.get("email") as string) || "";
+    const cepVal = cep || "";
+
+    if (cnpj && !validarCnpj(cnpj)) {
+      setErro("CNPJ inválido. Por favor, verifique o número digitado.");
+      setLoading(false);
+      return;
+    }
+
+    if (email && !validarEmail(email)) {
+      setErro("Formato de e-mail inválido. Exemplo correto: contato@empresa.com");
+      setLoading(false);
+      return;
+    }
+
+    if (cepVal && !validarCep(cepVal)) {
+      setErro("CEP inválido. Deve conter exatamente 8 dígitos.");
+      setLoading(false);
+      return;
+    }
+
     const objId = (formData.get("objetoId") as string) || objetoId;
 
     if (!objId) {
@@ -51,12 +74,12 @@ export function OrganizacaoForm({ organizacao: o, objetos = [], backHref }: Orga
     const data = {
       nome: formData.get("nome") as string,
       tipo: formData.get("tipo") as string,
-      cnpj: (formData.get("cnpj") as string) || null,
+      cnpj: cnpj || null,
       nomeResponsavel: (formData.get("nomeResponsavel") as string) || null,
       telefone: (formData.get("telefone") as string) || null,
-      email: (formData.get("email") as string) || null,
+      email: email || null,
       objetoId: objId,
-      cep: (formData.get("cep") as string) || null,
+      cep: cepVal || null,
       endereco: (formData.get("endereco") as string) || null,
       cidade: (formData.get("cidade") as string) || null,
       estado: (formData.get("estado") as string) || null,
@@ -98,13 +121,13 @@ export function OrganizacaoForm({ organizacao: o, objetos = [], backHref }: Orga
             </Select>
           </Field>
           <Field label="CNPJ">
-            <Input name="cnpj" defaultValue={o?.cnpj} placeholder="00.000.000/0000-00" />
+            <Input name="cnpj" mask="cnpj" defaultValue={o?.cnpj} placeholder="00.000.000/0000-00" />
           </Field>
           <Field label="Nome do responsável">
             <Input name="nomeResponsavel" defaultValue={o?.nomeResponsavel} placeholder="Nome completo" />
           </Field>
           <Field label="Telefone">
-            <Input name="telefone" defaultValue={o?.telefone} placeholder="(00) 00000-0000" />
+            <Input name="telefone" mask="telefone" defaultValue={o?.telefone} placeholder="(00) 00000-0000" />
           </Field>
           <Field label="Email">
             <Input name="email" type="email" defaultValue={o?.email} placeholder="contato@org.com.br" />
@@ -125,6 +148,7 @@ export function OrganizacaoForm({ organizacao: o, objetos = [], backHref }: Orga
           <Field label="CEP">
             <Input
               name="cep"
+              mask="cep"
               value={cep}
               onChange={(e) => setCep(e.target.value)}
               onBlur={handleCepBlur}
