@@ -330,11 +330,19 @@ function mapTurma(r: any): TurmaApi {
   };
 }
 
+function parseSexoDisplay(s: string | null | undefined): string {
+  if (s === 'M') return 'Masculino';
+  if (s === 'F') return 'Feminino';
+  if (s === 'O') return 'Outro';
+  if (s === 'N') return 'Não Informar';
+  return s || 'Masculino';
+}
+
 function mapBeneficiario(r: any): BeneficiarioApi {
   return {
     id: r.id, matricula: r.matricula, nomeCompleto: r.nome_completo,
     nomeSocial: r.nome_social ?? undefined, dataNascimento: r.data_nascimento,
-    sexo: r.sexo, dataCadastro: r.data_cadastro, pcd: r.pcd, tipoPcd: r.tipo_pcd ?? undefined,
+    sexo: parseSexoDisplay(r.sexo), dataCadastro: r.data_cadastro, pcd: r.pcd, tipoPcd: r.tipo_pcd ?? undefined,
     nucleoId: r.nucleo_id ?? undefined, status: r.status, tipoMatricula: r.tipo_matricula,
     celular: r.celular, cep: r.cep ?? undefined, logradouro: r.logradouro ?? undefined,
     numero: r.numero ?? undefined, bairro: r.bairro ?? undefined, cidade: r.cidade ?? undefined,
@@ -824,13 +832,21 @@ export const beneficiariosApi = {
   },
 };
 
+function parseSexoDb(v: unknown): Database['public']['Enums']['sexo_beneficiario'] {
+  const str = String(v || '').trim().toLowerCase();
+  if (str === 'm' || str === 'masculino') return 'M';
+  if (str === 'f' || str === 'feminino') return 'F';
+  if (str === 'o' || str === 'outro' || str === 'outros') return 'O';
+  return 'N';
+}
+
 function toBeneficiarioRow(b: Record<string, unknown>): Database['public']['Tables']['beneficiarios']['Insert'] {
   return {
     matricula: (b.matricula as string) || String(Math.floor(100000 + Math.random() * 900000)),
     nome_completo: b.nomeCompleto as string,
     nome_social: b.nomeSocial as string | null | undefined,
     data_nascimento: b.dataNascimento as string,
-    sexo: b.sexo as Database['public']['Enums']['sexo_beneficiario'],
+    sexo: parseSexoDb(b.sexo),
     pcd: b.pcd as boolean | undefined,
     tipo_pcd: b.tipoPcd as string | null | undefined,
     nucleo_id: b.nucleoId as string | null | undefined,
