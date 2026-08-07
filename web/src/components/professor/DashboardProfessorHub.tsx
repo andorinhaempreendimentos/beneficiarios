@@ -74,6 +74,9 @@ export function DashboardProfessorHub({
     router.push("/login");
   }
 
+  // Estado para Modal de Gestão de Matrículas do Professor
+  const [modalGestaoMatriculas, setModalGestaoMatriculas] = useState(false);
+
   // Cálculos Dinâmicos
   const totalTurmas = turmas.length;
   const totalAlunos = 0;
@@ -198,14 +201,25 @@ export function DashboardProfessorHub({
 
         {/* Régua de Métricas */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="p-4 border-l-4 border-l-sky-500 bg-white shadow-sm">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Alunos Atendidos</span>
+          <button
+            type="button"
+            onClick={() => setModalGestaoMatriculas(true)}
+            className="text-left p-4 border-l-4 border-l-sky-500 bg-white hover:bg-sky-50/50 rounded-2xl border border-zinc-200 shadow-sm transition-all active:scale-95 group"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 group-hover:text-sky-600">
+                Alunos Atendidos
+              </span>
+              <span className="text-[10px] font-bold text-sky-600 bg-sky-100 px-2 py-0.5 rounded-full">
+                Gerenciar ⚙️
+              </span>
+            </div>
             <div className="mt-1 flex items-baseline gap-2">
-              <span className="text-2xl font-extrabold text-zinc-900">{totalAlunos}</span>
+              <span className="text-2xl font-extrabold text-zinc-900 group-hover:text-sky-600">{totalAlunos}</span>
               <span className="text-xs text-sky-600 font-semibold">Alunos</span>
             </div>
-            <p className="text-[11px] text-zinc-500 mt-0.5">Soma total das turmas</p>
-          </Card>
+            <p className="text-[11px] text-zinc-500 mt-0.5">Clique para matricular/transferir</p>
+          </button>
 
           <Card className="p-4 border-l-4 border-l-indigo-500 bg-white shadow-sm">
             <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Turmas Ativas</span>
@@ -425,10 +439,12 @@ export function DashboardProfessorHub({
         )}
       </div>
 
-      {/* 4. GESTÃO DE MATRÍCULAS DO PROFESSOR */}
+      {/* 4. MODAL DE GESTÃO DE MATRÍCULAS DO PROFESSOR */}
       <GestaoMatriculasProfessor
         turmas={turmas}
         todosBeneficiarios={todosBeneficiarios}
+        isOpen={modalGestaoMatriculas}
+        onClose={() => setModalGestaoMatriculas(false)}
       />
 
       {/* 5. MENU DE AÇÕES RÁPIDAS */}
