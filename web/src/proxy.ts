@@ -47,8 +47,8 @@ export async function proxy(request: NextRequest) {
   }
 
   const tipo = user.app_metadata?.tipo as string | undefined;
-  if (tipo === "funcionario" && !pathname.startsWith("/agenda")) {
-    return NextResponse.redirect(new URL("/agenda", request.url));
+  if (tipo === "funcionario" && !pathname.startsWith("/professor") && !pathname.startsWith("/funcionarios")) {
+    return NextResponse.redirect(new URL("/professor", request.url));
   }
 
   return response;
