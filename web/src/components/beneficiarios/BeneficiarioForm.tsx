@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Plus, Trash2, User } from "lucide-react";
+import { useState, useRef } from "react";
+import { Plus, Trash2, User, ArrowUpRight } from "lucide-react";
 import {
   Button,
   Field,
@@ -56,6 +56,20 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
   const [estado, setEstado] = useState(b?.estado ?? "");
   const [buscandoCep, setBuscandoCep] = useState(false);
   const [nucleoId, setNucleoId] = useState(b?.nucleoId ?? "");
+
+  const nucleoSelectRef = useRef<HTMLSelectElement>(null);
+  const [alertaNucleoDestaque, setAlertaNucleoDestaque] = useState(false);
+
+  function rolarESelecionarNucleo() {
+    setAlertaNucleoDestaque(true);
+    if (nucleoSelectRef.current) {
+      nucleoSelectRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      nucleoSelectRef.current.focus();
+    }
+    setTimeout(() => {
+      setAlertaNucleoDestaque(false);
+    }, 4000);
+  }
 
   // Se nenhum núcleo for selecionado no Passo 1, NENHUMA turma estará disponível
   const turmasFiltradas = nucleoId
@@ -246,8 +260,14 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
               </Select>
             </Field>
           )}
-          <Field label="Núcleo">
-            <Select name="nucleoId" value={nucleoId} onChange={(e) => setNucleoId(e.target.value)}>
+          <Field label="Núcleo Esportivo (Polo)" required>
+            <Select
+              ref={nucleoSelectRef}
+              name="nucleoId"
+              value={nucleoId}
+              onChange={(e) => setNucleoId(e.target.value)}
+              className={alertaNucleoDestaque ? "ring-4 ring-amber-500 border-amber-600 bg-amber-50 animate-bounce" : ""}
+            >
               <option value="">Selecione o Núcleo Esportivo</option>
               {nucleos.map((n) => (
                 <option key={n.id} value={n.id}>{n.identificacao}</option>
@@ -481,20 +501,29 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
 
       <FormSection title="5. Atividades e Turmas">
         {!nucleoId ? (
-          <div className="rounded-2xl border border-amber-200 bg-amber-50/80 p-5 text-amber-900 shadow-xs">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-2xl border border-amber-300 bg-amber-50 p-5 text-amber-950 shadow-sm">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500 text-white font-bold text-lg">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-amber-500 text-white font-bold text-xl shadow-xs">
                 ⚠️
               </div>
               <div>
-                <h4 className="text-xs font-extrabold uppercase tracking-wider text-amber-800">
-                  Selecione um Núcleo no Passo 1
+                <h4 className="text-xs font-extrabold uppercase tracking-wider text-amber-900">
+                  Seleção de Núcleo Obrigatória
                 </h4>
                 <p className="text-xs text-amber-800 font-medium mt-0.5">
-                  Para visualizar e vincular turmas disponíveis, por favor escolha primeiro o <strong>Núcleo Esportivo (Polo)</strong> no campo de Identificação acima.
+                  Não é possível exibir ou vincular turmas sem selecionar um <strong>Núcleo Esportivo (Polo)</strong>.
                 </p>
               </div>
             </div>
+
+            <button
+              type="button"
+              onClick={rolarESelecionarNucleo}
+              className="flex items-center gap-2 shrink-0 rounded-xl bg-amber-600 px-4 py-2.5 text-xs font-bold text-white hover:bg-amber-700 shadow-sm transition-all active:scale-95 cursor-pointer"
+            >
+              <span>Selecionar Núcleo Agora</span>
+              <ArrowUpRight className="h-4 w-4" />
+            </button>
           </div>
         ) : (
           <div className="flex flex-col gap-4">
