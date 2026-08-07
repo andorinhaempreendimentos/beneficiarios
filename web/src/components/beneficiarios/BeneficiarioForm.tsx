@@ -171,7 +171,7 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
               options={["Masculino", "Feminino", "Não Informar"]}
               defaultValue={b?.sexo || "Masculino"}
               value={sexo}
-              onChange={setSexo}
+              onChange={(v) => setSexo(v as any)}
             />
           </Field>
           <Field label="Data de cadastro" required>
