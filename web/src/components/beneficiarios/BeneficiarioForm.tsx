@@ -57,10 +57,10 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
   const [buscandoCep, setBuscandoCep] = useState(false);
   const [nucleoId, setNucleoId] = useState(b?.nucleoId ?? "");
 
-  // Filtra as turmas disponíveis com base no núcleo selecionado (se houver núcleo selecionado)
+  // Se nenhum núcleo for selecionado no Passo 1, NENHUMA turma estará disponível
   const turmasFiltradas = nucleoId
     ? turmas.filter((t) => t.nucleoId === nucleoId)
-    : turmas;
+    : [];
 
   async function handleCepBlur() {
     if (!cep) return;
@@ -480,69 +480,122 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
       </FormSection>
 
       <FormSection title="5. Atividades e Turmas">
-        <p className="mb-4 text-xs text-zinc-500 font-medium">
-          {nucleoId
-            ? "Exibindo turmas vinculadas ao Núcleo selecionado acima:"
-            : "Selecione um Núcleo no Passo 1 para filtrar as turmas por polo, ou escolha diretamente da lista abaixo:"}
-        </p>
-        <div className="flex flex-col gap-4">
-          {vinculos.map((v, index) => (
-            <div key={index} className="grid grid-cols-1 gap-4 rounded-xl border border-zinc-200 bg-white p-4 sm:grid-cols-4">
-              <Field label="Turma / Modalidade" required>
-                <Select
-                  value={v.turmaId}
-                  onChange={(e) => {
-                    const novaTurmaId = e.target.value;
-                    setVinculos((prev) =>
-                      prev.map((item, i) => (i === index ? { ...item, turmaId: novaTurmaId } : item))
-                    );
-                  }}
-                >
-                  <option value="">Selecione a turma</option>
-                  {turmasFiltradas.map((t) => (
-                    <option key={t.id} value={t.id}>
-                      {t.nome}
-                    </option>
-                  ))}
-                </Select>
-              </Field>
-              <Field label="Status da Matrícula">
-                <Select
-                  value={v.status}
-                  onChange={(e) => {
-                    const novoStatus = e.target.value as "Ativo" | "Evadido";
-                    setVinculos((prev) =>
-                      prev.map((item, i) => (i === index ? { ...item, status: novoStatus } : item))
-                    );
-                  }}
-                >
-                  <option value="Ativo">Ativo</option>
-                  <option value="Evadido">Evadido</option>
-                </Select>
-              </Field>
-              <Field label="Data de Matrícula">
-                <Input
-                  type="date"
-                  value={v.dataRegistro}
-                  onChange={(e) => {
-                    const novaData = e.target.value;
-                    setVinculos((prev) =>
-                      prev.map((item, i) => (i === index ? { ...item, dataRegistro: novaData } : item))
-                    );
-                  }}
-                />
-              </Field>
-              <div className="flex items-end">
-                <Button type="button" variant="danger" size="sm" onClick={() => removerTurma(index)}>
-                  <Trash2 className="h-4 w-4" /> Remover turma
-                </Button>
+        {!nucleoId ? (
+          <div className="rounded-2xl border border-amber-200 bg-amber-50/80 p-5 text-amber-900 shadow-xs">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500 text-white font-bold text-lg">
+                ⚠️
+              </div>
+              <div>
+                <h4 className="text-xs font-extrabold uppercase tracking-wider text-amber-800">
+                  Selecione um Núcleo no Passo 1
+                </h4>
+                <p className="text-xs text-amber-800 font-medium mt-0.5">
+                  Para visualizar e vincular turmas disponíveis, por favor escolha primeiro o <strong>Núcleo Esportivo (Polo)</strong> no campo de Identificação acima.
+                </p>
               </div>
             </div>
-          ))}
-          <Button type="button" variant="outline" size="sm" className="self-start" onClick={adicionarTurma}>
-            <Plus className="h-4 w-4" /> Vincular a uma Turma
-          </Button>
-        </div>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-4">
+            {vinculos.map((v, index) => {
+              const turmaObjeto = turmas.find((t) => t.id === v.turmaId);
+              const nucleoObjeto = nucleos.find((n) => n.id === (turmaObjeto?.nucleoId || nucleoId));
+
+              return (
+                <div key={index} className="flex flex-col gap-3 rounded-2xl border border-zinc-200 bg-white p-4 shadow-xs">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
+                    <Field label="Turma / Modalidade" required>
+                      <Select
+                        value={v.turmaId}
+                        onChange={(e) => {
+                          const novaTurmaId = e.target.value;
+                          setVinculos((prev) =>
+                            prev.map((item, i) => (i === index ? { ...item, turmaId: novaTurmaId } : item))
+                          );
+                        }}
+                      >
+                        <option value="">Selecione a turma</option>
+                        {turmasFiltradas.map((t) => (
+                          <option key={t.id} value={t.id}>
+                            {t.nome}
+                          </option>
+                        ))}
+                      </Select>
+                    </Field>
+                    <Field label="Status da Matrícula">
+                      <Select
+                        value={v.status}
+                        onChange={(e) => {
+                          const novoStatus = e.target.value as "Ativo" | "Evadido";
+                          setVinculos((prev) =>
+                            prev.map((item, i) => (i === index ? { ...item, status: novoStatus } : item))
+                          );
+                        }}
+                      >
+                        <option value="Ativo">Ativo</option>
+                        <option value="Evadido">Evadido</option>
+                      </Select>
+                    </Field>
+                    <Field label="Data de Matrícula">
+                      <Input
+                        type="date"
+                        value={v.dataRegistro}
+                        onChange={(e) => {
+                          const novaData = e.target.value;
+                          setVinculos((prev) =>
+                            prev.map((item, i) => (i === index ? { ...item, dataRegistro: novaData } : item))
+                          );
+                        }}
+                      />
+                    </Field>
+                    <div className="flex items-end">
+                      <Button type="button" variant="danger" size="sm" onClick={() => removerTurma(index)}>
+                        <Trash2 className="h-4 w-4" /> Remover turma
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Informações detalhadas do Núcleo vinculadas à Turma Selecionada */}
+                  {turmaObjeto && nucleoObjeto && (
+                    <div className="mt-1 rounded-xl bg-sky-50/80 p-3.5 border border-sky-200/80 text-xs text-sky-900 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 animate-in fade-in">
+                      <div className="flex items-center gap-2.5">
+                        <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-sky-600 text-white font-bold text-xs">
+                          📍
+                        </span>
+                        <div>
+                          <span className="font-extrabold text-sky-950 block">
+                            Polo: {nucleoObjeto.identificacao}
+                          </span>
+                          <span className="text-[11px] text-sky-700 font-medium">
+                            {nucleoObjeto.cidade ? `${nucleoObjeto.cidade}` : "Polo Esportivo Ativo"}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3 text-[11px] font-semibold text-sky-800">
+                        {turmaObjeto.vagasTotais > 0 && (
+                          <span className="bg-sky-200/70 px-2.5 py-1 rounded-lg">
+                            👥 Vagas Totais: {turmaObjeto.vagasTotais}
+                          </span>
+                        )}
+                        {turmaObjeto.exclusiva && (
+                          <span className="bg-amber-100 text-amber-800 px-2.5 py-1 rounded-lg border border-amber-200 font-bold">
+                            ⭐ Turma Exclusiva
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+
+            <Button type="button" variant="outline" size="sm" className="self-start mt-1" onClick={adicionarTurma}>
+              <Plus className="h-4 w-4" /> Vincular a uma Turma
+            </Button>
+          </div>
+        )}
       </FormSection>
 
       <FormSection title="6. PAR-Q (Questionário de Prontidão para Atividade Física)" defaultOpen={false}>
