@@ -826,7 +826,7 @@ export const beneficiariosApi = {
 
 function toBeneficiarioRow(b: Record<string, unknown>): Database['public']['Tables']['beneficiarios']['Insert'] {
   return {
-    matricula: b.matricula as string,
+    matricula: (b.matricula as string) || String(Math.floor(100000 + Math.random() * 900000)),
     nome_completo: b.nomeCompleto as string,
     nome_social: b.nomeSocial as string | null | undefined,
     data_nascimento: b.dataNascimento as string,

@@ -11,7 +11,7 @@ export default async function InscricaoNucleoPage({ params }: InscricaoNucleoPag
   const { nucleoId } = await params;
   const nucleo = await nucleosApi.get(nucleoId).catch(() => null);
 
-  if (!nucleo) redirect("/");
+  if (!nucleo || nucleo.emFuncionamento === false) redirect("/");
 
   const [turmasRes, atividadesRes] = await Promise.all([
     turmasApi.list({ nucleoId, limit: 100 }).catch(() => ({ data: [] })),
@@ -19,8 +19,13 @@ export default async function InscricaoNucleoPage({ params }: InscricaoNucleoPag
   ]);
 
   const turmasDoNucleo = turmasRes.data;
-  const atividadesDoNucleo = atividadesRes.data.filter((a) =>
-    turmasDoNucleo.some((t) => t.atividadeId === a.id)
+  const atividadesDoNucleo = atividadesRes.data.filter(
+    (a) => a.disponivelPreInscricao !== false && turmasDoNucleo.some((t) => t.atividadeId === a.id)
+  );
+
+  const atividadesPublicasIds = new Set(atividadesDoNucleo.map((a) => a.id));
+  const turmasPublicasDoNucleo = turmasDoNucleo.filter(
+    (t) => t.atividadeId && atividadesPublicasIds.has(t.atividadeId)
   );
 
   const breadcrumb = ["Núcleo", nucleo.identificacao];
@@ -53,7 +58,7 @@ export default async function InscricaoNucleoPage({ params }: InscricaoNucleoPag
 
       <SelecionarAtividade
         atividades={atividadesDoNucleo as any}
-        turmas={turmasDoNucleo as any}
+        turmas={turmasPublicasDoNucleo as any}
         nucleoId={nucleoId}
       />
     </div>

@@ -63,9 +63,20 @@ export default function InscricoesPage() {
   const total = pageData?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
 
-  const nucleos = nucleosData?.data ?? [];
-  const atividades = atividadesData?.data ?? [];
-  const turmas = turmasData?.data ?? [];
+  const rawNucleos = nucleosData?.data ?? [];
+  const rawAtividades = atividadesData?.data ?? [];
+  const rawTurmas = turmasData?.data ?? [];
+
+  // Excluir atividades de uso interno (disponivelPreInscricao === false)
+  const atividades = rawAtividades.filter((a) => a.disponivelPreInscricao !== false);
+  const atividadesPublicasIds = new Set(atividades.map((a) => a.id));
+
+  // Filtrar turmas vinculadas a atividades públicas
+  const turmas = rawTurmas.filter((t) => t.atividadeId && atividadesPublicasIds.has(t.atividadeId));
+
+  // Excluir núcleos sem turmas ou atividades públicas
+  const nucleosComTurmasIds = new Set(turmas.map((t) => t.nucleoId).filter(Boolean));
+  const nucleos = rawNucleos.filter((n) => n.emFuncionamento !== false && nucleosComTurmasIds.has(n.id));
 
   const counts: Record<StatusInscricao, number> = {
     pendente: pendData?.total ?? 0,

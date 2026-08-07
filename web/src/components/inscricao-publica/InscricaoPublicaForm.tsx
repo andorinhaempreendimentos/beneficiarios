@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Plus, Trash2 } from "lucide-react";
 import {
   Button,
@@ -14,6 +15,7 @@ import {
 } from "@/components/ui";
 import type { PerguntaParQ } from "@/lib/types";
 import { validarCpf, validarCep, validarEmail } from "@/lib/mascaras";
+import { beneficiariosApi, inscricoesApi } from "@/lib/api/services";
 
 const PERGUNTAS_PARQ = [
   "Algum médico já disse que você possui um problema de coração e recomendou que você só praticasse atividade física supervisionado?",
@@ -34,6 +36,7 @@ interface InscricaoPublicaFormProps {
 }
 
 export function InscricaoPublicaForm({ turmaId, onSubmit }: InscricaoPublicaFormProps) {
+  const router = useRouter();
   const [sexo, setSexo] = useState("Masculino");
   const [pcd, setPcd] = useState(false);
   const [parQ, setParQ] = useState<PerguntaParQ[]>(
@@ -61,8 +64,9 @@ export function InscricaoPublicaForm({ turmaId, onSubmit }: InscricaoPublicaForm
   }
 
   const [erro, setErro] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setErro(null);
 
@@ -87,12 +91,56 @@ export function InscricaoPublicaForm({ turmaId, onSubmit }: InscricaoPublicaForm
     }
 
     if (!termoAceito) return;
-    if (onSubmit) onSubmit(formData);
+    if (onSubmit) {
+      onSubmit(formData);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const data: Record<string, unknown> = {
+        nomeCompleto: formData.get("nomeCompleto"),
+        nomeSocial: formData.get("nomeSocial"),
+        dataNascimento: formData.get("dataNascimento"),
+        sexo: formData.get("sexo"),
+        cpf,
+        rg: formData.get("rg"),
+        celular: formData.get("celular"),
+        telefoneResidencial: formData.get("telefoneResidencial"),
+        email,
+        cep: cepVal,
+        logradouro: formData.get("logradouro") || logradouro,
+        numero: formData.get("numero"),
+        complemento: formData.get("complemento"),
+        bairro: formData.get("bairro") || bairro,
+        cidade: formData.get("cidade") || cidade,
+        estado: formData.get("estado") || estado,
+        pcd,
+        tipoPcd: formData.get("tipoPcd"),
+        status: "Novo cadastro",
+      };
+
+      const createdBeneficiario = await beneficiariosApi.create(data);
+      await inscricoesApi.criar(createdBeneficiario.id, turmaId, "Inscrição pública", { parQ });
+
+      router.push(`/inscricao/confirmacao?turmaId=${turmaId}&tipo=aprovada`);
+    } catch (err: any) {
+      console.error("Erro na inscrição pública:", err);
+      setErro(err?.message || "Ocorreu um erro ao processar sua inscrição. Tente novamente.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
       <input type="hidden" name="turmaId" value={turmaId} />
+
+      {erro && (
+        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+          {erro}
+        </div>
+      )}
 
       {/* 1. Identificação */}
       <FormSection title="1. Identificação do Beneficiário">
@@ -440,8 +488,8 @@ export function InscricaoPublicaForm({ turmaId, onSubmit }: InscricaoPublicaForm
       </div>
 
       <div className="flex justify-end">
-        <Button type="submit" disabled={!termoAceito}>
-          Confirmar Inscrição
+        <Button type="submit" disabled={!termoAceito || loading}>
+          {loading ? "Processando..." : "Confirmar Inscrição"}
         </Button>
       </div>
     </form>
