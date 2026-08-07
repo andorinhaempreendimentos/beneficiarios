@@ -16,6 +16,7 @@ const TIPOS: TipoOrganizacao[] = ["Instituto", "ONG", "Associação", "Fundaçã
 export function OrganizacaoForm({ organizacao: o, objetos = [], backHref }: OrganizacaoFormProps) {
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  const [objetoId, setObjetoId] = useState(o?.objetoId ?? (objetos[0]?.id || ""));
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -23,6 +24,14 @@ export function OrganizacaoForm({ organizacao: o, objetos = [], backHref }: Orga
     setErro(null);
 
     const formData = new FormData(event.currentTarget);
+    const objId = (formData.get("objetoId") as string) || objetoId;
+
+    if (!objId) {
+      setErro("Por favor, selecione um objeto vinculado.");
+      setLoading(false);
+      return;
+    }
+
     const data = {
       nome: formData.get("nome") as string,
       tipo: formData.get("tipo") as string,
@@ -30,7 +39,7 @@ export function OrganizacaoForm({ organizacao: o, objetos = [], backHref }: Orga
       nomeResponsavel: (formData.get("nomeResponsavel") as string) || null,
       telefone: (formData.get("telefone") as string) || null,
       email: (formData.get("email") as string) || null,
-      objetoId: (formData.get("objetoId") as string) || null,
+      objetoId: objId,
       cep: (formData.get("cep") as string) || null,
       endereco: (formData.get("endereco") as string) || null,
       cidade: (formData.get("cidade") as string) || null,
@@ -84,9 +93,9 @@ export function OrganizacaoForm({ organizacao: o, objetos = [], backHref }: Orga
           <Field label="Email">
             <Input name="email" type="email" defaultValue={o?.email} placeholder="contato@org.com.br" />
           </Field>
-          <Field label="Objeto vinculado">
-            <Select name="objetoId" defaultValue={o?.objetoId ?? ""}>
-              <option value="">Nenhum</option>
+          <Field label="Objeto vinculado" required>
+            <Select name="objetoId" value={objetoId} onChange={(e) => setObjetoId(e.target.value)}>
+              <option value="" disabled>Selecione um objeto</option>
               {objetos.map((ob) => (
                 <option key={ob.id} value={ob.id}>{ob.nome}</option>
               ))}

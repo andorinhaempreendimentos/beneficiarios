@@ -17,6 +17,7 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], back
   const [erro, setErro] = useState<string | null>(null);
   const [emFuncionamento, setEmFuncionamento] = useState(n?.emFuncionamento ?? true);
   const [disponivelPreInscricao, setDisponivelPreInscricao] = useState(n?.disponivelPreInscricao ?? true);
+  const [organizacaoId, setOrganizacaoId] = useState(n?.organizacaoId ?? (organizacoes[0]?.id || ""));
   const [atividadeIds, setAtividadeIds] = useState<string[]>(
     n?.atividadeIds ?? atividades.map((a) => a.id)
   );
@@ -33,6 +34,14 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], back
     setErro(null);
 
     const formData = new FormData(event.currentTarget);
+    const orgId = (formData.get("organizacaoId") as string) || organizacaoId;
+
+    if (!orgId) {
+      setErro("Por favor, selecione uma organização responsável.");
+      setLoading(false);
+      return;
+    }
+
     const data = {
       identificacao: formData.get("identificacao") as string,
       nomeLocal: (formData.get("nomeLocal") as string) || null,
@@ -45,6 +54,7 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], back
       bairro: (formData.get("bairro") as string) || null,
       cidade: (formData.get("cidade") as string) || null,
       complemento: (formData.get("complemento") as string) || null,
+      organizacaoId: orgId,
       emFuncionamento,
       disponivelPreInscricao,
       atividadeIds,
@@ -75,6 +85,19 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], back
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="Identificação" required>
             <Input name="identificacao" defaultValue={n?.identificacao} placeholder="Ex: Núcleo Vila Esperança" />
+          </Field>
+          <Field label="Organização Responsável" required>
+            <select
+              name="organizacaoId"
+              value={organizacaoId}
+              onChange={(e) => setOrganizacaoId(e.target.value)}
+              className="w-full appearance-none rounded-lg border border-zinc-300 bg-white px-3 py-2 pr-9 text-sm text-zinc-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100"
+            >
+              <option value="" disabled>Selecione uma organização</option>
+              {organizacoes.map((org) => (
+                <option key={org.id} value={org.id}>{org.nome}</option>
+              ))}
+            </select>
           </Field>
           <Field label="Nome do local">
             <Input name="nomeLocal" defaultValue={n?.nomeLocal} placeholder="Ex: Escola Municipal..." />
