@@ -23,8 +23,15 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], backHref }:
   const [atividadeId, setAtividadeId] = useState(t?.atividadeId ?? "");
 
   const nucleoSelecionado = nucleos.find((n) => n.id === nucleoId);
-  const atividadesDisponiveis = nucleoSelecionado
-    ? atividades.filter((a) => !nucleoSelecionado.atividadeIds || nucleoSelecionado.atividadeIds.includes(a.id))
+
+  // Para o seletor da Turma: atividades que pertencem ao núcleo ou são de Controle Interno
+  const atividadesParaTurma = nucleoSelecionado
+    ? atividades.filter(
+        (a) =>
+          !a.disponivelPreInscricao || // Controle interno SEMPRE disponível
+          !nucleoSelecionado.atividadeIds ||
+          nucleoSelecionado.atividadeIds.includes(a.id)
+      )
     : atividades;
 
   function handleNucleoChange(novoNucleoId: string) {
@@ -119,7 +126,7 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], backHref }:
           <Field label="Atividade" required>
             <Select name="atividadeId" value={atividadeId} onChange={(e) => setAtividadeId(e.target.value)} disabled={!nucleoId}>
               <option value="" disabled>{!nucleoId ? "Selecione primeiro o núcleo" : "Selecione a atividade"}</option>
-              {atividadesDisponiveis.map((a) => (
+              {atividadesParaTurma.map((a) => (
                 <option key={a.id} value={a.id}>
                   {a.nome} {!a.disponivelPreInscricao ? "(🔒 Controle Interno)" : ""}
                 </option>
@@ -148,7 +155,7 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], backHref }:
         <div className="mt-6">
           <p className="mb-3 text-sm font-medium text-zinc-700">Grade semanal</p>
           {atividadeSelecionada ? (
-            <GradeSemanal atividade={atividadeSelecionada} atividadesLocais={atividadesDisponiveis} />
+            <GradeSemanal atividade={atividadeSelecionada} atividadesLocais={atividades} />
           ) : (
             <div className="rounded-xl border border-dashed border-zinc-200 bg-zinc-50 py-10 text-center text-sm text-zinc-400">
               Selecione uma atividade para montar a grade
