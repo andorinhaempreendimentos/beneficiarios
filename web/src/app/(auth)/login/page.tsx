@@ -111,10 +111,39 @@ function LoginForm() {
               {loading ? "Entrando…" : "Entrar no painel →"}
             </button>
           </form>
+
+          {/* Atalhos para Login Rápido / Modos de Acesso */}
+          <div className="border-t border-zinc-100 bg-zinc-50/60 p-4 rounded-b-2xl flex flex-col gap-2">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 text-center">
+              Acesso Rápido de Demonstração
+            </span>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setEmail("admin@andorinha.local");
+                  setSenha("Af7$kQ2mZx9!Lp4");
+                }}
+                className="flex items-center justify-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs font-medium text-zinc-700 shadow-sm hover:bg-sky-50 hover:text-sky-700 hover:border-sky-200 transition-colors"
+              >
+                <span>🛡️ Admin</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setEmail("professor@andorinha.local");
+                  setSenha("Af7$kQ2mZx9!Lp4");
+                }}
+                className="flex items-center justify-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs font-medium text-zinc-700 shadow-sm hover:bg-sky-50 hover:text-sky-700 hover:border-sky-200 transition-colors"
+              >
+                <span>👔 Funcionário</span>
+              </button>
+            </div>
+          </div>
         </div>
 
         <p className="mt-6 text-center text-xs text-zinc-400">
-          Andorinha &copy; 2024
+          Andorinha &copy; 2026
         </p>
       </div>
     </div>
