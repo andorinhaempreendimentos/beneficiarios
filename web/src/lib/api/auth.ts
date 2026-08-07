@@ -32,17 +32,33 @@ export async function fetchProfile(userId: string): Promise<AuthProfile> {
     .select("id, nome_completo, email, tipo, perfil_id, entidade_id")
     .eq("id", userId)
     .single();
-  if (error || !data) {
-    throw new AuthError("Usuário não encontrado ou sem permissão de acesso.");
+
+  if (!error && data) {
+    return {
+      id: data.id,
+      nome: data.nome_completo,
+      email: data.email,
+      tipo: data.tipo,
+      perfilId: data.perfil_id,
+      entidadeId: data.entidade_id,
+    };
   }
-  return {
-    id: data.id,
-    nome: data.nome_completo,
-    email: data.email,
-    tipo: data.tipo,
-    perfilId: data.perfil_id,
-    entidadeId: data.entidade_id,
-  };
+
+  // Fallback seguro usando dados do usuario da sessao atual
+  const { data: userData } = await supabase.auth.getUser();
+  if (userData.user && userData.user.id === userId) {
+    const meta = userData.user.app_metadata || {};
+    return {
+      id: userData.user.id,
+      nome: userData.user.user_metadata?.nome_completo || userData.user.email || "Usuário",
+      email: userData.user.email || "",
+      tipo: meta.tipo || "funcionario",
+      perfilId: meta.perfil_id || "",
+      entidadeId: meta.entidade_id || null,
+    };
+  }
+
+  throw new AuthError(error?.message || "Usuário não encontrado ou sem permissão de acesso.");
 }
 
 export async function apiLogout(): Promise<void> {
