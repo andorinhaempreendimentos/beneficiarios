@@ -14,10 +14,12 @@ import {
   GraduationCap,
   Landmark,
   LayoutDashboard,
+  Link as LinkIcon,
   LogOut,
   Menu,
   Settings,
   ShieldCheck,
+  UserPlus,
   Users,
   UsersRound,
   X,
@@ -36,6 +38,9 @@ export function Sidebar() {
   const [open, setOpen] = useState(false);
   const turmasAtivo = pathname.startsWith("/turmas");
   const [turmasAberto, setTurmasAberto] = useState(turmasAtivo);
+
+  const beneficiariosAtivo = pathname.startsWith("/beneficiarios") || pathname.startsWith("/inscricoes");
+  const [beneficiariosAberto, setBeneficiariosAberto] = useState(beneficiariosAtivo);
   const { config } = useTheme();
 
   function handleLogout() {
@@ -140,6 +145,49 @@ export function Sidebar() {
                   {`Todas as ${t("turma", "Turma", true).toLowerCase()}`}
                 </Link>
                 <Link
+                  href="/turmas/novo"
+                  onClick={() => setOpen(false)}
+                  className={cn(
+                    "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors",
+                    pathname === "/turmas/novo" ? "text-sky-700 font-medium" : "text-zinc-500 hover:text-zinc-900"
+                  )}
+                >
+                  {`Nova ${t("turma", "Turma").toLowerCase()}`}
+                </Link>
+              </div>
+            )}
+          </div>
+
+          {navLink("/atividades", t("atividade", "Atividade", true), Dumbbell)}
+
+          {/* Beneficiários com subitens */}
+          <div>
+            <button
+              type="button"
+              onClick={() => setBeneficiariosAberto((v) => !v)}
+              className={cn(
+                "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                beneficiariosAtivo ? "bg-sky-50 text-sky-700" : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
+              )}
+            >
+              <Users className="h-4 w-4 shrink-0" />
+              <span className="flex-1 text-left">{t("beneficiario", "Beneficiário", true)}</span>
+              <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", beneficiariosAberto && "rotate-180")} />
+            </button>
+            {beneficiariosAberto && (
+              <div className="ml-7 mt-1 space-y-1 border-l border-zinc-200 pl-3">
+                <Link
+                  href="/beneficiarios"
+                  onClick={() => setOpen(false)}
+                  className={cn(
+                    "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors",
+                    pathname === "/beneficiarios" ? "text-sky-700 font-medium" : "text-zinc-500 hover:text-zinc-900"
+                  )}
+                >
+                  <Users className="h-3.5 w-3.5 shrink-0" />
+                  {`Todos os ${t("beneficiario", "Beneficiário", true).toLowerCase()}`}
+                </Link>
+                <Link
                   href="/inscricoes"
                   onClick={() => setOpen(false)}
                   className={cn(
@@ -147,15 +195,24 @@ export function Sidebar() {
                     pathname === "/inscricoes" || pathname.includes("/inscricoes") ? "text-sky-700 font-medium" : "text-zinc-500 hover:text-zinc-900"
                   )}
                 >
-                  <ClipboardList className="h-3.5 w-3.5" />
+                  <ClipboardList className="h-3.5 w-3.5 shrink-0" />
                   Inscrições
+                </Link>
+                <Link
+                  href="/beneficiarios/novo"
+                  onClick={() => setOpen(false)}
+                  className={cn(
+                    "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors",
+                    pathname === "/beneficiarios/novo" ? "text-sky-700 font-medium" : "text-zinc-500 hover:text-zinc-900"
+                  )}
+                >
+                  <UserPlus className="h-3.5 w-3.5 shrink-0" />
+                  {`Novo ${t("beneficiario", "Beneficiário").toLowerCase()}`}
                 </Link>
               </div>
             )}
           </div>
 
-          {navLink("/atividades", t("atividade", "Atividade", true), Dumbbell)}
-          {navLink("/beneficiarios", t("beneficiario", "Beneficiário", true), Users)}
           {navLink("/funcionarios", "Pessoal", UsersRound)}
           {navLink("/equipamentos", "Equipamentos", Box)}
 
