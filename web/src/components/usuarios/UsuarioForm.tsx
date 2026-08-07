@@ -24,6 +24,7 @@ export function UsuarioForm({ usuario: u, perfis = [], backHref }: UsuarioFormPr
       nomeCompleto: formData.get("nome") as string,
       email: formData.get("email") as string,
       perfilId: formData.get("perfilId") as string,
+      isProfessor: formData.get("isProfessor") === "on",
       ativo: formData.get("status") !== "inativo",
     };
 
@@ -85,6 +86,19 @@ export function UsuarioForm({ usuario: u, perfis = [], backHref }: UsuarioFormPr
               <option value="inativo">Inativo</option>
               <option value="bloqueado">Bloqueado</option>
             </Select>
+          </Field>
+          <Field label="Identificação de Instrutor">
+            <label className="flex items-center gap-3 pt-2 cursor-pointer">
+              <input
+                type="checkbox"
+                name="isProfessor"
+                defaultChecked={Boolean(u?.isProfessor)}
+                className="h-4 w-4 rounded border-zinc-300 text-sky-600 focus:ring-sky-500"
+              />
+              <span className="text-sm font-medium text-zinc-800">
+                Este usuário é um Professor / Instrutor Esportivo
+              </span>
+            </label>
           </Field>
         </div>
         {u && (

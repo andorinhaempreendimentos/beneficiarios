@@ -243,6 +243,7 @@ export interface UsuarioApi {
   email: string;
   nomeCompleto: string;
   tipo: string;
+  isProfessor?: boolean;
   ativo: boolean;
   perfilId: string;
   entidadeId?: string;
@@ -383,7 +384,7 @@ function mapInscricao(r: any): InscricaoApi {
 
 function mapUsuario(r: any): UsuarioApi {
   return {
-    id: r.id, email: r.email, nomeCompleto: r.nome_completo, tipo: r.tipo, ativo: r.ativo,
+    id: r.id, email: r.email, nomeCompleto: r.nome_completo, tipo: r.tipo, isProfessor: r.is_professor ?? false, ativo: r.ativo,
     perfilId: r.perfil_id, entidadeId: r.entidade_id ?? undefined, criadoEm: r.created_at,
   };
 }
@@ -1059,11 +1060,12 @@ export const usuariosApi = {
   },
   async create(body: Record<string, unknown>): Promise<UsuarioApi> {
     const sb = createClient();
-    const row: Database['public']['Tables']['usuarios']['Insert'] = {
+    const row: any = {
       id: crypto.randomUUID(),
       email: String(body.email ?? ''),
       nome_completo: String(body.nomeCompleto ?? ''),
       tipo: (body.tipo as Database['public']['Enums']['tipo_usuario']) ?? 'gestor',
+      is_professor: Boolean(body.isProfessor),
       ativo: body.ativo !== false,
       perfil_id: (body.perfilId as string) ?? '',
       entidade_id: (body.entidadeId as string | null) ?? null,
@@ -1074,9 +1076,10 @@ export const usuariosApi = {
   },
   async update(id: string, body: Record<string, unknown>): Promise<UsuarioApi> {
     const sb = createClient();
-    const row: Database['public']['Tables']['usuarios']['Update'] = {
+    const row: any = {
       nome_completo: body.nomeCompleto as string | undefined,
       tipo: body.tipo as Database['public']['Enums']['tipo_usuario'] | undefined,
+      is_professor: body.isProfessor !== undefined ? Boolean(body.isProfessor) : undefined,
       ativo: body.ativo as boolean | undefined,
       perfil_id: body.perfilId as string | undefined,
       entidade_id: body.entidadeId as string | null | undefined,

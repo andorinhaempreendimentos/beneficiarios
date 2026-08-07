@@ -72,6 +72,7 @@ export default function UsuariosPage() {
                   <th className="px-5 py-3">Nome</th>
                   <th className="px-5 py-3">E-mail</th>
                   <th className="px-5 py-3">Perfil</th>
+                  <th className="px-5 py-3">É Professor?</th>
                   <th className="px-5 py-3">Status</th>
                   <th className="px-5 py-3">Criado em</th>
                   <th className="px-5 py-3 text-right">Ações</th>
@@ -79,7 +80,7 @@ export default function UsuariosPage() {
               </thead>
               <tbody>
                 {resultado.length === 0 ? (
-                  <tr><td colSpan={6} className="px-5 py-8 text-center text-sm text-zinc-400">Nenhum usuário encontrado.</td></tr>
+                  <tr><td colSpan={7} className="px-5 py-8 text-center text-sm text-zinc-400">Nenhum usuário encontrado.</td></tr>
                 ) : resultado.map((u) => {
                   const perfil = perfis.find((p) => p.id === u.perfilId);
                   return (
@@ -90,6 +91,24 @@ export default function UsuariosPage() {
                       <td className="px-5 py-3 text-zinc-600">{u.email}</td>
                       <td className="px-5 py-3">
                         <Badge tone="sky">{perfil?.nome ?? "—"}</Badge>
+                      </td>
+                      <td className="px-5 py-3">
+                        <label className="relative inline-flex items-center cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={Boolean(u.isProfessor)}
+                            onChange={async (e) => {
+                              const novoVal = e.target.checked;
+                              await usuariosApi.update(u.id, { isProfessor: novoVal });
+                              window.location.reload();
+                            }}
+                            className="sr-only peer"
+                          />
+                          <div className="w-11 h-6 bg-zinc-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-sky-600"></div>
+                          <span className="ml-2 text-xs font-semibold text-zinc-700">
+                            {u.isProfessor ? "Sim" : "Não"}
+                          </span>
+                        </label>
                       </td>
                       <td className="px-5 py-3">
                         <Badge tone={u.ativo ? "green" : "red"}>{u.ativo ? "Ativo" : "Inativo"}</Badge>
