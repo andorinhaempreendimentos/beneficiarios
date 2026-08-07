@@ -35,14 +35,18 @@ export function SelecionarTurma({ turmas, titulo = "Escolha uma turma" }: Seleci
               <div className="flex flex-col gap-1.5">
                 <span className="font-medium text-zinc-900">{t.nome}</span>
                 <div className="flex flex-wrap gap-3 text-sm text-zinc-500">
-                  <span className="flex items-center gap-1">
-                    <Clock className="h-3.5 w-3.5" />
-                    {t.horario}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <CalendarDays className="h-3.5 w-3.5" />
-                    {t.dias.join(", ")}
-                  </span>
+                  {t.horario && (
+                    <span className="flex items-center gap-1">
+                      <Clock className="h-3.5 w-3.5" />
+                      {t.horario}
+                    </span>
+                  )}
+                  {t.dias && t.dias.length > 0 && (
+                    <span className="flex items-center gap-1">
+                      <CalendarDays className="h-3.5 w-3.5" />
+                      {t.dias.join(", ")}
+                    </span>
+                  )}
                 </div>
               </div>
 
