@@ -280,54 +280,73 @@ export default function FolhaPontoPage({ params }: { params: Promise<{ id: strin
         actions={<LinkButton href={`/funcionarios/${id}`} variant="outline">Voltar ao funcionário</LinkButton>}
       />
 
-      {/* Card de batida rápida — hoje */}
-      <Card>
-        <CardBody className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="text-sm font-medium text-zinc-700">Bater ponto hoje</p>
-            <p className="text-xs text-zinc-500">
-              {hoje.toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "long" })}
-              {regHoje?.entradaReal && (
-                <> · Entrada registrada: <span className="font-mono font-semibold">{regHoje.entradaReal}</span></>
+      {/* Painel Didático de Batida de Ponto — Destaque Máximo */}
+      <div className="rounded-3xl bg-gradient-to-br from-sky-900 via-sky-800 to-indigo-900 p-6 text-white shadow-2xl border border-sky-700/40">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          {/* Data e Orientação Didática */}
+          <div className="flex flex-col gap-1">
+            <span className="inline-flex items-center gap-2 w-fit rounded-full bg-sky-400/20 px-3.5 py-1 text-xs font-bold text-sky-200 backdrop-blur-md border border-sky-300/30">
+              📅 HOJE — {hoje.toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "long", year: "numeric" }).toUpperCase()}
+            </span>
+
+            <h2 className="text-3xl font-extrabold text-white mt-2 tracking-tight">
+              {tipoBatida === "entrada" && !regHoje?.saidaReal && "Registar Horário de Entrada"}
+              {tipoBatida === "saida" && !regHoje?.saidaReal && "Registar Horário de Saída"}
+              {regHoje?.entradaReal && regHoje?.saidaReal && "Jornada de Hoje Concluída"}
+            </h2>
+
+            <p className="text-sm text-sky-100/90 leading-relaxed max-w-xl mt-1">
+              {!regHoje?.entradaReal && "Clique no botão verde abaixo para confirmar seu início de trabalho no polo hoje."}
+              {regHoje?.entradaReal && !regHoje?.saidaReal && (
+                <>Entrada confirmada às <span className="font-mono font-bold text-white bg-white/20 px-2 py-0.5 rounded">{regHoje.entradaReal}</span>. Ao final da aula, clique no botão para registrar sua saída.</>
               )}
-              {regHoje?.saidaReal && (
-                <> · Saída: <span className="font-mono font-semibold">{regHoje.saidaReal}</span></>
+              {regHoje?.entradaReal && regHoje?.saidaReal && (
+                <>Tudo certo! Suas batidas de entrada (<span className="font-mono font-bold text-white">{regHoje.entradaReal}</span>) e saída (<span className="font-mono font-bold text-white">{regHoje.saidaReal}</span>) já foram computadas no espelho do mês.</>
               )}
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
-            {batidaRegistrada && (
-              <span className="text-sm text-green-600">
-                {tipoBatida === "saida" ? "Saída" : "Entrada"} registrada às{" "}
-                <span className="font-mono font-semibold">{batidaRegistrada}</span>
-              </span>
-            )}
+          {/* Botão Gigante Didático de Marcação */}
+          <div className="flex flex-col items-center md:items-end justify-center shrink-0 gap-2">
             {!regHoje?.saidaReal && (
               <button
                 type="button"
                 onClick={baterPonto}
-                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold text-white ${
+                className={`group relative flex items-center justify-center gap-3 rounded-2xl px-8 py-5 text-lg font-extrabold text-white shadow-xl transition-all transform active:scale-95 ${
                   tipoBatida === "entrada"
-                    ? "bg-green-600 hover:bg-green-700"
-                    : "bg-amber-500 hover:bg-amber-600"
+                    ? "bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 shadow-emerald-950/40 ring-4 ring-emerald-400/30"
+                    : "bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 shadow-amber-950/40 ring-4 ring-amber-400/30"
                 }`}
               >
-                {tipoBatida === "entrada"
-                  ? <><LogIn className="h-4 w-4" /> Bater entrada</>
-                  : <><LogOut className="h-4 w-4" /> Bater saída</>
-                }
+                {tipoBatida === "entrada" ? (
+                  <>
+                    <LogIn className="h-7 w-7 transition-transform group-hover:scale-110" />
+                    <span>MARCAR PONTO DE ENTRADA</span>
+                  </>
+                ) : (
+                  <>
+                    <LogOut className="h-7 w-7 transition-transform group-hover:scale-110" />
+                    <span>MARCAR PONTO DE SAÍDA</span>
+                  </>
+                )}
               </button>
             )}
+
             {regHoje?.entradaReal && regHoje?.saidaReal && (
-              <span className="flex items-center gap-1 text-sm text-zinc-500">
-                <CheckCircle2 className="h-4 w-4 text-green-500" />
-                Ponto completo
+              <div className="flex items-center gap-2.5 rounded-2xl bg-emerald-500/20 border border-emerald-400/40 px-6 py-4 text-emerald-200 font-bold backdrop-blur-md">
+                <CheckCircle2 className="h-6 w-6 text-emerald-400" />
+                <span>PONTO DE HOJE COMPLETO</span>
+              </div>
+            )}
+
+            {batidaRegistrada && (
+              <span className="text-xs text-emerald-300 font-medium">
+                Última confirmação às {batidaRegistrada} ✓
               </span>
             )}
           </div>
-        </CardBody>
-      </Card>
+        </div>
+      </div>
 
       {/* Navegação de mês */}
       <Card>
