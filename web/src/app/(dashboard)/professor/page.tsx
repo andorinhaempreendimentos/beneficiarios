@@ -1,10 +1,9 @@
 import { notFound, redirect } from "next/navigation";
-import { PortalProfessor } from "@/components/professor/PortalProfessor";
-import { funcionariosApi, turmasApi, nucleosApi } from "@/lib/api/services";
+import { DashboardProfessorHub } from "@/components/professor/DashboardProfessorHub";
+import { funcionariosApi, nucleosApi } from "@/lib/api/services";
 
 export default async function AreaProfessorPage() {
   const funcionarios = await funcionariosApi.list({ limit: 100 }).catch(() => ({ data: [] }));
-  // Selecionar o primeiro professor responsavel como demonstracao
   const professor = funcionarios.data.find((f) => f.professorResponsavel) || funcionarios.data[0];
 
   if (!professor) {
@@ -15,14 +14,13 @@ export default async function AreaProfessorPage() {
     );
   }
 
-  const turmasRes = await turmasApi.list({ limit: 100 }).catch(() => ({ data: [] }));
   const nucleosRes = await nucleosApi.list({ limit: 100 }).catch(() => ({ data: [] }));
+  const nucleo = nucleosRes.data.find((n) => n.id === professor.nucleoId);
 
   return (
-    <PortalProfessor
+    <DashboardProfessorHub
       professor={professor}
-      turmas={turmasRes.data}
-      nucleos={nucleosRes.data}
+      nucleo={nucleo}
     />
   );
 }
