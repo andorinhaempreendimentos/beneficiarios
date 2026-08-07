@@ -159,51 +159,110 @@ export function PortalProfessor({ professor, turmas, nucleos }: PortalProfessorP
 
       {/* CONTEÚDO DA ABA 1: PONTO */}
       {abaAtiva === "ponto" && (
-        <Card className="p-6">
-          <h3 className="text-base font-bold text-zinc-900 border-b border-zinc-100 pb-3 mb-6 flex items-center gap-2">
-            <Clock className="h-5 w-5 text-sky-600" />
-            <span>Registro Diário de Ponto de Trabalho</span>
-          </h3>
+        <div className="flex flex-col gap-6">
+          <Card className="p-6">
+            <h3 className="text-base font-bold text-zinc-900 border-b border-zinc-100 pb-3 mb-6 flex items-center gap-2">
+              <Clock className="h-5 w-5 text-sky-600" />
+              <span>Registro Diário de Ponto de Trabalho</span>
+            </h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Cartão de Entrada */}
-            <div className="rounded-2xl border border-zinc-200 p-5 bg-zinc-50/50 flex flex-col justify-between gap-4">
-              <div>
-                <span className="text-xs font-semibold uppercase text-zinc-400">Ponto de Entrada</span>
-                <div className="mt-2 text-2xl font-extrabold text-zinc-900">
-                  {pontoEntrada ? pontoEntrada : "--:--"}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Cartão de Entrada */}
+              <div className="rounded-2xl border border-zinc-200 p-5 bg-zinc-50/50 flex flex-col justify-between gap-4">
+                <div>
+                  <span className="text-xs font-semibold uppercase text-zinc-400">Ponto de Entrada</span>
+                  <div className="mt-2 text-2xl font-extrabold text-zinc-900">
+                    {pontoEntrada ? pontoEntrada : "--:--"}
+                  </div>
+                  <p className="text-xs text-zinc-500 mt-1">Horário previsto: 08:00</p>
                 </div>
-                <p className="text-xs text-zinc-500 mt-1">Horário previsto: 08:00</p>
+                <Button
+                  onClick={() => handlePonto("entrada")}
+                  disabled={!!pontoEntrada}
+                  className="w-full justify-center"
+                >
+                  {pontoEntrada ? "Entrada Registrada ✓" : "Bater Ponto de Entrada"}
+                </Button>
               </div>
-              <Button
-                onClick={() => handlePonto("entrada")}
-                disabled={!!pontoEntrada}
-                className="w-full justify-center"
-              >
-                {pontoEntrada ? "Entrada Registrada ✓" : "Bater Ponto de Entrada"}
-              </Button>
-            </div>
 
-            {/* Cartão de Saída */}
-            <div className="rounded-2xl border border-zinc-200 p-5 bg-zinc-50/50 flex flex-col justify-between gap-4">
-              <div>
-                <span className="text-xs font-semibold uppercase text-zinc-400">Ponto de Saída</span>
-                <div className="mt-2 text-2xl font-extrabold text-zinc-900">
-                  {pontoSaida ? pontoSaida : "--:--"}
+              {/* Cartão de Saída */}
+              <div className="rounded-2xl border border-zinc-200 p-5 bg-zinc-50/50 flex flex-col justify-between gap-4">
+                <div>
+                  <span className="text-xs font-semibold uppercase text-zinc-400">Ponto de Saída</span>
+                  <div className="mt-2 text-2xl font-extrabold text-zinc-900">
+                    {pontoSaida ? pontoSaida : "--:--"}
+                  </div>
+                  <p className="text-xs text-zinc-500 mt-1">Horário previsto: 17:00</p>
                 </div>
-                <p className="text-xs text-zinc-500 mt-1">Horário previsto: 17:00</p>
+                <Button
+                  onClick={() => handlePonto("saida")}
+                  disabled={!pontoEntrada || !!pontoSaida}
+                  variant="outline"
+                  className="w-full justify-center"
+                >
+                  {pontoSaida ? "Saída Registrada ✓" : "Bater Ponto de Saída"}
+                </Button>
               </div>
-              <Button
-                onClick={() => handlePonto("saida")}
-                disabled={!pontoEntrada || !!pontoSaida}
-                variant="outline"
-                className="w-full justify-center"
-              >
-                {pontoSaida ? "Saída Registrada ✓" : "Bater Ponto de Saída"}
-              </Button>
             </div>
-          </div>
-        </Card>
+          </Card>
+
+          {/* Histórico Mensal de Ponto */}
+          <Card className="p-6">
+            <h3 className="text-base font-bold text-zinc-900 border-b border-zinc-100 pb-3 mb-4 flex items-center justify-between">
+              <span>Espelho de Ponto do Mês (Agosto/2026)</span>
+              <Badge tone="sky">160h Cumpridas</Badge>
+            </h3>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm text-zinc-600">
+                <thead className="bg-zinc-50 text-xs font-semibold uppercase text-zinc-500 border-b border-zinc-200">
+                  <tr>
+                    <th className="px-4 py-3">Data</th>
+                    <th className="px-4 py-3">Dia</th>
+                    <th className="px-4 py-3">Entrada</th>
+                    <th className="px-4 py-3">Saída</th>
+                    <th className="px-4 py-3">Total Horas</th>
+                    <th className="px-4 py-3">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-100">
+                  <tr className="bg-sky-50/40">
+                    <td className="px-4 py-3 font-semibold text-zinc-900">07/08/2026</td>
+                    <td className="px-4 py-3 font-medium">Hoje</td>
+                    <td className="px-4 py-3 text-zinc-900 font-mono">{pontoEntrada || "--:--"}</td>
+                    <td className="px-4 py-3 text-zinc-900 font-mono">{pontoSaida || "--:--"}</td>
+                    <td className="px-4 py-3 font-semibold">{pontoEntrada && pontoSaida ? "8h00" : "Em andamento"}</td>
+                    <td className="px-4 py-3"><Badge tone="sky">Trabalhando</Badge></td>
+                  </tr>
+                  <tr>
+                    <td className="px-4 py-3">06/08/2026</td>
+                    <td className="px-4 py-3">Quinta</td>
+                    <td className="px-4 py-3 font-mono">08:00</td>
+                    <td className="px-4 py-3 font-mono">17:00</td>
+                    <td className="px-4 py-3">8h00</td>
+                    <td className="px-4 py-3"><Badge tone="green">Presente</Badge></td>
+                  </tr>
+                  <tr>
+                    <td className="px-4 py-3">05/08/2026</td>
+                    <td className="px-4 py-3">Quarta</td>
+                    <td className="px-4 py-3 font-mono">08:05</td>
+                    <td className="px-4 py-3 font-mono">17:02</td>
+                    <td className="px-4 py-3">8h00</td>
+                    <td className="px-4 py-3"><Badge tone="green">Presente</Badge></td>
+                  </tr>
+                  <tr>
+                    <td className="px-4 py-3">04/08/2026</td>
+                    <td className="px-4 py-3">Terça</td>
+                    <td className="px-4 py-3 font-mono">07:58</td>
+                    <td className="px-4 py-3 font-mono">17:00</td>
+                    <td className="px-4 py-3">8h00</td>
+                    <td className="px-4 py-3"><Badge tone="green">Presente</Badge></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </Card>
+        </div>
       )}
 
       {/* CONTEÚDO DA ABA 2: CHAMADA DIÁRIA */}
