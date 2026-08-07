@@ -520,13 +520,29 @@ export const nucleosApi = {
   async list(p?: QP): Promise<Paginated<NucleoApi>> {
     const sb = await getSupabase();
     const { page, limit, from, to } = paginar(num(p?.page), num(p?.limit));
-    let q = sb.from('nucleos').select('*, nucleo_atividades(atividade_id)', { count: 'exact' }).is('deleted_at', null);
+    let q = sb.from('nucleos').select('*, organizacoes(id, nome, objeto_id), nucleo_atividades(atividade_id)', { count: 'exact' }).is('deleted_at', null);
     if (p?.busca) q = q.ilike('identificacao', `%${p.busca}%`);
+    if (p?.organizacaoId) q = q.eq('organizacao_id', p.organizacaoId as string);
+    if (p?.cidade) q = q.ilike('cidade', `%${p.cidade}%`);
     if (bool(p?.emFuncionamento) !== undefined) q = q.eq('em_funcionamento', bool(p?.emFuncionamento)!);
     if (bool(p?.disponivelPreInscricao) !== undefined) q = q.eq('disponivel_pre_inscricao', bool(p?.disponivelPreInscricao)!);
+    
     const { data, count, error } = await q.order('identificacao', { ascending: true }).range(from, to);
     if (error) throw error;
-    return { data: (data ?? []).map(mapNucleo), total: count ?? 0, page, limit };
+
+    let items = (data ?? []).map((r: any) => ({
+      ...mapNucleo(r),
+      organizacao: r.organizacoes ? { id: r.organizacoes.id, nome: r.organizacoes.nome, objetoId: r.organizacoes.objeto_id } : undefined,
+    }));
+
+    if (p?.objetoId) {
+      items = items.filter((n: any) => n.organizacao?.objetoId === p.objetoId);
+    }
+    if (p?.atividadeId) {
+      items = items.filter((n: any) => n.atividadeIds && n.atividadeIds.includes(p.atividadeId as string));
+    }
+
+    return { data: items, total: count ?? 0, page, limit };
   },
   async get(id: string): Promise<NucleoApi> {
     const sb = await getSupabase();
