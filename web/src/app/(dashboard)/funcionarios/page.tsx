@@ -88,46 +88,87 @@ export default function FuncionariosPage() {
       <Card>
         {loading && <div className="px-5 py-8 text-center text-sm text-zinc-400">Carregando…</div>}
         {!loading && (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-zinc-200 text-left text-xs font-medium uppercase tracking-wide text-zinc-500">
-                  <th className="px-5 py-3">Matrícula</th>
-                  <th className="px-5 py-3">Nome</th>
-                  <th className="px-5 py-3">Status</th>
-                  <th className="px-5 py-3">Função</th>
-                  <th className="px-5 py-3">Admissão</th>
-                  <th className="px-5 py-3">Alocação</th>
-                  <th className="px-5 py-3 text-right">Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                {resultado.length === 0 ? (
-                  <tr><td colSpan={7} className="px-5 py-8 text-center text-sm text-zinc-400">Nenhum funcionário encontrado.</td></tr>
-                ) : resultado.map((f) => (
-                  <tr key={f.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
-                    <td className="px-5 py-3 text-zinc-500">{f.matricula}</td>
-                    <td className="px-5 py-3">
-                      <Link href={`/funcionarios/${f.id}`} className="font-medium text-sky-600 hover:underline">{f.nomeCompleto}</Link>
-                    </td>
-                    <td className="px-5 py-3">
+          <>
+            {/* Visualização Mobile em Cards */}
+            <div className="md:hidden divide-y divide-zinc-100">
+              {resultado.length === 0 ? (
+                <div className="px-5 py-8 text-center text-sm text-zinc-400">Nenhum funcionário encontrado.</div>
+              ) : (
+                resultado.map((f) => (
+                  <div key={f.id} className="p-4 flex flex-col gap-3 hover:bg-zinc-50 transition-colors">
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <span className="text-[10px] font-mono font-semibold text-zinc-400 block">{f.matricula}</span>
+                        <Link href={`/funcionarios/${f.id}`} className="font-bold text-zinc-900 text-sm hover:text-sky-600">
+                          {f.nomeCompleto}
+                        </Link>
+                      </div>
                       <Badge tone={statusFuncionarioTone[f.status as keyof typeof statusFuncionarioTone] ?? "zinc"}>
                         {statusFuncionarioLabel[f.status as keyof typeof statusFuncionarioLabel] ?? f.status}
                       </Badge>
-                    </td>
-                    <td className="px-5 py-3 text-zinc-600">{f.funcao}</td>
-                    <td className="px-5 py-3 text-zinc-600">{f.dataAdmissao ? formatarData(f.dataAdmissao) : "—"}</td>
-                    <td className="px-5 py-3 text-zinc-600">{f.alocadoEm}</td>
-                    <td className="px-5 py-3 text-right">
-                      <Link href={`/funcionarios/${f.id}`} className="text-sky-600 hover:underline">Detalhes</Link>
-                      <span className="mx-1.5 text-zinc-300">|</span>
-                      <Link href={`/funcionarios/${f.id}/editar`} className="text-zinc-500 hover:underline">Editar</Link>
-                    </td>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2 text-xs text-zinc-500 border-t border-zinc-100 pt-2.5">
+                      <div>Função: <strong className="text-zinc-700 block truncate">{f.funcao || "—"}</strong></div>
+                      <div>Alocação: <strong className="text-zinc-700 block truncate">{f.alocadoEm || "—"}</strong></div>
+                    </div>
+
+                    <div className="flex items-center justify-end gap-3 pt-1 border-t border-zinc-100/60">
+                      <Link href={`/funcionarios/${f.id}`} className="text-xs font-semibold text-sky-600 hover:underline">
+                        Detalhes
+                      </Link>
+                      <span className="text-zinc-300">|</span>
+                      <Link href={`/funcionarios/${f.id}/editar`} className="text-xs text-zinc-500 hover:underline">
+                        Editar
+                      </Link>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Visualização Desktop em Tabela */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-zinc-200 text-left text-xs font-medium uppercase tracking-wide text-zinc-500">
+                    <th className="px-5 py-3">Matrícula</th>
+                    <th className="px-5 py-3">Nome</th>
+                    <th className="px-5 py-3">Status</th>
+                    <th className="px-5 py-3">Função</th>
+                    <th className="px-5 py-3">Admissão</th>
+                    <th className="px-5 py-3">Alocação</th>
+                    <th className="px-5 py-3 text-right">Ações</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {resultado.length === 0 ? (
+                    <tr><td colSpan={7} className="px-5 py-8 text-center text-sm text-zinc-400">Nenhum funcionário encontrado.</td></tr>
+                  ) : resultado.map((f) => (
+                    <tr key={f.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
+                      <td className="px-5 py-3 text-zinc-500">{f.matricula}</td>
+                      <td className="px-5 py-3">
+                        <Link href={`/funcionarios/${f.id}`} className="font-medium text-sky-600 hover:underline">{f.nomeCompleto}</Link>
+                      </td>
+                      <td className="px-5 py-3">
+                        <Badge tone={statusFuncionarioTone[f.status as keyof typeof statusFuncionarioTone] ?? "zinc"}>
+                          {statusFuncionarioLabel[f.status as keyof typeof statusFuncionarioLabel] ?? f.status}
+                        </Badge>
+                      </td>
+                      <td className="px-5 py-3 text-zinc-600">{f.funcao}</td>
+                      <td className="px-5 py-3 text-zinc-600">{f.dataAdmissao ? formatarData(f.dataAdmissao) : "—"}</td>
+                      <td className="px-5 py-3 text-zinc-600">{f.alocadoEm}</td>
+                      <td className="px-5 py-3 text-right">
+                        <Link href={`/funcionarios/${f.id}`} className="text-sky-600 hover:underline">Detalhes</Link>
+                        <span className="mx-1.5 text-zinc-300">|</span>
+                        <Link href={`/funcionarios/${f.id}/editar`} className="text-zinc-500 hover:underline">Editar</Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
         <Pagination currentPage={pagina} totalPages={totalPages} totalItems={total} itemsPerPage={PER_PAGE} onPageChange={setPagina} />
       </Card>

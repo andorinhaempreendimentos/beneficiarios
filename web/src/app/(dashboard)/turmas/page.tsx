@@ -67,48 +67,92 @@ export default function TurmasPage() {
       <Card>
         {loading && <div className="px-5 py-8 text-center text-sm text-zinc-400">Carregando…</div>}
         {!loading && (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-zinc-200 text-left text-xs font-medium uppercase tracking-wide text-zinc-500">
-                  <th className="px-5 py-3">Nome</th>
-                  <th className="px-5 py-3">Núcleo</th>
-                  <th className="px-5 py-3">Atividade</th>
-                  <th className="px-5 py-3">Vagas</th>
-                  <th className="px-5 py-3">Exclusiva</th>
-                  <th className="px-5 py-3 text-right">Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                {resultado.length === 0 ? (
-                  <tr><td colSpan={6} className="px-5 py-8 text-center text-sm text-zinc-400">Nenhuma turma encontrada.</td></tr>
-                ) : resultado.map((t) => {
+          <>
+            {/* Visualização Mobile em Cards */}
+            <div className="md:hidden divide-y divide-zinc-100">
+              {resultado.length === 0 ? (
+                <div className="px-5 py-8 text-center text-sm text-zinc-400">Nenhuma turma encontrada.</div>
+              ) : (
+                resultado.map((t) => {
                   const nucleo = nucleos.find((n) => n.id === t.nucleoId);
                   const atividade = atividades.find((a) => a.id === t.atividadeId);
                   return (
-                    <tr key={t.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
-                      <td className="px-5 py-3">
-                        <Link href={`/turmas/${t.id}`} className="font-medium text-sky-600 hover:underline">{t.nome}</Link>
-                      </td>
-                      <td className="px-5 py-3 text-zinc-600">{nucleo?.identificacao ?? "—"}</td>
-                      <td className="px-5 py-3 text-zinc-600">{atividade?.nome ?? "—"}</td>
-                      <td className="px-5 py-3">
+                    <div key={t.id} className="p-4 flex flex-col gap-3 hover:bg-zinc-50 transition-colors">
+                      <div className="flex items-start justify-between gap-2">
+                        <Link href={`/turmas/${t.id}`} className="font-bold text-zinc-900 text-sm hover:text-sky-600">
+                          {t.nome}
+                        </Link>
                         <Badge tone="zinc">{t.vagasTotais} vagas</Badge>
-                      </td>
-                      <td className="px-5 py-3">
-                        <Badge tone={t.exclusiva ? "amber" : "zinc"}>{t.exclusiva ? "Sim" : "Não"}</Badge>
-                      </td>
-                      <td className="px-5 py-3 text-right">
-                        <Link href={`/turmas/${t.id}`} className="text-sky-600 hover:underline">Detalhes</Link>
-                        <span className="mx-1.5 text-zinc-300">|</span>
-                        <Link href={`/turmas/${t.id}/editar`} className="text-zinc-500 hover:underline">Editar</Link>
-                      </td>
-                    </tr>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 text-xs text-zinc-500 border-t border-zinc-100 pt-2.5">
+                        <div>Núcleo: <strong className="text-zinc-700 block truncate">{nucleo?.identificacao ?? "—"}</strong></div>
+                        <div>Atividade: <strong className="text-zinc-700 block truncate">{atividade?.nome ?? "—"}</strong></div>
+                      </div>
+
+                      <div className="flex items-center justify-between pt-1 border-t border-zinc-100/60">
+                        <Badge tone={t.exclusiva ? "amber" : "zinc"}>{t.exclusiva ? "Exclusiva: Sim" : "Exclusiva: Não"}</Badge>
+
+                        <div className="flex items-center gap-3">
+                          <Link href={`/turmas/${t.id}`} className="text-xs font-semibold text-sky-600 hover:underline">
+                            Detalhes
+                          </Link>
+                          <span className="text-zinc-300">|</span>
+                          <Link href={`/turmas/${t.id}/editar`} className="text-xs text-zinc-500 hover:underline">
+                            Editar
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
                   );
-                })}
-              </tbody>
-            </table>
-          </div>
+                })
+              )}
+            </div>
+
+            {/* Visualização Desktop em Tabela */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-zinc-200 text-left text-xs font-medium uppercase tracking-wide text-zinc-500">
+                    <th className="px-5 py-3">Nome</th>
+                    <th className="px-5 py-3">Núcleo</th>
+                    <th className="px-5 py-3">Atividade</th>
+                    <th className="px-5 py-3">Vagas</th>
+                    <th className="px-5 py-3">Exclusiva</th>
+                    <th className="px-5 py-3 text-right">Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {resultado.length === 0 ? (
+                    <tr><td colSpan={6} className="px-5 py-8 text-center text-sm text-zinc-400">Nenhuma turma encontrada.</td></tr>
+                  ) : resultado.map((t) => {
+                    const nucleo = nucleos.find((n) => n.id === t.nucleoId);
+                    const atividade = atividades.find((a) => a.id === t.atividadeId);
+                    return (
+                      <tr key={t.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
+                        <td className="px-5 py-3">
+                          <Link href={`/turmas/${t.id}`} className="font-medium text-sky-600 hover:underline">{t.nome}</Link>
+                        </td>
+                        <td className="px-5 py-3 text-zinc-600">{nucleo?.identificacao ?? "—"}</td>
+                        <td className="px-5 py-3 text-zinc-600">{atividade?.nome ?? "—"}</td>
+                        <td className="px-5 py-3">
+                          <Badge tone="zinc">{t.vagasTotais} vagas</Badge>
+                        </td>
+                        <td className="px-5 py-3">
+                          <Badge tone={t.exclusiva ? "amber" : "zinc"}>{t.exclusiva ? "Sim" : "Não"}</Badge>
+                        </td>
+                        <td className="px-5 py-3 text-right">
+                          <Link href={`/turmas/${t.id}`} className="text-sky-600 hover:underline">Detalhes</Link>
+                          <span className="mx-1.5 text-zinc-300">|</span>
+                          <Link href={`/turmas/${t.id}/editar`} className="text-zinc-500 hover:underline">Editar</Link>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
         <Pagination currentPage={pagina} totalPages={totalPages} totalItems={total} itemsPerPage={PER_PAGE} onPageChange={setPagina} />
       </Card>
