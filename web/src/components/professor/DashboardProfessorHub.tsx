@@ -40,7 +40,7 @@ const DIAS_SEMANA_NOMES = [
   "Sábado",
 ];
 
-export function DashboardProfessorHub({ professor, nucleo, turmas }: DashboardProfessorHubProps) {
+export function DashboardProfessorHub({ professor, nucleo, turmas, todosBeneficiarios }: DashboardProfessorHubProps) {
   const router = useRouter();
   const { logout } = useAuth();
   const [slideAtual, setSlideAtual] = useState(0);
