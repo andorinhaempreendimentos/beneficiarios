@@ -11,7 +11,9 @@ export default async function InscricaoAtividadePage({ params }: InscricaoAtivid
   const { atividadeId } = await params;
   const atividade = await atividadesApi.get(atividadeId).catch(() => null);
 
-  if (!atividade) redirect("/");
+  if (!atividade || atividade.disponivelPreInscricao === false) {
+    redirect("/");
+  }
 
   const turmasRes = await turmasApi.list({ limit: 100 }).catch(() => ({ data: [] }));
   const turmasDaAtividade = turmasRes.data.filter((t) => t.atividadeId === atividadeId);

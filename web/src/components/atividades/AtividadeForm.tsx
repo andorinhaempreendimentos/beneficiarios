@@ -78,12 +78,17 @@ export function AtividadeForm({ atividade: a, backHref }: AtividadeFormProps) {
           </Field>
         </div>
 
-        <div className="mt-4">
+        <div className="mt-4 flex flex-col gap-1">
           <Switch
             checked={disponivelPreInscricao}
             onChange={setDisponivelPreInscricao}
-            label="Disponível no formulário de inscrição?"
+            label="Disponível no formulário público de inscrição?"
           />
+          <p className="text-xs text-zinc-500 ml-11">
+            {disponivelPreInscricao
+              ? "Esta atividade ficará visível para inscrições públicas de alunos."
+              : "🔒 Controle Interno (ex: Planejamento, Reunião de Equipe, Manutenção). Não aparecerá para inscrições públicas, mas continuará disponível para composição da grade de turmas e horários."}
+          </p>
         </div>
 
         {disponivelPreInscricao && (

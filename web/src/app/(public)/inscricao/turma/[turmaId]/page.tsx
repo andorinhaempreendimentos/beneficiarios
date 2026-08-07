@@ -19,6 +19,11 @@ export default async function InscricaoTurmaPage({ params }: InscricaoTurmaPageP
     turma.atividadeId ? atividadesApi.get(turma.atividadeId).catch(() => null) : null,
   ]);
 
+  // Se a atividade for de controle interno (disponivelPreInscricao === false), não permite inscrição pública
+  if (atividade && atividade.disponivelPreInscricao === false) {
+    redirect("/inscricao");
+  }
+
   const vagasLivres = turma.vagasTotais ? turma.vagasTotais : 10;
   const turmaCheia = false;
 

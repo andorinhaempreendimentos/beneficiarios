@@ -117,9 +117,11 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], backHref }:
           </Field>
           <Field label="Atividade" required>
             <Select name="atividadeId" value={atividadeId} onChange={(e) => setAtividadeId(e.target.value)} disabled={!nucleoId}>
-              <option value="" disabled>{!nucleoId ? "Selecione primeiro o núcleo" : "Selecione"}</option>
+              <option value="" disabled>{!nucleoId ? "Selecione primeiro o núcleo" : "Selecione a atividade"}</option>
               {atividadesDisponiveis.map((a) => (
-                <option key={a.id} value={a.id}>{a.nome}</option>
+                <option key={a.id} value={a.id}>
+                  {a.nome} {!a.disponivelPreInscricao ? "(🔒 Controle Interno)" : ""}
+                </option>
               ))}
             </Select>
           </Field>
