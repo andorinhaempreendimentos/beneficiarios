@@ -22,6 +22,22 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], back
     n?.atividadeIds ?? atividades.map((a) => a.id)
   );
 
+  const [cep, setCep] = useState(n?.cep ?? "");
+  const [endereco, setEndereco] = useState(n?.endereco ?? "");
+  const [bairro, setBairro] = useState(n?.bairro ?? "");
+  const [cidade, setCidade] = useState(n?.cidade ?? "");
+
+  async function handleCepBlur() {
+    if (!cep) return;
+    const { buscarEnderecoPorCep } = await import("@/lib/cep");
+    const res = await buscarEnderecoPorCep(cep);
+    if (res) {
+      if (res.logradouro) setEndereco(res.logradouro);
+      if (res.bairro) setBairro(res.bairro);
+      if (res.localidade) setCidade(res.localidade);
+    }
+  }
+
   function toggleAtividade(id: string) {
     setAtividadeIds((prev) =>
       prev.includes(id) ? prev.filter((aId) => aId !== id) : [...prev, id]
@@ -145,19 +161,37 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], back
       <FormSection title="Endereço">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <Field label="CEP">
-            <Input name="cep" defaultValue={n?.cep} placeholder="00000-000" />
+            <Input
+              name="cep"
+              value={cep}
+              onChange={(e) => setCep(e.target.value)}
+              onBlur={handleCepBlur}
+              placeholder="00000-000"
+            />
           </Field>
           <Field label="Endereço" className="lg:col-span-2">
-            <Input name="endereco" defaultValue={n?.endereco} />
+            <Input
+              name="endereco"
+              value={endereco}
+              onChange={(e) => setEndereco(e.target.value)}
+            />
           </Field>
           <Field label="Número">
             <Input name="numero" defaultValue={n?.numero} />
           </Field>
           <Field label="Bairro">
-            <Input name="bairro" defaultValue={n?.bairro} />
+            <Input
+              name="bairro"
+              value={bairro}
+              onChange={(e) => setBairro(e.target.value)}
+            />
           </Field>
           <Field label="Cidade">
-            <Input name="cidade" defaultValue={n?.cidade} />
+            <Input
+              name="cidade"
+              value={cidade}
+              onChange={(e) => setCidade(e.target.value)}
+            />
           </Field>
           <Field label="Complemento" className="lg:col-span-3">
             <Input name="complemento" defaultValue={n?.complemento} />

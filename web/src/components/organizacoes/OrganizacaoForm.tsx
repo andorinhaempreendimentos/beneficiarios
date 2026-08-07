@@ -18,6 +18,22 @@ export function OrganizacaoForm({ organizacao: o, objetos = [], backHref }: Orga
   const [erro, setErro] = useState<string | null>(null);
   const [objetoId, setObjetoId] = useState(o?.objetoId ?? (objetos[0]?.id || ""));
 
+  const [cep, setCep] = useState(o?.cep ?? "");
+  const [endereco, setEndereco] = useState(o?.endereco ?? "");
+  const [cidade, setCidade] = useState(o?.cidade ?? "");
+  const [estado, setEstado] = useState(o?.estado ?? "");
+
+  async function handleCepBlur() {
+    if (!cep) return;
+    const { buscarEnderecoPorCep } = await import("@/lib/cep");
+    const res = await buscarEnderecoPorCep(cep);
+    if (res) {
+      if (res.logradouro) setEndereco(res.logradouro);
+      if (res.localidade) setCidade(res.localidade);
+      if (res.uf) setEstado(res.uf);
+    }
+  }
+
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setLoading(true);
@@ -107,16 +123,37 @@ export function OrganizacaoForm({ organizacao: o, objetos = [], backHref }: Orga
       <FormSection title="Endereço">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="CEP">
-            <Input name="cep" defaultValue={o?.cep} placeholder="00000-000" />
+            <Input
+              name="cep"
+              value={cep}
+              onChange={(e) => setCep(e.target.value)}
+              onBlur={handleCepBlur}
+              placeholder="00000-000"
+            />
           </Field>
           <Field label="Endereço">
-            <Input name="endereco" defaultValue={o?.endereco} placeholder="Rua, Av., número" />
+            <Input
+              name="endereco"
+              value={endereco}
+              onChange={(e) => setEndereco(e.target.value)}
+              placeholder="Rua, Av., número"
+            />
           </Field>
           <Field label="Cidade">
-            <Input name="cidade" defaultValue={o?.cidade} placeholder="Cidade" />
+            <Input
+              name="cidade"
+              value={cidade}
+              onChange={(e) => setCidade(e.target.value)}
+              placeholder="Cidade"
+            />
           </Field>
           <Field label="Estado">
-            <Input name="estado" defaultValue={o?.estado} placeholder="UF" />
+            <Input
+              name="estado"
+              value={estado}
+              onChange={(e) => setEstado(e.target.value)}
+              placeholder="UF"
+            />
           </Field>
         </div>
       </FormSection>

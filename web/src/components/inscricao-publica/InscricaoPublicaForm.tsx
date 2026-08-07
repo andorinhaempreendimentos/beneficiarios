@@ -40,6 +40,24 @@ export function InscricaoPublicaForm({ turmaId, onSubmit }: InscricaoPublicaForm
   const [termoAceito, setTermoAceito] = useState(false);
   const algumaRespostaSim = parQ.some((p) => p.resposta === "Sim");
 
+  const [cep, setCep] = useState("");
+  const [logradouro, setLogradouro] = useState("");
+  const [bairro, setBairro] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [estado, setEstado] = useState("");
+
+  async function handleCepBlur() {
+    if (!cep) return;
+    const { buscarEnderecoPorCep } = await import("@/lib/cep");
+    const res = await buscarEnderecoPorCep(cep);
+    if (res) {
+      if (res.logradouro) setLogradouro(res.logradouro);
+      if (res.bairro) setBairro(res.bairro);
+      if (res.localidade) setCidade(res.localidade);
+      if (res.uf) setEstado(res.uf);
+    }
+  }
+
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!termoAceito) return;
@@ -132,10 +150,22 @@ export function InscricaoPublicaForm({ turmaId, onSubmit }: InscricaoPublicaForm
       <FormSection title="3. Endereço" defaultOpen={false}>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <Field label="CEP" required>
-            <Input name="cep" placeholder="00000-000" required />
+            <Input
+              name="cep"
+              value={cep}
+              onChange={(e) => setCep(e.target.value)}
+              onBlur={handleCepBlur}
+              placeholder="00000-000"
+              required
+            />
           </Field>
           <Field label="Logradouro" required className="lg:col-span-2">
-            <Input name="logradouro" required />
+            <Input
+              name="logradouro"
+              value={logradouro}
+              onChange={(e) => setLogradouro(e.target.value)}
+              required
+            />
           </Field>
           <Field label="Número" required>
             <Input name="numero" required />
@@ -144,13 +174,28 @@ export function InscricaoPublicaForm({ turmaId, onSubmit }: InscricaoPublicaForm
             <Input name="complemento" />
           </Field>
           <Field label="Bairro" required>
-            <Input name="bairro" required />
+            <Input
+              name="bairro"
+              value={bairro}
+              onChange={(e) => setBairro(e.target.value)}
+              required
+            />
           </Field>
           <Field label="Cidade" required>
-            <Input name="cidade" required />
+            <Input
+              name="cidade"
+              value={cidade}
+              onChange={(e) => setCidade(e.target.value)}
+              required
+            />
           </Field>
           <Field label="Estado" required>
-            <Input name="estado" required />
+            <Input
+              name="estado"
+              value={estado}
+              onChange={(e) => setEstado(e.target.value)}
+              required
+            />
           </Field>
         </div>
       </FormSection>

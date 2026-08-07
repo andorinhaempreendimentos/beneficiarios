@@ -47,6 +47,27 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
   );
   const algumaRespostaSim = parQ.some((p) => p.resposta === "Sim");
 
+  const [cep, setCep] = useState(b?.cep ?? "");
+  const [logradouro, setLogradouro] = useState(b?.logradouro ?? "");
+  const [bairro, setBairro] = useState(b?.bairro ?? "");
+  const [cidade, setCidade] = useState(b?.cidade ?? "");
+  const [estado, setEstado] = useState(b?.estado ?? "");
+  const [buscandoCep, setBuscandoCep] = useState(false);
+
+  async function handleCepBlur() {
+    if (!cep) return;
+    setBuscandoCep(true);
+    const { buscarEnderecoPorCep } = await import("@/lib/cep");
+    const res = await buscarEnderecoPorCep(cep);
+    if (res) {
+      if (res.logradouro) setLogradouro(res.logradouro);
+      if (res.bairro) setBairro(res.bairro);
+      if (res.localidade) setCidade(res.localidade);
+      if (res.uf) setEstado(res.uf);
+    }
+    setBuscandoCep(false);
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
@@ -302,10 +323,20 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
       <FormSection title="2. Endereço do Beneficiário">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <Field label="CEP" required>
-            <Input name="cep" defaultValue={b?.cep} placeholder="00000-000" />
+            <Input
+              name="cep"
+              value={cep}
+              onChange={(e) => setCep(e.target.value)}
+              onBlur={handleCepBlur}
+              placeholder="00000-000"
+            />
           </Field>
           <Field label="Logradouro" required className="lg:col-span-2">
-            <Input name="logradouro" defaultValue={b?.logradouro} />
+            <Input
+              name="logradouro"
+              value={logradouro}
+              onChange={(e) => setLogradouro(e.target.value)}
+            />
           </Field>
           <Field label="Número" required>
             <Input name="numero" defaultValue={b?.numero} />
@@ -314,13 +345,25 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
             <Input name="complemento" defaultValue={b?.complemento} />
           </Field>
           <Field label="Bairro" required>
-            <Input name="bairro" defaultValue={b?.bairro} />
+            <Input
+              name="bairro"
+              value={bairro}
+              onChange={(e) => setBairro(e.target.value)}
+            />
           </Field>
           <Field label="Cidade" required>
-            <Input name="cidade" defaultValue={b?.cidade} />
+            <Input
+              name="cidade"
+              value={cidade}
+              onChange={(e) => setCidade(e.target.value)}
+            />
           </Field>
           <Field label="Estado" required>
-            <Input name="estado" defaultValue={b?.estado} />
+            <Input
+              name="estado"
+              value={estado}
+              onChange={(e) => setEstado(e.target.value)}
+            />
           </Field>
         </div>
       </FormSection>
