@@ -12,7 +12,10 @@ interface TurmaFormProps {
   backHref: string;
 }
 
+import { useToast } from "@/components/providers/ToastProvider";
+
 export function TurmaForm({ turma: t, nucleos = [], atividades = [], backHref }: TurmaFormProps) {
+  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [exclusiva, setExclusiva] = useState(t?.exclusiva ?? false);
@@ -46,12 +49,16 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], backHref }:
     const aId = (formData.get("atividadeId") as string) || atividadeId;
 
     if (!nId) {
-      setErro("Por favor, selecione um núcleo.");
+      const msg = "Por favor, selecione um núcleo.";
+      setErro(msg);
+      toast.error(msg);
       setLoading(false);
       return;
     }
     if (!aId) {
-      setErro("Por favor, selecione uma atividade.");
+      const msg = "Por favor, selecione uma atividade.";
+      setErro(msg);
+      toast.error(msg);
       setLoading(false);
       return;
     }
@@ -69,15 +76,23 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], backHref }:
     try {
       if (t?.id) {
         await turmasApi.update(t.id, data);
+        toast.success("Turma atualizada com sucesso!");
       } else {
         await turmasApi.create(data);
+        toast.success("Turma cadastrada com sucesso!");
       }
       window.location.href = backHref;
     } catch (err: any) {
-      setErro(err.message || "Erro ao salvar turma.");
+      const msg = err.message || "Erro ao salvar turma.";
+      setErro(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
+  }
+
+  function handleCancel() {
+    toast.info("Ação cancelada.");
   }
 
   return (
@@ -144,10 +159,12 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], backHref }:
       </FormSection>
 
       <div className="flex justify-end gap-2">
-        <LinkButton href={backHref} variant="outline">
-          Voltar
+        <LinkButton href={backHref} variant="outline" onClick={handleCancel}>
+          Voltar / Cancelar
         </LinkButton>
-        <Button type="submit">{t ? "Salvar" : "Cadastrar Turma"}</Button>
+        <Button type="submit" loading={loading}>
+          {loading ? "Salvando..." : t ? "Salvar" : "Cadastrar Turma"}
+        </Button>
       </div>
     </form>
   );

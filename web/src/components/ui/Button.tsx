@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { Loader2 } from "lucide-react";
 import type { ButtonHTMLAttributes } from "react";
 
 type Variant = "primary" | "secondary" | "outline" | "danger" | "ghost";
@@ -24,11 +25,19 @@ const base =
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: Variant;
   size?: Size;
+  loading?: boolean;
 }
 
-export function Button({ variant = "primary", size = "md", className, ...props }: ButtonProps) {
+export function Button({ variant = "primary", size = "md", loading = false, disabled, children, className, ...props }: ButtonProps) {
   return (
-    <button className={cn(base, variantClasses[variant], sizeClasses[size], className)} {...props} />
+    <button
+      disabled={disabled || loading}
+      className={cn(base, variantClasses[variant], sizeClasses[size], className)}
+      {...props}
+    >
+      {loading && <Loader2 className="h-4 w-4 animate-spin shrink-0" />}
+      {children}
+    </button>
   );
 }
 
