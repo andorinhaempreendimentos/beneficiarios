@@ -14,27 +14,35 @@ export function FilterBar({ children, onFilter, onClear }: FilterBarProps) {
   const [visible, setVisible] = useState(true);
 
   return (
-    <div className="rounded-xl border border-zinc-200 bg-white shadow-sm">
-      <button
-        type="button"
-        onClick={() => setVisible((v) => !v)}
-        className="flex w-full items-center gap-2 px-5 py-3 text-left text-sm font-medium text-zinc-700"
-      >
-        <SlidersHorizontal className="h-4 w-4" />
-        {visible ? "Ocultar filtros" : "Exibir filtros"}
-      </button>
-      {visible && (
-        <div className="border-t border-zinc-200 px-5 py-4">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {children}
+    <div className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm transition-all">
+      <div className="flex items-center justify-between">
+        <button
+          type="button"
+          onClick={() => setVisible((v) => !v)}
+          className="flex items-center gap-2 text-sm font-semibold text-zinc-800 hover:text-sky-600 transition-colors"
+        >
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-sky-50 text-sky-600">
+            <SlidersHorizontal className="h-4 w-4" />
           </div>
-          <div className="mt-4 flex justify-end gap-2">
-            <Button variant="outline" onClick={onClear} type="button">
+          <span>Filtros de Busca</span>
+        </button>
+
+        {visible && (
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={onClear} type="button">
               Limpar
             </Button>
-            <Button onClick={onFilter} type="button">
-              Filtrar
+            <Button size="sm" onClick={onFilter} type="button">
+              Aplicar Filtros
             </Button>
+          </div>
+        )}
+      </div>
+
+      {visible && (
+        <div className="mt-4 border-t border-zinc-100 pt-4">
+          <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+            {children}
           </div>
         </div>
       )}
