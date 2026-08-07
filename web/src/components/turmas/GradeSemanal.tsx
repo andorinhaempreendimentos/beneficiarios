@@ -50,14 +50,27 @@ interface ModalSlotProps {
   atividadeNome: string;
   atividadesLocais?: AtividadeApi[];
   diasVisiveis: string[];
+  initialDia?: string;
+  initialInicio?: number;
+  initialFim?: number;
   onConfirm: (slot: SlotAula) => void;
   onClose: () => void;
 }
 
-function ModalSlot({ atividadeAtual, atividadeNome, atividadesLocais = [], diasVisiveis, onConfirm, onClose }: ModalSlotProps) {
-  const [dia, setDia] = useState(diasVisiveis[0] ?? "Seg");
-  const [inicio, setInicio] = useState(8);
-  const [fim, setFim] = useState(9);
+function ModalSlot({
+  atividadeAtual,
+  atividadeNome,
+  atividadesLocais = [],
+  diasVisiveis,
+  initialDia,
+  initialInicio,
+  initialFim,
+  onConfirm,
+  onClose,
+}: ModalSlotProps) {
+  const [dia, setDia] = useState(initialDia || diasVisiveis[0] || "Seg");
+  const [inicio, setInicio] = useState(initialInicio ?? 8);
+  const [fim, setFim] = useState(initialFim ?? 9);
 
   // Atividade selecionada para o slot
   const [selectedAtividadeId, setSelectedAtividadeId] = useState(atividadeAtual?.id || "");
@@ -253,6 +266,8 @@ export function GradeSemanal({ atividade, atividadeNome = "Aula", atividadesLoca
     setDragHover(hora);
   }
 
+  const [slotDraft, setSlotDraft] = useState<{ dia: string; inicio: number; fim: number } | null>(null);
+
   function handleMouseUp(dia: string, hora: number) {
     if (!dragging || dragging.dia !== dia) {
       setDragging(null);
@@ -261,8 +276,11 @@ export function GradeSemanal({ atividade, atividadeNome = "Aula", atividadesLoca
     }
     const inicio = Math.min(dragging.inicio, hora);
     const fim = Math.max(dragging.inicio, hora) + 1;
-    const filtered = items.filter((s) => s.dia !== dia || s.fim <= inicio || s.inicio >= fim);
-    notify([...filtered, { dia, inicio, fim }]);
+
+    // Guarda o rascunho do arrasto e abre o modal para o usuário selecionar a atividade
+    setSlotDraft({ dia, inicio, fim });
+    setModalAberto(true);
+
     setDragging(null);
     setDragHover(null);
   }
@@ -272,6 +290,7 @@ export function GradeSemanal({ atividade, atividadeNome = "Aula", atividadesLoca
       (s) => s.dia !== slot.dia || s.fim <= slot.inicio || s.inicio >= slot.fim
     );
     notify([...filtered, slot]);
+    setSlotDraft(null);
   }
 
   const isDragHighlight = (dia: string, hora: number) => {
@@ -421,8 +440,14 @@ export function GradeSemanal({ atividade, atividadeNome = "Aula", atividadesLoca
           atividadeNome={atividadeNome}
           atividadesLocais={atividadesLocais}
           diasVisiveis={[...diasVisiveis]}
+          initialDia={slotDraft?.dia}
+          initialInicio={slotDraft?.inicio}
+          initialFim={slotDraft?.fim}
           onConfirm={addSlotFromModal}
-          onClose={() => setModalAberto(false)}
+          onClose={() => {
+            setModalAberto(false);
+            setSlotDraft(null);
+          }}
         />
       )}
     </div>
