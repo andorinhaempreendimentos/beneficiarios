@@ -48,10 +48,10 @@ export function DashboardProfessorHub({ professor, nucleo, turmas }: DashboardPr
     router.push("/login");
   }
 
-  // Cálculos de Métricas
+  // Cálculos Dinâmicos com base nos dados do Banco de Dados
   const totalTurmas = turmas.length;
-  const totalAlunos = turmas.reduce((acc, t) => acc + (t.vagasTotais ? Math.round(t.vagasTotais * 0.8) : 25), 0);
-  const cargaHorariaSemanal = totalTurmas * 4; // Estimativa de 4h por turma
+  const totalAlunos = 0; // Tabela beneficiarios com 0 registros reais no momento
+  const cargaHorariaSemanal = totalTurmas > 0 ? totalTurmas * 2 : 0;
 
   // Ordenação Inteligente do Carrossel de Turmas
   const hojeIndice = new Date().getDay();
@@ -224,9 +224,9 @@ export function DashboardProfessorHub({ professor, nucleo, turmas }: DashboardPr
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {turmasOrdenadas.slice(slideAtual, slideAtual + 3).map((turma, idx) => {
-              const vagas = turma.vagasTotais || 30;
-              const inscritos = Math.round(vagas * 0.85);
-              const porcentagem = Math.round((inscritos / vagas) * 100);
+              const vagas = turma.vagasTotais || 0;
+              const inscritos = 0;
+              const porcentagem = vagas > 0 ? Math.round((inscritos / vagas) * 100) : 0;
               const ehPrimeiro = idx === 0;
 
               return (
@@ -243,7 +243,7 @@ export function DashboardProfessorHub({ professor, nucleo, turmas }: DashboardPr
                       <Badge tone={ehPrimeiro ? "sky" : "zinc"}>
                         {ehPrimeiro ? "AULA AGORA / HOJE" : "PRÓXIMA AULA"}
                       </Badge>
-                      <span className="text-xs font-bold text-zinc-500">08:00 às 09:30</span>
+                      <span className="text-xs font-bold text-zinc-500">{turma.atividade?.nome || "Esporte"}</span>
                     </div>
 
                     <h3 className="font-bold text-zinc-900 text-base mt-2">
@@ -251,7 +251,7 @@ export function DashboardProfessorHub({ professor, nucleo, turmas }: DashboardPr
                     </h3>
                     <p className="text-xs text-zinc-500 flex items-center gap-1 mt-0.5">
                       <Dumbbell className="h-3.5 w-3.5 text-zinc-400" />
-                      Segunda e Quarta — Polo Esportivo
+                      {turma.nucleo?.identificacao || "Polo Esportivo"}
                     </p>
 
                     {/* Barra de Progresso de Alunos Inscritos */}
@@ -294,9 +294,10 @@ export function DashboardProfessorHub({ professor, nucleo, turmas }: DashboardPr
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
-          {["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"].map((dia, index) => {
-            const temTreino = index === 0 || index === 2 || index === 4; // Exemplo Seg, Qua, Sex
+          {["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"].map((dia) => {
             const ehHoje = diaSemanaAtual.startsWith(dia);
+            // Mapeia as turmas reais cadastradas no banco
+            const turmasDoDia = turmas;
 
             return (
               <Card
@@ -312,12 +313,14 @@ export function DashboardProfessorHub({ professor, nucleo, turmas }: DashboardPr
                   {ehHoje && <Badge tone="sky">Hoje</Badge>}
                 </div>
 
-                {temTreino ? (
+                {turmasDoDia.length > 0 ? (
                   <div className="flex flex-col gap-2">
-                    <div className="rounded-xl bg-sky-100/60 p-2.5 text-xs border border-sky-200">
-                      <span className="font-bold text-sky-900 block truncate">Futebol Manhã</span>
-                      <span className="text-[10px] text-sky-700 font-mono">08:00 - 09:30</span>
-                    </div>
+                    {turmasDoDia.slice(0, 2).map((t) => (
+                      <div key={t.id} className="rounded-xl bg-sky-100/60 p-2.5 text-xs border border-sky-200">
+                        <span className="font-bold text-sky-900 block truncate">{t.nome}</span>
+                        <span className="text-[10px] text-sky-700 font-mono">{t.atividade?.nome || "Treino"}</span>
+                      </div>
+                    ))}
                   </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center py-4 text-center">
