@@ -44,7 +44,7 @@ function formatHora(h: number) {
   return `${String(h).padStart(2, "0")}:00`;
 }
 
-// Modal de adicionar slot
+// Modal de adicionar/criar slot por clique ou arrasto
 interface ModalSlotProps {
   atividadeAtual?: AtividadeApi;
   atividadeNome: string;
@@ -72,7 +72,6 @@ function ModalSlot({
   const [inicio, setInicio] = useState(initialInicio ?? 8);
   const [fim, setFim] = useState(initialFim ?? 9);
 
-  // Atividade selecionada para o slot
   const [selectedAtividadeId, setSelectedAtividadeId] = useState(atividadeAtual?.id || "");
 
   const atvSelecionada = atividadesLocais.find((a) => a.id === selectedAtividadeId) || atividadeAtual;
@@ -109,7 +108,6 @@ function ModalSlot({
         </div>
 
         <div className="flex flex-col gap-4">
-          {/* Seletor de Atividade do Slot */}
           {atividadesLocais.length > 0 && (
             <div>
               <label className="mb-1.5 block text-xs font-semibold text-zinc-700">Atividade / Bloco</label>
@@ -127,7 +125,6 @@ function ModalSlot({
             </div>
           )}
 
-          {/* Dia */}
           <div>
             <label className="mb-1.5 block text-xs font-semibold text-zinc-700">Dia da semana</label>
             <div className="flex flex-wrap gap-1.5">
@@ -149,7 +146,6 @@ function ModalSlot({
             </div>
           </div>
 
-          {/* Horário */}
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="mb-1.5 block text-xs font-semibold text-zinc-700">Início</label>
@@ -199,6 +195,179 @@ function ModalSlot({
   );
 }
 
+// Modal de opções do slot existente (Duplicar, Trocar Atividade, Deletar)
+interface ModalOpcoesSlotProps {
+  slot: SlotAula;
+  atividadesLocais?: AtividadeApi[];
+  onDuplicar: (diaDestino: string) => void;
+  onTrocarAtividade: (novaAtividade: AtividadeApi) => void;
+  onDeletar: () => void;
+  onClose: () => void;
+}
+
+function ModalOpcoesSlot({
+  slot,
+  atividadesLocais = [],
+  onDuplicar,
+  onTrocarAtividade,
+  onDeletar,
+  onClose,
+}: ModalOpcoesSlotProps) {
+  const [aba, setAba] = useState<"opcoes" | "duplicar" | "trocar">("opcoes");
+  const [diaDestino, setDiaDestino] = useState(slot.dia);
+  const [novaAtividadeId, setNovaAtividadeId] = useState(slot.atividadeId || "");
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs" onClick={onClose}>
+      <div
+        className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl border border-zinc-100 animate-in fade-in zoom-in-95"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="mb-4 flex items-center justify-between border-b border-zinc-100 pb-3">
+          <div>
+            <h3 className="text-sm font-extrabold text-zinc-900 flex items-center gap-1.5">
+              <span>{slot.isControleInterno ? "🔒" : "📌"}</span>
+              <span>{slot.atividadeNome || "Slot de Horário"}</span>
+            </h3>
+            <p className="text-xs text-zinc-500 font-medium">
+              {DIAS_OPCOES.find((d) => d.key === slot.dia)?.label} ({formatHora(slot.inicio)} às {formatHora(slot.fim)})
+            </p>
+          </div>
+          <button type="button" onClick={onClose} className="rounded-full p-1 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600">
+            <X size={16} />
+          </button>
+        </div>
+
+        {aba === "opcoes" && (
+          <div className="flex flex-col gap-2.5">
+            <button
+              type="button"
+              onClick={() => setAba("duplicar")}
+              className="flex items-center justify-between w-full p-3.5 rounded-2xl border border-zinc-200 bg-white hover:bg-sky-50/60 hover:border-sky-300 text-left transition-all text-xs font-bold text-zinc-800 active:scale-98"
+            >
+              <div className="flex items-center gap-3">
+                <span className="p-2 rounded-xl bg-sky-100 text-sky-700 font-bold">📋</span>
+                <div>
+                  <span className="block text-zinc-900">Duplicar Slot</span>
+                  <span className="text-[11px] font-normal text-zinc-500">Copiar para outro dia da semana</span>
+                </div>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setAba("trocar")}
+              className="flex items-center justify-between w-full p-3.5 rounded-2xl border border-zinc-200 bg-white hover:bg-amber-50/60 hover:border-amber-300 text-left transition-all text-xs font-bold text-zinc-800 active:scale-98"
+            >
+              <div className="flex items-center gap-3">
+                <span className="p-2 rounded-xl bg-amber-100 text-amber-700 font-bold">🔄</span>
+                <div>
+                  <span className="block text-zinc-900">Trocar Atividade</span>
+                  <span className="text-[11px] font-normal text-zinc-500">Alterar tipo de aula ou controle interno</span>
+                </div>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={onDeletar}
+              className="flex items-center justify-between w-full p-3.5 rounded-2xl border border-red-200 bg-red-50/50 hover:bg-red-100/60 text-left transition-all text-xs font-bold text-red-700 active:scale-98"
+            >
+              <div className="flex items-center gap-3">
+                <span className="p-2 rounded-xl bg-red-100 text-red-700 font-bold">🗑️</span>
+                <div>
+                  <span className="block text-red-900">Excluir Slot</span>
+                  <span className="text-[11px] font-normal text-red-600">Remover este horário da grade</span>
+                </div>
+              </div>
+            </button>
+          </div>
+        )}
+
+        {aba === "duplicar" && (
+          <div className="flex flex-col gap-4">
+            <label className="text-xs font-bold text-zinc-800 block">Escolha o dia para onde deseja copiar:</label>
+            <div className="grid grid-cols-2 gap-2">
+              {DIAS_OPCOES.map((d) => (
+                <button
+                  key={d.key}
+                  type="button"
+                  onClick={() => setDiaDestino(d.key)}
+                  className={`p-2.5 rounded-xl border text-xs font-semibold transition-all ${
+                    diaDestino === d.key
+                      ? "bg-sky-600 text-white border-sky-600 shadow-sm"
+                      : "bg-zinc-50 text-zinc-700 border-zinc-200 hover:bg-zinc-100"
+                  }`}
+                >
+                  {d.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex justify-end gap-2 pt-2 border-t border-zinc-100">
+              <button
+                type="button"
+                onClick={() => setAba("opcoes")}
+                className="rounded-xl border border-zinc-200 px-3.5 py-2 text-xs font-semibold text-zinc-600 hover:bg-zinc-50"
+              >
+                Voltar
+              </button>
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => {
+                  onDuplicar(diaDestino);
+                  onClose();
+                }}
+              >
+                Confirmar Cópia
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {aba === "trocar" && (
+          <div className="flex flex-col gap-4">
+            <label className="text-xs font-bold text-zinc-800 block">Selecione a nova atividade para este slot:</label>
+            <select
+              value={novaAtividadeId}
+              onChange={(e) => setNovaAtividadeId(e.target.value)}
+              className="w-full rounded-xl border border-zinc-200 bg-white px-3.5 py-2.5 text-xs font-medium text-zinc-800 focus:border-sky-500 focus:outline-none"
+            >
+              {atividadesLocais.map((a) => (
+                <option key={a.id} value={a.id}>
+                  {a.nome} {!a.disponivelPreInscricao ? "(🔒 Controle Interno)" : "(Turma)"}
+                </option>
+              ))}
+            </select>
+
+            <div className="flex justify-end gap-2 pt-2 border-t border-zinc-100">
+              <button
+                type="button"
+                onClick={() => setAba("opcoes")}
+                className="rounded-xl border border-zinc-200 px-3.5 py-2 text-xs font-semibold text-zinc-600 hover:bg-zinc-50"
+              >
+                Voltar
+              </button>
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => {
+                  const novaAtv = atividadesLocais.find((a) => a.id === novaAtividadeId);
+                  if (novaAtv) onTrocarAtividade(novaAtv);
+                  onClose();
+                }}
+              >
+                Salvar Alteração
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export function GradeSemanal({ atividade, atividadeNome = "Aula", atividadesLocais = [], slots = [], onChange }: GradeSemanalProps) {
   const [items, setItems] = useState<SlotAula[]>(slots);
   const [diasVisiveis, setDiasVisiveis] = useState<Set<string>>(
@@ -210,6 +379,8 @@ export function GradeSemanal({ atividade, atividadeNome = "Aula", atividadesLoca
   const [dragging, setDragging] = useState<{ dia: string; inicio: number } | null>(null);
   const [dragHover, setDragHover] = useState<number | null>(null);
   const [modalAberto, setModalAberto] = useState(false);
+  const [slotDraft, setSlotDraft] = useState<{ dia: string; inicio: number; fim: number } | null>(null);
+  const [slotSelecionadoOpcoes, setSlotSelecionadoOpcoes] = useState<SlotAula | null>(null);
 
   const horasVisiveis = TODAS_HORAS.filter((h) =>
     [...periodosVisiveis].some((p) => {
@@ -254,7 +425,7 @@ export function GradeSemanal({ atividade, atividadeNome = "Aula", atividadesLoca
   function handleMouseDown(dia: string, hora: number) {
     const existing = getSlot(dia, hora);
     if (existing) {
-      notify(items.filter((s) => s !== existing));
+      setSlotSelecionadoOpcoes(existing);
       return;
     }
     setDragging({ dia, inicio: hora });
@@ -266,8 +437,6 @@ export function GradeSemanal({ atividade, atividadeNome = "Aula", atividadesLoca
     setDragHover(hora);
   }
 
-  const [slotDraft, setSlotDraft] = useState<{ dia: string; inicio: number; fim: number } | null>(null);
-
   function handleMouseUp(dia: string, hora: number) {
     if (!dragging || dragging.dia !== dia) {
       setDragging(null);
@@ -277,7 +446,6 @@ export function GradeSemanal({ atividade, atividadeNome = "Aula", atividadesLoca
     const inicio = Math.min(dragging.inicio, hora);
     const fim = Math.max(dragging.inicio, hora) + 1;
 
-    // Guarda o rascunho do arrasto e abre o modal para o usuário selecionar a atividade
     setSlotDraft({ dia, inicio, fim });
     setModalAberto(true);
 
@@ -304,7 +472,6 @@ export function GradeSemanal({ atividade, atividadeNome = "Aula", atividadesLoca
     <div className="flex flex-col gap-3">
       {/* Controles acima da grade */}
       <div className="flex flex-wrap items-start gap-4 rounded-xl border border-zinc-200 bg-zinc-50 p-4">
-        {/* Dias */}
         <div className="flex flex-col gap-1.5">
           <span className="text-[11px] font-semibold uppercase tracking-wide text-zinc-400">Dias</span>
           <div className="flex flex-wrap gap-1">
@@ -326,7 +493,6 @@ export function GradeSemanal({ atividade, atividadeNome = "Aula", atividadesLoca
           </div>
         </div>
 
-        {/* Períodos */}
         <div className="flex flex-col gap-1.5">
           <span className="text-[11px] font-semibold uppercase tracking-wide text-zinc-400">Período</span>
           <div className="flex flex-wrap gap-1">
@@ -349,7 +515,6 @@ export function GradeSemanal({ atividade, atividadeNome = "Aula", atividadesLoca
           </div>
         </div>
 
-        {/* Botão adicionar */}
         <div className="ml-auto self-end">
           <Button
             type="button"
@@ -372,7 +537,6 @@ export function GradeSemanal({ atividade, atividadeNome = "Aula", atividadesLoca
       ) : (
         <div className="overflow-x-auto rounded-xl border border-zinc-200 bg-white select-none">
           <div className="flex" style={{ minWidth: `${56 + diasColuna.length * 80}px` }}>
-            {/* Coluna horas */}
             <div className="flex flex-col">
               <div className="h-10 w-14 border-b border-zinc-100" />
               {horasVisiveis.map((h) => (
@@ -382,7 +546,6 @@ export function GradeSemanal({ atividade, atividadeNome = "Aula", atividadesLoca
               ))}
             </div>
 
-            {/* Colunas dos dias */}
             {diasColuna.map(({ key, label }) => (
               <div key={key} className="flex flex-1 flex-col border-l border-zinc-100">
                 <div className="flex h-10 items-center justify-center border-b border-zinc-100 bg-zinc-50">
@@ -409,7 +572,7 @@ export function GradeSemanal({ atividade, atividadeNome = "Aula", atividadesLoca
                       >
                         {isStart && slot && (
                           <div
-                            className={`absolute inset-x-0.5 z-10 rounded-md border px-1.5 py-0.5 text-[11px] font-semibold leading-tight shadow-sm ${
+                            className={`absolute inset-x-0.5 z-10 rounded-md border px-1.5 py-0.5 text-[11px] font-semibold leading-tight shadow-sm cursor-pointer hover:opacity-90 ${
                               slot.isControleInterno
                                 ? "bg-amber-600 border-amber-700 text-white"
                                 : "bg-sky-600 border-sky-700 text-white"
@@ -433,7 +596,7 @@ export function GradeSemanal({ atividade, atividadeNome = "Aula", atividadesLoca
         </div>
       )}
 
-      {/* Modal */}
+      {/* Modal de Criação / Arrasto */}
       {modalAberto && (
         <ModalSlot
           atividadeAtual={atividade}
@@ -448,6 +611,40 @@ export function GradeSemanal({ atividade, atividadeNome = "Aula", atividadesLoca
             setModalAberto(false);
             setSlotDraft(null);
           }}
+        />
+      )}
+
+      {/* Modal de Opções do Slot Existente (Duplicar, Trocar Atividade, Excluir) */}
+      {slotSelecionadoOpcoes && (
+        <ModalOpcoesSlot
+          slot={slotSelecionadoOpcoes}
+          atividadesLocais={atividadesLocais}
+          onDuplicar={(diaDestino) => {
+            const copia: SlotAula = {
+              ...slotSelecionadoOpcoes,
+              dia: diaDestino,
+            };
+            const filtered = items.filter(
+              (s) => s.dia !== diaDestino || s.fim <= copia.inicio || s.inicio >= copia.fim
+            );
+            notify([...filtered, copia]);
+            setSlotSelecionadoOpcoes(null);
+          }}
+          onTrocarAtividade={(novaAtv) => {
+            const atualizado: SlotAula = {
+              ...slotSelecionadoOpcoes,
+              atividadeId: novaAtv.id,
+              atividadeNome: novaAtv.nome,
+              isControleInterno: !novaAtv.disponivelPreInscricao,
+            };
+            notify(items.map((s) => (s === slotSelecionadoOpcoes ? atualizado : s)));
+            setSlotSelecionadoOpcoes(null);
+          }}
+          onDeletar={() => {
+            notify(items.filter((s) => s !== slotSelecionadoOpcoes));
+            setSlotSelecionadoOpcoes(null);
+          }}
+          onClose={() => setSlotSelecionadoOpcoes(null)}
         />
       )}
     </div>
