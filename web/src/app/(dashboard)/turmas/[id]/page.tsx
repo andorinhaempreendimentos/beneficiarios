@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { Badge, Card, CardBody, CardHeader, LinkButton, PageHeader } from "@/components/ui";
-import { turmasApi, nucleosApi, atividadesApi, inscricoesApi } from "@/lib/api/services";
+import { GestaoMatriculasRoster } from "@/components/turmas/GestaoMatriculasRoster";
+import { turmasApi, nucleosApi, atividadesApi, beneficiariosApi } from "@/lib/api/services";
 import { formatarData } from "@/lib/utils";
 
 export default async function DetalhesTurmaPage({ params }: { params: Promise<{ id: string }> }) {
@@ -8,14 +9,18 @@ export default async function DetalhesTurmaPage({ params }: { params: Promise<{ 
   const t = await turmasApi.get(id).catch(() => null);
   if (!t) notFound();
 
-  const [nucleo, atividade, inscricoesRes] = await Promise.all([
+  const [nucleo, atividade, matriculadosRes, todasTurmasRes, todosBeneficiariosRes] = await Promise.all([
     t.nucleoId ? nucleosApi.get(t.nucleoId).catch(() => null) : null,
     t.atividadeId ? atividadesApi.get(t.atividadeId).catch(() => null) : null,
-    inscricoesApi.list({ turmaId: t.id, limit: 200 }).catch(() => ({ total: 0 })),
+    beneficiariosApi.list({ turmaId: t.id, limit: 200 }).catch(() => ({ data: [], total: 0, page: 1, limit: 200 })),
+    turmasApi.list({ limit: 100 }).catch(() => ({ data: [], total: 0, page: 1, limit: 100 })),
+    beneficiariosApi.list({ limit: 500 }).catch(() => ({ data: [], total: 0, page: 1, limit: 500 })),
   ]);
 
-  const qtdOcupadas = inscricoesRes.total;
+  const matriculados = matriculadosRes.data;
+  const qtdOcupadas = matriculadosRes.total;
   const vagasLivres = Math.max(0, t.vagasTotais - qtdOcupadas);
+  const outrasTurmas = todasTurmasRes.data.filter((item) => item.id !== t.id);
 
   return (
     <div className="flex flex-col gap-6">
@@ -74,6 +79,14 @@ export default async function DetalhesTurmaPage({ params }: { params: Promise<{ 
           </div>
         </CardBody>
       </Card>
+
+      {/* Roster de Gestão Ativa de Matrícula (Adicionar, Remover, Migrar) */}
+      <GestaoMatriculasRoster
+        turmaAtual={t}
+        matriculadosIniciais={matriculados}
+        outrasTurmas={outrasTurmas}
+        todosBeneficiarios={todosBeneficiariosRes.data}
+      />
     </div>
   );
 }

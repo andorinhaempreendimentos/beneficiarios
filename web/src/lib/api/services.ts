@@ -713,6 +713,31 @@ export const turmasApi = {
     );
     if (error) throw error;
   },
+  async matricular(turmaId: string, beneficiarioId: string): Promise<void> {
+    const sb = createClient();
+    const { error } = await sb.rpc('matricular_beneficiario' as any, {
+      p_turma_id: turmaId,
+      p_beneficiario_id: beneficiarioId,
+    });
+    if (error) throw error;
+  },
+  async desmatricular(turmaId: string, beneficiarioId: string): Promise<void> {
+    const sb = createClient();
+    const { error } = await sb.rpc('desmatricular_beneficiario' as any, {
+      p_turma_id: turmaId,
+      p_beneficiario_id: beneficiarioId,
+    });
+    if (error) throw error;
+  },
+  async migrar(beneficiarioId: string, turmaOrigemId: string, turmaDestinoId: string): Promise<void> {
+    const sb = createClient();
+    const { error } = await sb.rpc('migrar_beneficiario_turma' as any, {
+      p_beneficiario_id: beneficiarioId,
+      p_turma_origem: turmaOrigemId,
+      p_turma_destino: turmaDestinoId,
+    });
+    if (error) throw error;
+  },
 };
 
 function toTurmaRow(b: Record<string, unknown>): Database['public']['Tables']['turmas']['Insert'] {
