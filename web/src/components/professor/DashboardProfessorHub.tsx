@@ -31,6 +31,8 @@ import type { FuncionarioApi, TurmaApi, NucleoApi, BeneficiarioApi } from "@/lib
 
 interface DashboardProfessorHubProps {
   professor: FuncionarioApi;
+  professoresDisponiveis?: FuncionarioApi[];
+  onSelecionarProfessor?: (id: string) => void;
   nucleo?: NucleoApi;
   turmas: TurmaApi[];
   todosBeneficiarios: BeneficiarioApi[];
@@ -48,6 +50,8 @@ const DIAS_SEMANA_NOMES = [
 
 export function DashboardProfessorHub({
   professor,
+  professoresDisponiveis = [],
+  onSelecionarProfessor,
   nucleo,
   turmas,
   todosBeneficiarios,
@@ -157,6 +161,40 @@ export function DashboardProfessorHub({
 
   return (
     <div className="flex flex-col gap-8 max-w-6xl mx-auto py-2">
+      {/* SELETOR DE VISUALIZAÇÃO PARA ADMINISTRADORES */}
+      {professoresDisponiveis.length > 1 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 rounded-2xl bg-amber-50 p-4 border border-amber-200 text-amber-900 shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500 text-white font-bold text-lg">
+              👑
+            </div>
+            <div>
+              <span className="text-xs font-bold uppercase tracking-wider text-amber-700 block">
+                Modo Visão de Administrador
+              </span>
+              <p className="text-xs text-amber-800 font-medium">
+                Selecione qual professor deseja visualizar o painel operacional:
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <label className="text-xs font-bold shrink-0 text-amber-900">Ver como:</label>
+            <select
+              value={professor.id}
+              onChange={(e) => onSelecionarProfessor?.(e.target.value)}
+              className="w-full sm:w-64 rounded-xl border border-amber-300 bg-white px-3 py-2 text-xs font-bold text-zinc-800 focus:border-amber-500 focus:outline-none shadow-sm cursor-pointer"
+            >
+              {professoresDisponiveis.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.nomeCompleto} ({p.funcao || "Professor"})
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      )}
+
       {/* 1. SEÇÃO DE IDENTIFICAÇÃO E RÉGUA DE MÉTRICAS 360° */}
       <div className="flex flex-col gap-4">
         {/* Banner Superior */}
