@@ -37,7 +37,8 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], backHref }:
     }
   }
 
-  const atividadeNome = atividades.find((a) => a.id === atividadeId)?.nome;
+  const atividadeSelecionada = atividades.find((a) => a.id === atividadeId);
+  const atividadeNome = atividadeSelecionada?.nome;
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -146,8 +147,8 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], backHref }:
 
         <div className="mt-6">
           <p className="mb-3 text-sm font-medium text-zinc-700">Grade semanal</p>
-          {atividadeNome ? (
-            <GradeSemanal atividadeNome={atividadeNome} />
+          {atividadeSelecionada ? (
+            <GradeSemanal atividade={atividadeSelecionada} atividadesLocais={atividadesDisponiveis} />
           ) : (
             <div className="rounded-xl border border-dashed border-zinc-200 bg-zinc-50 py-10 text-center text-sm text-zinc-400">
               Selecione uma atividade para montar a grade

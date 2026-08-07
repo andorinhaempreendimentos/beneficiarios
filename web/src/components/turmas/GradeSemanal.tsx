@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui";
 import { Plus, X, Clock } from "lucide-react";
+import type { AtividadeApi } from "@/lib/api/services";
 
 const DIAS_OPCOES = [
   { key: "Dom", label: "Domingo" },
@@ -26,10 +27,15 @@ export interface SlotAula {
   dia: string;
   inicio: number;
   fim: number;
+  atividadeId?: string;
+  atividadeNome?: string;
+  isControleInterno?: boolean;
 }
 
 interface GradeSemanalProps {
+  atividade?: AtividadeApi;
   atividadeNome?: string;
+  atividadesLocais?: AtividadeApi[];
   slots?: SlotAula[];
   onChange?: (slots: SlotAula[]) => void;
 }
@@ -40,40 +46,77 @@ function formatHora(h: number) {
 
 // Modal de adicionar slot
 interface ModalSlotProps {
+  atividadeAtual?: AtividadeApi;
   atividadeNome: string;
+  atividadesLocais?: AtividadeApi[];
   diasVisiveis: string[];
   onConfirm: (slot: SlotAula) => void;
   onClose: () => void;
 }
 
-function ModalSlot({ atividadeNome, diasVisiveis, onConfirm, onClose }: ModalSlotProps) {
+function ModalSlot({ atividadeAtual, atividadeNome, atividadesLocais = [], diasVisiveis, onConfirm, onClose }: ModalSlotProps) {
   const [dia, setDia] = useState(diasVisiveis[0] ?? "Seg");
   const [inicio, setInicio] = useState(8);
   const [fim, setFim] = useState(9);
 
+  // Atividade selecionada para o slot
+  const [selectedAtividadeId, setSelectedAtividadeId] = useState(atividadeAtual?.id || "");
+
+  const atvSelecionada = atividadesLocais.find((a) => a.id === selectedAtividadeId) || atividadeAtual;
+  const isControleInterno = atvSelecionada ? !atvSelecionada.disponivelPreInscricao : false;
+  const nomeExibicao = atvSelecionada?.nome || atividadeNome;
+
   function handleConfirm() {
     if (fim <= inicio) return;
-    onConfirm({ dia, inicio, fim });
+    onConfirm({
+      dia,
+      inicio,
+      fim,
+      atividadeId: atvSelecionada?.id,
+      atividadeNome: nomeExibicao,
+      isControleInterno,
+    });
     onClose();
   }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={onClose}>
       <div
-        className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl"
+        className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="mb-5 flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-zinc-800">Adicionar slot — {atividadeNome}</h3>
+        <div className="mb-5 flex items-center justify-between border-b border-zinc-100 pb-3">
+          <div>
+            <h3 className="text-sm font-bold text-zinc-900">Adicionar Slot de Horário</h3>
+            <p className="text-xs text-zinc-500">Defina o tipo de aula ou atividade de controle interno</p>
+          </div>
           <button type="button" onClick={onClose} className="rounded-lg p-1 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600">
             <X size={16} />
           </button>
         </div>
 
         <div className="flex flex-col gap-4">
+          {/* Seletor de Atividade do Slot */}
+          {atividadesLocais.length > 0 && (
+            <div>
+              <label className="mb-1.5 block text-xs font-semibold text-zinc-700">Atividade / Bloco</label>
+              <select
+                value={selectedAtividadeId}
+                onChange={(e) => setSelectedAtividadeId(e.target.value)}
+                className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-medium text-zinc-800 focus:border-sky-500 focus:outline-none"
+              >
+                {atividadesLocais.map((a) => (
+                  <option key={a.id} value={a.id}>
+                    {a.nome} {!a.disponivelPreInscricao ? "(🔒 Controle Interno)" : "(Turma)"}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
           {/* Dia */}
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-zinc-600">Dia da semana</label>
+            <label className="mb-1.5 block text-xs font-semibold text-zinc-700">Dia da semana</label>
             <div className="flex flex-wrap gap-1.5">
               {DIAS_OPCOES.filter((d) => diasVisiveis.includes(d.key)).map((d) => (
                 <button
@@ -83,7 +126,7 @@ function ModalSlot({ atividadeNome, diasVisiveis, onConfirm, onClose }: ModalSlo
                   className={[
                     "rounded-lg px-3 py-1.5 text-xs font-medium transition-colors",
                     dia === d.key
-                      ? "bg-sky-500 text-white"
+                      ? "bg-sky-600 text-white shadow-sm"
                       : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200",
                   ].join(" ")}
                 >
@@ -96,11 +139,11 @@ function ModalSlot({ atividadeNome, diasVisiveis, onConfirm, onClose }: ModalSlo
           {/* Horário */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="mb-1.5 block text-xs font-medium text-zinc-600">Início</label>
+              <label className="mb-1.5 block text-xs font-semibold text-zinc-700">Início</label>
               <select
                 value={inicio}
                 onChange={(e) => setInicio(Number(e.target.value))}
-                className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-800 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100"
+                className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-medium text-zinc-800 focus:border-sky-500 focus:outline-none"
               >
                 {TODAS_HORAS.slice(0, -1).map((h) => (
                   <option key={h} value={h}>{formatHora(h)}</option>
@@ -108,11 +151,11 @@ function ModalSlot({ atividadeNome, diasVisiveis, onConfirm, onClose }: ModalSlo
               </select>
             </div>
             <div>
-              <label className="mb-1.5 block text-xs font-medium text-zinc-600">Fim</label>
+              <label className="mb-1.5 block text-xs font-semibold text-zinc-700">Fim</label>
               <select
                 value={fim}
                 onChange={(e) => setFim(Number(e.target.value))}
-                className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-800 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100"
+                className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-medium text-zinc-800 focus:border-sky-500 focus:outline-none"
               >
                 {TODAS_HORAS.slice(1).map((h) => (
                   <option key={h} value={h} disabled={h <= inicio}>{formatHora(h)}</option>
@@ -130,12 +173,12 @@ function ModalSlot({ atividadeNome, diasVisiveis, onConfirm, onClose }: ModalSlo
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg border border-zinc-300 px-4 py-2 text-sm text-zinc-600 hover:bg-zinc-50"
+            className="rounded-xl border border-zinc-200 px-4 py-2 text-xs font-semibold text-zinc-600 hover:bg-zinc-50"
           >
             Cancelar
           </button>
           <Button type="button" size="sm" onClick={handleConfirm} disabled={fim <= inicio}>
-            Adicionar
+            Adicionar à Grade
           </Button>
         </div>
       </div>
@@ -143,7 +186,7 @@ function ModalSlot({ atividadeNome, diasVisiveis, onConfirm, onClose }: ModalSlo
   );
 }
 
-export function GradeSemanal({ atividadeNome = "Aula", slots = [], onChange }: GradeSemanalProps) {
+export function GradeSemanal({ atividade, atividadeNome = "Aula", atividadesLocais = [], slots = [], onChange }: GradeSemanalProps) {
   const [items, setItems] = useState<SlotAula[]>(slots);
   const [diasVisiveis, setDiasVisiveis] = useState<Set<string>>(
     new Set(["Seg", "Ter", "Qua", "Qui", "Sex"])
@@ -347,11 +390,18 @@ export function GradeSemanal({ atividadeNome = "Aula", slots = [], onChange }: G
                       >
                         {isStart && slot && (
                           <div
-                            className="absolute inset-x-0.5 z-10 rounded-md border border-sky-600 bg-sky-500 px-1.5 py-0.5 text-[11px] font-medium leading-tight text-white shadow-sm"
+                            className={`absolute inset-x-0.5 z-10 rounded-md border px-1.5 py-0.5 text-[11px] font-semibold leading-tight shadow-sm ${
+                              slot.isControleInterno
+                                ? "bg-amber-600 border-amber-700 text-white"
+                                : "bg-sky-600 border-sky-700 text-white"
+                            }`}
                             style={{ top: 2, height: `calc(${(slot.fim - slot.inicio) * 48}px - 4px)` }}
                           >
-                            <div className="truncate">{atividadeNome}</div>
-                            <div className="opacity-80">{formatHora(slot.inicio)}–{formatHora(slot.fim)}</div>
+                            <div className="truncate flex items-center gap-1">
+                              {slot.isControleInterno && <span>🔒</span>}
+                              <span>{slot.atividadeNome || atividadeNome}</span>
+                            </div>
+                            <div className="opacity-90 text-[10px] font-normal">{formatHora(slot.inicio)}–{formatHora(slot.fim)}</div>
                           </div>
                         )}
                       </div>
@@ -367,7 +417,9 @@ export function GradeSemanal({ atividadeNome = "Aula", slots = [], onChange }: G
       {/* Modal */}
       {modalAberto && (
         <ModalSlot
+          atividadeAtual={atividade}
           atividadeNome={atividadeNome}
+          atividadesLocais={atividadesLocais}
           diasVisiveis={[...diasVisiveis]}
           onConfirm={addSlotFromModal}
           onClose={() => setModalAberto(false)}
