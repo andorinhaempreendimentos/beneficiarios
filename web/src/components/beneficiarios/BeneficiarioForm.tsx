@@ -14,7 +14,7 @@ import {
   Textarea,
 } from "@/components/ui";
 import type { Anexo, Beneficiario, PerguntaParQ, VinculoTurma } from "@/lib/types";
-import { beneficiariosApi, type NucleoApi, type TurmaApi } from "@/lib/api/services";
+import { beneficiariosApi, turmasApi, type NucleoApi, type TurmaApi } from "@/lib/api/services";
 import { validarCpf, validarCep, validarEmail } from "@/lib/mascaras";
 
 const PERGUNTAS_PARQ = [
@@ -55,6 +55,12 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
   const [cidade, setCidade] = useState(b?.cidade ?? "");
   const [estado, setEstado] = useState(b?.estado ?? "");
   const [buscandoCep, setBuscandoCep] = useState(false);
+  const [nucleoId, setNucleoId] = useState(b?.nucleoId ?? "");
+
+  // Filtra as turmas disponíveis com base no núcleo selecionado (se houver núcleo selecionado)
+  const turmasFiltradas = nucleoId
+    ? turmas.filter((t) => t.nucleoId === nucleoId)
+    : turmas;
 
   async function handleCepBlur() {
     if (!cep) return;
@@ -121,11 +127,25 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
     };
 
     try {
-      if (b?.id) {
-        await beneficiariosApi.update(b.id, data);
+      let benSavedId = b?.id;
+      if (benSavedId) {
+        await beneficiariosApi.update(benSavedId, data);
       } else {
-        await beneficiariosApi.create(data);
+        const created = await beneficiariosApi.create(data);
+        benSavedId = created.id;
       }
+
+      // Sincroniza/Matricula nas turmas selecionadas
+      if (benSavedId && vinculos.length > 0) {
+        for (const v of vinculos) {
+          if (v.turmaId) {
+            await turmasApi.matricular(v.turmaId, benSavedId).catch((err) => {
+              console.warn("Aviso ao matricular na turma:", err);
+            });
+          }
+        }
+      }
+
       window.location.href = backHref;
     } catch (err: any) {
       setErro(err.message || "Erro ao salvar beneficiário.");
@@ -227,8 +247,8 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
             </Field>
           )}
           <Field label="Núcleo">
-            <Select name="nucleoId" defaultValue={b?.nucleoId ?? ""}>
-              <option value="">Sem núcleo definido</option>
+            <Select name="nucleoId" value={nucleoId} onChange={(e) => setNucleoId(e.target.value)}>
+              <option value="">Selecione o Núcleo Esportivo</option>
               {nucleos.map((n) => (
                 <option key={n.id} value={n.id}>{n.identificacao}</option>
               ))}
@@ -460,35 +480,67 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
       </FormSection>
 
       <FormSection title="5. Atividades e Turmas">
+        <p className="mb-4 text-xs text-zinc-500 font-medium">
+          {nucleoId
+            ? "Exibindo turmas vinculadas ao Núcleo selecionado acima:"
+            : "Selecione um Núcleo no Passo 1 para filtrar as turmas por polo, ou escolha diretamente da lista abaixo:"}
+        </p>
         <div className="flex flex-col gap-4">
           {vinculos.map((v, index) => (
-            <div key={index} className="grid grid-cols-1 gap-4 rounded-lg border border-zinc-200 p-4 sm:grid-cols-4">
-              <Field label="Turma">
-                <Select defaultValue={v.turmaId}>
-                  <option value="">Selecione</option>
-                  {turmas.map((t) => (
-                    <option key={t.id} value={t.id}>{t.nome}</option>
+            <div key={index} className="grid grid-cols-1 gap-4 rounded-xl border border-zinc-200 bg-white p-4 sm:grid-cols-4">
+              <Field label="Turma / Modalidade" required>
+                <Select
+                  value={v.turmaId}
+                  onChange={(e) => {
+                    const novaTurmaId = e.target.value;
+                    setVinculos((prev) =>
+                      prev.map((item, i) => (i === index ? { ...item, turmaId: novaTurmaId } : item))
+                    );
+                  }}
+                >
+                  <option value="">Selecione a turma</option>
+                  {turmasFiltradas.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.nome}
+                    </option>
                   ))}
                 </Select>
               </Field>
-              <Field label="Status da Turma">
-                <Select defaultValue={v.status}>
-                  <option>Ativo</option>
-                  <option>Evadido</option>
+              <Field label="Status da Matrícula">
+                <Select
+                  value={v.status}
+                  onChange={(e) => {
+                    const novoStatus = e.target.value as "Ativo" | "Evadido";
+                    setVinculos((prev) =>
+                      prev.map((item, i) => (i === index ? { ...item, status: novoStatus } : item))
+                    );
+                  }}
+                >
+                  <option value="Ativo">Ativo</option>
+                  <option value="Evadido">Evadido</option>
                 </Select>
               </Field>
-              <Field label="Data de registro">
-                <Input type="date" defaultValue={v.dataRegistro} />
+              <Field label="Data de Matrícula">
+                <Input
+                  type="date"
+                  value={v.dataRegistro}
+                  onChange={(e) => {
+                    const novaData = e.target.value;
+                    setVinculos((prev) =>
+                      prev.map((item, i) => (i === index ? { ...item, dataRegistro: novaData } : item))
+                    );
+                  }}
+                />
               </Field>
               <div className="flex items-end">
                 <Button type="button" variant="danger" size="sm" onClick={() => removerTurma(index)}>
-                  <Trash2 className="h-4 w-4" /> Remover da turma
+                  <Trash2 className="h-4 w-4" /> Remover turma
                 </Button>
               </div>
             </div>
           ))}
           <Button type="button" variant="outline" size="sm" className="self-start" onClick={adicionarTurma}>
-            <Plus className="h-4 w-4" /> Adicionar turma
+            <Plus className="h-4 w-4" /> Vincular a uma Turma
           </Button>
         </div>
       </FormSection>
