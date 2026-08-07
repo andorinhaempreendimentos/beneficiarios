@@ -19,7 +19,9 @@ export function SelecionarTurma({ turmas, titulo = "Escolha uma turma" }: Seleci
 
       <div className="flex flex-col gap-3">
         {turmas.map((t) => {
-          const vagasLivres = t.vagasTotais - t.qtdBeneficiarios;
+          const vagasTotais = Number(t.vagasTotais || 0);
+          const qtdBeneficiarios = Number(t.qtdBeneficiarios || 0);
+          const vagasLivres = vagasTotais - qtdBeneficiarios;
           const cheia = vagasLivres <= 0;
 
           return (
@@ -63,7 +65,7 @@ export function SelecionarTurma({ turmas, titulo = "Escolha uma turma" }: Seleci
                       {vagasLivres} vaga{vagasLivres !== 1 ? "s" : ""} disponível
                     </span>
                     <Users className="ml-2 h-4 w-4 text-zinc-300" />
-                    <span className="text-sm text-zinc-400">{t.qtdBeneficiarios}/{t.vagasTotais}</span>
+                    <span className="text-sm text-zinc-400">{qtdBeneficiarios}/{vagasTotais}</span>
                   </>
                 )}
               </div>
