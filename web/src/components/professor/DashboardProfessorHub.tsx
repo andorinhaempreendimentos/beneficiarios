@@ -20,12 +20,14 @@ import {
 } from "lucide-react";
 import { Badge, Button, Card } from "@/components/ui";
 import { useAuth } from "@/components/providers/AuthProvider";
-import type { FuncionarioApi, TurmaApi, NucleoApi } from "@/lib/api/services";
+import { GestaoMatriculasProfessor } from "./GestaoMatriculasProfessor";
+import type { FuncionarioApi, TurmaApi, NucleoApi, BeneficiarioApi } from "@/lib/api/services";
 
 interface DashboardProfessorHubProps {
   professor: FuncionarioApi;
   nucleo?: NucleoApi;
   turmas: TurmaApi[];
+  todosBeneficiarios: BeneficiarioApi[];
 }
 
 const DIAS_SEMANA_NOMES = [
@@ -336,7 +338,13 @@ export function DashboardProfessorHub({ professor, nucleo, turmas }: DashboardPr
         </div>
       </div>
 
-      {/* 4. MENU DE AÇÕES RÁPIDAS (ATALHOS LIMPOS) */}
+      {/* 4. GESTÃO DE MATRÍCULAS DO PROFESSOR (ADICIONAR, REMOVER, TRANSFERIR) */}
+      <GestaoMatriculasProfessor
+        turmas={turmas}
+        todosBeneficiarios={todosBeneficiarios}
+      />
+
+      {/* 5. MENU DE AÇÕES RÁPIDAS (ATALHOS LIMPOS) */}
       <div className="flex flex-col gap-3">
         <h2 className="text-sm font-semibold uppercase tracking-wider text-zinc-400 px-1">
           Menu Operacional Rápido
