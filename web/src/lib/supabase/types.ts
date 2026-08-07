@@ -1328,6 +1328,7 @@ export type Database = {
           id: string
           nome: string
           nucleo_id: string
+          status_inicial: Database["public"]["Enums"]["status_inscricao"]
           updated_at: string
           vagas_totais: number
         }
@@ -1341,6 +1342,7 @@ export type Database = {
           id?: string
           nome: string
           nucleo_id: string
+          status_inicial?: Database["public"]["Enums"]["status_inscricao"]
           updated_at?: string
           vagas_totais?: number
         }
@@ -1354,6 +1356,7 @@ export type Database = {
           id?: string
           nome?: string
           nucleo_id?: string
+          status_inicial?: Database["public"]["Enums"]["status_inscricao"]
           updated_at?: string
           vagas_totais?: number
         }
