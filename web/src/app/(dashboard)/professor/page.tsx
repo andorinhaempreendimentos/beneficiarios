@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { DashboardProfessorHub } from "@/components/professor/DashboardProfessorHub";
-import { funcionariosApi, nucleosApi } from "@/lib/api/services";
+import { funcionariosApi, turmasApi, nucleosApi } from "@/lib/api/services";
 
 export default async function AreaProfessorPage() {
   const funcionarios = await funcionariosApi.list({ limit: 100 }).catch(() => ({ data: [] }));
@@ -14,6 +14,7 @@ export default async function AreaProfessorPage() {
     );
   }
 
+  const turmasRes = await turmasApi.list({ limit: 100 }).catch(() => ({ data: [] }));
   const nucleosRes = await nucleosApi.list({ limit: 100 }).catch(() => ({ data: [] }));
   const nucleo = nucleosRes.data.find((n) => n.id === professor.nucleoId);
 
@@ -21,6 +22,7 @@ export default async function AreaProfessorPage() {
     <DashboardProfessorHub
       professor={professor}
       nucleo={nucleo}
+      turmas={turmasRes.data}
     />
   );
 }
