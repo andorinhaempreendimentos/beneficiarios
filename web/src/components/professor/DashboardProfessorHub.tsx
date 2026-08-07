@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Clock,
   CheckCircle2,
@@ -11,8 +12,10 @@ import {
   ChevronRight,
   ShieldCheck,
   FileCheck,
+  LogOut,
 } from "lucide-react";
-import { Badge, Card } from "@/components/ui";
+import { Badge, Button, Card } from "@/components/ui";
+import { useAuth } from "@/components/providers/AuthProvider";
 import type { FuncionarioApi, NucleoApi } from "@/lib/api/services";
 
 interface DashboardProfessorHubProps {
@@ -21,6 +24,14 @@ interface DashboardProfessorHubProps {
 }
 
 export function DashboardProfessorHub({ professor, nucleo }: DashboardProfessorHubProps) {
+  const router = useRouter();
+  const { logout } = useAuth();
+
+  function handleLogout() {
+    logout();
+    router.push("/login");
+  }
+
   const acoes = [
     {
       id: "ponto",
@@ -90,6 +101,14 @@ export function DashboardProfessorHub({ professor, nucleo }: DashboardProfessorH
               <span className="block text-[10px] text-sky-200 uppercase font-semibold">Matrícula</span>
               <span className="text-sm font-bold font-mono">{professor.matricula}</span>
             </div>
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="flex items-center gap-1.5 rounded-xl bg-red-500/20 px-3 py-3 text-xs font-semibold text-red-100 hover:bg-red-500/30 border border-red-400/30 transition-colors"
+            >
+              <LogOut className="h-4 w-4" />
+              <span>Sair</span>
+            </button>
           </div>
         </div>
       </div>

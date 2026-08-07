@@ -36,7 +36,11 @@ export function Sidebar() {
   const router = useRouter();
   const { user, logout } = useAuth();
   const { t } = useDicionario();
-  const isFuncionario = user?.isProfessor || user?.tipo === "funcionario";
+  const isFuncionario = user?.isProfessor || user?.tipo === "funcionario" || pathname.startsWith("/professor");
+
+  if (isFuncionario) {
+    return null;
+  }
   const [open, setOpen] = useState(false);
   const turmasAtivo = pathname.startsWith("/turmas");
   const [turmasAberto, setTurmasAberto] = useState(turmasAtivo);
