@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { HelpCircle, Plus, Trash2, Globe, Lock } from "lucide-react";
 import { Button, Field, FormSection, Input, LinkButton, Switch } from "@/components/ui";
