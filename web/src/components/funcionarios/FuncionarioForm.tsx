@@ -36,13 +36,15 @@ const DIAS_SEMANA: DiaJornada["dia"][] = [
 interface FuncionarioFormProps {
   funcionario?: FuncionarioApi;
   nucleos?: NucleoApi[];
+  funcoes?: { id: string; nome: string }[];
   backHref: string;
 }
 
-export function FuncionarioForm({ funcionario: f, nucleos = [], backHref }: FuncionarioFormProps) {
+export function FuncionarioForm({ funcionario: f, nucleos = [], funcoes = [], backHref }: FuncionarioFormProps) {
+  const listaFuncoes = funcoes.length > 0 ? funcoes.map((fn) => fn.nome) : FUNCOES;
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
-  const [funcao, setFuncao] = useState<FuncaoFuncionario | "">((f?.funcao as FuncaoFuncionario) ?? "");
+  const [funcao, setFuncao] = useState<string>((f?.funcao as string) ?? "");
   const [professorResponsavel, setProfessorResponsavel] = useState(f?.professorResponsavel ?? false);
   const [jornada, setJornada] = useState<DiaJornada[]>(
     DIAS_SEMANA.map((dia) => ({ dia, trabalha: false }))
@@ -156,10 +158,10 @@ export function FuncionarioForm({ funcionario: f, nucleos = [], backHref }: Func
             <Select
               name="funcao"
               value={funcao}
-              onChange={(e) => setFuncao(e.target.value as FuncaoFuncionario)}
+              onChange={(e) => setFuncao(e.target.value)}
             >
               <option value="">Selecione</option>
-              {FUNCOES.map((fn) => (
+              {listaFuncoes.map((fn) => (
                 <option key={fn} value={fn}>{fn}</option>
               ))}
             </Select>

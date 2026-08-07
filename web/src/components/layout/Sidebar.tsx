@@ -41,6 +41,9 @@ export function Sidebar() {
 
   const beneficiariosAtivo = pathname.startsWith("/beneficiarios") || pathname.startsWith("/inscricoes");
   const [beneficiariosAberto, setBeneficiariosAberto] = useState(beneficiariosAtivo);
+
+  const pessoalAtivo = pathname.startsWith("/funcionarios");
+  const [pessoalAberto, setPessoalAberto] = useState(pessoalAtivo);
   const { config } = useTheme();
 
   function handleLogout() {
@@ -213,7 +216,48 @@ export function Sidebar() {
             )}
           </div>
 
-          {navLink("/funcionarios", "Pessoal", UsersRound)}
+          {/* Pessoal / Funcionários com subitem */}
+          <div>
+            <button
+              type="button"
+              onClick={() => setPessoalAberto((v) => !v)}
+              className={cn(
+                "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                pessoalAtivo ? "bg-sky-50 text-sky-700" : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
+              )}
+            >
+              <UsersRound className="h-4 w-4 shrink-0" />
+              <span className="flex-1 text-left">Pessoal</span>
+              <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", pessoalAberto && "rotate-180")} />
+            </button>
+            {pessoalAberto && (
+              <div className="ml-7 mt-1 space-y-1 border-l border-zinc-200 pl-3">
+                <Link
+                  href="/funcionarios"
+                  onClick={() => setOpen(false)}
+                  className={cn(
+                    "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors",
+                    pathname === "/funcionarios" ? "text-sky-700 font-medium" : "text-zinc-500 hover:text-zinc-900"
+                  )}
+                >
+                  <UsersRound className="h-3.5 w-3.5 shrink-0" />
+                  Todos os funcionários
+                </Link>
+                <Link
+                  href="/funcionarios/funcoes"
+                  onClick={() => setOpen(false)}
+                  className={cn(
+                    "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors",
+                    pathname === "/funcionarios/funcoes" ? "text-sky-700 font-medium" : "text-zinc-500 hover:text-zinc-900"
+                  )}
+                >
+                  <ShieldCheck className="h-3.5 w-3.5 shrink-0" />
+                  Gerenciar funções
+                </Link>
+              </div>
+            )}
+          </div>
+
           {navLink("/equipamentos", "Equipamentos", Box)}
 
           <div className="my-2 border-t border-zinc-100" />

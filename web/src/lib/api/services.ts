@@ -822,6 +822,48 @@ function toBeneficiarioRow(b: Record<string, unknown>): Database['public']['Tabl
   };
 }
 
+export interface FuncaoApi {
+  id: string;
+  nome: string;
+  descricao?: string;
+  criadoEm: string;
+}
+
+function mapFuncao(r: any): FuncaoApi {
+  return {
+    id: r.id,
+    nome: r.nome,
+    descricao: r.descricao ?? undefined,
+    criadoEm: r.created_at,
+  };
+}
+
+export const funcoesApi = {
+  async list(): Promise<FuncaoApi[]> {
+    const sb = await getSupabase();
+    const { data, error } = await sb.from('funcoes' as any).select('*').is('deleted_at', null).order('nome', { ascending: true });
+    if (error) throw error;
+    return (data ?? []).map(mapFuncao);
+  },
+  async create(body: { nome: string; descricao?: string }): Promise<FuncaoApi> {
+    const sb = createClient();
+    const { data, error } = await sb.from('funcoes' as any).insert(body).select('*').single();
+    if (error) throw error;
+    return mapFuncao(data);
+  },
+  async update(id: string, body: { nome?: string; descricao?: string }): Promise<FuncaoApi> {
+    const sb = createClient();
+    const { data, error } = await sb.from('funcoes' as any).update(body).eq('id', id).select('*').single();
+    if (error) throw error;
+    return mapFuncao(data);
+  },
+  async delete(id: string): Promise<void> {
+    const sb = createClient();
+    const { error } = await sb.from('funcoes' as any).update({ deleted_at: new Date().toISOString() }).eq('id', id);
+    if (error) throw error;
+  },
+};
+
 // ── Funcionários ─────────────────────────────────────────────────────────
 
 export const funcionariosApi = {
