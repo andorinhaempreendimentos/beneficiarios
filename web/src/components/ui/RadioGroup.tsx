@@ -12,7 +12,7 @@ interface RadioGroupProps {
 }
 
 export function RadioGroup({ name, options, value: externalValue, defaultValue, onChange }: RadioGroupProps) {
-  const [internalValue, setInternalValue] = useState(defaultValue || options[0] || "");
+  const [internalValue, setInternalValue] = useState(defaultValue ?? "");
   const selectedValue = externalValue !== undefined ? externalValue : internalValue;
 
   function handleSelect(val: string) {
