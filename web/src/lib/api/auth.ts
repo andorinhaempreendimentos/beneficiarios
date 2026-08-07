@@ -28,8 +28,8 @@ export async function apiLogin(email: string, senha: string): Promise<AuthProfil
 
 export async function fetchProfile(userId: string): Promise<AuthProfile> {
   const supabase = createClient();
-  const { data, error } = await supabase
-    .from("usuarios")
+  const { data, error } = await (supabase
+    .from("usuarios") as any)
     .select("id, nome_completo, email, tipo, is_professor, perfil_id, entidade_id")
     .eq("id", userId)
     .single();
@@ -40,7 +40,7 @@ export async function fetchProfile(userId: string): Promise<AuthProfile> {
       nome: data.nome_completo,
       email: data.email,
       tipo: data.tipo,
-      isProfessor: (data as any).is_professor ?? false,
+      isProfessor: Boolean(data.is_professor),
       perfilId: data.perfil_id,
       entidadeId: data.entidade_id,
     };
