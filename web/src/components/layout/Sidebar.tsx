@@ -6,6 +6,7 @@ import { useState } from "react";
 import {
   Box,
   Building2,
+  CalendarCheck,
   ChevronDown,
   ClipboardList,
   Dumbbell,
@@ -253,6 +254,17 @@ export function Sidebar() {
                 >
                   <ShieldCheck className="h-3.5 w-3.5 shrink-0" />
                   Gerenciar funções
+                </Link>
+                <Link
+                  href="/professor"
+                  onClick={() => setOpen(false)}
+                  className={cn(
+                    "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors",
+                    pathname === "/professor" ? "text-sky-700 font-medium" : "text-zinc-500 hover:text-zinc-900"
+                  )}
+                >
+                  <CalendarCheck className="h-3.5 w-3.5 shrink-0" />
+                  Área do Professor
                 </Link>
               </div>
             )}
