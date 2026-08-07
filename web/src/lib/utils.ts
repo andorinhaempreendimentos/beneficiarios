@@ -16,9 +16,23 @@ export function calcularIdade(dataNascimento: string): number {
   return idade;
 }
 
-export function formatarData(data: string): string {
-  const [ano, mes, dia] = data.split("-");
-  if (!ano || !mes || !dia) return data;
+export function formatarData(data: string | Date | null | undefined, incluirHora = false): string {
+  if (!data) return "";
+  const d = typeof data === "string" ? new Date(data) : data;
+  if (isNaN(d.getTime())) {
+    // Fallback caso venha string YYYY-MM-DD pura sem parse ISO
+    const parts = String(data).split("T")[0].split("-");
+    if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    return String(data);
+  }
+  const dia = String(d.getDate()).padStart(2, "0");
+  const mes = String(d.getMonth() + 1).padStart(2, "0");
+  const ano = d.getFullYear();
+  if (incluirHora) {
+    const horas = String(d.getHours()).padStart(2, "0");
+    const minutos = String(d.getMinutes()).padStart(2, "0");
+    return `${dia}/${mes}/${ano} às ${horas}:${minutos}`;
+  }
   return `${dia}/${mes}/${ano}`;
 }
 
