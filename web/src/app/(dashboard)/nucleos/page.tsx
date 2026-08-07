@@ -33,7 +33,6 @@ const EMPTY = {
 export default function NucleosPage() {
   const { t } = useDicionario();
   const [filtros, setFiltros] = useState(EMPTY);
-  const [ativos, setAtivos] = useState(EMPTY);
   const [pagina, setPagina] = useState(1);
 
   // Buscar opções dinâmicas de filtros
@@ -46,16 +45,20 @@ export default function NucleosPage() {
   const atividades = atividadesRes?.data ?? [];
 
   const { data: pageData, loading } = useQuery<Paginated<NucleoApi & { organizacao?: { id: string; nome: string; objetoId: string } }>>(
-    () => nucleosApi.list({ ...ativos, page: pagina, limit: PER_PAGE }),
-    [ativos, pagina],
+    () => nucleosApi.list({ ...filtros, page: pagina, limit: PER_PAGE }),
+    [filtros, pagina],
   );
 
   const resultado = pageData?.data ?? [];
   const total = pageData?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
 
-  const aplicar = useCallback(() => { setPagina(1); setAtivos(filtros); }, [filtros]);
-  const limpar = useCallback(() => { setFiltros(EMPTY); setAtivos(EMPTY); setPagina(1); }, []);
+  const limpar = useCallback(() => { setFiltros(EMPTY); setPagina(1); }, []);
+
+  function setCampo(chave: keyof typeof EMPTY, valor: string) {
+    setPagina(1);
+    setFiltros((f) => ({ ...f, [chave]: valor }));
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -65,19 +68,19 @@ export default function NucleosPage() {
         actions={<LinkButton href="/nucleos/novo">{`Novo ${t("local", "Núcleo").toLowerCase()}`}</LinkButton>}
       />
 
-      <FilterBar onFilter={aplicar} onClear={limpar}>
+      <FilterBar onClear={limpar}>
         <Field label="Busca">
           <Input
             placeholder="Nome ou identificação..."
             value={filtros.busca}
-            onChange={(e) => setFiltros((f) => ({ ...f, busca: e.target.value }))}
+            onChange={(e) => setCampo("busca", e.target.value)}
           />
         </Field>
 
         <Field label={t("objeto", "Objeto")}>
           <Select
             value={filtros.objetoId}
-            onChange={(e) => setFiltros((f) => ({ ...f, objetoId: e.target.value }))}
+            onChange={(e) => setCampo("objetoId", e.target.value)}
           >
             <option value="">Todos os objetos</option>
             {objetos.map((ob) => (
@@ -89,7 +92,7 @@ export default function NucleosPage() {
         <Field label={t("organizacao", "Organização")}>
           <Select
             value={filtros.organizacaoId}
-            onChange={(e) => setFiltros((f) => ({ ...f, organizacaoId: e.target.value }))}
+            onChange={(e) => setCampo("organizacaoId", e.target.value)}
           >
             <option value="">Todas as organizações</option>
             {organizacoes.map((org) => (
@@ -102,14 +105,14 @@ export default function NucleosPage() {
           <Input
             placeholder="Filtrar por cidade..."
             value={filtros.cidade}
-            onChange={(e) => setFiltros((f) => ({ ...f, cidade: e.target.value }))}
+            onChange={(e) => setCampo("cidade", e.target.value)}
           />
         </Field>
 
         <Field label={t("atividade", "Atividade")}>
           <Select
             value={filtros.atividadeId}
-            onChange={(e) => setFiltros((f) => ({ ...f, atividadeId: e.target.value }))}
+            onChange={(e) => setCampo("atividadeId", e.target.value)}
           >
             <option value="">Todas as atividades</option>
             {atividades.map((atv) => (
@@ -121,7 +124,7 @@ export default function NucleosPage() {
         <Field label="Status">
           <Select
             value={filtros.emFuncionamento}
-            onChange={(e) => setFiltros((f) => ({ ...f, emFuncionamento: e.target.value }))}
+            onChange={(e) => setCampo("emFuncionamento", e.target.value)}
           >
             <option value="">Todos os status</option>
             <option value="true">Em funcionamento (Ativo)</option>

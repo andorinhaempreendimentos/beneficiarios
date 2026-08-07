@@ -27,13 +27,10 @@ export function FilterBar({ children, onFilter, onClear }: FilterBarProps) {
           <span>Filtros de Busca</span>
         </button>
 
-        {visible && (
+        {visible && onClear && (
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" onClick={onClear} type="button">
-              Limpar
-            </Button>
-            <Button size="sm" onClick={onFilter} type="button">
-              Aplicar Filtros
+              Limpar Filtros
             </Button>
           </div>
         )}

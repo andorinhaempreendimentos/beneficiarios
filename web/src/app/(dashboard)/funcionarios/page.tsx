@@ -14,15 +14,14 @@ const EMPTY = { busca: "", funcao: "", status: "", admissaoDe: "", admissaoAte: 
 
 export default function FuncionariosPage() {
   const [filtros, setFiltros] = useState(EMPTY);
-  const [ativos, setAtivos] = useState(EMPTY);
   const [pagina, setPagina] = useState(1);
 
   const { data: funcoesRes } = useQuery<FuncaoApi[]>(() => funcoesApi.list(), []);
   const funcoes = funcoesRes ?? [];
 
   const { data: pageData, loading } = useQuery<Paginated<FuncionarioApi>>(
-    () => funcionariosApi.list({ ...ativos, page: pagina, limit: PER_PAGE }),
-    [ativos, pagina],
+    () => funcionariosApi.list({ ...filtros, page: pagina, limit: PER_PAGE }),
+    [filtros, pagina],
   );
   const { data: statsAdm } = useQuery<Paginated<FuncionarioApi>>(() => funcionariosApi.list({ status: "contratado,voluntario", limit: 1 }), []);
   const { data: statsDes } = useQuery<Paginated<FuncionarioApi>>(() => funcionariosApi.list({ status: "demitido", limit: 1 }), []);
@@ -31,8 +30,12 @@ export default function FuncionariosPage() {
   const total = pageData?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
 
-  const aplicar = useCallback(() => { setPagina(1); setAtivos(filtros); }, [filtros]);
-  const limpar = useCallback(() => { setFiltros(EMPTY); setAtivos(EMPTY); setPagina(1); }, []);
+  const limpar = useCallback(() => { setFiltros(EMPTY); setPagina(1); }, []);
+
+  function setCampo(chave: keyof typeof EMPTY, valor: string) {
+    setPagina(1);
+    setFiltros((f) => ({ ...f, [chave]: valor }));
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -47,13 +50,13 @@ export default function FuncionariosPage() {
         <StatCard label="Desligados" value={statsDes?.total ?? 0} tone="red" icon={UserX} />
       </div>
 
-      <FilterBar onFilter={aplicar} onClear={limpar}>
+      <FilterBar onClear={limpar}>
         <Field label="Buscar">
           <Input placeholder="Nome" value={filtros.busca}
-            onChange={(e) => setFiltros((f) => ({ ...f, busca: e.target.value }))} />
+            onChange={(e) => setCampo("busca", e.target.value)} />
         </Field>
         <Field label="Função">
-          <Select value={filtros.funcao} onChange={(e) => setFiltros((f) => ({ ...f, funcao: e.target.value }))}>
+          <Select value={filtros.funcao} onChange={(e) => setCampo("funcao", e.target.value)}>
             <option value="">Todas as funções</option>
             {funcoes.map((fn) => (
               <option key={fn.id} value={fn.nome}>{fn.nome}</option>
@@ -61,8 +64,8 @@ export default function FuncionariosPage() {
           </Select>
         </Field>
         <Field label="Status">
-          <Select value={filtros.status} onChange={(e) => setFiltros((f) => ({ ...f, status: e.target.value }))}>
-            <option value="">Todos</option>
+          <Select value={filtros.status} onChange={(e) => setCampo("status", e.target.value)}>
+            <option value="">Todos os status</option>
             <option value="contratado">Contratado</option>
             <option value="voluntario">Voluntário</option>
             <option value="demitido">Demitido</option>
@@ -74,11 +77,11 @@ export default function FuncionariosPage() {
         </Field>
         <Field label="Admissão de">
           <Input type="date" value={filtros.admissaoDe}
-            onChange={(e) => setFiltros((f) => ({ ...f, admissaoDe: e.target.value }))} />
+            onChange={(e) => setCampo("admissaoDe", e.target.value)} />
         </Field>
         <Field label="Até">
           <Input type="date" value={filtros.admissaoAte}
-            onChange={(e) => setFiltros((f) => ({ ...f, admissaoAte: e.target.value }))} />
+            onChange={(e) => setCampo("admissaoAte", e.target.value)} />
         </Field>
       </FilterBar>
 
