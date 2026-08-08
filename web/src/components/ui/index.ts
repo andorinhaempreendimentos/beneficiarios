@@ -12,3 +12,6 @@ export * from "./FileUpload";
 export * from "./FormSection";
 export * from "./PageHeader";
 export * from "./FilterBar";
+export * from "./ViewToggle";
+export * from "./BulkActionsBar";
+

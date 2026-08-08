@@ -240,7 +240,8 @@
       "Bash(node ~/.claude/scripts/supabase-mcp.js call execute_sql '{\"query\":\"SELECT id FROM auth.users WHERE email = '\\\\''admin@andorinha.local'\\\\'';\"}')",
       "Bash(rtk grep *)",
       "Bash(rtk read *)",
-      "Bash(rtk git *)"
+      "Bash(rtk git *)",
+      "Bash(rtk ls *)"
     ]
   },
   "enableAllProjectMcpServers": true,

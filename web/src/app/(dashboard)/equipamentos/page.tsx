@@ -2,7 +2,21 @@
 
 import { useState, useCallback } from "react";
 import Link from "next/link";
-import { Badge, Card, FilterBar, Field, Input, Select, LinkButton, PageHeader, Pagination } from "@/components/ui";
+import { Download } from "lucide-react";
+import {
+  Badge,
+  Card,
+  FilterBar,
+  Field,
+  Input,
+  Select,
+  LinkButton,
+  PageHeader,
+  Pagination,
+  ViewToggle,
+  BulkActionsBar,
+  type ViewMode,
+} from "@/components/ui";
 import { useQuery } from "@/lib/hooks/useQuery";
 import { equipamentosApi, nucleosApi, type Paginated, type EquipamentoApi, type NucleoApi } from "@/lib/api/services";
 import { conservacaoLabel, conservacaoTone } from "@/lib/status";
@@ -15,6 +29,8 @@ export default function EquipamentosPage() {
   const [filtros, setFiltros] = useState(EMPTY);
   const [ativos, setAtivos] = useState(EMPTY);
   const [pagina, setPagina] = useState(1);
+  const [viewMode, setViewMode] = useState<ViewMode>("cards");
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const { data: pageData, loading } = useQuery<Paginated<EquipamentoApi>>(
     () => equipamentosApi.list({ ...ativos, page: pagina, limit: PER_PAGE }),
@@ -30,12 +46,33 @@ export default function EquipamentosPage() {
   const aplicar = useCallback(() => { setPagina(1); setAtivos(filtros); }, [filtros]);
   const limpar = useCallback(() => { setFiltros(EMPTY); setAtivos(EMPTY); setPagina(1); }, []);
 
+  const toggleSelectAll = () => {
+    if (selectedIds.length === resultado.length && resultado.length > 0) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(resultado.map((e) => e.id));
+    }
+  };
+
+  const toggleSelectOne = (id: string) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
+  };
+
+  const allSelected = resultado.length > 0 && selectedIds.length === resultado.length;
+
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 pb-12">
       <PageHeader
         title="Equipamentos"
         description="Controle patrimonial de materiais e equipamentos"
-        actions={<LinkButton href="/equipamentos/novo">Novo equipamento</LinkButton>}
+        actions={
+          <div className="flex items-center gap-3">
+            <ViewToggle mode={viewMode} onChange={setViewMode} />
+            <LinkButton href="/equipamentos/novo">Novo equipamento</LinkButton>
+          </div>
+        }
       />
 
       <FilterBar onFilter={aplicar} onClear={limpar}>
@@ -75,54 +112,153 @@ export default function EquipamentosPage() {
       <Card>
         {loading && <div className="px-5 py-8 text-center text-sm text-zinc-400">Carregando…</div>}
         {!loading && (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-zinc-200 text-left text-xs font-medium uppercase tracking-wide text-zinc-500">
-                  <th className="px-5 py-3">Nome</th>
-                  <th className="px-5 py-3">Categoria</th>
-                  <th className="px-5 py-3">Qtd</th>
-                  <th className="px-5 py-3">Conservação</th>
-                  <th className="px-5 py-3">Núcleo</th>
-                  <th className="px-5 py-3">Nota Fiscal</th>
-                  <th className="px-5 py-3">Aquisição</th>
-                  <th className="px-5 py-3 text-right">Ações</th>
-                </tr>
-              </thead>
-              <tbody>
+          <>
+            {viewMode === "cards" ? (
+              <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {resultado.length === 0 ? (
-                  <tr><td colSpan={8} className="px-5 py-8 text-center text-sm text-zinc-400">Nenhum equipamento encontrado.</td></tr>
-                ) : resultado.map((e) => {
-                  const nucleo = e.nucleoId ? nucleos.find((n) => n.id === e.nucleoId) : null;
-                  return (
-                    <tr key={e.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
-                      <td className="px-5 py-3">
-                        <Link href={`/equipamentos/${e.id}`} className="font-medium text-sky-600 hover:underline">{e.nome}</Link>
-                      </td>
-                      <td className="px-5 py-3 text-zinc-600">{e.categoria}</td>
-                      <td className="px-5 py-3 text-zinc-600">{e.quantidade}</td>
-                      <td className="px-5 py-3">
-                        <Badge tone={conservacaoTone[e.conservacao as keyof typeof conservacaoTone] ?? "zinc"}>
-                          {conservacaoLabel[e.conservacao as keyof typeof conservacaoLabel] ?? e.conservacao}
-                        </Badge>
-                      </td>
-                      <td className="px-5 py-3 text-zinc-600">{nucleo?.identificacao ?? "—"}</td>
-                      <td className="px-5 py-3 text-zinc-600">{e.notaFiscal ?? "—"}</td>
-                      <td className="px-5 py-3 text-zinc-600">{e.dataAquisicao ? formatarData(e.dataAquisicao) : "—"}</td>
-                      <td className="px-5 py-3 text-right">
-                        <Link href={`/equipamentos/${e.id}`} className="text-sky-600 hover:underline">Detalhes</Link>
-                        <span className="mx-1.5 text-zinc-300">|</span>
-                        <Link href={`/equipamentos/${e.id}/editar`} className="text-zinc-500 hover:underline">Editar</Link>
-                      </td>
+                  <div className="col-span-full px-5 py-8 text-center text-sm text-zinc-400">
+                    Nenhum equipamento encontrado.
+                  </div>
+                ) : (
+                  resultado.map((e) => {
+                    const nucleo = e.nucleoId ? nucleos.find((n) => n.id === e.nucleoId) : null;
+                    const isSelected = selectedIds.includes(e.id);
+                    return (
+                      <div
+                        key={e.id}
+                        className={`p-4 rounded-xl border transition-all flex flex-col justify-between gap-3 ${
+                          isSelected
+                            ? "border-sky-500 bg-sky-50/30 ring-1 ring-sky-500"
+                            : "border-zinc-200 bg-white hover:border-zinc-300 hover:shadow-sm"
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex items-center gap-3">
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={() => toggleSelectOne(e.id)}
+                              className="h-4 w-4 rounded border-zinc-300 text-sky-600 focus:ring-sky-500 cursor-pointer"
+                            />
+                            <div>
+                              <Link href={`/equipamentos/${e.id}`} className="font-bold text-zinc-900 text-sm hover:text-sky-600">
+                                {e.nome}
+                              </Link>
+                              <span className="text-xs text-zinc-400 block">{e.categoria}</span>
+                            </div>
+                          </div>
+                          <Badge tone={conservacaoTone[e.conservacao as keyof typeof conservacaoTone] ?? "zinc"}>
+                            {conservacaoLabel[e.conservacao as keyof typeof conservacaoLabel] ?? e.conservacao}
+                          </Badge>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2 text-xs text-zinc-500 border-t border-zinc-100 pt-2.5">
+                          <div>Qtd: <strong className="text-zinc-700">{e.quantidade}</strong></div>
+                          <div>Núcleo: <strong className="text-zinc-700 block truncate">{nucleo?.identificacao ?? "—"}</strong></div>
+                        </div>
+
+                        <div className="flex items-center justify-between text-xs text-zinc-500 border-t border-zinc-100/60 pt-2">
+                          <span>NF: {e.notaFiscal ?? "—"}</span>
+                          <div className="flex items-center gap-3">
+                            <Link href={`/equipamentos/${e.id}`} className="text-xs font-semibold text-sky-600 hover:underline">
+                              Detalhes
+                            </Link>
+                            <span className="text-zinc-300">|</span>
+                            <Link href={`/equipamentos/${e.id}/editar`} className="text-xs text-zinc-500 hover:underline">
+                              Editar
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-zinc-200 text-left text-xs font-medium uppercase tracking-wide text-zinc-500 bg-zinc-50/50">
+                      <th className="px-4 py-3 w-10">
+                        <input
+                          type="checkbox"
+                          checked={allSelected}
+                          onChange={toggleSelectAll}
+                          className="h-4 w-4 rounded border-zinc-300 text-sky-600 focus:ring-sky-500 cursor-pointer"
+                        />
+                      </th>
+                      <th className="px-5 py-3">Nome</th>
+                      <th className="px-5 py-3">Categoria</th>
+                      <th className="px-5 py-3">Qtd</th>
+                      <th className="px-5 py-3">Conservação</th>
+                      <th className="px-5 py-3">Núcleo</th>
+                      <th className="px-5 py-3">Nota Fiscal</th>
+                      <th className="px-5 py-3">Aquisição</th>
+                      <th className="px-5 py-3 text-right">Ações</th>
                     </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+                  </thead>
+                  <tbody>
+                    {resultado.length === 0 ? (
+                      <tr><td colSpan={9} className="px-5 py-8 text-center text-sm text-zinc-400">Nenhum equipamento encontrado.</td></tr>
+                    ) : resultado.map((e) => {
+                      const nucleo = e.nucleoId ? nucleos.find((n) => n.id === e.nucleoId) : null;
+                      const isSelected = selectedIds.includes(e.id);
+                      return (
+                        <tr key={e.id} className={`border-b border-zinc-100 last:border-0 hover:bg-zinc-50 ${isSelected ? "bg-sky-50/30" : ""}`}>
+                          <td className="px-4 py-3">
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={() => toggleSelectOne(e.id)}
+                              className="h-4 w-4 rounded border-zinc-300 text-sky-600 focus:ring-sky-500 cursor-pointer"
+                            />
+                          </td>
+                          <td className="px-5 py-3">
+                            <Link href={`/equipamentos/${e.id}`} className="font-medium text-sky-600 hover:underline">{e.nome}</Link>
+                          </td>
+                          <td className="px-5 py-3 text-zinc-600">{e.categoria}</td>
+                          <td className="px-5 py-3 text-zinc-600">{e.quantidade}</td>
+                          <td className="px-5 py-3">
+                            <Badge tone={conservacaoTone[e.conservacao as keyof typeof conservacaoTone] ?? "zinc"}>
+                              {conservacaoLabel[e.conservacao as keyof typeof conservacaoLabel] ?? e.conservacao}
+                            </Badge>
+                          </td>
+                          <td className="px-5 py-3 text-zinc-600">{nucleo?.identificacao ?? "—"}</td>
+                          <td className="px-5 py-3 text-zinc-600">{e.notaFiscal ?? "—"}</td>
+                          <td className="px-5 py-3 text-zinc-600">{e.dataAquisicao ? formatarData(e.dataAquisicao) : "—"}</td>
+                          <td className="px-5 py-3 text-right">
+                            <Link href={`/equipamentos/${e.id}`} className="text-sky-600 hover:underline">Detalhes</Link>
+                            <span className="mx-1.5 text-zinc-300">|</span>
+                            <Link href={`/equipamentos/${e.id}/editar`} className="text-zinc-500 hover:underline">Editar</Link>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </>
         )}
         <Pagination currentPage={pagina} totalPages={totalPages} totalItems={total} itemsPerPage={PER_PAGE} onPageChange={setPagina} />
       </Card>
+
+      <BulkActionsBar
+        selectedCount={selectedIds.length}
+        totalCount={resultado.length}
+        allSelected={allSelected}
+        onSelectAll={toggleSelectAll}
+        onClearSelection={() => setSelectedIds([])}
+      >
+        <button
+          type="button"
+          onClick={() => alert(`Exportando ${selectedIds.length} equipamento(s)...`)}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-zinc-100 transition-colors"
+        >
+          <Download className="h-3.5 w-3.5" />
+          <span>Exportar</span>
+        </button>
+      </BulkActionsBar>
     </div>
   );
 }

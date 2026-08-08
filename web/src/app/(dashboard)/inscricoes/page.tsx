@@ -2,8 +2,16 @@
 
 import Link from "next/link";
 import { useState, useCallback } from "react";
-import { CheckCircle2, XCircle } from "lucide-react";
-import { Badge, Card, PageHeader, Pagination } from "@/components/ui";
+import { CheckCircle2, XCircle, Download } from "lucide-react";
+import {
+  Badge,
+  Card,
+  PageHeader,
+  Pagination,
+  ViewToggle,
+  BulkActionsBar,
+  type ViewMode,
+} from "@/components/ui";
 import { useQuery } from "@/lib/hooks/useQuery";
 import { inscricoesApi, nucleosApi, atividadesApi, turmasApi, type Paginated, type InscricaoApi, type NucleoApi, type AtividadeApi, type TurmaApi } from "@/lib/api/services";
 import { formatarData } from "@/lib/utils";
@@ -29,6 +37,8 @@ const FILTROS: { value: Filtro; label: string }[] = [
 export default function InscricoesPage() {
   const [filtro, setFiltro] = useState<Filtro>("todas");
   const [pagina, setPagina] = useState(1);
+  const [viewMode, setViewMode] = useState<ViewMode>("cards");
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const { data: pageData, loading, refetch } = useQuery<Paginated<InscricaoApi>>(
     () => inscricoesApi.list({ status: filtro !== "todas" ? filtro : undefined, page: pagina, limit: PER_PAGE }),
@@ -64,14 +74,11 @@ export default function InscricoesPage() {
   const rawAtividades = atividadesData?.data ?? [];
   const rawTurmas = turmasData?.data ?? [];
 
-  // Excluir atividades de uso interno (disponivelPreInscricao === false)
   const atividades = rawAtividades.filter((a) => a.disponivelPreInscricao !== false);
   const atividadesPublicasIds = new Set(atividades.map((a) => a.id));
 
-  // Filtrar turmas vinculadas a atividades públicas
   const turmas = rawTurmas.filter((t) => t.atividadeId && atividadesPublicasIds.has(t.atividadeId));
 
-  // Excluir núcleos sem turmas ou atividades públicas
   const nucleosComTurmasIds = new Set(turmas.map((t) => t.nucleoId).filter(Boolean));
   const nucleos = rawNucleos.filter((n) => n.emFuncionamento !== false && nucleosComTurmasIds.has(n.id));
 
@@ -89,15 +96,31 @@ export default function InscricoesPage() {
     setPagina(1);
   }, []);
 
+  const toggleSelectAll = () => {
+    if (selectedIds.length === lista.length && lista.length > 0) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(lista.map((i) => i.id));
+    }
+  };
+
+  const toggleSelectOne = (id: string) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
+  };
+
+  const allSelected = lista.length > 0 && selectedIds.length === lista.length;
+
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 pb-12">
       <PageHeader
         title="Inscrições"
         description="Gerencie inscrições recebidas e gere links por núcleo, atividade ou turma"
       />
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {(["pendente", "aprovada", "fila_espera", "cancelada"] as StatusInscricao[]).map((s) => (
+        {(["pendente", "aprovada", "reservada", "cancelada"] as StatusInscricao[]).map((s) => (
           <button key={s} type="button" onClick={() => handleFiltro(s)}
             className={`rounded-xl border px-4 py-3 text-left transition-all ${
               filtro === s ? "border-sky-200 bg-sky-50 ring-1 ring-sky-300" : "border-zinc-200 bg-white hover:border-zinc-300"
@@ -146,85 +169,195 @@ export default function InscricoesPage() {
       </div>
 
       <Card>
-        <div className="flex items-center justify-between border-b border-zinc-100 px-5 py-3">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-zinc-100 px-5 py-3">
           <div>
             <h3 className="text-sm font-semibold text-zinc-800">Inscrições recebidas</h3>
             {pendentes > 0 && <p className="mt-0.5 text-xs text-amber-600">{pendentes} aguardando análise</p>}
           </div>
-          <div className="flex items-center gap-1">
-            {FILTROS.map((f) => (
-              <button key={f.value} type="button" onClick={() => { setFiltro(f.value); setPagina(1); }}
-                className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
-                  filtro === f.value ? "bg-zinc-900 text-white" : "text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800"
-                }`}
-              >
-                {f.label}
-              </button>
-            ))}
+          <div className="flex items-center gap-3">
+            <ViewToggle mode={viewMode} onChange={setViewMode} />
+            <div className="flex items-center gap-1 overflow-x-auto">
+              {FILTROS.map((f) => (
+                <button key={f.value} type="button" onClick={() => { setFiltro(f.value); setPagina(1); }}
+                  className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+                    filtro === f.value ? "bg-zinc-900 text-white" : "text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800"
+                  }`}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
         {loading && <div className="px-5 py-8 text-center text-sm text-zinc-400">Carregando…</div>}
         {!loading && (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-zinc-100 text-left text-xs font-medium uppercase tracking-wide text-zinc-400">
-                  <th className="px-5 py-3">Beneficiário</th>
-                  <th className="px-5 py-3">Turma</th>
-                  <th className="px-5 py-3">Data</th>
-                  <th className="px-5 py-3">Status</th>
-                  <th className="px-5 py-3 text-right">Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                {lista.map((i) => {
-                  const turma = turmas.find((t) => t.id === i.turmaId) ?? i.turma;
-                  return (
-                    <tr key={i.id} className="border-b border-zinc-50 last:border-0 hover:bg-zinc-50/60 transition-colors">
-                      <td className="px-5 py-3">
-                        <span className="font-medium text-zinc-900">
-                          {i.beneficiario?.nomeCompleto ?? i.beneficiarioId}
-                        </span>
-                      </td>
-                      <td className="px-5 py-3">
-                        <Link href={`/turmas/${i.turmaId}/inscricoes`} className="text-zinc-600 hover:text-sky-600 hover:underline transition-colors">
-                          {turma?.nome ?? "—"}
-                        </Link>
-                      </td>
-                      <td className="px-5 py-3 text-zinc-500">{formatarData(i.criadoEm)}</td>
-                      <td className="px-5 py-3">
-                        <Badge tone={TONE[i.status as StatusInscricao] ?? "zinc"}>
-                          {LABEL[i.status as StatusInscricao] ?? i.status}
-                        </Badge>
-                      </td>
-                      <td className="px-5 py-3 text-right">
+          <>
+            {viewMode === "cards" ? (
+              <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {lista.length === 0 ? (
+                  <div className="col-span-full px-5 py-10 text-center text-sm text-zinc-400">Nenhuma inscrição encontrada</div>
+                ) : (
+                  lista.map((i) => {
+                    const turma = turmas.find((t) => t.id === i.turmaId) ?? i.turma;
+                    const isSelected = selectedIds.includes(i.id);
+                    return (
+                      <div
+                        key={i.id}
+                        className={`p-4 rounded-xl border transition-all flex flex-col justify-between gap-3 ${
+                          isSelected
+                            ? "border-sky-500 bg-sky-50/30 ring-1 ring-sky-500"
+                            : "border-zinc-200 bg-white hover:border-zinc-300 hover:shadow-sm"
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex items-center gap-3">
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={() => toggleSelectOne(i.id)}
+                              className="h-4 w-4 rounded border-zinc-300 text-sky-600 focus:ring-sky-500 cursor-pointer"
+                            />
+                            <div>
+                              <span className="font-medium text-zinc-900 text-sm block">
+                                {i.beneficiario?.nomeCompleto ?? i.beneficiarioId}
+                              </span>
+                              <span className="text-xs text-zinc-400 block">{formatarData(i.criadoEm)}</span>
+                            </div>
+                          </div>
+                          <Badge tone={TONE[i.status as StatusInscricao] ?? "zinc"}>
+                            {LABEL[i.status as StatusInscricao] ?? i.status}
+                          </Badge>
+                        </div>
+
+                        <div className="text-xs text-zinc-600 border-t border-zinc-100 pt-2.5">
+                          <span>Turma: </span>
+                          <Link href={`/turmas/${i.turmaId}/inscricoes`} className="font-semibold text-zinc-800 hover:text-sky-600 hover:underline">
+                            {turma?.nome ?? "—"}
+                          </Link>
+                        </div>
+
                         {i.status === "pendente" && (
-                          <div className="flex items-center justify-end gap-1">
-                            <button type="button" title="Aprovar" onClick={() => handleAcao(i.id, "aprovada")}
+                          <div className="flex items-center justify-end gap-2 pt-2 border-t border-zinc-100/60">
+                            <button
+                              type="button"
+                              onClick={() => handleAcao(i.id, "aprovada")}
                               disabled={actionId === i.id}
-                              className="flex h-7 w-7 items-center justify-center rounded-md text-zinc-400 hover:bg-green-50 hover:text-green-600 transition-colors disabled:opacity-40">
-                              <CheckCircle2 className="h-4 w-4" />
+                              className="px-2.5 py-1 rounded-md bg-green-50 text-green-700 hover:bg-green-100 text-xs font-semibold transition-colors disabled:opacity-40"
+                            >
+                              Aprovar
                             </button>
-                            <button type="button" title="Recusar" onClick={() => handleAcao(i.id, "cancelada")}
+                            <button
+                              type="button"
+                              onClick={() => handleAcao(i.id, "cancelada")}
                               disabled={actionId === i.id}
-                              className="flex h-7 w-7 items-center justify-center rounded-md text-zinc-400 hover:bg-red-50 hover:text-red-500 transition-colors disabled:opacity-40">
-                              <XCircle className="h-4 w-4" />
+                              className="px-2.5 py-1 rounded-md bg-red-50 text-red-700 hover:bg-red-100 text-xs font-semibold transition-colors disabled:opacity-40"
+                            >
+                              Recusar
                             </button>
                           </div>
                         )}
-                      </td>
-                    </tr>
-                  );
-                })}
-                {lista.length === 0 && (
-                  <tr><td colSpan={5} className="px-5 py-10 text-center text-sm text-zinc-400">Nenhuma inscrição encontrada</td></tr>
+                      </div>
+                    );
+                  })
                 )}
-              </tbody>
-            </table>
-          </div>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-zinc-100 text-left text-xs font-medium uppercase tracking-wide text-zinc-400 bg-zinc-50/50">
+                      <th className="px-4 py-3 w-10">
+                        <input
+                          type="checkbox"
+                          checked={allSelected}
+                          onChange={toggleSelectAll}
+                          className="h-4 w-4 rounded border-zinc-300 text-sky-600 focus:ring-sky-500 cursor-pointer"
+                        />
+                      </th>
+                      <th className="px-5 py-3">Beneficiário</th>
+                      <th className="px-5 py-3">Turma</th>
+                      <th className="px-5 py-3">Data</th>
+                      <th className="px-5 py-3">Status</th>
+                      <th className="px-5 py-3 text-right">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {lista.map((i) => {
+                      const turma = turmas.find((t) => t.id === i.turmaId) ?? i.turma;
+                      const isSelected = selectedIds.includes(i.id);
+                      return (
+                        <tr key={i.id} className={`border-b border-zinc-50 last:border-0 hover:bg-zinc-50/60 transition-colors ${isSelected ? "bg-sky-50/30" : ""}`}>
+                          <td className="px-4 py-3">
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={() => toggleSelectOne(i.id)}
+                              className="h-4 w-4 rounded border-zinc-300 text-sky-600 focus:ring-sky-500 cursor-pointer"
+                            />
+                          </td>
+                          <td className="px-5 py-3">
+                            <span className="font-medium text-zinc-900">
+                              {i.beneficiario?.nomeCompleto ?? i.beneficiarioId}
+                            </span>
+                          </td>
+                          <td className="px-5 py-3">
+                            <Link href={`/turmas/${i.turmaId}/inscricoes`} className="text-zinc-600 hover:text-sky-600 hover:underline transition-colors">
+                              {turma?.nome ?? "—"}
+                            </Link>
+                          </td>
+                          <td className="px-5 py-3 text-zinc-500">{formatarData(i.criadoEm)}</td>
+                          <td className="px-5 py-3">
+                            <Badge tone={TONE[i.status as StatusInscricao] ?? "zinc"}>
+                              {LABEL[i.status as StatusInscricao] ?? i.status}
+                            </Badge>
+                          </td>
+                          <td className="px-5 py-3 text-right">
+                            {i.status === "pendente" && (
+                              <div className="flex items-center justify-end gap-1">
+                                <button type="button" title="Aprovar" onClick={() => handleAcao(i.id, "aprovada")}
+                                  disabled={actionId === i.id}
+                                  className="flex h-7 w-7 items-center justify-center rounded-md text-zinc-400 hover:bg-green-50 hover:text-green-600 transition-colors disabled:opacity-40">
+                                  <CheckCircle2 className="h-4 w-4" />
+                                </button>
+                                <button type="button" title="Recusar" onClick={() => handleAcao(i.id, "cancelada")}
+                                  disabled={actionId === i.id}
+                                  className="flex h-7 w-7 items-center justify-center rounded-md text-zinc-400 hover:bg-red-50 hover:text-red-500 transition-colors disabled:opacity-40">
+                                  <XCircle className="h-4 w-4" />
+                                </button>
+                              </div>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                    {lista.length === 0 && (
+                      <tr><td colSpan={6} className="px-5 py-10 text-center text-sm text-zinc-400">Nenhuma inscrição encontrada</td></tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </>
         )}
         <Pagination currentPage={pagina} totalPages={totalPages} totalItems={total} itemsPerPage={PER_PAGE} onPageChange={setPagina} />
       </Card>
+
+      <BulkActionsBar
+        selectedCount={selectedIds.length}
+        totalCount={lista.length}
+        allSelected={allSelected}
+        onSelectAll={toggleSelectAll}
+        onClearSelection={() => setSelectedIds([])}
+      >
+        <button
+          type="button"
+          onClick={() => alert(`Exportando ${selectedIds.length} inscrição(ões)...`)}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-zinc-100 transition-colors"
+        >
+          <Download className="h-3.5 w-3.5" />
+          <span>Exportar</span>
+        </button>
+      </BulkActionsBar>
     </div>
   );
 }
