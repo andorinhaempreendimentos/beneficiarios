@@ -4,14 +4,9 @@ import { ExternalLink } from "lucide-react";
 import { Badge, Card, LinkButton, PageHeader } from "@/components/ui";
 import { turmasApi, inscricoesApi } from "@/lib/api/services";
 import { formatarData } from "@/lib/utils";
+import { statusInscricaoTone, statusInscricaoLabel } from "@/lib/status";
+import type { StatusInscricao } from "@/lib/types";
 
-const TONE: Record<string, "amber" | "green" | "sky" | "red" | "zinc"> = {
-  pendente: "amber",
-  aprovada: "green",
-  Aprovado: "green",
-  fila_espera: "sky",
-  cancelada: "red",
-};
 
 export default async function TurmaInscricoesPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -66,7 +61,7 @@ export default async function TurmaInscricoesPage({ params }: { params: Promise<
                 </tr>
               )}
               {lista.map((i) => {
-                const tone = TONE[i.status] ?? "zinc";
+                const tone = statusInscricaoTone[i.status as StatusInscricao] ?? "zinc";
                 return (
                   <tr key={i.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
                     <td className="px-5 py-3 font-medium text-zinc-800">{i.beneficiario?.nomeCompleto ?? i.beneficiarioId.substring(0, 8)}</td>
@@ -74,7 +69,7 @@ export default async function TurmaInscricoesPage({ params }: { params: Promise<
                     <td className="px-5 py-3 text-zinc-600">{i.beneficiario?.cpf ?? "—"}</td>
                     <td className="px-5 py-3 text-zinc-600">{formatarData(i.criadoEm)}</td>
                     <td className="px-5 py-3">
-                      <Badge tone={tone}>{i.status}</Badge>
+                      <Badge tone={tone}>{statusInscricaoLabel[i.status as StatusInscricao] ?? i.status}</Badge>
                     </td>
                     <td className="px-5 py-3 text-right">
                       <Link href={`/beneficiarios/${i.beneficiarioId}`} className="text-sky-600 hover:underline">Ver aluno</Link>

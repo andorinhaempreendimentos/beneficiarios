@@ -6,7 +6,7 @@ import { Badge, Card, CardBody, CardHeader, StatCard } from "@/components/ui";
 import { useQuery } from "@/lib/hooks/useQuery";
 import { dashboardApi, type DashboardResumo } from "@/lib/api/services";
 import { formatarData } from "@/lib/utils";
-import { statusBeneficiarioTone } from "@/lib/status";
+import { statusBeneficiarioTone, statusBeneficiarioLabel, normalizarStatusBeneficiario } from "@/lib/status";
 
 const VAZIO: DashboardResumo = {
   beneficiariosAtivos: 0, totalBeneficiarios: 0, nucleosAtivos: 0, funcionariosAtivos: 0,
@@ -43,7 +43,7 @@ export default function DashboardPage() {
           <CardBody className="flex flex-col gap-3">
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-lg bg-green-50 px-3 py-2.5">
-                <p className="text-xs text-green-700">Aprovados</p>
+                <p className="text-xs text-green-700">Ativos</p>
                 <p className="text-2xl font-bold text-green-700">{r.beneficiariosAtivos}</p>
               </div>
               <div className="rounded-lg bg-zinc-50 px-3 py-2.5">
@@ -222,12 +222,13 @@ export default function DashboardPage() {
             </thead>
             <tbody>
               {r.recentes.map((b) => {
-                const tone = statusBeneficiarioTone[b.status as keyof typeof statusBeneficiarioTone] ?? "zinc";
+                const statusNorm = normalizarStatusBeneficiario(b.status);
+                const tone = statusBeneficiarioTone[statusNorm];
                 return (
                   <tr key={b.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
                     <td className="px-5 py-3 font-medium text-zinc-900">{b.nomeCompleto}</td>
                     <td className="px-5 py-3 text-zinc-600">{b.nucleo ?? "—"}</td>
-                    <td className="px-5 py-3"><Badge tone={tone}>{b.status}</Badge></td>
+                    <td className="px-5 py-3"><Badge tone={tone}>{statusBeneficiarioLabel[statusNorm]}</Badge></td>
                     <td className="px-5 py-3 text-zinc-600">{formatarData(b.dataCadastro)}</td>
                   </tr>
                 );

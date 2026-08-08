@@ -2,9 +2,15 @@ import { notFound } from "next/navigation";
 import { Mail, MapPin, Phone, User } from "lucide-react";
 import { Badge, Card, CardBody, CardHeader, LinkButton, PageHeader } from "@/components/ui";
 import { beneficiariosApi, nucleosApi, inscricoesApi, turmasApi } from "@/lib/api/services";
-import { statusBeneficiarioTone } from "@/lib/status";
+import {
+  statusBeneficiarioTone,
+  statusBeneficiarioLabel,
+  normalizarStatusBeneficiario,
+  statusInscricaoTone,
+  statusInscricaoLabel,
+} from "@/lib/status";
 import { calcularIdade, formatarData } from "@/lib/utils";
-import type { StatusBeneficiario } from "@/lib/types";
+import type { StatusInscricao } from "@/lib/types";
 
 export default async function DetalhesBeneficiarioPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -15,7 +21,8 @@ export default async function DetalhesBeneficiarioPage({ params }: { params: Pro
   const inscricoesRes = await inscricoesApi.list({ beneficiarioId: b.id, limit: 100 }).catch(() => ({ data: [] }));
   const inscricoes = inscricoesRes.data;
 
-  const tone = statusBeneficiarioTone[b.status as StatusBeneficiario] ?? "zinc";
+  const statusNorm = normalizarStatusBeneficiario(b.status);
+  const tone = statusBeneficiarioTone[statusNorm];
 
   return (
     <div className="flex flex-col gap-6">
@@ -35,7 +42,7 @@ export default async function DetalhesBeneficiarioPage({ params }: { params: Pro
               <p className="font-medium text-zinc-900">{b.nomeCompleto}</p>
               <p className="text-sm text-zinc-500">{calcularIdade(b.dataNascimento)} anos - {formatarData(b.dataNascimento)}</p>
             </div>
-            <Badge tone={tone}>{b.status}</Badge>
+            <Badge tone={tone}>{statusBeneficiarioLabel[statusNorm]}</Badge>
           </CardHeader>
           <CardBody className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
             <div className="flex items-center gap-2 text-zinc-600">
@@ -70,7 +77,9 @@ export default async function DetalhesBeneficiarioPage({ params }: { params: Pro
           {inscricoes.map((ins) => (
             <div key={ins.id} className="flex items-center justify-between rounded-lg border border-zinc-100 px-4 py-2 text-sm">
               <span className="font-medium text-zinc-800">{ins.turma?.nome ?? ins.turmaId}</span>
-              <Badge tone={ins.status === "Aprovado" ? "green" : "zinc"}>{ins.status}</Badge>
+              <Badge tone={statusInscricaoTone[ins.status as StatusInscricao] ?? "zinc"}>
+                {statusInscricaoLabel[ins.status as StatusInscricao] ?? ins.status}
+              </Badge>
             </div>
           ))}
         </CardBody>

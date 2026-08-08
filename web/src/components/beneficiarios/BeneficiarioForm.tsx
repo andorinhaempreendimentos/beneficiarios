@@ -16,6 +16,7 @@ import {
 import type { Anexo, Beneficiario, PerguntaParQ, VinculoTurma } from "@/lib/types";
 import { beneficiariosApi, turmasApi, type NucleoApi, type TurmaApi } from "@/lib/api/services";
 import { validarCpf, validarCep, validarEmail } from "@/lib/mascaras";
+import { normalizarStatusBeneficiario, STATUS_BENEFICIARIO_OPCOES } from "@/lib/status";
 
 const PERGUNTAS_PARQ = [
   "Algum médico já disse que você possui um problema de coração e recomendou que você só praticasse atividade física supervisionado?",
@@ -137,7 +138,7 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
       pcd,
       tipoPcd: formData.get("tipoPcd"),
       nucleoId: formData.get("nucleoId"),
-      status: formData.get("status") || "Novo cadastro",
+      status: normalizarStatusBeneficiario(formData.get("status") as string | null),
     };
 
     try {
@@ -275,14 +276,10 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
             </Select>
           </Field>
           <Field label="Status">
-            <Select name="status" defaultValue={b?.status ?? ""}>
-              <option value="">Selecione</option>
-              <option>Novo cadastro</option>
-              <option>Comparecer a sede</option>
-              <option>Aguardando seletiva</option>
-              <option>Fila de espera</option>
-              <option>Desistente</option>
-              <option>Aprovado</option>
+            <Select name="status" defaultValue={normalizarStatusBeneficiario(b?.status)}>
+              {STATUS_BENEFICIARIO_OPCOES.map((o) => (
+                <option key={o.value} value={o.value}>{o.label}</option>
+              ))}
             </Select>
           </Field>
         </div>

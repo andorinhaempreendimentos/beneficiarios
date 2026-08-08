@@ -1,14 +1,53 @@
-import type { StatusBeneficiario, StatusFuncionario, StatusObjeto, StatusOrganizacao, ConservacaoEquipamento, StatusUsuario } from "@/lib/types";
+import type { StatusBeneficiario, StatusInscricao, StatusFuncionario, StatusObjeto, StatusOrganizacao, ConservacaoEquipamento, StatusUsuario } from "@/lib/types";
 
 type Tone = "zinc" | "sky" | "green" | "red" | "amber" | "violet";
 
+export const statusBeneficiarioLabel: Record<StatusBeneficiario, string> = {
+  pendente: "Pendente",
+  ativo: "Ativo",
+  inativo: "Inativo",
+};
+
 export const statusBeneficiarioTone: Record<StatusBeneficiario, Tone> = {
-  "Novo cadastro": "sky",
-  "Comparecer a sede": "amber",
-  "Aguardando seletiva": "violet",
-  "Fila de espera": "zinc",
-  Desistente: "red",
-  Aprovado: "green",
+  pendente: "amber",
+  ativo: "green",
+  inativo: "zinc",
+};
+
+export const STATUS_BENEFICIARIO_OPCOES = (
+  Object.keys(statusBeneficiarioLabel) as StatusBeneficiario[]
+).map((value) => ({ value, label: statusBeneficiarioLabel[value] }));
+
+/** Traduz status legado (labels antigos) para os três status atuais. */
+export function normalizarStatusBeneficiario(valor?: string | null): StatusBeneficiario {
+  switch (valor) {
+    case "ativo":
+    case "Aprovado":
+      return "ativo";
+    case "inativo":
+    case "Desistente":
+      return "inativo";
+    default:
+      return "pendente";
+  }
+}
+
+export const statusInscricaoLabel: Record<StatusInscricao, string> = {
+  pendente: "Pendente",
+  reservada: "Fila de espera",
+  aprovada: "Aprovada",
+  recusada: "Recusada",
+  expirada: "Expirada",
+  cancelada: "Cancelada",
+};
+
+export const statusInscricaoTone: Record<StatusInscricao, Tone> = {
+  pendente: "amber",
+  reservada: "sky",
+  aprovada: "green",
+  recusada: "red",
+  expirada: "zinc",
+  cancelada: "red",
 };
 
 export const statusFuncionarioLabel: Record<StatusFuncionario, string> = {

@@ -3,6 +3,7 @@
 import { Card, CardBody, CardHeader, Field, Select } from "@/components/ui";
 import { nucleosApi, atividadesApi, turmasApi } from "@/lib/api/services";
 import { useQuery } from "@/lib/hooks/useQuery";
+import { STATUS_BENEFICIARIO_OPCOES } from "@/lib/status";
 
 export interface FiltrosState {
   nucleoId: string;
@@ -71,12 +72,9 @@ export function FiltrosRelatorio({ filtros, onChange }: FiltrosRelatorioProps) {
         <Field label="Status do beneficiário">
           <Select value={filtros.status} onChange={(e) => set("status", e.target.value)}>
             <option value="">Todos</option>
-            <option>Aprovado</option>
-            <option>Novo cadastro</option>
-            <option>Aguardando seletiva</option>
-            <option>Comparecer a sede</option>
-            <option>Fila de espera</option>
-            <option>Desistente</option>
+            {STATUS_BENEFICIARIO_OPCOES.map((o) => (
+              <option key={o.value} value={o.value}>{o.label}</option>
+            ))}
           </Select>
         </Field>
 

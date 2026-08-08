@@ -1300,7 +1300,7 @@ export const dashboardApi = {
     const [totalRes, aprovadosRes, nucleosRes, funcionariosRes, turmasRes, atividadesRes, matriculasRes, recentesRes] =
       await Promise.all([
         sb.from('beneficiarios').select('id', { count: 'exact', head: true }).is('deleted_at', null),
-        sb.from('beneficiarios').select('id, nucleo_id').is('deleted_at', null).eq('status', 'Aprovado'),
+        sb.from('beneficiarios').select('id, nucleo_id').is('deleted_at', null).eq('status', 'ativo'),
         sb.from('nucleos').select('id, identificacao, em_funcionamento').is('deleted_at', null),
         sb.from('funcionarios').select('status').is('deleted_at', null),
         sb.from('turmas').select('id, atividade_id, vagas_totais').is('deleted_at', null),

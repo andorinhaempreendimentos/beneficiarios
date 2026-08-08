@@ -2,10 +2,9 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Badge, Card, Field, Input, LinkButton, PageHeader, Select, FilterBar, StatCard } from "@/components/ui";
 import { nucleosApi, beneficiariosApi, turmasApi } from "@/lib/api/services";
-import { statusBeneficiarioTone } from "@/lib/status";
+import { statusBeneficiarioTone, statusBeneficiarioLabel, normalizarStatusBeneficiario, STATUS_BENEFICIARIO_OPCOES } from "@/lib/status";
 import { calcularIdade } from "@/lib/utils";
 import { Users } from "lucide-react";
-import type { StatusBeneficiario } from "@/lib/types";
 
 export default async function BeneficiariosDoNucleoPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -29,7 +28,7 @@ export default async function BeneficiariosDoNucleoPage({ params }: { params: Pr
 
       <StatCard
         label="Beneficiários ativos"
-        value={beneficiariosDoNucleo.filter((b) => b.status === "Aprovado").length}
+        value={beneficiariosDoNucleo.filter((b) => normalizarStatusBeneficiario(b.status) === "ativo").length}
         tone="green"
         icon={Users}
       />
@@ -50,12 +49,9 @@ export default async function BeneficiariosDoNucleoPage({ params }: { params: Pr
         <Field label="Status">
           <Select defaultValue="">
             <option value="">Todos</option>
-            <option>Novo cadastro</option>
-            <option>Comparecer a sede</option>
-            <option>Aguardando seletiva</option>
-            <option>Fila de espera</option>
-            <option>Desistente</option>
-            <option>Aprovado</option>
+            {STATUS_BENEFICIARIO_OPCOES.map((o) => (
+              <option key={o.value} value={o.value}>{o.label}</option>
+            ))}
           </Select>
         </Field>
         <Field label="Atividade">
@@ -104,12 +100,13 @@ export default async function BeneficiariosDoNucleoPage({ params }: { params: Pr
             </thead>
             <tbody>
               {beneficiariosDoNucleo.map((b) => {
-                const tone = statusBeneficiarioTone[b.status as StatusBeneficiario] ?? "zinc";
+                const statusNorm = normalizarStatusBeneficiario(b.status);
+                const tone = statusBeneficiarioTone[statusNorm];
                 return (
                   <tr key={b.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
                     <td className="px-5 py-3 text-zinc-500">{b.matricula ?? b.id.substring(0, 8)}</td>
                     <td className="px-5 py-3">
-                      <Badge tone={tone}>{b.status}</Badge>
+                      <Badge tone={tone}>{statusBeneficiarioLabel[statusNorm]}</Badge>
                     </td>
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-2">

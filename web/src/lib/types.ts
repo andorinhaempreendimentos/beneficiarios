@@ -231,13 +231,15 @@ export interface Organizacao {
   criadoEm: string;
 }
 
-export type StatusBeneficiario =
-  | "Novo cadastro"
-  | "Comparecer a sede"
-  | "Aguardando seletiva"
-  | "Fila de espera"
-  | "Desistente"
-  | "Aprovado";
+export type StatusBeneficiario = "pendente" | "ativo" | "inativo";
+
+export type StatusInscricao =
+  | "pendente"
+  | "reservada"
+  | "aprovada"
+  | "recusada"
+  | "expirada"
+  | "cancelada";
 
 export type TipoMatricula = "Online" | "Interna";
 

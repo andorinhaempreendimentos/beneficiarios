@@ -5,16 +5,7 @@ import { beneficiariosApi, turmasApi, nucleosApi, atividadesApi } from "@/lib/ap
 import { useQuery } from "@/lib/hooks/useQuery";
 import { formatarData, calcularIdade } from "@/lib/utils";
 import type { FiltrosState } from "./FiltrosRelatorio";
-import type { StatusBeneficiario } from "@/lib/types";
-
-const TONE: Record<string, "green" | "amber" | "sky" | "zinc" | "red"> = {
-  "Aprovado": "green",
-  "Aguardando seletiva": "amber",
-  "Novo cadastro": "sky",
-  "Comparecer a sede": "amber",
-  "Fila de espera": "zinc",
-  "Desistente": "red",
-};
+import { statusBeneficiarioTone, statusBeneficiarioLabel, normalizarStatusBeneficiario } from "@/lib/status";
 
 interface Props { filtros: FiltrosState }
 
@@ -31,7 +22,7 @@ export function TabelaParticipacao({ filtros }: Props) {
   const linhas = beneficiarios
     .filter((b) => {
       if (filtros.nucleoId && b.nucleoId !== filtros.nucleoId) return false;
-      if (filtros.status && b.status !== filtros.status) return false;
+      if (filtros.status && normalizarStatusBeneficiario(b.status) !== filtros.status) return false;
       return true;
     })
     .map((b) => {
@@ -72,7 +63,11 @@ export function TabelaParticipacao({ filtros }: Props) {
                 <td className="px-5 py-3 text-zinc-600">{calcularIdade(b.dataNascimento)}</td>
                 <td className="px-5 py-3 text-zinc-600">{nucleo?.identificacao ?? "—"}</td>
                 <td className="px-5 py-3 text-zinc-600">{turmasNomes.join(", ") || "—"}</td>
-                <td className="px-5 py-3"><Badge tone={TONE[b.status]}>{b.status}</Badge></td>
+                <td className="px-5 py-3">
+                  <Badge tone={statusBeneficiarioTone[normalizarStatusBeneficiario(b.status)]}>
+                    {statusBeneficiarioLabel[normalizarStatusBeneficiario(b.status)]}
+                  </Badge>
+                </td>
                 <td className="px-5 py-3 font-mono text-xs text-zinc-400">{b.matricula}</td>
               </tr>
             ))}

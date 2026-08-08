@@ -237,7 +237,10 @@
       "Bash(node ~/.claude/scripts/supabase-mcp.js call execute_sql '{\"query\":\"SELECT get_logo_url\\(\\) AS logo, get_logo_url\\(\\) IS NULL AS is_null;\"}')",
       "Bash(node ~/.claude/scripts/supabase-mcp.js call execute_sql '{\"query\":\"SELECT name, bucket_id, created_at FROM storage.objects WHERE bucket_id = '\\\\''logos'\\\\'';\"}')",
       "Bash(node ~/.claude/scripts/supabase-mcp.js call execute_sql '{\"query\":\"SELECT u.email, us.tipo FROM auth.users u JOIN usuarios us ON us.id = u.id LIMIT 5;\"}')",
-      "Bash(node ~/.claude/scripts/supabase-mcp.js call execute_sql '{\"query\":\"SELECT id FROM auth.users WHERE email = '\\\\''admin@andorinha.local'\\\\'';\"}')"
+      "Bash(node ~/.claude/scripts/supabase-mcp.js call execute_sql '{\"query\":\"SELECT id FROM auth.users WHERE email = '\\\\''admin@andorinha.local'\\\\'';\"}')",
+      "Bash(rtk grep *)",
+      "Bash(rtk read *)",
+      "Bash(rtk git *)"
     ]
   },
   "enableAllProjectMcpServers": true,

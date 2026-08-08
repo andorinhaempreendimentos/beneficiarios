@@ -30,7 +30,7 @@ async function qa() {
     nome_completo: 'Carlos Eduardo QA Admin',
     cpf: '111.222.333-44',
     data_nascimento: '2012-05-15',
-    status: 'aprovado',
+    status: 'ativo',
     origem: 'interna'
   };
 
@@ -60,7 +60,7 @@ async function qa() {
     nome_completo: 'Mariana Silva QA Pré-Inscrição Futebol',
     cpf: '999.888.777-66',
     data_nascimento: '2014-09-20',
-    status: 'novo_cadastro',
+    status: 'pendente',
     origem: 'online'
   };
 
@@ -88,7 +88,7 @@ async function qa() {
     nome_completo: 'Lucas Gabriel QA Pré-Inscrição Futsal',
     cpf: '555.444.333-22',
     data_nascimento: '2015-03-10',
-    status: 'novo_cadastro',
+    status: 'pendente',
     origem: 'online'
   };
 

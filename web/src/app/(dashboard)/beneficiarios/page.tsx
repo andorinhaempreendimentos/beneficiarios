@@ -6,7 +6,7 @@ import { UserCheck, UserX } from "lucide-react";
 import { Badge, Card, Field, Input, LinkButton, PageHeader, Select, FilterBar, StatCard, Pagination } from "@/components/ui";
 import { useQuery } from "@/lib/hooks/useQuery";
 import { beneficiariosApi, nucleosApi, atividadesApi, type Paginated, type BeneficiarioApi, type NucleoApi, type AtividadeApi } from "@/lib/api/services";
-import { statusBeneficiarioTone } from "@/lib/status";
+import { statusBeneficiarioTone, statusBeneficiarioLabel, normalizarStatusBeneficiario, STATUS_BENEFICIARIO_OPCOES } from "@/lib/status";
 import { calcularIdade } from "@/lib/utils";
 
 const PER_PAGE = 15;
@@ -34,7 +34,7 @@ export default function BeneficiariosPage() {
   const aplicar = useCallback(() => { setPagina(1); setAtivos(filtros); }, [filtros]);
   const limpar = useCallback(() => { setFiltros(EMPTY); setAtivos(EMPTY); setPagina(1); }, []);
 
-  const atv = pageData?.data.filter((b) => b.status === "Aprovado").length ?? 0;
+  const atv = pageData?.data.filter((b) => normalizarStatusBeneficiario(b.status) === "ativo").length ?? 0;
 
   return (
     <div className="flex flex-col gap-6">
@@ -65,12 +65,9 @@ export default function BeneficiariosPage() {
         <Field label="Status">
           <Select value={filtros.status} onChange={(e) => setFiltros((f) => ({ ...f, status: e.target.value }))}>
             <option value="">Todos</option>
-            <option value="Novo cadastro">Novo cadastro</option>
-            <option value="Comparecer a sede">Comparecer a sede</option>
-            <option value="Aguardando seletiva">Aguardando seletiva</option>
-            <option value="Fila de espera">Fila de espera</option>
-            <option value="Desistente">Desistente</option>
-            <option value="Aprovado">Aprovado</option>
+            {STATUS_BENEFICIARIO_OPCOES.map((o) => (
+              <option key={o.value} value={o.value}>{o.label}</option>
+            ))}
           </Select>
         </Field>
         <Field label="Atividade">
@@ -122,8 +119,8 @@ export default function BeneficiariosPage() {
                           {b.nomeCompleto}
                         </Link>
                       </div>
-                      <Badge tone={statusBeneficiarioTone[b.status as keyof typeof statusBeneficiarioTone] ?? "zinc"}>
-                        {b.status}
+                      <Badge tone={statusBeneficiarioTone[normalizarStatusBeneficiario(b.status)]}>
+                        {statusBeneficiarioLabel[normalizarStatusBeneficiario(b.status)]}
                       </Badge>
                     </div>
 
@@ -165,7 +162,7 @@ export default function BeneficiariosPage() {
                     <tr key={b.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
                       <td className="px-5 py-3 text-zinc-500">{b.matricula}</td>
                       <td className="px-5 py-3">
-                        <Badge tone={statusBeneficiarioTone[b.status as keyof typeof statusBeneficiarioTone] ?? "zinc"}>{b.status}</Badge>
+                        <Badge tone={statusBeneficiarioTone[normalizarStatusBeneficiario(b.status)]}>{statusBeneficiarioLabel[normalizarStatusBeneficiario(b.status)]}</Badge>
                       </td>
                       <td className="px-5 py-3">
                         <div className="flex items-center gap-2">

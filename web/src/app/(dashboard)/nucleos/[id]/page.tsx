@@ -14,6 +14,7 @@ import {
 import { DonutChart } from "@/components/charts/DonutChart";
 import { nucleosApi, turmasApi, beneficiariosApi } from "@/lib/api/services";
 import { calcularIdade, formatarData } from "@/lib/utils";
+import { normalizarStatusBeneficiario } from "@/lib/status";
 
 export default async function DetalhesNucleoPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -28,8 +29,10 @@ export default async function DetalhesNucleoPage({ params }: { params: Promise<{
   const turmasDoNucleo = turmasRes.data;
   const beneficiariosDoNucleo = beneficiariosRes.data;
   const totalBeneficiarios = beneficiariosRes.total;
-  const beneficiariosAtivos = beneficiariosDoNucleo.filter((b) => b.status === "Aprovado" || b.status === "Novo cadastro").length;
-  const beneficiariosInativos = totalBeneficiarios - beneficiariosAtivos;
+  const statusNormalizados = beneficiariosDoNucleo.map((b) => normalizarStatusBeneficiario(b.status));
+  const beneficiariosAtivos = statusNormalizados.filter((s) => s === "ativo").length;
+  const beneficiariosPendentes = statusNormalizados.filter((s) => s === "pendente").length;
+  const beneficiariosInativos = statusNormalizados.filter((s) => s === "inativo").length;
 
   return (
     <div className="flex flex-col gap-6">
@@ -67,9 +70,9 @@ export default async function DetalhesNucleoPage({ params }: { params: Promise<{
           </CardHeader>
           <CardBody className="flex justify-center">
             <DonutChart
-              labels={["Ativos", "Inativos"]}
-              series={[beneficiariosAtivos, beneficiariosInativos]}
-              colors={["#16a34a", "#dc2626"]}
+              labels={["Ativos", "Pendentes", "Inativos"]}
+              series={[beneficiariosAtivos, beneficiariosPendentes, beneficiariosInativos]}
+              colors={["#16a34a", "#f59e0b", "#71717a"]}
               height={200}
             />
           </CardBody>

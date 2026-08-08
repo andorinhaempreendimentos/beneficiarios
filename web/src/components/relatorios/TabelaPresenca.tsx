@@ -3,6 +3,7 @@
 import { Badge, Card, CardHeader } from "@/components/ui";
 import { beneficiariosApi, turmasApi, nucleosApi } from "@/lib/api/services";
 import { useQuery } from "@/lib/hooks/useQuery";
+import { statusBeneficiarioTone, statusBeneficiarioLabel, normalizarStatusBeneficiario } from "@/lib/status";
 import type { FiltrosState } from "./FiltrosRelatorio";
 
 interface Props { filtros: FiltrosState }
@@ -19,7 +20,7 @@ export function TabelaPresenca({ filtros }: Props) {
   const linhas = beneficiarios
     .filter((b) => {
       if (filtros.nucleoId && b.nucleoId !== filtros.nucleoId) return false;
-      if (filtros.status && b.status !== filtros.status) return false;
+      if (filtros.status && normalizarStatusBeneficiario(b.status) !== filtros.status) return false;
       return true;
     })
     .map((b) => {
@@ -57,7 +58,9 @@ export function TabelaPresenca({ filtros }: Props) {
                 <td className="px-5 py-3 text-zinc-600">{turma?.nome ?? "—"}</td>
                 <td className="px-5 py-3 text-zinc-600">{nucleo?.identificacao ?? "—"}</td>
                 <td className="px-5 py-3">
-                  <Badge tone={b.status === "Aprovado" ? "green" : "zinc"}>{b.status}</Badge>
+                  <Badge tone={statusBeneficiarioTone[normalizarStatusBeneficiario(b.status)]}>
+                    {statusBeneficiarioLabel[normalizarStatusBeneficiario(b.status)]}
+                  </Badge>
                 </td>
                 <td className="px-5 py-3">
                   <div className="flex items-center gap-2">

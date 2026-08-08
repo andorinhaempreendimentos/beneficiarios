@@ -35,7 +35,7 @@ async function testBrowserQA() {
     nome_completo: 'Carlos Eduardo QA Navegador',
     cpf: '123.456.789-00',
     data_nascimento: '2013-04-10',
-    status: 'aprovado',
+    status: 'ativo',
     origem: 'interna'
   };
 
@@ -64,7 +64,7 @@ async function testBrowserQA() {
     nome_completo: 'Mariana Oliveira QA Pré-Inscrição',
     cpf: '987.654.321-11',
     data_nascimento: '2014-08-15',
-    status: 'novo_cadastro',
+    status: 'pendente',
     origem: 'online'
   };
 

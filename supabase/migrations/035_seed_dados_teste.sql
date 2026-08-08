@@ -129,25 +129,25 @@ begin
 
   -- Beneficiários (status mantido como texto livre, igual ao usado pela UI)
   insert into beneficiarios (matricula, nome_completo, data_nascimento, sexo, data_cadastro, pcd, nucleo_id, status, tipo_matricula, celular, cep, logradouro, numero, bairro, cidade, estado)
-  values ('2024-0001', 'Ana Beatriz Souza Lima', '2012-04-15', 'F', '2024-02-01', false, v_n1, 'Aprovado', 'Online', '21987654321', '20941-000', 'Rua das Palmeiras', '45', 'São Cristóvão', 'Rio de Janeiro', 'RJ')
+  values ('2024-0001', 'Ana Beatriz Souza Lima', '2012-04-15', 'F', '2024-02-01', false, v_n1, 'ativo', 'Online', '21987654321', '20941-000', 'Rua das Palmeiras', '45', 'São Cristóvão', 'Rio de Janeiro', 'RJ')
   returning id into v_b1;
 
   insert into beneficiarios (matricula, nome_completo, data_nascimento, sexo, data_cadastro, pcd, nucleo_id, status, tipo_matricula, celular, cep, logradouro, numero, bairro, cidade, estado)
   values ('2024-0002', 'Pedro Henrique Alves', '2010-09-22', 'M', '2024-02-03', false, v_n1, 'Fila de espera', 'Online', '21988552211', '20941-010', 'Rua Barão de São Félix', '12', 'São Cristóvão', 'Rio de Janeiro', 'RJ');
 
   insert into beneficiarios (matricula, nome_completo, data_nascimento, sexo, data_cadastro, pcd, tipo_pcd, nucleo_id, status, tipo_matricula, celular, cep, logradouro, numero, bairro, cidade, estado)
-  values ('2024-0003', 'Maria Clara Ferreira', '2014-01-30', 'F', '2024-01-20', true, 'Autismo (Leve)', v_n2, 'Aprovado', 'Interna', '21998877665', '21941-590', 'Av. Brasil', '300', 'Jardim das Flores', 'Rio de Janeiro', 'RJ')
+  values ('2024-0003', 'Maria Clara Ferreira', '2014-01-30', 'F', '2024-01-20', true, 'Autismo (Leve)', v_n2, 'ativo', 'Interna', '21998877665', '21941-590', 'Av. Brasil', '300', 'Jardim das Flores', 'Rio de Janeiro', 'RJ')
   returning id into v_b3;
 
   insert into beneficiarios (matricula, nome_completo, data_nascimento, sexo, data_cadastro, pcd, nucleo_id, status, tipo_matricula, celular, cep, logradouro, numero, bairro, cidade, estado)
-  values ('2024-0004', 'João Vitor Martins', '2009-11-05', 'M', '2023-11-10', false, v_n5, 'Desistente', 'Online', '51998765432', '90040-060', 'Av. Ipiranga', '1520', 'Azenha', 'Porto Alegre', 'RS')
+  values ('2024-0004', 'João Vitor Martins', '2009-11-05', 'M', '2023-11-10', false, v_n5, 'inativo', 'Online', '51998765432', '90040-060', 'Av. Ipiranga', '1520', 'Azenha', 'Porto Alegre', 'RS')
   returning id into v_b4;
 
   insert into beneficiarios (matricula, nome_completo, data_nascimento, sexo, data_cadastro, pcd, nucleo_id, status, tipo_matricula, celular, cep, logradouro, numero, bairro, cidade, estado)
-  values ('2024-0005', 'Larissa Gomes Cardoso', '2013-06-18', 'F', '2024-03-02', false, v_n4, 'Novo cadastro', 'Online', '81997765544', '50751-030', 'Rua do Sol', '210', 'Alto do Céu', 'Recife', 'PE');
+  values ('2024-0005', 'Larissa Gomes Cardoso', '2013-06-18', 'F', '2024-03-02', false, v_n4, 'pendente', 'Online', '81997765544', '50751-030', 'Rua do Sol', '210', 'Alto do Céu', 'Recife', 'PE');
 
   insert into beneficiarios (matricula, nome_completo, data_nascimento, sexo, data_cadastro, pcd, nucleo_id, status, tipo_matricula, celular, cep, logradouro, numero, bairro, cidade, estado)
-  values ('2024-0006', 'Gabriel Rodrigues Nunes', '2011-03-08', 'M', '2024-02-14', false, v_n5, 'Aguardando seletiva', 'Interna', '51988112233', '90040-070', 'Av. Ipiranga', '1600', 'Azenha', 'Porto Alegre', 'RS');
+  values ('2024-0006', 'Gabriel Rodrigues Nunes', '2011-03-08', 'M', '2024-02-14', false, v_n5, 'pendente', 'Interna', '51988112233', '90040-070', 'Av. Ipiranga', '1600', 'Azenha', 'Porto Alegre', 'RS');
 
   -- Vínculos beneficiário ↔ turma (só os que o mock marcava como ativos/evadidos)
   insert into beneficiario_turmas (beneficiario_id, turma_id, status, data_matricula)

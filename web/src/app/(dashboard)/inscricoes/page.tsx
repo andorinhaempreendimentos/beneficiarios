@@ -8,16 +8,13 @@ import { useQuery } from "@/lib/hooks/useQuery";
 import { inscricoesApi, nucleosApi, atividadesApi, turmasApi, type Paginated, type InscricaoApi, type NucleoApi, type AtividadeApi, type TurmaApi } from "@/lib/api/services";
 import { formatarData } from "@/lib/utils";
 import { LinkRow } from "@/components/inscricoes/LinkRow";
+import { statusInscricaoTone, statusInscricaoLabel } from "@/lib/status";
+import type { StatusInscricao } from "@/lib/types";
 
 const PER_PAGE = 20;
-type StatusInscricao = "pendente" | "aprovada" | "reservada" | "cancelada";
 
-const TONE: Record<StatusInscricao, "amber" | "green" | "sky" | "red"> = {
-  pendente: "amber", aprovada: "green", reservada: "sky", cancelada: "red",
-};
-const LABEL: Record<StatusInscricao, string> = {
-  pendente: "Pendente", aprovada: "Aprovada", reservada: "Fila de espera", cancelada: "Cancelada",
-};
+const TONE = statusInscricaoTone;
+const LABEL = statusInscricaoLabel;
 const STATUS_ORDER: StatusInscricao[] = ["pendente", "reservada", "aprovada", "cancelada"];
 
 type Filtro = StatusInscricao | "todas";
@@ -78,14 +75,14 @@ export default function InscricoesPage() {
   const nucleosComTurmasIds = new Set(turmas.map((t) => t.nucleoId).filter(Boolean));
   const nucleos = rawNucleos.filter((n) => n.emFuncionamento !== false && nucleosComTurmasIds.has(n.id));
 
-  const counts: Record<StatusInscricao, number> = {
+  const counts: Partial<Record<StatusInscricao, number>> = {
     pendente: pendData?.total ?? 0,
     aprovada: aprovData?.total ?? 0,
     reservada: filaData?.total ?? 0,
     cancelada: cancelData?.total ?? 0,
   };
 
-  const pendentes = counts.pendente;
+  const pendentes = counts.pendente ?? 0;
 
   const handleFiltro = useCallback((s: StatusInscricao) => {
     setFiltro((prev) => (prev === s ? "todas" : s));

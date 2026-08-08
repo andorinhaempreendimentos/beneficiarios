@@ -117,7 +117,7 @@ export function InscricaoPublicaForm({ turmaId, onSubmit }: InscricaoPublicaForm
         estado: formData.get("estado") || estado,
         pcd,
         tipoPcd: formData.get("tipoPcd"),
-        status: "Novo cadastro",
+        status: "pendente",
       };
 
       const createdBeneficiario = await beneficiariosApi.create(data);
