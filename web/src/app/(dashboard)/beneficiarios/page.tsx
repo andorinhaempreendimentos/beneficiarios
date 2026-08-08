@@ -6,7 +6,16 @@ import { UserCheck, UserX } from "lucide-react";
 import { Badge, Card, Field, Input, LinkButton, PageHeader, Select, FilterBar, StatCard, Pagination } from "@/components/ui";
 import { useQuery } from "@/lib/hooks/useQuery";
 import { beneficiariosApi, nucleosApi, atividadesApi, type Paginated, type BeneficiarioApi, type NucleoApi, type AtividadeApi } from "@/lib/api/services";
-import { statusBeneficiarioTone, statusBeneficiarioLabel, normalizarStatusBeneficiario, STATUS_BENEFICIARIO_OPCOES } from "@/lib/status";
+import {
+  statusBeneficiarioTone,
+  statusBeneficiarioLabel,
+  normalizarStatusBeneficiario,
+  STATUS_BENEFICIARIO_OPCOES,
+  tipoMatriculaTone,
+  tipoMatriculaLabel,
+  normalizarTipoMatricula,
+  TIPO_MATRICULA_OPCOES,
+} from "@/lib/status";
 import { calcularIdade } from "@/lib/utils";
 
 const PER_PAGE = 15;
@@ -79,8 +88,9 @@ export default function BeneficiariosPage() {
         <Field label="Tipo de matrícula">
           <Select value={filtros.tipoMatricula} onChange={(e) => setFiltros((f) => ({ ...f, tipoMatricula: e.target.value }))}>
             <option value="">Todos</option>
-            <option value="Online">Online</option>
-            <option value="Interna">Interna</option>
+            {TIPO_MATRICULA_OPCOES.map((o) => (
+              <option key={o.value} value={o.value}>{o.label}</option>
+            ))}
           </Select>
         </Field>
         <Field label="Núcleo">
@@ -126,7 +136,7 @@ export default function BeneficiariosPage() {
 
                     <div className="flex items-center justify-between text-xs text-zinc-500 border-t border-zinc-100 pt-2.5">
                       <span>Idade: <strong className="text-zinc-700">{calcularIdade(b.dataNascimento)} anos</strong></span>
-                      <Badge tone={b.tipoMatricula === "Online" ? "sky" : "violet"}>{b.tipoMatricula}</Badge>
+                      <Badge tone={tipoMatriculaTone[normalizarTipoMatricula(b.tipoMatricula)]}>{tipoMatriculaLabel[normalizarTipoMatricula(b.tipoMatricula)]}</Badge>
                     </div>
 
                     <div className="flex items-center justify-end gap-3 pt-1 border-t border-zinc-100/60">
@@ -167,7 +177,7 @@ export default function BeneficiariosPage() {
                       <td className="px-5 py-3">
                         <div className="flex items-center gap-2">
                           <Link href={`/beneficiarios/${b.id}`} className="font-medium text-sky-600 hover:underline">{b.nomeCompleto}</Link>
-                          <Badge tone={b.tipoMatricula === "Online" ? "sky" : "violet"}>{b.tipoMatricula}</Badge>
+                          <Badge tone={tipoMatriculaTone[normalizarTipoMatricula(b.tipoMatricula)]}>{tipoMatriculaLabel[normalizarTipoMatricula(b.tipoMatricula)]}</Badge>
                         </div>
                       </td>
                       <td className="px-5 py-3 text-zinc-600">{calcularIdade(b.dataNascimento)} anos</td>

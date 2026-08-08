@@ -5,7 +5,7 @@ import { beneficiariosApi, turmasApi, nucleosApi, atividadesApi } from "@/lib/ap
 import { useQuery } from "@/lib/hooks/useQuery";
 import { formatarData, calcularIdade } from "@/lib/utils";
 import type { FiltrosState } from "./FiltrosRelatorio";
-import { statusBeneficiarioTone, statusBeneficiarioLabel, normalizarStatusBeneficiario } from "@/lib/status";
+import { statusBeneficiarioTone, statusBeneficiarioLabel, normalizarStatusBeneficiario, tipoMatriculaLabel, normalizarTipoMatricula } from "@/lib/status";
 
 interface Props { filtros: FiltrosState }
 
@@ -27,7 +27,7 @@ export function TabelaParticipacao({ filtros }: Props) {
     })
     .map((b) => {
       const nucleo = nucleos.find((n) => n.id === b.nucleoId);
-      const turmasNomes = [b.tipoMatricula ?? "Geral"];
+      const turmasNomes = [tipoMatriculaLabel[normalizarTipoMatricula(b.tipoMatricula)]];
       return { b, nucleo, turmasNomes };
     });
 

@@ -146,7 +146,8 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
       if (benSavedId) {
         await beneficiariosApi.update(benSavedId, data);
       } else {
-        const created = await beneficiariosApi.create(data);
+        // Cadastro pelo painel é sempre origem interna; a inscrição pública grava 'online'.
+        const created = await beneficiariosApi.create({ ...data, tipoMatricula: "interna" });
         benSavedId = created.id;
       }
 

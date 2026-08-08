@@ -1,4 +1,4 @@
-import type { StatusBeneficiario, StatusInscricao, StatusFuncionario, StatusObjeto, StatusOrganizacao, ConservacaoEquipamento, StatusUsuario } from "@/lib/types";
+import type { StatusBeneficiario, StatusInscricao, TipoMatricula, StatusFuncionario, StatusObjeto, StatusOrganizacao, ConservacaoEquipamento, StatusUsuario } from "@/lib/types";
 
 type Tone = "zinc" | "sky" | "green" | "red" | "amber" | "violet";
 
@@ -30,6 +30,25 @@ export function normalizarStatusBeneficiario(valor?: string | null): StatusBenef
     default:
       return "pendente";
   }
+}
+
+export const tipoMatriculaLabel: Record<TipoMatricula, string> = {
+  online: "Online",
+  interna: "Interna",
+};
+
+export const tipoMatriculaTone: Record<TipoMatricula, Tone> = {
+  online: "sky",
+  interna: "violet",
+};
+
+export const TIPO_MATRICULA_OPCOES = (
+  Object.keys(tipoMatriculaLabel) as TipoMatricula[]
+).map((value) => ({ value, label: tipoMatriculaLabel[value] }));
+
+/** Traduz tipo de matrícula legado ('regular', 'Online', 'Interna') para os valores atuais. */
+export function normalizarTipoMatricula(valor?: string | null): TipoMatricula {
+  return String(valor).toLowerCase() === "online" ? "online" : "interna";
 }
 
 export const statusInscricaoLabel: Record<StatusInscricao, string> = {

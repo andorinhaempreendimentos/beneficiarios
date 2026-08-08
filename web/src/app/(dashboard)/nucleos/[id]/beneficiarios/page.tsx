@@ -2,7 +2,15 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Badge, Card, Field, Input, LinkButton, PageHeader, Select, FilterBar, StatCard } from "@/components/ui";
 import { nucleosApi, beneficiariosApi, turmasApi } from "@/lib/api/services";
-import { statusBeneficiarioTone, statusBeneficiarioLabel, normalizarStatusBeneficiario, STATUS_BENEFICIARIO_OPCOES } from "@/lib/status";
+import {
+  statusBeneficiarioTone,
+  statusBeneficiarioLabel,
+  normalizarStatusBeneficiario,
+  STATUS_BENEFICIARIO_OPCOES,
+  tipoMatriculaTone,
+  tipoMatriculaLabel,
+  normalizarTipoMatricula,
+} from "@/lib/status";
 import { calcularIdade } from "@/lib/utils";
 import { Users } from "lucide-react";
 
@@ -111,7 +119,7 @@ export default async function BeneficiariosDoNucleoPage({ params }: { params: Pr
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-2">
                         <span className="font-medium text-zinc-900">{b.nomeCompleto}</span>
-                        <Badge tone={b.tipoMatricula === "online" ? "sky" : "violet"}>{b.tipoMatricula}</Badge>
+                        <Badge tone={tipoMatriculaTone[normalizarTipoMatricula(b.tipoMatricula)]}>{tipoMatriculaLabel[normalizarTipoMatricula(b.tipoMatricula)]}</Badge>
                       </div>
                     </td>
                     <td className="px-5 py-3 text-zinc-600">{calcularIdade(b.dataNascimento)} anos</td>

@@ -241,7 +241,7 @@ export type StatusInscricao =
   | "expirada"
   | "cancelada";
 
-export type TipoMatricula = "Online" | "Interna";
+export type TipoMatricula = "online" | "interna";
 
 export interface VinculoTurma {
   turmaId: string;

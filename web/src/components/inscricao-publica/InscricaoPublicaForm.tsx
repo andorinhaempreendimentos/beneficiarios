@@ -118,6 +118,7 @@ export function InscricaoPublicaForm({ turmaId, onSubmit }: InscricaoPublicaForm
         pcd,
         tipoPcd: formData.get("tipoPcd"),
         status: "pendente",
+        tipoMatricula: "online",
       };
 
       const createdBeneficiario = await beneficiariosApi.create(data);

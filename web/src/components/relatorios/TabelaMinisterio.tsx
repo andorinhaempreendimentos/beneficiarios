@@ -6,6 +6,7 @@ import {
 } from "@/lib/api/services";
 import { useQuery } from "@/lib/hooks/useQuery";
 import { calcularIdade } from "@/lib/utils";
+import { tipoMatriculaLabel, normalizarTipoMatricula } from "@/lib/status";
 import type { FiltrosState } from "./FiltrosRelatorio";
 
 interface Props { filtros: FiltrosState }
@@ -131,7 +132,7 @@ export function TabelaMinisterio({ filtros }: Props) {
                         <td className="px-5 py-2 font-medium text-zinc-700">{b.nomeCompleto}</td>
                         <td className="px-5 py-2 text-zinc-500">{b.cpf ?? "—"}</td>
                         <td className="px-5 py-2 text-zinc-500">{calcularIdade(b.dataNascimento)} anos</td>
-                        <td className="px-5 py-2 text-zinc-500">{b.tipoMatricula ?? "Geral"}</td>
+                        <td className="px-5 py-2 text-zinc-500">{tipoMatriculaLabel[normalizarTipoMatricula(b.tipoMatricula)]}</td>
                       </tr>
                     );
                   })}
