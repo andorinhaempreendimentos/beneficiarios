@@ -38,7 +38,12 @@ export default function DashboardPage() {
         <Card>
           <CardHeader className="flex items-center justify-between">
             <h3 className="text-sm font-semibold text-zinc-800">Beneficiários</h3>
-            <Link href="/beneficiarios" className="text-xs text-sky-600 hover:underline">Ver todos</Link>
+            <Link
+              href="/beneficiarios"
+              className="inline-flex items-center rounded-lg border border-sky-200 bg-sky-50 px-2.5 py-1 text-xs font-semibold text-sky-700 hover:bg-sky-100 hover:border-sky-300 transition-colors shadow-2xs"
+            >
+              Ver todos
+            </Link>
           </CardHeader>
           <CardBody className="flex flex-col gap-3">
             <div className="grid grid-cols-2 gap-3">
@@ -65,7 +70,12 @@ export default function DashboardPage() {
         <Card>
           <CardHeader className="flex items-center justify-between">
             <h3 className="text-sm font-semibold text-zinc-800">Turmas e Vagas</h3>
-            <Link href="/turmas" className="text-xs text-sky-600 hover:underline">Ver turmas</Link>
+            <Link
+              href="/turmas"
+              className="inline-flex items-center rounded-lg border border-sky-200 bg-sky-50 px-2.5 py-1 text-xs font-semibold text-sky-700 hover:bg-sky-100 hover:border-sky-300 transition-colors shadow-2xs"
+            >
+              Ver turmas
+            </Link>
           </CardHeader>
           <CardBody className="flex flex-col gap-3">
             <div className="grid grid-cols-3 gap-2">
@@ -102,7 +112,12 @@ export default function DashboardPage() {
         <Card>
           <CardHeader className="flex items-center justify-between">
             <h3 className="text-sm font-semibold text-zinc-800">Pessoal</h3>
-            <Link href="/funcionarios" className="text-xs text-sky-600 hover:underline">Ver todos</Link>
+            <Link
+              href="/funcionarios"
+              className="inline-flex items-center rounded-lg border border-sky-200 bg-sky-50 px-2.5 py-1 text-xs font-semibold text-sky-700 hover:bg-sky-100 hover:border-sky-300 transition-colors shadow-2xs"
+            >
+              Ver todos
+            </Link>
           </CardHeader>
           <CardBody className="flex flex-col gap-3">
             <div className="grid grid-cols-2 gap-3">
