@@ -1,4 +1,7 @@
-import { CalendarDays, CheckCircle, Clock, Users, XCircle } from "lucide-react";
+"use client";
+
+import { useState } from "react";
+import { CalendarDays, CheckCircle, Clock, Sun, Sunset, Users, XCircle } from "lucide-react";
 import Link from "next/link";
 import type { Turma } from "@/lib/types";
 
@@ -7,22 +10,85 @@ interface SelecionarTurmaProps {
   titulo?: string;
 }
 
+function obterTurnoTurma(t: Turma): "manha" | "tarde" {
+  const texto = `${t.nome} ${t.horario || ""}`.toLowerCase();
+  if (texto.includes("manhã") || texto.includes("manha") || texto.includes("08:") || texto.includes("09:") || texto.includes("10:") || texto.includes("11:")) {
+    return "manha";
+  }
+  if (texto.includes("tarde") || texto.includes("12:") || texto.includes("13:") || texto.includes("14:") || texto.includes("15:") || texto.includes("16:") || texto.includes("17:")) {
+    return "tarde";
+  }
+  return "manha";
+}
+
 export function SelecionarTurma({ turmas, titulo = "Escolha uma turma" }: SelecionarTurmaProps) {
+  const [filtroTurno, setFiltroTurno] = useState<"todos" | "manha" | "tarde">("todos");
+
+  const turmasFiltradas = turmas.filter((t) => {
+    if (filtroTurno === "todos") return true;
+    return obterTurnoTurma(t) === filtroTurno;
+  });
+
+  const qtdManha = turmas.filter((t) => obterTurnoTurma(t) === "manha").length;
+  const qtdTarde = turmas.filter((t) => obterTurnoTurma(t) === "tarde").length;
+
   return (
     <div className="flex flex-col gap-4">
-      <div>
-        <h2 className="text-lg font-semibold text-zinc-900">{titulo}</h2>
-        <p className="mt-1 text-sm text-zinc-500">
-          Selecione a turma com o horário que melhor se encaixa na sua rotina.
-        </p>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 className="text-lg font-semibold text-zinc-900">{titulo}</h2>
+          <p className="mt-1 text-sm text-zinc-500">
+            Selecione a turma com o horário que melhor se encaixa na sua rotina.
+          </p>
+        </div>
+
+        {/* Filtro por Turno (Manhã / Tarde) */}
+        <div className="flex items-center gap-1 rounded-xl border border-zinc-200 bg-zinc-100 p-1 shrink-0">
+          <button
+            type="button"
+            onClick={() => setFiltroTurno("todos")}
+            className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
+              filtroTurno === "todos"
+                ? "bg-white text-zinc-900 shadow-2xs"
+                : "text-zinc-500 hover:text-zinc-900"
+            }`}
+          >
+            Todos ({turmas.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setFiltroTurno("manha")}
+            className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
+              filtroTurno === "manha"
+                ? "bg-sky-600 text-white shadow-2xs"
+                : "text-zinc-600 hover:bg-zinc-200"
+            }`}
+          >
+            <Sun className="h-3.5 w-3.5" />
+            Manhã ({qtdManha})
+          </button>
+          <button
+            type="button"
+            onClick={() => setFiltroTurno("tarde")}
+            className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
+              filtroTurno === "tarde"
+                ? "bg-amber-600 text-white shadow-2xs"
+                : "text-zinc-600 hover:bg-zinc-200"
+            }`}
+          >
+            <Sunset className="h-3.5 w-3.5" />
+            Tarde ({qtdTarde})
+          </button>
+        </div>
       </div>
 
       <div className="flex flex-col gap-3">
-        {turmas.map((t) => {
+        {turmasFiltradas.map((t) => {
           const vagasTotais = Number(t.vagasTotais || 0);
           const qtdBeneficiarios = Number(t.qtdBeneficiarios || 0);
           const vagasLivres = vagasTotais - qtdBeneficiarios;
           const cheia = vagasLivres <= 0;
+          const turno = obterTurnoTurma(t);
 
           return (
             <Link
@@ -35,7 +101,18 @@ export function SelecionarTurma({ turmas, titulo = "Escolha uma turma" }: Seleci
               }`}
             >
               <div className="flex flex-col gap-1.5">
-                <span className="font-medium text-zinc-900">{t.nome}</span>
+                <div className="flex items-center gap-2">
+                  <span className="font-medium text-zinc-900">{t.nome}</span>
+                  <span
+                    className={`rounded-md px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+                      turno === "manha"
+                        ? "bg-sky-100 text-sky-800"
+                        : "bg-amber-100 text-amber-800"
+                    }`}
+                  >
+                    {turno === "manha" ? "Manhã" : "Tarde"}
+                  </span>
+                </div>
                 <div className="flex flex-wrap gap-3 text-sm text-zinc-500">
                   {t.horario && (
                     <span className="flex items-center gap-1">
@@ -73,9 +150,9 @@ export function SelecionarTurma({ turmas, titulo = "Escolha uma turma" }: Seleci
           );
         })}
 
-        {turmas.length === 0 && (
+        {turmasFiltradas.length === 0 && (
           <p className="rounded-xl border border-zinc-200 bg-zinc-50 px-5 py-8 text-center text-sm text-zinc-400">
-            Nenhuma turma disponível para esta atividade.
+            Nenhuma turma disponível no turno selecionado.
           </p>
         )}
       </div>
