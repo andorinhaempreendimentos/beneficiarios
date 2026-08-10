@@ -1,6 +1,7 @@
 import { createServerClient } from '@supabase/ssr';
 import { createClient as createBrowserClient } from '@/lib/supabase/client';
 import type { Database } from '@/lib/supabase/types';
+import type { StatusInscricao } from '@/lib/types';
 
 async function getSupabase() {
   if (typeof window === 'undefined') {
