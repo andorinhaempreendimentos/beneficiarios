@@ -1,6 +1,6 @@
 "use client";
 
-import { Building2, ClipboardList, Dumbbell, FileBarChart, Plus, UserCheck, UserPlus, Users, UsersRound } from "lucide-react";
+import { Building2, ClipboardList, Dumbbell, FileBarChart, Plus, ShieldCheck, UserCheck, UserPlus, Users, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { Badge, Card, CardBody, CardHeader, StatCard } from "@/components/ui";
 import { useQuery } from "@/lib/hooks/useQuery";
@@ -37,6 +37,42 @@ export default function DashboardPage() {
             <span>{label}</span>
           </Link>
         ))}
+      </div>
+
+      {/* Fluxo de Hierarquia do Sistema */}
+      <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-2xs">
+        <div className="mb-3 flex items-center justify-between border-b border-zinc-100 pb-2">
+          <div className="flex items-center gap-2">
+            <span className="flex h-5 w-5 items-center justify-center rounded bg-zinc-900 text-[10px] font-bold text-white">HV</span>
+            <h2 className="text-xs font-extrabold uppercase tracking-wider text-zinc-800">Hierarquia Operacional do Sistema</h2>
+          </div>
+          <span className="text-[11px] font-semibold text-zinc-400">Estrutura relacional encadeada</span>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">
+          {[
+            { nivel: "1º", titulo: "Organização", sub: "Entidade Gestora", icon: ShieldCheck, color: "border-indigo-200 bg-indigo-50 text-indigo-700" },
+            { nivel: "2º", titulo: "Objeto / Projeto", sub: "Termo de Fomento", icon: FileBarChart, color: "border-sky-200 bg-sky-50 text-sky-700" },
+            { nivel: "3º", titulo: "Coordenação", sub: "Gestão Regional", icon: UserCheck, color: "border-amber-200 bg-amber-50 text-amber-700" },
+            { nivel: "4º", titulo: "Núcleos (20)", sub: "Praças Esportivas", icon: Building2, color: "border-green-200 bg-green-50 text-green-700" },
+            { nivel: "5º", titulo: "Professores (20)", sub: "Instrutores de Campo", icon: UsersRound, color: "border-purple-200 bg-purple-50 text-purple-700" },
+            { nivel: "6º", titulo: "Turmas (40)", sub: "Futebol e Futsal", icon: Dumbbell, color: "border-blue-200 bg-blue-50 text-blue-700" },
+            { nivel: "7º", titulo: "Beneficiários", sub: "Alunos (1.200 vagas)", icon: Users, color: "border-emerald-200 bg-emerald-50 text-emerald-700" },
+          ].map(({ nivel, titulo, sub, icon: Icon, color }) => (
+            <div key={nivel} className="flex flex-col justify-between rounded-lg border border-zinc-200 bg-zinc-50/60 p-2.5 hover:border-zinc-300 hover:bg-white hover:shadow-2xs transition-all">
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className={`px-1.5 py-0.5 rounded text-[9px] font-extrabold border ${color}`}>
+                    Nível {nivel}
+                  </span>
+                  <Icon className="h-4 w-4 text-zinc-400" />
+                </div>
+                <span className="block text-xs font-bold text-zinc-900 leading-tight">{titulo}</span>
+                <span className="block text-[10px] text-zinc-500 mt-0.5 font-medium">{sub}</span>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Métricas principais — 4 colunas, sem hero redundante */}
