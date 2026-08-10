@@ -730,7 +730,7 @@ export const turmasApi = {
       if (bool(p?.exclusiva) !== undefined) qFallback = qFallback.eq('exclusiva', bool(p?.exclusiva)!);
       const resFallback = await qFallback.order('created_at', { ascending: false }).range(from, to);
       if (resFallback.error) throw resFallback.error;
-      data = resFallback.data;
+      data = resFallback.data as any;
       count = resFallback.count;
     }
     return { data: (data ?? []).map(mapTurma), total: count ?? 0, page, limit };
@@ -741,7 +741,7 @@ export const turmasApi = {
     if (error) {
       const resFallback = await sb.from('turmas').select(TURMA_FALLBACK_SELECT).eq('id', id).single();
       if (resFallback.error) throw resFallback.error;
-      data = resFallback.data;
+      data = resFallback.data as any;
     }
     return mapTurma(data);
   },
