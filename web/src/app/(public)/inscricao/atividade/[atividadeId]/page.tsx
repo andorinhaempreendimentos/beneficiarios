@@ -6,10 +6,14 @@ import { InstrucoesInscricaoBanner } from "@/components/inscricao-publica/Instru
 
 interface InscricaoAtividadePageProps {
   params: Promise<{ atividadeId: string }>;
+  searchParams?: Promise<{ nucleoId?: string }>;
 }
 
-export default async function InscricaoAtividadePage({ params }: InscricaoAtividadePageProps) {
+export default async function InscricaoAtividadePage({ params, searchParams }: InscricaoAtividadePageProps) {
   const { atividadeId } = await params;
+  const sParams = searchParams ? await searchParams : {};
+  const nucleoIdParam = sParams.nucleoId;
+
   const atividade = await atividadesApi.get(atividadeId).catch(() => null);
 
   if (!atividade || atividade.disponivelPreInscricao === false) {
@@ -17,12 +21,18 @@ export default async function InscricaoAtividadePage({ params }: InscricaoAtivid
   }
 
   const [turmasRes, nucleosRes] = await Promise.all([
-    turmasApi.list({ limit: 100 }).catch(() => ({ data: [] })),
+    turmasApi.list({ limit: 100, nucleoId: nucleoIdParam }).catch(() => ({ data: [] })),
     nucleosApi.list({ limit: 50 }).catch(() => ({ data: [] })),
   ]);
 
-  const turmasDaAtividade = turmasRes.data.filter((t) => t.atividadeId === atividadeId);
-  const nucleo = nucleosRes.data.find((n) => turmasDaAtividade.some((t) => t.nucleoId === n.id)) || nucleosRes.data[0];
+  let turmasDaAtividade = turmasRes.data.filter((t) => t.atividadeId === atividadeId);
+  if (nucleoIdParam) {
+    turmasDaAtividade = turmasDaAtividade.filter((t) => t.nucleoId === nucleoIdParam);
+  }
+
+  const nucleo = nucleosRes.data.find((n) => n.id === nucleoIdParam) ||
+    nucleosRes.data.find((n) => turmasDaAtividade.some((t) => t.nucleoId === n.id)) ||
+    nucleosRes.data[0];
 
   const breadcrumb = [
     nucleo?.identificacao || "Núcleo Esportivo",

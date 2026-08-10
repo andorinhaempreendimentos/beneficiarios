@@ -22,14 +22,16 @@ export function SelecionarAtividade({ atividades, turmas, nucleoId }: Selecionar
         {atividades.map((a) => {
           const turmasDaAtividade = turmas.filter((t) => t.atividadeId === a.id);
           const vagasDisponiveis = turmasDaAtividade.reduce(
-            (acc, t) => acc + Math.max(0, t.vagasTotais - t.qtdBeneficiarios),
+            (acc, t) => acc + Math.max(0, Number(t.vagasTotais || 0) - Number(t.qtdBeneficiarios || 0)),
             0
           );
+
+          const href = `/inscricao/atividade/${a.id}${nucleoId ? `?nucleoId=${nucleoId}` : ""}`;
 
           return (
             <Link
               key={a.id}
-              href={`/inscricao/atividade/${a.id}`}
+              href={href}
               className="flex flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-5 transition-colors hover:border-sky-300 hover:bg-sky-50"
             >
               <div className="flex items-start justify-between gap-2">
