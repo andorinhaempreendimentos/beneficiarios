@@ -21,19 +21,19 @@ export default function DashboardPage() {
   return (
     <div className="flex flex-col gap-6">
 
-      {/* Barra de Ações Rápidas no Topo — Estilo Executivo Sério (Sem curvas) */}
-      <div className="flex flex-wrap items-center gap-px bg-zinc-200 border border-zinc-200 shadow-2xs overflow-hidden">
+      {/* Barra de Ações Rápidas no Topo — Colada ao topo, sem curvas, com padding amplo e cores executivas */}
+      <div className="-mt-6 -mx-4 sm:-mx-6 lg:-mx-8 flex flex-wrap items-center gap-0 border-b border-zinc-300 shadow-sm">
         {[
-          { href: "/inscricoes", label: "Inscrições", icon: ClipboardList },
-          { href: "/atividades", label: "Atividades & Cursos", icon: Dumbbell },
-          { href: "/relatorios", label: "Relatórios & Relances", icon: FileBarChart },
-        ].map(({ href, label, icon: Icon }) => (
+          { href: "/inscricoes", label: "Inscrições", icon: ClipboardList, bg: "bg-amber-600 hover:bg-amber-700 text-white" },
+          { href: "/atividades", label: "Atividades & Cursos", icon: Dumbbell, bg: "bg-sky-600 hover:bg-sky-700 text-white" },
+          { href: "/relatorios", label: "Relatórios & Relances", icon: FileBarChart, bg: "bg-emerald-600 hover:bg-emerald-700 text-white" },
+        ].map(({ href, label, icon: Icon, bg }) => (
           <Link
             key={href}
             href={href}
-            className="flex flex-1 items-center justify-center gap-2.5 bg-white px-4 py-3 text-xs font-semibold text-zinc-700 hover:bg-zinc-900 hover:text-white transition-colors"
+            className={`flex flex-1 items-center justify-center gap-3 ${bg} py-5 px-6 text-sm font-extrabold tracking-wide uppercase transition-all shadow-inner`}
           >
-            <Icon className="h-4 w-4 shrink-0" />
+            <Icon className="h-5 w-5 shrink-0" />
             <span>{label}</span>
           </Link>
         ))}
