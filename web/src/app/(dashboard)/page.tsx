@@ -39,30 +39,27 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      {/* Fluxo de Hierarquia do Sistema — Encaixe Encadeado (Sem subtextos) */}
+      {/* Fluxo de Hierarquia do Sistema — Minimalista sem ícones/emojis */}
       <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-2xs">
         <div className="mb-3 flex items-center justify-between border-b border-zinc-100 pb-2">
-          <div className="flex items-center gap-2">
-            <span className="flex h-5 w-5 items-center justify-center rounded bg-zinc-900 text-[10px] font-bold text-white">HV</span>
-            <h2 className="text-xs font-extrabold uppercase tracking-wider text-zinc-800">Hierarquia Operacional do Sistema</h2>
-          </div>
+          <h2 className="text-xs font-extrabold uppercase tracking-wider text-zinc-800">Hierarquia Operacional do Sistema</h2>
           <span className="text-[11px] font-semibold text-zinc-400">Encadeamento sequencial</span>
         </div>
 
-        {/* Trilha de Encaixe Interligada Neutra (Sem Cores, Arredondado no Primeiro e Último Item) */}
+        {/* Trilha de Encaixe Interligada Neutra (Sem Cores/Ícones) */}
         <div className="grid grid-cols-2 gap-px sm:grid-cols-4 lg:grid-cols-7 bg-zinc-200 border border-zinc-200 rounded-xl overflow-hidden shadow-2xs">
           {[
-            { nivel: "1º", titulo: "Organização", icon: ShieldCheck },
-            { nivel: "2º", titulo: "Objeto", icon: FileBarChart },
-            { nivel: "3º", titulo: "Coordenação", icon: UserCheck },
-            { nivel: "4º", titulo: "Núcleos (20)", icon: Building2 },
-            { nivel: "5º", titulo: "Professores (20)", icon: UsersRound },
-            { nivel: "6º", titulo: "Turmas (40)", icon: Dumbbell },
-            { nivel: "7º", titulo: "Beneficiários", icon: Users },
-          ].map(({ nivel, titulo, icon: Icon }, idx) => (
+            { nivel: "1º", titulo: "Organização" },
+            { nivel: "2º", titulo: "Objeto" },
+            { nivel: "3º", titulo: "Coordenação" },
+            { nivel: "4º", titulo: "Núcleos (20)" },
+            { nivel: "5º", titulo: "Professores (20)" },
+            { nivel: "6º", titulo: "Turmas (40)" },
+            { nivel: "7º", titulo: "Beneficiários" },
+          ].map(({ nivel, titulo }, idx) => (
             <div
               key={nivel}
-              className={`relative flex items-center justify-between gap-2 bg-white px-3.5 py-3.5 text-zinc-900 transition-all hover:bg-zinc-100 select-none ${
+              className={`relative flex items-center justify-between gap-2 bg-white px-4 py-3.5 text-zinc-900 transition-all hover:bg-zinc-100 select-none ${
                 idx === 0 ? "rounded-l-xl lg:rounded-l-xl lg:rounded-r-none" :
                 idx === 6 ? "rounded-r-xl lg:rounded-r-xl lg:rounded-l-none" : "rounded-none"
               }`}
@@ -73,9 +70,8 @@ export default function DashboardPage() {
                 </span>
                 <span className="text-xs font-bold text-zinc-800 truncate tracking-tight">{titulo}</span>
               </div>
-              <Icon className="h-4 w-4 shrink-0 text-zinc-500" />
               {idx < 6 && (
-                <div className="absolute -right-2 top-1/2 -translate-y-1/2 z-10 hidden lg:flex h-4 w-4 items-center justify-center rounded-full bg-zinc-300 text-[10px] font-bold text-zinc-700 shadow-2xs">
+                <div className="absolute -right-2 top-1/2 -translate-y-1/2 z-10 hidden lg:flex h-4 w-4 items-center justify-center rounded-full bg-zinc-200 text-[10px] font-bold text-zinc-600 border border-zinc-300 shadow-2xs">
                   ›
                 </div>
               )}
