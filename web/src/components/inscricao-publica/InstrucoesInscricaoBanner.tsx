@@ -4,31 +4,70 @@ import type { NucleoApi, AtividadeApi } from "@/lib/api/services";
 interface InstrucoesInscricaoBannerProps {
   nucleo?: NucleoApi | null;
   atividade?: AtividadeApi | null;
-  etapaAtual?: 1 | 2 | 3;
+  tipoLink?: "nucleo" | "atividade" | "turma";
+  etapaAtual?: number;
 }
 
-export function InstrucoesInscricaoBanner({ nucleo, atividade, etapaAtual = 1 }: InstrucoesInscricaoBannerProps) {
+export function InstrucoesInscricaoBanner({
+  nucleo,
+  atividade,
+  tipoLink = "nucleo",
+  etapaAtual = 1,
+}: InstrucoesInscricaoBannerProps) {
   const enderecoFormatado = nucleo
     ? [nucleo.endereco, nucleo.bairro, nucleo.cidade, nucleo.regiao].filter(Boolean).join(", ")
     : null;
 
-  const etapas = [
+  let etapas = [
     {
       num: 1,
-      titulo: "Escolha a Modalidade / Turma",
-      sub: "Selecione a atividade esportiva e o horário ideal.",
+      titulo: "Escolha a Atividade",
+      sub: "Selecione a modalidade esportiva no núcleo.",
     },
     {
       num: 2,
-      titulo: "Preencha os Dados",
-      sub: "Informe os dados do aluno (06 a 17 anos) e do responsável.",
+      titulo: "Escolha a Turma",
+      sub: "Selecione o horário ideal para as aulas.",
     },
     {
       num: 3,
-      titulo: "Garanta a Vaga",
-      sub: "Confirme o formulário e receba o comprovante imediato.",
+      titulo: "Preencha os Dados",
+      sub: "Informe os dados do aluno e do responsável.",
     },
   ];
+
+  if (tipoLink === "atividade") {
+    etapas = [
+      {
+        num: 1,
+        titulo: "Escolha a Turma",
+        sub: "Filtre por Manhã ou Tarde e selecione o horário.",
+      },
+      {
+        num: 2,
+        titulo: "Preencha os Dados",
+        sub: "Informe os dados do aluno e do responsável.",
+      },
+      {
+        num: 3,
+        titulo: "Garanta a Vaga",
+        sub: "Confirme a inscrição e receba o comprovante.",
+      },
+    ];
+  } else if (tipoLink === "turma") {
+    etapas = [
+      {
+        num: 1,
+        titulo: "Preencha os Dados",
+        sub: "Informe os dados do aluno (06 a 17 anos) e do responsável.",
+      },
+      {
+        num: 2,
+        titulo: "Garanta a Vaga",
+        sub: "Confirme o formulário e receba o comprovante.",
+      },
+    ];
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -74,11 +113,11 @@ export function InstrucoesInscricaoBanner({ nucleo, atividade, etapaAtual = 1 }:
             </h3>
           </div>
           <span className="rounded-full bg-sky-600 px-2.5 py-0.5 text-[11px] font-black text-white shadow-2xs">
-            Etapa {etapaAtual} de 3
+            Etapa {etapaAtual} de {etapas.length}
           </span>
         </div>
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 text-xs">
+        <div className={`grid grid-cols-1 gap-3 text-xs ${etapas.length === 2 ? 'sm:grid-cols-2' : 'sm:grid-cols-3'}`}>
           {etapas.map(({ num, titulo, sub }) => {
             const isAtual = etapaAtual === num;
             const isConcluida = etapaAtual > num;

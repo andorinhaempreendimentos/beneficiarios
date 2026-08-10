@@ -57,8 +57,8 @@ export default async function InscricaoAtividadePage({ params, searchParams }: I
         </ol>
       </nav>
 
-      {/* Banner de Instruções e Informações do Núcleo */}
-      <InstrucoesInscricaoBanner nucleo={nucleo} atividade={atividade} />
+      {/* Banner de Instruções e Informações do Núcleo — Etapa 1 (Escolha a Turma) */}
+      <InstrucoesInscricaoBanner nucleo={nucleo} atividade={atividade} tipoLink="atividade" etapaAtual={1} />
 
       <div className="rounded-xl border border-zinc-200 bg-white p-6">
         <h1 className="text-xl font-bold text-zinc-900">{atividade.nome}</h1>

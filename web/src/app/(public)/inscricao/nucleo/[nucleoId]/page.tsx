@@ -49,8 +49,8 @@ export default async function InscricaoNucleoPage({ params }: InscricaoNucleoPag
         </ol>
       </nav>
 
-      {/* Banner de Instruções e Endereço Completo do Núcleo */}
-      <InstrucoesInscricaoBanner nucleo={nucleo} />
+      {/* Banner de Instruções e Endereço Completo do Núcleo — Etapa 1 (Escolha a Atividade) */}
+      <InstrucoesInscricaoBanner nucleo={nucleo} tipoLink="nucleo" etapaAtual={1} />
 
       <div className="rounded-xl border border-zinc-200 bg-white p-6">
         <h1 className="text-xl font-bold text-zinc-900">{nucleo.identificacao}</h1>
