@@ -15,7 +15,7 @@ import {
 } from "@/components/ui";
 import type { PerguntaParQ } from "@/lib/types";
 import { validarCpf, validarCep, validarEmail } from "@/lib/mascaras";
-import { beneficiariosApi, inscricoesApi } from "@/lib/api/services";
+import { beneficiariosApi, inscricoesApi, turmasApi } from "@/lib/api/services";
 
 const PERGUNTAS_PARQ = [
   "Algum médico já disse que você possui um problema de coração e recomendou que você só praticasse atividade física supervisionado?",
@@ -85,9 +85,26 @@ export function InscricaoPublicaForm({ turmaId, onSubmit }: InscricaoPublicaForm
       return;
     }
 
-    if (cepVal && !validarCep(cepVal)) {
-      setErro("CEP inválido. Deve conter exatamente 8 dígitos.");
-      return;
+    const dataNascimentoStr = String(formData.get("dataNascimento") || "");
+    if (dataNascimentoStr) {
+      const nasc = new Date(dataNascimentoStr);
+      const hoje = new Date();
+      let idade = hoje.getFullYear() - nasc.getFullYear();
+      const m = hoje.getMonth() - nasc.getMonth();
+      if (m < 0 || (m === 0 && hoje.getDate() < nasc.getDate())) {
+        idade--;
+      }
+      try {
+        const turmaInfo = await turmasApi.get(turmaId);
+        const min = turmaInfo.idadeMinima ?? 6;
+        const max = turmaInfo.idadeMaxima ?? 17;
+        if (idade < min || idade > max) {
+          setErro(`A idade do aluno (${idade} anos) está fora do limite permitido para esta turma (Permitido: ${min} a ${max} anos).`);
+          return;
+        }
+      } catch (e) {
+        // Ignora falha de busca de turma se houver
+      }
     }
 
     if (!termoAceito) return;

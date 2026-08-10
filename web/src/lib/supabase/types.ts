@@ -1326,6 +1326,8 @@ export type Database = {
           deleted_at: string | null
           exclusiva: boolean
           id: string
+          idade_minima: number | null
+          idade_maxima: number | null
           nome: string
           nucleo_id: string
           status_inicial: Database["public"]["Enums"]["status_inscricao"]
@@ -1340,6 +1342,8 @@ export type Database = {
           deleted_at?: string | null
           exclusiva?: boolean
           id?: string
+          idade_minima?: number | null
+          idade_maxima?: number | null
           nome: string
           nucleo_id: string
           status_inicial?: Database["public"]["Enums"]["status_inscricao"]
@@ -1354,6 +1358,8 @@ export type Database = {
           deleted_at?: string | null
           exclusiva?: boolean
           id?: string
+          idade_minima?: number | null
+          idade_maxima?: number | null
           nome?: string
           nucleo_id?: string
           status_inicial?: Database["public"]["Enums"]["status_inscricao"]

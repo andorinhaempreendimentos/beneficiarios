@@ -21,6 +21,7 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], backHref }:
   const [exclusiva, setExclusiva] = useState(t?.exclusiva ?? false);
   const [nucleoId, setNucleoId] = useState(t?.nucleoId ?? "");
   const [atividadeId, setAtividadeId] = useState(t?.atividadeId ?? "");
+  const [slots, setSlots] = useState<any[]>(t?.slots ?? []);
 
   const nucleoSelecionado = nucleos.find((n) => n.id === nucleoId);
 
@@ -76,6 +77,8 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], backHref }:
       nucleoId: nId,
       atividadeId: aId,
       vagasTotais: Number(formData.get("vagasTotais") || 30),
+      idadeMinima: Number(formData.get("idadeMinima") || 6),
+      idadeMaxima: Number(formData.get("idadeMaxima") || 17),
       exclusiva,
       statusInicial: (formData.get("statusInicial") as any) || "aprovada",
       dataInicio: (formData.get("dataInicio") as string) || null,
@@ -83,13 +86,15 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], backHref }:
     };
 
     try {
+      let savedTurma: TurmaApi;
       if (t?.id) {
-        await turmasApi.update(t.id, data);
+        savedTurma = await turmasApi.update(t.id, data);
         toast.success("Turma atualizada com sucesso!");
       } else {
-        await turmasApi.create(data);
+        savedTurma = await turmasApi.create(data);
         toast.success("Turma cadastrada com sucesso!");
       }
+      await turmasApi.setHorarios(savedTurma.id, slots);
       window.location.href = backHref;
     } catch (err: any) {
       const msg = err.message || "Erro ao salvar turma.";
@@ -141,17 +146,25 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], backHref }:
       </FormSection>
 
       <FormSection title="Horários e Vagas">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Field label="Vagas totais" required>
-            <Input name="vagasTotais" type="number" defaultValue={t?.vagasTotais?.toString()} placeholder="30" />
+            <Input name="vagasTotais" type="number" defaultValue={t?.vagasTotais?.toString() || "30"} placeholder="30" />
           </Field>
-          <Field label="Status inicial da inscrição" required hint="Status que o beneficiário recebe ao se inscrever pelo link público">
+          <Field label="Idade Mínima (anos)" required hint="Ex: 6 anos">
+            <Input name="idadeMinima" type="number" defaultValue={t?.idadeMinima?.toString() || "6"} placeholder="6" />
+          </Field>
+          <Field label="Idade Máxima (anos)" required hint="Ex: 17 anos">
+            <Input name="idadeMaxima" type="number" defaultValue={t?.idadeMaxima?.toString() || "17"} placeholder="17" />
+          </Field>
+          <Field label="Status inicial da inscrição" required hint="Status que o beneficiário recebe ao se inscrever">
             <Select name="statusInicial" defaultValue={t?.statusInicial || "aprovada"}>
               <option value="aprovada">Aprovado automaticamente</option>
               <option value="pendente">Pendente de aprovação</option>
               <option value="reservada">Fila de espera</option>
             </Select>
           </Field>
+        </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 mt-4">
           <Field label="Data de início">
             <Input name="dataInicio" type="date" defaultValue={t?.dataInicio} />
           </Field>
@@ -163,7 +176,13 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], backHref }:
         <div className="mt-6">
           <p className="mb-3 text-sm font-medium text-zinc-700">Grade semanal</p>
           {atividadeSelecionada ? (
-            <GradeSemanal atividade={atividadeSelecionada} atividadesLocais={atividades} />
+            <GradeSemanal
+              atividade={atividadeSelecionada}
+              atividadeNome={atividadeNome}
+              atividadesLocais={atividades}
+              slots={slots}
+              onChange={setSlots}
+            />
           ) : (
             <div className="rounded-xl border border-dashed border-zinc-200 bg-zinc-50 py-10 text-center text-sm text-zinc-400">
               Selecione uma atividade para montar a grade

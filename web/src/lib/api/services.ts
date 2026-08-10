@@ -152,6 +152,8 @@ export interface TurmaApi {
   atividadeId: string;
   responsaveis: string[];
   vagasTotais: number;
+  idadeMinima?: number;
+  idadeMaxima?: number;
   exclusiva: boolean;
   statusInicial?: "aprovada" | "pendente" | "reservada";
   dataInicio?: string;
@@ -159,6 +161,7 @@ export interface TurmaApi {
   criadoEm: string;
   nucleo?: NucleoApi;
   atividade?: AtividadeApi;
+  slots?: any[];
 }
 
 export interface BeneficiarioApi {
@@ -319,16 +322,37 @@ function mapAtividade(r: any): AtividadeApi {
   };
 }
 
+const DIA_KEY_MAP: Record<number, string> = {
+  0: 'Dom', 1: 'Seg', 2: 'Ter', 3: 'Qua', 4: 'Qui', 5: 'Sex', 6: 'Sáb'
+};
+
 function mapTurma(r: any): TurmaApi {
+  const horarios = r.turma_horarios ?? [];
+  const slots = horarios.map((th: any) => {
+    const inicioHour = parseInt(String(th.hora_inicio || '').split(':')[0], 10);
+    const fimHour = parseInt(String(th.hora_fim || '').split(':')[0], 10);
+    return {
+      dia: DIA_KEY_MAP[th.dia_semana] || 'Seg',
+      inicio: isNaN(inicioHour) ? 8 : inicioHour,
+      fim: isNaN(fimHour) ? 10 : fimHour,
+      atividadeId: r.atividade_id,
+      atividadeNome: r.atividades?.nome,
+    };
+  });
+
   return {
     id: r.id, nome: r.nome, nucleoId: r.nucleo_id, atividadeId: r.atividade_id,
     responsaveis: (r.turma_responsaveis ?? []).map((tr: any) => tr.funcionario_id),
-    vagasTotais: r.vagas_totais, exclusiva: r.exclusiva,
+    vagasTotais: r.vagas_totais,
+    idadeMinima: r.idade_minima ?? 6,
+    idadeMaxima: r.idade_maxima ?? 17,
+    exclusiva: r.exclusiva,
     statusInicial: r.status_inicial ?? 'aprovada',
     dataInicio: r.data_inicio ?? undefined, dataFim: r.data_fim ?? undefined,
     criadoEm: r.created_at,
     nucleo: r.nucleos ? mapNucleo(r.nucleos) : undefined,
     atividade: r.atividades ? mapAtividade(r.atividades) : undefined,
+    slots,
   };
 }
 
@@ -675,7 +699,7 @@ function toAtividadeRow(b: Record<string, unknown>): Database['public']['Tables'
 
 // ── Turmas ───────────────────────────────────────────────────────────────
 
-const TURMA_SELECT = '*, nucleos(*), atividades(*), turma_responsaveis(*)';
+const TURMA_SELECT = '*, nucleos(*), atividades(*), turma_responsaveis(*), turma_horarios(*)';
 
 export const turmasApi = {
   async list(p?: QP): Promise<Paginated<TurmaApi>> {
@@ -723,6 +747,26 @@ export const turmasApi = {
     );
     if (error) throw error;
   },
+  async setHorarios(turmaId: string, slots: any[]): Promise<void> {
+    const sb = createClient();
+    const { error: delErr } = await sb.from('turma_horarios').delete().eq('turma_id', turmaId);
+    if (delErr) throw delErr;
+    if (!slots || slots.length === 0) return;
+
+    const KEY_TO_DIA: Record<string, number> = {
+      Dom: 0, Seg: 1, Ter: 2, Qua: 3, Qui: 4, Sex: 5, Sáb: 6
+    };
+
+    const rows = slots.map((s) => ({
+      turma_id: turmaId,
+      dia_semana: KEY_TO_DIA[s.dia] ?? 1,
+      hora_inicio: `${String(s.inicio).padStart(2, '0')}:00:00`,
+      hora_fim: `${String(s.fim).padStart(2, '0')}:00:00`,
+    }));
+
+    const { error } = await sb.from('turma_horarios').insert(rows);
+    if (error) throw error;
+  },
   async matricular(turmaId: string, beneficiarioId: string): Promise<void> {
     const sb = createClient();
     const { error } = await sb.rpc('matricular_beneficiario' as any, {
@@ -756,6 +800,8 @@ function toTurmaRow(b: Record<string, unknown>): Database['public']['Tables']['t
     nucleo_id: b.nucleoId as string,
     atividade_id: b.atividadeId as string,
     vagas_totais: b.vagasTotais as number | undefined,
+    idade_minima: (b.idadeMinima as number) ?? 6,
+    idade_maxima: (b.idadeMaxima as number) ?? 17,
     exclusiva: b.exclusiva as boolean | undefined,
     status_inicial: b.statusInicial as Database['public']['Enums']['status_inscricao'] | undefined,
     data_inicio: b.dataInicio as string | null | undefined,
