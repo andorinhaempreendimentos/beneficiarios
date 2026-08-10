@@ -26,7 +26,9 @@ export function SelecionarAtividade({ atividades, turmas, nucleoId }: Selecionar
             0
           );
 
-          const href = `/inscricao/atividade/${a.id}${nucleoId ? `?nucleoId=${nucleoId}` : ""}`;
+          const href = turmasDaAtividade.length === 1
+            ? `/inscricao/turma/${turmasDaAtividade[0].id}`
+            : `/inscricao/atividade/${a.id}${nucleoId ? `?nucleoId=${nucleoId}` : ""}`;
 
           return (
             <Link

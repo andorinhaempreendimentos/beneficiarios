@@ -708,6 +708,7 @@ function toAtividadeRow(b: Record<string, unknown>): Database['public']['Tables'
 // ── Turmas ───────────────────────────────────────────────────────────────
 
 const TURMA_SELECT = '*, nucleos(*), atividades(*), turma_responsaveis(*, funcionarios(nome_completo)), turma_horarios(*)';
+const TURMA_FALLBACK_SELECT = '*, nucleos(*), atividades(*), turma_responsaveis(*), turma_horarios(*)';
 
 export const turmasApi = {
   async list(p?: QP): Promise<Paginated<TurmaApi>> {
@@ -718,14 +719,30 @@ export const turmasApi = {
     if (p?.nucleoId) q = q.eq('nucleo_id', String(p.nucleoId));
     if (p?.atividadeId) q = q.eq('atividade_id', String(p.atividadeId));
     if (bool(p?.exclusiva) !== undefined) q = q.eq('exclusiva', bool(p?.exclusiva)!);
-    const { data, count, error } = await q.order('created_at', { ascending: false }).range(from, to);
-    if (error) throw error;
+    
+    let { data, count, error } = await q.order('created_at', { ascending: false }).range(from, to);
+    if (error) {
+      console.warn('[turmasApi.list fallback]', error.message);
+      let qFallback = sb.from('turmas').select(TURMA_FALLBACK_SELECT, { count: 'exact' }).is('deleted_at', null);
+      if (p?.busca) qFallback = qFallback.ilike('nome', `%${p.busca}%`);
+      if (p?.nucleoId) qFallback = qFallback.eq('nucleo_id', String(p.nucleoId));
+      if (p?.atividadeId) qFallback = qFallback.eq('atividade_id', String(p.atividadeId));
+      if (bool(p?.exclusiva) !== undefined) qFallback = qFallback.eq('exclusiva', bool(p?.exclusiva)!);
+      const resFallback = await qFallback.order('created_at', { ascending: false }).range(from, to);
+      if (resFallback.error) throw resFallback.error;
+      data = resFallback.data;
+      count = resFallback.count;
+    }
     return { data: (data ?? []).map(mapTurma), total: count ?? 0, page, limit };
   },
   async get(id: string): Promise<TurmaApi> {
     const sb = await getSupabase();
-    const { data, error } = await sb.from('turmas').select(TURMA_SELECT).eq('id', id).single();
-    if (error) throw error;
+    let { data, error } = await sb.from('turmas').select(TURMA_SELECT).eq('id', id).single();
+    if (error) {
+      const resFallback = await sb.from('turmas').select(TURMA_FALLBACK_SELECT).eq('id', id).single();
+      if (resFallback.error) throw resFallback.error;
+      data = resFallback.data;
+    }
     return mapTurma(data);
   },
   async create(body: Record<string, unknown>): Promise<TurmaApi> {
