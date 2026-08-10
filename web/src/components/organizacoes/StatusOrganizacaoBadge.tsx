@@ -8,7 +8,7 @@ import { statusOrganizacaoTone, statusOrganizacaoLabel } from "@/lib/status";
 import type { StatusOrganizacao } from "@/lib/types";
 import { useToast } from "@/components/providers/ToastProvider";
 
-const OPCOES: { value: StatusOrganizacao; label: string; tone: keyof typeof statusOrganizacaoTone }[] = [
+const OPCOES: { value: StatusOrganizacao; label: string; tone: "zinc" | "green" }[] = [
   { value: "ativa", label: "Ativa", tone: "green" },
   { value: "inativa", label: "Inativa", tone: "zinc" },
 ];
@@ -108,7 +108,7 @@ export function StatusOrganizacaoBadge({
                 <div className="flex items-center gap-2">
                   <span
                     className={`h-2 w-2 rounded-full ${
-                      op.tone === "green" ? "bg-green-500" : "bg-zinc-400"
+                      op.value === "ativa" ? "bg-green-500" : "bg-zinc-400"
                     }`}
                   />
                   <span>{op.label}</span>

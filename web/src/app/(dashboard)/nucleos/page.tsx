@@ -17,7 +17,7 @@ import {
   BulkActionsBar,
   type ViewMode,
 } from "@/components/ui";
-import { useTenantLabels } from "@/lib/context/TenantContext";
+import { useQuery } from "@/lib/hooks/useQuery";
 import { StatusNucleoBadge } from "@/components/nucleos/StatusNucleoBadge";
 import { useDicionario } from "@/components/providers/DictionaryProvider";
 import {

@@ -8,7 +8,7 @@ import { statusObjetoTone, statusObjetoLabel } from "@/lib/status";
 import type { StatusObjeto } from "@/lib/types";
 import { useToast } from "@/components/providers/ToastProvider";
 
-const OPCOES: { value: StatusObjeto; label: string; tone: keyof typeof statusObjetoTone }[] = [
+const OPCOES: { value: StatusObjeto; label: string; tone: "zinc" | "sky" | "green" }[] = [
   { value: "ativo", label: "Ativo", tone: "green" },
   { value: "planejado", label: "Planejado", tone: "sky" },
   { value: "encerrado", label: "Encerrado", tone: "zinc" },
@@ -109,9 +109,9 @@ export function StatusObjetoBadge({
                 <div className="flex items-center gap-2">
                   <span
                     className={`h-2 w-2 rounded-full ${
-                      op.tone === "green"
+                      op.value === "ativo"
                         ? "bg-green-500"
-                        : op.tone === "sky"
+                        : op.value === "planejado"
                         ? "bg-sky-500"
                         : "bg-zinc-400"
                     }`}
