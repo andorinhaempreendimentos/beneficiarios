@@ -49,30 +49,33 @@ export default function DashboardPage() {
           <span className="text-[11px] font-semibold text-zinc-400">Encadeamento sequencial</span>
         </div>
 
-        {/* Trilha de Encaixe Interligada */}
-        <div className="grid grid-cols-2 gap-px sm:grid-cols-4 lg:grid-cols-7 bg-zinc-300 border border-zinc-300 overflow-hidden shadow-inner">
+        {/* Trilha de Encaixe Interligada Neutra (Sem Cores, Arredondado no Primeiro e Último Item) */}
+        <div className="grid grid-cols-2 gap-px sm:grid-cols-4 lg:grid-cols-7 bg-zinc-200 border border-zinc-200 rounded-xl overflow-hidden shadow-2xs">
           {[
-            { nivel: "1º", titulo: "Organização", icon: ShieldCheck, bg: "bg-indigo-700 text-white" },
-            { nivel: "2º", titulo: "Objeto", icon: FileBarChart, bg: "bg-sky-700 text-white" },
-            { nivel: "3º", titulo: "Coordenação", icon: UserCheck, bg: "bg-amber-600 text-white" },
-            { nivel: "4º", titulo: "Núcleos (20)", icon: Building2, bg: "bg-green-700 text-white" },
-            { nivel: "5º", titulo: "Professores (20)", icon: UsersRound, bg: "bg-purple-700 text-white" },
-            { nivel: "6º", titulo: "Turmas (40)", icon: Dumbbell, bg: "bg-blue-700 text-white" },
-            { nivel: "7º", titulo: "Beneficiários", icon: Users, bg: "bg-emerald-700 text-white" },
-          ].map(({ nivel, titulo, icon: Icon, bg }, idx) => (
+            { nivel: "1º", titulo: "Organização", icon: ShieldCheck },
+            { nivel: "2º", titulo: "Objeto", icon: FileBarChart },
+            { nivel: "3º", titulo: "Coordenação", icon: UserCheck },
+            { nivel: "4º", titulo: "Núcleos (20)", icon: Building2 },
+            { nivel: "5º", titulo: "Professores (20)", icon: UsersRound },
+            { nivel: "6º", titulo: "Turmas (40)", icon: Dumbbell },
+            { nivel: "7º", titulo: "Beneficiários", icon: Users },
+          ].map(({ nivel, titulo, icon: Icon }, idx) => (
             <div
               key={nivel}
-              className={`relative flex items-center justify-between gap-2 ${bg} p-3 transition-all hover:brightness-110 select-none`}
+              className={`relative flex items-center justify-between gap-2 bg-white px-3.5 py-3.5 text-zinc-900 transition-all hover:bg-zinc-100 select-none ${
+                idx === 0 ? "rounded-l-xl lg:rounded-l-xl lg:rounded-r-none" :
+                idx === 6 ? "rounded-r-xl lg:rounded-r-xl lg:rounded-l-none" : "rounded-none"
+              }`}
             >
               <div className="flex items-center gap-2 truncate">
-                <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-black/25 text-white/90">
+                <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-zinc-100 border border-zinc-300 text-zinc-700">
                   {nivel}
                 </span>
-                <span className="text-xs font-extrabold truncate tracking-tight">{titulo}</span>
+                <span className="text-xs font-bold text-zinc-800 truncate tracking-tight">{titulo}</span>
               </div>
-              <Icon className="h-4 w-4 shrink-0 opacity-80" />
+              <Icon className="h-4 w-4 shrink-0 text-zinc-500" />
               {idx < 6 && (
-                <div className="absolute -right-2 top-1/2 -translate-y-1/2 z-10 hidden lg:flex h-4 w-4 items-center justify-center rounded-full bg-zinc-900 text-[10px] font-black text-white shadow-xs">
+                <div className="absolute -right-2 top-1/2 -translate-y-1/2 z-10 hidden lg:flex h-4 w-4 items-center justify-center rounded-full bg-zinc-300 text-[10px] font-bold text-zinc-700 shadow-2xs">
                   ›
                 </div>
               )}
