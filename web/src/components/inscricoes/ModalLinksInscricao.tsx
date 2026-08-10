@@ -39,22 +39,59 @@ export function ModalLinksInscricao({
     setTimeout(() => setCopiedId(null), 2000);
   }
 
-  const buscaNorm = busca.toLowerCase().trim();
+  function normalizar(txt?: string | null): string {
+    if (!txt) return "";
+    return txt
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+  }
 
-  const listNucleos = nucleos.filter((n) =>
-    n.identificacao.toLowerCase().includes(buscaNorm) ||
-    (n.cidade && n.cidade.toLowerCase().includes(buscaNorm)) ||
-    (n.bairro && n.bairro.toLowerCase().includes(buscaNorm))
-  );
+  function contemTodosOsTermos(textoAlvo: string, buscaStr: string): boolean {
+    const tokens = normalizar(buscaStr).split(/\s+/).filter(Boolean);
+    if (tokens.length === 0) return true;
+    const alvoNorm = normalizar(textoAlvo);
+    return tokens.every((token) => alvoNorm.includes(token));
+  }
 
-  const listAtividades = atividades.filter((a) =>
-    a.nome.toLowerCase().includes(buscaNorm)
-  );
+  const listNucleos = nucleos.filter((n) => {
+    const alvo = [
+      n.identificacao,
+      n.nomeLocal,
+      n.endereco,
+      n.bairro,
+      n.cidade,
+      n.regiao,
+      n.nomeResponsavel,
+    ].filter(Boolean).join(" ");
+    return contemTodosOsTermos(alvo, busca);
+  });
 
-  const listTurmas = turmas.filter((t) =>
-    t.nome.toLowerCase().includes(buscaNorm) ||
-    (t.atividade?.nome && t.atividade.nome.toLowerCase().includes(buscaNorm))
-  );
+  const listAtividades = atividades.filter((a) => {
+    const alvo = [
+      a.nome,
+      a.descricao,
+      ...(a.turnos || []),
+    ].filter(Boolean).join(" ");
+    return contemTodosOsTermos(alvo, busca);
+  });
+
+  const listTurmas = turmas.filter((t) => {
+    const turnosSlot = (t.slots || []).map((s: any) => `${s.dia || ''} ${s.inicio || ''}h ${s.fim || ''}h ${s.inicio < 12 ? 'manhã manha' : 'tarde'}`).join(" ");
+    const alvo = [
+      t.nome,
+      t.atividade?.nome,
+      t.nucleo?.identificacao,
+      t.nucleo?.nomeLocal,
+      t.nucleo?.cidade,
+      t.nucleo?.bairro,
+      ...(t.responsaveis || []),
+      turnosSlot,
+      t.nome.toLowerCase().includes("manhã") || t.nome.toLowerCase().includes("manha") ? "manhã manha" : "",
+      t.nome.toLowerCase().includes("tarde") ? "tarde" : "",
+    ].filter(Boolean).join(" ");
+    return contemTodosOsTermos(alvo, busca);
+  });
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in-50">
@@ -86,35 +123,35 @@ export function ModalLinksInscricao({
           <div className="flex items-center p-1 bg-zinc-100/80 rounded-xl gap-1">
             <button
               type="button"
-              onClick={() => { setTab("nucleos"); setBusca(""); }}
+              onClick={() => setTab("nucleos")}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 tab === "nucleos" ? "bg-white text-sky-700 shadow-2xs" : "text-zinc-600 hover:text-zinc-900"
               }`}
             >
               <Building2 className="h-3.5 w-3.5" />
-              <span>Por Núcleo ({nucleos.length})</span>
+              <span>Por Núcleo ({listNucleos.length})</span>
             </button>
 
             <button
               type="button"
-              onClick={() => { setTab("atividades"); setBusca(""); }}
+              onClick={() => setTab("atividades")}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 tab === "atividades" ? "bg-white text-sky-700 shadow-2xs" : "text-zinc-600 hover:text-zinc-900"
               }`}
             >
               <Activity className="h-3.5 w-3.5" />
-              <span>Por Atividade ({atividades.length})</span>
+              <span>Por Atividade ({listAtividades.length})</span>
             </button>
 
             <button
               type="button"
-              onClick={() => { setTab("turmas"); setBusca(""); }}
+              onClick={() => setTab("turmas")}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 tab === "turmas" ? "bg-white text-sky-700 shadow-2xs" : "text-zinc-600 hover:text-zinc-900"
               }`}
             >
               <Users className="h-3.5 w-3.5" />
-              <span>Por Turma ({turmas.length})</span>
+              <span>Por Turma ({listTurmas.length})</span>
             </button>
           </div>
 
