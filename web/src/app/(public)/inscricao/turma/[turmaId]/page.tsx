@@ -49,8 +49,8 @@ export default async function InscricaoTurmaPage({ params }: InscricaoTurmaPageP
         </ol>
       </nav>
 
-      {/* Banner de Instruções e Endereço Completo do Núcleo */}
-      <InstrucoesInscricaoBanner nucleo={nucleo} atividade={atividade} />
+      {/* Banner de Instruções e Endereço Completo do Núcleo — Etapa 2 (Preencha os Dados) */}
+      <InstrucoesInscricaoBanner nucleo={nucleo} atividade={atividade} etapaAtual={2} />
 
       <div className="rounded-xl border border-zinc-200 bg-white p-6">
         <h1 className="text-xl font-bold text-zinc-900">{turma.nome}</h1>

@@ -1,15 +1,34 @@
-import { MapPin, Info, CheckCircle2, Navigation } from "lucide-react";
+import { MapPin, Info, CheckCircle2, Navigation, Check } from "lucide-react";
 import type { NucleoApi, AtividadeApi } from "@/lib/api/services";
 
 interface InstrucoesInscricaoBannerProps {
   nucleo?: NucleoApi | null;
   atividade?: AtividadeApi | null;
+  etapaAtual?: 1 | 2 | 3;
 }
 
-export function InstrucoesInscricaoBanner({ nucleo, atividade }: InstrucoesInscricaoBannerProps) {
+export function InstrucoesInscricaoBanner({ nucleo, atividade, etapaAtual = 1 }: InstrucoesInscricaoBannerProps) {
   const enderecoFormatado = nucleo
     ? [nucleo.endereco, nucleo.bairro, nucleo.cidade, nucleo.regiao].filter(Boolean).join(", ")
     : null;
+
+  const etapas = [
+    {
+      num: 1,
+      titulo: "Escolha a Turma",
+      sub: "Filtre por Manhã ou Tarde e selecione o horário ideal.",
+    },
+    {
+      num: 2,
+      titulo: "Preencha os Dados",
+      sub: "Informe os dados do aluno (06 a 17 anos) e do responsável.",
+    },
+    {
+      num: 3,
+      titulo: "Garanta a Vaga",
+      sub: "Confirme o formulário e receba o comprovante imediato.",
+    },
+  ];
 
   return (
     <div className="flex flex-col gap-4">
@@ -45,39 +64,72 @@ export function InstrucoesInscricaoBanner({ nucleo, atividade }: InstrucoesInscr
         </div>
       )}
 
-      {/* Guia de Instruções de Como se Inscrever */}
-      <div className="rounded-2xl border border-amber-200/80 bg-amber-50/50 p-5">
-        <div className="flex items-center gap-2 mb-3">
-          <Info className="h-4 w-4 text-amber-700 shrink-0" />
-          <h3 className="text-xs font-extrabold uppercase tracking-wider text-amber-900">
-            Como realizar a sua inscrição
-          </h3>
+      {/* Guia de Instruções com Progresso de Etapa Atual */}
+      <div className="rounded-2xl border border-sky-200/80 bg-sky-50/40 p-5 shadow-2xs">
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <div className="flex items-center gap-2">
+            <Info className="h-4 w-4 text-sky-700 shrink-0" />
+            <h3 className="text-xs font-extrabold uppercase tracking-wider text-sky-900">
+              Etapas da sua inscrição
+            </h3>
+          </div>
+          <span className="rounded-full bg-sky-600 px-2.5 py-0.5 text-[11px] font-black text-white shadow-2xs">
+            Etapa {etapaAtual} de 3
+          </span>
         </div>
 
-        <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3 text-xs">
-          <div className="flex items-start gap-2 bg-white/80 p-3 rounded-xl border border-amber-100 shadow-2xs">
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-amber-600 text-[10px] font-black text-white shrink-0">1</span>
-            <div>
-              <p className="font-bold text-zinc-900">Escolha a Turma</p>
-              <p className="text-[11px] text-zinc-600 mt-0.5">Filtre por Manhã ou Tarde e selecione o horário ideal.</p>
-            </div>
-          </div>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 text-xs">
+          {etapas.map(({ num, titulo, sub }) => {
+            const isAtual = etapaAtual === num;
+            const isConcluida = etapaAtual > num;
 
-          <div className="flex items-start gap-2 bg-white/80 p-3 rounded-xl border border-amber-100 shadow-2xs">
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-amber-600 text-[10px] font-black text-white shrink-0">2</span>
-            <div>
-              <p className="font-bold text-zinc-900">Preencha os Dados</p>
-              <p className="text-[11px] text-zinc-600 mt-0.5">Informe os dados do aluno (06 a 17 anos) e do responsável.</p>
-            </div>
-          </div>
+            return (
+              <div
+                key={num}
+                className={`relative flex flex-col justify-between p-3.5 rounded-xl border transition-all ${
+                  isAtual
+                    ? "bg-white border-sky-500 shadow-md ring-2 ring-sky-500/20"
+                    : isConcluida
+                    ? "bg-green-50/70 border-green-200 text-zinc-700"
+                    : "bg-white/60 border-zinc-200 text-zinc-500 opacity-75"
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span
+                      className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-black shrink-0 ${
+                        isAtual
+                          ? "bg-sky-600 text-white shadow-xs"
+                          : isConcluida
+                          ? "bg-green-600 text-white"
+                          : "bg-zinc-200 text-zinc-600"
+                      }`}
+                    >
+                      {isConcluida ? <Check className="h-3.5 w-3.5 stroke-[3]" /> : num}
+                    </span>
 
-          <div className="flex items-start gap-2 bg-white/80 p-3 rounded-xl border border-amber-100 shadow-2xs">
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-amber-600 text-[10px] font-black text-white shrink-0">3</span>
-            <div>
-              <p className="font-bold text-zinc-900">Garanta a Vaga</p>
-              <p className="text-[11px] text-zinc-600 mt-0.5">Confirme o formulário e receba o comprovante imediato.</p>
-            </div>
-          </div>
+                    {isAtual && (
+                      <span className="rounded-md bg-sky-100 border border-sky-300 px-2 py-0.5 text-[10px] font-black uppercase text-sky-800 tracking-wider">
+                        Você está aqui
+                      </span>
+                    )}
+                    {isConcluida && (
+                      <span className="text-[10px] font-extrabold text-green-700 uppercase tracking-wider">
+                        Concluído
+                      </span>
+                    )}
+                  </div>
+
+                  <p className={`font-bold text-sm leading-snug ${isAtual ? "text-zinc-900" : "text-zinc-700"}`}>
+                    {titulo}
+                  </p>
+                  <p className="text-[11px] text-zinc-500 mt-1 leading-relaxed">
+                    {sub}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
