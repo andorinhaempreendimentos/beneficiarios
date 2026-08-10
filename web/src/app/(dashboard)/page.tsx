@@ -92,12 +92,6 @@ export default function DashboardPage() {
                 <p className="text-2xl font-bold text-sky-700">{r.ocupacaoGlobal}%</p>
               </div>
             </div>
-            <div className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-100">
-              <div
-                className="h-full rounded-full bg-sky-500 transition-all"
-                style={{ width: `${r.ocupacaoGlobal}%` }}
-              />
-            </div>
             <Link
               href="/turmas/novo"
               className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 bg-sky-50 px-3 py-2 text-sm font-medium text-sky-700 hover:bg-sky-100 transition-colors"
