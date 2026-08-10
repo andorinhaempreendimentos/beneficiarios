@@ -9,7 +9,7 @@ import { formatarData } from "@/lib/utils";
 import { statusBeneficiarioTone, statusBeneficiarioLabel, normalizarStatusBeneficiario } from "@/lib/status";
 
 const VAZIO: DashboardResumo = {
-  beneficiariosAtivos: 0, totalBeneficiarios: 0, nucleosAtivos: 0, funcionariosAtivos: 0,
+  beneficiariosAtivos: 0, totalBeneficiarios: 0, nucleosAtivos: 0, totalNucleos: 0, totalObjetos: 0, totalOrganizacoes: 0, funcionariosAtivos: 0,
   funcionariosLicenca: 0, totalTurmas: 0, totalVagas: 0, totalOcupadas: 0, vagasLivres: 0,
   ocupacaoGlobal: 0, totalModalidades: 0, topNucleos: [], distribuicaoPorModalidade: [], recentes: [],
 };
