@@ -1330,6 +1330,7 @@ export type Database = {
           idade_maxima: number | null
           nome: string
           nucleo_id: string
+          permitir_fila_espera: boolean
           status_inicial: Database["public"]["Enums"]["status_inscricao"]
           updated_at: string
           vagas_totais: number
@@ -1346,6 +1347,7 @@ export type Database = {
           idade_maxima?: number | null
           nome: string
           nucleo_id: string
+          permitir_fila_espera?: boolean
           status_inicial?: Database["public"]["Enums"]["status_inscricao"]
           updated_at?: string
           vagas_totais?: number
@@ -1362,6 +1364,7 @@ export type Database = {
           idade_maxima?: number | null
           nome?: string
           nucleo_id?: string
+          permitir_fila_espera?: boolean
           status_inicial?: Database["public"]["Enums"]["status_inscricao"]
           updated_at?: string
           vagas_totais?: number

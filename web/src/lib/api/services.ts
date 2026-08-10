@@ -157,6 +157,7 @@ export interface TurmaApi {
   vagasTotais: number;
   idadeMinima?: number;
   idadeMaxima?: number;
+  permitirFilaEspera?: boolean;
   exclusiva: boolean;
   statusInicial?: "aprovada" | "pendente" | "reservada";
   dataInicio?: string;
@@ -349,6 +350,7 @@ function mapTurma(r: any): TurmaApi {
     vagasTotais: r.vagas_totais,
     idadeMinima: r.idade_minima ?? 6,
     idadeMaxima: r.idade_maxima ?? 17,
+    permitirFilaEspera: r.permitir_fila_espera ?? true,
     exclusiva: r.exclusiva,
     statusInicial: r.status_inicial ?? 'aprovada',
     dataInicio: r.data_inicio ?? undefined, dataFim: r.data_fim ?? undefined,
@@ -805,6 +807,7 @@ function toTurmaRow(b: Record<string, unknown>): Database['public']['Tables']['t
     vagas_totais: b.vagasTotais as number | undefined,
     idade_minima: (b.idadeMinima as number) ?? 6,
     idade_maxima: (b.idadeMaxima as number) ?? 17,
+    permitir_fila_espera: (b.permitirFilaEspera as boolean) ?? true,
     exclusiva: b.exclusiva as boolean | undefined,
     status_inicial: b.statusInicial as Database['public']['Enums']['status_inscricao'] | undefined,
     data_inicio: b.dataInicio as string | null | undefined,

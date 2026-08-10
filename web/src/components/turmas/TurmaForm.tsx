@@ -22,6 +22,7 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], backHref }:
   const [nucleoId, setNucleoId] = useState(t?.nucleoId ?? "");
   const [atividadeId, setAtividadeId] = useState(t?.atividadeId ?? "");
   const [slots, setSlots] = useState<any[]>(t?.slots ?? []);
+  const [permitirFilaEspera, setPermitirFilaEspera] = useState(t?.permitirFilaEspera ?? true);
 
   const nucleoSelecionado = nucleos.find((n) => n.id === nucleoId);
 
@@ -79,6 +80,7 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], backHref }:
       vagasTotais: Number(formData.get("vagasTotais") || 30),
       idadeMinima: Number(formData.get("idadeMinima") || 6),
       idadeMaxima: Number(formData.get("idadeMaxima") || 17),
+      permitirFilaEspera,
       exclusiva,
       statusInicial: (formData.get("statusInicial") as any) || "aprovada",
       dataInicio: (formData.get("dataInicio") as string) || null,
@@ -171,6 +173,14 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], backHref }:
           <Field label="Duração">
             <Input name="duracao" placeholder="Ex: 12 meses" />
           </Field>
+        </div>
+
+        <div className="mt-4 flex items-center justify-between rounded-xl border border-zinc-200 bg-zinc-50/70 p-4">
+          <div>
+            <span className="text-sm font-semibold text-zinc-900 block">Permitir Fila de Espera ao esgotar vagas</span>
+            <span className="text-xs text-zinc-500 block mt-0.5">Se ativado, quando as 30 vagas forem preenchidas, novos inscritos entram automaticamente na fila (`reservada`). Se desativado, bloqueia novas inscrições.</span>
+          </div>
+          <Switch checked={permitirFilaEspera} onChange={setPermitirFilaEspera} />
         </div>
 
         <div className="mt-6">
