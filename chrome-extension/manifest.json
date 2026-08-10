@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "Preenchedor Automático - Escolinhas de Palmas",
+  "version": "1.0.0",
+  "description": "Extensão do Chrome para preencher automaticamente formulários de pré-inscrição de beneficiários para testes rápidos.",
+  "permissions": ["activeTab", "scripting"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Preencher Formulário de Beneficiário"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ]
+}
