@@ -155,6 +155,7 @@ export interface TurmaApi {
   nucleoId: string;
   atividadeId: string;
   responsaveis: string[];
+  responsaveisNomes?: string[];
   vagasTotais: number;
   idadeMinima?: number;
   idadeMaxima?: number;
@@ -348,6 +349,7 @@ function mapTurma(r: any): TurmaApi {
   return {
     id: r.id, nome: r.nome, nucleoId: r.nucleo_id, atividadeId: r.atividade_id,
     responsaveis: (r.turma_responsaveis ?? []).map((tr: any) => tr.funcionario_id),
+    responsaveisNomes: (r.turma_responsaveis ?? []).map((tr: any) => tr.funcionarios?.nome_completo).filter(Boolean),
     vagasTotais: r.vagas_totais,
     idadeMinima: r.idade_minima ?? 6,
     idadeMaxima: r.idade_maxima ?? 17,
@@ -705,7 +707,7 @@ function toAtividadeRow(b: Record<string, unknown>): Database['public']['Tables'
 
 // ── Turmas ───────────────────────────────────────────────────────────────
 
-const TURMA_SELECT = '*, nucleos(*), atividades(*), turma_responsaveis(*), turma_horarios(*)';
+const TURMA_SELECT = '*, nucleos(*), atividades(*), turma_responsaveis(*, funcionarios(nome_completo)), turma_horarios(*)';
 
 export const turmasApi = {
   async list(p?: QP): Promise<Paginated<TurmaApi>> {
