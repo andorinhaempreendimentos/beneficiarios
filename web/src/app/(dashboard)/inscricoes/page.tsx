@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { useState, useCallback } from "react";
-import { CheckCircle2, XCircle, Download } from "lucide-react";
+import { CheckCircle2, XCircle, Download, Link2 } from "lucide-react";
 import {
   Badge,
+  Button,
   Card,
   PageHeader,
   Pagination,
@@ -15,9 +16,9 @@ import {
 import { useQuery } from "@/lib/hooks/useQuery";
 import { inscricoesApi, nucleosApi, atividadesApi, turmasApi, type Paginated, type InscricaoApi, type NucleoApi, type AtividadeApi, type TurmaApi } from "@/lib/api/services";
 import { formatarData } from "@/lib/utils";
-import { LinkRow } from "@/components/inscricoes/LinkRow";
 import { statusInscricaoTone, statusInscricaoLabel } from "@/lib/status";
 import type { StatusInscricao } from "@/lib/types";
+import { ModalLinksInscricao } from "@/components/inscricoes/ModalLinksInscricao";
 
 const PER_PAGE = 20;
 
@@ -39,6 +40,7 @@ export default function InscricoesPage() {
   const [pagina, setPagina] = useState(1);
   const [viewMode, setViewMode] = useState<ViewMode>("cards");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [modalLinksOpen, setModalLinksOpen] = useState(false);
 
   const { data: pageData, loading, refetch } = useQuery<Paginated<InscricaoApi>>(
     () => inscricoesApi.list({ status: filtro !== "todas" ? filtro : undefined, page: pagina, limit: PER_PAGE }),
@@ -116,7 +118,24 @@ export default function InscricoesPage() {
     <div className="flex flex-col gap-6 pb-12">
       <PageHeader
         title="Inscrições"
-        description="Gerencie inscrições recebidas e gere links por núcleo, atividade ou turma"
+        description="Gerencie inscrições recebidas e acesse os links de autocadastro público"
+        actions={
+          <Button
+            onClick={() => setModalLinksOpen(true)}
+            className="flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white font-bold shadow-xs cursor-pointer"
+          >
+            <Link2 className="h-4 w-4" />
+            <span>Links de Inscrição Pública</span>
+          </Button>
+        }
+      />
+
+      <ModalLinksInscricao
+        open={modalLinksOpen}
+        onClose={() => setModalLinksOpen(false)}
+        nucleos={rawNucleos}
+        atividades={atividades}
+        turmas={turmas}
       />
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -130,42 +149,6 @@ export default function InscricoesPage() {
             <p className="mt-0.5 text-xs text-zinc-500">{LABEL[s]}</p>
           </button>
         ))}
-      </div>
-
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <Card>
-          <div className="border-b border-zinc-100 px-5 py-3">
-            <h3 className="text-sm font-semibold text-zinc-800">Links por núcleo</h3>
-            <p className="mt-0.5 text-xs text-zinc-400">Beneficiário escolhe atividade e turma</p>
-          </div>
-          <div className="divide-y divide-zinc-50">
-            {nucleos.map((n) => (
-              <LinkRow key={n.id} label={n.identificacao} sub={[n.cidade, n.regiao].filter(Boolean).join(" · ")} path={`/inscricao/nucleo/${n.id}`} />
-            ))}
-          </div>
-        </Card>
-        <Card>
-          <div className="border-b border-zinc-100 px-5 py-3">
-            <h3 className="text-sm font-semibold text-zinc-800">Links por atividade</h3>
-            <p className="mt-0.5 text-xs text-zinc-400">Beneficiário escolhe apenas a turma</p>
-          </div>
-          <div className="divide-y divide-zinc-50">
-            {atividades.map((a) => (
-              <LinkRow key={a.id} label={a.nome} path={`/inscricao/atividade/${a.id}`} />
-            ))}
-          </div>
-        </Card>
-        <Card>
-          <div className="border-b border-zinc-100 px-5 py-3">
-            <h3 className="text-sm font-semibold text-zinc-800">Links por turma</h3>
-            <p className="mt-0.5 text-xs text-zinc-400">Turma já pré-definida</p>
-          </div>
-          <div className="divide-y divide-zinc-50">
-            {turmas.map((t) => (
-              <LinkRow key={t.id} label={t.nome} path={`/inscricao/turma/${t.id}`} />
-            ))}
-          </div>
-        </Card>
       </div>
 
       <Card>
