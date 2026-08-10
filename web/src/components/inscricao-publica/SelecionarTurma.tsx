@@ -117,7 +117,7 @@ export function SelecionarTurma({ turmas, titulo = "Escolha uma turma" }: Seleci
                   {(t.horario || (Array.isArray(t.slots) && t.slots.length > 0)) && (
                     <span className="flex items-center gap-1">
                       <Clock className="h-3.5 w-3.5" />
-                      {t.horario || `${t.slots[0].inicio || 8}h–${t.slots[0].fim || 10}h`}
+                      {t.horario || `${t.slots?.[0]?.inicio || 8}h–${t.slots?.[0]?.fim || 10}h`}
                     </span>
                   )}
                   {((Array.isArray(t.dias) && t.dias.length > 0) || (Array.isArray(t.slots) && t.slots.length > 0)) && (
@@ -125,7 +125,7 @@ export function SelecionarTurma({ turmas, titulo = "Escolha uma turma" }: Seleci
                       <CalendarDays className="h-3.5 w-3.5" />
                       {Array.isArray(t.dias) && t.dias.length > 0
                         ? t.dias.join(", ")
-                        : Array.from(new Set(t.slots.map((s: any) => s.dia).filter(Boolean))).join(", ")}
+                        : Array.from(new Set((t.slots || []).map((s: any) => s.dia).filter(Boolean))).join(", ")}
                     </span>
                   )}
                 </div>
