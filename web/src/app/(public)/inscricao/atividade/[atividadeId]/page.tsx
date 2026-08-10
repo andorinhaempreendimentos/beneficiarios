@@ -4,6 +4,9 @@ import { atividadesApi, turmasApi, nucleosApi } from "@/lib/api/services";
 import { SelecionarTurma } from "@/components/inscricao-publica/SelecionarTurma";
 import { InstrucoesInscricaoBanner } from "@/components/inscricao-publica/InstrucoesInscricaoBanner";
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 interface InscricaoAtividadePageProps {
   params: Promise<{ atividadeId: string }>;
   searchParams?: Promise<{ nucleoId?: string }>;

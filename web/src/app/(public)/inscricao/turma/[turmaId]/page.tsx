@@ -5,6 +5,9 @@ import { InscricaoPublicaForm } from "@/components/inscricao-publica/InscricaoPu
 import { TurmaCheiaSection } from "@/components/inscricao-publica/TurmaCheiaSection";
 import { InstrucoesInscricaoBanner } from "@/components/inscricao-publica/InstrucoesInscricaoBanner";
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 interface InscricaoTurmaPageProps {
   params: Promise<{ turmaId: string }>;
 }
