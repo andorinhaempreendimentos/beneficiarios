@@ -39,37 +39,43 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      {/* Fluxo de Hierarquia do Sistema */}
+      {/* Fluxo de Hierarquia do Sistema — Encaixe Encadeado (Sem subtextos) */}
       <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-2xs">
         <div className="mb-3 flex items-center justify-between border-b border-zinc-100 pb-2">
           <div className="flex items-center gap-2">
             <span className="flex h-5 w-5 items-center justify-center rounded bg-zinc-900 text-[10px] font-bold text-white">HV</span>
             <h2 className="text-xs font-extrabold uppercase tracking-wider text-zinc-800">Hierarquia Operacional do Sistema</h2>
           </div>
-          <span className="text-[11px] font-semibold text-zinc-400">Estrutura relacional encadeada</span>
+          <span className="text-[11px] font-semibold text-zinc-400">Encadeamento sequencial</span>
         </div>
 
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">
+        {/* Trilha de Encaixe Interligada */}
+        <div className="grid grid-cols-2 gap-px sm:grid-cols-4 lg:grid-cols-7 bg-zinc-300 border border-zinc-300 overflow-hidden shadow-inner">
           {[
-            { nivel: "1º", titulo: "Organização", sub: "Entidade Gestora", icon: ShieldCheck, color: "border-indigo-200 bg-indigo-50 text-indigo-700" },
-            { nivel: "2º", titulo: "Objeto / Projeto", sub: "Termo de Fomento", icon: FileBarChart, color: "border-sky-200 bg-sky-50 text-sky-700" },
-            { nivel: "3º", titulo: "Coordenação", sub: "Gestão Regional", icon: UserCheck, color: "border-amber-200 bg-amber-50 text-amber-700" },
-            { nivel: "4º", titulo: "Núcleos (20)", sub: "Praças Esportivas", icon: Building2, color: "border-green-200 bg-green-50 text-green-700" },
-            { nivel: "5º", titulo: "Professores (20)", sub: "Instrutores de Campo", icon: UsersRound, color: "border-purple-200 bg-purple-50 text-purple-700" },
-            { nivel: "6º", titulo: "Turmas (40)", sub: "Futebol e Futsal", icon: Dumbbell, color: "border-blue-200 bg-blue-50 text-blue-700" },
-            { nivel: "7º", titulo: "Beneficiários", sub: "Alunos (1.200 vagas)", icon: Users, color: "border-emerald-200 bg-emerald-50 text-emerald-700" },
-          ].map(({ nivel, titulo, sub, icon: Icon, color }) => (
-            <div key={nivel} className="flex flex-col justify-between rounded-lg border border-zinc-200 bg-zinc-50/60 p-2.5 hover:border-zinc-300 hover:bg-white hover:shadow-2xs transition-all">
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className={`px-1.5 py-0.5 rounded text-[9px] font-extrabold border ${color}`}>
-                    Nível {nivel}
-                  </span>
-                  <Icon className="h-4 w-4 text-zinc-400" />
-                </div>
-                <span className="block text-xs font-bold text-zinc-900 leading-tight">{titulo}</span>
-                <span className="block text-[10px] text-zinc-500 mt-0.5 font-medium">{sub}</span>
+            { nivel: "1º", titulo: "Organização", icon: ShieldCheck, bg: "bg-indigo-700 text-white" },
+            { nivel: "2º", titulo: "Objeto", icon: FileBarChart, bg: "bg-sky-700 text-white" },
+            { nivel: "3º", titulo: "Coordenação", icon: UserCheck, bg: "bg-amber-600 text-white" },
+            { nivel: "4º", titulo: "Núcleos (20)", icon: Building2, bg: "bg-green-700 text-white" },
+            { nivel: "5º", titulo: "Professores (20)", icon: UsersRound, bg: "bg-purple-700 text-white" },
+            { nivel: "6º", titulo: "Turmas (40)", icon: Dumbbell, bg: "bg-blue-700 text-white" },
+            { nivel: "7º", titulo: "Beneficiários", icon: Users, bg: "bg-emerald-700 text-white" },
+          ].map(({ nivel, titulo, icon: Icon, bg }, idx) => (
+            <div
+              key={nivel}
+              className={`relative flex items-center justify-between gap-2 ${bg} p-3 transition-all hover:brightness-110 select-none`}
+            >
+              <div className="flex items-center gap-2 truncate">
+                <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-black/25 text-white/90">
+                  {nivel}
+                </span>
+                <span className="text-xs font-extrabold truncate tracking-tight">{titulo}</span>
               </div>
+              <Icon className="h-4 w-4 shrink-0 opacity-80" />
+              {idx < 6 && (
+                <div className="absolute -right-2 top-1/2 -translate-y-1/2 z-10 hidden lg:flex h-4 w-4 items-center justify-center rounded-full bg-zinc-900 text-[10px] font-black text-white shadow-xs">
+                  ›
+                </div>
+              )}
             </div>
           ))}
         </div>
