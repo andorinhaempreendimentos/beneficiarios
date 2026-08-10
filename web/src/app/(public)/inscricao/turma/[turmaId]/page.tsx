@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { turmasApi, nucleosApi, atividadesApi } from "@/lib/api/services";
 import { InscricaoPublicaForm } from "@/components/inscricao-publica/InscricaoPublicaForm";
 import { TurmaCheiaSection } from "@/components/inscricao-publica/TurmaCheiaSection";
+import { InstrucoesInscricaoBanner } from "@/components/inscricao-publica/InstrucoesInscricaoBanner";
 
 interface InscricaoTurmaPageProps {
   params: Promise<{ turmaId: string }>;
@@ -34,7 +35,7 @@ export default async function InscricaoTurmaPage({ params }: InscricaoTurmaPageP
   ];
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6">
       <nav aria-label="Hierarquia da inscrição">
         <ol className="flex flex-wrap items-center gap-1 text-xs text-zinc-400">
           {breadcrumb.map((item, i) => (
@@ -47,6 +48,9 @@ export default async function InscricaoTurmaPage({ params }: InscricaoTurmaPageP
           ))}
         </ol>
       </nav>
+
+      {/* Banner de Instruções e Endereço Completo do Núcleo */}
+      <InstrucoesInscricaoBanner nucleo={nucleo} atividade={atividade} />
 
       <div className="rounded-xl border border-zinc-200 bg-white p-6">
         <h1 className="text-xl font-bold text-zinc-900">{turma.nome}</h1>

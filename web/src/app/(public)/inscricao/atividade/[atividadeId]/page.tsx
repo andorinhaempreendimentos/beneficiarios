@@ -1,7 +1,8 @@
 import { ChevronRight } from "lucide-react";
 import { redirect } from "next/navigation";
-import { atividadesApi, turmasApi } from "@/lib/api/services";
+import { atividadesApi, turmasApi, nucleosApi } from "@/lib/api/services";
 import { SelecionarTurma } from "@/components/inscricao-publica/SelecionarTurma";
+import { InstrucoesInscricaoBanner } from "@/components/inscricao-publica/InstrucoesInscricaoBanner";
 
 interface InscricaoAtividadePageProps {
   params: Promise<{ atividadeId: string }>;
@@ -15,16 +16,21 @@ export default async function InscricaoAtividadePage({ params }: InscricaoAtivid
     redirect("/");
   }
 
-  const turmasRes = await turmasApi.list({ limit: 100 }).catch(() => ({ data: [] }));
+  const [turmasRes, nucleosRes] = await Promise.all([
+    turmasApi.list({ limit: 100 }).catch(() => ({ data: [] })),
+    nucleosApi.list({ limit: 50 }).catch(() => ({ data: [] })),
+  ]);
+
   const turmasDaAtividade = turmasRes.data.filter((t) => t.atividadeId === atividadeId);
+  const nucleo = nucleosRes.data.find((n) => turmasDaAtividade.some((t) => t.nucleoId === n.id)) || nucleosRes.data[0];
 
   const breadcrumb = [
-    "Atividade",
+    nucleo?.identificacao || "Núcleo Esportivo",
     atividade.nome,
   ];
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6">
       <nav aria-label="Hierarquia da inscrição">
         <ol className="flex flex-wrap items-center gap-1 text-xs text-zinc-400">
           {breadcrumb.map((item, i) => (
@@ -38,11 +44,14 @@ export default async function InscricaoAtividadePage({ params }: InscricaoAtivid
         </ol>
       </nav>
 
+      {/* Banner de Instruções e Informações do Núcleo */}
+      <InstrucoesInscricaoBanner nucleo={nucleo} atividade={atividade} />
+
       <div className="rounded-xl border border-zinc-200 bg-white p-6">
         <h1 className="text-xl font-bold text-zinc-900">{atividade.nome}</h1>
         {(atividade.idadeMinima != null || atividade.idadeMaxima != null) && (
           <p className="mt-1 text-sm text-zinc-500">
-            Faixa etária:{" "}
+            Faixa etária permitida:{" "}
             {atividade.idadeMinima != null && atividade.idadeMaxima != null
               ? `${atividade.idadeMinima} a ${atividade.idadeMaxima} anos`
               : atividade.idadeMinima != null
