@@ -32,6 +32,8 @@ import {
 } from "@/lib/status";
 import { calcularIdade } from "@/lib/utils";
 
+import { StatusBeneficiarioBadge } from "@/components/beneficiarios/StatusBeneficiarioBadge";
+
 const PER_PAGE = 15;
 const EMPTY = { nome: "", matricula: "", cpf: "", status: "", atividadeId: "", tipoMatricula: "", nucleoId: "", idadeMin: "", idadeMax: "" };
 
@@ -183,9 +185,7 @@ export default function BeneficiariosPage() {
                             </Link>
                           </div>
                         </div>
-                        <Badge tone={statusBeneficiarioTone[normalizarStatusBeneficiario(b.status)]}>
-                          {statusBeneficiarioLabel[normalizarStatusBeneficiario(b.status)]}
-                        </Badge>
+                        <StatusBeneficiarioBadge beneficiarioId={b.id} statusAtual={b.status} />
                       </div>
 
                       <div className="flex items-center justify-between text-xs text-zinc-500 border-t border-zinc-100 pt-2.5">
@@ -246,7 +246,7 @@ export default function BeneficiariosPage() {
                         </td>
                         <td className="px-5 py-3 text-zinc-500">{b.matricula}</td>
                         <td className="px-5 py-3">
-                          <Badge tone={statusBeneficiarioTone[normalizarStatusBeneficiario(b.status)]}>{statusBeneficiarioLabel[normalizarStatusBeneficiario(b.status)]}</Badge>
+                          <StatusBeneficiarioBadge beneficiarioId={b.id} statusAtual={b.status} />
                         </td>
                         <td className="px-5 py-3">
                           <div className="flex items-center gap-2">
