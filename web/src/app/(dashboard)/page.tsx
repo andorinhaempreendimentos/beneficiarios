@@ -25,8 +25,8 @@ export default function DashboardPage() {
       <div className="-mt-6 -mx-4 sm:-mx-6 lg:-mx-8 flex flex-wrap items-center gap-0 border-b border-zinc-300 shadow-sm">
         {[
           { href: "/inscricoes", label: "Inscrições", icon: ClipboardList, bg: "bg-amber-600 hover:bg-amber-700 text-white" },
-          { href: "/atividades", label: "Atividades & Cursos", icon: Dumbbell, bg: "bg-sky-600 hover:bg-sky-700 text-white" },
-          { href: "/relatorios", label: "Relatórios & Relances", icon: FileBarChart, bg: "bg-emerald-600 hover:bg-emerald-700 text-white" },
+          { href: "/atividades", label: "Atividades", icon: Dumbbell, bg: "bg-sky-600 hover:bg-sky-700 text-white" },
+          { href: "/relatorios", label: "Relatórios", icon: FileBarChart, bg: "bg-emerald-600 hover:bg-emerald-700 text-white" },
         ].map(({ href, label, icon: Icon, bg }) => (
           <Link
             key={href}
