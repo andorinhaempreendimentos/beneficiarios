@@ -61,14 +61,36 @@ export function SelecionarAtividade({ atividades, turmas, nucleoId }: Selecionar
 
               {/* Grade de horários resumida */}
               <div className="flex flex-col gap-1">
-                {turmasDaAtividade.map((t) => (
-                  <div key={t.id} className="flex items-center gap-2 text-xs text-zinc-400">
-                    <CalendarDays className="h-3 w-3 shrink-0" />
-                    <span>{t.dias.join(", ")}</span>
-                    <Clock className="h-3 w-3 shrink-0 ml-1" />
-                    <span>{t.horario}</span>
-                  </div>
-                ))}
+                {turmasDaAtividade.map((t) => {
+                  const diasTexto = Array.isArray(t.dias)
+                    ? t.dias.join(", ")
+                    : Array.isArray(t.slots) && t.slots.length > 0
+                    ? Array.from(new Set(t.slots.map((s: any) => s.dia).filter(Boolean))).join(", ")
+                    : "";
+
+                  const horarioTexto = t.horario || (Array.isArray(t.slots) && t.slots.length > 0
+                    ? `${t.slots[0].inicio || 8}h–${t.slots[0].fim || 10}h`
+                    : "");
+
+                  if (!diasTexto && !horarioTexto) return null;
+
+                  return (
+                    <div key={t.id} className="flex items-center gap-2 text-xs text-zinc-400">
+                      {diasTexto && (
+                        <>
+                          <CalendarDays className="h-3 w-3 shrink-0" />
+                          <span>{diasTexto}</span>
+                        </>
+                      )}
+                      {horarioTexto && (
+                        <>
+                          <Clock className="h-3 w-3 shrink-0 ml-1" />
+                          <span>{horarioTexto}</span>
+                        </>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </Link>
           );
