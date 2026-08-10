@@ -52,9 +52,9 @@ export default function DashboardPage() {
             { nivel: "1º", titulo: "Organização" },
             { nivel: "2º", titulo: "Objeto" },
             { nivel: "3º", titulo: "Coordenação" },
-            { nivel: "4º", titulo: "Núcleos (20)" },
-            { nivel: "5º", titulo: "Professores (20)" },
-            { nivel: "6º", titulo: "Turmas (40)" },
+            { nivel: "4º", titulo: "Núcleos" },
+            { nivel: "5º", titulo: "Professores" },
+            { nivel: "6º", titulo: "Turmas" },
             { nivel: "7º", titulo: "Beneficiários" },
           ].map(({ nivel, titulo }, idx) => (
             <div
