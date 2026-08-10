@@ -41,6 +41,9 @@ export interface DashboardResumo {
   beneficiariosAtivos: number;
   totalBeneficiarios: number;
   nucleosAtivos: number;
+  totalNucleos: number;
+  totalObjetos: number;
+  totalOrganizacoes: number;
   funcionariosAtivos: number;
   funcionariosLicenca: number;
   totalTurmas: number;
@@ -1284,6 +1287,8 @@ function montarResumo(
   atividades: { id: string; nome: string }[],
   matriculas: { turma_id: string }[],
   recentes: { id: string; nome_completo: string; status: string; data_cadastro: string; nucleo_id: string | null }[],
+  totalObjetos: number = 0,
+  totalOrganizacoes: number = 0,
 ): DashboardResumo {
   const nucleoNome = new Map(nucleos.map((n) => [n.id, n.identificacao]));
   const beneficiariosAtivos = aprovados.length;
@@ -1323,6 +1328,9 @@ function montarResumo(
     beneficiariosAtivos,
     totalBeneficiarios,
     nucleosAtivos,
+    totalNucleos: nucleos.length,
+    totalObjetos,
+    totalOrganizacoes,
     funcionariosAtivos,
     funcionariosLicenca,
     totalTurmas: turmas.length,
@@ -1343,7 +1351,7 @@ function montarResumo(
 export const dashboardApi = {
   async resumo(): Promise<DashboardResumo> {
     const sb = createClient();
-    const [totalRes, aprovadosRes, nucleosRes, funcionariosRes, turmasRes, atividadesRes, matriculasRes, recentesRes] =
+    const [totalRes, aprovadosRes, nucleosRes, funcionariosRes, turmasRes, atividadesRes, matriculasRes, recentesRes, objetosRes, organizacoesRes] =
       await Promise.all([
         sb.from('beneficiarios').select('id', { count: 'exact', head: true }).is('deleted_at', null),
         sb.from('beneficiarios').select('id, nucleo_id').is('deleted_at', null).eq('status', 'ativo'),
@@ -1354,11 +1362,14 @@ export const dashboardApi = {
         sb.from('beneficiario_turmas').select('turma_id').eq('status', 'ativo'),
         sb.from('beneficiarios').select('id, nome_completo, status, data_cadastro, nucleo_id')
           .is('deleted_at', null).order('data_cadastro', { ascending: false }).limit(5),
+        sb.from('objetos').select('id', { count: 'exact', head: true }).is('deleted_at', null),
+        sb.from('organizacoes').select('id', { count: 'exact', head: true }).is('deleted_at', null),
       ]);
-    for (const r of [totalRes, aprovadosRes, nucleosRes, funcionariosRes, turmasRes, atividadesRes, matriculasRes, recentesRes]) {
+    for (const r of [totalRes, aprovadosRes, nucleosRes, funcionariosRes, turmasRes, atividadesRes, matriculasRes, recentesRes, objetosRes, organizacoesRes]) {
       if (r.error) throw r.error;
     }
     return montarResumo(totalRes.count ?? 0, aprovadosRes.data ?? [], nucleosRes.data ?? [], funcionariosRes.data ?? [],
-      turmasRes.data ?? [], atividadesRes.data ?? [], matriculasRes.data ?? [], recentesRes.data ?? []);
+      turmasRes.data ?? [], atividadesRes.data ?? [], matriculasRes.data ?? [], recentesRes.data ?? [],
+      objetosRes.count ?? 0, organizacoesRes.count ?? 0);
   },
 };

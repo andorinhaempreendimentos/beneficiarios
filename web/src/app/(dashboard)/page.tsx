@@ -133,6 +133,102 @@ export default function DashboardPage() {
             </Link>
           </CardBody>
         </Card>
+
+        {/* Objetos */}
+        <Card>
+          <CardHeader className="flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-zinc-800">Objetos</h3>
+            <Link
+              href="/objetos"
+              className="inline-flex items-center rounded-lg border border-sky-200 bg-sky-50 px-2.5 py-1 text-xs font-semibold text-sky-700 hover:bg-sky-100 hover:border-sky-300 transition-colors shadow-2xs"
+            >
+              Ver todos
+            </Link>
+          </CardHeader>
+          <CardBody className="flex flex-col gap-3">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-lg bg-green-50 px-3 py-2.5">
+                <p className="text-xs text-green-700">Cadastrados</p>
+                <p className="text-2xl font-bold text-green-700">{r.totalObjetos}</p>
+              </div>
+              <div className="rounded-lg bg-sky-50 px-3 py-2.5">
+                <p className="text-xs text-sky-700">Vigentes</p>
+                <p className="text-2xl font-bold text-sky-700">{r.totalObjetos}</p>
+              </div>
+            </div>
+            <Link
+              href="/objetos/novo"
+              className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 bg-sky-50 px-3 py-2 text-sm font-medium text-sky-700 hover:bg-sky-100 transition-colors"
+            >
+              <Plus className="h-4 w-4" />
+              Novo objeto
+            </Link>
+          </CardBody>
+        </Card>
+
+        {/* Organizações */}
+        <Card>
+          <CardHeader className="flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-zinc-800">Organizações</h3>
+            <Link
+              href="/organizacoes"
+              className="inline-flex items-center rounded-lg border border-sky-200 bg-sky-50 px-2.5 py-1 text-xs font-semibold text-sky-700 hover:bg-sky-100 hover:border-sky-300 transition-colors shadow-2xs"
+            >
+              Ver todas
+            </Link>
+          </CardHeader>
+          <CardBody className="flex flex-col gap-3">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-lg bg-green-50 px-3 py-2.5">
+                <p className="text-xs text-green-700">Parceiras</p>
+                <p className="text-2xl font-bold text-green-700">{r.totalOrganizacoes}</p>
+              </div>
+              <div className="rounded-lg bg-zinc-50 px-3 py-2.5">
+                <p className="text-xs text-zinc-500">Ativas</p>
+                <p className="text-2xl font-bold text-zinc-700">{r.totalOrganizacoes}</p>
+              </div>
+            </div>
+            <Link
+              href="/organizacoes/novo"
+              className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 bg-sky-50 px-3 py-2 text-sm font-medium text-sky-700 hover:bg-sky-100 transition-colors"
+            >
+              <Building2 className="h-4 w-4" />
+              Nova organização
+            </Link>
+          </CardBody>
+        </Card>
+
+        {/* Núcleos */}
+        <Card>
+          <CardHeader className="flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-zinc-800">Núcleos</h3>
+            <Link
+              href="/nucleos"
+              className="inline-flex items-center rounded-lg border border-sky-200 bg-sky-50 px-2.5 py-1 text-xs font-semibold text-sky-700 hover:bg-sky-100 hover:border-sky-300 transition-colors shadow-2xs"
+            >
+              Ver todos
+            </Link>
+          </CardHeader>
+          <CardBody className="flex flex-col gap-3">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-lg bg-green-50 px-3 py-2.5">
+                <p className="text-xs text-green-700">Em operação</p>
+                <p className="text-2xl font-bold text-green-700">{r.nucleosAtivos}</p>
+              </div>
+              <div className="rounded-lg bg-zinc-50 px-3 py-2.5">
+                <p className="text-xs text-zinc-500">Total núcleos</p>
+                <p className="text-2xl font-bold text-zinc-700">{r.totalNucleos}</p>
+              </div>
+            </div>
+            <Link
+              href="/nucleos/novo"
+              className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 bg-sky-50 px-3 py-2 text-sm font-medium text-sky-700 hover:bg-sky-100 transition-colors"
+            >
+              <Building2 className="h-4 w-4" />
+              Novo núcleo
+            </Link>
+          </CardBody>
+        </Card>
       </div>
 
       {/* Ações rápidas — integradas numa linha, sem card wrapper desnecessário */}
