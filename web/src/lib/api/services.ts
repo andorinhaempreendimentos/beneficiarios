@@ -1299,7 +1299,7 @@ function montarResumo(
     .slice(0, 5);
 
   const nucleosAtivos = nucleos.filter((n) => n.em_funcionamento).length;
-  const funcionariosAtivos = funcionarios.filter((f) => f.status === "contratado").length;
+  const funcionariosAtivos = funcionarios.filter((f) => f.status === "ativo" || f.status === "contratado").length;
   const funcionariosLicenca = funcionarios.filter((f) =>
     f.status === "licenca_medica" || f.status === "licenca_maternidade" || f.status === "afastado_inss",
   ).length;
