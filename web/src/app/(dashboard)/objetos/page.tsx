@@ -22,6 +22,8 @@ import { objetosApi, type Paginated, type ObjetoApi } from "@/lib/api/services";
 import { statusObjetoLabel, statusObjetoTone } from "@/lib/status";
 import { formatarData } from "@/lib/utils";
 
+import { StatusObjetoBadge } from "@/components/objetos/StatusObjetoBadge";
+
 const PER_PAGE = 15;
 const EMPTY = { busca: "", status: "", tipoDuracao: "" };
 
@@ -134,9 +136,7 @@ export default function ObjetosPage() {
                               </span>
                             </div>
                           </div>
-                          <Badge tone={statusObjetoTone[o.status as keyof typeof statusObjetoTone] ?? "zinc"}>
-                            {statusObjetoLabel[o.status as keyof typeof statusObjetoLabel] ?? o.status}
-                          </Badge>
+                          <StatusObjetoBadge objetoId={o.id} statusAtual={o.status} />
                         </div>
 
                         <div className="text-xs text-zinc-500 border-t border-zinc-100 pt-2.5">
@@ -213,9 +213,7 @@ export default function ObjetosPage() {
                               : `${formatarData(o.dataInicio ?? "")} — ${formatarData(o.dataTermino ?? "")}`}
                           </td>
                           <td className="px-5 py-3">
-                            <Badge tone={statusObjetoTone[o.status as keyof typeof statusObjetoTone] ?? "zinc"}>
-                              {statusObjetoLabel[o.status as keyof typeof statusObjetoLabel] ?? o.status}
-                            </Badge>
+                            <StatusObjetoBadge objetoId={o.id} statusAtual={o.status} />
                           </td>
                           <td className="px-5 py-3 text-zinc-600">{o.termoDeFomento ?? "—"}</td>
                           <td className="px-5 py-3 text-zinc-600">{formatarData(o.criadoEm)}</td>

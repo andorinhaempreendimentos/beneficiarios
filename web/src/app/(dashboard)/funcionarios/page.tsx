@@ -22,6 +22,7 @@ import { useQuery } from "@/lib/hooks/useQuery";
 import { funcionariosApi, funcoesApi, type Paginated, type FuncionarioApi, type FuncaoApi } from "@/lib/api/services";
 import { statusFuncionarioLabel, statusFuncionarioTone } from "@/lib/status";
 import { formatarData } from "@/lib/utils";
+import { StatusFuncionarioBadge } from "@/components/funcionarios/StatusFuncionarioBadge";
 
 const PER_PAGE = 15;
 const EMPTY = { busca: "", funcao: "", status: "", admissaoDe: "", admissaoAte: "" };
@@ -157,9 +158,7 @@ export default function FuncionariosPage() {
                               </Link>
                             </div>
                           </div>
-                          <Badge tone={statusFuncionarioTone[f.status as keyof typeof statusFuncionarioTone] ?? "zinc"}>
-                            {statusFuncionarioLabel[f.status as keyof typeof statusFuncionarioLabel] ?? f.status}
-                          </Badge>
+                          <StatusFuncionarioBadge funcionarioId={f.id} statusAtual={f.status} />
                         </div>
 
                         <div className="grid grid-cols-2 gap-2 text-xs text-zinc-500 border-t border-zinc-100 pt-2.5">
@@ -223,9 +222,7 @@ export default function FuncionariosPage() {
                             <Link href={`/funcionarios/${f.id}`} className="font-medium text-sky-600 hover:underline">{f.nomeCompleto}</Link>
                           </td>
                           <td className="px-5 py-3">
-                            <Badge tone={statusFuncionarioTone[f.status as keyof typeof statusFuncionarioTone] ?? "zinc"}>
-                              {statusFuncionarioLabel[f.status as keyof typeof statusFuncionarioLabel] ?? f.status}
-                            </Badge>
+                            <StatusFuncionarioBadge funcionarioId={f.id} statusAtual={f.status} />
                           </td>
                           <td className="px-5 py-3 text-zinc-600">{f.funcao}</td>
                           <td className="px-5 py-3 text-zinc-600">{f.dataAdmissao ? formatarData(f.dataAdmissao) : "—"}</td>

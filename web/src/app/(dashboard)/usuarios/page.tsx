@@ -20,6 +20,7 @@ import {
 import { useQuery } from "@/lib/hooks/useQuery";
 import { usuariosApi, perfisApi, type Paginated, type UsuarioApi, type PerfilApi } from "@/lib/api/services";
 import { formatarData } from "@/lib/utils";
+import { StatusUsuarioBadge } from "@/components/usuarios/StatusUsuarioBadge";
 
 const PER_PAGE = 15;
 const EMPTY = { busca: "", perfilId: "", ativo: "" };
@@ -133,7 +134,7 @@ export default function UsuariosPage() {
                               <span className="text-xs text-zinc-400 block">{u.email}</span>
                             </div>
                           </div>
-                          <Badge tone={u.ativo ? "green" : "red"}>{u.ativo ? "Ativo" : "Inativo"}</Badge>
+                          <StatusUsuarioBadge usuarioId={u.id} statusAtual={u.ativo ? "ativo" : "inativo"} />
                         </div>
 
                         <div className="flex items-center justify-between text-xs text-zinc-500 border-t border-zinc-100 pt-2.5">
@@ -221,7 +222,7 @@ export default function UsuariosPage() {
                             </label>
                           </td>
                           <td className="px-5 py-3">
-                            <Badge tone={u.ativo ? "green" : "red"}>{u.ativo ? "Ativo" : "Inativo"}</Badge>
+                            <StatusUsuarioBadge usuarioId={u.id} statusAtual={u.ativo ? "ativo" : "inativo"} />
                           </td>
                           <td className="px-5 py-3 text-zinc-600">{formatarData(u.criadoEm)}</td>
                           <td className="px-5 py-3 text-right">

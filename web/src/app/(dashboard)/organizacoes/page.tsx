@@ -22,6 +22,8 @@ import { organizacoesApi, objetosApi, type Paginated, type OrganizacaoApi, type 
 import { statusOrganizacaoLabel, statusOrganizacaoTone } from "@/lib/status";
 import { formatarData } from "@/lib/utils";
 
+import { StatusOrganizacaoBadge } from "@/components/organizacoes/StatusOrganizacaoBadge";
+
 const PER_PAGE = 15;
 const EMPTY = { busca: "", tipo: "", status: "" };
 
@@ -137,9 +139,7 @@ export default function OrganizacoesPage() {
                               <span className="text-xs text-zinc-400 block">{o.tipo}</span>
                             </div>
                           </div>
-                          <Badge tone={statusOrganizacaoTone[o.status as keyof typeof statusOrganizacaoTone] ?? "zinc"}>
-                            {statusOrganizacaoLabel[o.status as keyof typeof statusOrganizacaoLabel] ?? o.status}
-                          </Badge>
+                          <StatusOrganizacaoBadge organizacaoId={o.id} statusAtual={o.status} />
                         </div>
 
                         <div className="grid grid-cols-2 gap-2 text-xs text-zinc-500 border-t border-zinc-100 pt-2.5">
@@ -211,9 +211,7 @@ export default function OrganizacoesPage() {
                           <td className="px-5 py-3 text-zinc-600">{o.cidade && o.estado ? `${o.cidade}/${o.estado}` : "—"}</td>
                           <td className="px-5 py-3 text-zinc-600">{objeto?.nome ?? "—"}</td>
                           <td className="px-5 py-3">
-                            <Badge tone={statusOrganizacaoTone[o.status as keyof typeof statusOrganizacaoTone] ?? "zinc"}>
-                              {statusOrganizacaoLabel[o.status as keyof typeof statusOrganizacaoLabel] ?? o.status}
-                            </Badge>
+                            <StatusOrganizacaoBadge organizacaoId={o.id} statusAtual={o.status} />
                           </td>
                           <td className="px-5 py-3 text-zinc-600">{formatarData(o.criadoEm)}</td>
                           <td className="px-5 py-3 text-right">

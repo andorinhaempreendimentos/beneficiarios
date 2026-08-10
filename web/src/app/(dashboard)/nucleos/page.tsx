@@ -17,7 +17,8 @@ import {
   BulkActionsBar,
   type ViewMode,
 } from "@/components/ui";
-import { useQuery } from "@/lib/hooks/useQuery";
+import { useTenantLabels } from "@/lib/context/TenantContext";
+import { StatusNucleoBadge } from "@/components/nucleos/StatusNucleoBadge";
 import { useDicionario } from "@/components/providers/DictionaryProvider";
 import {
   nucleosApi,
@@ -208,9 +209,7 @@ export default function NucleosPage() {
                               </div>
                             </div>
                           </div>
-                          <Badge tone={nucleo.emFuncionamento ? "green" : "red"}>
-                            {nucleo.emFuncionamento ? "Ativo" : "Inativo"}
-                          </Badge>
+                          <StatusNucleoBadge nucleoId={nucleo.id} emFuncionamento={nucleo.emFuncionamento} />
                         </div>
 
                         <div className="flex items-center gap-1.5 text-xs text-zinc-600 border-t border-zinc-100 pt-2.5">
@@ -295,9 +294,7 @@ export default function NucleosPage() {
                               {nucleo.organizacao?.nome || "—"}
                             </td>
                             <td className="px-5 py-3">
-                              <Badge tone={nucleo.emFuncionamento ? "green" : "red"}>
-                                {nucleo.emFuncionamento ? "Ativo" : "Inativo"}
-                              </Badge>
+                              <StatusNucleoBadge nucleoId={nucleo.id} emFuncionamento={nucleo.emFuncionamento} />
                             </td>
                             <td className="px-5 py-3 text-zinc-600 text-xs">{formatarData(nucleo.dataInicio)}</td>
                             <td className="px-5 py-3 text-right">
