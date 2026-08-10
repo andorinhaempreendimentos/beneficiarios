@@ -18,56 +18,26 @@ export function InstrucoesInscricaoBanner({
     ? [nucleo.endereco, nucleo.bairro, nucleo.cidade, nucleo.regiao].filter(Boolean).join(", ")
     : null;
 
-  let etapas = [
-    {
-      num: 1,
-      titulo: "Escolha a Atividade",
-      sub: "Selecione a modalidade esportiva no núcleo.",
-    },
-    {
-      num: 2,
-      titulo: "Escolha a Turma",
-      sub: "Selecione o horário ideal para as aulas.",
-    },
-    {
-      num: 3,
-      titulo: "Preencha os Dados",
-      sub: "Informe os dados do aluno e do responsável.",
-    },
-  ];
+  const ETAPA_ATIVIDADE = {
+    titulo: "Escolha a Atividade",
+    sub: "Selecione a modalidade esportiva desejada.",
+  };
+  const ETAPA_TURMA = {
+    titulo: "Escolha a Turma",
+    sub: "Selecione o horário e turno ideal.",
+  };
+  const ETAPA_DADOS = {
+    titulo: "Preencha os Dados",
+    sub: "Informe os dados do aluno e do responsável.",
+  };
 
-  if (tipoLink === "atividade") {
-    etapas = [
-      {
-        num: 1,
-        titulo: "Escolha a Turma",
-        sub: "Filtre por Manhã ou Tarde e selecione o horário.",
-      },
-      {
-        num: 2,
-        titulo: "Preencha os Dados",
-        sub: "Informe os dados do aluno e do responsável.",
-      },
-      {
-        num: 3,
-        titulo: "Garanta a Vaga",
-        sub: "Confirme a inscrição e receba o comprovante.",
-      },
-    ];
-  } else if (tipoLink === "turma") {
-    etapas = [
-      {
-        num: 1,
-        titulo: "Preencha os Dados",
-        sub: "Informe os dados do aluno (06 a 17 anos) e do responsável.",
-      },
-      {
-        num: 2,
-        titulo: "Garanta a Vaga",
-        sub: "Confirme o formulário e receba o comprovante.",
-      },
-    ];
-  }
+  const etapasMap = {
+    nucleo: [ETAPA_ATIVIDADE, ETAPA_TURMA, ETAPA_DADOS],
+    atividade: [ETAPA_TURMA, ETAPA_DADOS],
+    turma: [ETAPA_DADOS],
+  };
+
+  const etapas = etapasMap[tipoLink].map((e, i) => ({ ...e, num: i + 1 }));
 
   return (
     <div className="flex flex-col gap-4">
