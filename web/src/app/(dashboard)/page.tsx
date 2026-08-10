@@ -21,6 +21,24 @@ export default function DashboardPage() {
   return (
     <div className="flex flex-col gap-6">
 
+      {/* Barra de Ações Rápidas no Topo — Estilo Executivo Sério (Sem curvas) */}
+      <div className="flex flex-wrap items-center gap-px bg-zinc-200 border border-zinc-200 shadow-2xs overflow-hidden">
+        {[
+          { href: "/inscricoes", label: "Inscrições", icon: ClipboardList },
+          { href: "/atividades", label: "Atividades & Cursos", icon: Dumbbell },
+          { href: "/relatorios", label: "Relatórios & Relances", icon: FileBarChart },
+        ].map(({ href, label, icon: Icon }) => (
+          <Link
+            key={href}
+            href={href}
+            className="flex flex-1 items-center justify-center gap-2.5 bg-white px-4 py-3 text-xs font-semibold text-zinc-700 hover:bg-zinc-900 hover:text-white transition-colors"
+          >
+            <Icon className="h-4 w-4 shrink-0" />
+            <span>{label}</span>
+          </Link>
+        ))}
+      </div>
+
       {/* Métricas principais — 4 colunas, sem hero redundante */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard label="Beneficiários ativos" value={r.beneficiariosAtivos} icon={Users} tone="sky" />
@@ -229,32 +247,6 @@ export default function DashboardPage() {
             </Link>
           </CardBody>
         </Card>
-      </div>
-
-      {/* Ações rápidas — integradas numa linha, sem card wrapper desnecessário */}
-      <div className="grid grid-cols-3 gap-3 sm:grid-cols-6">
-        {[
-          { href: "/beneficiarios/novo", label: "Novo beneficiário", icon: UserPlus,      color: "sky"   },
-          { href: "/funcionarios/novo",  label: "Novo funcionário",  icon: UserCheck,     color: "green" },
-          { href: "/turmas/novo",        label: "Nova turma",        icon: Plus,          color: "sky"   },
-          { href: "/inscricoes",         label: "Inscrições",        icon: ClipboardList, color: "amber" },
-          { href: "/nucleos/novo",       label: "Novo núcleo",       icon: Building2,     color: "green" },
-          { href: "/relatorios",         label: "Relatórios",        icon: FileBarChart,  color: "zinc"  },
-        ].map(({ href, label, icon: Icon, color }) => (
-          <Link
-            key={href}
-            href={href}
-            className={`flex flex-col items-center gap-2 rounded-xl border px-3 py-4 text-center text-xs font-medium transition-colors ${
-              color === "sky"   ? "border-sky-100   bg-sky-50   text-sky-700   hover:bg-sky-100"   :
-              color === "green" ? "border-green-100 bg-green-50 text-green-700 hover:bg-green-100" :
-              color === "amber" ? "border-amber-100 bg-amber-50 text-amber-700 hover:bg-amber-100" :
-                                  "border-zinc-200  bg-white    text-zinc-600  hover:bg-zinc-50"
-            }`}
-          >
-            <Icon className="h-5 w-5" />
-            {label}
-          </Link>
-        ))}
       </div>
 
       {/* Distribuição por modalidade */}
