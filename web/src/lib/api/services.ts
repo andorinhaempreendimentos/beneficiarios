@@ -1132,6 +1132,15 @@ export const inscricoesApi = {
     if (error) throw error;
     return mapInscricao(data);
   },
+  async updateStatus(id: string, status: StatusInscricao): Promise<InscricaoApi> {
+    const sb = createClient();
+    if (status === 'aprovada') return this.aprovar(id);
+    if (status === 'cancelada') return this.cancelar(id);
+    if (status === 'recusada') return this.recusar(id);
+    const { data, error } = await sb.from('inscricoes').update({ status }).eq('id', id).select(INSCRICAO_SELECT).single();
+    if (error) throw error;
+    return mapInscricao(data);
+  },
 };
 
 // ── Usuários ─────────────────────────────────────────────────────────────

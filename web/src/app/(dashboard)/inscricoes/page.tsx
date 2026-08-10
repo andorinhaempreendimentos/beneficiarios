@@ -19,6 +19,7 @@ import { formatarData } from "@/lib/utils";
 import { statusInscricaoTone, statusInscricaoLabel } from "@/lib/status";
 import type { StatusInscricao } from "@/lib/types";
 import { ModalLinksInscricao } from "@/components/inscricoes/ModalLinksInscricao";
+import { StatusInscricaoBadge } from "@/components/inscricoes/StatusInscricaoBadge";
 
 const PER_PAGE = 20;
 
@@ -207,9 +208,7 @@ export default function InscricoesPage() {
                               <span className="text-xs text-zinc-400 block">{formatarData(i.criadoEm)}</span>
                             </div>
                           </div>
-                          <Badge tone={TONE[i.status as StatusInscricao] ?? "zinc"}>
-                            {LABEL[i.status as StatusInscricao] ?? i.status}
-                          </Badge>
+                          <StatusInscricaoBadge inscricaoId={i.id} statusAtual={i.status} onStatusChange={() => refetch()} />
                         </div>
 
                         <div className="text-xs text-zinc-600 border-t border-zinc-100 pt-2.5">
@@ -290,9 +289,7 @@ export default function InscricoesPage() {
                           </td>
                           <td className="px-5 py-3 text-zinc-500">{formatarData(i.criadoEm)}</td>
                           <td className="px-5 py-3">
-                            <Badge tone={TONE[i.status as StatusInscricao] ?? "zinc"}>
-                              {LABEL[i.status as StatusInscricao] ?? i.status}
-                            </Badge>
+                            <StatusInscricaoBadge inscricaoId={i.id} statusAtual={i.status} onStatusChange={() => refetch()} />
                           </td>
                           <td className="px-5 py-3 text-right">
                             {i.status === "pendente" && (
