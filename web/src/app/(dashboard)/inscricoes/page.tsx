@@ -14,7 +14,21 @@ import {
   type ViewMode,
 } from "@/components/ui";
 import { useQuery } from "@/lib/hooks/useQuery";
-import { inscricoesApi, nucleosApi, atividadesApi, turmasApi, type Paginated, type InscricaoApi, type NucleoApi, type AtividadeApi, type TurmaApi } from "@/lib/api/services";
+import {
+  inscricoesApi,
+  nucleosApi,
+  atividadesApi,
+  turmasApi,
+  organizacoesApi,
+  objetosApi,
+  type Paginated,
+  type InscricaoApi,
+  type NucleoApi,
+  type AtividadeApi,
+  type TurmaApi,
+  type OrganizacaoApi,
+  type ObjetoApi,
+} from "@/lib/api/services";
 import { formatarData } from "@/lib/utils";
 import { statusInscricaoTone, statusInscricaoLabel } from "@/lib/status";
 import type { StatusInscricao } from "@/lib/types";
@@ -55,6 +69,8 @@ export default function InscricoesPage() {
   const { data: nucleosData } = useQuery<Paginated<NucleoApi>>(() => nucleosApi.list({ emFuncionamento: "true", limit: 200 }), []);
   const { data: atividadesData } = useQuery<Paginated<AtividadeApi>>(() => atividadesApi.list({ limit: 200 }), []);
   const { data: turmasData } = useQuery<Paginated<TurmaApi>>(() => turmasApi.list({ limit: 200 }), []);
+  const { data: organizacoesData } = useQuery<Paginated<OrganizacaoApi>>(() => organizacoesApi.list({ limit: 200 }), []);
+  const { data: objetosData } = useQuery<Paginated<ObjetoApi>>(() => objetosApi.list({ limit: 200 }), []);
 
   const [actionId, setActionId] = useState<string | null>(null);
 
@@ -137,6 +153,8 @@ export default function InscricoesPage() {
         nucleos={rawNucleos}
         atividades={atividades}
         turmas={turmas}
+        organizacoes={organizacoesData?.data ?? []}
+        objetos={objetosData?.data ?? []}
       />
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">

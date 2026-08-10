@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { X, Copy, Check, ExternalLink, Search, Link2, Building2, Activity, Users, User, Clock } from "lucide-react";
+import { X, Copy, Check, ExternalLink, Search, Link2, Building2, Activity, Users, User, Building } from "lucide-react";
 import { Button } from "@/components/ui";
 import { useToast } from "@/components/providers/ToastProvider";
-import type { NucleoApi, AtividadeApi, TurmaApi } from "@/lib/api/services";
+import type { NucleoApi, AtividadeApi, TurmaApi, OrganizacaoApi, ObjetoApi } from "@/lib/api/services";
 
 interface ModalLinksInscricaoProps {
   open: boolean;
@@ -12,9 +12,11 @@ interface ModalLinksInscricaoProps {
   nucleos: NucleoApi[];
   atividades: AtividadeApi[];
   turmas: TurmaApi[];
+  organizacoes?: OrganizacaoApi[];
+  objetos?: ObjetoApi[];
 }
 
-type TabType = "todos" | "nucleos" | "atividades" | "turmas";
+type TabType = "todos" | "turmas" | "nucleos" | "atividades";
 
 export function ModalLinksInscricao({
   open,
@@ -22,6 +24,8 @@ export function ModalLinksInscricao({
   nucleos = [],
   atividades = [],
   turmas = [],
+  organizacoes = [],
+  objetos = [],
 }: ModalLinksInscricaoProps) {
   const { toast } = useToast();
   const [tab, setTab] = useState<TabType>("todos");
@@ -54,7 +58,14 @@ export function ModalLinksInscricao({
     return tokens.every((token) => alvoNorm.includes(token));
   }
 
+  // Mapa rápido de organizações e objetos por ID
+  const orgMap = new Map(organizacoes.map((o) => [o.id, o]));
+  const objMap = new Map(objetos.map((ob) => [ob.id, ob]));
+
   const listNucleos = nucleos.filter((n) => {
+    const org = n.organizacaoId ? orgMap.get(n.organizacaoId) : undefined;
+    const obj = org?.objetoId ? objMap.get(org.objetoId) : undefined;
+
     const alvo = [
       n.identificacao,
       n.nomeLocal,
@@ -63,6 +74,11 @@ export function ModalLinksInscricao({
       n.cidade,
       n.regiao,
       n.nomeResponsavel,
+      org?.nome,
+      org?.sigla,
+      org?.razaoSocial,
+      obj?.nome,
+      obj?.descricao,
     ].filter(Boolean).join(" ");
     return contemTodosOsTermos(alvo, busca);
   });
@@ -79,22 +95,37 @@ export function ModalLinksInscricao({
   const listTurmas = turmas.filter((t) => {
     const turnosSlot = (t.slots || []).map((s: any) => `${s.dia || ''} ${s.inicio || ''}h ${s.fim || ''}h ${s.inicio < 12 ? 'manhã manha' : 'tarde'}`).join(" ");
     const profs = (t.responsaveisNomes || []).join(" ");
+
+    // Busca organização do núcleo da turma
+    const orgId = t.nucleo?.organizacaoId;
+    const org = orgId ? orgMap.get(orgId) : undefined;
+    const obj = org?.objetoId ? objMap.get(org.objetoId) : undefined;
+
     const alvo = [
       t.nome,
       t.atividade?.nome,
+      t.atividade?.descricao,
       t.nucleo?.identificacao,
       t.nucleo?.nomeLocal,
       t.nucleo?.cidade,
       t.nucleo?.bairro,
+      t.nucleo?.endereco,
+      t.nucleo?.nomeResponsavel,
       profs,
       turnosSlot,
+      org?.nome,
+      org?.sigla,
+      org?.razaoSocial,
+      obj?.nome,
+      obj?.descricao,
+      t.idadeMinima ? `${t.idadeMinima} anos` : "",
+      t.idadeMaxima ? `${t.idadeMaxima} anos` : "",
       t.nome.toLowerCase().includes("manhã") || t.nome.toLowerCase().includes("manha") ? "manhã manha" : "",
       t.nome.toLowerCase().includes("tarde") ? "tarde" : "",
     ].filter(Boolean).join(" ");
     return contemTodosOsTermos(alvo, busca);
   });
 
-  const temBusca = busca.trim().length > 0;
   const totalEncontrados = listTurmas.length + listNucleos.length + listAtividades.length;
 
   return (
@@ -109,7 +140,7 @@ export function ModalLinksInscricao({
             <div>
               <h2 className="text-base font-extrabold text-zinc-900">Links de Inscrição Pública</h2>
               <p className="text-xs text-zinc-500">
-                Pesquise por nome, turno (ex: manhã), professor ou local para copiar o link.
+                Pesquise por turma, professor, organização, objeto, núcleo, bairro ou turno.
               </p>
             </div>
           </div>
@@ -169,11 +200,11 @@ export function ModalLinksInscricao({
             </button>
           </div>
 
-          <div className="relative w-full sm:w-72">
+          <div className="relative w-full sm:w-80">
             <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-zinc-400" />
             <input
               type="text"
-              placeholder="Ex: manhã felipe, futsal, centro..."
+              placeholder="Ex: manhã felipe andorinha, futsal..."
               value={busca}
               onChange={(e) => setBusca(e.target.value)}
               className="w-full pl-8 pr-3 py-1.5 text-xs rounded-xl border border-zinc-200 bg-zinc-50 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-sky-500/20 font-medium"
@@ -203,6 +234,10 @@ export function ModalLinksInscricao({
                       const url = `${baseUrl}/inscricao/turma/${t.id}`;
                       const isCopied = copiedId === t.id;
                       const profsText = (t.responsaveisNomes || []).join(", ");
+                      const orgId = t.nucleo?.organizacaoId;
+                      const org = orgId ? orgMap.get(orgId) : undefined;
+                      const obj = org?.objetoId ? objMap.get(org.objetoId) : undefined;
+
                       return (
                         <div key={t.id} className="py-3 flex items-center justify-between gap-4 first:pt-0 last:pb-0">
                           <div>
@@ -216,6 +251,16 @@ export function ModalLinksInscricao({
                               {t.nucleo?.identificacao && (
                                 <span className="text-[10px] bg-zinc-100 text-zinc-600 px-2 py-0.5 rounded-full font-medium">
                                   {t.nucleo.identificacao}
+                                </span>
+                              )}
+                              {org?.nome && (
+                                <span className="text-[10px] bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full font-semibold">
+                                  {org.nome}
+                                </span>
+                              )}
+                              {obj?.nome && (
+                                <span className="text-[10px] bg-purple-50 text-purple-700 px-2 py-0.5 rounded-full font-semibold">
+                                  {obj.nome}
                                 </span>
                               )}
                             </div>
@@ -270,10 +315,19 @@ export function ModalLinksInscricao({
                     {listNucleos.map((n) => {
                       const url = `${baseUrl}/inscricao/nucleo/${n.id}`;
                       const isCopied = copiedId === n.id;
+                      const org = n.organizacaoId ? orgMap.get(n.organizacaoId) : undefined;
+
                       return (
                         <div key={n.id} className="py-3 flex items-center justify-between gap-4 first:pt-0 last:pb-0">
                           <div>
-                            <span className="font-bold text-sm text-zinc-900 block">{n.identificacao}</span>
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="font-bold text-sm text-zinc-900">{n.identificacao}</span>
+                              {org?.nome && (
+                                <span className="text-[10px] bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full font-semibold">
+                                  {org.nome}
+                                </span>
+                              )}
+                            </div>
                             <span className="text-xs text-zinc-500 block">{[n.bairro, n.cidade].filter(Boolean).join(" · ")}</span>
                             <span className="text-[11px] font-mono text-zinc-400 block truncate max-w-md mt-0.5">{url}</span>
                           </div>
