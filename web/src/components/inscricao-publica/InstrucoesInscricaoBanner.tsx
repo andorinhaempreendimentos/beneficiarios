@@ -15,8 +15,8 @@ export function InstrucoesInscricaoBanner({ nucleo, atividade, etapaAtual = 1 }:
   const etapas = [
     {
       num: 1,
-      titulo: "Escolha a Turma",
-      sub: "Filtre por Manhã ou Tarde e selecione o horário ideal.",
+      titulo: "Escolha a Modalidade / Turma",
+      sub: "Selecione a atividade esportiva e o horário ideal.",
     },
     {
       num: 2,
