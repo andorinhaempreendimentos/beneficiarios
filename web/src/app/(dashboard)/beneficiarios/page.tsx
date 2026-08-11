@@ -256,24 +256,19 @@ export default function BeneficiariosPage() {
                         )}
                       </div>
 
-                      <div className="flex items-center justify-between pt-2 border-t border-zinc-100/80 text-xs">
-                        <Link href={`/beneficiarios/${b.id}`} className="font-semibold text-sky-600 hover:underline">
-                          Acessar detalhes
+                      <div className="flex items-center justify-end gap-3 pt-2 border-t border-zinc-100/80 text-xs">
+                        <Link href={`/beneficiarios/${b.id}/editar`} className="font-medium text-zinc-700 hover:text-sky-600 hover:underline">
+                          Editar
                         </Link>
-                        <div className="flex items-center gap-2 text-zinc-500">
-                          <Link href={`/beneficiarios/${b.id}/editar`} className="font-medium hover:text-zinc-900 hover:underline">
-                            Editar
-                          </Link>
-                          <span className="text-zinc-200">|</span>
-                          <button
-                            type="button"
-                            onClick={() => setBeneficiarioParaExcluir(b)}
-                            className="flex items-center gap-1 font-medium text-red-600 hover:text-red-700 hover:underline cursor-pointer"
-                          >
-                            <Trash2 className="h-3 w-3" />
-                            <span>Excluir</span>
-                          </button>
-                        </div>
+                        <span className="text-zinc-200">|</span>
+                        <button
+                          type="button"
+                          onClick={() => setBeneficiarioParaExcluir(b)}
+                          className="flex items-center gap-1 font-medium text-red-600 hover:text-red-700 hover:underline cursor-pointer"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                          <span>Excluir</span>
+                        </button>
                       </div>
                     </div>
                   ))
@@ -347,14 +342,12 @@ export default function BeneficiariosPage() {
                         </td>
                         <td className="px-5 py-3 text-right">
                           <div className="flex items-center justify-end gap-2 text-xs">
-                            <Link href={`/beneficiarios/${b.id}`} className="text-sky-600 hover:underline">Acessar</Link>
-                            <span className="text-zinc-300">|</span>
-                            <Link href={`/beneficiarios/${b.id}/editar`} className="text-zinc-500 hover:underline">Editar</Link>
+                            <Link href={`/beneficiarios/${b.id}/editar`} className="text-zinc-600 font-medium hover:underline">Editar</Link>
                             <span className="text-zinc-300">|</span>
                             <button
                               type="button"
                               onClick={() => setBeneficiarioParaExcluir(b)}
-                              className="text-red-600 hover:underline cursor-pointer"
+                              className="text-red-600 font-medium hover:underline cursor-pointer"
                             >
                               Excluir
                             </button>
