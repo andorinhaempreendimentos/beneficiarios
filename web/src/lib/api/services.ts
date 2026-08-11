@@ -1400,7 +1400,10 @@ function montarResumo(
   const totalVagas = turmas.reduce((acc, t) => acc + (t.vagas_totais || 0), 0);
   const totalOcupadas = turmas.reduce((acc, t) => acc + (ocupacaoPorTurma.get(t.id) ?? 0), 0);
   const vagasLivres = Math.max(0, totalVagas - totalOcupadas);
-  const ocupacaoGlobal = totalVagas > 0 ? Math.round((totalOcupadas / totalVagas) * 100) : 0;
+  const calcOcupacao = totalVagas > 0 ? (totalOcupadas / totalVagas) * 100 : 0;
+  const ocupacaoGlobal = totalOcupadas > 0 && calcOcupacao < 1
+    ? Number(calcOcupacao.toFixed(1))
+    : Math.round(calcOcupacao);
 
   const distribuicaoPorModalidade = atividades
     .map((a) => ({
