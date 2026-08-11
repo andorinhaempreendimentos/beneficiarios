@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import Link from "next/link";
 import { Download } from "lucide-react";
 import {
@@ -19,11 +19,13 @@ import {
 } from "@/components/ui";
 import { useQuery } from "@/lib/hooks/useQuery";
 import { turmasApi, nucleosApi, atividadesApi, type Paginated, type TurmaApi, type NucleoApi, type AtividadeApi } from "@/lib/api/services";
+import { useLocationFilter } from "@/components/providers/LocationFilterProvider";
 
 const PER_PAGE = 15;
 const EMPTY = { busca: "", nucleoId: "", atividadeId: "", exclusiva: "" };
 
 export default function TurmasPage() {
+  const { estado, cidade } = useLocationFilter();
   const [filtros, setFiltros] = useState(EMPTY);
   const [ativos, setAtivos] = useState(EMPTY);
   const [pagina, setPagina] = useState(1);
@@ -37,11 +39,30 @@ export default function TurmasPage() {
   const { data: nucleosData } = useQuery<Paginated<NucleoApi>>(() => nucleosApi.list({ limit: 200 }), []);
   const { data: atividadesData } = useQuery<Paginated<AtividadeApi>>(() => atividadesApi.list({ limit: 200 }), []);
 
-  const resultado = pageData?.data ?? [];
-  const total = pageData?.total ?? 0;
-  const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
   const nucleos = nucleosData?.data ?? [];
   const atividades = atividadesData?.data ?? [];
+  const rawResultado = pageData?.data ?? [];
+
+  const resultado = useMemo(() => {
+    return rawResultado.filter((t: TurmaApi) => {
+      const nucleoEncontrado = nucleos.find((n) => n.id === t.nucleoId);
+      let estadoUf = (nucleoEncontrado as any)?.estado as string | undefined;
+      const cidadeNome = nucleoEncontrado?.cidade || "Palmas";
+
+      if (!estadoUf) {
+        if (cidadeNome.toLowerCase() === "palmas") estadoUf = "TO";
+        else if (cidadeNome.toLowerCase() === "recife") estadoUf = "PE";
+        else estadoUf = "TO";
+      }
+
+      const bateEstado = estado === "Todos" || estadoUf === estado;
+      const bateCidade = cidade === "Todas" || cidadeNome === cidade;
+      return bateEstado && bateCidade;
+    });
+  }, [rawResultado, estado, cidade, nucleos]);
+
+  const total = pageData?.total ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
 
   const aplicar = useCallback(() => { setPagina(1); setAtivos(filtros); }, [filtros]);
   const limpar = useCallback(() => { setFiltros(EMPTY); setAtivos(EMPTY); setPagina(1); }, []);

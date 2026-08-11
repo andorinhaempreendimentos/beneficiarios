@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import Link from "next/link";
 import { UserCheck, UserX, Download } from "lucide-react";
 import {
@@ -19,15 +19,17 @@ import {
   type ViewMode,
 } from "@/components/ui";
 import { useQuery } from "@/lib/hooks/useQuery";
-import { funcionariosApi, funcoesApi, type Paginated, type FuncionarioApi, type FuncaoApi } from "@/lib/api/services";
+import { funcionariosApi, funcoesApi, nucleosApi, type Paginated, type FuncionarioApi, type FuncaoApi, type NucleoApi } from "@/lib/api/services";
 import { statusFuncionarioLabel, statusFuncionarioTone } from "@/lib/status";
 import { formatarData } from "@/lib/utils";
 import { StatusFuncionarioBadge } from "@/components/funcionarios/StatusFuncionarioBadge";
+import { useLocationFilter } from "@/components/providers/LocationFilterProvider";
 
 const PER_PAGE = 15;
 const EMPTY = { busca: "", funcao: "", status: "", admissaoDe: "", admissaoAte: "" };
 
 export default function FuncionariosPage() {
+  const { estado, cidade } = useLocationFilter();
   const [filtros, setFiltros] = useState(EMPTY);
   const [pagina, setPagina] = useState(1);
   const [viewMode, setViewMode] = useState<ViewMode>("cards");
@@ -42,8 +44,29 @@ export default function FuncionariosPage() {
   );
   const { data: statsAdm } = useQuery<Paginated<FuncionarioApi>>(() => funcionariosApi.list({ status: "contratado,voluntario", limit: 1 }), []);
   const { data: statsDes } = useQuery<Paginated<FuncionarioApi>>(() => funcionariosApi.list({ status: "demitido", limit: 1 }), []);
+  const { data: nucleosData } = useQuery<Paginated<NucleoApi>>(() => nucleosApi.list({ limit: 200 }), []);
 
-  const resultado = pageData?.data ?? [];
+  const nucleos = nucleosData?.data ?? [];
+  const rawResultado = pageData?.data ?? [];
+
+  const resultado = useMemo(() => {
+    return rawResultado.filter((f: FuncionarioApi) => {
+      const nucleoEncontrado = nucleos.find((n) => n.id === f.nucleoId);
+      let estadoUf = (nucleoEncontrado as any)?.estado as string | undefined;
+      const cidadeNome = nucleoEncontrado?.cidade || "Palmas";
+
+      if (!estadoUf) {
+        if (cidadeNome.toLowerCase() === "palmas") estadoUf = "TO";
+        else if (cidadeNome.toLowerCase() === "recife") estadoUf = "PE";
+        else estadoUf = "TO";
+      }
+
+      const bateEstado = estado === "Todos" || estadoUf === estado;
+      const bateCidade = cidade === "Todas" || cidadeNome === cidade;
+      return bateEstado && bateCidade;
+    });
+  }, [rawResultado, estado, cidade, nucleos]);
+  
   const total = pageData?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
 

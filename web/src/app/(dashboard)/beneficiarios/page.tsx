@@ -34,10 +34,14 @@ import { calcularIdade } from "@/lib/utils";
 
 import { StatusBeneficiarioBadge } from "@/components/beneficiarios/StatusBeneficiarioBadge";
 
+import { useLocationFilter } from "@/components/providers/LocationFilterProvider";
+import { useMemo } from "react";
+
 const PER_PAGE = 15;
 const EMPTY = { nome: "", matricula: "", cpf: "", status: "", atividadeId: "", tipoMatricula: "", nucleoId: "", idadeMin: "", idadeMax: "" };
 
 export default function BeneficiariosPage() {
+  const { estado, cidade } = useLocationFilter();
   const [filtros, setFiltros] = useState(EMPTY);
   const [ativos, setAtivos] = useState(EMPTY);
   const [pagina, setPagina] = useState(1);
@@ -57,7 +61,33 @@ export default function BeneficiariosPage() {
 
   const nucleos = nucleosData?.data ?? [];
   const atividades = atividadesData?.data ?? [];
-  const resultado = pageData?.data ?? [];
+  const rawResultado = pageData?.data ?? [];
+
+  const resultado = useMemo(() => {
+    return rawResultado.filter((b) => {
+      let estadoUf = b.estado;
+      let cidadeNome = b.cidade || b.nucleoNome || b.turmasInfo?.[0]?.nucleoNome || "Palmas";
+
+      const nucleoEncontrado = nucleos.find(
+        (n) => n.id === b.nucleoId || n.identificacao === b.nucleoNome || n.identificacao === b.turmasInfo?.[0]?.nucleoNome
+      );
+
+      if (nucleoEncontrado) {
+        cidadeNome = nucleoEncontrado.cidade || cidadeNome;
+        if (!estadoUf) {
+          if (cidadeNome.toLowerCase() === "palmas") estadoUf = "TO";
+          else if (cidadeNome.toLowerCase() === "recife") estadoUf = "PE";
+          else estadoUf = "TO";
+        }
+      } else if (!estadoUf) {
+        estadoUf = "TO";
+      }
+
+      const bateEstado = estado === "Todos" || estadoUf === estado;
+      const bateCidade = cidade === "Todas" || cidadeNome === cidade;
+      return bateEstado && bateCidade;
+    });
+  }, [rawResultado, estado, cidade, nucleos]);
   const total = pageData?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
 

@@ -33,6 +33,9 @@ import {
 } from "@/lib/api/services";
 import { formatarData } from "@/lib/utils";
 
+import { useLocationFilter } from "@/components/providers/LocationFilterProvider";
+import { useMemo } from "react";
+
 const PER_PAGE = 15;
 const EMPTY = {
   busca: "",
@@ -45,6 +48,7 @@ const EMPTY = {
 };
 
 export default function NucleosPage() {
+  const { estado, cidade } = useLocationFilter();
   const { t } = useDicionario();
   const [filtros, setFiltros] = useState(EMPTY);
   const [pagina, setPagina] = useState(1);
@@ -64,7 +68,22 @@ export default function NucleosPage() {
     [filtros, pagina],
   );
 
-  const resultado = pageData?.data ?? [];
+  const rawResultado = pageData?.data ?? [];
+
+  const resultado = useMemo(() => {
+    return rawResultado.filter((n) => {
+      let estadoUf = (n as any).estado as string | undefined;
+      if (!estadoUf) {
+        if (n.cidade?.toLowerCase() === "palmas") estadoUf = "TO";
+        else if (n.cidade?.toLowerCase() === "recife") estadoUf = "PE";
+        else estadoUf = "TO";
+      }
+      const cidadeNome = n.cidade || "Palmas";
+      const bateEstado = estado === "Todos" || estadoUf === estado;
+      const bateCidade = cidade === "Todas" || cidadeNome === cidade;
+      return bateEstado && bateCidade;
+    });
+  }, [rawResultado, estado, cidade]);
   const total = pageData?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
 

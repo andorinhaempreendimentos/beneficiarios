@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { CheckCircle2, XCircle, Download, Link2 } from "lucide-react";
 import {
   Badge,
@@ -35,6 +35,8 @@ import type { StatusInscricao } from "@/lib/types";
 import { ModalLinksInscricao } from "@/components/inscricoes/ModalLinksInscricao";
 import { StatusInscricaoBadge } from "@/components/inscricoes/StatusInscricaoBadge";
 
+import { useLocationFilter } from "@/components/providers/LocationFilterProvider";
+
 const PER_PAGE = 20;
 
 const TONE = statusInscricaoTone;
@@ -51,6 +53,7 @@ const FILTROS: { value: Filtro; label: string }[] = [
 ];
 
 export default function InscricoesPage() {
+  const { estado, cidade } = useLocationFilter();
   const [filtro, setFiltro] = useState<Filtro>("todas");
   const [pagina, setPagina] = useState(1);
   const [viewMode, setViewMode] = useState<ViewMode>("cards");
@@ -83,15 +86,36 @@ export default function InscricoesPage() {
     } finally { setActionId(null); }
   }
 
-  const lista = (pageData?.data ?? []).slice().sort(
-    (a, b) => STATUS_ORDER.indexOf(a.status as StatusInscricao) - STATUS_ORDER.indexOf(b.status as StatusInscricao),
-  );
-  const total = pageData?.total ?? 0;
-  const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
-
   const rawNucleos = nucleosData?.data ?? [];
   const rawAtividades = atividadesData?.data ?? [];
   const rawTurmas = turmasData?.data ?? [];
+
+  const rawLista = (pageData?.data ?? []).slice().sort(
+    (a, b) => STATUS_ORDER.indexOf(a.status as StatusInscricao) - STATUS_ORDER.indexOf(b.status as StatusInscricao),
+  );
+
+  const lista = useMemo(() => {
+    return rawLista.filter((i: InscricaoApi) => {
+      const turma = rawTurmas.find((t) => t.id === i.turmaId) ?? i.turma;
+      const nucleo = rawNucleos.find((n) => n.id === (turma?.nucleoId || (i as any).nucleoId));
+
+      let estadoUf = (nucleo as any)?.estado as string | undefined;
+      const cidadeNome = nucleo?.cidade || "Palmas";
+
+      if (!estadoUf) {
+        if (cidadeNome.toLowerCase() === "palmas") estadoUf = "TO";
+        else if (cidadeNome.toLowerCase() === "recife") estadoUf = "PE";
+        else estadoUf = "TO";
+      }
+
+      const bateEstado = estado === "Todos" || estadoUf === estado;
+      const bateCidade = cidade === "Todas" || cidadeNome === cidade;
+      return bateEstado && bateCidade;
+    });
+  }, [rawLista, estado, cidade, rawTurmas, rawNucleos]);
+
+  const total = pageData?.total ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
 
   const atividades = rawAtividades.filter((a) => a.disponivelPreInscricao !== false);
   const atividadesPublicasIds = new Set(atividades.map((a) => a.id));
