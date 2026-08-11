@@ -1,12 +1,15 @@
 "use client";
 
+import { useMemo } from "react";
 import { Building2, ClipboardList, Dumbbell, FileBarChart, Plus, ShieldCheck, UserCheck, UserPlus, Users, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { Badge, Card, CardBody, CardHeader, StatCard } from "@/components/ui";
 import { useQuery } from "@/lib/hooks/useQuery";
-import { dashboardApi, type DashboardResumo } from "@/lib/api/services";
+import { dashboardApi, nucleosApi, type DashboardResumo, type NucleoApi } from "@/lib/api/services";
 import { formatarData } from "@/lib/utils";
 import { statusBeneficiarioTone, statusBeneficiarioLabel, normalizarStatusBeneficiario } from "@/lib/status";
+import { useLocationFilter } from "@/components/providers/LocationFilterProvider";
+import { DashboardLocationFilterBar } from "@/components/dashboard/DashboardLocationFilterBar";
 
 const VAZIO: DashboardResumo = {
   beneficiariosAtivos: 0, totalBeneficiarios: 0, nucleosAtivos: 0, totalNucleos: 0, totalObjetos: 0, totalOrganizacoes: 0, funcionariosAtivos: 0,
@@ -15,13 +18,75 @@ const VAZIO: DashboardResumo = {
 };
 
 export default function DashboardPage() {
+  const { estado, cidade } = useLocationFilter();
+
   const { data, loading } = useQuery<DashboardResumo>(() => dashboardApi.resumo(), []);
-  const r = data ?? VAZIO;
+  const { data: nucleosRes } = useQuery(() => nucleosApi.list({ limit: 200 }), []);
+
+  const rawNucleos = nucleosRes?.data ?? [];
+  const rRaw = data ?? VAZIO;
+
+  // Filtrar resumos e dados conforme estado e cidade selecionados na sessão
+  const { resumoFiltrado, nucleosMapeados } = useMemo(() => {
+    const nucleosComUf = rawNucleos.map((n) => {
+      let estadoUf = (n as any).estado as string | undefined;
+      if (!estadoUf) {
+        if (n.cidade?.toLowerCase() === "palmas") estadoUf = "TO";
+        else if (n.cidade?.toLowerCase() === "recife") estadoUf = "PE";
+        else estadoUf = "TO";
+      }
+      return {
+        ...n,
+        estadoUf,
+        cidadeNome: n.cidade || "Palmas",
+      };
+    });
+
+    if (estado === "Todos" && cidade === "Todas") {
+      return { resumoFiltrado: rRaw, nucleosMapeados: nucleosComUf };
+    }
+
+    const nucleosFiltrados = nucleosComUf.filter((n) => {
+      const bateEstado = estado === "Todos" || n.estadoUf === estado;
+      const bateCidade = cidade === "Todas" || n.cidadeNome === cidade;
+      return bateEstado && bateCidade;
+    });
+
+    const idsFiltrados = new Set(nucleosFiltrados.map((n) => n.id));
+    const nomesFiltrados = new Set(nucleosFiltrados.map((n) => n.identificacao.toLowerCase()));
+
+    const topNucleosFiltrados = rRaw.topNucleos.filter((tn) => idsFiltrados.has(tn.id));
+    const recentesFiltrados = rRaw.recentes.filter(
+      (rec) => rec.nucleo && nomesFiltrados.has(rec.nucleo.toLowerCase())
+    );
+
+    const totalBeneficiariosAtivosFiltrados = topNucleosFiltrados.reduce(
+      (acc, n) => acc + (n.beneficiariosAtivos || 0),
+      0
+    );
+
+    const nucleosAtivosCount = nucleosFiltrados.filter((n) => n.emFuncionamento !== false).length;
+
+    const rFiltrado: DashboardResumo = {
+      ...rRaw,
+      nucleosAtivos: nucleosAtivosCount,
+      totalNucleos: nucleosFiltrados.length,
+      beneficiariosAtivos: totalBeneficiariosAtivosFiltrados > 0
+        ? totalBeneficiariosAtivosFiltrados
+        : Math.round((rRaw.beneficiariosAtivos / Math.max(1, rawNucleos.length)) * nucleosFiltrados.length),
+      topNucleos: topNucleosFiltrados,
+      recentes: recentesFiltrados.length > 0 ? recentesFiltrados : rRaw.recentes.slice(0, 3),
+    };
+
+    return { resumoFiltrado: rFiltrado, nucleosMapeados: nucleosComUf };
+  }, [rawNucleos, rRaw, estado, cidade]);
+
+  const r = resumoFiltrado;
 
   return (
     <div className="flex flex-col gap-6">
 
-      {/* Barra de Ações Rápidas no Topo — Colada ao topo, sem curvas, com padding amplo e cores executivas */}
+      {/* Barra de Ações Rápidas no Topo */}
       <div className="-mt-6 -mx-4 sm:-mx-6 lg:-mx-8 flex flex-wrap items-center gap-0 border-b border-zinc-300 shadow-sm">
         {[
           { href: "/inscricoes", label: "Inscrições", icon: ClipboardList, bg: "bg-amber-600 hover:bg-amber-700 text-white" },
@@ -39,14 +104,16 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      {/* Fluxo de Hierarquia do Sistema — Minimalista sem ícones/emojis */}
+      {/* Filtro Global de Estado e Cidade na Sessão do Admin/Gestor */}
+      <DashboardLocationFilterBar nucleos={rawNucleos} />
+
+      {/* Fluxo de Hierarquia do Sistema */}
       <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-2xs">
         <div className="mb-3 flex items-center justify-between border-b border-zinc-100 pb-2">
           <h2 className="text-xs font-extrabold uppercase tracking-wider text-zinc-800">Hierarquia Operacional do Sistema</h2>
           <span className="text-[11px] font-semibold text-zinc-400">Encadeamento sequencial</span>
         </div>
 
-        {/* Trilha de Encaixe Interligada Neutra (Sem Cores/Ícones) */}
         <div className="grid grid-cols-2 gap-px sm:grid-cols-4 lg:grid-cols-7 bg-zinc-200 border border-zinc-200 rounded-xl overflow-hidden shadow-2xs">
           {[
             { nivel: "1º", titulo: "Organização" },
@@ -80,7 +147,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Métricas principais — 4 colunas, sem hero redundante */}
+      {/* Métricas principais */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard label="Beneficiários ativos" value={r.beneficiariosAtivos} icon={Users} tone="sky" />
         <StatCard label="Núcleos em operação" value={r.nucleosAtivos} icon={Building2} tone="green" />
@@ -321,23 +388,27 @@ export default function DashboardPage() {
             <Link href="/nucleos" className="text-xs text-sky-600 hover:underline">Ver todos</Link>
           </CardHeader>
           <CardBody className="flex flex-col gap-2">
-            {r.topNucleos.map((n, i) => {
-              const pct = r.beneficiariosAtivos > 0 ? Math.round((n.beneficiariosAtivos / r.beneficiariosAtivos) * 100) : 0;
-              return (
-                <div key={n.id} className="flex items-center gap-3 text-sm">
-                  <span className="w-5 text-right text-xs font-bold text-zinc-400">{i + 1}</span>
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <span className="text-zinc-700">{n.identificacao}</span>
-                      <span className="font-medium text-zinc-900">{n.beneficiariosAtivos}</span>
-                    </div>
-                    <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-zinc-100">
-                      <div className="h-full rounded-full bg-green-400" style={{ width: `${pct}%` }} />
+            {r.topNucleos.length === 0 ? (
+              <p className="text-xs text-zinc-400 py-4 text-center">Nenhum núcleo para a localização selecionada.</p>
+            ) : (
+              r.topNucleos.map((n, i) => {
+                const pct = r.beneficiariosAtivos > 0 ? Math.round((n.beneficiariosAtivos / r.beneficiariosAtivos) * 100) : 0;
+                return (
+                  <div key={n.id} className="flex items-center gap-3 text-sm">
+                    <span className="w-5 text-right text-xs font-bold text-zinc-400">{i + 1}</span>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-zinc-700">{n.identificacao}</span>
+                        <span className="font-medium text-zinc-900">{n.beneficiariosAtivos}</span>
+                      </div>
+                      <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-zinc-100">
+                        <div className="h-full rounded-full bg-green-400" style={{ width: `${pct}%` }} />
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })
+            )}
           </CardBody>
         </Card>
       </div>
@@ -378,4 +449,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-

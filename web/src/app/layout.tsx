@@ -4,6 +4,7 @@ import { AuthProvider } from "@/components/providers/AuthProvider";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { DictionaryProvider } from "@/components/providers/DictionaryProvider";
 import { ToastProvider } from "@/components/providers/ToastProvider";
+import { LocationFilterProvider } from "@/components/providers/LocationFilterProvider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -39,9 +40,11 @@ export default function RootLayout({
       <body className="h-full">
         <ThemeProvider>
           <AuthProvider>
-            <DictionaryProvider>
-              <ToastProvider>{children}</ToastProvider>
-            </DictionaryProvider>
+            <LocationFilterProvider>
+              <DictionaryProvider>
+                <ToastProvider>{children}</ToastProvider>
+              </DictionaryProvider>
+            </LocationFilterProvider>
           </AuthProvider>
         </ThemeProvider>
       </body>
