@@ -43,7 +43,17 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
   const [erro, setErro] = useState<string | null>(null);
   const [sexo, setSexo] = useState(b?.sexo || "Masculino");
   const [pcd, setPcd] = useState(b?.pcd ?? false);
-  const [vinculos, setVinculos] = useState<VinculoTurma[]>(b?.turmas ?? []);
+  const [vinculos, setVinculos] = useState<VinculoTurma[]>(() => {
+    if (b?.turmas && b.turmas.length > 0) return b.turmas;
+    if ((b as any)?.turmasInfo && (b as any).turmasInfo.length > 0) {
+      return (b as any).turmasInfo.map((ti: any) => ({
+        turmaId: ti.turmaId || "",
+        status: "Ativo",
+        dataRegistro: "",
+      }));
+    }
+    return [];
+  });
   const [anexos, setAnexos] = useState<Anexo[]>(b?.anexos ?? []);
   const [parQ, setParQ] = useState<PerguntaParQ[]>(
     b?.parQ?.length ? b.parQ : PERGUNTAS_PARQ.map((p) => ({ pergunta: p }))
@@ -56,7 +66,13 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
   const [cidade, setCidade] = useState(b?.cidade ?? "");
   const [estado, setEstado] = useState(b?.estado ?? "");
   const [buscandoCep, setBuscandoCep] = useState(false);
-  const [nucleoId, setNucleoId] = useState(b?.nucleoId ?? "");
+
+  const initialNucleoId = b?.nucleoId ||
+    (b as any)?.turmasInfo?.[0]?.nucleoId ||
+    (b as any)?.turmas?.[0]?.nucleoId ||
+    "";
+
+  const [nucleoId, setNucleoId] = useState(initialNucleoId);
 
   const nucleoSelectRef = useRef<HTMLSelectElement>(null);
   const [alertaNucleoDestaque, setAlertaNucleoDestaque] = useState(false);
