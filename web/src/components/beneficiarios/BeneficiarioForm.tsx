@@ -492,7 +492,83 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
         </div>
       </FormSection>
 
+      <FormSection title="5. Atribuição de Turmas Esportivas" defaultOpen={true}>
+        <div className="flex flex-col gap-4">
+          <p className="text-xs text-zinc-500">
+            Selecione as turmas nas quais o beneficiário estará matriculado. Ao escolher uma turma, o núcleo esportivo correspondente é associado automaticamente.
+          </p>
 
+          {vinculos.length === 0 ? (
+            <div className="rounded-xl border border-dashed border-zinc-300 p-4 text-center text-xs text-zinc-500">
+              Nenhuma turma atribuída a este beneficiário.
+            </div>
+          ) : (
+            vinculos.map((v, index) => {
+              const turmaAtual = turmas.find((t) => t.id === v.turmaId);
+
+              // Filtrar turmas pelo Núcleo selecionado no formulário (se houver)
+              const turmasFiltradas = nucleoId
+                ? turmas.filter((t) => t.nucleoId === nucleoId)
+                : turmas;
+
+              return (
+                <div key={index} className="grid grid-cols-1 gap-4 rounded-xl border border-zinc-200 bg-zinc-50/70 p-4 sm:grid-cols-3 items-end">
+                  <Field label="Turma Esportiva" required>
+                    <Select
+                      value={v.turmaId}
+                      onChange={(e) => {
+                        const newId = e.target.value;
+                        setVinculos((prev) =>
+                          prev.map((item, i) => (i === index ? { ...item, turmaId: newId } : item))
+                        );
+                        const selectedT = turmas.find((t) => t.id === newId);
+                        if (selectedT?.nucleoId) {
+                          setNucleoId(selectedT.nucleoId);
+                        }
+                      }}
+                    >
+                      <option value="">Selecione a Turma</option>
+                      {turmasFiltradas.map((t) => {
+                        const n = nucleos.find((n) => n.id === t.nucleoId);
+                        return (
+                          <option key={t.id} value={t.id}>
+                            {t.nome} {n ? `(${n.identificacao})` : ""} — {t.vagasTotais || 0} vagas
+                          </option>
+                        );
+                      })}
+                    </Select>
+                  </Field>
+
+                  <Field label="Status da Matrícula">
+                    <Select
+                      value={v.status || "Ativo"}
+                      onChange={(e) => {
+                        const newStatus = (e.target.value === "Evadido" ? "Evadido" : "Ativo") as "Ativo" | "Evadido";
+                        setVinculos((prev) =>
+                          prev.map((item, i) => (i === index ? { ...item, status: newStatus } : item))
+                        );
+                      }}
+                    >
+                      <option value="Ativo">Ativo (Matriculado)</option>
+                      <option value="Evadido">Inativo / Evadido</option>
+                    </Select>
+                  </Field>
+
+                  <div className="flex items-center gap-2">
+                    <Button type="button" variant="danger" size="sm" onClick={() => removerTurma(index)} className="w-full sm:w-auto cursor-pointer">
+                      <Trash2 className="h-4 w-4" /> Remover Turma
+                    </Button>
+                  </div>
+                </div>
+              );
+            })
+          )}
+
+          <Button type="button" variant="outline" size="sm" className="self-start cursor-pointer" onClick={adicionarTurma}>
+            <Plus className="h-4 w-4" /> Adicionar Turma ao Beneficiário
+          </Button>
+        </div>
+      </FormSection>
 
       <FormSection title="6. PAR-Q (Questionário de Prontidão para Atividade Física)" defaultOpen={false}>
         <div className="flex flex-col divide-y divide-zinc-100">

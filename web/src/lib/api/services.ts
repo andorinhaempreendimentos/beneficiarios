@@ -827,7 +827,13 @@ export const turmasApi = {
       p_turma_id: turmaId,
       p_beneficiario_id: beneficiarioId,
     });
-    if (error) throw error;
+    if (error) {
+      const { error: errIns } = await sb.from('beneficiario_turmas').insert({
+        turma_id: turmaId,
+        beneficiario_id: beneficiarioId,
+      });
+      if (errIns && !errIns.message?.includes('duplicate key')) throw errIns;
+    }
   },
   async desmatricular(turmaId: string, beneficiarioId: string): Promise<void> {
     const sb = createClient();
