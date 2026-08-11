@@ -1356,13 +1356,13 @@ export const configuracoesApi = {
 
 function montarResumo(
   totalBeneficiarios: number,
-  aprovados: { id: string; nucleo_id: string | null }[],
+  aprovados: any[],
   nucleos: { id: string; identificacao: string; em_funcionamento: boolean }[],
   funcionarios: { status: string }[],
   turmas: { id: string; atividade_id: string; vagas_totais: number }[],
   atividades: { id: string; nome: string }[],
   matriculas: { turma_id: string }[],
-  recentes: { id: string; nome_completo: string; status: string; data_cadastro: string; nucleo_id: string | null }[],
+  recentes: any[],
   totalObjetos: number = 0,
   totalOrganizacoes: number = 0,
 ): DashboardResumo {
@@ -1371,11 +1371,20 @@ function montarResumo(
 
   const porNucleo = new Map<string, number>();
   for (const b of aprovados) {
-    if (!b.nucleo_id) continue;
-    porNucleo.set(b.nucleo_id, (porNucleo.get(b.nucleo_id) ?? 0) + 1);
+    let nid = b.nucleo_id;
+    if (!nid && b.beneficiario_turmas && b.beneficiario_turmas.length > 0) {
+      nid = b.beneficiario_turmas[0]?.turmas?.nucleo_id;
+    }
+    if (!nid) continue;
+    porNucleo.set(nid, (porNucleo.get(nid) ?? 0) + 1);
   }
-  const topNucleos = [...porNucleo.entries()]
-    .map(([id, qtd]) => ({ id, identificacao: nucleoNome.get(id) ?? "—", beneficiariosAtivos: qtd }))
+
+  const topNucleos = nucleos
+    .map((n) => ({
+      id: n.id,
+      identificacao: n.identificacao,
+      beneficiariosAtivos: porNucleo.get(n.id) ?? 0,
+    }))
     .sort((a, b) => b.beneficiariosAtivos - a.beneficiariosAtivos)
     .slice(0, 5);
 
@@ -1388,9 +1397,9 @@ function montarResumo(
   const ocupacaoPorTurma = new Map<string, number>();
   for (const m of matriculas) ocupacaoPorTurma.set(m.turma_id, (ocupacaoPorTurma.get(m.turma_id) ?? 0) + 1);
 
-  const totalVagas = turmas.reduce((acc, t) => acc + t.vagas_totais, 0);
+  const totalVagas = turmas.reduce((acc, t) => acc + (t.vagas_totais || 0), 0);
   const totalOcupadas = turmas.reduce((acc, t) => acc + (ocupacaoPorTurma.get(t.id) ?? 0), 0);
-  const vagasLivres = totalVagas - totalOcupadas;
+  const vagasLivres = Math.max(0, totalVagas - totalOcupadas);
   const ocupacaoGlobal = totalVagas > 0 ? Math.round((totalOcupadas / totalVagas) * 100) : 0;
 
   const distribuicaoPorModalidade = atividades
@@ -1417,35 +1426,74 @@ function montarResumo(
     totalModalidades: atividades.length,
     topNucleos,
     distribuicaoPorModalidade,
-    recentes: recentes.map((b) => ({
-      id: b.id, nomeCompleto: b.nome_completo, status: b.status, dataCadastro: b.data_cadastro,
-      nucleo: b.nucleo_id ? nucleoNome.get(b.nucleo_id) : undefined,
-    })),
+    recentes: recentes.map((b) => {
+      let nomeDoNucleo = b.nucleo_id ? nucleoNome.get(b.nucleo_id) : undefined;
+      if (!nomeDoNucleo && b.nucleos?.identificacao) {
+        nomeDoNucleo = b.nucleos.identificacao;
+      }
+      if (!nomeDoNucleo && b.beneficiario_turmas && b.beneficiario_turmas.length > 0) {
+        nomeDoNucleo = b.beneficiario_turmas[0]?.turmas?.nucleos?.identificacao;
+      }
+      return {
+        id: b.id,
+        nomeCompleto: b.nome_completo,
+        status: b.status,
+        dataCadastro: b.data_cadastro || b.created_at,
+        nucleo: nomeDoNucleo || "—",
+      };
+    }),
   };
 }
 
 export const dashboardApi = {
   async resumo(): Promise<DashboardResumo> {
     const sb = createClient();
-    const [totalRes, aprovadosRes, nucleosRes, funcionariosRes, turmasRes, atividadesRes, matriculasRes, recentesRes, objetosRes, organizacoesRes] =
-      await Promise.all([
-        sb.from('beneficiarios').select('id', { count: 'exact', head: true }).is('deleted_at', null),
-        sb.from('beneficiarios').select('id, nucleo_id').is('deleted_at', null).eq('status', 'ativo'),
-        sb.from('nucleos').select('id, identificacao, em_funcionamento').is('deleted_at', null),
-        sb.from('funcionarios').select('status').is('deleted_at', null),
-        sb.from('turmas').select('id, atividade_id, vagas_totais').is('deleted_at', null),
-        sb.from('atividades').select('id, nome').is('deleted_at', null),
-        sb.from('beneficiario_turmas').select('turma_id').eq('status', 'ativo'),
-        sb.from('beneficiarios').select('id, nome_completo, status, data_cadastro, nucleo_id')
-          .is('deleted_at', null).order('data_cadastro', { ascending: false }).limit(5),
-        sb.from('objetos').select('id', { count: 'exact', head: true }).is('deleted_at', null),
-        sb.from('organizacoes').select('id', { count: 'exact', head: true }).is('deleted_at', null),
-      ]);
-    for (const r of [totalRes, aprovadosRes, nucleosRes, funcionariosRes, turmasRes, atividadesRes, matriculasRes, recentesRes, objetosRes, organizacoesRes]) {
+    const [
+      totalRes,
+      aprovadosRes,
+      nucleosRes,
+      funcionariosRes,
+      turmasRes,
+      atividadesRes,
+      matriculasRes,
+      recentesRes,
+      objetosRes,
+      organizacoesRes,
+    ] = await Promise.all([
+      sb.from('beneficiarios').select('id', { count: 'exact', head: true }).is('deleted_at', null),
+      sb.from('beneficiarios').select('id, nucleo_id, beneficiario_turmas(turmas(nucleo_id))').is('deleted_at', null).eq('status', 'ativo'),
+      sb.from('nucleos').select('id, identificacao, em_funcionamento').is('deleted_at', null),
+      sb.from('funcionarios').select('status').is('deleted_at', null),
+      sb.from('turmas').select('id, atividade_id, vagas_totais').is('deleted_at', null),
+      sb.from('atividades').select('id, nome').is('deleted_at', null),
+      sb.from('beneficiario_turmas').select('turma_id').eq('status', 'ativo'),
+      sb.from('beneficiarios')
+        .select('id, nome_completo, status, data_cadastro, created_at, nucleo_id, nucleos(identificacao), beneficiario_turmas(turmas(nucleos(identificacao)))')
+        .is('deleted_at', null)
+        .order('created_at', { ascending: false })
+        .limit(5),
+      sb.from('objetos').select('id', { count: 'exact', head: true }).is('deleted_at', null),
+      sb.from('organizacoes').select('id', { count: 'exact', head: true }).is('deleted_at', null),
+    ]);
+
+    for (const r of [
+      totalRes, aprovadosRes, nucleosRes, funcionariosRes, turmasRes,
+      atividadesRes, matriculasRes, recentesRes, objetosRes, organizacoesRes,
+    ]) {
       if (r.error) throw r.error;
     }
-    return montarResumo(totalRes.count ?? 0, aprovadosRes.data ?? [], nucleosRes.data ?? [], funcionariosRes.data ?? [],
-      turmasRes.data ?? [], atividadesRes.data ?? [], matriculasRes.data ?? [], recentesRes.data ?? [],
-      objetosRes.count ?? 0, organizacoesRes.count ?? 0);
+
+    return montarResumo(
+      totalRes.count ?? 0,
+      aprovadosRes.data ?? [],
+      nucleosRes.data ?? [],
+      funcionariosRes.data ?? [],
+      turmasRes.data ?? [],
+      atividadesRes.data ?? [],
+      matriculasRes.data ?? [],
+      recentesRes.data ?? [],
+      objetosRes.count ?? 0,
+      organizacoesRes.count ?? 0,
+    );
   },
 };
