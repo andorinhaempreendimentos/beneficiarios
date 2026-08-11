@@ -2,29 +2,31 @@
 
 import { useState } from "react";
 import { PageHeader } from "@/components/ui";
+import { AbaCargos } from "@/components/configuracoes/AbaCargos";
 import { AbaPermissoes } from "@/components/configuracoes/AbaPermissoes";
 import { AbaDicionario } from "@/components/configuracoes/AbaDicionario";
 import { AbaStorage } from "@/components/configuracoes/AbaStorage";
 import { AbaAparencia } from "@/components/configuracoes/AbaAparencia";
 import { cn } from "@/lib/utils";
 
-type Aba = "aparencia" | "permissoes" | "dicionario" | "storage";
+type Aba = "cargos" | "permissoes" | "aparencia" | "dicionario" | "storage";
 
 const ABAS: { id: Aba; label: string }[] = [
-  { id: "aparencia",  label: "Aparência" },
+  { id: "cargos",     label: "Cargos & Estrutura" },
   { id: "permissoes", label: "Permissões / RBAC" },
+  { id: "aparencia",  label: "Aparência" },
   { id: "dicionario", label: "Dicionário de Termos" },
   { id: "storage",    label: "Armazenamento" },
 ];
 
 export default function ConfiguracoesPage() {
-  const [aba, setAba] = useState<Aba>("aparencia");
+  const [aba, setAba] = useState<Aba>("cargos");
 
   return (
     <div className="flex flex-col gap-6">
       <PageHeader
-        title="Configurações"
-        description="Aparência, permissões de acesso, terminologia e armazenamento"
+        title="Configurações do Sistema"
+        description="Gestão de cargos de RH, permissões RBAC de acesso, aparência e armazenamento"
       />
 
       <div className="border-b border-zinc-200">
@@ -35,9 +37,9 @@ export default function ConfiguracoesPage() {
               type="button"
               onClick={() => setAba(a.id)}
               className={cn(
-                "px-4 py-2.5 text-sm font-medium border-b-2 transition-colors",
+                "px-4 py-2.5 text-sm font-bold border-b-2 transition-colors cursor-pointer",
                 aba === a.id
-                  ? "border-sky-600 text-sky-700"
+                  ? "border-sky-600 text-sky-700 bg-sky-50/50"
                   : "border-transparent text-zinc-500 hover:text-zinc-800 hover:border-zinc-300"
               )}
             >
@@ -47,8 +49,9 @@ export default function ConfiguracoesPage() {
         </nav>
       </div>
 
-      {aba === "aparencia"  && <AbaAparencia />}
+      {aba === "cargos"     && <AbaCargos />}
       {aba === "permissoes" && <AbaPermissoes />}
+      {aba === "aparencia"  && <AbaAparencia />}
       {aba === "dicionario" && <AbaDicionario />}
       {aba === "storage"    && <AbaStorage />}
     </div>
