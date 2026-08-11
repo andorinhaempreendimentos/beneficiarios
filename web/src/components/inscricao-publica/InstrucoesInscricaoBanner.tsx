@@ -4,7 +4,7 @@ import type { NucleoApi, AtividadeApi } from "@/lib/api/services";
 interface InstrucoesInscricaoBannerProps {
   nucleo?: NucleoApi | null;
   atividade?: AtividadeApi | null;
-  tipoLink?: "nucleo" | "atividade" | "turma";
+  tipoLink?: "geral" | "nucleo" | "atividade" | "turma";
   etapaAtual?: number;
 }
 
@@ -18,6 +18,10 @@ export function InstrucoesInscricaoBanner({
     ? [nucleo.endereco, nucleo.bairro, nucleo.cidade, nucleo.regiao].filter(Boolean).join(", ")
     : null;
 
+  const ETAPA_NUCLEO = {
+    titulo: "Escolha o Núcleo",
+    sub: "Selecione o local mais próximo de você.",
+  };
   const ETAPA_ATIVIDADE = {
     titulo: "Escolha a Atividade",
     sub: "Selecione a modalidade esportiva desejada.",
@@ -32,6 +36,7 @@ export function InstrucoesInscricaoBanner({
   };
 
   const etapasMap = {
+    geral: [ETAPA_NUCLEO, ETAPA_ATIVIDADE, ETAPA_TURMA, ETAPA_DADOS],
     nucleo: [ETAPA_ATIVIDADE, ETAPA_TURMA, ETAPA_DADOS],
     atividade: [ETAPA_TURMA, ETAPA_DADOS],
     turma: [ETAPA_DADOS],
@@ -87,7 +92,11 @@ export function InstrucoesInscricaoBanner({
           </span>
         </div>
 
-        <div className={`grid grid-cols-1 gap-3 text-xs ${etapas.length === 2 ? 'sm:grid-cols-2' : 'sm:grid-cols-3'}`}>
+        <div className={`grid grid-cols-1 gap-3 text-xs ${
+          etapas.length === 1 ? 'sm:grid-cols-1' :
+          etapas.length === 2 ? 'sm:grid-cols-2' :
+          etapas.length === 4 ? 'sm:grid-cols-4' : 'sm:grid-cols-3'
+        }`}>
           {etapas.map(({ num, titulo, sub }) => {
             const isAtual = etapaAtual === num;
             const isConcluida = etapaAtual > num;
