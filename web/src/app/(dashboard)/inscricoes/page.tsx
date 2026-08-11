@@ -201,16 +201,24 @@ export default function InscricoesPage() {
                 ) : (
                   lista.map((i) => {
                     const turma = turmas.find((t) => t.id === i.turmaId) ?? i.turma;
+                    const nucleo = rawNucleos.find((n) => n.id === (turma?.nucleoId || (i as any).nucleoId));
+                    const atividade = rawAtividades.find((a) => a.id === (turma?.atividadeId || (i as any).atividadeId));
                     const isSelected = selectedIds.includes(i.id);
+
+                    const nucleoNome = turma?.nucleo?.identificacao || nucleo?.identificacao;
+                    const atividadeNome = turma?.atividade?.nome || atividade?.nome;
+                    const turmaNome = turma?.nome;
+
                     return (
                       <div
                         key={i.id}
-                        className={`p-4 rounded-xl border transition-all flex flex-col justify-between gap-3 ${
+                        className={`p-4 rounded-xl border transition-all flex flex-col justify-between gap-3.5 ${
                           isSelected
                             ? "border-sky-500 bg-sky-50/30 ring-1 ring-sky-500"
-                            : "border-zinc-200 bg-white hover:border-zinc-300 hover:shadow-sm"
+                            : "border-zinc-200 bg-white hover:border-zinc-300 hover:shadow-xs"
                         }`}
                       >
+                        {/* Header: Checkbox, Nome, Data e Tag Inscrição */}
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex items-center gap-3">
                             <input
@@ -220,20 +228,55 @@ export default function InscricoesPage() {
                               className="h-4 w-4 rounded border-zinc-300 text-sky-600 focus:ring-sky-500 cursor-pointer"
                             />
                             <div>
-                              <span className="font-medium text-zinc-900 text-sm block">
+                              <div className="flex items-center gap-1.5 mb-0.5">
+                                <span className="rounded-md bg-amber-100 px-1.5 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-amber-800">
+                                  Inscrição
+                                </span>
+                                <span className="text-[10px] text-zinc-400 font-mono">
+                                  {formatarData(i.criadoEm)}
+                                </span>
+                              </div>
+                              <span className="font-bold text-zinc-900 text-sm block">
                                 {i.beneficiario?.nomeCompleto ?? i.beneficiarioId}
                               </span>
-                              <span className="text-xs text-zinc-400 block">{formatarData(i.criadoEm)}</span>
                             </div>
                           </div>
                           <StatusInscricaoBadge inscricaoId={i.id} statusAtual={i.status} onStatusChange={() => refetch()} />
                         </div>
 
-                        <div className="text-xs text-zinc-600 border-t border-zinc-100 pt-2.5">
-                          <span>Turma: </span>
-                          <Link href={`/turmas/${i.turmaId}/inscricoes`} className="font-semibold text-zinc-800 hover:text-sky-600 hover:underline">
-                            {turma?.nome ?? "—"}
-                          </Link>
+                        {/* Seção Vínculos da Inscrição: Núcleo, Atividade e Turma */}
+                        <div className="flex flex-col gap-1.5 border-t border-zinc-100 pt-2 text-xs">
+                          <div className="flex flex-col gap-1 rounded-lg bg-zinc-50/80 p-2 border border-zinc-100">
+                            {nucleoNome && (
+                              <div className="flex items-center gap-1.5 text-zinc-600">
+                                <span className="shrink-0 rounded-md bg-violet-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-violet-700">
+                                  Núcleo
+                                </span>
+                                <span className="font-medium truncate text-zinc-800">{nucleoNome}</span>
+                              </div>
+                            )}
+                            {atividadeNome && (
+                              <div className="flex items-center gap-1.5 text-zinc-600">
+                                <span className="shrink-0 rounded-md bg-emerald-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-emerald-700">
+                                  Atividade
+                                </span>
+                                <span className="font-medium truncate text-zinc-800">{atividadeNome}</span>
+                              </div>
+                            )}
+                            {turmaNome && (
+                              <div className="flex items-center gap-1.5 text-zinc-600">
+                                <span className="shrink-0 rounded-md bg-sky-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-sky-700">
+                                  Turma
+                                </span>
+                                <Link
+                                  href={`/turmas/${i.turmaId}/inscricoes`}
+                                  className="font-medium truncate text-zinc-800 hover:text-sky-600 hover:underline"
+                                >
+                                  {turmaNome}
+                                </Link>
+                              </div>
+                            )}
+                          </div>
                         </div>
 
                         {i.status === "pendente" && (
@@ -242,7 +285,7 @@ export default function InscricoesPage() {
                               type="button"
                               onClick={() => handleAcao(i.id, "aprovada")}
                               disabled={actionId === i.id}
-                              className="px-2.5 py-1 rounded-md bg-green-50 text-green-700 hover:bg-green-100 text-xs font-semibold transition-colors disabled:opacity-40"
+                              className="px-2.5 py-1 rounded-md bg-green-50 text-green-700 hover:bg-green-100 text-xs font-semibold transition-colors disabled:opacity-40 cursor-pointer"
                             >
                               Aprovar
                             </button>
@@ -250,7 +293,7 @@ export default function InscricoesPage() {
                               type="button"
                               onClick={() => handleAcao(i.id, "cancelada")}
                               disabled={actionId === i.id}
-                              className="px-2.5 py-1 rounded-md bg-red-50 text-red-700 hover:bg-red-100 text-xs font-semibold transition-colors disabled:opacity-40"
+                              className="px-2.5 py-1 rounded-md bg-red-50 text-red-700 hover:bg-red-100 text-xs font-semibold transition-colors disabled:opacity-40 cursor-pointer"
                             >
                               Recusar
                             </button>
