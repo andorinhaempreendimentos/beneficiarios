@@ -1466,7 +1466,7 @@ export const dashboardApi = {
       sb.from('funcionarios').select('status').is('deleted_at', null),
       sb.from('turmas').select('id, atividade_id, vagas_totais').is('deleted_at', null),
       sb.from('atividades').select('id, nome').is('deleted_at', null),
-      sb.from('beneficiario_turmas').select('turma_id').eq('status', 'ativo'),
+      sb.from('beneficiario_turmas').select('turma_id').is('deleted_at', null),
       sb.from('beneficiarios')
         .select('id, nome_completo, status, data_cadastro, created_at, nucleo_id, nucleos(identificacao), beneficiario_turmas(turmas(nucleos(identificacao)))')
         .is('deleted_at', null)
