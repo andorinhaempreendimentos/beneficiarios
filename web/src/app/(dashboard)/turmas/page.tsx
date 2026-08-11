@@ -210,7 +210,7 @@ export default function TurmasPage() {
                               </Link>
                             </div>
                           </div>
-                          <span className="rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-bold text-zinc-700">
+                          <span className="shrink-0 whitespace-nowrap rounded-xl bg-sky-50 border border-sky-200 px-2.5 py-1 text-xs font-extrabold text-sky-700 shadow-2xs">
                             {vagasTotais} vagas
                           </span>
                         </div>
