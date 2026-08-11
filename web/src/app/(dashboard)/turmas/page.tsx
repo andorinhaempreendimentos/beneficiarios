@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useMemo } from "react";
 import Link from "next/link";
-import { Download, Trash2, Dumbbell, Building2, Users, Calendar, Clock } from "lucide-react";
+import { Download, Trash2, Dumbbell, Building2, Users, Calendar, Clock, Check } from "lucide-react";
 import {
   Badge,
   Card,
@@ -179,36 +179,45 @@ export default function TurmasPage() {
                     return (
                       <div
                         key={t.id}
-                        className={`p-4 rounded-xl border transition-all flex flex-col justify-between gap-3.5 ${
+                        className={`group relative overflow-hidden rounded-2xl border transition-all flex flex-col justify-between gap-3.5 p-4 ${
                           isSelected
-                            ? "border-sky-500 bg-sky-50/30 ring-1 ring-sky-500"
+                            ? "border-sky-500 bg-sky-50/30 ring-2 ring-sky-500/20 shadow-xs"
                             : "border-zinc-200 bg-white hover:border-zinc-300 hover:shadow-xs"
                         }`}
                       >
-                        {/* Header: Checkbox, Tag Turma, Nome & Status Exclusivo */}
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="flex items-center gap-3">
-                            <input
-                              type="checkbox"
-                              checked={isSelected}
-                              onChange={() => toggleSelectOne(t.id)}
-                              className="h-4 w-4 rounded border-zinc-300 text-sky-600 focus:ring-sky-500 cursor-pointer"
-                            />
-                            <div>
-                              <div className="flex items-center gap-1.5 mb-0.5">
-                                <span className="rounded-md bg-sky-100 px-1.5 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-sky-800">
-                                  Turma
+                        {/* Checkbox Elegante no Canto Superior Esquerdo */}
+                        <label
+                          className={`absolute top-0 left-0 z-10 flex h-8 w-9 items-center justify-center rounded-br-xl border-r border-b transition-all cursor-pointer ${
+                            isSelected
+                              ? "bg-sky-600 border-sky-600 text-white shadow-2xs"
+                              : "bg-zinc-100/90 border-zinc-200/80 text-zinc-400 group-hover:bg-zinc-200/80 group-hover:border-zinc-300"
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => toggleSelectOne(t.id)}
+                            className="sr-only"
+                          />
+                          <Check className={`h-4 w-4 stroke-[3] transition-transform ${isSelected ? "scale-100 text-white" : "scale-85 text-zinc-400 opacity-60 group-hover:opacity-100"}`} />
+                        </label>
+
+                        {/* Header: Tag Turma, Nome & Status Exclusivo */}
+                        <div className="flex items-start justify-between gap-2 pl-7">
+                          <div>
+                            <div className="flex items-center gap-1.5 mb-0.5">
+                              <span className="rounded-md bg-sky-100 px-1.5 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-sky-800">
+                                Turma
+                              </span>
+                              {t.exclusiva && (
+                                <span className="rounded-md bg-amber-100 px-1.5 py-0.5 text-[9px] font-bold uppercase text-amber-800">
+                                  Exclusiva
                                 </span>
-                                {t.exclusiva && (
-                                  <span className="rounded-md bg-amber-100 px-1.5 py-0.5 text-[9px] font-bold uppercase text-amber-800">
-                                    Exclusiva
-                                  </span>
-                                )}
-                              </div>
-                              <Link href={`/turmas/${t.id}`} className="font-bold text-zinc-900 text-sm hover:text-sky-600">
-                                {t.nome}
-                              </Link>
+                              )}
                             </div>
+                            <Link href={`/turmas/${t.id}`} className="font-bold text-zinc-900 text-sm hover:text-sky-600">
+                              {t.nome}
+                            </Link>
                           </div>
                           <span className="shrink-0 whitespace-nowrap rounded-xl bg-sky-50 border border-sky-200 px-2.5 py-1 text-xs font-extrabold text-sky-700 shadow-2xs">
                             {vagasTotais} vagas

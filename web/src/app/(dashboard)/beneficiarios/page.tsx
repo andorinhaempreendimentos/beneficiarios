@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import Link from "next/link";
-import { UserCheck, UserX, Download, Trash2 } from "lucide-react";
+import { UserCheck, UserX, Download, Trash2, Check } from "lucide-react";
 import {
   Badge,
   Card,
@@ -209,32 +209,43 @@ export default function BeneficiariosPage() {
                     Nenhum beneficiário encontrado.
                   </div>
                 ) : (
-                  resultado.map((b) => (
-                    <div
-                      key={b.id}
-                      className={`p-4 rounded-xl border transition-all flex flex-col justify-between gap-3 ${
-                        selectedIds.includes(b.id)
-                          ? "border-sky-500 bg-sky-50/30 ring-1 ring-sky-500"
-                          : "border-zinc-200 bg-white hover:border-zinc-300 hover:shadow-sm"
-                      }`}
-                    >
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="flex items-center gap-3">
+                  resultado.map((b) => {
+                    const isSelected = selectedIds.includes(b.id);
+                    return (
+                      <div
+                        key={b.id}
+                        className={`group relative overflow-hidden rounded-2xl border transition-all flex flex-col justify-between gap-3 p-4 ${
+                          isSelected
+                            ? "border-sky-500 bg-sky-50/30 ring-2 ring-sky-500/20 shadow-xs"
+                            : "border-zinc-200 bg-white hover:border-zinc-300 hover:shadow-xs"
+                        }`}
+                      >
+                        {/* Checkbox Elegante no Canto Superior Esquerdo */}
+                        <label
+                          className={`absolute top-0 left-0 z-10 flex h-8 w-9 items-center justify-center rounded-br-xl border-r border-b transition-all cursor-pointer ${
+                            isSelected
+                              ? "bg-sky-600 border-sky-600 text-white shadow-2xs"
+                              : "bg-zinc-100/90 border-zinc-200/80 text-zinc-400 group-hover:bg-zinc-200/80 group-hover:border-zinc-300"
+                          }`}
+                        >
                           <input
                             type="checkbox"
-                            checked={selectedIds.includes(b.id)}
+                            checked={isSelected}
                             onChange={() => toggleSelectOne(b.id)}
-                            className="h-4 w-4 rounded border-zinc-300 text-sky-600 focus:ring-sky-500 cursor-pointer"
+                            className="sr-only"
                           />
+                          <Check className={`h-4 w-4 stroke-[3] transition-transform ${isSelected ? "scale-100 text-white" : "scale-85 text-zinc-400 opacity-60 group-hover:opacity-100"}`} />
+                        </label>
+
+                        <div className="flex items-start justify-between gap-2 pl-7">
                           <div>
                             <span className="text-[10px] font-mono font-semibold text-zinc-400 block">{b.matricula}</span>
                             <Link href={`/beneficiarios/${b.id}`} className="font-bold text-zinc-900 text-sm hover:text-sky-600">
                               {b.nomeCompleto}
                             </Link>
                           </div>
+                          <StatusBeneficiarioBadge beneficiarioId={b.id} statusAtual={b.status} />
                         </div>
-                        <StatusBeneficiarioBadge beneficiarioId={b.id} statusAtual={b.status} />
-                      </div>
 
                       <div className="flex items-center justify-between text-xs text-zinc-500 border-t border-zinc-100 pt-2">
                         <span>Idade: <strong className="text-zinc-700">{calcularIdade(b.dataNascimento)} anos</strong></span>
@@ -301,7 +312,8 @@ export default function BeneficiariosPage() {
                         </button>
                       </div>
                     </div>
-                  ))
+                  );
+                })
                 )}
               </div>
             ) : (
