@@ -17,3 +17,32 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Regra Global: Cursor Pointer para todos os botões, links e elementos interativos */
+a,
+button,
+select,
+summary,
+label,
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+input[type="checkbox"],
+input[type="radio"],
+input[type="file"],
+[role="button"],
+[role="tab"],
+[role="menuitem"],
+[tabindex]:not([tabindex="-1"]) {
+  cursor: pointer !important;
+}
+
+/* Desabilitados recebem not-allowed */
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled,
+.disabled,
+[aria-disabled="true"] {
+  cursor: not-allowed !important;
+}
