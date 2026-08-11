@@ -9,7 +9,6 @@ import { dashboardApi, nucleosApi, type DashboardResumo, type NucleoApi } from "
 import { formatarData } from "@/lib/utils";
 import { statusBeneficiarioTone, statusBeneficiarioLabel, normalizarStatusBeneficiario } from "@/lib/status";
 import { useLocationFilter } from "@/components/providers/LocationFilterProvider";
-import { DashboardLocationFilterBar } from "@/components/dashboard/DashboardLocationFilterBar";
 
 const VAZIO: DashboardResumo = {
   beneficiariosAtivos: 0, totalBeneficiarios: 0, nucleosAtivos: 0, totalNucleos: 0, totalObjetos: 0, totalOrganizacoes: 0, funcionariosAtivos: 0,
@@ -103,9 +102,6 @@ export default function DashboardPage() {
           </Link>
         ))}
       </div>
-
-      {/* Filtro Global de Estado e Cidade na Sessão do Admin/Gestor */}
-      <DashboardLocationFilterBar nucleos={rawNucleos} />
 
       {/* Fluxo de Hierarquia do Sistema */}
       <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-2xs">
