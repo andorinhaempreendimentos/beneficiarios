@@ -181,6 +181,7 @@ export interface BeneficiarioApi {
   pcd: boolean;
   tipoPcd?: string;
   nucleoId?: string;
+  nucleoNome?: string;
   status: string;
   tipoMatricula: string;
   celular: string;
@@ -193,6 +194,14 @@ export interface BeneficiarioApi {
   cpf?: string;
   fotoUrl?: string;
   criadoEm: string;
+  turmasInfo?: Array<{
+    turmaId?: string;
+    turmaNome?: string;
+    nucleoId?: string;
+    nucleoNome?: string;
+    atividadeId?: string;
+    atividadeNome?: string;
+  }>;
 }
 
 export interface FuncionarioApi {
@@ -373,15 +382,30 @@ function parseSexoDisplay(s: string | null | undefined): string {
 }
 
 function mapBeneficiario(r: any): BeneficiarioApi {
+  const turmasInfo = (r.beneficiario_turmas ?? []).map((bt: any) => {
+    const t = bt.turmas;
+    return {
+      turmaId: t?.id,
+      turmaNome: t?.nome,
+      nucleoId: t?.nucleo_id || r.nucleo_id,
+      nucleoNome: t?.nucleos?.identificacao || r.nucleos?.identificacao,
+      atividadeId: t?.atividade_id,
+      atividadeNome: t?.atividades?.nome,
+    };
+  }).filter((vt: any) => vt.turmaNome || vt.nucleoNome || vt.atividadeNome);
+
   return {
     id: r.id, matricula: r.matricula, nomeCompleto: r.nome_completo,
     nomeSocial: r.nome_social ?? undefined, dataNascimento: r.data_nascimento,
     sexo: parseSexoDisplay(r.sexo), dataCadastro: r.data_cadastro, pcd: r.pcd, tipoPcd: r.tipo_pcd ?? undefined,
-    nucleoId: r.nucleo_id ?? undefined, status: r.status, tipoMatricula: r.tipo_matricula,
+    nucleoId: r.nucleo_id ?? undefined,
+    nucleoNome: r.nucleos?.identificacao ?? undefined,
+    status: r.status, tipoMatricula: r.tipo_matricula,
     celular: r.celular, cep: r.cep ?? undefined, logradouro: r.logradouro ?? undefined,
     numero: r.numero ?? undefined, bairro: r.bairro ?? undefined, cidade: r.cidade ?? undefined,
     estado: r.estado ?? undefined, cpf: r.cpf ?? undefined, fotoUrl: r.foto_url ?? undefined,
     criadoEm: r.created_at,
+    turmasInfo: turmasInfo.length > 0 ? turmasInfo : undefined,
   };
 }
 
@@ -863,7 +887,8 @@ export const beneficiariosApi = {
       if (eV) throw eV;
       beneficiarioIds = Array.from(new Set((vinculos ?? []).map((v) => v.beneficiario_id)));
     }
-    let q = sb.from('beneficiarios').select('*', { count: 'exact' }).is('deleted_at', null);
+    const BENEFICIARIO_FULL_SELECT = '*, nucleos(*), beneficiario_turmas(*, turmas(*, nucleos(*), atividades(*)))';
+    let q = sb.from('beneficiarios').select(BENEFICIARIO_FULL_SELECT, { count: 'exact' }).is('deleted_at', null);
     if (p?.nome) q = q.ilike('nome_completo', `%${p.nome}%`);
     if (p?.matricula) q = q.ilike('matricula', `%${p.matricula}%`);
     if (p?.cpf) q = q.ilike('cpf', `%${p.cpf}%`);
@@ -875,16 +900,35 @@ export const beneficiariosApi = {
     const idadeMax = num(p?.idadeMax);
     if (idadeMin !== undefined) q = q.lte('data_nascimento', dataNascimentoMaxima(idadeMin));
     if (idadeMax !== undefined) q = q.gte('data_nascimento', dataNascimentoMinima(idadeMax));
-    const { data, count, error } = await q.order('created_at', { ascending: false }).range(from, to);
-    if (error) throw error;
+    
+    let { data, count, error } = await q.order('created_at', { ascending: false }).range(from, to);
+    if (error) {
+      console.warn('[beneficiariosApi.list fallback]', error.message);
+      let qFallback = sb.from('beneficiarios').select('*', { count: 'exact' }).is('deleted_at', null);
+      if (p?.nome) qFallback = qFallback.ilike('nome_completo', `%${p.nome}%`);
+      if (p?.matricula) qFallback = qFallback.ilike('matricula', `%${p.matricula}%`);
+      if (p?.cpf) qFallback = qFallback.ilike('cpf', `%${p.cpf}%`);
+      if (p?.status) qFallback = qFallback.eq('status', String(p.status));
+      if (p?.tipoMatricula) qFallback = qFallback.eq('tipo_matricula', String(p.tipoMatricula));
+      if (p?.nucleoId) qFallback = qFallback.eq('nucleo_id', String(p.nucleoId));
+      if (beneficiarioIds) qFallback = qFallback.in('id', beneficiarioIds.length ? beneficiarioIds : ['—']);
+      if (idadeMin !== undefined) qFallback = qFallback.lte('data_nascimento', dataNascimentoMaxima(idadeMin));
+      if (idadeMax !== undefined) qFallback = qFallback.gte('data_nascimento', dataNascimentoMinima(idadeMax));
+      const resFallback = await qFallback.order('created_at', { ascending: false }).range(from, to);
+      if (resFallback.error) throw resFallback.error;
+      data = resFallback.data as any;
+      count = resFallback.count;
+    }
     return { data: (data ?? []).map(mapBeneficiario), total: count ?? 0, page, limit };
   },
   async get(id: string): Promise<BeneficiarioApi> {
     const sb = await getSupabase();
-    const { data, error } = await sb.from('beneficiarios').select('*').eq('id', id).single();
+    const BENEFICIARIO_FULL_SELECT = '*, nucleos(*), beneficiario_turmas(*, turmas(*, nucleos(*), atividades(*)))';
+    let { data, error } = await sb.from('beneficiarios').select(BENEFICIARIO_FULL_SELECT).eq('id', id).single();
     if (error) {
-      console.error('[beneficiariosApi.get Error]', error);
-      throw error;
+      const resFallback = await sb.from('beneficiarios').select('*').eq('id', id).single();
+      if (resFallback.error) throw resFallback.error;
+      data = resFallback.data as any;
     }
     return mapBeneficiario(data);
   },

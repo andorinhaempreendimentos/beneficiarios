@@ -44,6 +44,9 @@ export default function BeneficiariosPage() {
   const [viewMode, setViewMode] = useState<ViewMode>("cards");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
+  const [beneficiarioParaExcluir, setBeneficiarioParaExcluir] = useState<BeneficiarioApi | null>(null);
+  const [excluindo, setExcluindo] = useState(false);
+
   const { data: pageData, loading } = useQuery<Paginated<BeneficiarioApi>>(
     () => beneficiariosApi.list({ ...ativos, page: pagina, limit: PER_PAGE }),
     [ativos, pagina],
@@ -60,6 +63,21 @@ export default function BeneficiariosPage() {
 
   const aplicar = useCallback(() => { setPagina(1); setAtivos(filtros); }, [filtros]);
   const limpar = useCallback(() => { setFiltros(EMPTY); setAtivos(EMPTY); setPagina(1); }, []);
+
+  const confirmarExclusao = async () => {
+    if (!beneficiarioParaExcluir) return;
+    setExcluindo(true);
+    try {
+      await beneficiariosApi.remove(beneficiarioParaExcluir.id);
+      setBeneficiarioParaExcluir(null);
+      setPagina(1);
+      setAtivos({ ...filtros });
+    } catch (err: any) {
+      alert("Erro ao excluir beneficiário: " + (err?.message || "Ocorreu um erro."));
+    } finally {
+      setExcluindo(false);
+    }
+  };
 
   const atv = pageData?.data.filter((b) => normalizarStatusBeneficiario(b.status) === "ativo").length ?? 0;
 
@@ -188,19 +206,74 @@ export default function BeneficiariosPage() {
                         <StatusBeneficiarioBadge beneficiarioId={b.id} statusAtual={b.status} />
                       </div>
 
-                      <div className="flex items-center justify-between text-xs text-zinc-500 border-t border-zinc-100 pt-2.5">
+                      <div className="flex items-center justify-between text-xs text-zinc-500 border-t border-zinc-100 pt-2">
                         <span>Idade: <strong className="text-zinc-700">{calcularIdade(b.dataNascimento)} anos</strong></span>
-                        <Badge tone={tipoMatriculaTone[normalizarTipoMatricula(b.tipoMatricula)]}>{tipoMatriculaLabel[normalizarTipoMatricula(b.tipoMatricula)]}</Badge>
+                        <Badge tone={tipoMatriculaTone[normalizarTipoMatricula(b.tipoMatricula)]}>
+                          {tipoMatriculaLabel[normalizarTipoMatricula(b.tipoMatricula)]}
+                        </Badge>
                       </div>
 
-                      <div className="flex items-center justify-end gap-3 pt-2 border-t border-zinc-100/60">
-                        <Link href={`/beneficiarios/${b.id}`} className="text-xs font-semibold text-sky-600 hover:underline">
+                      {/* Vínculos: Núcleo, Atividade e Turma */}
+                      <div className="flex flex-col gap-1.5 border-t border-zinc-100 pt-2 text-xs">
+                        {b.turmasInfo && b.turmasInfo.length > 0 ? (
+                          b.turmasInfo.map((t, idx) => (
+                            <div key={idx} className="flex flex-col gap-1 rounded-lg bg-zinc-50/80 p-2 border border-zinc-100">
+                              {t.nucleoNome && (
+                                <div className="flex items-center gap-1.5 text-zinc-600">
+                                  <span className="shrink-0 rounded-md bg-violet-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-violet-700">
+                                    Núcleo
+                                  </span>
+                                  <span className="font-medium truncate text-zinc-800">{t.nucleoNome}</span>
+                                </div>
+                              )}
+                              {t.atividadeNome && (
+                                <div className="flex items-center gap-1.5 text-zinc-600">
+                                  <span className="shrink-0 rounded-md bg-emerald-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-emerald-700">
+                                    Atividade
+                                  </span>
+                                  <span className="font-medium truncate text-zinc-800">{t.atividadeNome}</span>
+                                </div>
+                              )}
+                              {t.turmaNome && (
+                                <div className="flex items-center gap-1.5 text-zinc-600">
+                                  <span className="shrink-0 rounded-md bg-sky-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-sky-700">
+                                    Turma
+                                  </span>
+                                  <span className="font-medium truncate text-zinc-800">{t.turmaNome}</span>
+                                </div>
+                              )}
+                            </div>
+                          ))
+                        ) : b.nucleoNome ? (
+                          <div className="flex items-center gap-1.5 rounded-lg bg-zinc-50/80 p-2 border border-zinc-100">
+                            <span className="shrink-0 rounded-md bg-violet-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-violet-700">
+                              Núcleo
+                            </span>
+                            <span className="font-medium truncate text-zinc-800">{b.nucleoNome}</span>
+                          </div>
+                        ) : (
+                          <span className="text-[11px] italic text-zinc-400">Sem vínculo ativo</span>
+                        )}
+                      </div>
+
+                      <div className="flex items-center justify-between pt-2 border-t border-zinc-100/80 text-xs">
+                        <Link href={`/beneficiarios/${b.id}`} className="font-semibold text-sky-600 hover:underline">
                           Acessar detalhes
                         </Link>
-                        <span className="text-zinc-300">|</span>
-                        <Link href={`/beneficiarios/${b.id}/editar`} className="text-xs text-zinc-500 hover:underline">
-                          Editar
-                        </Link>
+                        <div className="flex items-center gap-2 text-zinc-500">
+                          <Link href={`/beneficiarios/${b.id}/editar`} className="font-medium hover:text-zinc-900 hover:underline">
+                            Editar
+                          </Link>
+                          <span className="text-zinc-200">|</span>
+                          <button
+                            type="button"
+                            onClick={() => setBeneficiarioParaExcluir(b)}
+                            className="flex items-center gap-1 font-medium text-red-600 hover:text-red-700 hover:underline cursor-pointer"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                            <span>Excluir</span>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   ))
@@ -222,7 +295,7 @@ export default function BeneficiariosPage() {
                       <th className="px-5 py-3">Matrícula</th>
                       <th className="px-5 py-3">Status</th>
                       <th className="px-5 py-3">Nome</th>
-                      <th className="px-5 py-3">Idade</th>
+                      <th className="px-5 py-3">Vínculos (Núcleo / Turma)</th>
                       <th className="px-5 py-3 text-right">Ações</th>
                     </tr>
                   </thead>
@@ -249,16 +322,43 @@ export default function BeneficiariosPage() {
                           <StatusBeneficiarioBadge beneficiarioId={b.id} statusAtual={b.status} />
                         </td>
                         <td className="px-5 py-3">
-                          <div className="flex items-center gap-2">
-                            <Link href={`/beneficiarios/${b.id}`} className="font-medium text-sky-600 hover:underline">{b.nomeCompleto}</Link>
-                            <Badge tone={tipoMatriculaTone[normalizarTipoMatricula(b.tipoMatricula)]}>{tipoMatriculaLabel[normalizarTipoMatricula(b.tipoMatricula)]}</Badge>
+                          <div className="flex flex-col gap-1">
+                            <div className="flex items-center gap-2">
+                              <Link href={`/beneficiarios/${b.id}`} className="font-medium text-sky-600 hover:underline">{b.nomeCompleto}</Link>
+                              <Badge tone={tipoMatriculaTone[normalizarTipoMatricula(b.tipoMatricula)]}>{tipoMatriculaLabel[normalizarTipoMatricula(b.tipoMatricula)]}</Badge>
+                            </div>
+                            <span className="text-xs text-zinc-400">{calcularIdade(b.dataNascimento)} anos</span>
                           </div>
                         </td>
-                        <td className="px-5 py-3 text-zinc-600">{calcularIdade(b.dataNascimento)} anos</td>
+                        <td className="px-5 py-3 text-xs">
+                          {b.turmasInfo && b.turmasInfo.length > 0 ? (
+                            <div className="flex flex-wrap gap-1">
+                              {b.turmasInfo.map((t, idx) => (
+                                <span key={idx} className="rounded-md bg-zinc-100 px-2 py-0.5 text-[11px] font-medium text-zinc-700">
+                                  {[t.nucleoNome, t.atividadeNome, t.turmaNome].filter(Boolean).join(" · ")}
+                                </span>
+                              ))}
+                            </div>
+                          ) : b.nucleoNome ? (
+                            <span className="text-zinc-600">{b.nucleoNome}</span>
+                          ) : (
+                            <span className="text-zinc-400 italic">—</span>
+                          )}
+                        </td>
                         <td className="px-5 py-3 text-right">
-                          <Link href={`/beneficiarios/${b.id}`} className="text-sky-600 hover:underline">Acessar</Link>
-                          <span className="mx-1.5 text-zinc-300">|</span>
-                          <Link href={`/beneficiarios/${b.id}/editar`} className="text-zinc-500 hover:underline">Editar</Link>
+                          <div className="flex items-center justify-end gap-2 text-xs">
+                            <Link href={`/beneficiarios/${b.id}`} className="text-sky-600 hover:underline">Acessar</Link>
+                            <span className="text-zinc-300">|</span>
+                            <Link href={`/beneficiarios/${b.id}/editar`} className="text-zinc-500 hover:underline">Editar</Link>
+                            <span className="text-zinc-300">|</span>
+                            <button
+                              type="button"
+                              onClick={() => setBeneficiarioParaExcluir(b)}
+                              className="text-red-600 hover:underline cursor-pointer"
+                            >
+                              Excluir
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -276,6 +376,46 @@ export default function BeneficiariosPage() {
           onPageChange={setPagina}
         />
       </Card>
+
+      {/* Modal de Confirmação de Exclusão */}
+      {beneficiarioParaExcluir && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl flex flex-col gap-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 text-red-600 shrink-0">
+                <Trash2 className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-zinc-900">Excluir Beneficiário</h3>
+                <p className="text-xs text-zinc-500">Esta ação moverá o beneficiário para a lixeira.</p>
+              </div>
+            </div>
+
+            <p className="text-sm text-zinc-600">
+              Tem certeza que deseja excluir o beneficiário <strong>{beneficiarioParaExcluir.nomeCompleto}</strong> (Matrícula: {beneficiarioParaExcluir.matricula})?
+            </p>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setBeneficiarioParaExcluir(null)}
+                disabled={excluindo}
+                className="rounded-xl border border-zinc-300 px-4 py-2 text-xs font-semibold text-zinc-700 hover:bg-zinc-100 disabled:opacity-50 cursor-pointer"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={confirmarExclusao}
+                disabled={excluindo}
+                className="rounded-xl bg-red-600 px-4 py-2 text-xs font-semibold text-white hover:bg-red-700 disabled:opacity-50 cursor-pointer"
+              >
+                {excluindo ? "Excluindo..." : "Sim, Excluir"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <BulkActionsBar
         selectedCount={selectedIds.length}
