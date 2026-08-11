@@ -61,6 +61,9 @@ export default async function InscricaoAtividadePage({ params, searchParams }: I
       <InstrucoesInscricaoBanner nucleo={nucleo} atividade={atividade} tipoLink="atividade" etapaAtual={1} />
 
       <div className="rounded-xl border border-zinc-200 bg-white p-6">
+        <span className="inline-block rounded-md bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-700 mb-2">
+          Atividade
+        </span>
         <h1 className="text-xl font-bold text-zinc-900">{atividade.nome}</h1>
         {(atividade.idadeMinima != null || atividade.idadeMaxima != null) && (
           <p className="mt-1 text-sm text-zinc-500">

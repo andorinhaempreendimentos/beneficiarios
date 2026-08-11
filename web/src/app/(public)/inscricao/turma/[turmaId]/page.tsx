@@ -56,7 +56,30 @@ export default async function InscricaoTurmaPage({ params }: InscricaoTurmaPageP
       <InstrucoesInscricaoBanner nucleo={nucleo} atividade={atividade} tipoLink="turma" etapaAtual={1} />
 
       <div className="rounded-xl border border-zinc-200 bg-white p-6">
+        <span className="inline-block rounded-md bg-sky-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-sky-700 mb-2">
+          Turma
+        </span>
         <h1 className="text-xl font-bold text-zinc-900">{turma.nome}</h1>
+
+        <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2">
+          {atividade && (
+            <div className="flex items-center gap-1.5 text-sm text-zinc-600">
+              <span className="rounded-md bg-emerald-100 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-700">
+                Atividade
+              </span>
+              <span className="font-medium">{atividade.nome}</span>
+            </div>
+          )}
+          {nucleo && (
+            <div className="flex items-center gap-1.5 text-sm text-zinc-600">
+              <span className="rounded-md bg-violet-100 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-violet-700">
+                Núcleo
+              </span>
+              <span className="font-medium">{nucleo.identificacao}</span>
+            </div>
+          )}
+        </div>
+
         {nucleo && (
           <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-zinc-500">
             <MapPin className="h-4 w-4 shrink-0" />

@@ -37,7 +37,12 @@ export function SelecionarAtividade({ atividades, turmas, nucleoId }: Selecionar
               className="flex flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-5 transition-colors hover:border-sky-300 hover:bg-sky-50"
             >
               <div className="flex items-start justify-between gap-2">
-                <span className="font-medium text-zinc-900">{a.nome}</span>
+                <div className="flex flex-col gap-1">
+                  <span className="inline-block w-fit rounded-md bg-emerald-100 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-700">
+                    Atividade
+                  </span>
+                  <span className="font-medium text-zinc-900">{a.nome}</span>
+                </div>
                 <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${vagasDisponiveis > 0 ? "bg-green-100 text-green-700" : "bg-red-100 text-red-600"}`}>
                   {vagasDisponiveis > 0 ? `${vagasDisponiveis} vagas` : "Sem vagas"}
                 </span>

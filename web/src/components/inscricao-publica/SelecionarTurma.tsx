@@ -101,6 +101,9 @@ export function SelecionarTurma({ turmas, titulo = "Escolha uma turma" }: Seleci
               }`}
             >
               <div className="flex flex-col gap-1.5">
+                <span className="inline-block w-fit rounded-md bg-sky-100 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-sky-700">
+                  Turma
+                </span>
                 <div className="flex items-center gap-2">
                   <span className="font-medium text-zinc-900">{t.nome}</span>
                   <span
