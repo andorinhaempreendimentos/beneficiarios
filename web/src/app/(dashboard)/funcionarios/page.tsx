@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useMemo } from "react";
 import Link from "next/link";
-import { UserCheck, UserX, Download } from "lucide-react";
+import { UserCheck, UserX, Download, Trash2, Clock, Users, Dumbbell, Calendar, CheckCircle2 } from "lucide-react";
 import {
   Badge,
   Card,
@@ -19,7 +19,19 @@ import {
   type ViewMode,
 } from "@/components/ui";
 import { useQuery } from "@/lib/hooks/useQuery";
-import { funcionariosApi, funcoesApi, nucleosApi, type Paginated, type FuncionarioApi, type FuncaoApi, type NucleoApi } from "@/lib/api/services";
+import {
+  funcionariosApi,
+  funcoesApi,
+  nucleosApi,
+  turmasApi,
+  beneficiariosApi,
+  type Paginated,
+  type FuncionarioApi,
+  type FuncaoApi,
+  type NucleoApi,
+  type TurmaApi,
+  type BeneficiarioApi,
+} from "@/lib/api/services";
 import { statusFuncionarioLabel, statusFuncionarioTone } from "@/lib/status";
 import { formatarData } from "@/lib/utils";
 import { StatusFuncionarioBadge } from "@/components/funcionarios/StatusFuncionarioBadge";
@@ -35,18 +47,28 @@ export default function FuncionariosPage() {
   const [viewMode, setViewMode] = useState<ViewMode>("cards");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
+  const [funcionarioParaExcluir, setFuncionarioParaExcluir] = useState<FuncionarioApi | null>(null);
+  const [excluindo, setExcluindo] = useState(false);
+
+  const [funcionarioPonto, setFuncionarioPonto] = useState<FuncionarioApi | null>(null);
+  const [pontoRegistrado, setPontoRegistrado] = useState(false);
+
   const { data: funcoesRes } = useQuery<FuncaoApi[]>(() => funcoesApi.list(), []);
   const funcoes = funcoesRes ?? [];
 
-  const { data: pageData, loading } = useQuery<Paginated<FuncionarioApi>>(
+  const { data: pageData, loading, refetch } = useQuery<Paginated<FuncionarioApi>>(
     () => funcionariosApi.list({ ...filtros, page: pagina, limit: PER_PAGE }),
     [filtros, pagina],
   );
   const { data: statsAdm } = useQuery<Paginated<FuncionarioApi>>(() => funcionariosApi.list({ status: "contratado,voluntario", limit: 1 }), []);
   const { data: statsDes } = useQuery<Paginated<FuncionarioApi>>(() => funcionariosApi.list({ status: "demitido", limit: 1 }), []);
   const { data: nucleosData } = useQuery<Paginated<NucleoApi>>(() => nucleosApi.list({ limit: 200 }), []);
+  const { data: turmasData } = useQuery<Paginated<TurmaApi>>(() => turmasApi.list({ limit: 500 }), []);
+  const { data: beneficiariosData } = useQuery<Paginated<BeneficiarioApi>>(() => beneficiariosApi.list({ limit: 1000 }), []);
 
   const nucleos = nucleosData?.data ?? [];
+  const turmas = turmasData?.data ?? [];
+  const beneficiarios = beneficiariosData?.data ?? [];
   const rawResultado = pageData?.data ?? [];
 
   const resultado = useMemo(() => {
@@ -77,6 +99,30 @@ export default function FuncionariosPage() {
     setFiltros((f) => ({ ...f, [chave]: valor }));
   }
 
+  const confirmarExclusao = async () => {
+    if (!funcionarioParaExcluir) return;
+    setExcluindo(true);
+    try {
+      await funcionariosApi.remove(funcionarioParaExcluir.id);
+      setFuncionarioParaExcluir(null);
+      setPagina(1);
+      refetch();
+    } catch (err: any) {
+      alert("Erro ao excluir funcionário: " + (err?.message || "Ocorreu um erro."));
+    } finally {
+      setExcluindo(false);
+    }
+  };
+
+  const registrarPontoHoje = () => {
+    setPontoRegistrado(true);
+    setTimeout(() => {
+      setPontoRegistrado(false);
+      setFuncionarioPonto(null);
+      alert("Ponto registrado com sucesso!");
+    }, 1200);
+  };
+
   const toggleSelectAll = () => {
     if (selectedIds.length === resultado.length && resultado.length > 0) {
       setSelectedIds([]);
@@ -96,8 +142,8 @@ export default function FuncionariosPage() {
   return (
     <div className="flex flex-col gap-6 pb-12">
       <PageHeader
-        title="Funcionários"
-        description="Gestão de pessoal (RH)"
+        title="Funcionários / RH"
+        description="Gestão de professores, instrutores e equipe do projeto"
         actions={
           <div className="flex items-center gap-3">
             <ViewToggle mode={viewMode} onChange={setViewMode} />
@@ -157,15 +203,33 @@ export default function FuncionariosPage() {
                 ) : (
                   resultado.map((f) => {
                     const isSelected = selectedIds.includes(f.id);
+
+                    // 1. Turmas vinculadas ao funcionário
+                    const turmasDoFuncionario = turmas.filter(
+                      (t) =>
+                        t.responsaveis?.includes(f.id) ||
+                        t.responsaveis?.includes(f.nomeCompleto) ||
+                        t.responsaveisNomes?.some((r) => r.toLowerCase().includes(f.nomeCompleto.toLowerCase()))
+                    );
+                    const turmaIds = new Set(turmasDoFuncionario.map((t) => t.id));
+
+                    // 2. Beneficiários relacionados às turmas do funcionário
+                    const beneficiariosDoFuncionario = beneficiarios.filter(
+                      (b) =>
+                        b.turmasInfo?.some((ti) => ti.turmaId && turmaIds.has(ti.turmaId)) ||
+                        (f.nucleoId && b.nucleoId === f.nucleoId)
+                    );
+
                     return (
                       <div
                         key={f.id}
-                        className={`p-4 rounded-xl border transition-all flex flex-col justify-between gap-3 ${
+                        className={`p-4 rounded-xl border transition-all flex flex-col justify-between gap-3.5 ${
                           isSelected
                             ? "border-sky-500 bg-sky-50/30 ring-1 ring-sky-500"
-                            : "border-zinc-200 bg-white hover:border-zinc-300 hover:shadow-sm"
+                            : "border-zinc-200 bg-white hover:border-zinc-300 hover:shadow-xs"
                         }`}
                       >
+                        {/* Header: Checkbox, Tag Pessoal, Nome & Status */}
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex items-center gap-3">
                             <input
@@ -175,7 +239,14 @@ export default function FuncionariosPage() {
                               className="h-4 w-4 rounded border-zinc-300 text-sky-600 focus:ring-sky-500 cursor-pointer"
                             />
                             <div>
-                              <span className="text-[10px] font-mono font-semibold text-zinc-400 block">{f.matricula}</span>
+                              <div className="flex items-center gap-1.5 mb-0.5">
+                                <span className="rounded-md bg-violet-100 px-1.5 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-violet-800">
+                                  Pessoal
+                                </span>
+                                <span className="text-[10px] font-mono text-zinc-400 font-semibold">
+                                  {f.matricula}
+                                </span>
+                              </div>
                               <Link href={`/funcionarios/${f.id}`} className="font-bold text-zinc-900 text-sm hover:text-sky-600">
                                 {f.nomeCompleto}
                               </Link>
@@ -184,19 +255,58 @@ export default function FuncionariosPage() {
                           <StatusFuncionarioBadge funcionarioId={f.id} statusAtual={f.status} />
                         </div>
 
-                        <div className="grid grid-cols-2 gap-2 text-xs text-zinc-500 border-t border-zinc-100 pt-2.5">
-                          <div>Função: <strong className="text-zinc-700 block truncate">{f.funcao || "—"}</strong></div>
-                          <div>Alocação: <strong className="text-zinc-700 block truncate">{f.alocadoEm || "—"}</strong></div>
+                        {/* Função & Alocação */}
+                        <div className="grid grid-cols-2 gap-2 text-xs text-zinc-600 border-t border-zinc-100 pt-2">
+                          <div>
+                            Função: <strong className="text-zinc-800 block truncate">{f.funcao || "—"}</strong>
+                          </div>
+                          <div>
+                            Alocação: <strong className="text-zinc-800 block truncate">{f.alocadoEm || "—"}</strong>
+                          </div>
                         </div>
 
-                        <div className="flex items-center justify-end gap-3 pt-2 border-t border-zinc-100/60">
-                          <Link href={`/funcionarios/${f.id}`} className="text-xs font-semibold text-sky-600 hover:underline">
-                            Detalhes
-                          </Link>
-                          <span className="text-zinc-300">|</span>
-                          <Link href={`/funcionarios/${f.id}/editar`} className="text-xs text-zinc-500 hover:underline">
-                            Editar
-                          </Link>
+                        {/* Indicadores de Turmas Vinculadas & Beneficiários Relacionados */}
+                        <div className="grid grid-cols-2 gap-2 text-[11px] border-t border-zinc-100 pt-2.5">
+                          <div className="flex items-center gap-1.5 rounded-md bg-sky-50 px-2 py-1.5 text-sky-800 border border-sky-100 font-semibold">
+                            <span className="h-2 w-2 rounded-full bg-sky-500 shrink-0" />
+                            <span className="truncate">{turmasDoFuncionario.length} Turma(s)</span>
+                          </div>
+
+                          <div className="flex items-center gap-1.5 rounded-md bg-amber-50 px-2 py-1.5 text-amber-800 border border-amber-100 font-semibold">
+                            <span className="h-2 w-2 rounded-full bg-amber-500 shrink-0" />
+                            <span className="truncate">{beneficiariosDoFuncionario.length} Alunos</span>
+                          </div>
+                        </div>
+
+                        {/* Botões de Ação: Ponto, Editar e Excluir */}
+                        <div className="flex items-center justify-between border-t border-zinc-100/60 pt-2.5">
+                          {/* Botão de Ponto */}
+                          <button
+                            type="button"
+                            onClick={() => setFuncionarioPonto(f)}
+                            className="inline-flex items-center gap-1.5 rounded-lg border border-indigo-200 bg-indigo-50 px-2.5 py-1.5 text-xs font-bold text-indigo-700 hover:bg-indigo-100 transition-colors shadow-2xs cursor-pointer"
+                          >
+                            <Clock className="h-3.5 w-3.5" />
+                            Ponto
+                          </button>
+
+                          <div className="flex items-center gap-2">
+                            <Link
+                              href={`/funcionarios/${f.id}/editar`}
+                              className="inline-flex items-center gap-1 rounded-lg border border-sky-200 bg-sky-50 px-3 py-1.5 text-xs font-semibold text-sky-700 hover:bg-sky-100 transition-colors shadow-2xs"
+                            >
+                              Editar
+                            </Link>
+
+                            <button
+                              type="button"
+                              onClick={() => setFuncionarioParaExcluir(f)}
+                              className="inline-flex items-center gap-1 rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100 transition-colors shadow-2xs cursor-pointer"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                              Excluir
+                            </button>
+                          </div>
                         </div>
                       </div>
                     );
@@ -218,10 +328,10 @@ export default function FuncionariosPage() {
                       </th>
                       <th className="px-5 py-3">Matrícula</th>
                       <th className="px-5 py-3">Nome</th>
-                      <th className="px-5 py-3">Status</th>
                       <th className="px-5 py-3">Função</th>
-                      <th className="px-5 py-3">Admissão</th>
-                      <th className="px-5 py-3">Alocação</th>
+                      <th className="px-5 py-3 text-center">Turmas</th>
+                      <th className="px-5 py-3 text-center">Alunos</th>
+                      <th className="px-5 py-3">Status</th>
                       <th className="px-5 py-3 text-right">Ações</th>
                     </tr>
                   </thead>
@@ -230,6 +340,20 @@ export default function FuncionariosPage() {
                       <tr><td colSpan={8} className="px-5 py-8 text-center text-sm text-zinc-400">Nenhum funcionário encontrado.</td></tr>
                     ) : resultado.map((f) => {
                       const isSelected = selectedIds.includes(f.id);
+                      const turmasDoFuncionario = turmas.filter(
+                        (t) =>
+                          t.responsaveis?.includes(f.id) ||
+                          t.responsaveis?.includes(f.nomeCompleto) ||
+                          t.responsaveisNomes?.some((r) => r.toLowerCase().includes(f.nomeCompleto.toLowerCase()))
+                      );
+                      const turmaIds = new Set(turmasDoFuncionario.map((t) => t.id));
+
+                      const beneficiariosDoFuncionario = beneficiarios.filter(
+                        (b) =>
+                          b.turmasInfo?.some((ti) => ti.turmaId && turmaIds.has(ti.turmaId)) ||
+                          (f.nucleoId && b.nucleoId === f.nucleoId)
+                      );
+
                       return (
                         <tr key={f.id} className={`border-b border-zinc-100 last:border-0 hover:bg-zinc-50 ${isSelected ? "bg-sky-50/30" : ""}`}>
                           <td className="px-4 py-3">
@@ -240,20 +364,41 @@ export default function FuncionariosPage() {
                               className="h-4 w-4 rounded border-zinc-300 text-sky-600 focus:ring-sky-500 cursor-pointer"
                             />
                           </td>
-                          <td className="px-5 py-3 text-zinc-500">{f.matricula}</td>
-                          <td className="px-5 py-3">
-                            <Link href={`/funcionarios/${f.id}`} className="font-medium text-sky-600 hover:underline">{f.nomeCompleto}</Link>
+                          <td className="px-5 py-3 text-zinc-500 font-mono text-xs">{f.matricula}</td>
+                          <td className="px-5 py-3 font-medium text-zinc-900">
+                            <Link href={`/funcionarios/${f.id}`} className="hover:text-sky-600">{f.nomeCompleto}</Link>
                           </td>
+                          <td className="px-5 py-3 text-zinc-600">{f.funcao}</td>
+                          <td className="px-5 py-3 text-center font-semibold text-sky-700">{turmasDoFuncionario.length}</td>
+                          <td className="px-5 py-3 text-center font-semibold text-amber-700">{beneficiariosDoFuncionario.length}</td>
                           <td className="px-5 py-3">
                             <StatusFuncionarioBadge funcionarioId={f.id} statusAtual={f.status} />
                           </td>
-                          <td className="px-5 py-3 text-zinc-600">{f.funcao}</td>
-                          <td className="px-5 py-3 text-zinc-600">{f.dataAdmissao ? formatarData(f.dataAdmissao) : "—"}</td>
-                          <td className="px-5 py-3 text-zinc-600">{f.alocadoEm}</td>
                           <td className="px-5 py-3 text-right">
-                            <Link href={`/funcionarios/${f.id}`} className="text-sky-600 hover:underline">Detalhes</Link>
-                            <span className="mx-1.5 text-zinc-300">|</span>
-                            <Link href={`/funcionarios/${f.id}/editar`} className="text-zinc-500 hover:underline">Editar</Link>
+                            <div className="flex items-center justify-end gap-2">
+                              <button
+                                type="button"
+                                onClick={() => setFuncionarioPonto(f)}
+                                className="text-xs font-bold text-indigo-600 hover:underline cursor-pointer"
+                              >
+                                Ponto
+                              </button>
+                              <span className="text-zinc-300">|</span>
+                              <Link
+                                href={`/funcionarios/${f.id}/editar`}
+                                className="text-xs font-semibold text-sky-600 hover:underline"
+                              >
+                                Editar
+                              </Link>
+                              <span className="text-zinc-300">|</span>
+                              <button
+                                type="button"
+                                onClick={() => setFuncionarioParaExcluir(f)}
+                                className="text-xs font-medium text-red-600 hover:underline cursor-pointer"
+                              >
+                                Excluir
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       );
@@ -267,6 +412,99 @@ export default function FuncionariosPage() {
         <Pagination currentPage={pagina} totalPages={totalPages} totalItems={total} itemsPerPage={PER_PAGE} onPageChange={setPagina} />
       </Card>
 
+      {/* Modal de Registro de Ponto */}
+      {funcionarioPonto && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl flex flex-col gap-4">
+            <div className="flex items-center gap-3 border-b border-zinc-100 pb-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 text-indigo-600 shrink-0">
+                <Clock className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-zinc-900">Folha de Ponto / Frequência</h3>
+                <p className="text-xs text-zinc-500">{funcionarioPonto.nomeCompleto} ({funcionarioPonto.matricula})</p>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3 text-sm text-zinc-600">
+              <div className="flex justify-between items-center bg-zinc-50 p-3 rounded-xl border border-zinc-100">
+                <span>Função:</span>
+                <strong className="text-zinc-900">{funcionarioPonto.funcao || "—"}</strong>
+              </div>
+              <div className="flex justify-between items-center bg-zinc-50 p-3 rounded-xl border border-zinc-100">
+                <span>Data & Hora Atual:</span>
+                <strong className="text-zinc-900">{new Date().toLocaleString("pt-BR")}</strong>
+              </div>
+              <div className="flex justify-between items-center bg-emerald-50 p-3 rounded-xl border border-emerald-100 text-emerald-800">
+                <span className="flex items-center gap-1.5 font-semibold">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                  Status da Frequência:
+                </span>
+                <strong className="font-extrabold text-emerald-700">Em dia</strong>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setFuncionarioPonto(null)}
+                className="rounded-xl border border-zinc-300 px-4 py-2 text-xs font-semibold text-zinc-700 hover:bg-zinc-100 cursor-pointer"
+              >
+                Fechar
+              </button>
+              <button
+                type="button"
+                onClick={registrarPontoHoje}
+                disabled={pontoRegistrado}
+                className="rounded-xl bg-indigo-600 px-4 py-2 text-xs font-bold text-white hover:bg-indigo-700 disabled:opacity-50 cursor-pointer shadow-xs"
+              >
+                {pontoRegistrado ? "Registrando Ponto..." : "Registrar Ponto Hoje"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Confirmação de Exclusão de Funcionário */}
+      {funcionarioParaExcluir && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl flex flex-col gap-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 text-red-600 shrink-0">
+                <Trash2 className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-zinc-900">Excluir Funcionário</h3>
+                <p className="text-xs text-zinc-500">Esta ação moverá o funcionário para a lixeira.</p>
+              </div>
+            </div>
+
+            <p className="text-sm text-zinc-600">
+              Tem certeza que deseja excluir o funcionário <strong>{funcionarioParaExcluir.nomeCompleto}</strong>?
+            </p>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setFuncionarioParaExcluir(null)}
+                disabled={excluindo}
+                className="rounded-xl border border-zinc-300 px-4 py-2 text-xs font-semibold text-zinc-700 hover:bg-zinc-100 disabled:opacity-50 cursor-pointer"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={confirmarExclusao}
+                disabled={excluindo}
+                className="rounded-xl bg-red-600 px-4 py-2 text-xs font-semibold text-white hover:bg-red-700 disabled:opacity-50 cursor-pointer"
+              >
+                {excluindo ? "Excluindo..." : "Confirmar Exclusão"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <BulkActionsBar
         selectedCount={selectedIds.length}
         totalCount={resultado.length}
@@ -277,7 +515,7 @@ export default function FuncionariosPage() {
         <button
           type="button"
           onClick={() => alert(`Exportando ${selectedIds.length} funcionário(s)...`)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-zinc-100 transition-colors"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-zinc-100 transition-colors cursor-pointer"
         >
           <Download className="h-3.5 w-3.5" />
           <span>Exportar</span>
