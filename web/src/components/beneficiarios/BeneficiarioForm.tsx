@@ -133,8 +133,8 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
       cidade: formData.get("cidade"),
       estado: formData.get("estado"),
       pcd,
-      tipoPcd: formData.get("tipoPcd"),
-      nucleoId: formData.get("nucleoId"),
+      tipoPcd: formData.get("tipoPcd") || null,
+      nucleoId: String(formData.get("nucleoId") || "").trim() || null,
       status: normalizarStatusBeneficiario(formData.get("status") as string | null),
     };
 

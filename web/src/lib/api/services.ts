@@ -76,6 +76,11 @@ function bool(v: unknown): boolean | undefined {
   return v === true || v === 'true';
 }
 
+function uuidOrNull(v: unknown): string | null {
+  if (typeof v === 'string' && v.trim() !== '') return v.trim();
+  return null;
+}
+
 // ── Tipos ─────────────────────────────────────────────────────────────────
 
 export interface ObjetoApi {
@@ -576,7 +581,7 @@ function toOrganizacaoRow(b: Record<string, unknown>): Database['public']['Table
     endereco: b.endereco as string | null | undefined,
     cidade: b.cidade as string | null | undefined,
     estado: b.estado as string | null | undefined,
-    objeto_id: (b.objetoId as any) || null,
+    objeto_id: uuidOrNull(b.objetoId) as any,
     status: b.status as string | undefined,
   };
 }
@@ -669,7 +674,7 @@ function toNucleoRow(b: Record<string, unknown>): Database['public']['Tables']['
     longitude: b.longitude as number | null | undefined,
     nome_responsavel: b.nomeResponsavel as string | null | undefined,
     telefone_contato: b.telefoneContato as string | null | undefined,
-    organizacao_id: (b.organizacaoId as any) || null,
+    organizacao_id: uuidOrNull(b.organizacaoId) as any,
     data_inicio: (b.dataInicio as string) || new Date().toISOString().slice(0, 10),
     data_fechamento: b.dataFechamento as string | null | undefined,
     em_funcionamento: b.emFuncionamento as boolean | undefined,
@@ -725,7 +730,7 @@ function toAtividadeRow(b: Record<string, unknown>): Database['public']['Tables'
     tipo_aprovacao: b.tipoAprovacao as Database['public']['Enums']['tipo_aprovacao'] | undefined,
     idade_minima: b.idadeMinima as number | null | undefined,
     idade_maxima: b.idadeMaxima as number | null | undefined,
-    nucleo_id: (b.nucleoId as any) || null,
+    nucleo_id: uuidOrNull(b.nucleoId) as any,
   };
 }
 
@@ -968,7 +973,7 @@ function toBeneficiarioRow(b: Record<string, unknown>): Database['public']['Tabl
     sexo: parseSexoDb(b.sexo),
     pcd: b.pcd as boolean | undefined,
     tipo_pcd: b.tipoPcd as string | null | undefined,
-    nucleo_id: b.nucleoId as string | null | undefined,
+    nucleo_id: uuidOrNull(b.nucleoId),
     status: b.status as string | undefined,
     tipo_matricula: b.tipoMatricula as string | undefined,
     celular: b.celular as string,
@@ -1079,7 +1084,7 @@ function toFuncionarioRow(b: Record<string, unknown>): Database['public']['Table
     professor_responsavel: b.professorResponsavel as boolean | undefined,
     data_admissao: b.dataAdmissao as string | null | undefined,
     data_demissao: b.dataDemissao as string | null | undefined,
-    nucleo_id: b.nucleoId as string | null | undefined,
+    nucleo_id: uuidOrNull(b.nucleoId),
     alocado_em: b.alocadoEm as string | null | undefined,
     cpf: b.cpf as string | null | undefined,
     celular: b.celular as string | null | undefined,
@@ -1137,8 +1142,8 @@ function toEquipamentoRow(b: Record<string, unknown>): Database['public']['Table
     categoria: b.categoria as string | null | undefined,
     quantidade: b.quantidade as number | undefined,
     conservacao: b.conservacao as Database['public']['Enums']['estado_equipamento'] | undefined,
-    nucleo_id: b.nucleoId as string | null | undefined,
-    objeto_id: b.objetoId as string | null | undefined,
+    nucleo_id: uuidOrNull(b.nucleoId),
+    objeto_id: uuidOrNull(b.objetoId),
     nota_fiscal: b.notaFiscal as string | null | undefined,
     data_aquisicao: b.dataAquisicao as string | null | undefined,
     valor_unitario: b.valorUnitario as number | null | undefined,
