@@ -66,9 +66,11 @@ export function GestaoMatriculasProfessor({
       b.matricula.toLowerCase().includes(busca.toLowerCase())
   );
 
-  const disponiveisParaAdicionar = todosBeneficiarios.filter(
-    (b) => !matriculados.some((m) => m.id === b.id)
-  );
+  // Apenas beneficiários que NÃO possuem NENHUMA turma vinculada (não alocados)
+  const disponiveisParaAdicionar = todosBeneficiarios.filter((b) => {
+    const temAlgumaTurma = Boolean(b.turmasInfo && b.turmasInfo.length > 0);
+    return !temAlgumaTurma;
+  });
 
   const outrasTurmas = turmas.filter((t) => t.id !== turmaSelecionadaId);
 
