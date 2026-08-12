@@ -156,7 +156,7 @@ export function FuncoesManager({ inicialFuncoes }: FuncoesManagerProps) {
                       <div className="flex items-center gap-2">
                         <h4 className="font-semibold text-zinc-900 text-sm">{f.nome}</h4>
                         {temLogin ? (
-                          <Badge tone="emerald">
+                          <Badge tone="green">
                             <Key className="h-3 w-3 mr-1 inline" /> Login Habilitado
                           </Badge>
                         ) : (
