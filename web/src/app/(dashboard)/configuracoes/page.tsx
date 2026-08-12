@@ -2,17 +2,15 @@
 
 import { useState } from "react";
 import { PageHeader } from "@/components/ui";
-import { AbaCargos } from "@/components/configuracoes/AbaCargos";
 import { AbaPermissoes } from "@/components/configuracoes/AbaPermissoes";
 import { AbaDicionario } from "@/components/configuracoes/AbaDicionario";
 import { AbaStorage } from "@/components/configuracoes/AbaStorage";
 import { AbaAparencia } from "@/components/configuracoes/AbaAparencia";
 import { cn } from "@/lib/utils";
 
-type Aba = "cargos" | "permissoes" | "aparencia" | "dicionario" | "storage";
+type Aba = "permissoes" | "aparencia" | "dicionario" | "storage";
 
 const ABAS: { id: Aba; label: string }[] = [
-  { id: "cargos",     label: "Cargos & Estrutura" },
   { id: "permissoes", label: "Permissões / RBAC" },
   { id: "aparencia",  label: "Aparência" },
   { id: "dicionario", label: "Dicionário de Termos" },
@@ -20,13 +18,13 @@ const ABAS: { id: Aba; label: string }[] = [
 ];
 
 export default function ConfiguracoesPage() {
-  const [aba, setAba] = useState<Aba>("cargos");
+  const [aba, setAba] = useState<Aba>("permissoes");
 
   return (
     <div className="flex flex-col gap-6">
       <PageHeader
         title="Configurações do Sistema"
-        description="Gestão de cargos de RH, permissões RBAC de acesso, aparência e armazenamento"
+        description="Gestão de permissões RBAC de acesso, aparência, dicionário e armazenamento"
       />
 
       <div className="border-b border-zinc-200">
@@ -49,7 +47,6 @@ export default function ConfiguracoesPage() {
         </nav>
       </div>
 
-      {aba === "cargos"     && <AbaCargos />}
       {aba === "permissoes" && <AbaPermissoes />}
       {aba === "aparencia"  && <AbaAparencia />}
       {aba === "dicionario" && <AbaDicionario />}
