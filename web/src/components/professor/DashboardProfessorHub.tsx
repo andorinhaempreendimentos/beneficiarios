@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import {
   Clock,
   Users,
+  UserPlus,
   Camera,
   Calendar,
   MapPin,
@@ -297,21 +298,27 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
           <button
             type="button"
             onClick={() => setModalGestaoMatriculas(true)}
-            className="text-left p-4 border-l-4 border-l-sky-500 bg-white hover:bg-sky-50/50 rounded-2xl border border-zinc-200 shadow-sm transition-all active:scale-95 group"
+            className="text-left p-4 border-l-4 border-l-sky-500 bg-white hover:bg-gradient-to-br hover:from-sky-50/70 hover:to-white rounded-2xl border border-zinc-200 shadow-sm hover:shadow-md hover:border-sky-300 transition-all active:scale-[0.98] group flex flex-col justify-between"
           >
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 group-hover:text-sky-600">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-[11px] font-extrabold uppercase tracking-wider text-zinc-400 group-hover:text-sky-600 transition-colors">
                 Beneficiários Atendidos
               </span>
-              <span className="text-[10px] font-bold text-sky-600 bg-sky-100 px-2 py-0.5 rounded-full">
-                Gerenciar ⚙️
+              <span className="inline-flex items-center gap-1 rounded-xl bg-sky-600 px-2.5 py-1 text-[10px] font-extrabold text-white shadow-xs group-hover:bg-sky-700 group-hover:scale-105 transition-all">
+                <UserPlus className="h-3 w-3" />
+                <span>Gerenciar</span>
               </span>
             </div>
-            <div className="mt-1 flex items-baseline gap-2">
-              <span className="text-2xl font-extrabold text-zinc-900 group-hover:text-sky-600">{totalAlunos}</span>
-              <span className="text-xs text-sky-600 font-semibold">Beneficiários</span>
+
+            <div className="mt-2 flex items-baseline gap-2">
+              <span className="text-2xl font-extrabold text-zinc-900 group-hover:text-sky-600 transition-colors">{totalAlunos}</span>
+              <span className="text-xs text-sky-600 font-bold">Beneficiários</span>
             </div>
-            <p className="text-[11px] text-zinc-500 mt-0.5">Clique para gerenciar matrículas</p>
+            
+            <p className="text-[11px] text-zinc-500 font-medium mt-1 flex items-center gap-1 group-hover:text-sky-700 transition-colors">
+              <span>Clique para matricular / transferir</span>
+              <ChevronRight className="h-3 w-3 text-sky-500 transition-transform group-hover:translate-x-0.5" />
+            </p>
           </button>
 
           <Card className="p-4 border-l-4 border-l-indigo-500 bg-white shadow-sm">
