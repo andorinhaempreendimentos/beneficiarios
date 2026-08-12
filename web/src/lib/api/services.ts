@@ -1022,6 +1022,9 @@ const CARGOS_OFICIAIS: FuncaoApi[] = [
 
 export const funcoesApi = {
   async list(): Promise<FuncaoApi[]> {
+    const sb = await getSupabase();
+    const { data } = await sb.from('funcoes' as any).select('*').is('deleted_at', null).order('created_at', { ascending: true });
+    if (data && data.length > 0) return data.map(mapFuncao);
     return CARGOS_OFICIAIS;
   },
   async create(body: { nome: string; descricao?: string; permiteLogin?: boolean }): Promise<FuncaoApi> {
