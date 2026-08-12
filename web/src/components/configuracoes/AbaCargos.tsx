@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Briefcase, ShieldCheck, Users, ExternalLink, Dumbbell, Building2, Layers, Award } from "lucide-react";
+import { Briefcase, ShieldCheck, Users, ExternalLink, Dumbbell, Building2, Layers, Award, Key, Lock } from "lucide-react";
 import { Badge, Card, CardBody, CardHeader, LinkButton } from "@/components/ui";
 import { funcoesApi, perfisApi, funcionariosApi, usuariosApi } from "@/lib/api/services";
 import { useQuery } from "@/lib/hooks/useQuery";
@@ -34,28 +34,28 @@ export function AbaCargos() {
               <span className="rounded-md bg-sky-500/30 px-2 py-0.5 text-xs font-bold uppercase tracking-wider text-sky-200 border border-sky-400/30 inline-block mb-2">
                 Arquitetura de RH & Permissões RBAC
               </span>
-              <h2 className="text-xl font-bold text-white">Cargos de Funcionários & Perfis de Acesso</h2>
+              <h2 className="text-xl font-bold text-white">Cargos de Funcionários & Direitos de Acesso ao Painel</h2>
               <p className="text-sm text-sky-100/80 mt-1 max-w-2xl">
-                Cada cargo de funcionário possui um perfil de usuário 1 para 1 correspondente no sistema. O Administrador possui controle total soberano.
+                Cada cargo funcional define automaticamente se os colaboradores daquela categoria possuem direito de login e acesso ao sistema.
               </p>
             </div>
-            <LinkButton href="/usuarios/perfis/novo" className="bg-white text-sky-900 hover:bg-sky-50 font-bold shrink-0">
-              Gerenciar Perfis RBAC
+            <LinkButton href="/configuracoes?aba=permissoes" className="bg-white text-sky-900 hover:bg-sky-50 font-bold shrink-0">
+              Matriz de Permissões RBAC
             </LinkButton>
           </div>
         </CardBody>
       </Card>
 
-      {/* Matriz 1 para 1: Cargo ➔ Perfil de Acesso */}
+      {/* Matriz 1 para 1: Cargo ➔ Perfil de Acesso & Regra de Login */}
       <Card className="shadow-xs">
         <CardHeader className="flex items-center justify-between border-b border-zinc-100 pb-3">
           <div>
             <h3 className="text-sm font-bold text-zinc-800 flex items-center gap-2">
               <Briefcase className="h-4 w-4 text-sky-600" />
-              <span>Cargos e Alinhamento com Perfis de Usuário</span>
+              <span>Cargos, Direitos de Login e Perfis de Acesso</span>
             </h3>
             <p className="text-xs text-zinc-400 mt-0.5">
-              Mapeamento 1:1 entre o cargo funcional do colaborador e suas permissões de acesso ao sistema
+              Mapeamento de permissões por categoria de colaboradores no projeto
             </p>
           </div>
         </CardHeader>
@@ -66,8 +66,9 @@ export function AbaCargos() {
               <tr className="border-b border-zinc-200 bg-zinc-50/70 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
                 <th className="px-5 py-3">Cargo do Funcionário (RH)</th>
                 <th className="px-5 py-3">Perfil de Acesso (RBAC)</th>
+                <th className="px-5 py-3 text-center">Regra de Login</th>
                 <th className="px-5 py-3 text-center">Colaboradores</th>
-                <th className="px-5 py-3 text-center">Usuários com Login</th>
+                <th className="px-5 py-3 text-center">Usuários no Sistema</th>
                 <th className="px-5 py-3 text-right">Permissões</th>
               </tr>
             </thead>
@@ -81,6 +82,8 @@ export function AbaCargos() {
                 const countUsers = perfilCorrespondente
                   ? usuarios.filter((u) => u.perfilId === perfilCorrespondente.id).length
                   : 0;
+
+                const permiteLogin = f.nome !== "Staff";
 
                 return (
                   <tr key={f.id} className="hover:bg-zinc-50/80 transition-colors">
@@ -108,6 +111,20 @@ export function AbaCargos() {
                     </td>
 
                     <td className="px-5 py-4 text-center">
+                      {permiteLogin ? (
+                        <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 bg-emerald-100/80 px-2.5 py-1 rounded-full border border-emerald-200">
+                          <Key className="h-3 w-3" />
+                          <span>Login Permitido</span>
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-xs font-bold text-zinc-600 bg-zinc-100 px-2.5 py-1 rounded-full border border-zinc-200">
+                          <Lock className="h-3 w-3" />
+                          <span>Sem Acesso</span>
+                        </span>
+                      )}
+                    </td>
+
+                    <td className="px-5 py-4 text-center">
                       <Badge tone={countFunc > 0 ? "sky" : "zinc"}>
                         {countFunc} colaborador(es)
                       </Badge>
@@ -115,7 +132,7 @@ export function AbaCargos() {
 
                     <td className="px-5 py-4 text-center">
                       <Badge tone={countUsers > 0 ? "green" : "zinc"}>
-                        {countUsers} login(s)
+                        {countUsers} conta(s)
                       </Badge>
                     </td>
 
