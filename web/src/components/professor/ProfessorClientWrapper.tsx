@@ -88,6 +88,7 @@ export function ProfessorClientWrapper({
       turmas={turmasDoProfessor}
       slotsGrid={slotsGrid}
       todosBeneficiarios={beneficiariosDoProfessor}
+      pontoHoje={dadosSupabase?.pontoHoje}
       loading={loading}
     />
   );

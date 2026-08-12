@@ -1774,12 +1774,33 @@ export const areaProfessorApi = {
       beneficiariosMapped = Array.from(bMap.values());
     }
 
+    // Buscar registro de ponto hoje para o colaborador
+    let pontoHoje: { entrada?: string; saida?: string; registrado: boolean } = { registrado: false };
+    if (funcionarioId) {
+      const dataHojeStr = new Date().toISOString().split('T')[0];
+      const { data: pontos } = await (sb.from('registros_ponto') as any)
+        .select('*')
+        .eq('funcionario_id', funcionarioId)
+        .eq('data', dataHojeStr);
+
+      if (pontos && pontos.length > 0) {
+        const entrada = pontos.find((p: any) => p.tipo === 'entrada')?.hora;
+        const saida = pontos.find((p: any) => p.tipo === 'saida')?.hora;
+        pontoHoje = {
+          entrada: entrada ? String(entrada).slice(0, 5) : undefined,
+          saida: saida ? String(saida).slice(0, 5) : undefined,
+          registrado: Boolean(entrada || saida),
+        };
+      }
+    }
+
     return {
       usuario,
       funcionario,
       turmas: turmasMapped,
       slotsGrid,
       beneficiarios: beneficiariosMapped,
+      pontoHoje,
       isAdmin,
     };
   },

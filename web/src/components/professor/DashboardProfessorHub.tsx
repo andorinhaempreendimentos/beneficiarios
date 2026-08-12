@@ -39,6 +39,7 @@ interface DashboardProfessorHubProps {
   turmas: TurmaApi[];
   slotsGrid?: SlotAulaGrid[];
   todosBeneficiarios: BeneficiarioApi[];
+  pontoHoje?: { entrada?: string; saida?: string; registrado: boolean };
   loading?: boolean;
 }
 
@@ -60,6 +61,7 @@ export function DashboardProfessorHub({
   turmas,
   slotsGrid = [],
   todosBeneficiarios,
+  pontoHoje,
   loading = false,
 }: DashboardProfessorHubProps) {
   const router = useRouter();
@@ -299,7 +301,7 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
           >
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 group-hover:text-sky-600">
-                Alunos Atendidos
+                Beneficiários Atendidos
               </span>
               <span className="text-[10px] font-bold text-sky-600 bg-sky-100 px-2 py-0.5 rounded-full">
                 Gerenciar ⚙️
@@ -307,9 +309,9 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
             </div>
             <div className="mt-1 flex items-baseline gap-2">
               <span className="text-2xl font-extrabold text-zinc-900 group-hover:text-sky-600">{totalAlunos}</span>
-              <span className="text-xs text-sky-600 font-semibold">Alunos</span>
+              <span className="text-xs text-sky-600 font-semibold">Beneficiários</span>
             </div>
-            <p className="text-[11px] text-zinc-500 mt-0.5">Clique para matricular/transferir</p>
+            <p className="text-[11px] text-zinc-500 mt-0.5">Clique para gerenciar matrículas</p>
           </button>
 
           <Card className="p-4 border-l-4 border-l-indigo-500 bg-white shadow-sm">
@@ -330,13 +332,30 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
             <p className="text-[11px] text-zinc-500 mt-0.5">Treinos programados</p>
           </Card>
 
-          <Card className="p-4 border-l-4 border-l-amber-500 bg-white shadow-sm">
+          <Card className={`p-4 border-l-4 ${pontoHoje?.registrado ? 'border-l-emerald-500' : 'border-l-amber-500'} bg-white shadow-sm`}>
             <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Status Ponto Hoje</span>
             <div className="mt-1 flex items-center gap-1.5">
-              <CheckCircle2 className="h-5 w-5 text-emerald-500" />
-              <span className="text-sm font-bold text-zinc-900">Entrada 08:00</span>
+              {pontoHoje?.registrado ? (
+                <>
+                  <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+                  <span className="text-sm font-bold text-zinc-900">
+                    Entrada {pontoHoje.entrada || 'registrada'}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <AlertCircle className="h-5 w-5 text-amber-500" />
+                  <span className="text-sm font-bold text-zinc-900">Ponto Não Registrado</span>
+                </>
+              )}
             </div>
-            <p className="text-[11px] text-emerald-600 font-semibold mt-0.5">Jornada em andamento</p>
+            <p className={`text-[11px] font-semibold mt-0.5 ${pontoHoje?.registrado ? 'text-emerald-600' : 'text-amber-600'}`}>
+              {pontoHoje?.registrado
+                ? pontoHoje.saida
+                  ? `Saída registrada às ${pontoHoje.saida}`
+                  : "Jornada em andamento"
+                : "Aguardando entrada de hoje"}
+            </p>
           </Card>
         </div>
       </div>
