@@ -70,11 +70,9 @@ export default function DashboardPage() {
       ...rRaw,
       nucleosAtivos: nucleosAtivosCount,
       totalNucleos: nucleosFiltrados.length,
-      beneficiariosAtivos: totalBeneficiariosAtivosFiltrados > 0
-        ? totalBeneficiariosAtivosFiltrados
-        : Math.round((rRaw.beneficiariosAtivos / Math.max(1, rawNucleos.length)) * nucleosFiltrados.length),
+      beneficiariosAtivos: totalBeneficiariosAtivosFiltrados,
       topNucleos: topNucleosFiltrados,
-      recentes: recentesFiltrados.length > 0 ? recentesFiltrados : rRaw.recentes.slice(0, 3),
+      recentes: recentesFiltrados,
     };
 
     return { resumoFiltrado: rFiltrado, nucleosMapeados: nucleosComUf };
