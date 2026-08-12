@@ -105,10 +105,54 @@ export function DashboardProfessorHub({
     }
   }
 
-  function handleIniciarAtividade(turmaId: string) {
+const SIGLAS_DIA: Record<number, string> = {
+  1: "Seg", 2: "Ter", 3: "Qua", 4: "Qui", 5: "Sex", 6: "Sáb", 0: "Dom"
+};
+
+function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: string } {
+  const agora = new Date();
+  const siglaHoje = SIGLAS_DIA[agora.getDay()];
+  const horaAtualDecimal = agora.getHours() + agora.getMinutes() / 60;
+
+  const slotHoje = (turma.slots ?? []).find((s: any) => s.dia === siglaHoje);
+
+  if (slotHoje) {
+    const horaFim = Number(slotHoje.fim) || 10;
+    if (horaAtualDecimal >= horaFim) {
+      return {
+        encerrado: true,
+        motivo: `O horário previsto desta aula (${String(slotHoje.inicio).padStart(2, '0')}:00 às ${String(horaFim).padStart(2, '0')}:00) já encerrou hoje.`
+      };
+    }
+    return { encerrado: false };
+  }
+
+  // Se não houver slot definido no banco para hoje
+  const ehDiaPadrao = siglaHoje === "Seg" || siglaHoje === "Qua" || siglaHoje === "Sex";
+  if (ehDiaPadrao && horaAtualDecimal >= 10) {
+    return {
+      encerrado: true,
+      motivo: "O horário desta aula (08:00 às 10:00) já encerrou hoje."
+    };
+  } else if (!ehDiaPadrao && (!turma.slots || turma.slots.length === 0)) {
+    return {
+      encerrado: true,
+      motivo: "Esta turma não possui treino/aula agendado para o dia de hoje."
+    };
+  }
+
+  return { encerrado: false };
+}
+
+  function handleIniciarAtividade(turma: TurmaApi) {
+    const check = checarHorarioEncerrou(turma);
+    if (check.encerrado) {
+      toast.error(check.motivo || "Horário encerrado. Não é permitido iniciar a atividade.");
+      return;
+    }
     const agora = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
-    setStatusAtividade((prev) => ({ ...prev, [turmaId]: "em_andamento" }));
-    setHoraInicio((prev) => ({ ...prev, [turmaId]: agora }));
+    setStatusAtividade((prev) => ({ ...prev, [turma.id]: "em_andamento" }));
+    setHoraInicio((prev) => ({ ...prev, [turma.id]: agora }));
     toast.success(`Atividade e ponto de entrada iniciados às ${agora}!`);
   }
 
@@ -610,15 +654,29 @@ export function DashboardProfessorHub({
                 <span>1. Início de Atividade & Ponto do Professor</span>
               </h4>
 
-              {statusAtividade[turmaModal.id] !== "em_andamento" && statusAtividade[turmaModal.id] !== "concluido" && (
-                <Button
-                  onClick={() => handleIniciarAtividade(turmaModal.id)}
-                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2"
-                >
-                  <PlayCircle className="h-5 w-5" />
-                  <span>Iniciar Atividade & Bater Entrada</span>
-                </Button>
-              )}
+              {statusAtividade[turmaModal.id] !== "em_andamento" && statusAtividade[turmaModal.id] !== "concluido" && (() => {
+                const checkHorario = checarHorarioEncerrou(turmaModal);
+                if (checkHorario.encerrado) {
+                  return (
+                    <div className="rounded-xl bg-amber-50 p-3.5 text-xs text-amber-900 border border-amber-300 font-medium flex items-start gap-2.5 shadow-2xs">
+                      <AlertCircle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+                      <div className="flex flex-col gap-0.5">
+                        <span className="font-bold text-amber-950">Horário Encerrado / Bloqueado</span>
+                        <span className="text-amber-800">{checkHorario.motivo} Não é permitido iniciar a atividade fora do horário previsto.</span>
+                      </div>
+                    </div>
+                  );
+                }
+                return (
+                  <Button
+                    onClick={() => handleIniciarAtividade(turmaModal)}
+                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 shadow-sm"
+                  >
+                    <PlayCircle className="h-5 w-5" />
+                    <span>Iniciar Atividade & Bater Entrada</span>
+                  </Button>
+                );
+              })()}
 
               {statusAtividade[turmaModal.id] === "em_andamento" && (
                 <div className="flex flex-col gap-3">
