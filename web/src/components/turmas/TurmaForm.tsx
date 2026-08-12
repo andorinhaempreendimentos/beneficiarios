@@ -1,20 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button, Field, FormSection, Input, LinkButton, Select, Switch } from "@/components/ui";
 import { GradeSemanal } from "./GradeSemanal";
-import { turmasApi, type TurmaApi, type NucleoApi, type AtividadeApi } from "@/lib/api/services";
+import {
+  turmasApi,
+  funcionariosApi,
+  type TurmaApi,
+  type NucleoApi,
+  type AtividadeApi,
+  type FuncionarioApi,
+} from "@/lib/api/services";
 
 interface TurmaFormProps {
   turma?: TurmaApi;
   nucleos?: NucleoApi[];
   atividades?: AtividadeApi[];
+  funcionarios?: FuncionarioApi[];
   backHref: string;
 }
 
 import { useToast } from "@/components/providers/ToastProvider";
 
-export function TurmaForm({ turma: t, nucleos = [], atividades = [], backHref }: TurmaFormProps) {
+export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionarios: initialFuncionarios = [], backHref }: TurmaFormProps) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
@@ -23,6 +31,18 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], backHref }:
   const [atividadeId, setAtividadeId] = useState(t?.atividadeId ?? "");
   const [slots, setSlots] = useState<any[]>(t?.slots ?? []);
   const [permitirFilaEspera, setPermitirFilaEspera] = useState(t?.permitirFilaEspera ?? true);
+  const [responsaveisIds, setResponsaveisIds] = useState<string[]>(t?.responsaveis ?? []);
+  const [listaFuncionarios, setListaFuncionarios] = useState<FuncionarioApi[]>(initialFuncionarios);
+
+  useEffect(() => {
+    if (initialFuncionarios.length === 0) {
+      funcionariosApi.list({ limit: 500 }).then((res) => {
+        setListaFuncionarios(res.data);
+      }).catch(() => {});
+    } else {
+      setListaFuncionarios(initialFuncionarios);
+    }
+  }, [initialFuncionarios]);
 
   const nucleoSelecionado = nucleos.find((n) => n.id === nucleoId);
 
@@ -96,6 +116,7 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], backHref }:
         savedTurma = await turmasApi.create(data);
         toast.success("Turma cadastrada com sucesso!");
       }
+      await turmasApi.setResponsaveis(savedTurma.id, responsaveisIds);
       await turmasApi.setHorarios(savedTurma.id, slots);
       window.location.href = backHref;
     } catch (err: any) {
@@ -142,7 +163,49 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], backHref }:
             </Select>
           </Field>
           <Field label="Responsável(is)">
-            <Input name="responsaveis" defaultValue={(t?.responsaveis ?? []).join(", ")} placeholder="Nomes separados por vírgula" />
+            <div className="flex flex-col gap-2">
+              <div className="flex flex-wrap gap-2 min-h-[38px] p-2 border border-zinc-200 rounded-xl bg-white">
+                {responsaveisIds.length === 0 ? (
+                  <span className="text-xs text-zinc-400 py-1 px-1">Nenhum responsável selecionado</span>
+                ) : (
+                  responsaveisIds.map((fId) => {
+                    const func = listaFuncionarios.find((f) => f.id === fId);
+                    const nomeExibicao = func ? func.nomeCompleto : fId;
+                    return (
+                      <span key={fId} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-sky-100 text-sky-800 text-xs font-semibold">
+                        {nomeExibicao}
+                        <button
+                          type="button"
+                          onClick={() => setResponsaveisIds(responsaveisIds.filter((id) => id !== fId))}
+                          className="hover:text-red-600 focus:outline-none ml-1 cursor-pointer"
+                        >
+                          &times;
+                        </button>
+                      </span>
+                    );
+                  })
+                )}
+              </div>
+              <select
+                value=""
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val && !responsaveisIds.includes(val)) {
+                    setResponsaveisIds([...responsaveisIds, val]);
+                  }
+                }}
+                className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-medium text-zinc-800 focus:border-sky-500 focus:outline-none"
+              >
+                <option value="">+ Selecionar funcionário / professor responsável</option>
+                {listaFuncionarios
+                  .filter((f) => !responsaveisIds.includes(f.id))
+                  .map((f) => (
+                    <option key={f.id} value={f.id}>
+                      {f.nomeCompleto} {f.funcao ? `(${f.funcao})` : ""} {f.professorResponsavel ? "⭐ Professor" : ""}
+                    </option>
+                  ))}
+              </select>
+            </div>
           </Field>
         </div>
       </FormSection>
@@ -170,8 +233,8 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], backHref }:
           <Field label="Data de início">
             <Input name="dataInicio" type="date" defaultValue={t?.dataInicio} />
           </Field>
-          <Field label="Duração">
-            <Input name="duracao" placeholder="Ex: 12 meses" />
+          <Field label="Data de término">
+            <Input name="dataFim" type="date" defaultValue={t?.dataFim} />
           </Field>
         </div>
 
@@ -216,3 +279,4 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], backHref }:
     </form>
   );
 }
+

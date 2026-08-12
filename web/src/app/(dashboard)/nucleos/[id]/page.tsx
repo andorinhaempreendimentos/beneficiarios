@@ -115,7 +115,11 @@ export default async function DetalhesNucleoPage({ params }: { params: Promise<{
                 <tr key={turma.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
                   <td className="px-5 py-3 text-zinc-500">{turma.id.substring(0, 8)}</td>
                   <td className="px-5 py-3 font-medium text-zinc-900">{turma.nome}</td>
-                  <td className="px-5 py-3 text-zinc-600">{(turma.responsaveis ?? []).join(", ") || "-"}</td>
+                  <td className="px-5 py-3 text-zinc-600 font-medium">
+                    {(turma.responsaveisNomes && turma.responsaveisNomes.length > 0)
+                      ? turma.responsaveisNomes.join(", ")
+                      : (turma.responsaveis ?? []).join(", ") || "-"}
+                  </td>
                   <td className="px-5 py-3 text-zinc-600">-</td>
                   <td className="px-5 py-3 text-zinc-600">-</td>
                   <td className="px-5 py-3">

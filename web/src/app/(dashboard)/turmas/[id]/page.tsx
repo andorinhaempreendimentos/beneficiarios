@@ -75,7 +75,11 @@ export default async function DetalhesTurmaPage({ params }: { params: Promise<{ 
           </div>
           <div>
             <p className="text-zinc-500">Responsável(is)</p>
-            <p className="text-zinc-800">{(t.responsaveis ?? []).join(", ") || "-"}</p>
+            <p className="text-zinc-800">
+              {(t.responsaveisNomes && t.responsaveisNomes.length > 0)
+                ? t.responsaveisNomes.join(", ")
+                : (t.responsaveis ?? []).join(", ") || "-"}
+            </p>
           </div>
         </CardBody>
       </Card>
