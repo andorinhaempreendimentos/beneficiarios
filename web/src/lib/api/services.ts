@@ -890,7 +890,15 @@ export const beneficiariosApi = {
     const sb = await getSupabase();
     const { page, limit, from, to } = paginar(num(p?.page), num(p?.limit));
     let beneficiarioIds: string[] | null = null;
-    if (p?.atividadeId) {
+    if (p?.turmaId) {
+      const { data: vinculos, error: eV } = await sb
+        .from('beneficiario_turmas')
+        .select('beneficiario_id')
+        .eq('turma_id', String(p.turmaId))
+        .is('deleted_at', null);
+      if (eV) throw eV;
+      beneficiarioIds = Array.from(new Set((vinculos ?? []).map((v) => v.beneficiario_id)));
+    } else if (p?.atividadeId) {
       const { data: turmas, error: eT } = await sb.from('turmas').select('id').eq('atividade_id', String(p.atividadeId));
       if (eT) throw eT;
       const turmaIds = (turmas ?? []).map((t) => t.id);
