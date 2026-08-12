@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { User, KeyRound, ShieldCheck, Eye, EyeOff, AlertCircle, Check } from "lucide-react";
+import { User, KeyRound, ShieldCheck, Eye, EyeOff, AlertCircle, Lock } from "lucide-react";
 import {
   Button,
   Field,
@@ -49,9 +49,9 @@ export function FuncionarioForm({ funcionario: f, nucleos = [], funcoes = [], ba
   const [checandoEmail, setChecandoEmail] = useState(false);
   const [professorResponsavel, setProfessorResponsavel] = useState(f?.professorResponsavel ?? false);
   
-  // Credenciais de Login
-  const [permitirLogin, setPermitirLogin] = useState<boolean>(true);
-  const [senhaLogin, setSenhaLogin] = useState<string>("Palmas444##@1");
+  // Credenciais de Acesso (Geridas pela Categoria do Cargo)
+  const categoriaPermiteLogin = funcao !== "Staff";
+  const [senhaNova, setSenhaNova] = useState<string>("");
   const [mostrarSenha, setMostrarSenha] = useState<boolean>(false);
 
   // Jornada de trabalho
@@ -73,7 +73,7 @@ export function FuncionarioForm({ funcionario: f, nucleos = [], funcoes = [], ba
     try {
       const res = await funcionariosApi.verificarEmailUnico(emailVal, f?.id);
       if (!res.unico) {
-        setErroEmail(res.mensagem || "Este e-mail já está em uso.");
+        setErroEmail(res.mensagem || "Este e-mail já está em uso por outro cadastro.");
       } else {
         setErroEmail(null);
       }
@@ -105,8 +105,8 @@ export function FuncionarioForm({ funcionario: f, nucleos = [], funcoes = [], ba
       nucleoId: (formData.get("nucleoId") as string) || null,
       alocadoEm: (formData.get("alocadoEm") as string) || "Administração",
       professorResponsavel,
-      permitirLogin,
-      senhaLogin,
+      permitirLogin: categoriaPermiteLogin,
+      senhaLogin: senhaNova.trim() || undefined,
     };
 
     try {
@@ -280,28 +280,36 @@ export function FuncionarioForm({ funcionario: f, nucleos = [], funcoes = [], ba
         )}
       </FormSection>
 
-      {/* CREDENCIAIS E ACESSO AO SISTEMA (FLUXO UNIFICADO RH + LOGIN) */}
-      <FormSection title="Credenciais & Acesso ao Sistema (Login)">
-        <div className="rounded-xl border border-sky-200 bg-sky-50/50 p-5 flex flex-col gap-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-sky-100 pb-3">
-            <div>
-              <div className="flex items-center gap-2">
+      {/* REGRA DA CATEGORIA DO PERFIL: CREDENCIAIS E ACESSO AO SISTEMA */}
+      <FormSection title="Acesso ao Sistema (Regra da Categoria)">
+        <div className={`rounded-xl border p-5 flex flex-col gap-4 ${
+          categoriaPermiteLogin ? "border-sky-200 bg-sky-50/50" : "border-zinc-200 bg-zinc-50"
+        }`}>
+          <div className="flex items-center justify-between border-b border-sky-100/60 pb-3">
+            <div className="flex items-center gap-2">
+              {categoriaPermiteLogin ? (
                 <ShieldCheck className="h-5 w-5 text-sky-600" />
-                <h4 className="text-sm font-bold text-sky-950">Acesso ao Painel do Sistema</h4>
+              ) : (
+                <Lock className="h-5 w-5 text-zinc-400" />
+              )}
+              <div>
+                <h4 className="text-sm font-bold text-zinc-900">
+                  {categoriaPermiteLogin ? "Acesso ao Painel Permitido" : "Acesso ao Painel Bloqueado para esta Categoria"}
+                </h4>
+                <p className="text-xs text-zinc-500 mt-0.5">
+                  Regra herdada do perfil de acesso: <span className="font-bold text-sky-900 bg-sky-100 px-1.5 py-0.5 rounded">{funcao}</span>
+                </p>
               </div>
-              <p className="text-xs text-sky-800/80 mt-0.5">
-                Perfil RBAC sugerido automaticamente pelo cargo:{" "}
-                <span className="font-bold text-sky-900 bg-sky-200/60 px-1.5 py-0.5 rounded">{funcao}</span>
-              </p>
             </div>
-            <Switch
-              checked={permitirLogin}
-              onChange={setPermitirLogin}
-              label="Permitir Acesso / Login"
-            />
+
+            <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${
+              categoriaPermiteLogin ? "bg-sky-600 text-white" : "bg-zinc-200 text-zinc-600"
+            }`}>
+              {categoriaPermiteLogin ? "Categoria com Login" : "Sem Login"}
+            </span>
           </div>
 
-          {permitirLogin ? (
+          {categoriaPermiteLogin ? (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 pt-1">
               <Field label="E-mail de Login no Sistema" required>
                 <Input
@@ -310,17 +318,16 @@ export function FuncionarioForm({ funcionario: f, nucleos = [], funcoes = [], ba
                   readOnly
                   className="bg-white font-mono text-xs font-semibold text-zinc-700 cursor-not-allowed"
                 />
-                <p className="mt-1 text-[11px] text-zinc-500">Sincronizado automaticamente com o e-mail pessoal acima.</p>
+                <p className="mt-1 text-[11px] text-zinc-500">Sincronizado automaticamente com o e-mail oficial do colaborador.</p>
               </Field>
 
-              <Field label="Senha de Acesso do Colaborador" required>
+              <Field label="Definir / Redefinir Senha do Colaborador">
                 <div className="relative">
                   <Input
                     type={mostrarSenha ? "text" : "password"}
-                    value={senhaLogin}
-                    onChange={(e) => setSenhaLogin(e.target.value)}
-                    required
-                    placeholder="Palmas444##@1"
+                    value={senhaNova}
+                    onChange={(e) => setSenhaNova(e.target.value)}
+                    placeholder="••••••••"
                     className="bg-white font-mono pr-10"
                   />
                   <button
@@ -332,15 +339,15 @@ export function FuncionarioForm({ funcionario: f, nucleos = [], funcoes = [], ba
                     {mostrarSenha ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
-                <p className="mt-1 text-[11px] font-semibold text-sky-800 flex items-center gap-1">
+                <p className="mt-1 text-[11px] text-zinc-500 flex items-center gap-1">
                   <KeyRound className="h-3 w-3 text-sky-600 shrink-0" />
-                  <span>Senha padrão inicial configurada: <strong>Palmas444##@1</strong></span>
+                  <span>Deixe em branco para manter a senha atual ou a senha padrão da categoria.</span>
                 </p>
               </Field>
             </div>
           ) : (
-            <p className="text-xs text-amber-800 font-medium bg-amber-100/60 p-3 rounded-lg border border-amber-200">
-              ⚠️ Este colaborador não terá permissão de login no painel do sistema.
+            <p className="text-xs text-zinc-600 font-medium bg-white p-3 rounded-lg border border-zinc-200">
+              🔒 Os colaboradores cadastrados na categoria <strong>{funcao}</strong> não possuem permissão de login no painel. Para habilitar acesso, altere o cargo ou a regra do perfil em <em>Configurações &gt; Permissões RBAC</em>.
             </p>
           )}
         </div>
@@ -407,7 +414,7 @@ export function FuncionarioForm({ funcionario: f, nucleos = [], funcoes = [], ba
           Voltar
         </LinkButton>
         <Button type="submit" loading={loading} disabled={!!erroEmail} className="cursor-pointer">
-          {f ? "Salvar Alterações" : "Cadastrar Funcionário & Criar Acesso"}
+          {f ? "Salvar Alterações" : "Cadastrar Colaborador"}
         </Button>
       </div>
     </form>
