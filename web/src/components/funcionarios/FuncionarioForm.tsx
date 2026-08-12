@@ -172,7 +172,7 @@ export function FuncionarioForm({ funcionario: f, nucleos = [], funcoes = [], ba
           </Field>
 
           <Field label="Celular / WhatsApp">
-            <Input name="celular" mask="celular" defaultValue={f?.celular} placeholder="(63) 99999-0000" />
+            <Input name="celular" mask="telefone" defaultValue={f?.celular} placeholder="(63) 99999-0000" />
           </Field>
 
           <Field label="E-mail Pessoal / Oficial" required>

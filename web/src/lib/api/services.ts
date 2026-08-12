@@ -1164,12 +1164,12 @@ async function sincronizarUsuarioFuncionario(
     };
 
     if (usrExistente?.id) {
-      await sb.from('usuarios').update(usuarioRow).eq('id', usrExistente.id);
+      await sb.from('usuarios' as any).update(usuarioRow).eq('id', usrExistente.id);
     } else {
-      await sb.from('usuarios').insert({ id: crypto.randomUUID(), ...usuarioRow });
+      await sb.from('usuarios' as any).insert({ id: crypto.randomUUID(), ...usuarioRow });
     }
   } else if (usrExistente?.id) {
-    await sb.from('usuarios').update({ ativo: false }).eq('id', usrExistente.id);
+    await sb.from('usuarios' as any).update({ ativo: false }).eq('id', usrExistente.id);
   }
 }
 
