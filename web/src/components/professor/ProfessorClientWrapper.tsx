@@ -54,10 +54,23 @@ export function ProfessorClientWrapper({
     return responsavelDireto || responsavelNome || mesmoNucleo;
   });
 
-  // Beneficiários vinculados ao núcleo do professor
+  // Beneficiários vinculados às turmas do professor OU ao seu núcleo via turmasInfo
+  const idsTurmasDoProf = new Set(turmasDoProfessor.map((t) => t.id));
   const beneficiariosDoProfessor = todosBeneficiarios.filter((b) => {
     if (!professorAtual) return false;
-    return professorAtual.nucleoId ? b.nucleoId === professorAtual.nucleoId : true;
+
+    // 1. Verifica se o aluno está matriculado em alguma das turmas do professor
+    const temTurmaDoProf = (b.turmasInfo ?? []).some((ti) => ti.turmaId && idsTurmasDoProf.has(ti.turmaId));
+    if (temTurmaDoProf) return true;
+
+    // 2. Verifica se o aluno possui vínculo com o núcleo do professor
+    if (professorAtual.nucleoId) {
+      if (b.nucleoId === professorAtual.nucleoId) return true;
+      const temNucleoDoProf = (b.turmasInfo ?? []).some((ti) => ti.nucleoId === professorAtual.nucleoId);
+      if (temNucleoDoProf) return true;
+    }
+
+    return false;
   });
 
   return (

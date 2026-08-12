@@ -83,7 +83,7 @@ export function DashboardProfessorHub({
 
   // Cálculos Dinâmicos
   const totalTurmas = turmas.length;
-  const totalAlunos = 0;
+  const totalAlunos = (todosBeneficiarios ?? []).length;
   const cargaHorariaSemanal = totalTurmas > 0 ? totalTurmas * 2 : 0;
 
   const hojeIndice = new Date().getDay();
@@ -486,8 +486,10 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {turmasOrdenadas.slice(slideAtual, slideAtual + 3).map((turma, idx) => {
               const vagas = turma.vagasTotais || 0;
-              const inscritos = 0;
-              const porcentagem = vagas > 0 ? Math.round((inscritos / vagas) * 100) : 0;
+              const inscritos = (todosBeneficiarios ?? []).filter((b) =>
+                (b.turmasInfo ?? []).some((ti) => ti.turmaId === turma.id)
+              ).length;
+              const porcentagem = vagas > 0 ? Math.min(100, Math.round((inscritos / vagas) * 100)) : 0;
               const ehPrimeiro = idx === 0;
 
               return (
