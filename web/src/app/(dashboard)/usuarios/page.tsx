@@ -113,39 +113,41 @@ export default function UsuariosPage() {
                     return (
                       <div
                         key={u.id}
-                        className={`p-4 rounded-xl border transition-all flex flex-col justify-between gap-3 ${
+                        className={`p-4 rounded-2xl border transition-all flex flex-col justify-between gap-3 ${
                           isSelected
-                            ? "border-sky-500 bg-sky-50/30 ring-1 ring-sky-500"
-                            : "border-zinc-200 bg-white hover:border-zinc-300 hover:shadow-sm"
+                            ? "border-sky-500 bg-sky-50/30 ring-2 ring-sky-500/20 shadow-xs"
+                            : "border-zinc-200 bg-white hover:border-zinc-300 hover:shadow-xs"
                         }`}
                       >
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="flex items-center gap-3">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-start gap-3">
                             <input
                               type="checkbox"
                               checked={isSelected}
                               onChange={() => toggleSelectOne(u.id)}
-                              className="h-4 w-4 rounded border-zinc-300 text-sky-600 focus:ring-sky-500 cursor-pointer"
+                              className="h-4 w-4 rounded border-zinc-300 text-sky-600 focus:ring-sky-500 cursor-pointer mt-0.5"
                             />
                             <div>
-                              <Link href={`/usuarios/${u.id}`} className="font-bold text-zinc-900 text-sm hover:text-sky-600">
+                              <Link href={`/usuarios/${u.id}`} className="font-bold text-zinc-900 text-sm hover:text-sky-600 block">
                                 {u.nomeCompleto}
                               </Link>
-                              <span className="text-xs text-zinc-400 block">{u.email}</span>
+                              <span className="text-xs text-zinc-400 block mt-0.5 font-normal">{u.email}</span>
                             </div>
                           </div>
                           <StatusUsuarioBadge usuarioId={u.id} statusAtual={u.ativo ? "ativo" : "inativo"} />
                         </div>
 
-                        <div className="flex items-center justify-between text-xs text-zinc-500 border-t border-zinc-100 pt-2.5">
-                          <Badge tone="sky">{perfil?.nome ?? "—"}</Badge>
+                        <div className="flex items-center justify-between text-xs text-zinc-500 border-t border-zinc-100 pt-3">
+                          <span className="inline-flex items-center rounded-full bg-violet-100/90 px-3 py-1 text-xs font-semibold text-violet-700">
+                            {perfil?.nome ?? "—"}
+                          </span>
                           <span className="text-zinc-600 font-medium">
                             {u.isProfessor ? "Professor" : "Usuário"}
                           </span>
                         </div>
 
-                        <div className="flex items-center justify-end gap-3 pt-2 border-t border-zinc-100/60">
-                          <Link href={`/usuarios/${u.id}`} className="text-xs font-semibold text-sky-600 hover:underline">
+                        <div className="flex items-center justify-end gap-3 pt-2.5 border-t border-zinc-100/80">
+                          <Link href={`/usuarios/${u.id}`} className="text-xs font-bold text-sky-900 hover:underline">
                             Detalhes
                           </Link>
                           <span className="text-zinc-300">|</span>
