@@ -8,6 +8,9 @@ import {
   ArrowRightLeft,
   Search,
   BookOpen,
+  Link2,
+  Copy,
+  X,
 } from "lucide-react";
 import { Badge, Button, Card, CardBody, CardHeader, Select } from "@/components/ui";
 import { useToast } from "@/components/providers/ToastProvider";
@@ -18,8 +21,6 @@ import {
   type TurmaApi,
   type BeneficiarioApi,
 } from "@/lib/api/services";
-
-import { X } from "lucide-react";
 
 interface GestaoMatriculasProfessorProps {
   turmas: TurmaApi[];
@@ -117,6 +118,22 @@ export function GestaoMatriculasProfessor({
     }
   }
 
+  function handleCopiarLinkInscricao() {
+    if (!turmaSelecionadaId) {
+      toast.error("Selecione uma turma para copiar o link de inscrição.");
+      return;
+    }
+    const origin = typeof window !== "undefined" ? window.location.origin : "";
+    const linkInscricao = `${origin}/inscricao?turmaId=${turmaSelecionadaId}`;
+
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(linkInscricao);
+      toast.success(`Link de inscrição público da turma "${turmaAtual?.nome || 'selecionada'}" copiado com sucesso!`);
+    } else {
+      toast.info(`Link de inscrição: ${linkInscricao}`);
+    }
+  }
+
   if (!isOpen) return null;
 
   return (
@@ -130,7 +147,7 @@ export function GestaoMatriculasProfessor({
               <span>Gestão de Matrículas do Professor</span>
             </h2>
             <p className="text-xs text-zinc-500 mt-0.5">
-              Adicionar, remover ou transferir beneficiários associados às suas turmas
+              Adicionar, remover, transferir ou compartilhar link de inscrição das turmas
             </p>
           </div>
 
@@ -161,10 +178,22 @@ export function GestaoMatriculasProfessor({
               </Select>
             </div>
 
-            <Button onClick={() => setModalAdicionar(true)} size="sm" className="w-full sm:w-auto self-end">
-              <UserPlus className="h-4 w-4" />
-              <span>Matricular Novo Aluno</span>
-            </Button>
+            <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto self-end">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleCopiarLinkInscricao}
+                className="w-full sm:w-auto bg-white hover:bg-sky-50 text-sky-700 border-sky-300 font-semibold text-xs flex items-center justify-center gap-1.5 shadow-2xs"
+              >
+                <Link2 className="h-4 w-4 text-sky-600" />
+                <span>Copiar Link de Inscrição</span>
+              </Button>
+
+              <Button onClick={() => setModalAdicionar(true)} size="sm" className="w-full sm:w-auto">
+                <UserPlus className="h-4 w-4" />
+                <span>Matricular Novo Aluno</span>
+              </Button>
+            </div>
           </div>
 
           {/* Barra de Busca de Aluno na Turma */}
