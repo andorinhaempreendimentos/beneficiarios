@@ -1020,13 +1020,7 @@ const CARGOS_OFICIAIS = [
 
 export const funcoesApi = {
   async list(): Promise<FuncaoApi[]> {
-    const sb = await getSupabase();
-    const { data, error } = await sb.from('funcoes' as any).select('*').is('deleted_at', null).order('nome', { ascending: true });
-    if (error || !data || data.length === 0) return CARGOS_OFICIAIS;
-    const dbMapped = data.map(mapFuncao);
-    const validos = dbMapped.filter((f) => !["coordenador geral", "coordenador de logística", "supervisor de campo", "professor / instrutor esportivo"].includes(f.nome.toLowerCase()));
-    if (validos.length === 0) return CARGOS_OFICIAIS;
-    return validos;
+    return CARGOS_OFICIAIS;
   },
   async create(body: { nome: string; descricao?: string }): Promise<FuncaoApi> {
     const sb = createClient();
