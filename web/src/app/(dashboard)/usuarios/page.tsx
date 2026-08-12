@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import Link from "next/link";
-import { Download } from "lucide-react";
+import { Download, Check } from "lucide-react";
 import {
   Badge,
   Card,
@@ -113,32 +113,43 @@ export default function UsuariosPage() {
                     return (
                       <div
                         key={u.id}
-                        className={`p-4 rounded-2xl border transition-all flex flex-col justify-between gap-3 ${
+                        className={`group relative overflow-hidden rounded-2xl border transition-all flex flex-col justify-between gap-3 p-4 ${
                           isSelected
                             ? "border-sky-500 bg-sky-50/30 ring-2 ring-sky-500/20 shadow-xs"
                             : "border-zinc-200 bg-white hover:border-zinc-300 hover:shadow-xs"
                         }`}
                       >
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="flex items-start gap-3">
-                            <input
-                              type="checkbox"
-                              checked={isSelected}
-                              onChange={() => toggleSelectOne(u.id)}
-                              className="h-4 w-4 rounded border-zinc-300 text-sky-600 focus:ring-sky-500 cursor-pointer mt-0.5"
-                            />
-                            <div>
-                              <Link href={`/usuarios/${u.id}`} className="font-bold text-zinc-900 text-sm hover:text-sky-600 block">
-                                {u.nomeCompleto}
-                              </Link>
-                              <span className="text-xs text-zinc-400 block mt-0.5 font-normal">{u.email}</span>
-                            </div>
+                        {/* Checkbox Elegante no Canto Superior Esquerdo (Padrão Beneficiário) */}
+                        <label
+                          className={`absolute top-0 left-0 z-10 flex h-8 w-9 items-center justify-center rounded-br-xl border-r border-b transition-all cursor-pointer ${
+                            isSelected
+                              ? "bg-sky-600 border-sky-600 text-white shadow-2xs"
+                              : "bg-zinc-100/90 border-zinc-200/80 text-zinc-400 group-hover:bg-zinc-200/80 group-hover:border-zinc-300"
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => toggleSelectOne(u.id)}
+                            className="sr-only"
+                          />
+                          <Check className={`h-4 w-4 stroke-[3] transition-transform ${isSelected ? "scale-100 text-white" : "scale-85 text-zinc-400 opacity-60 group-hover:opacity-100"}`} />
+                        </label>
+
+                        {/* Cabeçalho com Deslocamento pl-7 para o Checkbox */}
+                        <div className="flex items-start justify-between gap-2 pl-7">
+                          <div>
+                            <span className="text-[10px] font-mono font-semibold text-zinc-400 block">{u.email}</span>
+                            <Link href={`/usuarios/${u.id}`} className="font-bold text-zinc-900 text-sm hover:text-sky-600">
+                              {u.nomeCompleto}
+                            </Link>
                           </div>
                           <StatusUsuarioBadge usuarioId={u.id} statusAtual={u.ativo ? "ativo" : "inativo"} />
                         </div>
 
-                        <div className="flex items-center justify-between text-xs text-zinc-500 border-t border-zinc-100 pt-3">
-                          <span className="inline-flex items-center rounded-full bg-violet-100/90 px-3 py-1 text-xs font-semibold text-violet-700">
+                        {/* Informação de Perfil e Tipo */}
+                        <div className="flex items-center justify-between text-xs text-zinc-500 border-t border-zinc-100 pt-2">
+                          <span className="inline-flex items-center rounded-full bg-violet-100 px-2.5 py-0.5 text-xs font-semibold text-violet-700">
                             {perfil?.nome ?? "—"}
                           </span>
                           <span className="text-zinc-600 font-medium">
@@ -146,12 +157,13 @@ export default function UsuariosPage() {
                           </span>
                         </div>
 
-                        <div className="flex items-center justify-end gap-3 pt-2.5 border-t border-zinc-100/80">
-                          <Link href={`/usuarios/${u.id}`} className="text-xs font-bold text-sky-900 hover:underline">
-                            Detalhes
+                        {/* Ações Rápidas no Rodapé (Estilo Beneficiário) */}
+                        <div className="flex items-center justify-end text-xs text-zinc-500 border-t border-zinc-100 pt-2 text-right">
+                          <Link href={`/usuarios/${u.id}`} className="text-sky-600 hover:underline font-medium">
+                            Acessar
                           </Link>
-                          <span className="text-zinc-300">|</span>
-                          <Link href={`/usuarios/${u.id}/editar`} className="text-xs text-zinc-500 hover:underline">
+                          <span className="mx-1.5 text-zinc-300">|</span>
+                          <Link href={`/usuarios/${u.id}/editar`} className="text-zinc-500 hover:underline">
                             Editar
                           </Link>
                         </div>
