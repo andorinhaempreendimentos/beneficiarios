@@ -1010,12 +1010,23 @@ function mapFuncao(r: any): FuncaoApi {
   };
 }
 
+const CARGOS_OFICIAIS = [
+  { id: "cargo-1", nome: "Professor / Instrutor", descricao: "Aulas práticas nos núcleos e chamada de alunos.", criadoEm: new Date().toISOString() },
+  { id: "cargo-2", nome: "Coordenador de Núcleo", descricao: "Gestão do polo esportivo físico, infraestrutura e equipamentos.", criadoEm: new Date().toISOString() },
+  { id: "cargo-3", nome: "Coordenador de Turma", descricao: "Gestão de horários, vagas e turmas específicas.", criadoEm: new Date().toISOString() },
+  { id: "cargo-4", nome: "Coordenador de Instrutores", descricao: "Supervisão técnica, pedagógica e equipe de professores.", criadoEm: new Date().toISOString() },
+  { id: "cargo-5", nome: "Staff", descricao: "Apoio administrativo, logística, recepção e operações.", criadoEm: new Date().toISOString() },
+];
+
 export const funcoesApi = {
   async list(): Promise<FuncaoApi[]> {
     const sb = await getSupabase();
     const { data, error } = await sb.from('funcoes' as any).select('*').is('deleted_at', null).order('nome', { ascending: true });
-    if (error) throw error;
-    return (data ?? []).map(mapFuncao);
+    if (error || !data || data.length === 0) return CARGOS_OFICIAIS;
+    const dbMapped = data.map(mapFuncao);
+    const validos = dbMapped.filter((f) => !["coordenador geral", "coordenador de logística", "supervisor de campo", "professor / instrutor esportivo"].includes(f.nome.toLowerCase()));
+    if (validos.length === 0) return CARGOS_OFICIAIS;
+    return validos;
   },
   async create(body: { nome: string; descricao?: string }): Promise<FuncaoApi> {
     const sb = createClient();
