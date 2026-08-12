@@ -1166,13 +1166,28 @@ async function sincronizarUsuarioFuncionario(
   status: string | undefined,
   overridePermitirLogin?: boolean
 ) {
-  if (!email || !email.trim()) return;
-  const emailLower = email.trim().toLowerCase();
-
   let loginHabilitado = overridePermitirLogin;
   if (loginHabilitado === undefined) {
     const oficial = CARGOS_OFICIAIS.find((c) => c.nome.toLowerCase() === (funcao || '').toLowerCase());
     loginHabilitado = oficial?.permiteLogin ?? ((funcao || '').toLowerCase() !== 'staff');
+  }
+
+  const slugNome = nomeCompleto
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ".")
+    .replace(/^\.|\.$/g, "");
+
+  const emailLower = (email && email.trim())
+    ? email.trim().toLowerCase()
+    : `${slugNome || 'funcionario'}@andorinha.local`;
+
+  // Atualizar email no funcionario se estiver em branco
+  if (!email || !email.trim()) {
+    try {
+      await sb.from('funcionarios').update({ email: emailLower }).eq('id', funcionarioId);
+    } catch (_) {}
   }
 
   const { data: perfis } = await sb.from('perfis').select('id, nome');
@@ -1353,6 +1368,7 @@ export const inscricoesApi = {
 
 export const usuariosApi = {
   async list(p?: QP): Promise<Paginated<UsuarioApi>> {
+    await sincronizarTodosFuncionariosUsuarios().catch(() => {});
     const sb = await getSupabase();
     const { page, limit, from, to } = paginar(num(p?.page), num(p?.limit));
     let q = sb.from('usuarios').select('*', { count: 'exact' }).is('deleted_at', null);
