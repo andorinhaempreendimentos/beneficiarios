@@ -1,18 +1,61 @@
 "use client";
 
-import { useState } from "react";
-import { Users, UserCheck, UserX, AlertCircle } from "lucide-react";
+import { useState, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
+import { Users, UserCheck, UserX, AlertCircle, ArrowLeft, GraduationCap } from "lucide-react";
+import Link from "next/link";
 import { Button, Card, PageHeader, Select } from "@/components/ui";
 import { useToast } from "@/components/providers/ToastProvider";
+import { useAuth } from "@/components/providers/AuthProvider";
 import { useQuery } from "@/lib/hooks/useQuery";
-import { beneficiariosApi, type TurmaApi, type BeneficiarioApi } from "@/lib/api/services";
+import { beneficiariosApi, type TurmaApi, type FuncionarioApi } from "@/lib/api/services";
 
-export function ChamadaView({ turmas }: { turmas: TurmaApi[] }) {
+export function ChamadaView({ turmas, funcionarios = [] }: { turmas: TurmaApi[]; funcionarios?: FuncionarioApi[] }) {
   const { toast } = useToast();
-  const [turmaSelecionadaId, setTurmaSelecionadaId] = useState(turmas[0]?.id || "");
+  const { user } = useAuth();
+  const searchParams = useSearchParams();
+  const queryTurmaId = searchParams.get("turmaId");
+
+  const isAdmin = user?.tipo === "admin";
+
+  // Identifica o professor correspondente ao usuário logado
+  const profDoUsuario = useMemo(() => {
+    if (!user) return null;
+    return funcionarios.find(
+      (p) =>
+        p.id === user.entidadeId ||
+        (p.email && user.email && p.email.toLowerCase() === user.email.toLowerCase()) ||
+        (user.refId && p.id === user.refId) ||
+        (user.nome && p.nomeCompleto.toLowerCase() === user.nome.toLowerCase())
+    );
+  }, [user, funcionarios]);
+
+  // Se não for admin, filtra estritamente apenas as turmas pertencentes a este professor
+  const turmasPermitidas = useMemo(() => {
+    if (isAdmin || !profDoUsuario) return turmas;
+    const nomeProfLower = profDoUsuario.nomeCompleto.toLowerCase();
+    return turmas.filter((t) => {
+      const respDireto = (t.responsaveis ?? []).some((r) => r.toLowerCase().includes(nomeProfLower));
+      const respNome = (t.responsaveisNomes ?? []).some((r) => r.toLowerCase().includes(nomeProfLower));
+      const mesmoNucleo = profDoUsuario.nucleoId && t.nucleoId === profDoUsuario.nucleoId;
+      return respDireto || respNome || mesmoNucleo;
+    });
+  }, [turmas, isAdmin, profDoUsuario]);
+
+  // Seleciona obrigatoriamente a turma específica que foi aberta pelo professor (se informada via URL), ou a primeira permitida
+  const turmaInicialId = useMemo(() => {
+    if (queryTurmaId && turmasPermitidas.some((t) => t.id === queryTurmaId)) {
+      return queryTurmaId;
+    }
+    return turmasPermitidas[0]?.id || "";
+  }, [queryTurmaId, turmasPermitidas]);
+
+  const [turmaSelecionadaId, setTurmaSelecionadaId] = useState(turmaInicialId);
   const [presencas, setPresencas] = useState<Record<string, "presente" | "falta">>({});
 
-  // Busca real de beneficiários inscritos na turma via Supabase
+  const turmaAtual = turmasPermitidas.find((t) => t.id === turmaSelecionadaId);
+
+  // Busca real de beneficiários inscritos na turma selecionada via Supabase
   const { data: beneficiariosRes, loading } = useQuery(
     () => (turmaSelecionadaId ? beneficiariosApi.list({ turmaId: turmaSelecionadaId, limit: 100 }) : Promise.resolve({ data: [], total: 0, page: 1, limit: 100 })),
     [turmaSelecionadaId]
@@ -25,38 +68,65 @@ export function ChamadaView({ turmas }: { turmas: TurmaApi[] }) {
   }
 
   function handleSalvarChamada() {
-    toast.success("Chamada diária registrada com sucesso!");
+    toast.success(`Chamada da turma "${turmaAtual?.nome || 'selecionada'}" registrada com sucesso!`);
   }
 
   return (
     <div className="flex flex-col gap-6 max-w-4xl mx-auto py-2">
+      <div className="flex items-center justify-between">
+        <Link
+          href="/professor"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-sky-600 hover:text-sky-800"
+        >
+          <ArrowLeft className="h-4 w-4" /> Voltar ao Painel do Professor
+        </Link>
+      </div>
+
       <PageHeader
-        title="Dar Presença para Beneficiários"
-        description="Frequência diária dos alunos matriculados na turma"
+        title="Chamada Diária — Lista de Presença"
+        description="Frequência dos beneficiários inscritos na turma aberta"
       />
 
       <Card className="p-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-zinc-100 pb-4 mb-6 gap-4">
           <div>
-            <h3 className="text-base font-bold text-zinc-900 flex items-center gap-2">
-              <Users className="h-5 w-5 text-sky-600" />
-              <span>Lista de Alunos da Turma</span>
+            <div className="flex items-center gap-2">
+              <span className="rounded-md bg-sky-100 px-2 py-0.5 text-[10px] font-extrabold uppercase text-sky-800">
+                Turma Selecionada
+              </span>
+              {turmaAtual && (
+                <span className="text-xs font-mono font-semibold text-zinc-400">
+                  {turmaAtual.nucleo?.identificacao || "Polo Palmas"}
+                </span>
+              )}
+            </div>
+            <h3 className="text-lg font-bold text-zinc-900 flex items-center gap-2 mt-1">
+              <GraduationCap className="h-5 w-5 text-sky-600" />
+              <span>{turmaAtual?.nome || "Nenhuma turma disponível"}</span>
             </h3>
           </div>
 
-          <div className="w-full sm:w-64">
+          <div className="w-full sm:w-72 flex flex-col gap-1">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">
+              Turmas do Professor
+            </span>
             <Select
               value={turmaSelecionadaId}
               onChange={(e) => setTurmaSelecionadaId(e.target.value)}
+              disabled={turmasPermitidas.length <= 1}
             >
-              {turmas.map((t) => (
-                <option key={t.id} value={t.id}>{t.nome}</option>
-              ))}
+              {turmasPermitidas.length === 0 ? (
+                <option value="">Nenhuma turma vinculada</option>
+              ) : (
+                turmasPermitidas.map((t) => (
+                  <option key={t.id} value={t.id}>{t.nome}</option>
+                ))
+              )}
             </Select>
           </div>
         </div>
 
-        {loading && <div className="py-8 text-center text-sm text-zinc-400">Carregando lista de alunos…</div>}
+        {loading && <div className="py-8 text-center text-sm text-zinc-400">Carregando alunos da turma…</div>}
 
         {!loading && (
           <div className="divide-y divide-zinc-100">
@@ -110,7 +180,7 @@ export function ChamadaView({ turmas }: { turmas: TurmaApi[] }) {
         )}
 
         <div className="mt-6 flex justify-end pt-4 border-t border-zinc-100">
-          <Button onClick={handleSalvarChamada}>
+          <Button onClick={handleSalvarChamada} disabled={alunosReais.length === 0}>
             Salvar Chamada de Hoje
           </Button>
         </div>

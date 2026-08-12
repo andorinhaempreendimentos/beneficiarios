@@ -682,7 +682,7 @@ export function DashboardProfessorHub({
               </h4>
 
               <Link
-                href="/professor/chamada"
+                href={`/professor/chamada?turmaId=${turmaModal.id}`}
                 className="w-full justify-center flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-xs font-bold text-white shadow-sm hover:bg-emerald-700 transition-colors"
               >
                 <Users className="h-4 w-4" />
