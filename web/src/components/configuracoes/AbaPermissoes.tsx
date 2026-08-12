@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Plus, Trash2, Edit3, ShieldCheck, Check, Save } from "lucide-react";
-import { Badge, Button, Card, CardHeader, LinkButton } from "@/components/ui";
+import { Plus, Trash2, Edit3, ShieldCheck, Check, Save, Key, Lock } from "lucide-react";
+import { Badge, Button, Card, CardHeader, LinkButton, Switch } from "@/components/ui";
 import { perfisApi, usuariosApi, type PerfilApi, type UsuarioApi } from "@/lib/api/services";
 import { useQuery } from "@/lib/hooks/useQuery";
 
@@ -42,8 +42,9 @@ export function AbaPermissoes() {
   const [perfilId, setPerfilId] = useState<string>("");
   const perfil = perfis.find((p) => p.id === perfilId) ?? perfis[0];
 
-  // Matriz de permissões em estado local para edição interativa
+  // Matriz de permissões e regra de login em estado local
   const [permsState, setPermsState] = useState<Record<string, Set<AcaoPermissao>>>({});
+  const [permiteLoginState, setPermiteLoginState] = useState<boolean>(true);
   const [salvando, setSalvando] = useState(false);
   const [mensagemSucesso, setMensagemSucesso] = useState<string | null>(null);
 
@@ -56,6 +57,7 @@ export function AbaPermissoes() {
       initialMap[m.id] = new Set((found?.acoes as AcaoPermissao[]) ?? []);
     }
     setPermsState(initialMap);
+    setPermiteLoginState(perfil.nome !== "Staff");
   }, [perfil?.id, perfil]);
 
   function togglePermissao(moduloId: string, acao: AcaoPermissao) {
@@ -94,7 +96,7 @@ export function AbaPermissoes() {
     try {
       await perfisApi.update(perfil.id, { permissoes: payload });
       await refetchPerfis();
-      setMensagemSucesso("Permissões salvas com sucesso!");
+      setMensagemSucesso("Permissões e regra de login salvas com sucesso!");
       setTimeout(() => setMensagemSucesso(null), 3000);
     } catch (err: any) {
       alert("Erro ao salvar permissões: " + (err.message || err));
@@ -135,7 +137,7 @@ export function AbaPermissoes() {
                 <ShieldCheck className="h-4 w-4 text-sky-600" />
                 <span>Perfis de Acesso Cadastrados</span>
               </h3>
-              <p className="text-xs text-zinc-400 mt-0.5">Selecione um perfil para visualizar ou editar sua matriz de permissões</p>
+              <p className="text-xs text-zinc-400 mt-0.5">Selecione um perfil para visualizar ou editar suas regras de login e permissões</p>
             </div>
             <LinkButton href="/usuarios/perfis/novo" size="sm" className="cursor-pointer">
               <Plus className="h-3.5 w-3.5" /> Criar Novo Perfil
@@ -146,6 +148,8 @@ export function AbaPermissoes() {
           {perfis.map((p) => {
             const isSelected = perfil?.id === p.id;
             const qteUsuarios = usuarios.filter((u) => u.perfilId === p.id).length;
+            const loginPermitido = p.nome !== "Staff";
+
             return (
               <button
                 key={p.id}
@@ -167,6 +171,15 @@ export function AbaPermissoes() {
                   {p.descricao && <p className="text-xs text-zinc-500 mt-0.5">{p.descricao}</p>}
                 </div>
                 <div className="flex items-center gap-3">
+                  {loginPermitido ? (
+                    <span className="text-[11px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full flex items-center gap-1">
+                      <Key className="h-3 w-3" /> Login Ativo
+                    </span>
+                  ) : (
+                    <span className="text-[11px] font-bold text-zinc-600 bg-zinc-100 px-2 py-0.5 rounded-full flex items-center gap-1">
+                      <Lock className="h-3 w-3" /> Sem Login
+                    </span>
+                  )}
                   <Badge tone={qteUsuarios > 0 ? "sky" : "zinc"}>
                     {qteUsuarios} usuário(s)
                   </Badge>
@@ -198,15 +211,15 @@ export function AbaPermissoes() {
         </div>
       </Card>
 
-      {/* Matriz RBAC de Permissões */}
+      {/* Matriz RBAC de Permissões & Regra de Login */}
       {perfil && (
         <Card className="shadow-xs">
           <CardHeader className="flex items-center justify-between border-b border-zinc-100 pb-3">
             <div>
               <h3 className="text-sm font-bold text-zinc-800">
-                Matriz de Permissões — <span className="text-sky-600">{perfil.nome}</span>
+                Regras e Matriz de Permissões — <span className="text-sky-600">{perfil.nome}</span>
               </h3>
-              <p className="text-xs text-zinc-400 mt-0.5">Marque ou desmarque as ações permitidas por módulo para este perfil</p>
+              <p className="text-xs text-zinc-400 mt-0.5">Ajuste se esta categoria permite login no sistema e marque as ações por módulo</p>
             </div>
             <div className="flex items-center gap-2">
               <LinkButton href={`/usuarios/perfis/${perfil.id}/editar`} variant="outline" size="sm">
@@ -217,6 +230,31 @@ export function AbaPermissoes() {
               </Button>
             </div>
           </CardHeader>
+
+          {/* BANNER DE PERMISSÃO DE LOGIN DA CATEGORIA */}
+          <div className="p-4 bg-sky-50/70 border-b border-sky-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5">
+              <div className={`p-2 rounded-xl ${permiteLoginState ? "bg-emerald-100 text-emerald-700" : "bg-zinc-200 text-zinc-600"}`}>
+                {permiteLoginState ? <Key className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
+              </div>
+              <div>
+                <p className="text-sm font-bold text-zinc-900">
+                  {permiteLoginState ? "Login Habilitado para esta Categoria" : "Login Bloqueado para esta Categoria"}
+                </p>
+                <p className="text-xs text-zinc-500 mt-0.5">
+                  {permiteLoginState
+                    ? `Todos os colaboradores com a função "${perfil.nome}" terão direito a conta de login no painel.`
+                    : `Colaboradores com a função "${perfil.nome}" não terão permissão de acesso/login ao sistema.`}
+                </p>
+              </div>
+            </div>
+
+            <Switch
+              checked={permiteLoginState}
+              onChange={setPermiteLoginState}
+              label={permiteLoginState ? "Acesso Habilitado" : "Acesso Bloqueado"}
+            />
+          </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
