@@ -33,6 +33,7 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
   const [permitirFilaEspera, setPermitirFilaEspera] = useState(t?.permitirFilaEspera ?? true);
   const [responsaveisIds, setResponsaveisIds] = useState<string[]>(t?.responsaveis ?? []);
   const [listaFuncionarios, setListaFuncionarios] = useState<FuncionarioApi[]>(initialFuncionarios);
+  const [todasTurmas, setTodasTurmas] = useState<TurmaApi[]>([]);
 
   useEffect(() => {
     if (initialFuncionarios.length === 0) {
@@ -42,7 +43,31 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
     } else {
       setListaFuncionarios(initialFuncionarios);
     }
+    turmasApi.list({ limit: 500 }).then((res) => {
+      setTodasTurmas(res.data);
+    }).catch(() => {});
   }, [initialFuncionarios]);
+
+  // IDs de funcionários que já são responsáveis em OUTRAS turmas
+  const idsResponsaveisEmOutrasTurmas = new Set<string>();
+  todasTurmas.forEach((item) => {
+    if (item.id !== t?.id) {
+      (item.responsaveis ?? []).forEach((fId) => idsResponsaveisEmOutrasTurmas.add(fId));
+    }
+  });
+
+  // Filtra apenas professores/instrutores não vinculados a outras turmas
+  const professoresDisponiveis = listaFuncionarios.filter((f) => {
+    const isProf =
+      f.professorResponsavel ||
+      f.funcao?.toLowerCase().includes("profess") ||
+      f.funcao?.toLowerCase().includes("instrut") ||
+      f.funcao?.toLowerCase().includes("treinad") ||
+      !f.funcao;
+
+    if (!isProf) return false;
+    return !idsResponsaveisEmOutrasTurmas.has(f.id);
+  });
 
   const nucleoSelecionado = nucleos.find((n) => n.id === nucleoId);
 
@@ -196,12 +221,12 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
                 }}
                 className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-medium text-zinc-800 focus:border-sky-500 focus:outline-none"
               >
-                <option value="">+ Selecionar funcionário / professor responsável</option>
-                {listaFuncionarios
+                <option value="">+ Selecionar professor responsável</option>
+                {professoresDisponiveis
                   .filter((f) => !responsaveisIds.includes(f.id))
                   .map((f) => (
                     <option key={f.id} value={f.id}>
-                      {f.nomeCompleto} {f.funcao ? `(${f.funcao})` : ""} {f.professorResponsavel ? "⭐ Professor" : ""}
+                      {f.nomeCompleto} {f.funcao ? `(${f.funcao})` : ""}
                     </option>
                   ))}
               </select>
