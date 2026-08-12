@@ -998,6 +998,7 @@ export interface FuncaoApi {
   id: string;
   nome: string;
   descricao?: string;
+  permiteLogin?: boolean;
   criadoEm: string;
 }
 
@@ -1006,31 +1007,37 @@ function mapFuncao(r: any): FuncaoApi {
     id: r.id,
     nome: r.nome,
     descricao: r.descricao ?? undefined,
+    permiteLogin: r.permite_login ?? r.permiteLogin ?? true,
     criadoEm: r.created_at,
   };
 }
 
-const CARGOS_OFICIAIS = [
-  { id: "cargo-1", nome: "Professor / Instrutor", descricao: "Aulas práticas nos núcleos e chamada de alunos.", criadoEm: new Date().toISOString() },
-  { id: "cargo-2", nome: "Coordenador de Núcleo", descricao: "Gestão do polo esportivo físico, infraestrutura e equipamentos.", criadoEm: new Date().toISOString() },
-  { id: "cargo-3", nome: "Coordenador de Turma", descricao: "Gestão de horários, vagas e turmas específicas.", criadoEm: new Date().toISOString() },
-  { id: "cargo-4", nome: "Coordenador de Instrutores", descricao: "Supervisão técnica, pedagógica e equipe de professores.", criadoEm: new Date().toISOString() },
-  { id: "cargo-5", nome: "Staff", descricao: "Apoio administrativo, logística, recepção e operações.", criadoEm: new Date().toISOString() },
+const CARGOS_OFICIAIS: FuncaoApi[] = [
+  { id: "cargo-1", nome: "Professor / Instrutor", descricao: "Aulas práticas nos núcleos e chamada de alunos.", permiteLogin: true, criadoEm: new Date().toISOString() },
+  { id: "cargo-2", nome: "Coordenador de Núcleo", descricao: "Gestão do polo esportivo físico, infraestrutura e equipamentos.", permiteLogin: true, criadoEm: new Date().toISOString() },
+  { id: "cargo-3", nome: "Coordenador de Turma", descricao: "Gestão de horários, vagas e turmas específicas.", permiteLogin: true, criadoEm: new Date().toISOString() },
+  { id: "cargo-4", nome: "Coordenador de Instrutores", descricao: "Supervisão técnica, pedagógica e equipe de professores.", permiteLogin: true, criadoEm: new Date().toISOString() },
+  { id: "cargo-5", nome: "Staff", descricao: "Apoio administrativo, logística, recepção e operações.", permiteLogin: false, criadoEm: new Date().toISOString() },
 ];
 
 export const funcoesApi = {
   async list(): Promise<FuncaoApi[]> {
     return CARGOS_OFICIAIS;
   },
-  async create(body: { nome: string; descricao?: string }): Promise<FuncaoApi> {
+  async create(body: { nome: string; descricao?: string; permiteLogin?: boolean }): Promise<FuncaoApi> {
     const sb = createClient();
-    const { data, error } = await sb.from('funcoes' as any).insert(body).select('*').single();
+    const payload = { nome: body.nome, descricao: body.descricao, permite_login: body.permiteLogin };
+    const { data, error } = await sb.from('funcoes' as any).insert(payload).select('*').single();
     if (error) throw error;
     return mapFuncao(data);
   },
-  async update(id: string, body: { nome?: string; descricao?: string }): Promise<FuncaoApi> {
+  async update(id: string, body: { nome?: string; descricao?: string; permiteLogin?: boolean }): Promise<FuncaoApi> {
     const sb = createClient();
-    const { data, error } = await sb.from('funcoes' as any).update(body).eq('id', id).select('*').single();
+    const payload: any = {};
+    if (body.nome !== undefined) payload.nome = body.nome;
+    if (body.descricao !== undefined) payload.descricao = body.descricao;
+    if (body.permiteLogin !== undefined) payload.permite_login = body.permiteLogin;
+    const { data, error } = await sb.from('funcoes' as any).update(payload).eq('id', id).select('*').single();
     if (error) throw error;
     return mapFuncao(data);
   },

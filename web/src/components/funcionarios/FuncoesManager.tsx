@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Trash2, Edit2, CheckCircle2, Shield } from "lucide-react";
-import { Button, Card, Field, Input, Textarea } from "@/components/ui";
+import { Plus, Trash2, Edit2, CheckCircle2, Shield, Key, Lock } from "lucide-react";
+import { Badge, Button, Card, Field, Input, Switch, Textarea } from "@/components/ui";
 import { funcoesApi, type FuncaoApi } from "@/lib/api/services";
 import { useToast } from "@/components/providers/ToastProvider";
 
@@ -15,6 +15,7 @@ export function FuncoesManager({ inicialFuncoes }: FuncoesManagerProps) {
   const [funcoes, setFuncoes] = useState<FuncaoApi[]>(inicialFuncoes);
   const [nome, setNome] = useState("");
   const [descricao, setDescricao] = useState("");
+  const [permiteLogin, setPermiteLogin] = useState(true);
   const [editandoId, setEditandoId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -28,12 +29,20 @@ export function FuncoesManager({ inicialFuncoes }: FuncoesManagerProps) {
     setLoading(true);
     try {
       if (editandoId) {
-        const atualizada = await funcoesApi.update(editandoId, { nome: nome.trim(), descricao: descricao.trim() || undefined });
-        setFuncoes((prev) => prev.map((f) => (f.id === editandoId ? atualizada : f)));
+        const atualizada = await funcoesApi.update(editandoId, {
+          nome: nome.trim(),
+          descricao: descricao.trim() || undefined,
+          permiteLogin,
+        });
+        setFuncoes((prev) => prev.map((f) => (f.id === editandoId ? { ...f, ...atualizada, permiteLogin } : f)));
         toast.success("Função atualizada com sucesso!");
       } else {
-        const nova = await funcoesApi.create({ nome: nome.trim(), descricao: descricao.trim() || undefined });
-        setFuncoes((prev) => [...prev, nova]);
+        const nova = await funcoesApi.create({
+          nome: nome.trim(),
+          descricao: descricao.trim() || undefined,
+          permiteLogin,
+        });
+        setFuncoes((prev) => [...prev, { ...nova, permiteLogin }]);
         toast.success("Nova função cadastrada!");
       }
       limparForm();
@@ -48,6 +57,7 @@ export function FuncoesManager({ inicialFuncoes }: FuncoesManagerProps) {
     setEditandoId(f.id);
     setNome(f.nome);
     setDescricao(f.descricao || "");
+    setPermiteLogin(f.permiteLogin ?? true);
   }
 
   async function handleDelete(id: string) {
@@ -65,6 +75,7 @@ export function FuncoesManager({ inicialFuncoes }: FuncoesManagerProps) {
     setEditandoId(null);
     setNome("");
     setDescricao("");
+    setPermiteLogin(true);
   }
 
   return (
@@ -90,6 +101,24 @@ export function FuncoesManager({ inicialFuncoes }: FuncoesManagerProps) {
               rows={3}
             />
           </Field>
+
+          {/* Toggle de Direito a Login */}
+          <div className="p-3 bg-zinc-50 rounded-xl border border-zinc-200/80 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <div className={`p-1.5 rounded-lg ${permiteLogin ? "bg-emerald-100 text-emerald-700" : "bg-zinc-200 text-zinc-600"}`}>
+                {permiteLogin ? <Key className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
+              </div>
+              <div>
+                <p className="text-xs font-bold text-zinc-800">Direito a Login no Sistema</p>
+                <p className="text-[11px] text-zinc-500">Permitir conta para colaboradores nesta função</p>
+              </div>
+            </div>
+            <Switch
+              checked={permiteLogin}
+              onChange={setPermiteLogin}
+            />
+          </div>
+
           <div className="flex gap-2 justify-end pt-2">
             {editandoId && (
               <Button type="button" variant="outline" onClick={limparForm}>
@@ -115,41 +144,55 @@ export function FuncoesManager({ inicialFuncoes }: FuncoesManagerProps) {
           </div>
         ) : (
           <div className="divide-y divide-zinc-100">
-            {funcoes.map((f) => (
-              <div key={f.id} className="py-3.5 flex items-start justify-between gap-4 hover:bg-zinc-50/60 p-2 rounded-xl transition-colors">
-                <div className="flex items-start gap-3">
-                  <div className="h-8 w-8 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center shrink-0 mt-0.5">
-                    <Shield className="h-4 w-4" />
+            {funcoes.map((f) => {
+              const temLogin = f.permiteLogin ?? (f.nome !== "Staff");
+              return (
+                <div key={f.id} className="py-3.5 flex items-center justify-between gap-4 hover:bg-zinc-50/60 p-2 rounded-xl transition-colors">
+                  <div className="flex items-start gap-3">
+                    <div className="h-8 w-8 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center shrink-0 mt-0.5">
+                      <Shield className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-semibold text-zinc-900 text-sm">{f.nome}</h4>
+                        {temLogin ? (
+                          <Badge tone="emerald">
+                            <Key className="h-3 w-3 mr-1 inline" /> Login Habilitado
+                          </Badge>
+                        ) : (
+                          <Badge tone="zinc">
+                            <Lock className="h-3 w-3 mr-1 inline" /> Sem Login
+                          </Badge>
+                        )}
+                      </div>
+                      {f.descricao ? (
+                        <p className="text-xs text-zinc-500 mt-0.5">{f.descricao}</p>
+                      ) : (
+                        <p className="text-xs text-zinc-400 italic mt-0.5">Sem descrição</p>
+                      )}
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="font-semibold text-zinc-900 text-sm">{f.nome}</h4>
-                    {f.descricao ? (
-                      <p className="text-xs text-zinc-500 mt-0.5">{f.descricao}</p>
-                    ) : (
-                      <p className="text-xs text-zinc-400 italic mt-0.5">Sem descrição</p>
-                    )}
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => handleEdit(f)}
+                      className="p-1.5 text-zinc-400 hover:text-sky-600 rounded-lg hover:bg-sky-50 transition-colors"
+                      title="Editar"
+                    >
+                      <Edit2 className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(f.id)}
+                      className="p-1.5 text-zinc-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors"
+                      title="Excluir"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
                   </div>
                 </div>
-                <div className="flex items-center gap-1.5 shrink-0">
-                  <button
-                    type="button"
-                    onClick={() => handleEdit(f)}
-                    className="p-1.5 text-zinc-400 hover:text-sky-600 rounded-lg hover:bg-sky-50 transition-colors"
-                    title="Editar"
-                  >
-                    <Edit2 className="h-4 w-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleDelete(f.id)}
-                    className="p-1.5 text-zinc-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors"
-                    title="Excluir"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </Card>
