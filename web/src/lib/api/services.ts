@@ -1039,6 +1039,7 @@ export const funcoesApi = {
     if (body.permiteLogin !== undefined) payload.permite_login = body.permiteLogin;
     const { data, error } = await sb.from('funcoes' as any).update(payload).eq('id', id).select('*').single();
     if (error) throw error;
+    await sincronizarTodosFuncionariosUsuarios().catch(() => {});
     return mapFuncao(data);
   },
   async delete(id: string): Promise<void> {
@@ -1102,9 +1103,7 @@ export const funcionariosApi = {
       data.nome_completo,
       data.email,
       data.funcao,
-      data.status,
-      body.permitirLogin !== false,
-      (body.senhaLogin as string) || "Palmas444##@1"
+      data.status
     );
     return mapFuncionario(data);
   },
@@ -1118,9 +1117,7 @@ export const funcionariosApi = {
       data.nome_completo,
       data.email,
       data.funcao,
-      data.status,
-      body.permitirLogin !== false,
-      (body.senhaLogin as string) || "Palmas444##@1"
+      data.status
     );
     return mapFuncionario(data);
   },
@@ -1131,6 +1128,32 @@ export const funcionariosApi = {
   },
 };
 
+export async function sincronizarTodosFuncionariosUsuarios() {
+  const sb = await getSupabase();
+  const { data: funcs } = await sb.from('funcionarios').select('*').is('deleted_at', null);
+  if (!funcs || funcs.length === 0) return;
+
+  const { data: funcoesDb } = await sb.from('funcoes' as any).select('nome, permite_login');
+
+  for (const f of funcs) {
+    const funcDb = (funcoesDb ?? []).find((fd: any) => fd.nome.toLowerCase() === (f.funcao || '').toLowerCase());
+    let permite = funcDb && (funcDb as any).permite_login !== undefined ? Boolean((funcDb as any).permite_login) : undefined;
+    if (permite === undefined) {
+      const oficial = CARGOS_OFICIAIS.find((c) => c.nome.toLowerCase() === (f.funcao || '').toLowerCase());
+      permite = oficial?.permiteLogin ?? ((f.funcao || '').toLowerCase() !== 'staff');
+    }
+    await sincronizarUsuarioFuncionario(
+      sb as any,
+      f.id,
+      f.nome_completo,
+      f.email,
+      f.funcao,
+      f.status,
+      permite
+    );
+  }
+}
+
 async function sincronizarUsuarioFuncionario(
   sb: ReturnType<typeof createClient>,
   funcionarioId: string,
@@ -1138,11 +1161,16 @@ async function sincronizarUsuarioFuncionario(
   email: string | null | undefined,
   funcao: string | null | undefined,
   status: string | undefined,
-  permitirLogin: boolean,
-  senhaLogin?: string
+  overridePermitirLogin?: boolean
 ) {
   if (!email || !email.trim()) return;
   const emailLower = email.trim().toLowerCase();
+
+  let loginHabilitado = overridePermitirLogin;
+  if (loginHabilitado === undefined) {
+    const oficial = CARGOS_OFICIAIS.find((c) => c.nome.toLowerCase() === (funcao || '').toLowerCase());
+    loginHabilitado = oficial?.permiteLogin ?? ((funcao || '').toLowerCase() !== 'staff');
+  }
 
   const { data: perfis } = await sb.from('perfis').select('id, nome');
   const perfilCorrespondente = (perfis ?? []).find(
@@ -1158,13 +1186,13 @@ async function sincronizarUsuarioFuncionario(
     .or(`entidade_id.eq.${funcionarioId},email.eq.${emailLower}`)
     .maybeSingle();
 
-  if (permitirLogin) {
+  if (loginHabilitado && isAtivo) {
     const usuarioRow = {
       email: emailLower,
       nome_completo: nomeCompleto,
       tipo: 'funcionario' as const,
       is_professor: isProf,
-      ativo: isAtivo,
+      ativo: true,
       perfil_id: perfilId,
       entidade_id: funcionarioId,
       deleted_at: null,
