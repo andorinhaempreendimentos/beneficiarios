@@ -852,6 +852,22 @@ export const turmasApi = {
     });
     if (error) throw error;
   },
+  async listarBeneficiarios(turmaId: string): Promise<BeneficiarioApi[]> {
+    const sb = createClient();
+    const { data: bTurmas, error } = await (sb.from('beneficiario_turmas') as any)
+      .select(`
+        turma_id,
+        beneficiarios(*, nucleos(identificacao))
+      `)
+      .eq('turma_id', turmaId)
+      .is('deleted_at', null)
+      .eq('status', 'ativo');
+
+    if (error) throw error;
+    return (bTurmas ?? [])
+      .map((bt: any) => bt.beneficiarios ? mapBeneficiario(bt.beneficiarios) : null)
+      .filter(Boolean) as BeneficiarioApi[];
+  },
 };
 
 function toTurmaRow(b: Record<string, unknown>): Database['public']['Tables']['turmas']['Insert'] {
@@ -1860,4 +1876,50 @@ export const areaProfessorApi = {
 
     return true;
   },
+
+  async buscarPresencasTurma(turmaId: string, dataAula?: string) {
+    const sb = createClient();
+    let q = (sb.from('registros_presenca') as any)
+      .select('*')
+      .eq('turma_id', turmaId);
+    if (dataAula) {
+      q = q.eq('data', dataAula);
+    }
+    const { data, error } = await q;
+    if (error) throw error;
+    return data ?? [];
+  },
+
+  async salvarBatidaPonto(payload: { funcionarioId: string; tipo: 'entrada' | 'saida'; data?: string; hora?: string; observacao?: string }) {
+    const sb = createClient();
+    const dataHoje = payload.data || new Date().toISOString().slice(0, 10);
+    const now = new Date();
+    const horaAtual = payload.hora || `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
+    
+    const { data, error } = await (sb.from('registros_ponto') as any).insert({
+      funcionario_id: payload.funcionarioId,
+      data: dataHoje,
+      tipo: payload.tipo,
+      hora: horaAtual,
+      status: 'ok',
+      observacao: payload.observacao || null,
+    }).select().single();
+
+    if (error && !error.message?.includes('duplicate key')) throw error;
+    return data || true;
+  },
+
+  async uploadComprovacao(file: File | Blob, nomeArquivo: string): Promise<string> {
+    const sb = createClient();
+    const extension = nomeArquivo.split('.').pop() || 'jpg';
+    const path = `atividades/${Date.now()}_${Math.random().toString(36).substring(7)}.${extension}`;
+    const { data, error } = await sb.storage.from('comprovacoes').upload(path, file, {
+      upsert: true,
+      contentType: file.type || 'image/jpeg',
+    });
+    if (error) throw error;
+    return data.path;
+  },
 };
+
+export const professoresApi = areaProfessorApi;

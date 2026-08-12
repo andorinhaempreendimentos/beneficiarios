@@ -1,10 +1,10 @@
 "use client";
 
 import { notFound } from "next/navigation";
-import { use, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { CheckCircle2, Circle, AlertCircle, ChevronLeft, ChevronRight, Save } from "lucide-react";
 import { Badge, Button, Card, CardBody, CardHeader, LinkButton, PageHeader } from "@/components/ui";
-import { turmasApi, beneficiariosApi } from "@/lib/api/services";
+import { turmasApi, professoresApi, type BeneficiarioApi } from "@/lib/api/services";
 import { useQuery } from "@/lib/hooks/useQuery";
 import type { StatusPresenca } from "@/lib/types";
 
@@ -35,6 +35,7 @@ function gerarDatasAula(dias: string[] = ["Seg", "Qua", "Sex"], quantidade = 8):
 }
 
 function formatarDataExibicao(iso: string): string {
+  if (!iso) return "";
   const [ano, mes, dia] = iso.split("-");
   return `${dia}/${mes}/${ano}`;
 }
@@ -53,15 +54,32 @@ export default function PresencaTurmaPage({ params }: { params: Promise<{ id: st
   const { id } = use(params);
   
   const { data: turma } = useQuery(() => turmasApi.get(id), [id]);
-  const { data: beneficiariosRes } = useQuery(() => beneficiariosApi.list({ limit: 100 }), []);
+  const { data: beneficiariosRes } = useQuery(() => turmasApi.listarBeneficiarios(id), [id]);
+  const beneficiarios = beneficiariosRes ?? [];
   
-  const beneficiarios = beneficiariosRes?.data ?? [];
   const datas = gerarDatasAula([], 8);
 
   const [dataAtual, setDataAtual] = useState<string>(datas[datas.length - 1] ?? "");
   const [salvo, setSalvo] = useState(false);
+  const [salvando, setSalvando] = useState(false);
 
   const [mapas, setMapas] = useState<Record<string, MapPresenca>>({});
+
+  // Carregar presenças salvas no banco para a data atual
+  useEffect(() => {
+    if (!id || !dataAtual) return;
+    professoresApi.buscarPresencasTurma(id, dataAtual)
+      .then((rows: any[]) => {
+        if (rows && rows.length > 0) {
+          const mapaData: MapPresenca = {};
+          rows.forEach((r) => {
+            mapaData[r.beneficiario_id] = r.status || (r.presente ? "presente" : "falta");
+          });
+          setMapas((prev) => ({ ...prev, [dataAtual]: mapaData }));
+        }
+      })
+      .catch((err: any) => console.error("Erro ao carregar presenças:", err));
+  }, [id, dataAtual]);
 
   const mapaAtual = mapas[dataAtual] ?? {};
   const idxAtual = datas.indexOf(dataAtual);
@@ -86,9 +104,25 @@ export default function PresencaTurmaPage({ params }: { params: Promise<{ id: st
     });
   }
 
-  function salvar() {
-    // Mock: simula salvamento
-    setSalvo(true);
+  async function salvar() {
+    setSalvando(true);
+    const presencasPayload = beneficiarios.map((b) => ({
+      beneficiarioId: b.id,
+      presente: (mapaAtual[b.id] ?? "presente") === "presente",
+    }));
+
+    try {
+      await professoresApi.salvarPresencas({
+        turmaId: id,
+        dataAula: dataAtual,
+        presencas: presencasPayload,
+      });
+      setSalvo(true);
+    } catch (err: any) {
+      alert("Erro ao salvar presença no banco: " + (err?.message || "Tente novamente"));
+    } finally {
+      setSalvando(false);
+    }
   }
 
   const presentes       = Object.values(mapaAtual).filter((s) => s === "presente").length;

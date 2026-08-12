@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { Camera, CheckCircle2, Clock, LogIn, LogOut, RotateCcw, User, X } from "lucide-react";
-import { funcionariosApi, type FuncionarioApi } from "@/lib/api/services";
+import { funcionariosApi, professoresApi, type FuncionarioApi } from "@/lib/api/services";
 import type { RegistroPonto } from "@/lib/types";
 
 function isoHoje(): string {
@@ -21,17 +21,20 @@ const isInstrutor = (f: FuncionarioApi) =>
 
 // Modal de confirmação de atividade com foto
 interface ModalAtividadeProps {
-  onConfirmar: (obs: string, fotoUrl: string) => void;
+  onConfirmar: (obs: string, fotoFile: File | null) => void;
+  salvando: boolean;
 }
 
-function ModalAtividade({ onConfirmar }: ModalAtividadeProps) {
+function ModalAtividade({ onConfirmar, salvando }: ModalAtividadeProps) {
   const [obs, setObs] = useState("");
   const [fotoPreview, setFotoPreview] = useState<string | null>(null);
+  const [fotoFile, setFotoFile] = useState<File | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   function handleArquivo(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+    setFotoFile(file);
     setFotoPreview(URL.createObjectURL(file));
   }
 
@@ -47,7 +50,7 @@ function ModalAtividade({ onConfirmar }: ModalAtividadeProps) {
             <img src={fotoPreview} alt="Foto da aula" className="h-52 w-full rounded-xl object-cover" />
             <button
               type="button"
-              onClick={() => { setFotoPreview(null); if (inputRef.current) inputRef.current.value = ""; }}
+              onClick={() => { setFotoPreview(null); setFotoFile(null); if (inputRef.current) inputRef.current.value = ""; }}
               className="absolute right-2 top-2 rounded-full bg-white p-1 shadow"
             >
               <X className="h-3.5 w-3.5 text-zinc-600" />
@@ -87,13 +90,14 @@ function ModalAtividade({ onConfirmar }: ModalAtividadeProps) {
 
       <button
         type="button"
+        disabled={salvando}
         onClick={() => {
-          if (!fotoPreview) { alert("Foto obrigatória."); return; }
-          onConfirmar(obs, fotoPreview);
+          if (!fotoFile) { alert("Foto obrigatória."); return; }
+          onConfirmar(obs, fotoFile);
         }}
-        className="w-full rounded-xl bg-blue-600 py-3 text-sm font-semibold text-white hover:bg-blue-700 active:bg-blue-800"
+        className="w-full rounded-xl bg-blue-600 py-3 text-sm font-semibold text-white hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50"
       >
-        Confirmar atividade
+        {salvando ? "Enviando..." : "Confirmar atividade"}
       </button>
     </div>
   );
@@ -107,6 +111,7 @@ export default function PontoPublicoPage() {
   const [tipoBatida, setTipoBatida] = useState<"entrada" | "saida">("entrada");
   const [horaBatida, setHoraBatida] = useState("");
   const [atividadeConfirmada, setAtividadeConfirmada] = useState(false);
+  const [salvando, setSalvando] = useState(false);
 
   async function buscarFuncionario() {
     setErro("");
@@ -127,18 +132,51 @@ export default function PontoPublicoPage() {
     }
   }
 
-  function confirmarPonto() {
-    // Mock: registra no estado local
-    if (isInstrutor(funcionario!) && tipoBatida === "saida") {
-      setEtapa("atividade");
-    } else {
-      setEtapa("sucesso");
+  async function confirmarPonto() {
+    if (!funcionario) return;
+    setSalvando(true);
+    try {
+      await professoresApi.salvarBatidaPonto({
+        funcionarioId: funcionario.id,
+        tipo: tipoBatida,
+        hora: `${horaBatida}:00`,
+      });
+
+      if (isInstrutor(funcionario) && tipoBatida === "saida") {
+        setEtapa("atividade");
+      } else {
+        setEtapa("sucesso");
+      }
+    } catch (err: any) {
+      alert("Erro ao registrar ponto: " + (err?.message || "Tente novamente"));
+    } finally {
+      setSalvando(false);
     }
   }
 
-  function confirmarAtividade(_obs: string, _fotoUrl: string) {
-    setAtividadeConfirmada(true);
-    setEtapa("sucesso");
+  async function confirmarAtividade(obs: string, fotoFile: File | null) {
+    if (!funcionario) return;
+    setSalvando(true);
+    try {
+      let fotoUrl = "";
+      if (fotoFile) {
+        fotoUrl = await professoresApi.uploadComprovacao(fotoFile, fotoFile.name);
+      }
+      await professoresApi.salvarAplicacaoAtividade({
+        turmaId: (funcionario as any).turmasIds?.[0] || funcionario.nucleoId || "",
+        funcionarioId: funcionario.id,
+        dataAula: isoHoje(),
+        horaInicio: horaBatida,
+        descricao: obs || "Atividade de aula registrada via Kiosk público",
+        fotoUrl,
+      });
+      setAtividadeConfirmada(true);
+      setEtapa("sucesso");
+    } catch (err: any) {
+      alert("Erro ao salvar atividade: " + (err?.message || "Tente novamente"));
+    } finally {
+      setSalvando(false);
+    }
   }
 
   function reiniciar() {
@@ -244,7 +282,7 @@ export default function PontoPublicoPage() {
               Registre a aula de hoje com uma foto antes de sair
             </p>
           </div>
-          <ModalAtividade onConfirmar={confirmarAtividade} />
+          <ModalAtividade onConfirmar={confirmarAtividade} salvando={salvando} />
           <button
             type="button"
             onClick={() => setEtapa("sucesso")}

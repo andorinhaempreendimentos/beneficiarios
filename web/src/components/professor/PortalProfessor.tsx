@@ -18,7 +18,8 @@ import {
 } from "lucide-react";
 import { Badge, Button, Card, Field, Input, PageHeader, Select, Textarea } from "@/components/ui";
 import { useToast } from "@/components/providers/ToastProvider";
-import type { FuncionarioApi, TurmaApi, NucleoApi } from "@/lib/api/services";
+import { turmasApi, professoresApi, type FuncionarioApi, type TurmaApi, type NucleoApi, type BeneficiarioApi } from "@/lib/api/services";
+import { useEffect } from "react";
 
 interface PortalProfessorProps {
   professor: FuncionarioApi;
@@ -36,34 +37,54 @@ export function PortalProfessor({ professor, turmas, nucleos }: PortalProfessorP
 
   // Estado da Chamada
   const [turmaSelecionadaId, setTurmaSelecionadaId] = useState(turmas[0]?.id || "");
+  const [alunos, setAlunos] = useState<BeneficiarioApi[]>([]);
+  const [carregandoAlunos, setCarregandoAlunos] = useState(false);
   const [presencas, setPresencas] = useState<Record<string, "presente" | "falta">>({});
 
   // Estado da Confirmação de Serviço
-  const [fotoAula, setFotoAula] = useState<string | null>(null);
+  const [fotoFile, setFotoFile] = useState<File | null>(null);
   const [observacoesAula, setObservacoesAula] = useState("");
   const [atividadeExecutada, setAtividadeExecutada] = useState("");
   const [enviadoConfirmacao, setEnviadoConfirmacao] = useState(false);
+  const [salvando, setSalvando] = useState(false);
 
   const turmaAtual = turmas.find((t) => t.id === turmaSelecionadaId);
   const nucleoAtual = nucleos.find((n) => n.id === professor.nucleoId) || nucleos[0];
 
-  // Simulação de Beneficiários da Turma para a Chamada
-  const alunosExemplo = [
-    { id: "1", nome: "Gabriel Santos QA", matricula: "BEN-001" },
-    { id: "2", nome: "Ana Clara Silva QA", matricula: "BEN-002" },
-    { id: "3", nome: "Lucas Rodrigues QA", matricula: "BEN-003" },
-    { id: "4", nome: "Mateus Henrique QA", matricula: "BEN-004" },
-    { id: "5", nome: "Sophia Oliveira QA", matricula: "BEN-005" },
-  ];
+  // Carregar beneficiários da turma selecionada
+  useEffect(() => {
+    if (!turmaSelecionadaId) return;
+    setCarregandoAlunos(true);
+    turmasApi.listarBeneficiarios(turmaSelecionadaId)
+      .then((res) => {
+        setAlunos(res);
+        const presencasIniciais: Record<string, "presente" | "falta"> = {};
+        res.forEach((b) => { presencasIniciais[b.id] = "presente"; });
+        setPresencas(presencasIniciais);
+      })
+      .catch((err) => {
+        console.error("Erro ao carregar alunos da turma:", err);
+      })
+      .finally(() => setCarregandoAlunos(false));
+  }, [turmaSelecionadaId]);
 
-  function handlePonto(tipo: "entrada" | "saida") {
+  async function handlePonto(tipo: "entrada" | "saida") {
     const hora = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
-    if (tipo === "entrada") {
-      setPontoEntrada(hora);
-      toast.success(`Entrada registrada com sucesso às ${hora}!`);
-    } else {
-      setPontoSaida(hora);
-      toast.success(`Saída registrada com sucesso às ${hora}!`);
+    try {
+      await professoresApi.salvarBatidaPonto({
+        funcionarioId: professor.id,
+        tipo,
+        hora: `${hora}:00`,
+      });
+      if (tipo === "entrada") {
+        setPontoEntrada(hora);
+        toast.success(`Entrada registrada com sucesso às ${hora}!`);
+      } else {
+        setPontoSaida(hora);
+        toast.success(`Saída registrada com sucesso às ${hora}!`);
+      }
+    } catch (err: any) {
+      toast.error("Erro ao registrar ponto: " + (err?.message || "Tente novamente."));
     }
   }
 
@@ -71,18 +92,60 @@ export function PortalProfessor({ professor, turmas, nucleos }: PortalProfessorP
     setPresencas((prev) => ({ ...prev, [alunoId]: status }));
   }
 
-  function handleSalvarChamada() {
-    toast.success("Chamada diária registrada com sucesso!");
+  async function handleSalvarChamada() {
+    if (!turmaSelecionadaId) return;
+    setSalvando(true);
+    const dataHoje = new Date().toISOString().slice(0, 10);
+    const payloadPresencas = Object.entries(presencas).map(([beneficiarioId, status]) => ({
+      beneficiarioId,
+      presente: status === "presente",
+    }));
+
+    try {
+      await professoresApi.salvarPresencas({
+        turmaId: turmaSelecionadaId,
+        dataAula: dataHoje,
+        presencas: payloadPresencas,
+      });
+      toast.success("Chamada diária registrada com sucesso no banco de dados!");
+    } catch (err: any) {
+      toast.error("Erro ao salvar chamada: " + (err?.message || "Tente novamente."));
+    } finally {
+      setSalvando(false);
+    }
   }
 
-  function handleEnviarConfirmacao(e: React.FormEvent) {
+  async function handleEnviarConfirmacao(e: React.FormEvent) {
     e.preventDefault();
     if (!atividadeExecutada) {
       toast.error("Por favor, descreva a atividade executada.");
       return;
     }
-    setEnviadoConfirmacao(true);
-    toast.success("Confirmação de serviço e relatório fotográfico enviados!");
+    setSalvando(true);
+    try {
+      let fotoUrl = "";
+      if (fotoFile) {
+        fotoUrl = await professoresApi.uploadComprovacao(fotoFile, fotoFile.name);
+      }
+      const dataHoje = new Date().toISOString().slice(0, 10);
+      const horaAgora = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+
+      await professoresApi.salvarAplicacaoAtividade({
+        turmaId: turmaSelecionadaId || turmas[0]?.id || "",
+        funcionarioId: professor.id,
+        dataAula: dataHoje,
+        horaInicio: horaAgora,
+        descricao: `${atividadeExecutada}. ${observacoesAula}`.trim(),
+        fotoUrl,
+      });
+
+      setEnviadoConfirmacao(true);
+      toast.success("Confirmação de serviço e relatório fotográfico enviados!");
+    } catch (err: any) {
+      toast.error("Erro ao enviar relatório: " + (err?.message || "Tente novamente."));
+    } finally {
+      setSalvando(false);
+    }
   }
 
   return (
@@ -290,50 +353,56 @@ export function PortalProfessor({ professor, turmas, nucleos }: PortalProfessorP
           </div>
 
           <div className="divide-y divide-zinc-100">
-            {alunosExemplo.map((aluno) => {
-              const status = presencas[aluno.id] || "presente";
-              return (
-                <div key={aluno.id} className="py-3.5 flex items-center justify-between gap-4">
-                  <div>
-                    <h4 className="font-semibold text-zinc-900 text-sm">{aluno.nome}</h4>
-                    <span className="text-xs text-zinc-400 font-mono">{aluno.matricula}</span>
-                  </div>
+            {carregandoAlunos ? (
+              <div className="py-8 text-center text-sm text-zinc-500">Carregando lista de alunos da turma...</div>
+            ) : alunos.length === 0 ? (
+              <div className="py-8 text-center text-sm text-zinc-500">Nenhum aluno matriculado nesta turma.</div>
+            ) : (
+              alunos.map((aluno) => {
+                const status = presencas[aluno.id] || "presente";
+                return (
+                  <div key={aluno.id} className="py-3.5 flex items-center justify-between gap-4">
+                    <div>
+                      <h4 className="font-semibold text-zinc-900 text-sm">{aluno.nomeCompleto}</h4>
+                      <span className="text-xs text-zinc-400 font-mono">{aluno.matricula}</span>
+                    </div>
 
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => togglePresenca(aluno.id, "presente")}
-                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors ${
-                        status === "presente"
-                          ? "bg-green-100 text-green-800 border border-green-300"
-                          : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
-                      }`}
-                    >
-                      <UserCheck className="h-3.5 w-3.5" />
-                      Presente
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => togglePresenca(aluno.id, "presente")}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors ${
+                          status === "presente"
+                            ? "bg-green-100 text-green-800 border border-green-300"
+                            : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
+                        }`}
+                      >
+                        <UserCheck className="h-3.5 w-3.5" />
+                        Presente
+                      </button>
 
-                    <button
-                      type="button"
-                      onClick={() => togglePresenca(aluno.id, "falta")}
-                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors ${
-                        status === "falta"
-                          ? "bg-red-100 text-red-800 border border-red-300"
-                          : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
-                      }`}
-                    >
-                      <UserX className="h-3.5 w-3.5" />
-                      Falta
-                    </button>
+                      <button
+                        type="button"
+                        onClick={() => togglePresenca(aluno.id, "falta")}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors ${
+                          status === "falta"
+                            ? "bg-red-100 text-red-800 border border-red-300"
+                            : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
+                        }`}
+                      >
+                        <UserX className="h-3.5 w-3.5" />
+                        Falta
+                      </button>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })
+            )}
           </div>
 
           <div className="mt-6 flex justify-end pt-4 border-t border-zinc-100">
-            <Button onClick={handleSalvarChamada}>
-              Salvar Chamada de Hoje
+            <Button onClick={handleSalvarChamada} disabled={salvando || carregandoAlunos || alunos.length === 0}>
+              {salvando ? "Salvar..." : "Salvar Chamada de Hoje"}
             </Button>
           </div>
         </Card>
@@ -357,10 +426,22 @@ export function PortalProfessor({ professor, turmas, nucleos }: PortalProfessorP
             </Field>
 
             <Field label="Foto de Comprovação da Aula (Upload ou Câmera)">
-              <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-zinc-300 p-6 text-center hover:bg-zinc-50 transition-colors">
+              <div className="relative flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-zinc-300 p-6 text-center hover:bg-zinc-50 transition-colors cursor-pointer">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    if (e.target.files?.[0]) setFotoFile(e.target.files[0]);
+                  }}
+                  className="absolute inset-0 opacity-0 cursor-pointer"
+                />
                 <Camera className="h-8 w-8 text-zinc-400 mb-2" />
-                <span className="text-sm font-semibold text-zinc-700">Anexar Foto da Aula</span>
-                <span className="text-xs text-zinc-400 mt-0.5">Selecione uma imagem ou tire uma foto com a câmera do celular</span>
+                <span className="text-sm font-semibold text-zinc-700">
+                  {fotoFile ? fotoFile.name : "Anexar Foto da Aula"}
+                </span>
+                <span className="text-xs text-zinc-400 mt-0.5">
+                  {fotoFile ? "Arquivo selecionado. Clique para alterar." : "Selecione uma imagem ou tire uma foto com a câmera do celular"}
+                </span>
               </div>
             </Field>
 
@@ -374,8 +455,8 @@ export function PortalProfessor({ professor, turmas, nucleos }: PortalProfessorP
             </Field>
 
             <div className="flex justify-end pt-2">
-              <Button type="submit">
-                {enviadoConfirmacao ? "Confirmação Enviada ✓" : "Enviar Relatório de Serviço"}
+              <Button type="submit" disabled={salvando}>
+                {salvando ? "Enviando..." : enviadoConfirmacao ? "Confirmação Enviada ✓" : "Enviar Relatório de Serviço"}
               </Button>
             </div>
           </form>
