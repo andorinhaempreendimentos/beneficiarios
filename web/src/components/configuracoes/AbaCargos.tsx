@@ -83,7 +83,7 @@ export function AbaCargos() {
                   ? usuarios.filter((u) => u.perfilId === perfilCorrespondente.id).length
                   : 0;
 
-                const permiteLogin = f.nome !== "Staff";
+                const permiteLogin = f.permiteLogin ?? (f.nome !== "Staff");
 
                 return (
                   <tr key={f.id} className="hover:bg-zinc-50/80 transition-colors">
