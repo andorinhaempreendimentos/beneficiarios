@@ -66,7 +66,9 @@ export function Sidebar() {
         onClick={() => setOpen(false)}
         className={cn(
           "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-          active ? "bg-sky-50 text-sky-700" : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
+          active
+            ? "bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 font-bold"
+            : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/80 hover:text-zinc-900 dark:hover:text-zinc-100"
         )}
       >
         <Icon className="h-4 w-4 shrink-0" />
@@ -80,26 +82,26 @@ export function Sidebar() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="fixed left-4 top-4 z-50 flex h-10 w-10 items-center justify-center rounded-lg bg-white shadow-md lg:hidden"
+        className="fixed left-4 top-4 z-50 flex h-10 w-10 items-center justify-center rounded-lg bg-white dark:bg-zinc-800 shadow-md lg:hidden"
         aria-label="Abrir menu"
       >
-        <Menu className="h-5 w-5 text-zinc-700" />
+        <Menu className="h-5 w-5 text-zinc-700 dark:text-zinc-200" />
       </button>
 
       {open && (
         <div
-          className="fixed inset-0 z-40 bg-black/30 lg:hidden"
+          className="fixed inset-0 z-40 bg-black/30 dark:bg-black/60 lg:hidden"
           onClick={() => setOpen(false)}
         />
       )}
 
       <aside
         className={cn(
-          "fixed inset-y-0 z-50 flex w-60 flex-col border-r border-zinc-200 bg-white transition-[left] duration-200 lg:static lg:left-0",
+          "fixed inset-y-0 z-50 flex w-60 flex-col border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 transition-colors duration-200 lg:static lg:left-0",
           open ? "left-0" : "-left-60"
         )}
       >
-        <div className="relative flex flex-col items-center justify-center border-b border-zinc-200 px-4 py-3">
+        <div className="relative flex flex-col items-center justify-center border-b border-zinc-200 dark:border-zinc-800 px-4 py-3">
           <button
             type="button"
             onClick={() => setOpen(false)}

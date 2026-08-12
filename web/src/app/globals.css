@@ -5,6 +5,12 @@
   --foreground: #171717;
 }
 
+html.dark {
+  --background: #090d16;
+  --foreground: #f4f4f5;
+  color-scheme: dark;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -16,6 +22,12 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+html.dark body {
+  background-color: #090d16;
+  color: #f4f4f5;
 }
 
 /* Regra Global: Cursor Pointer para todos os botões, links e elementos interativos */

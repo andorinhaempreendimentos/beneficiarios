@@ -13,6 +13,8 @@ export interface ConfigAparencia {
 
 interface ThemeContextValue {
   config: ConfigAparencia;
+  modoEscuro: boolean;
+  alternarModoEscuro: () => void;
   aplicarTema: (id: TemaId) => void;
   setNomeSistema: (nome: string) => void;
   setLogoUrl: (url: string | undefined) => void;
@@ -20,6 +22,8 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue>({
   config: { temaId: "andorinha", nomeSistema: "Andorinha" },
+  modoEscuro: false,
+  alternarModoEscuro: () => {},
   aplicarTema: () => {},
   setNomeSistema: () => {},
   setLogoUrl: () => {},
@@ -38,10 +42,36 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     temaId: "andorinha",
     nomeSistema: "Andorinha Beneficiários",
   });
+  const [modoEscuro, setModoEscuro] = useState(false);
 
   useEffect(() => {
     injetarCores(config.temaId);
   }, [config.temaId]);
+
+  useEffect(() => {
+    const salvo = localStorage.getItem("tema_modo");
+    if (salvo === "dark" || (!salvo && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+      setModoEscuro(true);
+      document.documentElement.classList.add("dark");
+    } else {
+      setModoEscuro(false);
+      document.documentElement.classList.remove("dark");
+    }
+  }, []);
+
+  function alternarModoEscuro() {
+    setModoEscuro((prev) => {
+      const novo = !prev;
+      if (novo) {
+        document.documentElement.classList.add("dark");
+        localStorage.setItem("tema_modo", "dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+        localStorage.setItem("tema_modo", "light");
+      }
+      return novo;
+    });
+  }
 
   useEffect(() => {
     const sb = createClient();
@@ -66,7 +96,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <ThemeContext.Provider value={{ config, aplicarTema, setNomeSistema, setLogoUrl }}>
+    <ThemeContext.Provider value={{ config, modoEscuro, alternarModoEscuro, aplicarTema, setNomeSistema, setLogoUrl }}>
       {children}
     </ThemeContext.Provider>
   );
