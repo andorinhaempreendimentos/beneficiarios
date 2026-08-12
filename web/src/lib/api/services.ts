@@ -1066,16 +1066,55 @@ export const funcionariosApi = {
     if (error) throw error;
     return mapFuncionario(data);
   },
+  async verificarEmailUnico(email: string, ignoreId?: string): Promise<{ unico: boolean; mensagem?: string }> {
+    const sb = await getSupabase();
+    const emailLower = email.trim().toLowerCase();
+    if (!emailLower) return { unico: true };
+
+    const { data: func } = await sb.from('funcionarios').select('id, nome_completo').eq('email', emailLower).is('deleted_at', null);
+    const funcDup = (func ?? []).find((f) => f.id !== ignoreId);
+    if (funcDup) {
+      return { unico: false, mensagem: `Este e-mail já pertence ao funcionário "${funcDup.nome_completo}".` };
+    }
+
+    const { data: usr } = await sb.from('usuarios').select('id, nome_completo, entidade_id').eq('email', emailLower).is('deleted_at', null);
+    const usrDup = (usr ?? []).find((u) => u.id !== ignoreId && u.entidade_id !== ignoreId);
+    if (usrDup) {
+      return { unico: false, mensagem: `Este e-mail já possui uma conta de usuário ("${usrDup.nome_completo}").` };
+    }
+
+    return { unico: true };
+  },
   async create(body: Record<string, unknown>): Promise<FuncionarioApi> {
     const sb = createClient();
     const { data, error } = await sb.from('funcionarios').insert(toFuncionarioRow(body)).select('*').single();
     if (error) throw error;
+    await sincronizarUsuarioFuncionario(
+      sb,
+      data.id,
+      data.nome_completo,
+      data.email,
+      data.funcao,
+      data.status,
+      body.permitirLogin !== false,
+      (body.senhaLogin as string) || "Palmas444##@1"
+    );
     return mapFuncionario(data);
   },
   async update(id: string, body: Record<string, unknown>): Promise<FuncionarioApi> {
     const sb = createClient();
     const { data, error } = await sb.from('funcionarios').update(toFuncionarioRow(body)).eq('id', id).select('*').single();
     if (error) throw error;
+    await sincronizarUsuarioFuncionario(
+      sb,
+      data.id,
+      data.nome_completo,
+      data.email,
+      data.funcao,
+      data.status,
+      body.permitirLogin !== false,
+      (body.senhaLogin as string) || "Palmas444##@1"
+    );
     return mapFuncionario(data);
   },
   async remove(id: string): Promise<void> {
@@ -1084,6 +1123,55 @@ export const funcionariosApi = {
     if (error) throw error;
   },
 };
+
+async function sincronizarUsuarioFuncionario(
+  sb: ReturnType<typeof createClient>,
+  funcionarioId: string,
+  nomeCompleto: string,
+  email: string | null | undefined,
+  funcao: string | null | undefined,
+  status: string | undefined,
+  permitirLogin: boolean,
+  senhaLogin?: string
+) {
+  if (!email || !email.trim()) return;
+  const emailLower = email.trim().toLowerCase();
+
+  const { data: perfis } = await sb.from('perfis').select('id, nome');
+  const perfilCorrespondente = (perfis ?? []).find(
+    (p) => p.nome.toLowerCase() === (funcao || '').toLowerCase()
+  ) ?? (perfis ?? []).find((p) => p.nome.toLowerCase().includes('professor'));
+
+  const perfilId = perfilCorrespondente?.id || '';
+  const isAtivo = status === 'ativo' || status === 'contratado';
+  const isProf = (funcao || '').toLowerCase().includes('professor') || (funcao || '').toLowerCase().includes('instrutor');
+
+  const { data: usrExistente } = await sb.from('usuarios')
+    .select('id, email')
+    .or(`entidade_id.eq.${funcionarioId},email.eq.${emailLower}`)
+    .maybeSingle();
+
+  if (permitirLogin) {
+    const usuarioRow = {
+      email: emailLower,
+      nome_completo: nomeCompleto,
+      tipo: 'funcionario' as const,
+      is_professor: isProf,
+      ativo: isAtivo,
+      perfil_id: perfilId,
+      entidade_id: funcionarioId,
+      deleted_at: null,
+    };
+
+    if (usrExistente?.id) {
+      await sb.from('usuarios').update(usuarioRow).eq('id', usrExistente.id);
+    } else {
+      await sb.from('usuarios').insert({ id: crypto.randomUUID(), ...usuarioRow });
+    }
+  } else if (usrExistente?.id) {
+    await sb.from('usuarios').update({ ativo: false }).eq('id', usrExistente.id);
+  }
+}
 
 function toFuncionarioRow(b: Record<string, unknown>): Database['public']['Tables']['funcionarios']['Insert'] {
   return {

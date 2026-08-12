@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { User } from "lucide-react";
+import { User, KeyRound, ShieldCheck, Eye, EyeOff, AlertCircle, Check } from "lucide-react";
 import {
   Button,
   Field,
@@ -13,20 +13,16 @@ import {
   Switch,
   Textarea,
 } from "@/components/ui";
-import type { DiaJornada, FuncaoFuncionario } from "@/lib/types";
+import type { DiaJornada } from "@/lib/types";
 import { statusFuncionarioLabel } from "@/lib/status";
 import { funcionariosApi, type FuncionarioApi, type NucleoApi } from "@/lib/api/services";
 
-const FUNCOES: FuncaoFuncionario[] = [
-  "Agente comunitário",
-  "Articulador social",
-  "Coordenador de núcleo",
-  "Coordenador de projeto",
-  "Coordenador de setor",
-  "Instrutor",
-  "Monitor",
-  "Fisioterapeuta",
-  "Técnico de Enfermagem",
+const CARGOS_PADRAO = [
+  "Professor / Instrutor",
+  "Coordenador de Núcleo",
+  "Coordenador de Turma",
+  "Coordenador de Instrutores",
+  "Staff",
 ];
 
 const DIAS_SEMANA: DiaJornada["dia"][] = [
@@ -41,11 +37,24 @@ interface FuncionarioFormProps {
 }
 
 export function FuncionarioForm({ funcionario: f, nucleos = [], funcoes = [], backHref }: FuncionarioFormProps) {
-  const listaFuncoes = funcoes.length > 0 ? funcoes.map((fn) => fn.nome) : FUNCOES;
+  const listaFuncoes = funcoes.length > 0 ? funcoes.map((fn) => fn.nome) : CARGOS_PADRAO;
+  
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
-  const [funcao, setFuncao] = useState<string>((f?.funcao as string) ?? "");
+  
+  // Dados do Funcionário
+  const [funcao, setFuncao] = useState<string>((f?.funcao as string) || "Professor / Instrutor");
+  const [emailVal, setEmailVal] = useState<string>(f?.email || "");
+  const [erroEmail, setErroEmail] = useState<string | null>(null);
+  const [checandoEmail, setChecandoEmail] = useState(false);
   const [professorResponsavel, setProfessorResponsavel] = useState(f?.professorResponsavel ?? false);
+  
+  // Credenciais de Login
+  const [permitirLogin, setPermitirLogin] = useState<boolean>(true);
+  const [senhaLogin, setSenhaLogin] = useState<string>("Palmas444##@1");
+  const [mostrarSenha, setMostrarSenha] = useState<boolean>(false);
+
+  // Jornada de trabalho
   const [jornada, setJornada] = useState<DiaJornada[]>(
     DIAS_SEMANA.map((dia) => ({ dia, trabalha: false }))
   );
@@ -54,23 +63,50 @@ export function FuncionarioForm({ funcionario: f, nucleos = [], funcoes = [], ba
 
   const exigeConselho = funcao === "Fisioterapeuta" || funcao === "Técnico de Enfermagem";
 
+  // Checagem de unicidade de e-mail em tempo real (onBlur)
+  async function handleBlurEmail() {
+    if (!emailVal.trim()) {
+      setErroEmail(null);
+      return;
+    }
+    setChecandoEmail(true);
+    try {
+      const res = await funcionariosApi.verificarEmailUnico(emailVal, f?.id);
+      if (!res.unico) {
+        setErroEmail(res.mensagem || "Este e-mail já está em uso.");
+      } else {
+        setErroEmail(null);
+      }
+    } catch {
+      setErroEmail(null);
+    } finally {
+      setChecandoEmail(false);
+    }
+  }
+
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (erroEmail) return;
+
     setLoading(true);
     setErro(null);
 
     const formData = new FormData(event.currentTarget);
     const data = {
+      matricula: f?.matricula || `PROF-${Math.floor(100 + Math.random() * 900)}`,
       nomeCompleto: formData.get("nomeCompleto") as string,
       cpf: formData.get("cpf") as string,
       rg: formData.get("rg") as string,
       dataNascimento: formData.get("dataNascimento") as string,
       celular: formData.get("celular") as string,
-      email: formData.get("email") as string,
-      funcao: formData.get("funcao") as string,
-      status: (formData.get("status") as string) || "contratado",
+      email: emailVal.trim(),
+      funcao: funcao,
+      status: (formData.get("status") as string) || "ativo",
       nucleoId: (formData.get("nucleoId") as string) || null,
+      alocadoEm: (formData.get("alocadoEm") as string) || "Administração",
       professorResponsavel,
+      permitirLogin,
+      senhaLogin,
     };
 
     try {
@@ -104,72 +140,102 @@ export function FuncionarioForm({ funcionario: f, nucleos = [], funcoes = [], ba
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
       {erro && (
-        <div className="rounded-lg bg-red-50 p-4 text-sm text-red-700">
-          {erro}
+        <div className="rounded-xl bg-red-50 border border-red-200 p-4 text-sm font-semibold text-red-700 flex items-center gap-2">
+          <AlertCircle className="h-5 w-5 text-red-600 shrink-0" />
+          <span>{erro}</span>
         </div>
       )}
-      <FormSection title="Dados Pessoais">
+
+      {/* Dados Pessoais */}
+      <FormSection title="Dados Pessoais do Colaborador">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <Field label="Foto" className="lg:col-span-3 sm:max-w-xs">
             {f?.fotoUrl ? (
-              <div className="flex h-24 w-24 items-center justify-center rounded-full bg-zinc-100">
+              <div className="flex h-24 w-24 items-center justify-center rounded-full bg-zinc-100 border border-zinc-200">
                 <User className="h-10 w-10 text-zinc-400" />
               </div>
             ) : (
               <FileUpload label="Enviar foto de perfil" />
             )}
           </Field>
+
           <Field label="Nome completo" required>
-            <Input name="nomeCompleto" defaultValue={f?.nomeCompleto} />
+            <Input name="nomeCompleto" defaultValue={f?.nomeCompleto} required placeholder="Ex: Aleksandro Soares de Sousa" />
           </Field>
-          <Field label="Documento CPF/CNPJ">
-            <Input name="cpfCnpj" mask="cpfCnpj" defaultValue={f?.cpfCnpj} placeholder="000.000.000-00 ou 00.000.000/0000-00" />
+
+          <Field label="CPF">
+            <Input name="cpf" mask="cpf" defaultValue={f?.cpf} placeholder="000.000.000-00" />
           </Field>
+
           <Field label="Data de Nascimento">
             <Input type="date" name="dataNascimento" defaultValue={f?.dataNascimento} />
           </Field>
+
+          <Field label="Celular / WhatsApp">
+            <Input name="celular" mask="celular" defaultValue={f?.celular} placeholder="(63) 99999-0000" />
+          </Field>
+
+          <Field label="E-mail Pessoal / Oficial" required>
+            <div className="relative">
+              <Input
+                type="email"
+                name="email"
+                value={emailVal}
+                onChange={(e) => {
+                  setEmailVal(e.target.value);
+                  if (erroEmail) setErroEmail(null);
+                }}
+                onBlur={handleBlurEmail}
+                required
+                placeholder="nome@exemplo.com"
+                className={erroEmail ? "border-red-500 ring-2 ring-red-500/20" : ""}
+              />
+              {checandoEmail && (
+                <span className="absolute right-3 top-2.5 text-xs text-zinc-400">Verificando...</span>
+              )}
+            </div>
+            {erroEmail && (
+              <p className="mt-1 text-xs font-semibold text-red-600 flex items-center gap-1">
+                <AlertCircle className="h-3.5 w-3.5" />
+                <span>{erroEmail}</span>
+              </p>
+            )}
+          </Field>
         </div>
+
         <div className="mt-4">
           <Switch
             checked={professorResponsavel}
             onChange={setProfessorResponsavel}
-            label="Professor responsável de turma"
+            label="Professor responsável por turmas esportivas"
           />
         </div>
       </FormSection>
 
-      <FormSection title="Vínculo e Função">
+      {/* Vínculo e Função */}
+      <FormSection title="Vínculo Institucional & Cargo">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <Field label="Status" required>
-            <Select name="status" defaultValue={f?.status ?? ""}>
-              <option value="">Selecione</option>
-              {Object.entries(statusFuncionarioLabel).map(([value, label]) => (
-                <option key={value} value={value}>{label}</option>
-              ))}
-            </Select>
-          </Field>
-          <Field label="Data de admissão" required>
-            <Input type="date" name="dataAdmissao" defaultValue={f?.dataAdmissao} />
-          </Field>
-          <Field label="Data de demissão">
-            <Input type="date" name="dataDemissao" defaultValue={f?.dataDemissao} />
-          </Field>
-          <Field label="Função" required>
+          <Field label="Cargo / Função (RH)" required>
             <Select
               name="funcao"
               value={funcao}
               onChange={(e) => setFuncao(e.target.value)}
             >
-              <option value="">Selecione</option>
               {listaFuncoes.map((fn) => (
                 <option key={fn} value={fn}>{fn}</option>
               ))}
             </Select>
           </Field>
-          <Field label="Remuneração">
-            <Input name="remuneracao" defaultValue={f?.remuneracao} placeholder="R$ 0,00" />
+
+          <Field label="Status do Vínculo" required>
+            <Select name="status" defaultValue={f?.status ?? "ativo"}>
+              {Object.entries(statusFuncionarioLabel).map(([value, label]) => (
+                <option key={value} value={value}>{label}</option>
+              ))}
+            </Select>
           </Field>
-          <Field label="Núcleo">
+
+          <Field label="Núcleo de Atuação">
             <Select name="nucleoId" defaultValue={f?.nucleoId ?? ""}>
               <option value="">Sem núcleo definido</option>
               {nucleos.map((n) => (
@@ -177,13 +243,20 @@ export function FuncionarioForm({ funcionario: f, nucleos = [], funcoes = [], ba
               ))}
             </Select>
           </Field>
+
+          <Field label="Data de admissão" required>
+            <Input type="date" name="dataAdmissao" defaultValue={f?.dataAdmissao ?? new Date().toISOString().split('T')[0]} />
+          </Field>
+
+          <Field label="Data de demissão">
+            <Input type="date" name="dataDemissao" defaultValue={f?.dataDemissao} />
+          </Field>
+
           <Field label="Alocado em" required>
-            <Select name="alocadoEm" defaultValue={f?.alocadoEm ?? ""}>
-              <option value="">Selecione</option>
-              <option>Administração</option>
-              <option>Múlti. núcleos</option>
-              <option>Nenhum</option>
-              <option>Serviços gerais</option>
+            <Select name="alocadoEm" defaultValue={f?.alocadoEm ?? "Administração"}>
+              <option value="Administração">Administração</option>
+              <option value="Múlti. núcleos">Múltiplos Núcleos</option>
+              <option value="Serviços gerais">Serviços Gerais</option>
               {nucleos.map((n) => (
                 <option key={n.id} value={n.identificacao}>{n.identificacao}</option>
               ))}
@@ -205,24 +278,77 @@ export function FuncionarioForm({ funcionario: f, nucleos = [], funcoes = [], ba
             </Field>
           </div>
         )}
+      </FormSection>
 
-        <div className="mt-4">
-          <Field label="Conta de acesso">
-            <Select name="contaAcesso" defaultValue="">
-              <option value="">Nenhuma conta vinculada</option>
-            </Select>
-          </Field>
-        </div>
+      {/* CREDENCIAIS E ACESSO AO SISTEMA (FLUXO UNIFICADO RH + LOGIN) */}
+      <FormSection title="Credenciais & Acesso ao Sistema (Login)">
+        <div className="rounded-xl border border-sky-200 bg-sky-50/50 p-5 flex flex-col gap-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-sky-100 pb-3">
+            <div>
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="h-5 w-5 text-sky-600" />
+                <h4 className="text-sm font-bold text-sky-950">Acesso ao Painel do Sistema</h4>
+              </div>
+              <p className="text-xs text-sky-800/80 mt-0.5">
+                Perfil RBAC sugerido automaticamente pelo cargo:{" "}
+                <span className="font-bold text-sky-900 bg-sky-200/60 px-1.5 py-0.5 rounded">{funcao}</span>
+              </p>
+            </div>
+            <Switch
+              checked={permitirLogin}
+              onChange={setPermitirLogin}
+              label="Permitir Acesso / Login"
+            />
+          </div>
 
-        <div className="mt-4">
-          <Field label="Observação">
-            <Textarea name="observacao" defaultValue={f?.observacao} />
-          </Field>
+          {permitirLogin ? (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 pt-1">
+              <Field label="E-mail de Login no Sistema" required>
+                <Input
+                  type="email"
+                  value={emailVal}
+                  readOnly
+                  className="bg-white font-mono text-xs font-semibold text-zinc-700 cursor-not-allowed"
+                />
+                <p className="mt-1 text-[11px] text-zinc-500">Sincronizado automaticamente com o e-mail pessoal acima.</p>
+              </Field>
+
+              <Field label="Senha de Acesso do Colaborador" required>
+                <div className="relative">
+                  <Input
+                    type={mostrarSenha ? "text" : "password"}
+                    value={senhaLogin}
+                    onChange={(e) => setSenhaLogin(e.target.value)}
+                    required
+                    placeholder="Palmas444##@1"
+                    className="bg-white font-mono pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setMostrarSenha(!mostrarSenha)}
+                    className="absolute right-3 top-2.5 text-zinc-400 hover:text-zinc-600 transition-colors cursor-pointer"
+                    title={mostrarSenha ? "Ocultar Senha" : "Exibir Senha"}
+                  >
+                    {mostrarSenha ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+                <p className="mt-1 text-[11px] font-semibold text-sky-800 flex items-center gap-1">
+                  <KeyRound className="h-3 w-3 text-sky-600 shrink-0" />
+                  <span>Senha padrão inicial configurada: <strong>Palmas444##@1</strong></span>
+                </p>
+              </Field>
+            </div>
+          ) : (
+            <p className="text-xs text-amber-800 font-medium bg-amber-100/60 p-3 rounded-lg border border-amber-200">
+              ⚠️ Este colaborador não terá permissão de login no painel do sistema.
+            </p>
+          )}
         </div>
       </FormSection>
 
+      {/* Jornada de Trabalho */}
       <FormSection title="Jornada de Trabalho">
-        <div className="mb-4 flex flex-wrap items-end gap-4 rounded-lg bg-zinc-50 p-4">
+        <div className="mb-4 flex flex-wrap items-end gap-4 rounded-lg bg-zinc-50 p-4 border border-zinc-200">
           <Field label="Entrada Padrão">
             <Input type="time" value={entradaPadrao} onChange={(e) => setEntradaPadrao(e.target.value)} />
           </Field>
@@ -237,21 +363,21 @@ export function FuncionarioForm({ funcionario: f, nucleos = [], funcoes = [], ba
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-zinc-200 text-left text-xs font-medium uppercase tracking-wide text-zinc-500">
-                <th className="py-2">Dia</th>
-                <th className="py-2">Trabalha</th>
-                <th className="py-2">Entrada</th>
-                <th className="py-2">Saída</th>
+              <tr className="border-b border-zinc-200 bg-zinc-50 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                <th className="py-2.5 px-3">Dia da Semana</th>
+                <th className="py-2.5 px-3">Trabalha</th>
+                <th className="py-2.5 px-3">Entrada</th>
+                <th className="py-2.5 px-3">Saída</th>
               </tr>
             </thead>
             <tbody>
               {jornada.map((d) => (
-                <tr key={d.dia} className="border-b border-zinc-100 last:border-0">
-                  <td className="py-2 font-medium text-zinc-700">{d.dia}</td>
-                  <td className="py-2">
+                <tr key={d.dia} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50/50">
+                  <td className="py-2.5 px-3 font-semibold text-zinc-800">{d.dia}</td>
+                  <td className="py-2.5 px-3">
                     <Switch checked={d.trabalha} onChange={(v) => toggleDia(d.dia, v)} />
                   </td>
-                  <td className="py-2">
+                  <td className="py-2.5 px-3">
                     <Input
                       type="time"
                       disabled={!d.trabalha}
@@ -260,7 +386,7 @@ export function FuncionarioForm({ funcionario: f, nucleos = [], funcoes = [], ba
                       className="w-32"
                     />
                   </td>
-                  <td className="py-2">
+                  <td className="py-2.5 px-3">
                     <Input
                       type="time"
                       disabled={!d.trabalha}
@@ -276,11 +402,13 @@ export function FuncionarioForm({ funcionario: f, nucleos = [], funcoes = [], ba
         </div>
       </FormSection>
 
-      <div className="flex justify-end gap-2">
-        <LinkButton href={backHref} variant="outline">
+      <div className="flex justify-end gap-3 pt-4 border-t border-zinc-200">
+        <LinkButton href={backHref} variant="outline" className="cursor-pointer">
           Voltar
         </LinkButton>
-        <Button type="submit">Salvar</Button>
+        <Button type="submit" loading={loading} disabled={!!erroEmail} className="cursor-pointer">
+          {f ? "Salvar Alterações" : "Cadastrar Funcionário & Criar Acesso"}
+        </Button>
       </div>
     </form>
   );
