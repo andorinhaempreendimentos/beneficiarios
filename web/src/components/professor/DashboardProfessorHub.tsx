@@ -119,7 +119,19 @@ export function DashboardProfessorHub({
   // Cálculos Dinâmicos
   const totalTurmas = turmas.length;
   const totalAlunos = (todosBeneficiarios ?? []).length;
-  const cargaHorariaSemanal = totalTurmas > 0 ? totalTurmas * 2 : 0;
+  
+  // Cálculo Dinâmico da Carga Horária Semanal Real baseada nos Slots de Aula (turma_horarios)
+  const cargaHorariaSemanal = useMemo(() => {
+    if (!slotsGrid || slotsGrid.length === 0) return 0;
+    const total = slotsGrid.reduce((acc, slot) => {
+      if (slot.duracaoHoras && slot.duracaoHoras > 0) {
+        return acc + slot.duracaoHoras;
+      }
+      const dur = Math.max(1, (slot.fim ?? 10) - (slot.inicio ?? 8));
+      return acc + dur;
+    }, 0);
+    return Math.round(total * 10) / 10;
+  }, [slotsGrid]);
 
   const hojeIndice = new Date().getDay();
   const turmasOrdenadas = [...turmas].sort((a, b) => a.nome.localeCompare(b.nome));

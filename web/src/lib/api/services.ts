@@ -1675,6 +1675,9 @@ export interface SlotAulaGrid {
   diaSemanaNum: number;
   inicio: number;
   fim: number;
+  horaInicioRaw?: string;
+  horaFimRaw?: string;
+  duracaoHoras?: number;
   atividadeId?: string;
   atividadeNome?: string;
   nucleoId?: string;
@@ -1734,16 +1737,25 @@ export const areaProfessorApi = {
     (turmasRaw ?? []).forEach((t: any) => {
       const horarios = t.turma_horarios ?? [];
       horarios.forEach((th: any) => {
-        const inicioHour = parseInt(String(th.hora_inicio || '').split(':')[0], 10);
-        const fimHour = parseInt(String(th.hora_fim || '').split(':')[0], 10);
+        const hInicioStr = String(th.hora_inicio || '08:00');
+        const hFimStr = String(th.hora_fim || '10:00');
+        const [hIn, mIn] = hInicioStr.split(':').map(Number);
+        const [hFim, mFim] = hFimStr.split(':').map(Number);
+        const inicioDec = (hIn || 0) + ((mIn || 0) / 60);
+        const fimDec = (hFim || 0) + ((mFim || 0) / 60);
+        const duracao = Math.max(0.5, fimDec - inicioDec);
+
         slotsGrid.push({
           id: th.id || `${t.id}-${th.dia_semana}`,
           turmaId: t.id,
           turmaNome: t.nome,
           dia: (DIA_KEY_MAP[th.dia_semana] as any) || 'Seg',
           diaSemanaNum: th.dia_semana,
-          inicio: isNaN(inicioHour) ? 8 : inicioHour,
-          fim: isNaN(fimHour) ? 10 : fimHour,
+          inicio: isNaN(hIn) ? 8 : hIn,
+          fim: isNaN(hFim) ? 10 : hFim,
+          horaInicioRaw: hInicioStr.slice(0, 5),
+          horaFimRaw: hFimStr.slice(0, 5),
+          duracaoHoras: Number(duracao.toFixed(2)),
           atividadeId: t.atividade_id,
           atividadeNome: t.atividades?.nome,
           nucleoId: t.nucleo_id,
