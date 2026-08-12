@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Clock,
   Users,
   UserPlus,
+  Search,
   Camera,
   Calendar,
   MapPin,
@@ -72,6 +73,28 @@ export function DashboardProfessorHub({
 
   // Data da aula selecionada para aplicacao/ponto (padrao YYYY-MM-DD hoje)
   const [dataAula, setDataAula] = useState<string>(new Date().toISOString().split("T")[0]);
+
+  // Estado e filtro para busca dinâmica instantânea de beneficiários do professor
+  const [buscaBeneficiario, setBuscaBeneficiario] = useState("");
+
+  const beneficiariosFiltradosBusca = useMemo(() => {
+    if (!buscaBeneficiario.trim()) return [];
+    const termo = buscaBeneficiario.toLowerCase().trim();
+    return todosBeneficiarios.filter((b) => {
+      const nome = b.nomeCompleto?.toLowerCase() || "";
+      const mat = b.matricula?.toLowerCase() || "";
+      const cpf = b.cpf?.toLowerCase() || "";
+      const turmasStr = (b.turmasInfo ?? []).map((t) => t.turmaNome?.toLowerCase() || "").join(" ");
+      const nucleoStr = b.nucleoNome?.toLowerCase() || "";
+      return (
+        nome.includes(termo) ||
+        mat.includes(termo) ||
+        cpf.includes(termo) ||
+        turmasStr.includes(termo) ||
+        nucleoStr.includes(termo)
+      );
+    });
+  }, [buscaBeneficiario, todosBeneficiarios]);
 
   // Estado da Modal de Ação da Atividade
   const [turmaModal, setTurmaModal] = useState<TurmaApi | null>(null);
@@ -364,6 +387,97 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
                 : "Aguardando entrada de hoje"}
             </p>
           </Card>
+        </div>
+
+        {/* CAMPO DE BUSCA DINÂMICA DE BENEFICIÁRIOS DO PROFESSOR */}
+        <div className="flex flex-col gap-3 rounded-2xl bg-white p-5 border border-zinc-200 shadow-sm transition-all hover:border-sky-300">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <h2 className="text-sm font-extrabold text-zinc-900 flex items-center gap-2">
+                <Search className="h-4 w-4 text-sky-600" />
+                <span>Consulta Dinâmica de Beneficiários</span>
+              </h2>
+              <p className="text-xs text-zinc-500 mt-0.5">
+                Busque instantaneamente beneficiários das suas turmas por nome, matrícula ou polo
+              </p>
+            </div>
+            <span className="text-[11px] text-sky-700 bg-sky-50 border border-sky-200/60 px-2.5 py-1 rounded-full font-mono font-bold self-start sm:self-auto">
+              {todosBeneficiarios.length} beneficiário(s) no seu escopo
+            </span>
+          </div>
+
+          <div className="relative">
+            <Search className="absolute left-3.5 top-3.5 h-4 w-4 text-zinc-400" />
+            <input
+              type="text"
+              placeholder="Digite o nome, matrícula ou turma do beneficiário..."
+              value={buscaBeneficiario}
+              onChange={(e) => setBuscaBeneficiario(e.target.value)}
+              className="w-full rounded-xl border border-zinc-200 bg-zinc-50/60 pl-10 pr-10 py-3 text-xs font-semibold text-zinc-900 placeholder-zinc-400 focus:bg-white focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all shadow-2xs"
+            />
+            {buscaBeneficiario && (
+              <button
+                type="button"
+                onClick={() => setBuscaBeneficiario("")}
+                className="absolute right-3 top-3 rounded-full p-1 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600 transition-colors"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+
+          {/* RESULTADOS DINÂMICOS DA BUSCA */}
+          {buscaBeneficiario.trim() !== "" && (
+            <div className="mt-1 flex flex-col gap-2 max-h-72 overflow-y-auto divide-y divide-zinc-100 border-t border-zinc-100 pt-3 animate-in fade-in">
+              {beneficiariosFiltradosBusca.length === 0 ? (
+                <div className="py-6 text-center text-xs text-zinc-400 flex flex-col items-center justify-center gap-1">
+                  <AlertCircle className="h-5 w-5 text-zinc-300 mb-0.5" />
+                  <span>Nenhum beneficiário encontrado para &quot;{buscaBeneficiario}&quot;.</span>
+                </div>
+              ) : (
+                beneficiariosFiltradosBusca.map((b) => {
+                  const turmaInfo = b.turmasInfo?.[0];
+                  return (
+                    <div
+                      key={b.id}
+                      className="pt-2.5 first:pt-0 flex items-center justify-between gap-3 group hover:bg-sky-50/50 p-2.5 rounded-xl transition-all border border-transparent hover:border-sky-200/60"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-sky-500 to-sky-700 font-extrabold text-white text-xs shadow-2xs">
+                          {b.nomeCompleto.slice(0, 2).toUpperCase()}
+                        </div>
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-extrabold text-zinc-900 text-xs truncate group-hover:text-sky-700 transition-colors">
+                              {b.nomeCompleto}
+                            </h4>
+                            <span className="text-[10px] font-mono font-bold text-zinc-500 bg-zinc-100 px-1.5 py-0.5 rounded">
+                              Mat: {b.matricula}
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-zinc-500 truncate mt-0.5 flex items-center gap-1.5">
+                            <span className="font-semibold text-sky-700">{turmaInfo?.turmaNome || "Turma Vinculada"}</span>
+                            <span>·</span>
+                            <span>📍 {turmaInfo?.nucleoNome || b.nucleoNome || "Polo Esportivo"}</span>
+                          </p>
+                        </div>
+                      </div>
+
+                      {turmaInfo?.turmaId && (
+                        <Link
+                          href={`/professor/chamada?turmaId=${turmaInfo.turmaId}`}
+                          className="shrink-0 rounded-xl bg-sky-600 hover:bg-sky-700 text-white px-3 py-1.5 text-[11px] font-bold transition-all shadow-2xs flex items-center gap-1.5 active:scale-95"
+                        >
+                          <Users className="h-3.5 w-3.5" />
+                          <span>Abrir Chamada</span>
+                        </Link>
+                      )}
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          )}
         </div>
       </div>
 
