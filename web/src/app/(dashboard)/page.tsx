@@ -102,13 +102,13 @@ export default function DashboardPage() {
       </div>
 
       {/* Fluxo de Hierarquia do Sistema */}
-      <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-2xs">
-        <div className="mb-3 flex items-center justify-between border-b border-zinc-100 pb-2">
-          <h2 className="text-xs font-extrabold uppercase tracking-wider text-zinc-800">Hierarquia Operacional do Sistema</h2>
-          <span className="text-[11px] font-semibold text-zinc-400">Encadeamento sequencial</span>
+      <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 shadow-2xs transition-colors">
+        <div className="mb-3 flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-2">
+          <h2 className="text-xs font-extrabold uppercase tracking-wider text-zinc-800 dark:text-zinc-100">Hierarquia Operacional do Sistema</h2>
+          <span className="text-[11px] font-semibold text-zinc-400 dark:text-zinc-500">Encadeamento sequencial</span>
         </div>
 
-        <div className="grid grid-cols-2 gap-px sm:grid-cols-4 lg:grid-cols-7 bg-zinc-200 border border-zinc-200 rounded-xl overflow-hidden shadow-2xs">
+        <div className="grid grid-cols-2 gap-px sm:grid-cols-4 lg:grid-cols-7 bg-zinc-200 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 rounded-xl overflow-hidden shadow-2xs">
           {[
             { nivel: "1º", titulo: "Organização" },
             { nivel: "2º", titulo: "Objeto" },
@@ -120,19 +120,19 @@ export default function DashboardPage() {
           ].map(({ nivel, titulo }, idx) => (
             <div
               key={nivel}
-              className={`relative flex items-center justify-between gap-2 bg-white px-4 py-3.5 text-zinc-900 transition-all hover:bg-zinc-100 select-none ${
+              className={`relative flex items-center justify-between gap-2 bg-white dark:bg-zinc-900 px-4 py-3.5 text-zinc-900 dark:text-zinc-100 transition-all hover:bg-zinc-100 dark:hover:bg-zinc-800 select-none ${
                 idx === 0 ? "rounded-l-xl lg:rounded-l-xl lg:rounded-r-none" :
                 idx === 6 ? "rounded-r-xl lg:rounded-r-xl lg:rounded-l-none" : "rounded-none"
               }`}
             >
               <div className="flex items-center gap-2 truncate">
-                <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-zinc-100 border border-zinc-300 text-zinc-700">
+                <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300">
                   {nivel}
                 </span>
-                <span className="text-xs font-bold text-zinc-800 truncate tracking-tight">{titulo}</span>
+                <span className="text-xs font-bold text-zinc-800 dark:text-zinc-200 truncate tracking-tight">{titulo}</span>
               </div>
               {idx < 6 && (
-                <div className="absolute -right-2 top-1/2 -translate-y-1/2 z-10 hidden lg:flex h-4 w-4 items-center justify-center rounded-full bg-zinc-200 text-[10px] font-bold text-zinc-600 border border-zinc-300 shadow-2xs">
+                <div className="absolute -right-2 top-1/2 -translate-y-1/2 z-10 hidden lg:flex h-4 w-4 items-center justify-center rounded-full bg-zinc-200 dark:bg-zinc-800 text-[10px] font-bold text-zinc-600 dark:text-zinc-400 border border-zinc-300 dark:border-zinc-700 shadow-2xs">
                   ›
                 </div>
               )}
@@ -157,28 +157,28 @@ export default function DashboardPage() {
         {/* Beneficiários */}
         <Card>
           <CardHeader className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-zinc-800">Beneficiários</h3>
+            <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-100">Beneficiários</h3>
             <Link
               href="/beneficiarios"
-              className="inline-flex items-center rounded-lg border border-sky-200 bg-sky-50 px-2.5 py-1 text-xs font-semibold text-sky-700 hover:bg-sky-100 hover:border-sky-300 transition-colors shadow-2xs"
+              className="inline-flex items-center rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-2.5 py-1 text-xs font-semibold text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors shadow-2xs"
             >
               Ver todos
             </Link>
           </CardHeader>
           <CardBody className="flex flex-col gap-3">
             <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-lg bg-green-50 px-3 py-2.5">
-                <p className="text-xs text-green-700">Ativos</p>
-                <p className="text-2xl font-bold text-green-700">{r.beneficiariosAtivos}</p>
+              <div className="rounded-lg bg-green-50 dark:bg-green-950/60 px-3 py-2.5">
+                <p className="text-xs text-green-700 dark:text-green-300">Ativos</p>
+                <p className="text-2xl font-bold text-green-700 dark:text-green-300">{r.beneficiariosAtivos}</p>
               </div>
-              <div className="rounded-lg bg-zinc-50 px-3 py-2.5">
-                <p className="text-xs text-zinc-500">Total cadastrado</p>
-                <p className="text-2xl font-bold text-zinc-700">{r.totalBeneficiarios}</p>
+              <div className="rounded-lg bg-zinc-50 dark:bg-zinc-800/80 px-3 py-2.5">
+                <p className="text-xs text-zinc-500 dark:text-zinc-400">Total cadastrado</p>
+                <p className="text-2xl font-bold text-zinc-700 dark:text-zinc-200">{r.totalBeneficiarios}</p>
               </div>
             </div>
             <Link
               href="/beneficiarios/novo"
-              className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 bg-sky-50 px-3 py-2 text-sm font-medium text-sky-700 hover:bg-sky-100 transition-colors"
+              className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-3 py-2 text-sm font-medium text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors"
             >
               <UserPlus className="h-4 w-4" />
               Novo beneficiário
@@ -189,32 +189,32 @@ export default function DashboardPage() {
         {/* Turmas e vagas */}
         <Card>
           <CardHeader className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-zinc-800">Turmas e Vagas</h3>
+            <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-100">Turmas e Vagas</h3>
             <Link
               href="/turmas"
-              className="inline-flex items-center rounded-lg border border-sky-200 bg-sky-50 px-2.5 py-1 text-xs font-semibold text-sky-700 hover:bg-sky-100 hover:border-sky-300 transition-colors shadow-2xs"
+              className="inline-flex items-center rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-2.5 py-1 text-xs font-semibold text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors shadow-2xs"
             >
               Ver turmas
             </Link>
           </CardHeader>
           <CardBody className="flex flex-col gap-3">
             <div className="grid grid-cols-3 gap-2">
-              <div className="rounded-lg bg-zinc-50 px-3 py-2.5 text-center">
-                <p className="text-xs text-zinc-500">Turmas</p>
-                <p className="text-2xl font-bold text-zinc-700">{r.totalTurmas}</p>
+              <div className="rounded-lg bg-zinc-50 dark:bg-zinc-800/80 px-3 py-2.5 text-center">
+                <p className="text-xs text-zinc-500 dark:text-zinc-400">Turmas</p>
+                <p className="text-2xl font-bold text-zinc-700 dark:text-zinc-200">{r.totalTurmas}</p>
               </div>
-              <div className="rounded-lg bg-green-50 px-3 py-2.5 text-center">
-                <p className="text-xs text-green-700">Vagas livres</p>
-                <p className="text-2xl font-bold text-green-700">{r.vagasLivres}</p>
+              <div className="rounded-lg bg-green-50 dark:bg-green-950/60 px-3 py-2.5 text-center">
+                <p className="text-xs text-green-700 dark:text-green-300">Vagas livres</p>
+                <p className="text-2xl font-bold text-green-700 dark:text-green-300">{r.vagasLivres}</p>
               </div>
-              <div className="rounded-lg bg-sky-50 px-3 py-2.5 text-center">
-                <p className="text-xs text-sky-700">Ocupação</p>
-                <p className="text-2xl font-bold text-sky-700">{r.ocupacaoGlobal}%</p>
+              <div className="rounded-lg bg-sky-50 dark:bg-sky-950/60 px-3 py-2.5 text-center">
+                <p className="text-xs text-sky-700 dark:text-sky-300">Ocupação</p>
+                <p className="text-2xl font-bold text-sky-700 dark:text-sky-300">{r.ocupacaoGlobal}%</p>
               </div>
             </div>
             <Link
               href="/turmas/novo"
-              className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 bg-sky-50 px-3 py-2 text-sm font-medium text-sky-700 hover:bg-sky-100 transition-colors"
+              className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-3 py-2 text-sm font-medium text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors"
             >
               <Plus className="h-4 w-4" />
               Nova turma
@@ -225,28 +225,28 @@ export default function DashboardPage() {
         {/* Funcionários */}
         <Card>
           <CardHeader className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-zinc-800">Pessoal</h3>
+            <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-100">Pessoal</h3>
             <Link
               href="/funcionarios"
-              className="inline-flex items-center rounded-lg border border-sky-200 bg-sky-50 px-2.5 py-1 text-xs font-semibold text-sky-700 hover:bg-sky-100 hover:border-sky-300 transition-colors shadow-2xs"
+              className="inline-flex items-center rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-2.5 py-1 text-xs font-semibold text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors shadow-2xs"
             >
               Ver todos
             </Link>
           </CardHeader>
           <CardBody className="flex flex-col gap-3">
             <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-lg bg-green-50 px-3 py-2.5">
-                <p className="text-xs text-green-700">Contratados</p>
-                <p className="text-2xl font-bold text-green-700">{r.funcionariosAtivos}</p>
+              <div className="rounded-lg bg-green-50 dark:bg-green-950/60 px-3 py-2.5">
+                <p className="text-xs text-green-700 dark:text-green-300">Contratados</p>
+                <p className="text-2xl font-bold text-green-700 dark:text-green-300">{r.funcionariosAtivos}</p>
               </div>
-              <div className="rounded-lg bg-amber-50 px-3 py-2.5">
-                <p className="text-xs text-amber-700">Em licença</p>
-                <p className="text-2xl font-bold text-amber-700">{r.funcionariosLicenca}</p>
+              <div className="rounded-lg bg-amber-50 dark:bg-amber-950/60 px-3 py-2.5">
+                <p className="text-xs text-amber-700 dark:text-amber-300">Em licença</p>
+                <p className="text-2xl font-bold text-amber-700 dark:text-amber-300">{r.funcionariosLicenca}</p>
               </div>
             </div>
             <Link
               href="/funcionarios/novo"
-              className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 bg-sky-50 px-3 py-2 text-sm font-medium text-sky-700 hover:bg-sky-100 transition-colors"
+              className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-3 py-2 text-sm font-medium text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors"
             >
               <UserCheck className="h-4 w-4" />
               Novo funcionário
@@ -257,28 +257,28 @@ export default function DashboardPage() {
         {/* Objetos */}
         <Card>
           <CardHeader className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-zinc-800">Objetos</h3>
+            <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-100">Objetos</h3>
             <Link
               href="/objetos"
-              className="inline-flex items-center rounded-lg border border-sky-200 bg-sky-50 px-2.5 py-1 text-xs font-semibold text-sky-700 hover:bg-sky-100 hover:border-sky-300 transition-colors shadow-2xs"
+              className="inline-flex items-center rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-2.5 py-1 text-xs font-semibold text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors shadow-2xs"
             >
               Ver todos
             </Link>
           </CardHeader>
           <CardBody className="flex flex-col gap-3">
             <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-lg bg-green-50 px-3 py-2.5">
-                <p className="text-xs text-green-700">Cadastrados</p>
-                <p className="text-2xl font-bold text-green-700">{r.totalObjetos}</p>
+              <div className="rounded-lg bg-green-50 dark:bg-green-950/60 px-3 py-2.5">
+                <p className="text-xs text-green-700 dark:text-green-300">Cadastrados</p>
+                <p className="text-2xl font-bold text-green-700 dark:text-green-300">{r.totalObjetos}</p>
               </div>
-              <div className="rounded-lg bg-sky-50 px-3 py-2.5">
-                <p className="text-xs text-sky-700">Vigentes</p>
-                <p className="text-2xl font-bold text-sky-700">{r.totalObjetos}</p>
+              <div className="rounded-lg bg-sky-50 dark:bg-sky-950/60 px-3 py-2.5">
+                <p className="text-xs text-sky-700 dark:text-sky-300">Vigentes</p>
+                <p className="text-2xl font-bold text-sky-700 dark:text-sky-300">{r.totalObjetos}</p>
               </div>
             </div>
             <Link
               href="/objetos/novo"
-              className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 bg-sky-50 px-3 py-2 text-sm font-medium text-sky-700 hover:bg-sky-100 transition-colors"
+              className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-3 py-2 text-sm font-medium text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors"
             >
               <Plus className="h-4 w-4" />
               Novo objeto
@@ -289,28 +289,28 @@ export default function DashboardPage() {
         {/* Organizações */}
         <Card>
           <CardHeader className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-zinc-800">Organizações</h3>
+            <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-100">Organizações</h3>
             <Link
               href="/organizacoes"
-              className="inline-flex items-center rounded-lg border border-sky-200 bg-sky-50 px-2.5 py-1 text-xs font-semibold text-sky-700 hover:bg-sky-100 hover:border-sky-300 transition-colors shadow-2xs"
+              className="inline-flex items-center rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-2.5 py-1 text-xs font-semibold text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors shadow-2xs"
             >
               Ver todas
             </Link>
           </CardHeader>
           <CardBody className="flex flex-col gap-3">
             <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-lg bg-green-50 px-3 py-2.5">
-                <p className="text-xs text-green-700">Parceiras</p>
-                <p className="text-2xl font-bold text-green-700">{r.totalOrganizacoes}</p>
+              <div className="rounded-lg bg-green-50 dark:bg-green-950/60 px-3 py-2.5">
+                <p className="text-xs text-green-700 dark:text-green-300">Parceiras</p>
+                <p className="text-2xl font-bold text-green-700 dark:text-green-300">{r.totalOrganizacoes}</p>
               </div>
-              <div className="rounded-lg bg-zinc-50 px-3 py-2.5">
-                <p className="text-xs text-zinc-500">Ativas</p>
-                <p className="text-2xl font-bold text-zinc-700">{r.totalOrganizacoes}</p>
+              <div className="rounded-lg bg-zinc-50 dark:bg-zinc-800/80 px-3 py-2.5">
+                <p className="text-xs text-zinc-500 dark:text-zinc-400">Ativas</p>
+                <p className="text-2xl font-bold text-zinc-700 dark:text-zinc-200">{r.totalOrganizacoes}</p>
               </div>
             </div>
             <Link
               href="/organizacoes/novo"
-              className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 bg-sky-50 px-3 py-2 text-sm font-medium text-sky-700 hover:bg-sky-100 transition-colors"
+              className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-3 py-2 text-sm font-medium text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors"
             >
               <Building2 className="h-4 w-4" />
               Nova organização
@@ -321,28 +321,28 @@ export default function DashboardPage() {
         {/* Núcleos */}
         <Card>
           <CardHeader className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-zinc-800">Núcleos</h3>
+            <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-100">Núcleos</h3>
             <Link
               href="/nucleos"
-              className="inline-flex items-center rounded-lg border border-sky-200 bg-sky-50 px-2.5 py-1 text-xs font-semibold text-sky-700 hover:bg-sky-100 hover:border-sky-300 transition-colors shadow-2xs"
+              className="inline-flex items-center rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-2.5 py-1 text-xs font-semibold text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors shadow-2xs"
             >
               Ver todos
             </Link>
           </CardHeader>
           <CardBody className="flex flex-col gap-3">
             <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-lg bg-green-50 px-3 py-2.5">
-                <p className="text-xs text-green-700">Em operação</p>
-                <p className="text-2xl font-bold text-green-700">{r.nucleosAtivos}</p>
+              <div className="rounded-lg bg-green-50 dark:bg-green-950/60 px-3 py-2.5">
+                <p className="text-xs text-green-700 dark:text-green-300">Em operação</p>
+                <p className="text-2xl font-bold text-green-700 dark:text-green-300">{r.nucleosAtivos}</p>
               </div>
-              <div className="rounded-lg bg-zinc-50 px-3 py-2.5">
-                <p className="text-xs text-zinc-500">Total núcleos</p>
-                <p className="text-2xl font-bold text-zinc-700">{r.totalNucleos}</p>
+              <div className="rounded-lg bg-zinc-50 dark:bg-zinc-800/80 px-3 py-2.5">
+                <p className="text-xs text-zinc-500 dark:text-zinc-400">Total núcleos</p>
+                <p className="text-2xl font-bold text-zinc-700 dark:text-zinc-200">{r.totalNucleos}</p>
               </div>
             </div>
             <Link
               href="/nucleos/novo"
-              className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 bg-sky-50 px-3 py-2 text-sm font-medium text-sky-700 hover:bg-sky-100 transition-colors"
+              className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-3 py-2 text-sm font-medium text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors"
             >
               <Building2 className="h-4 w-4" />
               Novo núcleo
@@ -355,7 +355,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <h3 className="text-sm font-medium text-zinc-700">Beneficiários por modalidade</h3>
+            <h3 className="text-sm font-medium text-zinc-700 dark:text-zinc-200">Beneficiários por modalidade</h3>
           </CardHeader>
           <CardBody className="flex flex-col gap-2">
             {r.distribuicaoPorModalidade.map((m) => {
@@ -363,11 +363,11 @@ export default function DashboardPage() {
               return (
                 <div key={m.nome} className="flex flex-col gap-1">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-zinc-700">{m.nome}</span>
-                    <span className="font-medium text-zinc-900">{m.total} <span className="text-xs font-normal text-zinc-400">({pct}%)</span></span>
+                    <span className="text-zinc-700 dark:text-zinc-300">{m.nome}</span>
+                    <span className="font-medium text-zinc-900 dark:text-zinc-100">{m.total} <span className="text-xs font-normal text-zinc-400 dark:text-zinc-500">({pct}%)</span></span>
                   </div>
-                  <div className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-100">
-                    <div className="h-full rounded-full bg-sky-400" style={{ width: `${pct}%` }} />
+                  <div className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800">
+                    <div className="h-full rounded-full bg-sky-400 dark:bg-sky-500" style={{ width: `${pct}%` }} />
                   </div>
                 </div>
               );
@@ -378,25 +378,25 @@ export default function DashboardPage() {
         {/* Top núcleos */}
         <Card>
           <CardHeader className="flex items-center justify-between">
-            <h3 className="text-sm font-medium text-zinc-700">Top núcleos por beneficiários ativos</h3>
-            <Link href="/nucleos" className="text-xs text-sky-600 hover:underline">Ver todos</Link>
+            <h3 className="text-sm font-medium text-zinc-700 dark:text-zinc-200">Top núcleos por beneficiários ativos</h3>
+            <Link href="/nucleos" className="text-xs text-sky-600 dark:text-sky-400 hover:underline">Ver todos</Link>
           </CardHeader>
           <CardBody className="flex flex-col gap-2">
             {r.topNucleos.length === 0 ? (
-              <p className="text-xs text-zinc-400 py-4 text-center">Nenhum núcleo para a localização selecionada.</p>
+              <p className="text-xs text-zinc-400 dark:text-zinc-500 py-4 text-center">Nenhum núcleo para a localização selecionada.</p>
             ) : (
               r.topNucleos.map((n, i) => {
                 const pct = r.beneficiariosAtivos > 0 ? Math.round((n.beneficiariosAtivos / r.beneficiariosAtivos) * 100) : 0;
                 return (
                   <div key={n.id} className="flex items-center gap-3 text-sm">
-                    <span className="w-5 text-right text-xs font-bold text-zinc-400">{i + 1}</span>
+                    <span className="w-5 text-right text-xs font-bold text-zinc-400 dark:text-zinc-500">{i + 1}</span>
                     <div className="flex-1">
                       <div className="flex items-center justify-between">
-                        <span className="text-zinc-700">{n.identificacao}</span>
-                        <span className="font-medium text-zinc-900">{n.beneficiariosAtivos}</span>
+                        <span className="text-zinc-700 dark:text-zinc-300">{n.identificacao}</span>
+                        <span className="font-medium text-zinc-900 dark:text-zinc-100">{n.beneficiariosAtivos}</span>
                       </div>
-                      <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-zinc-100">
-                        <div className="h-full rounded-full bg-green-400" style={{ width: `${pct}%` }} />
+                      <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800">
+                        <div className="h-full rounded-full bg-green-400 dark:bg-green-500" style={{ width: `${pct}%` }} />
                       </div>
                     </div>
                   </div>
@@ -410,13 +410,13 @@ export default function DashboardPage() {
       {/* Cadastros recentes */}
       <Card>
         <CardHeader className="flex items-center justify-between">
-          <h3 className="text-sm font-medium text-zinc-700">Cadastros recentes</h3>
-          <Link href="/beneficiarios" className="text-sm text-sky-600 hover:underline">Ver todos</Link>
+          <h3 className="text-sm font-medium text-zinc-700 dark:text-zinc-200">Cadastros recentes</h3>
+          <Link href="/beneficiarios" className="text-sm text-sky-600 dark:text-sky-400 hover:underline">Ver todos</Link>
         </CardHeader>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-zinc-200 text-left text-xs font-medium uppercase tracking-wide text-zinc-500">
+              <tr className="border-b border-zinc-200 dark:border-zinc-800 text-left text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
                 <th className="px-5 py-3">Nome</th>
                 <th className="px-5 py-3">Núcleo</th>
                 <th className="px-5 py-3">Status</th>
@@ -428,11 +428,11 @@ export default function DashboardPage() {
                 const statusNorm = normalizarStatusBeneficiario(b.status);
                 const tone = statusBeneficiarioTone[statusNorm];
                 return (
-                  <tr key={b.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
-                    <td className="px-5 py-3 font-medium text-zinc-900">{b.nomeCompleto}</td>
-                    <td className="px-5 py-3 text-zinc-600">{b.nucleo ?? "—"}</td>
+                  <tr key={b.id} className="border-b border-zinc-100 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
+                    <td className="px-5 py-3 font-medium text-zinc-900 dark:text-zinc-100">{b.nomeCompleto}</td>
+                    <td className="px-5 py-3 text-zinc-600 dark:text-zinc-400">{b.nucleo ?? "—"}</td>
                     <td className="px-5 py-3"><Badge tone={tone}>{statusBeneficiarioLabel[statusNorm]}</Badge></td>
-                    <td className="px-5 py-3 text-zinc-600">{formatarData(b.dataCadastro)}</td>
+                    <td className="px-5 py-3 text-zinc-600 dark:text-zinc-400">{formatarData(b.dataCadastro)}</td>
                   </tr>
                 );
               })}
