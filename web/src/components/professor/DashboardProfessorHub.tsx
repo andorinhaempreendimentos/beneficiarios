@@ -27,7 +27,9 @@ import { Badge, Button, Card, Field, Input, Textarea } from "@/components/ui";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useToast } from "@/components/providers/ToastProvider";
 import { GestaoMatriculasProfessor } from "./GestaoMatriculasProfessor";
-import type { FuncionarioApi, TurmaApi, NucleoApi, BeneficiarioApi } from "@/lib/api/services";
+import { GradeSemanalProfessor } from "./GradeSemanalProfessor";
+import type { FuncionarioApi, TurmaApi, NucleoApi, BeneficiarioApi, SlotAulaGrid } from "@/lib/api/services";
+import { areaProfessorApi } from "@/lib/api/services";
 
 interface DashboardProfessorHubProps {
   professor: FuncionarioApi;
@@ -35,7 +37,9 @@ interface DashboardProfessorHubProps {
   onSelecionarProfessor?: (id: string) => void;
   nucleo?: NucleoApi;
   turmas: TurmaApi[];
+  slotsGrid?: SlotAulaGrid[];
   todosBeneficiarios: BeneficiarioApi[];
+  loading?: boolean;
 }
 
 const DIAS_SEMANA_NOMES = [
@@ -54,12 +58,17 @@ export function DashboardProfessorHub({
   onSelecionarProfessor,
   nucleo,
   turmas,
+  slotsGrid = [],
   todosBeneficiarios,
+  loading = false,
 }: DashboardProfessorHubProps) {
   const router = useRouter();
   const { logout } = useAuth();
   const { toast } = useToast();
   const [slideAtual, setSlideAtual] = useState(0);
+
+  // Data da aula selecionada para aplicacao/ponto (padrao YYYY-MM-DD hoje)
+  const [dataAula, setDataAula] = useState<string>(new Date().toISOString().split("T")[0]);
 
   // Estado da Modal de Ação da Atividade
   const [turmaModal, setTurmaModal] = useState<TurmaApi | null>(null);
@@ -332,119 +341,24 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
         </div>
       </div>
 
-      {/* 2. QUADRO DE GRADE SEMANAL (ACIMA DAS TURMAS EM DESTAQUE) */}
+      {/* 2. QUADRO DE GRADE SEMANAL DE TREINOS (MATRIZ IDENTICA AO EDITAR TURMAS) */}
       <div className="flex flex-col gap-3">
         <div>
           <h2 className="text-lg font-bold text-zinc-900 flex items-center gap-2">
             <Calendar className="h-5 w-5 text-sky-600" />
-            <span>Grade Semanal de Treinos (Segunda a Sábado)</span>
+            <span>Grade Semanal de Treinos do Professor</span>
           </h2>
-          <p className="text-xs text-zinc-500">Clique na aula para abrir a modal de Ações (Ponto, Confirmação e Presença)</p>
+          <p className="text-xs text-zinc-500">Matriz de horários (Segunda a Sábado). Clique no bloco da aula para registrar ponto, relatório e chamada.</p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
-          {(() => {
-            const SIGLAS: Record<string, string> = {
-              Segunda: "Seg",
-              Terça: "Ter",
-              Quarta: "Qua",
-              Quinta: "Qui",
-              Sexta: "Sex",
-              Sábado: "Sáb",
-            };
-            const diasOrdenados = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
-            const diaHojeNome = diaSemanaAtual.split("-")[0];
-            const indiceHoje = diasOrdenados.findIndex((d) => diaHojeNome.startsWith(d));
-            
-            // Reordena colocando o dia de HOJE primeiro
-            const diasReordenados = indiceHoje !== -1
-              ? [diasOrdenados[indiceHoje], ...diasOrdenados.slice(0, indiceHoje), ...diasOrdenados.slice(indiceHoje + 1)]
-              : diasOrdenados;
-
-            return diasReordenados.map((dia) => {
-              const ehHoje = diaSemanaAtual.startsWith(dia);
-              const sigla = SIGLAS[dia] || "Seg";
-
-              // Filtra turmas que possuem aula agendada neste dia da semana
-              const turmasDoDia = turmas.filter((t) => {
-                if (t.slots && t.slots.length > 0) {
-                  return t.slots.some((s: any) => s.dia === sigla || s.dia === dia);
-                }
-                // Se não houver slots específicos no banco, distribui como padrão Seg/Qua/Sex
-                return sigla === "Seg" || sigla === "Qua" || sigla === "Sex";
-              });
-
-              return (
-                <Card
-                  key={dia}
-                  className={`p-4 flex flex-col justify-between gap-3 min-h-[175px] transition-all ${
-                    ehHoje
-                      ? "border-2 border-sky-500 bg-gradient-to-b from-sky-50 via-sky-50/80 to-indigo-50/40 shadow-xl ring-2 ring-sky-500/30 sm:col-span-2 lg:col-span-1"
-                      : "bg-white border-zinc-200 hover:border-zinc-300"
-                  }`}
-                >
-                  <div className="flex items-center justify-between border-b border-zinc-100 pb-2">
-                    <span className={`text-xs font-black uppercase tracking-wider ${ehHoje ? "text-sky-800" : "text-zinc-600"}`}>
-                      {dia}
-                    </span>
-                    {ehHoje && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-sky-600 px-2.5 py-0.5 text-[10px] font-extrabold text-white shadow-sm animate-pulse">
-                        ★ HOJE
-                      </span>
-                    )}
-                  </div>
-
-                  {turmasDoDia.length > 0 ? (
-                    <div className="flex flex-col gap-2">
-                      {turmasDoDia.slice(0, 2).map((t) => {
-                        const st = statusAtividade[t.id];
-                        const slotDia = (t.slots ?? []).find((s: any) => s.dia === sigla);
-                        const horaTexto = slotDia 
-                          ? `${String(slotDia.inicio).padStart(2, '0')}:00 às ${String(slotDia.fim).padStart(2, '0')}:00`
-                          : "08:00 às 10:00";
-
-                        return (
-                          <button
-                            key={t.id}
-                            type="button"
-                            onClick={() => setTurmaModal(t)}
-                            className={`w-full text-left rounded-xl p-3 text-xs border transition-all active:scale-95 group shadow-sm ${
-                              ehHoje
-                                ? "bg-white hover:bg-sky-50/80 border-sky-300 shadow-sky-100"
-                                : "bg-zinc-50/80 hover:bg-zinc-100 border-zinc-200"
-                            }`}
-                          >
-                            <div className="flex items-center justify-between gap-1 mb-1">
-                              <span className="font-extrabold text-zinc-900 truncate group-hover:text-sky-700">{t.nome}</span>
-                              <Clock className="h-3.5 w-3.5 text-sky-600 shrink-0" />
-                            </div>
-
-                            <div className="flex items-center justify-between text-[10px] font-mono text-zinc-600 font-bold">
-                              <span>{horaTexto}</span>
-                              {st === "em_andamento" && (
-                                <span className="text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded font-bold">Iniciada</span>
-                              )}
-                              {st === "concluido" && (
-                                <span className="text-blue-700 bg-blue-100 px-1.5 py-0.5 rounded font-bold">Concluída</span>
-                              )}
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center py-4 text-center">
-                      <AlertCircle className="h-5 w-5 text-zinc-300 mb-1" />
-                      <span className="text-[11px] font-medium text-zinc-400 leading-tight">
-                        Sem treino agendado
-                      </span>
-                    </div>
-                  )}
-                </Card>
-              );
-            });
-          })()}
-        </div>
+        <GradeSemanalProfessor
+          turmas={turmas}
+          slotsGrid={slotsGrid ?? []}
+          onSelectSlot={(slot, turma) => {
+            setTurmaModal(turma);
+            setDataAula(new Date().toISOString().split("T")[0]);
+          }}
+        />
       </div>
 
       {/* 3. CARROSSEL INTELIGENTE DE TURMAS (LOGA ABAIXO DA GRADE) */}
@@ -573,7 +487,10 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
                   </div>
 
                   <Button
-                    onClick={() => setTurmaModal(turma)}
+                    onClick={() => {
+                      setTurmaModal(turma);
+                      setDataAula(new Date().toISOString().split("T")[0]);
+                    }}
                     className="w-full justify-center flex items-center gap-2 rounded-xl bg-sky-600 px-4 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-sky-700 transition-colors"
                   >
                     <CheckSquare className="h-4 w-4" />
@@ -638,7 +555,7 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
               <div>
                 <span className="text-[10px] font-bold uppercase text-sky-600 tracking-wider">Ações da Atividade</span>
                 <h3 className="text-lg font-extrabold text-zinc-900">{turmaModal.nome}</h3>
-                <p className="text-xs text-zinc-500 font-mono mt-0.5">Horário: 08:00 às 09:30 · {turmaModal.nucleo?.identificacao || "Polo Esportivo"}</p>
+                <p className="text-xs text-zinc-500 font-mono mt-0.5">{turmaModal.nucleo?.identificacao || "Polo Esportivo Palmas"}</p>
               </div>
               <button
                 type="button"
@@ -647,6 +564,22 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
               >
                 <X className="h-5 w-5" />
               </button>
+            </div>
+
+            {/* SELETOR DE DATA DA AULA */}
+            <div className="flex items-center gap-3 rounded-2xl bg-sky-50/80 p-3.5 border border-sky-200 text-sky-950">
+              <Calendar className="h-5 w-5 text-sky-600 shrink-0" />
+              <div className="flex-1">
+                <label className="text-[10px] font-extrabold uppercase tracking-wider text-sky-800 block">
+                  Data da Aula para Aplicação & Ponto
+                </label>
+                <input
+                  type="date"
+                  value={dataAula}
+                  onChange={(e) => setDataAula(e.target.value)}
+                  className="text-xs font-bold text-zinc-900 bg-white px-2 py-1 rounded-lg border border-sky-300 focus:outline-none cursor-pointer mt-0.5"
+                />
+              </div>
             </div>
 
             {/* Opção 1: Iniciar / Finalizar Atividade e Ponto */}
@@ -683,7 +616,7 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
               {statusAtividade[turmaModal.id] === "em_andamento" && (
                 <div className="flex flex-col gap-3">
                   <div className="rounded-xl bg-emerald-100/70 p-3 text-xs text-emerald-900 font-semibold border border-emerald-300">
-                    ✓ Atividade em andamento! Entrada registrada às <span className="font-mono font-bold">{horaInicio[turmaModal.id]}</span>.
+                    ✓ Atividade em andamento! Entrada registrada às <span className="font-mono font-bold">{horaInicio[turmaModal.id]}</span> para a data <span className="font-mono font-bold">{dataAula.split('-').reverse().join('/')}</span>.
                   </div>
 
                   <Field label="Descrição da Atividade Aplicada" required>
@@ -729,12 +662,12 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
 
               {statusAtividade[turmaModal.id] === "concluido" && (
                 <div className="rounded-xl bg-blue-100/70 p-3 text-xs text-blue-900 font-semibold border border-blue-300">
-                  ✓ Atividade e Ponto concluídos! Entrada: {horaInicio[turmaModal.id]} · Saída: {horaFim[turmaModal.id]}
+                  ✓ Atividade e Ponto concluídos para {dataAula.split('-').reverse().join('/')}! Entrada: {horaInicio[turmaModal.id]} · Saída: {horaFim[turmaModal.id]}
                 </div>
               )}
             </div>
 
-            {/* Opção 2: Dar Presença */}
+            {/* Opção 2: Dar Presença na Data */}
             <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4 flex flex-col gap-3">
               <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-700 flex items-center gap-1.5">
                 <Users className="h-4 w-4 text-emerald-600" />
@@ -742,11 +675,11 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
               </h4>
 
               <Link
-                href={`/professor/chamada?turmaId=${turmaModal.id}`}
+                href={`/professor/chamada?turmaId=${turmaModal.id}&data=${dataAula}`}
                 className="w-full justify-center flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-xs font-bold text-white shadow-sm hover:bg-emerald-700 transition-colors"
               >
                 <Users className="h-4 w-4" />
-                <span>Dar Presença para os Alunos Desta Turma</span>
+                <span>Dar Presença para os Alunos em {dataAula.split('-').reverse().join('/')}</span>
               </Link>
             </div>
           </div>

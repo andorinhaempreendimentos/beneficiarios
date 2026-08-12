@@ -2,23 +2,24 @@
 
 import { useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
-import { Users, UserCheck, UserX, AlertCircle, ArrowLeft, GraduationCap } from "lucide-react";
+import { Users, UserCheck, UserX, AlertCircle, ArrowLeft, GraduationCap, Calendar } from "lucide-react";
 import Link from "next/link";
 import { Button, Card, PageHeader, Select } from "@/components/ui";
 import { useToast } from "@/components/providers/ToastProvider";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useQuery } from "@/lib/hooks/useQuery";
-import { beneficiariosApi, type TurmaApi, type FuncionarioApi } from "@/lib/api/services";
+import { beneficiariosApi, areaProfessorApi, type TurmaApi, type FuncionarioApi } from "@/lib/api/services";
 
 export function ChamadaView({ turmas, funcionarios = [] }: { turmas: TurmaApi[]; funcionarios?: FuncionarioApi[] }) {
   const { toast } = useToast();
   const { user } = useAuth();
   const searchParams = useSearchParams();
   const queryTurmaId = searchParams.get("turmaId");
+  const queryData = searchParams.get("data") || new Date().toISOString().split("T")[0];
 
+  const [dataAula, setDataAula] = useState<string>(queryData);
   const isAdmin = user?.tipo === "admin";
 
-  // Identifica o professor correspondente ao usuário logado
   const profDoUsuario = useMemo(() => {
     if (!user) return null;
     return funcionarios.find(
@@ -30,7 +31,6 @@ export function ChamadaView({ turmas, funcionarios = [] }: { turmas: TurmaApi[];
     );
   }, [user, funcionarios]);
 
-  // Se não for admin, filtra estritamente apenas as turmas pertencentes a este professor
   const turmasPermitidas = useMemo(() => {
     if (isAdmin || !profDoUsuario) return turmas;
     const nomeProfLower = profDoUsuario.nomeCompleto.toLowerCase();
@@ -42,7 +42,6 @@ export function ChamadaView({ turmas, funcionarios = [] }: { turmas: TurmaApi[];
     });
   }, [turmas, isAdmin, profDoUsuario]);
 
-  // Seleciona obrigatoriamente a turma específica que foi aberta pelo professor (se informada via URL), ou a primeira permitida
   const turmaInicialId = useMemo(() => {
     if (queryTurmaId && turmasPermitidas.some((t) => t.id === queryTurmaId)) {
       return queryTurmaId;
@@ -52,10 +51,10 @@ export function ChamadaView({ turmas, funcionarios = [] }: { turmas: TurmaApi[];
 
   const [turmaSelecionadaId, setTurmaSelecionadaId] = useState(turmaInicialId);
   const [presencas, setPresencas] = useState<Record<string, "presente" | "falta">>({});
+  const [salvando, setSalvando] = useState(false);
 
   const turmaAtual = turmasPermitidas.find((t) => t.id === turmaSelecionadaId);
 
-  // Busca real de beneficiários inscritos na turma selecionada via Supabase
   const { data: beneficiariosRes, loading } = useQuery(
     () => (turmaSelecionadaId ? beneficiariosApi.list({ turmaId: turmaSelecionadaId, limit: 100 }) : Promise.resolve({ data: [], total: 0, page: 1, limit: 100 })),
     [turmaSelecionadaId]
@@ -67,8 +66,27 @@ export function ChamadaView({ turmas, funcionarios = [] }: { turmas: TurmaApi[];
     setPresencas((prev) => ({ ...prev, [alunoId]: status }));
   }
 
-  function handleSalvarChamada() {
-    toast.success(`Chamada da turma "${turmaAtual?.nome || 'selecionada'}" registrada com sucesso!`);
+  async function handleSalvarChamada() {
+    if (!turmaSelecionadaId) return;
+    setSalvando(true);
+    try {
+      const listaPresencas = alunosReais.map((aluno) => ({
+        beneficiarioId: aluno.id,
+        presente: presencas[aluno.id] !== "falta",
+      }));
+
+      await areaProfessorApi.salvarPresencas({
+        turmaId: turmaSelecionadaId,
+        dataAula,
+        presencas: listaPresencas,
+      });
+
+      toast.success(`Chamada da turma "${turmaAtual?.nome}" salva com sucesso para a data ${dataAula.split('-').reverse().join('/')}!`);
+    } catch (err: any) {
+      toast.error(`Erro ao salvar chamada: ${err.message || "Tente novamente."}`);
+    } finally {
+      setSalvando(false);
+    }
   }
 
   return (
@@ -88,7 +106,8 @@ export function ChamadaView({ turmas, funcionarios = [] }: { turmas: TurmaApi[];
       />
 
       <Card className="p-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-zinc-100 pb-4 mb-6 gap-4">
+        {/* SELETOR DE DATA E SELEÇÃO DE TURMA */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-zinc-100 pb-4 mb-6 gap-4">
           <div>
             <div className="flex items-center gap-2">
               <span className="rounded-md bg-sky-100 px-2 py-0.5 text-[10px] font-extrabold uppercase text-sky-800">
@@ -106,23 +125,38 @@ export function ChamadaView({ turmas, funcionarios = [] }: { turmas: TurmaApi[];
             </h3>
           </div>
 
-          <div className="w-full sm:w-72 flex flex-col gap-1">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">
-              Turmas do Professor
-            </span>
-            <Select
-              value={turmaSelecionadaId}
-              onChange={(e) => setTurmaSelecionadaId(e.target.value)}
-              disabled={turmasPermitidas.length <= 1}
-            >
-              {turmasPermitidas.length === 0 ? (
-                <option value="">Nenhuma turma vinculada</option>
-              ) : (
-                turmasPermitidas.map((t) => (
-                  <option key={t.id} value={t.id}>{t.nome}</option>
-                ))
-              )}
-            </Select>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+            <div className="flex flex-col gap-1">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-1">
+                <Calendar className="h-3 w-3 text-sky-600" />
+                Data da Aula
+              </span>
+              <input
+                type="date"
+                value={dataAula}
+                onChange={(e) => setDataAula(e.target.value)}
+                className="text-xs font-bold text-zinc-900 bg-zinc-50 border border-zinc-200 rounded-lg px-2.5 py-2 focus:outline-none focus:border-sky-500 cursor-pointer"
+              />
+            </div>
+
+            <div className="w-full sm:w-64 flex flex-col gap-1">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">
+                Turmas do Professor
+              </span>
+              <Select
+                value={turmaSelecionadaId}
+                onChange={(e) => setTurmaSelecionadaId(e.target.value)}
+                disabled={turmasPermitidas.length <= 1}
+              >
+                {turmasPermitidas.length === 0 ? (
+                  <option value="">Nenhuma turma vinculada</option>
+                ) : (
+                  turmasPermitidas.map((t) => (
+                    <option key={t.id} value={t.id}>{t.nome}</option>
+                  ))
+                )}
+              </Select>
+            </div>
           </div>
         </div>
 
@@ -180,8 +214,8 @@ export function ChamadaView({ turmas, funcionarios = [] }: { turmas: TurmaApi[];
         )}
 
         <div className="mt-6 flex justify-end pt-4 border-t border-zinc-100">
-          <Button onClick={handleSalvarChamada} disabled={alunosReais.length === 0}>
-            Salvar Chamada de Hoje
+          <Button onClick={handleSalvarChamada} disabled={alunosReais.length === 0 || salvando}>
+            {salvando ? "Salvando…" : `Salvar Chamada de ${dataAula.split('-').reverse().join('/')}`}
           </Button>
         </div>
       </Card>

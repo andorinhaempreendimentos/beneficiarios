@@ -1658,3 +1658,165 @@ export const dashboardApi = {
     );
   },
 };
+
+export interface SlotAulaGrid {
+  id: string;
+  turmaId: string;
+  turmaNome: string;
+  dia: 'Seg' | 'Ter' | 'Qua' | 'Qui' | 'Sex' | 'Sáb';
+  diaSemanaNum: number;
+  inicio: number;
+  fim: number;
+  atividadeId?: string;
+  atividadeNome?: string;
+  nucleoId?: string;
+  nucleoNome?: string;
+}
+
+export const areaProfessorApi = {
+  async getDadosProfessor(userId: string) {
+    const sb = createClient();
+
+    const { data: usuario } = await (sb.from('usuarios') as any)
+      .select('id, nome_completo, email, tipo, perfil_id, entidade_id')
+      .eq('id', userId)
+      .maybeSingle();
+
+    const funcionarioId = usuario?.entidade_id;
+
+    let funcionario = null;
+    if (funcionarioId) {
+      const { data: f } = await (sb.from('funcionarios') as any)
+        .select('*, nucleos(*)')
+        .eq('id', funcionarioId)
+        .maybeSingle();
+      funcionario = f;
+    }
+
+    const isAdmin = usuario?.tipo === 'admin';
+
+    let turmaIds: string[] = [];
+    if (!isAdmin && funcionarioId) {
+      const { data: resp } = await (sb.from('turma_responsaveis') as any)
+        .select('turma_id')
+        .eq('funcionario_id', funcionarioId);
+      turmaIds = (resp ?? []).map((r: any) => r.turma_id);
+    }
+
+    let queryTurmas = sb.from('turmas').select(`
+      *,
+      nucleos(*),
+      atividades(*),
+      turma_horarios(*),
+      turma_responsaveis(*, funcionarios(nome_completo))
+    `).is('deleted_at', null);
+
+    if (!isAdmin && turmaIds.length > 0) {
+      queryTurmas = queryTurmas.in('id', turmaIds);
+    } else if (!isAdmin && funcionarioId) {
+      if (funcionario?.nucleo_id) {
+        queryTurmas = queryTurmas.eq('nucleo_id', funcionario.nucleo_id);
+      }
+    }
+
+    const { data: turmasRaw } = await queryTurmas;
+    const turmasMapped = (turmasRaw ?? []).map(mapTurma);
+
+    const slotsGrid: SlotAulaGrid[] = [];
+    (turmasRaw ?? []).forEach((t: any) => {
+      const horarios = t.turma_horarios ?? [];
+      horarios.forEach((th: any) => {
+        const inicioHour = parseInt(String(th.hora_inicio || '').split(':')[0], 10);
+        const fimHour = parseInt(String(th.hora_fim || '').split(':')[0], 10);
+        slotsGrid.push({
+          id: th.id || `${t.id}-${th.dia_semana}`,
+          turmaId: t.id,
+          turmaNome: t.nome,
+          dia: (DIA_KEY_MAP[th.dia_semana] as any) || 'Seg',
+          diaSemanaNum: th.dia_semana,
+          inicio: isNaN(inicioHour) ? 8 : inicioHour,
+          fim: isNaN(fimHour) ? 10 : fimHour,
+          atividadeId: t.atividade_id,
+          atividadeNome: t.atividades?.nome,
+          nucleoId: t.nucleo_id,
+          nucleoNome: t.nucleos?.identificacao,
+        });
+      });
+    });
+
+    const targetTurmaIds = turmasMapped.map((t) => t.id);
+    let beneficiariosMapped: BeneficiarioApi[] = [];
+
+    if (targetTurmaIds.length > 0) {
+      const { data: bTurmas } = await (sb.from('beneficiario_turmas') as any)
+        .select(`
+          turma_id,
+          beneficiarios(*, nucleos(identificacao))
+        `)
+        .in('turma_id', targetTurmaIds)
+        .is('deleted_at', null)
+        .eq('status', 'ativo');
+
+      const bMap = new Map<string, any>();
+      (bTurmas ?? []).forEach((bt: any) => {
+        if (bt.beneficiarios) {
+          bMap.set(bt.beneficiarios.id, mapBeneficiario(bt.beneficiarios));
+        }
+      });
+      beneficiariosMapped = Array.from(bMap.values());
+    }
+
+    return {
+      usuario,
+      funcionario,
+      turmas: turmasMapped,
+      slotsGrid,
+      beneficiarios: beneficiariosMapped,
+      isAdmin,
+    };
+  },
+
+  async salvarPresencas(payload: { turmaId: string; dataAula: string; presencas: Array<{ beneficiarioId: string; presente: boolean }> }) {
+    const sb = createClient();
+    const rows = payload.presencas.map((p) => ({
+      turma_id: payload.turmaId,
+      data: payload.dataAula,
+      beneficiario_id: p.beneficiarioId,
+      presente: p.presente,
+      status: p.presente ? 'presente' : 'falta',
+      updated_at: new Date().toISOString(),
+    }));
+
+    const { error } = await (sb.from('registros_presenca') as any)
+      .upsert(rows, { onConflict: 'turma_id,data,beneficiario_id' });
+
+    if (error) throw error;
+    return true;
+  },
+
+  async salvarAplicacaoAtividade(payload: { turmaId: string; funcionarioId: string; dataAula: string; horaInicio: string; horaFim?: string; descricao: string; fotoUrl?: string }) {
+    const sb = createClient();
+    const { error: errConf } = await (sb.from('confirmacoes_atividade') as any).insert({
+      turma_id: payload.turmaId,
+      enviado_por: payload.funcionarioId,
+      data: payload.dataAula,
+      observacao: payload.descricao,
+      storage_key: payload.fotoUrl || null,
+    });
+
+    if (errConf) console.warn("Aviso ao salvar confirmacoes_atividade:", errConf.message);
+
+    const { error: errPonto } = await (sb.from('registros_ponto') as any).insert({
+      funcionario_id: payload.funcionarioId,
+      data: payload.dataAula,
+      tipo: 'entrada',
+      hora: payload.horaInicio,
+      status: 'confirmado',
+      observacao: `Atividade ministrada na turma: ${payload.descricao}`,
+    });
+
+    if (errPonto) console.warn("Aviso ao salvar registros_ponto:", errPonto.message);
+
+    return true;
+  },
+};
