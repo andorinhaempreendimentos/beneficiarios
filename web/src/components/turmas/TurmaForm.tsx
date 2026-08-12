@@ -177,8 +177,8 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
               ))}
             </Select>
           </Field>
-          <Field label="Atividade" required>
-            <Select name="atividadeId" value={atividadeId} onChange={(e) => setAtividadeId(e.target.value)} disabled={!nucleoId}>
+          <Field label="Atividade" required hint={t?.id ? "A atividade principal não pode ser alterada após a criação" : undefined}>
+            <Select name="atividadeId" value={atividadeId} onChange={(e) => setAtividadeId(e.target.value)} disabled={Boolean(t?.id) || !nucleoId}>
               <option value="" disabled>{!nucleoId ? "Selecione primeiro o núcleo" : "Selecione a atividade"}</option>
               {atividadesParaTurma.map((a) => (
                 <option key={a.id} value={a.id}>
