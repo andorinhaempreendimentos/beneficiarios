@@ -300,6 +300,14 @@ export function DashboardProfessorHub({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
           {(() => {
+            const SIGLAS: Record<string, string> = {
+              Segunda: "Seg",
+              Terça: "Ter",
+              Quarta: "Qua",
+              Quinta: "Qui",
+              Sexta: "Sex",
+              Sábado: "Sáb",
+            };
             const diasOrdenados = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
             const diaHojeNome = diaSemanaAtual.split("-")[0];
             const indiceHoje = diasOrdenados.findIndex((d) => diaHojeNome.startsWith(d));
@@ -311,7 +319,16 @@ export function DashboardProfessorHub({
 
             return diasReordenados.map((dia) => {
               const ehHoje = diaSemanaAtual.startsWith(dia);
-              const turmasDoDia = turmas;
+              const sigla = SIGLAS[dia] || "Seg";
+
+              // Filtra turmas que possuem aula agendada neste dia da semana
+              const turmasDoDia = turmas.filter((t) => {
+                if (t.slots && t.slots.length > 0) {
+                  return t.slots.some((s: any) => s.dia === sigla || s.dia === dia);
+                }
+                // Se não houver slots específicos no banco, distribui como padrão Seg/Qua/Sex
+                return sigla === "Seg" || sigla === "Qua" || sigla === "Sex";
+              });
 
               return (
                 <Card
@@ -337,6 +354,11 @@ export function DashboardProfessorHub({
                     <div className="flex flex-col gap-2">
                       {turmasDoDia.slice(0, 2).map((t) => {
                         const st = statusAtividade[t.id];
+                        const slotDia = (t.slots ?? []).find((s: any) => s.dia === sigla);
+                        const horaTexto = slotDia 
+                          ? `${String(slotDia.inicio).padStart(2, '0')}:00 às ${String(slotDia.fim).padStart(2, '0')}:00`
+                          : "08:00 às 10:00";
+
                         return (
                           <button
                             key={t.id}
@@ -354,7 +376,7 @@ export function DashboardProfessorHub({
                             </div>
 
                             <div className="flex items-center justify-between text-[10px] font-mono text-zinc-600 font-bold">
-                              <span>08:00 às 09:30</span>
+                              <span>{horaTexto}</span>
                               {st === "em_andamento" && (
                                 <span className="text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded font-bold">Iniciada</span>
                               )}
@@ -448,6 +470,47 @@ export function DashboardProfessorHub({
                       <Dumbbell className="h-3.5 w-3.5 text-zinc-400" />
                       {turma.nucleo?.identificacao || "Polo Esportivo"}
                     </p>
+
+                    {/* Grade de Horários em Estilo Calendário na Turma */}
+                    <div className="mt-3.5 rounded-xl border border-zinc-200/90 bg-zinc-50/80 p-2.5 flex flex-col gap-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 flex items-center gap-1">
+                          <Calendar className="h-3 w-3 text-sky-600" />
+                          Grade de Horários (Calendário)
+                        </span>
+                        <span className="text-[10px] font-mono text-zinc-400 font-semibold">
+                          {turma.slots && turma.slots.length > 0
+                            ? `${turma.slots.length} horário(s)`
+                            : "Seg, Qua, Sex"}
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-5 gap-1 text-center">
+                        {["Seg", "Ter", "Qua", "Qui", "Sex"].map((diaSigla) => {
+                          const slotDia = (turma.slots ?? []).find((s: any) => s.dia === diaSigla);
+                          const temAula = Boolean(slotDia) || ((!turma.slots || turma.slots.length === 0) && (diaSigla === "Seg" || diaSigla === "Qua" || diaSigla === "Sex"));
+                          const horaInicio = slotDia ? `${String(slotDia.inicio).padStart(2, '0')}h` : temAula ? "08h" : "—";
+                          const horaFim = slotDia ? `${String(slotDia.fim).padStart(2, '0')}h` : temAula ? "10h" : "";
+
+                          return (
+                            <div
+                              key={diaSigla}
+                              className={`rounded-lg py-1.5 px-1 flex flex-col items-center justify-center border transition-all ${
+                                temAula
+                                  ? "bg-sky-100/90 border-sky-300/80 text-sky-900 shadow-2xs"
+                                  : "bg-white/80 border-zinc-200/60 text-zinc-300 opacity-50"
+                              }`}
+                            >
+                              <span className="text-[9px] font-extrabold uppercase tracking-tight">{diaSigla}</span>
+                              <span className="text-[9.5px] font-mono font-bold mt-0.5 leading-tight">
+                                {horaInicio}
+                              </span>
+                              {horaFim && <span className="text-[8px] font-mono text-sky-700/80 leading-none">{horaFim}</span>}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
 
                     <div className="mt-4 flex flex-col gap-1.5">
                       <div className="flex justify-between text-xs font-semibold">
