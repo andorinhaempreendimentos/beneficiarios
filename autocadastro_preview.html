@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Autoinscrição do Beneficiário - Projeto Andorinha</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .form-checkbox, .form-radio {
+      accent-color: #0284c7;
+    }
+  </style>
+</head>
+<body class="bg-zinc-50 text-zinc-800 antialiased min-h-screen py-8 px-4 sm:px-6">
+
+  <div class="max-w-3xl mx-auto flex flex-col gap-6">
+
+    <!-- Header do Sistema -->
+    <header class="bg-white rounded-2xl border border-zinc-200/80 p-6 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="h-11 w-11 rounded-xl bg-sky-600 flex items-center justify-center text-white font-bold text-xl shadow-xs">
+          ⚽
+        </div>
+        <div>
+          <h1 class="text-xl font-bold text-zinc-900 leading-tight">Projeto Escolinhas de Esporte</h1>
+          <p class="text-xs text-zinc-500 font-medium">Ficha de Autoinscrição do Beneficiário</p>
+        </div>
+      </div>
+      <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 border border-emerald-200/60">
+        <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+        Inscrição Online Ativa
+      </span>
+    </header>
+
+    <!-- Formulário Principal -->
+    <form id="formAutoinscricao" class="flex flex-col gap-6" onsubmit="handleSubmit(event)">
+
+      <!-- 1. Identificação do Beneficiário -->
+      <section class="bg-white rounded-2xl border border-zinc-200/80 p-6 shadow-xs flex flex-col gap-5">
+        <div class="flex items-center justify-between border-b border-zinc-100 pb-3">
+          <h2 class="text-base font-bold text-zinc-900 flex items-center gap-2">
+            <span class="flex h-6 w-6 items-center justify-center rounded-lg bg-sky-100 text-sky-700 text-xs font-bold">1</span>
+            Identificação do Beneficiário
+          </h2>
+          <span class="text-[11px] text-zinc-400 font-medium">* Campos obrigatórios</span>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          
+          <div class="sm:col-span-2 flex flex-col gap-1.5">
+            <label class="text-xs font-semibold text-zinc-700">Nome completo *</label>
+            <input type="text" name="nomeCompleto" required placeholder="Digite o nome completo do beneficiário"
+              class="w-full rounded-xl border border-zinc-300 px-3.5 py-2.5 text-sm transition-all focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none">
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold text-zinc-700 h-6.5 flex items-center">Data de nascimento *</label>
+            <input type="date" id="dataNascimento" name="dataNascimento" required onchange="handleDataNascimentoChange(this.value)"
+              class="w-full rounded-xl border border-zinc-300 px-3.5 py-2.5 text-sm transition-all focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none">
+            <span id="badgeIdade" class="text-[11px] font-medium text-sky-600 hidden"></span>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold text-zinc-700 h-6.5 flex items-center">Sexo *</label>
+            <select name="sexo" required class="w-full rounded-xl border border-zinc-300 px-3.5 py-2.5 text-sm bg-white transition-all focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none">
+              <option value="Masculino">Masculino</option>
+              <option value="Feminino">Feminino</option>
+              <option value="Não Informar">Não Informar</option>
+            </select>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold text-zinc-700 h-6.5 flex items-center">CPF do beneficiário</label>
+            <input type="text" name="cpf" placeholder="000.000.000-00" oninput="mascaraCPF(this)" maxlength="14"
+              class="w-full rounded-xl border border-zinc-300 px-3.5 py-2.5 text-sm transition-all focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none">
+          </div>
+
+          <!-- Documento Discreto Integrado (Prefix Select dentro do Input) -->
+          <div id="containerDocumento" class="flex flex-col gap-1.5 sm:col-span-1">
+            <label class="text-xs font-semibold text-zinc-700">Documento do beneficiário</label>
+            
+            <div class="relative flex items-center w-full rounded-xl border border-zinc-300 bg-white transition-all focus-within:border-sky-500 focus-within:ring-2 focus-within:ring-sky-500/20">
+              <!-- Select embutido na esquerda em 2 linhas -->
+              <select id="selectTipoDoc" onchange="alterarTipoDocumento(this.value)"
+                class="text-[10px] leading-tight font-bold text-sky-700 bg-transparent py-1 pl-2.5 pr-1 outline-none cursor-pointer border-r border-zinc-200 rounded-l-xl hover:bg-zinc-50 shrink-0 text-left">
+                <option value="RG">RG</option>
+                <option value="Certidao">Certidão&#10;de Nasc.</option>
+              </select>
+
+              <!-- Campo RG -->
+              <div id="blocoRG" class="w-full">
+                <input type="text" name="rg" placeholder="00.000.000-0" oninput="mascaraRG(this)" maxlength="14"
+                  class="w-full bg-transparent px-3 py-2.5 text-sm outline-none">
+              </div>
+
+              <!-- Campo Certidão Novo Modelo (CNJ 32 Dígitos pós-2010) -->
+              <div id="blocoCertidaoNovo" class="hidden w-full">
+                <input type="text" id="inputMatriculaCertidao" name="matriculaCertidao" placeholder="32 dígitos da certidão" oninput="mascaraCertidaoMatricula(this)" maxlength="40"
+                  class="w-full bg-transparent px-3 py-2.5 text-sm font-mono outline-none">
+              </div>
+
+              <!-- Campo Certidão Modelo Antigo (Termo, Livro, Folha pré-2010) -->
+              <div id="blocoCertidaoAntigo" class="hidden w-full p-1">
+                <div class="grid grid-cols-3 gap-1">
+                  <input type="text" name="certidaoTermo" placeholder="Termo" class="w-full bg-zinc-50 border border-zinc-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:border-sky-500">
+                  <input type="text" name="certidaoLivro" placeholder="Livro" class="w-full bg-zinc-50 border border-zinc-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:border-sky-500">
+                  <input type="text" name="certidaoFolha" placeholder="Folha" class="w-full bg-zinc-50 border border-zinc-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:border-sky-500">
+                </div>
+              </div>
+            </div>
+            
+            <p id="dicaCertidao" class="text-[11px] text-zinc-400 hidden">Matrícula unificada de 32 dígitos do CadÚnico/CNJ.</p>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold text-zinc-700">Raça / Etnia</label>
+            <select name="raca" class="w-full rounded-xl border border-zinc-300 px-3.5 py-2.5 text-sm bg-white transition-all focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none">
+              <option value="">Selecione</option>
+              <option value="Parda">Parda</option>
+              <option value="Preta">Preta</option>
+              <option value="Branca">Branca</option>
+              <option value="Amarela">Amarela</option>
+              <option value="Indígena">Indígena</option>
+              <option value="Outras">Outras</option>
+            </select>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold text-zinc-700">Número do NIS</label>
+            <input type="text" name="nis" placeholder="00000000000" maxlength="11" oninput="this.value=this.value.replace(/\D/g,'')"
+              class="w-full rounded-xl border border-zinc-300 px-3.5 py-2.5 text-sm transition-all focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none">
+            <p class="text-[11px] text-zinc-400">Número do CadÚnico ou Bolsa Família (opcional).</p>
+          </div>
+
+          <div class="sm:col-span-2 flex flex-col gap-2 rounded-xl bg-zinc-50 p-3.5 border border-zinc-200/80">
+            <label class="text-xs font-semibold text-zinc-700">Pessoa com Deficiência (PCD)? *</label>
+            <p class="text-[11px] text-zinc-400">Marcar Sim se possui deficiência física, visual, auditiva, intelectual ou autismo (TEA).</p>
+            
+            <div class="flex items-center gap-6 pt-1">
+              <label class="flex items-center gap-2 cursor-pointer text-sm font-medium text-zinc-700">
+                <input type="radio" name="pcd" value="Não" checked onchange="togglePCD(false)" class="form-radio h-4 w-4">
+                Não
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer text-sm font-medium text-zinc-700">
+                <input type="radio" name="pcd" value="Sim" onchange="togglePCD(true)" class="form-radio h-4 w-4">
+                Sim
+              </label>
+            </div>
+
+            <div id="campoTipoPCD" class="hidden mt-2 flex flex-col gap-1.5">
+              <label class="text-xs font-semibold text-zinc-700">Tipo de Deficiência</label>
+              <select name="tipoPcd" class="w-full rounded-xl border border-zinc-300 px-3.5 py-2.5 text-sm bg-white transition-all focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none">
+                <option value="">Selecione o tipo de deficiência</option>
+                <option>Autismo (TEA - Leve)</option>
+                <option>Autismo (TEA - Moderado)</option>
+                <option>Autismo (TEA - Severo)</option>
+                <option>Deficiência Física</option>
+                <option>Deficiência Visual</option>
+                <option>Deficiência Auditiva</option>
+                <option>Deficiência Intelectual</option>
+                <option>Síndrome de Down</option>
+                <option>Deficiência Múltipla</option>
+                <option>Outros</option>
+              </select>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- 2. Dados do Responsável Legal (Condicional: Exibido se menor de 18 anos OU se for PCD) -->
+      <section id="secaoResponsavel" class="hidden bg-amber-50/40 rounded-2xl border border-amber-200/80 p-6 shadow-xs flex flex-col gap-5 transition-all">
+        <div class="border-b border-amber-200/60 pb-3 flex flex-col gap-1">
+          <div class="flex items-center justify-between">
+            <h2 class="text-base font-bold text-amber-950 flex items-center gap-2">
+              <span class="flex h-6 w-6 items-center justify-center rounded-lg bg-amber-200 text-amber-900 text-xs font-bold">2</span>
+              Dados do Responsável Legal
+            </h2>
+            <span id="motivoResponsavel" class="inline-flex items-center gap-1 rounded-md bg-amber-200/60 px-2 py-0.5 text-[11px] font-semibold text-amber-800">
+              Obrigatório
+            </span>
+          </div>
+          <p class="text-xs text-amber-800/80">Pai, mãe ou responsável legal exigido para beneficiários menores de 18 anos ou beneficiários PCD.</p>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          
+          <div class="sm:col-span-2 flex flex-col gap-1.5">
+            <label class="text-xs font-semibold text-zinc-700">Nome completo do responsável *</label>
+            <input type="text" name="nomeResponsavel" data-required-conditional placeholder="Digite o nome completo do responsável"
+              class="w-full rounded-xl border border-zinc-300 px-3.5 py-2.5 text-sm bg-white transition-all focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none">
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold text-zinc-700">Grau de parentesco *</label>
+            <select name="parentescoResponsavel" data-required-conditional class="w-full rounded-xl border border-zinc-300 px-3.5 py-2.5 text-sm bg-white transition-all focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none">
+              <option value="Mãe">Mãe</option>
+              <option value="Pai">Pai</option>
+              <option value="Avó/Avô">Avó / Avô</option>
+              <option value="Tia/Tio">Tia / Tio</option>
+              <option value="Outro">Outro Responsável Legal</option>
+            </select>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold text-zinc-700">CPF do responsável *</label>
+            <input type="text" name="cpfResponsavel" data-required-conditional placeholder="000.000.000-00" oninput="mascaraCPF(this)" maxlength="14"
+              class="w-full rounded-xl border border-zinc-300 px-3.5 py-2.5 text-sm bg-white transition-all focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none">
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold text-zinc-700">Celular / WhatsApp do responsável *</label>
+            <input type="text" name="whatsappResponsavel" data-required-conditional placeholder="(63) 90000-0000" oninput="mascaraTelefone(this)" maxlength="15"
+              class="w-full rounded-xl border border-zinc-300 px-3.5 py-2.5 text-sm bg-white transition-all focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none">
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold text-zinc-700">E-mail do responsável</label>
+            <input type="email" name="emailResponsavel" placeholder="seuemail@exemplo.com"
+              class="w-full rounded-xl border border-zinc-300 px-3.5 py-2.5 text-sm bg-white transition-all focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none">
+          </div>
+
+        </div>
+      </section>
+
+      <!-- 3. Endereço do Aluno -->
+      <section class="bg-white rounded-2xl border border-zinc-200/80 p-6 shadow-xs flex flex-col gap-5">
+        <div class="border-b border-zinc-100 pb-3">
+          <h2 class="text-base font-bold text-zinc-900 flex items-center gap-2">
+            <span class="flex h-6 w-6 items-center justify-center rounded-lg bg-sky-100 text-sky-700 text-xs font-bold">3</span>
+            Endereço Residencial
+          </h2>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold text-zinc-700">CEP *</label>
+            <div class="relative">
+              <input type="text" id="cep" name="cep" required placeholder="77000-000" oninput="mascaraCEP(this)" onblur="buscarCEP(this.value)" maxlength="9"
+                class="w-full rounded-xl border border-zinc-300 px-3.5 py-2.5 text-sm transition-all focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none">
+              <span id="loadingCep" class="hidden absolute right-3 top-3 text-xs text-sky-600 font-medium">Buscando...</span>
+            </div>
+          </div>
+
+          <div class="sm:col-span-2 flex flex-col gap-1.5">
+            <label class="text-xs font-semibold text-zinc-700">Endereço / Logradouro *</label>
+            <input type="text" id="logradouro" name="logradouro" required placeholder="Rua, Avenida, Quadra"
+              class="w-full rounded-xl border border-zinc-300 px-3.5 py-2.5 text-sm transition-all focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none">
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold text-zinc-700">Número *</label>
+            <input type="text" name="numero" required placeholder="Ex: 104 ou S/N"
+              class="w-full rounded-xl border border-zinc-300 px-3.5 py-2.5 text-sm transition-all focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none">
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold text-zinc-700">Complemento</label>
+            <input type="text" name="complemento" placeholder="Apto, Bloco, Casa B"
+              class="w-full rounded-xl border border-zinc-300 px-3.5 py-2.5 text-sm transition-all focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none">
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold text-zinc-700">Bairro *</label>
+            <input type="text" id="bairro" name="bairro" required placeholder="Bairro"
+              class="w-full rounded-xl border border-zinc-300 px-3.5 py-2.5 text-sm transition-all focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none">
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold text-zinc-700">Cidade *</label>
+            <input type="text" id="cidade" name="cidade" required value="Palmas"
+              class="w-full rounded-xl border border-zinc-300 px-3.5 py-2.5 text-sm transition-all focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none">
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold text-zinc-700">UF *</label>
+            <input type="text" id="estado" name="estado" required value="TO" maxlength="2"
+              class="w-full rounded-xl border border-zinc-300 px-3.5 py-2.5 text-sm uppercase transition-all focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none">
+          </div>
+
+        </div>
+      </section>
+
+      <!-- 4. Dados Escolares & Uniforme -->
+      <section class="bg-white rounded-2xl border border-zinc-200/80 p-6 shadow-xs flex flex-col gap-5">
+        <div class="border-b border-zinc-100 pb-3">
+          <h2 class="text-base font-bold text-zinc-900 flex items-center gap-2">
+            <span class="flex h-6 w-6 items-center justify-center rounded-lg bg-sky-100 text-sky-700 text-xs font-bold">4</span>
+            Dados Escolares & Uniforme
+          </h2>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          
+          <div class="sm:col-span-2 flex flex-col gap-1.5">
+            <label class="text-xs font-semibold text-zinc-700">Nome da Escola</label>
+            <input type="text" name="nomeEscola" placeholder="Nome da escola onde estuda"
+              class="w-full rounded-xl border border-zinc-300 px-3.5 py-2.5 text-sm transition-all focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none">
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold text-zinc-700">Rede de ensino</label>
+            <select name="redeEnsino" class="w-full rounded-xl border border-zinc-300 px-3.5 py-2.5 text-sm bg-white transition-all focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none">
+              <option value="">Selecione</option>
+              <option value="Municipal">Municipal</option>
+              <option value="Estadual">Estadual</option>
+              <option value="Particular">Particular</option>
+              <option value="Federal">Federal</option>
+              <option value="Não estuda">Não estuda</option>
+            </select>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold text-zinc-700">Turno escolar</label>
+            <select name="turnoEscolar" class="w-full rounded-xl border border-zinc-300 px-3.5 py-2.5 text-sm bg-white transition-all focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none">
+              <option value="">Selecione</option>
+              <option value="Manhã">Manhã</option>
+              <option value="Tarde">Tarde</option>
+              <option value="Integral">Integral</option>
+              <option value="Noite">Noite</option>
+            </select>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold text-zinc-700">Tamanho da Camisa *</label>
+            <select name="tamanhoCamisa" required class="w-full rounded-xl border border-zinc-300 px-3.5 py-2.5 text-sm bg-white transition-all focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none">
+              <option value="">Selecione o tamanho</option>
+              <optgroup label="Infantil">
+                <option value="8">Tamanho 8</option>
+                <option value="10">Tamanho 10</option>
+                <option value="12">Tamanho 12</option>
+                <option value="14">Tamanho 14</option>
+                <option value="16">Tamanho 16</option>
+              </optgroup>
+              <optgroup label="Adulto">
+                <option value="P">Tamanho P</option>
+                <option value="M">Tamanho M</option>
+                <option value="G">Tamanho G</option>
+                <option value="GG">Tamanho GG</option>
+                <option value="XG">Tamanho XG</option>
+              </optgroup>
+            </select>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold text-zinc-700">Tamanho do Calção *</label>
+            <select name="tamanhoCalcao" required class="w-full rounded-xl border border-zinc-300 px-3.5 py-2.5 text-sm bg-white transition-all focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none">
+              <option value="">Selecione o tamanho</option>
+              <optgroup label="Infantil">
+                <option value="8">Tamanho 8</option>
+                <option value="10">Tamanho 10</option>
+                <option value="12">Tamanho 12</option>
+                <option value="14">Tamanho 14</option>
+                <option value="16">Tamanho 16</option>
+              </optgroup>
+              <optgroup label="Adulto">
+                <option value="P">Tamanho P</option>
+                <option value="M">Tamanho M</option>
+                <option value="G">Tamanho G</option>
+                <option value="GG">Tamanho GG</option>
+                <option value="XG">Tamanho XG</option>
+              </optgroup>
+            </select>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- 5. PAR-Q (Questionário de Prontidão para Atividade Física - Colapsado por Padrão) -->
+      <section class="bg-white rounded-2xl border border-zinc-200/80 overflow-hidden shadow-xs">
+        <button type="button" onclick="toggleAccordion('conteudoParq', 'iconeChevronParq')"
+          class="w-full p-6 text-left flex items-center justify-between gap-4 hover:bg-zinc-50/80 transition-colors cursor-pointer">
+          <div class="flex items-center gap-3">
+            <span class="flex h-6 w-6 items-center justify-center rounded-lg bg-sky-100 text-sky-700 text-xs font-bold shrink-0">5</span>
+            <div>
+              <h2 class="text-base font-bold text-zinc-900">PAR-Q — Questionário de Prontidão para Atividade Física</h2>
+              <p class="text-xs text-zinc-500">Todas as respostas estão selecionadas em <strong>NÃO</strong> por padrão. Clique para expandir apenas se desejar alterar.</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 shrink-0">
+            <svg id="iconeChevronParq" class="w-5 h-5 text-zinc-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </div>
+        </button>
+
+        <div id="conteudoParq" class="hidden border-t border-zinc-100 p-6 bg-zinc-50/40">
+          <div class="flex flex-col divide-y divide-zinc-200/60">
+            
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-3">
+              <p class="text-xs text-zinc-700 font-medium">1. Algum médico já disse que possui problema de coração e recomendou só praticar atividade física supervisionado?</p>
+              <div class="flex items-center gap-4 shrink-0">
+                <label class="inline-flex items-center gap-1.5 text-xs text-zinc-700"><input type="radio" name="parq_1" value="Sim" class="form-radio"> Sim</label>
+                <label class="inline-flex items-center gap-1.5 text-xs text-zinc-700"><input type="radio" name="parq_1" value="Não" checked class="form-radio"> Não</label>
+              </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-3">
+              <p class="text-xs text-zinc-700 font-medium">2. Sente dor no peito quando pratica atividade física?</p>
+              <div class="flex items-center gap-4 shrink-0">
+                <label class="inline-flex items-center gap-1.5 text-xs text-zinc-700"><input type="radio" name="parq_2" value="Sim" class="form-radio"> Sim</label>
+                <label class="inline-flex items-center gap-1.5 text-xs text-zinc-700"><input type="radio" name="parq_2" value="Não" checked class="form-radio"> Não</label>
+              </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-3">
+              <p class="text-xs text-zinc-700 font-medium">3. No último mês, sentiu dor no peito quando não estava praticando atividade física?</p>
+              <div class="flex items-center gap-4 shrink-0">
+                <label class="inline-flex items-center gap-1.5 text-xs text-zinc-700"><input type="radio" name="parq_3" value="Sim" class="form-radio"> Sim</label>
+                <label class="inline-flex items-center gap-1.5 text-xs text-zinc-700"><input type="radio" name="parq_3" value="Não" checked class="form-radio"> Não</label>
+              </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-3">
+              <p class="text-xs text-zinc-700 font-medium">4. Perde o equilíbrio devido a tontura ou já perdeu a consciência?</p>
+              <div class="flex items-center gap-4 shrink-0">
+                <label class="inline-flex items-center gap-1.5 text-xs text-zinc-700"><input type="radio" name="parq_4" value="Sim" class="form-radio"> Sim</label>
+                <label class="inline-flex items-center gap-1.5 text-xs text-zinc-700"><input type="radio" name="parq_4" value="Não" checked class="form-radio"> Não</label>
+              </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-3">
+              <p class="text-xs text-zinc-700 font-medium">5. Tem algum problema ósseo ou articular que poderia ser piorado pela atividade física?</p>
+              <div class="flex items-center gap-4 shrink-0">
+                <label class="inline-flex items-center gap-1.5 text-xs text-zinc-700"><input type="radio" name="parq_5" value="Sim" class="form-radio"> Sim</label>
+                <label class="inline-flex items-center gap-1.5 text-xs text-zinc-700"><input type="radio" name="parq_5" value="Não" checked class="form-radio"> Não</label>
+              </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-3">
+              <p class="text-xs text-zinc-700 font-medium">6. Toma atualmente algum medicamento para pressão arterial ou problema de coração?</p>
+              <div class="flex items-center gap-4 shrink-0">
+                <label class="inline-flex items-center gap-1.5 text-xs text-zinc-700"><input type="radio" name="parq_6" value="Sim" class="form-radio"> Sim</label>
+                <label class="inline-flex items-center gap-1.5 text-xs text-zinc-700"><input type="radio" name="parq_6" value="Não" checked class="form-radio"> Não</label>
+              </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-3">
+              <p class="text-xs text-zinc-700 font-medium">7. Sabe de outra razão pela qual não deveria praticar atividade física?</p>
+              <div class="flex items-center gap-4 shrink-0">
+                <label class="inline-flex items-center gap-1.5 text-xs text-zinc-700"><input type="radio" name="parq_7" value="Sim" class="form-radio"> Sim</label>
+                <label class="inline-flex items-center gap-1.5 text-xs text-zinc-700"><input type="radio" name="parq_7" value="Não" checked class="form-radio"> Não</label>
+              </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-3">
+              <p class="text-xs text-zinc-700 font-medium">8. Tem diabetes controlada com insulina?</p>
+              <div class="flex items-center gap-4 shrink-0">
+                <label class="inline-flex items-center gap-1.5 text-xs text-zinc-700"><input type="radio" name="parq_8" value="Sim" class="form-radio"> Sim</label>
+                <label class="inline-flex items-center gap-1.5 text-xs text-zinc-700"><input type="radio" name="parq_8" value="Não" checked class="form-radio"> Não</label>
+              </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-3">
+              <p class="text-xs text-zinc-700 font-medium">9. Tem mais de 65 anos e não está acostumado a praticar atividade física?</p>
+              <div class="flex items-center gap-4 shrink-0">
+                <label class="inline-flex items-center gap-1.5 text-xs text-zinc-700"><input type="radio" name="parq_9" value="Sim" class="form-radio"> Sim</label>
+                <label class="inline-flex items-center gap-1.5 text-xs text-zinc-700"><input type="radio" name="parq_9" value="Não" checked class="form-radio"> Não</label>
+              </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-3">
+              <p class="text-xs text-zinc-700 font-medium">10. Está gestante ou suspeita estar gestante?</p>
+              <div class="flex items-center gap-4 shrink-0">
+                <label class="inline-flex items-center gap-1.5 text-xs text-zinc-700"><input type="radio" name="parq_10" value="Sim" class="form-radio"> Sim</label>
+                <label class="inline-flex items-center gap-1.5 text-xs text-zinc-700"><input type="radio" name="parq_10" value="Não" checked class="form-radio"> Não</label>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. Autorizações e Termos (Colapsado por padrão) -->
+      <section class="bg-white rounded-2xl border border-zinc-200/80 overflow-hidden shadow-xs">
+        <button type="button" onclick="toggleAccordion('conteudoTermos', 'iconeChevronTermos')"
+          class="w-full p-6 text-left flex items-center justify-between gap-4 hover:bg-zinc-50/80 transition-colors cursor-pointer">
+          <div class="flex items-center gap-3">
+            <span class="flex h-6 w-6 items-center justify-center rounded-lg bg-sky-100 text-sky-700 text-xs font-bold shrink-0">6</span>
+            <div>
+              <h2 class="text-base font-bold text-zinc-900">Autorizações e Termos de Aceite</h2>
+              <p class="text-xs text-zinc-500">Termos de participação, uso de imagem e LGPD pré-aceitos por padrão. Clique para visualizar detalhes.</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 shrink-0">
+            <svg id="iconeChevronTermos" class="w-5 h-5 text-zinc-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </div>
+        </button>
+
+        <div id="conteudoTermos" class="hidden border-t border-zinc-100 p-6 bg-zinc-50/40">
+          <div class="flex flex-col gap-3">
+            
+            <label class="flex items-start gap-3 p-3 rounded-xl border border-zinc-200/80 bg-white hover:bg-zinc-50 cursor-pointer transition-colors">
+              <input type="checkbox" name="autParticipacao" checked required class="form-checkbox mt-0.5 h-4 w-4 rounded">
+              <div class="text-xs text-zinc-700">
+                <strong class="font-semibold text-zinc-900 block">Autorização de Participação no Projeto</strong>
+                Autorizo a participação do(a) beneficiário(a) nas atividades do Projeto Escolinhas de Esporte, declarando ciência dos dias, horários e normas estabelecidas.
+              </div>
+            </label>
+
+            <label class="flex items-start gap-3 p-3 rounded-xl border border-zinc-200/80 bg-white hover:bg-zinc-50 cursor-pointer transition-colors">
+              <input type="checkbox" name="autImagem" checked class="form-checkbox mt-0.5 h-4 w-4 rounded">
+              <div class="text-xs text-zinc-700">
+                <strong class="font-semibold text-zinc-900 block">Autorização de Uso de Imagem (SIM)</strong>
+                Autorizo o uso de fotos e vídeos exclusivamente para fins institucionais e de prestação de contas do projeto.
+              </div>
+            </label>
+
+            <label class="flex items-start gap-3 p-3 rounded-xl border border-zinc-200/80 bg-white hover:bg-zinc-50 cursor-pointer transition-colors">
+              <input type="checkbox" name="aceiteLGPD" checked required class="form-checkbox mt-0.5 h-4 w-4 rounded">
+              <div class="text-xs text-zinc-700">
+                <strong class="font-semibold text-zinc-900 block">Ciência e Aceite de Tratamento de Dados (LGPD)</strong>
+                Declaro que as informações são verdadeiras e estou ciente do tratamento dos dados em atendimento ao melhor interesse da criança/adolescente (Lei 13.709/2018).
+              </div>
+            </label>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- Botão de Envio -->
+      <div class="flex justify-end pt-2">
+        <button type="submit"
+          class="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-sky-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500/20 cursor-pointer transition-all">
+          <span>Confirmar Inscrição do Beneficiário</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- Modal de Sucesso (Simulado) -->
+  <div id="modalSucesso" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 hidden backdrop-blur-xs">
+    <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl flex flex-col items-center text-center gap-4">
+      <div class="h-12 w-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-2xl">✓</div>
+      <h3 class="text-lg font-bold text-zinc-900">Inscrição Realizada com Sucesso!</h3>
+      <p class="text-xs text-zinc-600">Os dados do beneficiário foram cadastrados no sistema. A equipe responsável entrará em contato via WhatsApp para confirmação.</p>
+      <button onclick="document.getElementById('modalSucesso').classList.add('hidden')"
+        class="w-full rounded-xl bg-zinc-900 px-4 py-2.5 text-xs font-semibold text-white hover:bg-zinc-800 cursor-pointer">
+        Fechar Demonstração
+      </button>
+    </div>
+  </div>
+
+  <script>
+    let idadeAtual = null;
+    let isPcdAtual = false;
+    let tipoDocumentoAtual = 'RG';
+
+    // Alterar tipo de documento (RG vs Certidão de Nascimento)
+    function alterarTipoDocumento(tipo) {
+      tipoDocumentoAtual = tipo;
+      
+      const blocoRG = document.getElementById('blocoRG');
+      const blocoCertidaoNovo = document.getElementById('blocoCertidaoNovo');
+      const blocoCertidaoAntigo = document.getElementById('blocoCertidaoAntigo');
+      const dicaCertidao = document.getElementById('dicaCertidao');
+
+      if (tipo === 'RG') {
+        blocoRG.classList.remove('hidden');
+        blocoCertidaoNovo.classList.add('hidden');
+        blocoCertidaoAntigo.classList.add('hidden');
+        if (dicaCertidao) dicaCertidao.classList.add('hidden');
+      } else {
+        blocoRG.classList.add('hidden');
+        
+        // Avalia se usa certidão modelo novo (pós-2010) ou antigo (pré-2010) baseado no ano de nascimento
+        let anoNasc = 0;
+        const inputDataNasc = document.getElementById('dataNascimento');
+        if (inputDataNasc && inputDataNasc.value) {
+          anoNasc = new Date(inputDataNasc.value).getFullYear();
+        }
+
+        if (anoNasc > 0 && anoNasc < 2010) {
+          blocoCertidaoAntigo.classList.remove('hidden');
+          blocoCertidaoNovo.classList.add('hidden');
+          if (dicaCertidao) dicaCertidao.classList.add('hidden');
+        } else {
+          // Padrão pós-2010 (Matrícula unificada de 32 dígitos CNJ)
+          blocoCertidaoNovo.classList.remove('hidden');
+          blocoCertidaoAntigo.classList.add('hidden');
+          if (dicaCertidao) dicaCertidao.classList.remove('hidden');
+        }
+      }
+    }
+
+    // Handler de alteração da data de nascimento
+    function handleDataNascimentoChange(dataStr) {
+      calcularIdade(dataStr);
+      if (tipoDocumentoAtual === 'Certidao') {
+        alterarTipoDocumento('Certidao');
+      }
+    }
+
+    // Toggle para seção de acordeão (PAR-Q / Termos)
+    function toggleAccordion(conteudoId, iconeId) {
+      const conteudo = document.getElementById(conteudoId);
+      const icone = document.getElementById(iconeId);
+      if (conteudo.classList.contains('hidden')) {
+        conteudo.classList.remove('hidden');
+        icone.classList.add('rotate-180');
+      } else {
+        conteudo.classList.add('hidden');
+        icone.classList.remove('rotate-180');
+      }
+    }
+
+    // Calcular idade e re-avaliar exibição condicional do responsável
+    function calcularIdade(dataStr) {
+      if (!dataStr) {
+        idadeAtual = null;
+        verificarExibicaoResponsavel();
+        return;
+      }
+      const nasc = new Date(dataStr);
+      const hoje = new Date();
+      let idade = hoje.getFullYear() - nasc.getFullYear();
+      const m = hoje.getMonth() - nasc.getMonth();
+      if (m < 0 || (m === 0 && hoje.getDate() < nasc.getDate())) idade--;
+      
+      idadeAtual = idade;
+
+      const badge = document.getElementById('badgeIdade');
+      badge.textContent = `Beneficiário possui ${idade} anos`;
+      badge.classList.remove('hidden');
+
+      verificarExibicaoResponsavel();
+    }
+
+    // Toggle PCD e re-avaliar exibição condicional do responsável
+    function togglePCD(isPcd) {
+      isPcdAtual = isPcd;
+      const campo = document.getElementById('campoTipoPCD');
+      if (isPcd) {
+        campo.classList.remove('hidden');
+      } else {
+        campo.classList.add('hidden');
+      }
+      verificarExibicaoResponsavel();
+    }
+
+    // Re-avalia se exibe a Seção 2 (Dados do Responsável Legal)
+    function verificarExibicaoResponsavel() {
+      const secao = document.getElementById('secaoResponsavel');
+      const motivo = document.getElementById('motivoResponsavel');
+      const camposReq = secao.querySelectorAll('[data-required-conditional]');
+
+      const ehMenor = (idadeAtual !== null && idadeAtual < 18);
+      const precisaResponsavel = ehMenor || isPcdAtual;
+
+      if (precisaResponsavel) {
+        secao.classList.remove('hidden');
+        camposReq.forEach(el => el.setAttribute('required', 'required'));
+        
+        if (ehMenor && isPcdAtual) {
+          motivo.textContent = 'Obrigatório (Menor de 18 anos + PCD)';
+        } else if (ehMenor) {
+          motivo.textContent = `Obrigatório (Menor de 18 anos - ${idadeAtual} anos)`;
+        } else {
+          motivo.textContent = 'Ativado (Aluno PCD)';
+        }
+      } else {
+        secao.classList.add('hidden');
+        camposReq.forEach(el => el.removeAttribute('required'));
+      }
+    }
+
+    // Máscaras de entrada
+    function mascaraCPF(i) {
+      let v = i.value.replace(/\D/g,"");
+      v = v.replace(/(\d{3})(\d)/,"$1.$2");
+      v = v.replace(/(\d{3})(\d)/,"$1.$2");
+      v = v.replace(/(\d{3})(\d{1,2})$/,"$1-$2");
+      i.value = v;
+    }
+
+    function mascaraRG(i) {
+      let v = i.value.replace(/[^\dxX]/g,"");
+      if (v.length > 2) v = v.replace(/^(\d{2})(\d)/, "$1.$2");
+      if (v.length > 6) v = v.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
+      if (v.length > 9) v = v.replace(/^(\d{2})\.(\d{3})\.(\d{3})([\dxX])/, "$1.$2.$3-$4");
+      i.value = v;
+    }
+
+    function mascaraCertidaoMatricula(i) {
+      let v = i.value.replace(/\D/g,"");
+      // Formato CNJ: 000000 00 55 2024 1 00000 000 0000000 00 (32 dígitos)
+      v = v.replace(/^(\d{6})(\d)/, "$1 $2");
+      v = v.replace(/^(\d{6})\s(\d{2})(\d)/, "$1 $2 $3");
+      v = v.replace(/^(\d{6})\s(\d{2})\s(\d{2})(\d)/, "$1 $2 $3 $4");
+      v = v.replace(/^(\d{6})\s(\d{2})\s(\d{2})\s(\d{4})(\d)/, "$1 $2 $3 $4 $5");
+      v = v.replace(/^(\d{6})\s(\d{2})\s(\d{2})\s(\d{4})\s(\d{1})(\d)/, "$1 $2 $3 $4 $5 $6");
+      v = v.replace(/^(\d{6})\s(\d{2})\s(\d{2})\s(\d{4})\s(\d{1})\s(\d{5})(\d)/, "$1 $2 $3 $4 $5 $6 $7");
+      v = v.replace(/^(\d{6})\s(\d{2})\s(\d{2})\s(\d{4})\s(\d{1})\s(\d{5})\s(\d{3})(\d)/, "$1 $2 $3 $4 $5 $6 $7 $8");
+      v = v.replace(/^(\d{6})\s(\d{2})\s(\d{2})\s(\d{4})\s(\d{1})\s(\d{5})\s(\d{3})\s(\d{7})(\d)/, "$1 $2 $3 $4 $5 $6 $7 $8 $9");
+      i.value = v;
+    }
+
+    function mascaraTelefone(i) {
+      let v = i.value.replace(/\D/g,"");
+      v = v.replace(/^(\d{2})(\d)/g,"($1) $2");
+      v = v.replace(/(\d{5})(\d)/,"$1-$2");
+      i.value = v;
+    }
+
+    function mascaraCEP(i) {
+      let v = i.value.replace(/\D/g,"");
+      v = v.replace(/^(\d{5})(\d)/,"$1-$2");
+      i.value = v;
+    }
+
+    // Autocompletar CEP via ViaCEP API
+    async function buscarCEP(cepVal) {
+      const cepLimpo = cepVal.replace(/\D/g, '');
+      if (cepLimpo.length !== 8) return;
+
+      const loading = document.getElementById('loadingCep');
+      loading.classList.remove('hidden');
+
+      try {
+        const res = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
+        const data = await res.json();
+        if (!data.erro) {
+          document.getElementById('logradouro').value = data.logradouro || '';
+          document.getElementById('bairro').value = data.bairro || '';
+          document.getElementById('cidade').value = data.localidade || '';
+          document.getElementById('estado').value = data.uf || '';
+        }
+      } catch (e) {
+        console.warn('Erro ao buscar CEP:', e);
+      } finally {
+        loading.classList.add('hidden');
+      }
+    }
+
+    // Validação matemática de CPF
+    function validarCPF(cpf) {
+      const clean = (cpf || '').replace(/\D/g, '');
+      if (!clean) return true; // Se vazio e opcional, passa
+      if (clean.length !== 11) return false;
+      if (/^(\d)\1{10}$/.test(clean)) return false;
+      let soma = 0;
+      for (let i = 0; i < 9; i++) soma += parseInt(clean.charAt(i)) * (10 - i);
+      let resto = (soma * 10) % 11;
+      if (resto === 10 || resto === 11) resto = 0;
+      if (resto !== parseInt(clean.charAt(9))) return false;
+      soma = 0;
+      for (let i = 0; i < 10; i++) soma += parseInt(clean.charAt(i)) * (11 - i);
+      resto = (soma * 10) % 11;
+      if (resto === 10 || resto === 11) resto = 0;
+      if (resto !== parseInt(clean.charAt(10))) return false;
+      return true;
+    }
+
+    // Validação básica de RG (mínimo de dígitos)
+    function validarRG(rg) {
+      const clean = (rg || '').replace(/[^\dxX]/g, '');
+      if (!clean) return true;
+      return clean.length >= 7;
+    }
+
+    // Handler de envio com validações de CPF e RG
+    function handleSubmit(e) {
+      e.preventDefault();
+      const form = e.currentTarget;
+      
+      const cpfAluno = form.cpf ? form.cpf.value : '';
+      if (cpfAluno && !validarCPF(cpfAluno)) {
+        alert("CPF do beneficiário inválido. Por favor, verifique os números digitados.");
+        return;
+      }
+
+      if (tipoDocumentoAtual === 'RG') {
+        const rgAluno = form.rg ? form.rg.value : '';
+        if (rgAluno && !validarRG(rgAluno)) {
+          alert("RG do beneficiário inválido. Por favor, verifique o número digitado.");
+          return;
+        }
+      }
+
+      const secaoResp = document.getElementById('secaoResponsavel');
+      if (!secaoResp.classList.contains('hidden')) {
+        const cpfResp = form.cpfResponsavel ? form.cpfResponsavel.value : '';
+        if (cpfResp && !validarCPF(cpfResp)) {
+          alert("CPF do responsável inválido. Por favor, verifique os números digitados.");
+          return;
+        }
+      }
+
+      document.getElementById('modalSucesso').classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
