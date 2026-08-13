@@ -100,7 +100,30 @@ export function ModalLinksInscricao({
     return true;
   }
 
-  // Opções de dropdowns dinâmicos e encadeados
+  // Extrações seguras de IDs da Turma
+  function getNucleoIdDaTurma(t: TurmaApi): string | undefined {
+    return t.nucleoId || t.nucleo?.id;
+  }
+
+  function getOrganizacaoIdDaTurma(t: TurmaApi): string | undefined {
+    const nId = getNucleoIdDaTurma(t);
+    if (t.nucleo?.organizacaoId) return t.nucleo.organizacaoId;
+    if (nId && nucleoMap.has(nId)) return nucleoMap.get(nId)?.organizacaoId;
+    return undefined;
+  }
+
+  function getObjetoIdDaTurma(t: TurmaApi): string | undefined {
+    const orgId = getOrganizacaoIdDaTurma(t);
+    if (orgId && orgMap.has(orgId)) return orgMap.get(orgId)?.objetoId;
+    return undefined;
+  }
+
+  // Dropdowns estritamente encadeados pela hierarquia
+  const organizacoesFiltradasDropdown = organizacoes.filter((org) => {
+    if (selectedObjetoId && org.objetoId !== selectedObjetoId) return false;
+    return true;
+  });
+
   const nucleosFiltradosDropdown = nucleos.filter((n) => {
     if (!isNucleoPublico(n)) return false;
     if (selectedOrganizacaoId && n.organizacaoId !== selectedOrganizacaoId) return false;
@@ -120,12 +143,18 @@ export function ModalLinksInscricao({
 
   const turmasFiltradasDropdown = turmas.filter((t) => {
     if (!isTurmaPublica(t)) return false;
+    
     if (selectedAtividadeId && t.atividadeId !== selectedAtividadeId && t.atividade?.id !== selectedAtividadeId) return false;
-    if (selectedNucleoId && t.nucleoId !== selectedNucleoId && t.nucleo?.id !== selectedNucleoId) return false;
 
-    const orgId = t.nucleo?.organizacaoId;
-    if (selectedOrganizacaoId && orgId !== selectedOrganizacaoId) return false;
-    if (selectedObjetoId && orgMap.get(orgId || "")?.objetoId !== selectedObjetoId) return false;
+    const tNucleoId = getNucleoIdDaTurma(t);
+    if (selectedNucleoId && tNucleoId !== selectedNucleoId) return false;
+
+    const tOrgId = getOrganizacaoIdDaTurma(t);
+    if (selectedOrganizacaoId && tOrgId !== selectedOrganizacaoId) return false;
+
+    const tObjId = getObjetoIdDaTurma(t);
+    if (selectedObjetoId && tObjId !== selectedObjetoId) return false;
+
     return true;
   });
 
@@ -133,9 +162,11 @@ export function ModalLinksInscricao({
   const listTurmas = turmasFiltradasDropdown.filter((t) => {
     if (selectedTurmaId && t.id !== selectedTurmaId) return false;
 
-    const orgId = t.nucleo?.organizacaoId;
+    const orgId = getOrganizacaoIdDaTurma(t);
     const org = orgId ? orgMap.get(orgId) : undefined;
     const obj = org?.objetoId ? objMap.get(org.objetoId) : undefined;
+    const nId = getNucleoIdDaTurma(t);
+    const nucleoObj = nId ? nucleoMap.get(nId) : t.nucleo;
 
     const turnosSlot = (t.slots || []).map((s: any) => `${s.dia || ''} ${s.inicio || ''}h ${s.fim || ''}h ${s.inicio < 12 ? 'manhã manha' : 'tarde'}`).join(" ");
     const profs = (t.responsaveisNomes || []).join(" ");
@@ -144,12 +175,12 @@ export function ModalLinksInscricao({
       t.nome,
       t.atividade?.nome,
       t.atividade?.descricao,
-      t.nucleo?.identificacao,
-      t.nucleo?.nomeLocal,
-      t.nucleo?.cidade,
-      t.nucleo?.bairro,
-      t.nucleo?.endereco,
-      t.nucleo?.nomeResponsavel,
+      nucleoObj?.identificacao,
+      nucleoObj?.nomeLocal,
+      nucleoObj?.cidade,
+      nucleoObj?.bairro,
+      nucleoObj?.endereco,
+      nucleoObj?.nomeResponsavel,
       profs,
       turnosSlot,
       org?.nome,
@@ -234,7 +265,7 @@ export function ModalLinksInscricao({
         {/* Modal Filters Section */}
         <div className="p-4 border-b border-zinc-200 bg-zinc-50/50 flex flex-col gap-3">
           
-          {/* Linha de Seletor de Entidades */}
+          {/* Linha de Seletor de Entidades com Encademaneto Estrito */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2">
             
             {/* Objeto */}
@@ -275,7 +306,7 @@ export function ModalLinksInscricao({
                   className="w-full rounded-lg border border-zinc-300 bg-white px-2.5 py-1.5 text-xs text-zinc-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 cursor-pointer"
                 >
                   <option value="">Todas as Organizações</option>
-                  {organizacoes.map((org) => (
+                  {organizacoesFiltradasDropdown.map((org) => (
                     <option key={org.id} value={org.id}>{org.nome}</option>
                   ))}
                 </select>
@@ -327,7 +358,7 @@ export function ModalLinksInscricao({
                 onChange={(e) => setSelectedTurmaId(e.target.value)}
                 className="w-full rounded-lg border border-zinc-300 bg-white px-2.5 py-1.5 text-xs text-zinc-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 cursor-pointer"
               >
-                <option value="">Todas as Turmas</option>
+                <option value="">Todas as Turmas ({turmasFiltradasDropdown.length})</option>
                 {turmasFiltradasDropdown.map((t) => (
                   <option key={t.id} value={t.id}>{t.nome}</option>
                 ))}
@@ -382,9 +413,11 @@ export function ModalLinksInscricao({
                       const url = `${baseUrl}/inscricao/turma/${t.id}`;
                       const isCopied = copiedId === t.id;
                       const profsText = (t.responsaveisNomes || []).join(", ");
-                      const orgId = t.nucleo?.organizacaoId;
+                      const orgId = getOrganizacaoIdDaTurma(t);
                       const org = orgId ? orgMap.get(orgId) : undefined;
                       const obj = org?.objetoId ? objMap.get(org.objetoId) : undefined;
+                      const nId = getNucleoIdDaTurma(t);
+                      const nucleoObj = nId ? nucleoMap.get(nId) : t.nucleo;
 
                       return (
                         <div key={t.id} className="p-4 rounded-xl border border-zinc-200/90 bg-white hover:border-sky-300 hover:shadow-xs transition-all flex flex-col gap-3">
@@ -432,9 +465,9 @@ export function ModalLinksInscricao({
                                 ⚽ {t.atividade.nome}
                               </span>
                             )}
-                            {t.nucleo?.identificacao && (
+                            {nucleoObj?.identificacao && (
                               <span className="inline-flex items-center gap-1 bg-zinc-100 text-zinc-700 px-2.5 py-1 rounded-md font-medium border border-zinc-200">
-                                📍 {t.nucleo.identificacao}
+                                📍 {nucleoObj.identificacao}
                               </span>
                             )}
                             {org?.nome && (
