@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { UserCheck, UserX, Download, Trash2, Clock, Users, Dumbbell, Calendar, CheckCircle2, Check } from "lucide-react";
 import {
@@ -43,6 +43,7 @@ const EMPTY = { busca: "", funcao: "", status: "", admissaoDe: "", admissaoAte: 
 export default function FuncionariosPage() {
   const { estado, cidade } = useLocationFilter();
   const [filtros, setFiltros] = useState(EMPTY);
+  const [ativos, setAtivos] = useState(EMPTY);
   const [pagina, setPagina] = useState(1);
   const [viewMode, setViewMode] = useState<ViewMode>("cards");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -53,12 +54,20 @@ export default function FuncionariosPage() {
   const [funcionarioPonto, setFuncionarioPonto] = useState<FuncionarioApi | null>(null);
   const [pontoRegistrado, setPontoRegistrado] = useState(false);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setPagina(1);
+      setAtivos(filtros);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [filtros]);
+
   const { data: funcoesRes } = useQuery<FuncaoApi[]>(() => funcoesApi.list(), []);
   const funcoes = funcoesRes ?? [];
 
   const { data: pageData, loading, refetch } = useQuery<Paginated<FuncionarioApi>>(
-    () => funcionariosApi.list({ ...filtros, page: pagina, limit: PER_PAGE }),
-    [filtros, pagina],
+    () => funcionariosApi.list({ ...ativos, page: pagina, limit: PER_PAGE }),
+    [ativos, pagina],
   );
   const { data: statsAdm } = useQuery<Paginated<FuncionarioApi>>(() => funcionariosApi.list({ status: "contratado,voluntario", limit: 1 }), []);
   const { data: statsDes } = useQuery<Paginated<FuncionarioApi>>(() => funcionariosApi.list({ status: "demitido", limit: 1 }), []);
@@ -92,10 +101,9 @@ export default function FuncionariosPage() {
   const total = pageData?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
 
-  const limpar = useCallback(() => { setFiltros(EMPTY); setPagina(1); }, []);
+  const limpar = useCallback(() => { setFiltros(EMPTY); setAtivos(EMPTY); setPagina(1); }, []);
 
   function setCampo(chave: keyof typeof EMPTY, valor: string) {
-    setPagina(1);
     setFiltros((f) => ({ ...f, [chave]: valor }));
   }
 

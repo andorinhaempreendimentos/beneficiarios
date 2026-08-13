@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
 import { Download, Check } from "lucide-react";
 import {
@@ -31,6 +31,14 @@ export default function UsuariosPage() {
   const [pagina, setPagina] = useState(1);
   const [viewMode, setViewMode] = useState<ViewMode>("cards");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setPagina(1);
+      setAtivos(filtros);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [filtros]);
 
   const { data: pageData, loading } = useQuery<Paginated<UsuarioApi>>(
     () => usuariosApi.list({ ...ativos, page: pagina, limit: PER_PAGE }),

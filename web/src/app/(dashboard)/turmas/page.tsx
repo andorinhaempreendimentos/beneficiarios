@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { Download, Trash2, Dumbbell, Building2, Users, Calendar, Clock, Check } from "lucide-react";
 import {
@@ -44,6 +44,14 @@ export default function TurmasPage() {
 
   const [turmaParaExcluir, setTurmaParaExcluir] = useState<TurmaApi | null>(null);
   const [excluindo, setExcluindo] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setPagina(1);
+      setAtivos(filtros);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [filtros]);
 
   const { data: pageData, loading, refetch } = useQuery<Paginated<TurmaApi>>(
     () => turmasApi.list({ ...ativos, page: pagina, limit: PER_PAGE }),
