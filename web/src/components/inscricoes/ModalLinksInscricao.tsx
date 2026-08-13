@@ -73,22 +73,68 @@ export function ModalLinksInscricao({
 
   const temFiltroAtivo = selectedObjetoId || selectedOrganizacaoId || selectedNucleoId || selectedAtividadeId || selectedTurmaId || busca;
 
-  // Mapa rápido de organizações e objetos por ID
+  // Mapeamentos rápidos de lookup
   const orgMap = new Map(organizacoes.map((o) => [o.id, o]));
   const objMap = new Map(objetos.map((ob) => [ob.id, ob]));
+  const nucleoMap = new Map(nucleos.map((n) => [n.id, n]));
 
-  // Filtragem de Turmas
-  const listTurmas = turmas.filter((t) => {
-    if (selectedTurmaId && t.id !== selectedTurmaId) return false;
+  // Regra de Negócio: Filtrar atividades de uso interno ("Planejamento") e indisponíveis para pré-inscrição
+  function isAtividadePublica(a: AtividadeApi): boolean {
+    if (a.disponivelPreInscricao === false) return false;
+    const nomeNorm = normalizar(a.nome);
+    if (nomeNorm.includes("planejamento")) return false;
+    return true;
+  }
+
+  function isTurmaPublica(t: TurmaApi): boolean {
+    const nomeTurmaNorm = normalizar(t.nome);
+    const nomeAtvNorm = normalizar(t.atividade?.nome);
+    if (nomeTurmaNorm.includes("planejamento") || nomeAtvNorm.includes("planejamento")) return false;
+    if (t.atividade?.disponivelPreInscricao === false) return false;
+    return true;
+  }
+
+  function isNucleoPublico(n: NucleoApi): boolean {
+    if (n.emFuncionamento === false) return false;
+    if (n.disponivelPreInscricao === false) return false;
+    return true;
+  }
+
+  // Opções de dropdowns dinâmicos e encadeados
+  const nucleosFiltradosDropdown = nucleos.filter((n) => {
+    if (!isNucleoPublico(n)) return false;
+    if (selectedOrganizacaoId && n.organizacaoId !== selectedOrganizacaoId) return false;
+    if (selectedObjetoId && orgMap.get(n.organizacaoId || "")?.objetoId !== selectedObjetoId) return false;
+    return true;
+  });
+
+  const atividadesFiltradasDropdown = atividades.filter((a) => {
+    if (!isAtividadePublica(a)) return false;
+    if (selectedNucleoId && a.nucleoId !== selectedNucleoId) return false;
+
+    const n = nucleoMap.get(a.nucleoId);
+    if (selectedOrganizacaoId && n?.organizacaoId !== selectedOrganizacaoId) return false;
+    if (selectedObjetoId && orgMap.get(n?.organizacaoId || "")?.objetoId !== selectedObjetoId) return false;
+    return true;
+  });
+
+  const turmasFiltradasDropdown = turmas.filter((t) => {
+    if (!isTurmaPublica(t)) return false;
     if (selectedAtividadeId && t.atividadeId !== selectedAtividadeId && t.atividade?.id !== selectedAtividadeId) return false;
     if (selectedNucleoId && t.nucleoId !== selectedNucleoId && t.nucleo?.id !== selectedNucleoId) return false;
 
     const orgId = t.nucleo?.organizacaoId;
     if (selectedOrganizacaoId && orgId !== selectedOrganizacaoId) return false;
+    if (selectedObjetoId && orgMap.get(orgId || "")?.objetoId !== selectedObjetoId) return false;
+    return true;
+  });
 
+  // Listas finais filtradas também pela busca de texto
+  const listTurmas = turmasFiltradasDropdown.filter((t) => {
+    if (selectedTurmaId && t.id !== selectedTurmaId) return false;
+
+    const orgId = t.nucleo?.organizacaoId;
     const org = orgId ? orgMap.get(orgId) : undefined;
-    if (selectedObjetoId && org?.objetoId !== selectedObjetoId) return false;
-
     const obj = org?.objetoId ? objMap.get(org.objetoId) : undefined;
 
     const turnosSlot = (t.slots || []).map((s: any) => `${s.dia || ''} ${s.inicio || ''}h ${s.fim || ''}h ${s.inicio < 12 ? 'manhã manha' : 'tarde'}`).join(" ");
@@ -117,14 +163,8 @@ export function ModalLinksInscricao({
     return contemTodosOsTermos(alvo, busca);
   });
 
-  // Filtragem de Núcleos
-  const listNucleos = nucleos.filter((n) => {
-    if (selectedNucleoId && n.id !== selectedNucleoId) return false;
-    if (selectedOrganizacaoId && n.organizacaoId !== selectedOrganizacaoId) return false;
-
+  const listNucleos = nucleosFiltradosDropdown.filter((n) => {
     const org = n.organizacaoId ? orgMap.get(n.organizacaoId) : undefined;
-    if (selectedObjetoId && org?.objetoId !== selectedObjetoId) return false;
-
     const obj = org?.objetoId ? objMap.get(org.objetoId) : undefined;
 
     const alvo = [
@@ -146,14 +186,17 @@ export function ModalLinksInscricao({
     return contemTodosOsTermos(alvo, busca);
   });
 
-  // Filtragem de Atividades
-  const listAtividades = atividades.filter((a) => {
-    if (selectedAtividadeId && a.id !== selectedAtividadeId) return false;
-    if (selectedNucleoId && a.nucleoId !== selectedNucleoId) return false;
+  const listAtividades = atividadesFiltradasDropdown.filter((a) => {
+    const n = nucleoMap.get(a.nucleoId);
+    const org = n?.organizacaoId ? orgMap.get(n.organizacaoId) : undefined;
+    const obj = org?.objetoId ? objMap.get(org.objetoId) : undefined;
 
     const alvo = [
       a.nome,
       a.descricao,
+      n?.identificacao,
+      org?.nome,
+      obj?.nome,
       ...(a.turnos || []),
     ].filter(Boolean).join(" ");
 
@@ -200,7 +243,13 @@ export function ModalLinksInscricao({
                 <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Objeto</label>
                 <select
                   value={selectedObjetoId}
-                  onChange={(e) => setSelectedObjetoId(e.target.value)}
+                  onChange={(e) => {
+                    setSelectedObjetoId(e.target.value);
+                    setSelectedOrganizacaoId("");
+                    setSelectedNucleoId("");
+                    setSelectedAtividadeId("");
+                    setSelectedTurmaId("");
+                  }}
                   className="w-full rounded-lg border border-zinc-300 bg-white px-2.5 py-1.5 text-xs text-zinc-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 cursor-pointer"
                 >
                   <option value="">Todos os Objetos</option>
@@ -217,7 +266,12 @@ export function ModalLinksInscricao({
                 <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Organização</label>
                 <select
                   value={selectedOrganizacaoId}
-                  onChange={(e) => setSelectedOrganizacaoId(e.target.value)}
+                  onChange={(e) => {
+                    setSelectedOrganizacaoId(e.target.value);
+                    setSelectedNucleoId("");
+                    setSelectedAtividadeId("");
+                    setSelectedTurmaId("");
+                  }}
                   className="w-full rounded-lg border border-zinc-300 bg-white px-2.5 py-1.5 text-xs text-zinc-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 cursor-pointer"
                 >
                   <option value="">Todas as Organizações</option>
@@ -233,11 +287,15 @@ export function ModalLinksInscricao({
               <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Núcleo</label>
               <select
                 value={selectedNucleoId}
-                onChange={(e) => setSelectedNucleoId(e.target.value)}
+                onChange={(e) => {
+                  setSelectedNucleoId(e.target.value);
+                  setSelectedAtividadeId("");
+                  setSelectedTurmaId("");
+                }}
                 className="w-full rounded-lg border border-zinc-300 bg-white px-2.5 py-1.5 text-xs text-zinc-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 cursor-pointer"
               >
                 <option value="">Todos os Núcleos</option>
-                {nucleos.map((n) => (
+                {nucleosFiltradosDropdown.map((n) => (
                   <option key={n.id} value={n.id}>{n.identificacao}</option>
                 ))}
               </select>
@@ -248,11 +306,14 @@ export function ModalLinksInscricao({
               <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Atividade</label>
               <select
                 value={selectedAtividadeId}
-                onChange={(e) => setSelectedAtividadeId(e.target.value)}
+                onChange={(e) => {
+                  setSelectedAtividadeId(e.target.value);
+                  setSelectedTurmaId("");
+                }}
                 className="w-full rounded-lg border border-zinc-300 bg-white px-2.5 py-1.5 text-xs text-zinc-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 cursor-pointer"
               >
                 <option value="">Todas as Atividades</option>
-                {atividades.map((a) => (
+                {atividadesFiltradasDropdown.map((a) => (
                   <option key={a.id} value={a.id}>{a.nome}</option>
                 ))}
               </select>
@@ -267,7 +328,7 @@ export function ModalLinksInscricao({
                 className="w-full rounded-lg border border-zinc-300 bg-white px-2.5 py-1.5 text-xs text-zinc-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 cursor-pointer"
               >
                 <option value="">Todas as Turmas</option>
-                {turmas.map((t) => (
+                {turmasFiltradasDropdown.map((t) => (
                   <option key={t.id} value={t.id}>{t.nome}</option>
                 ))}
               </select>
@@ -480,6 +541,10 @@ export function ModalLinksInscricao({
                     {listAtividades.map((a) => {
                       const url = `${baseUrl}/inscricao/atividade/${a.id}`;
                       const isCopied = copiedId === a.id;
+                      const n = nucleoMap.get(a.nucleoId);
+                      const org = n?.organizacaoId ? orgMap.get(n.organizacaoId) : undefined;
+                      const obj = org?.objetoId ? objMap.get(org.objetoId) : undefined;
+
                       return (
                         <div key={a.id} className="p-4 rounded-xl border border-zinc-200/90 bg-white hover:border-sky-300 hover:shadow-xs transition-all flex flex-col gap-3">
                           <div className="flex items-start justify-between gap-4">
@@ -508,6 +573,24 @@ export function ModalLinksInscricao({
                                 <ExternalLink className="h-4 w-4" />
                               </a>
                             </div>
+                          </div>
+
+                          <div className="flex items-center gap-2 flex-wrap text-[11px]">
+                            {n?.identificacao && (
+                              <span className="inline-flex items-center gap-1 bg-zinc-100 text-zinc-700 px-2.5 py-1 rounded-md font-medium border border-zinc-200">
+                                📍 {n.identificacao}
+                              </span>
+                            )}
+                            {org?.nome && (
+                              <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-800 px-2.5 py-1 rounded-md font-medium border border-emerald-200">
+                                🏛️ {org.nome}
+                              </span>
+                            )}
+                            {obj?.nome && (
+                              <span className="inline-flex items-center gap-1 bg-purple-50 text-purple-800 px-2.5 py-1 rounded-md font-medium border border-purple-200">
+                                📄 {obj.nome}
+                              </span>
+                            )}
                           </div>
 
                           <div className="flex items-center rounded-lg bg-zinc-50 border border-zinc-200 px-3 py-1.5">
