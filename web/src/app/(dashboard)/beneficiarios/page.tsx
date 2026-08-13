@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { UserCheck, UserX, Download, Trash2, Check } from "lucide-react";
 import {
@@ -35,7 +35,6 @@ import { calcularIdade } from "@/lib/utils";
 import { StatusBeneficiarioBadge } from "@/components/beneficiarios/StatusBeneficiarioBadge";
 
 import { useLocationFilter } from "@/components/providers/LocationFilterProvider";
-import { useMemo } from "react";
 
 const PER_PAGE = 15;
 const EMPTY = { nome: "", matricula: "", cpf: "", status: "", atividadeId: "", tipoMatricula: "", nucleoId: "", idadeMin: "", idadeMax: "" };
@@ -50,6 +49,14 @@ export default function BeneficiariosPage() {
 
   const [beneficiarioParaExcluir, setBeneficiarioParaExcluir] = useState<BeneficiarioApi | null>(null);
   const [excluindo, setExcluindo] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setPagina(1);
+      setAtivos(filtros);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [filtros]);
 
   const { data: pageData, loading } = useQuery<Paginated<BeneficiarioApi>>(
     () => beneficiariosApi.list({ ...ativos, page: pagina, limit: PER_PAGE }),
