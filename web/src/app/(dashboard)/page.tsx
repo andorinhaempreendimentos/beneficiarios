@@ -1,14 +1,28 @@
 "use client";
 
-import { useMemo } from "react";
-import { Building2, ClipboardList, Dumbbell, FileBarChart, Plus, ShieldCheck, UserCheck, UserPlus, Users, UsersRound } from "lucide-react";
+import { useState, useMemo } from "react";
+import { Building2, ClipboardList, Dumbbell, FileBarChart, Link2, Plus, ShieldCheck, UserCheck, UserPlus, Users, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { Badge, Card, CardBody, CardHeader, StatCard } from "@/components/ui";
 import { useQuery } from "@/lib/hooks/useQuery";
-import { dashboardApi, nucleosApi, type DashboardResumo, type NucleoApi } from "@/lib/api/services";
+import {
+  dashboardApi,
+  nucleosApi,
+  atividadesApi,
+  turmasApi,
+  organizacoesApi,
+  objetosApi,
+  type DashboardResumo,
+  type NucleoApi,
+  type AtividadeApi,
+  type TurmaApi,
+  type OrganizacaoApi,
+  type ObjetoApi,
+} from "@/lib/api/services";
 import { formatarData } from "@/lib/utils";
 import { statusBeneficiarioTone, statusBeneficiarioLabel, normalizarStatusBeneficiario } from "@/lib/status";
 import { useLocationFilter } from "@/components/providers/LocationFilterProvider";
+import { ModalLinksInscricao } from "@/components/inscricoes/ModalLinksInscricao";
 
 const VAZIO: DashboardResumo = {
   beneficiariosAtivos: 0, totalBeneficiarios: 0, nucleosAtivos: 0, totalNucleos: 0, totalObjetos: 0, totalOrganizacoes: 0, funcionariosAtivos: 0,
@@ -18,11 +32,18 @@ const VAZIO: DashboardResumo = {
 
 export default function DashboardPage() {
   const { estado, cidade } = useLocationFilter();
+  const [modalLinksOpen, setModalLinksOpen] = useState(false);
 
   const { data, loading } = useQuery<DashboardResumo>(() => dashboardApi.resumo(), []);
   const { data: nucleosRes } = useQuery(() => nucleosApi.list({ limit: 200 }), []);
+  const { data: atividadesData } = useQuery(() => atividadesApi.list({ limit: 200 }), []);
+  const { data: turmasData } = useQuery(() => turmasApi.list({ limit: 200 }), []);
+  const { data: organizacoesData } = useQuery(() => organizacoesApi.list({ limit: 200 }), []);
+  const { data: objetosData } = useQuery(() => objetosApi.list({ limit: 200 }), []);
 
   const rawNucleos = nucleosRes?.data ?? [];
+  const atividades = atividadesData?.data ?? [];
+  const turmas = turmasData?.data ?? [];
   const rRaw = data ?? VAZIO;
 
   // Filtrar resumos e dados conforme estado e cidade selecionados na sessão
@@ -242,13 +263,23 @@ export default function DashboardPage() {
                 <p className="text-2xl font-bold text-zinc-700 dark:text-zinc-200">{r.totalBeneficiarios}</p>
               </div>
             </div>
-            <Link
-              href="/beneficiarios/novo"
-              className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-3 py-2 text-sm font-medium text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors"
-            >
-              <UserPlus className="h-4 w-4" />
-              Novo beneficiário
-            </Link>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <Link
+                href="/beneficiarios/novo"
+                className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-3 py-2 text-xs font-semibold text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors"
+              >
+                <UserPlus className="h-4 w-4" />
+                Novo beneficiário
+              </Link>
+              <button
+                type="button"
+                onClick={() => setModalLinksOpen(true)}
+                className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-3 py-2 text-xs font-semibold text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors cursor-pointer"
+              >
+                <Link2 className="h-4 w-4" />
+                Links de Autocadastro
+              </button>
+            </div>
           </CardBody>
         </Card>
 
@@ -374,6 +405,16 @@ export default function DashboardPage() {
           </table>
         </div>
       </Card>
+
+      <ModalLinksInscricao
+        open={modalLinksOpen}
+        onClose={() => setModalLinksOpen(false)}
+        nucleos={rawNucleos}
+        atividades={atividades}
+        turmas={turmas}
+        organizacoes={organizacoesData?.data ?? []}
+        objetos={objetosData?.data ?? []}
+      />
     </div>
   );
 }
