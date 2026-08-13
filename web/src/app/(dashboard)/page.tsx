@@ -83,14 +83,6 @@ export default function DashboardPage() {
   return (
     <div className="flex flex-col gap-6">
 
-      {/* Métricas principais */}
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <StatCard label="Beneficiários ativos" value={r.beneficiariosAtivos} icon={Users} tone="sky" />
-        <StatCard label="Núcleos em operação" value={r.nucleosAtivos} icon={Building2} tone="green" />
-        <StatCard label="Funcionários" value={r.funcionariosAtivos} icon={UsersRound} tone="sky" />
-        <StatCard label="Modalidades" value={r.totalModalidades} icon={Dumbbell} tone="green" />
-      </div>
-
       {loading && <div className="px-1 text-sm text-zinc-400">Carregando…</div>}
 
       {/* Estatísticas detalhadas em ordem hierárquica */}
