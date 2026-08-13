@@ -131,13 +131,40 @@ export function ModalLinksInscricao({
     return true;
   });
 
+  // Atividades pertencentes ao Núcleo/Organização/Objeto diretamente OU praticadas através das turmas daquele local
   const atividadesFiltradasDropdown = atividades.filter((a) => {
     if (!isAtividadePublica(a)) return false;
-    if (selectedNucleoId && a.nucleoId !== selectedNucleoId) return false;
 
-    const n = nucleoMap.get(a.nucleoId);
-    if (selectedOrganizacaoId && n?.organizacaoId !== selectedOrganizacaoId) return false;
-    if (selectedObjetoId && orgMap.get(n?.organizacaoId || "")?.objetoId !== selectedObjetoId) return false;
+    // Se selecionou Núcleo: deve estar associada ao núcleo diretamente OU presente em turmas desse núcleo
+    if (selectedNucleoId) {
+      const eNoNucleoDireto = a.nucleoId === selectedNucleoId;
+      const temTurmaNoNucleo = turmas.some(
+        (t) => isTurmaPublica(t) && getNucleoIdDaTurma(t) === selectedNucleoId && (t.atividadeId === a.id || t.atividade?.id === a.id)
+      );
+      if (!eNoNucleoDireto && !temTurmaNoNucleo) return false;
+    }
+
+    // Se selecionou Organização: deve estar associada à organização diretamente OU presente em turmas dessa org
+    if (selectedOrganizacaoId) {
+      const orgIdDireto = nucleoMap.get(a.nucleoId)?.organizacaoId;
+      const eNaOrgDireta = orgIdDireto === selectedOrganizacaoId;
+      const temTurmaNaOrg = turmas.some(
+        (t) => isTurmaPublica(t) && getOrganizacaoIdDaTurma(t) === selectedOrganizacaoId && (t.atividadeId === a.id || t.atividade?.id === a.id)
+      );
+      if (!eNaOrgDireta && !temTurmaNaOrg) return false;
+    }
+
+    // Se selecionou Objeto: deve estar associada ao objeto diretamente OU presente em turmas desse objeto
+    if (selectedObjetoId) {
+      const orgIdDireto = nucleoMap.get(a.nucleoId)?.organizacaoId;
+      const objIdDireto = orgIdDireto ? orgMap.get(orgIdDireto)?.objetoId : undefined;
+      const eNoObjDireto = objIdDireto === selectedObjetoId;
+      const temTurmaNoObj = turmas.some(
+        (t) => isTurmaPublica(t) && getObjetoIdDaTurma(t) === selectedObjetoId && (t.atividadeId === a.id || t.atividade?.id === a.id)
+      );
+      if (!eNoObjDireto && !temTurmaNoObj) return false;
+    }
+
     return true;
   });
 
@@ -343,7 +370,7 @@ export function ModalLinksInscricao({
                 }}
                 className="w-full rounded-lg border border-zinc-300 bg-white px-2.5 py-1.5 text-xs text-zinc-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 cursor-pointer"
               >
-                <option value="">Todas as Atividades</option>
+                <option value="">Todas as Atividades ({atividadesFiltradasDropdown.length})</option>
                 {atividadesFiltradasDropdown.map((a) => (
                   <option key={a.id} value={a.id}>{a.nome}</option>
                 ))}
