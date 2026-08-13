@@ -83,64 +83,6 @@ export default function DashboardPage() {
   return (
     <div className="flex flex-col gap-6">
 
-      {/* Barra de Ações Rápidas no Topo */}
-      <div className="-mt-6 -mx-4 sm:-mx-6 lg:-mx-8 flex flex-wrap items-center gap-0 border-b border-zinc-300 shadow-sm">
-        {[
-          { href: "/inscricoes", label: "Inscrições", icon: ClipboardList, bg: "bg-amber-600 hover:bg-amber-700 text-white" },
-          { href: "/atividades", label: "Atividades", icon: Dumbbell, bg: "bg-sky-600 hover:bg-sky-700 text-white" },
-          { href: "/relatorios", label: "Relatórios", icon: FileBarChart, bg: "bg-emerald-600 hover:bg-emerald-700 text-white" },
-        ].map(({ href, label, icon: Icon, bg }) => (
-          <Link
-            key={href}
-            href={href}
-            className={`flex flex-1 items-center justify-center gap-3 ${bg} py-5 px-6 text-sm font-extrabold tracking-wide uppercase transition-all shadow-inner`}
-          >
-            <Icon className="h-5 w-5 shrink-0" />
-            <span>{label}</span>
-          </Link>
-        ))}
-      </div>
-
-      {/* Fluxo de Hierarquia do Sistema */}
-      <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 shadow-2xs transition-colors">
-        <div className="mb-3 flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-2">
-          <h2 className="text-xs font-extrabold uppercase tracking-wider text-zinc-800 dark:text-zinc-100">Hierarquia Operacional do Sistema</h2>
-          <span className="text-[11px] font-semibold text-zinc-400 dark:text-zinc-500">Encadeamento sequencial</span>
-        </div>
-
-        <div className="grid grid-cols-2 gap-px sm:grid-cols-4 lg:grid-cols-7 bg-zinc-200 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 rounded-xl overflow-hidden shadow-2xs">
-          {[
-            { nivel: "1º", titulo: "Organização" },
-            { nivel: "2º", titulo: "Objeto" },
-            { nivel: "3º", titulo: "Coordenação" },
-            { nivel: "4º", titulo: "Núcleos" },
-            { nivel: "5º", titulo: "Professores" },
-            { nivel: "6º", titulo: "Turmas" },
-            { nivel: "7º", titulo: "Beneficiários" },
-          ].map(({ nivel, titulo }, idx) => (
-            <div
-              key={nivel}
-              className={`relative flex items-center justify-between gap-2 bg-white dark:bg-zinc-900 px-4 py-3.5 text-zinc-900 dark:text-zinc-100 transition-all hover:bg-zinc-100 dark:hover:bg-zinc-800 select-none ${
-                idx === 0 ? "rounded-l-xl lg:rounded-l-xl lg:rounded-r-none" :
-                idx === 6 ? "rounded-r-xl lg:rounded-r-xl lg:rounded-l-none" : "rounded-none"
-              }`}
-            >
-              <div className="flex items-center gap-2 truncate">
-                <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300">
-                  {nivel}
-                </span>
-                <span className="text-xs font-bold text-zinc-800 dark:text-zinc-200 truncate tracking-tight">{titulo}</span>
-              </div>
-              {idx < 6 && (
-                <div className="absolute -right-2 top-1/2 -translate-y-1/2 z-10 hidden lg:flex h-4 w-4 items-center justify-center rounded-full bg-zinc-200 dark:bg-zinc-800 text-[10px] font-bold text-zinc-600 dark:text-zinc-400 border border-zinc-300 dark:border-zinc-700 shadow-2xs">
-                  ›
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* Métricas principais */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard label="Beneficiários ativos" value={r.beneficiariosAtivos} icon={Users} tone="sky" />
