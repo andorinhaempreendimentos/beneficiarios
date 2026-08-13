@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X, Copy, Check, ExternalLink, Search, Link2, Building2, Activity, Users, User, Building } from "lucide-react";
+import { X, Copy, Check, ExternalLink, Search, Link2, Building2, Activity, Users, User, FilterX } from "lucide-react";
 import { Button } from "@/components/ui";
 import { useToast } from "@/components/providers/ToastProvider";
 import type { NucleoApi, AtividadeApi, TurmaApi, OrganizacaoApi, ObjetoApi } from "@/lib/api/services";
@@ -16,8 +16,6 @@ interface ModalLinksInscricaoProps {
   objetos?: ObjetoApi[];
 }
 
-type TabType = "todos" | "turmas" | "nucleos" | "atividades";
-
 export function ModalLinksInscricao({
   open,
   onClose,
@@ -28,9 +26,15 @@ export function ModalLinksInscricao({
   objetos = [],
 }: ModalLinksInscricaoProps) {
   const { toast } = useToast();
-  const [tab, setTab] = useState<TabType>("todos");
   const [busca, setBusca] = useState("");
   const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  // Filtros dinâmicos por entidade
+  const [selectedObjetoId, setSelectedObjetoId] = useState("");
+  const [selectedOrganizacaoId, setSelectedOrganizacaoId] = useState("");
+  const [selectedNucleoId, setSelectedNucleoId] = useState("");
+  const [selectedAtividadeId, setSelectedAtividadeId] = useState("");
+  const [selectedTurmaId, setSelectedTurmaId] = useState("");
 
   if (!open) return null;
 
@@ -58,49 +62,37 @@ export function ModalLinksInscricao({
     return tokens.every((token) => alvoNorm.includes(token));
   }
 
+  function limparFiltros() {
+    setSelectedObjetoId("");
+    setSelectedOrganizacaoId("");
+    setSelectedNucleoId("");
+    setSelectedAtividadeId("");
+    setSelectedTurmaId("");
+    setBusca("");
+  }
+
+  const temFiltroAtivo = selectedObjetoId || selectedOrganizacaoId || selectedNucleoId || selectedAtividadeId || selectedTurmaId || busca;
+
   // Mapa rápido de organizações e objetos por ID
   const orgMap = new Map(organizacoes.map((o) => [o.id, o]));
   const objMap = new Map(objetos.map((ob) => [ob.id, ob]));
 
-  const listNucleos = nucleos.filter((n) => {
-    const org = n.organizacaoId ? orgMap.get(n.organizacaoId) : undefined;
+  // Filtragem de Turmas
+  const listTurmas = turmas.filter((t) => {
+    if (selectedTurmaId && t.id !== selectedTurmaId) return false;
+    if (selectedAtividadeId && t.atividadeId !== selectedAtividadeId && t.atividade?.id !== selectedAtividadeId) return false;
+    if (selectedNucleoId && t.nucleoId !== selectedNucleoId && t.nucleo?.id !== selectedNucleoId) return false;
+
+    const orgId = t.nucleo?.organizacaoId;
+    if (selectedOrganizacaoId && orgId !== selectedOrganizacaoId) return false;
+
+    const org = orgId ? orgMap.get(orgId) : undefined;
+    if (selectedObjetoId && org?.objetoId !== selectedObjetoId) return false;
+
     const obj = org?.objetoId ? objMap.get(org.objetoId) : undefined;
 
-    const alvo = [
-      n.identificacao,
-      n.nomeLocal,
-      n.endereco,
-      n.bairro,
-      n.cidade,
-      n.regiao,
-      n.nomeResponsavel,
-      org?.nome,
-      org?.cnpj,
-      org?.cidade,
-      org?.endereco,
-      obj?.nome,
-      obj?.descricao,
-    ].filter(Boolean).join(" ");
-    return contemTodosOsTermos(alvo, busca);
-  });
-
-  const listAtividades = atividades.filter((a) => {
-    const alvo = [
-      a.nome,
-      a.descricao,
-      ...(a.turnos || []),
-    ].filter(Boolean).join(" ");
-    return contemTodosOsTermos(alvo, busca);
-  });
-
-  const listTurmas = turmas.filter((t) => {
     const turnosSlot = (t.slots || []).map((s: any) => `${s.dia || ''} ${s.inicio || ''}h ${s.fim || ''}h ${s.inicio < 12 ? 'manhã manha' : 'tarde'}`).join(" ");
     const profs = (t.responsaveisNomes || []).join(" ");
-
-    // Busca organização do núcleo da turma
-    const orgId = t.nucleo?.organizacaoId;
-    const org = orgId ? orgMap.get(orgId) : undefined;
-    const obj = org?.objetoId ? objMap.get(org.objetoId) : undefined;
 
     const alvo = [
       t.nome,
@@ -120,11 +112,51 @@ export function ModalLinksInscricao({
       org?.endereco,
       obj?.nome,
       obj?.descricao,
-      t.idadeMinima ? `${t.idadeMinima} anos` : "",
-      t.idadeMaxima ? `${t.idadeMaxima} anos` : "",
-      t.nome.toLowerCase().includes("manhã") || t.nome.toLowerCase().includes("manha") ? "manhã manha" : "",
-      t.nome.toLowerCase().includes("tarde") ? "tarde" : "",
     ].filter(Boolean).join(" ");
+
+    return contemTodosOsTermos(alvo, busca);
+  });
+
+  // Filtragem de Núcleos
+  const listNucleos = nucleos.filter((n) => {
+    if (selectedNucleoId && n.id !== selectedNucleoId) return false;
+    if (selectedOrganizacaoId && n.organizacaoId !== selectedOrganizacaoId) return false;
+
+    const org = n.organizacaoId ? orgMap.get(n.organizacaoId) : undefined;
+    if (selectedObjetoId && org?.objetoId !== selectedObjetoId) return false;
+
+    const obj = org?.objetoId ? objMap.get(org.objetoId) : undefined;
+
+    const alvo = [
+      n.identificacao,
+      n.nomeLocal,
+      n.endereco,
+      n.bairro,
+      n.cidade,
+      n.regiao,
+      n.nomeResponsavel,
+      org?.nome,
+      org?.cnpj,
+      org?.cidade,
+      org?.endereco,
+      obj?.nome,
+      obj?.descricao,
+    ].filter(Boolean).join(" ");
+
+    return contemTodosOsTermos(alvo, busca);
+  });
+
+  // Filtragem de Atividades
+  const listAtividades = atividades.filter((a) => {
+    if (selectedAtividadeId && a.id !== selectedAtividadeId) return false;
+    if (selectedNucleoId && a.nucleoId !== selectedNucleoId) return false;
+
+    const alvo = [
+      a.nome,
+      a.descricao,
+      ...(a.turnos || []),
+    ].filter(Boolean).join(" ");
+
     return contemTodosOsTermos(alvo, busca);
   });
 
@@ -132,7 +164,8 @@ export function ModalLinksInscricao({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in-50">
-      <div className="relative flex flex-col w-full max-w-3xl max-h-[85vh] bg-white rounded-2xl shadow-2xl border border-zinc-200 overflow-hidden animate-in zoom-in-95">
+      <div className="relative flex flex-col w-full max-w-4xl max-h-[90vh] bg-white rounded-2xl shadow-2xl border border-zinc-200 overflow-hidden animate-in zoom-in-95">
+        
         {/* Modal Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-200 bg-zinc-50/80">
           <div className="flex items-center gap-3">
@@ -142,7 +175,7 @@ export function ModalLinksInscricao({
             <div>
               <h2 className="text-base font-extrabold text-zinc-900">Links de Inscrição Pública</h2>
               <p className="text-xs text-zinc-500">
-                Pesquise por turma, professor, organização, objeto, núcleo, bairro ou turno.
+                Filtre por objeto, organização, núcleo, atividade ou turma para obter os links públicos.
               </p>
             </div>
           </div>
@@ -155,62 +188,116 @@ export function ModalLinksInscricao({
           </button>
         </div>
 
-        {/* Modal Tabs & Search */}
-        <div className="p-4 border-b border-zinc-100 bg-white flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-          <div className="flex items-center p-1 bg-zinc-100/80 rounded-xl gap-1 overflow-x-auto">
-            <button
-              type="button"
-              onClick={() => setTab("todos")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                tab === "todos" ? "bg-white text-sky-700 shadow-2xs" : "text-zinc-600 hover:text-zinc-900"
-              }`}
-            >
-              <span>Todos ({totalEncontrados})</span>
-            </button>
+        {/* Modal Filters Section */}
+        <div className="p-4 border-b border-zinc-200 bg-zinc-50/50 flex flex-col gap-3">
+          
+          {/* Linha de Seletor de Entidades */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2">
+            
+            {/* Objeto */}
+            {objetos.length > 0 && (
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Objeto</label>
+                <select
+                  value={selectedObjetoId}
+                  onChange={(e) => setSelectedObjetoId(e.target.value)}
+                  className="w-full rounded-lg border border-zinc-300 bg-white px-2.5 py-1.5 text-xs text-zinc-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+                >
+                  <option value="">Todos os Objetos</option>
+                  {objetos.map((ob) => (
+                    <option key={ob.id} value={ob.id}>{ob.nome}</option>
+                  ))}
+                </select>
+              </div>
+            )}
 
-            <button
-              type="button"
-              onClick={() => setTab("turmas")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                tab === "turmas" ? "bg-white text-sky-700 shadow-2xs" : "text-zinc-600 hover:text-zinc-900"
-              }`}
-            >
-              <Users className="h-3.5 w-3.5" />
-              <span>Turmas ({listTurmas.length})</span>
-            </button>
+            {/* Organização */}
+            {organizacoes.length > 0 && (
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Organização</label>
+                <select
+                  value={selectedOrganizacaoId}
+                  onChange={(e) => setSelectedOrganizacaoId(e.target.value)}
+                  className="w-full rounded-lg border border-zinc-300 bg-white px-2.5 py-1.5 text-xs text-zinc-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+                >
+                  <option value="">Todas as Organizações</option>
+                  {organizacoes.map((org) => (
+                    <option key={org.id} value={org.id}>{org.nome}</option>
+                  ))}
+                </select>
+              </div>
+            )}
 
-            <button
-              type="button"
-              onClick={() => setTab("nucleos")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                tab === "nucleos" ? "bg-white text-sky-700 shadow-2xs" : "text-zinc-600 hover:text-zinc-900"
-              }`}
-            >
-              <Building2 className="h-3.5 w-3.5" />
-              <span>Núcleos ({listNucleos.length})</span>
-            </button>
+            {/* Núcleo */}
+            <div className="flex flex-col gap-1">
+              <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Núcleo</label>
+              <select
+                value={selectedNucleoId}
+                onChange={(e) => setSelectedNucleoId(e.target.value)}
+                className="w-full rounded-lg border border-zinc-300 bg-white px-2.5 py-1.5 text-xs text-zinc-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+              >
+                <option value="">Todos os Núcleos</option>
+                {nucleos.map((n) => (
+                  <option key={n.id} value={n.id}>{n.identificacao}</option>
+                ))}
+              </select>
+            </div>
 
-            <button
-              type="button"
-              onClick={() => setTab("atividades")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                tab === "atividades" ? "bg-white text-sky-700 shadow-2xs" : "text-zinc-600 hover:text-zinc-900"
-              }`}
-            >
-              <Activity className="h-3.5 w-3.5" />
-              <span>Atividades ({listAtividades.length})</span>
-            </button>
+            {/* Atividade */}
+            <div className="flex flex-col gap-1">
+              <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Atividade</label>
+              <select
+                value={selectedAtividadeId}
+                onChange={(e) => setSelectedAtividadeId(e.target.value)}
+                className="w-full rounded-lg border border-zinc-300 bg-white px-2.5 py-1.5 text-xs text-zinc-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+              >
+                <option value="">Todas as Atividades</option>
+                {atividades.map((a) => (
+                  <option key={a.id} value={a.id}>{a.nome}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Turma */}
+            <div className="flex flex-col gap-1">
+              <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Turma</label>
+              <select
+                value={selectedTurmaId}
+                onChange={(e) => setSelectedTurmaId(e.target.value)}
+                className="w-full rounded-lg border border-zinc-300 bg-white px-2.5 py-1.5 text-xs text-zinc-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+              >
+                <option value="">Todas as Turmas</option>
+                {turmas.map((t) => (
+                  <option key={t.id} value={t.id}>{t.nome}</option>
+                ))}
+              </select>
+            </div>
+
           </div>
 
-          <div className="relative w-full sm:w-80">
-            <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-zinc-400" />
-            <input
-              type="text"
-              placeholder="Ex: manhã felipe andorinha, futsal..."
-              value={busca}
-              onChange={(e) => setBusca(e.target.value)}
-              className="w-full pl-8 pr-3 py-1.5 text-xs rounded-xl border border-zinc-200 bg-zinc-50 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-sky-500/20 font-medium"
-            />
+          {/* Busca por Texto e Limpeza */}
+          <div className="flex items-center gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-zinc-400" />
+              <input
+                type="text"
+                placeholder="Busca por nome, professor, bairro, horários..."
+                value={busca}
+                onChange={(e) => setBusca(e.target.value)}
+                className="w-full pl-8 pr-3 py-1.5 text-xs rounded-xl border border-zinc-300 bg-white focus:outline-hidden focus:ring-2 focus:ring-sky-500/20 font-medium"
+              />
+            </div>
+
+            {temFiltroAtivo && (
+              <button
+                type="button"
+                onClick={limparFiltros}
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-zinc-300 bg-white text-xs font-medium text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 transition-colors shrink-0 cursor-pointer"
+              >
+                <FilterX className="h-3.5 w-3.5 text-zinc-500" />
+                <span>Limpar Filtros</span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -218,19 +305,17 @@ export function ModalLinksInscricao({
         <div className="flex-1 overflow-y-auto p-4 space-y-6">
           {totalEncontrados === 0 ? (
             <div className="py-12 text-center text-xs text-zinc-400">
-              Nenhum resultado encontrado para &quot;{busca}&quot;.
+              Nenhum link de inscrição encontrado para os filtros aplicados.
             </div>
           ) : (
             <>
               {/* TURMAS SECTION */}
-              {(tab === "todos" || tab === "turmas") && listTurmas.length > 0 && (
+              {listTurmas.length > 0 && (
                 <div>
-                  {tab === "todos" && (
-                    <div className="flex items-center gap-2 mb-2 pb-1 border-b border-zinc-100 text-xs font-extrabold uppercase tracking-wider text-sky-700">
-                      <Users className="h-4 w-4" />
-                      <span>Turmas Encontradas ({listTurmas.length})</span>
-                    </div>
-                  )}
+                  <div className="flex items-center gap-2 mb-2 pb-1 border-b border-zinc-100 text-xs font-extrabold uppercase tracking-wider text-sky-700">
+                    <Users className="h-4 w-4" />
+                    <span>Turmas ({listTurmas.length})</span>
+                  </div>
                   <div className="divide-y divide-zinc-100">
                     {listTurmas.map((t) => {
                       const url = `${baseUrl}/inscricao/turma/${t.id}`;
@@ -305,14 +390,12 @@ export function ModalLinksInscricao({
               )}
 
               {/* NÚCLEOS SECTION */}
-              {(tab === "todos" || tab === "nucleos") && listNucleos.length > 0 && (
+              {listNucleos.length > 0 && (
                 <div>
-                  {tab === "todos" && (
-                    <div className="flex items-center gap-2 mb-2 pb-1 border-b border-zinc-100 text-xs font-extrabold uppercase tracking-wider text-sky-700">
-                      <Building2 className="h-4 w-4" />
-                      <span>Núcleos Encontrados ({listNucleos.length})</span>
-                    </div>
-                  )}
+                  <div className="flex items-center gap-2 mb-2 pb-1 border-b border-zinc-100 text-xs font-extrabold uppercase tracking-wider text-sky-700">
+                    <Building2 className="h-4 w-4" />
+                    <span>Núcleos ({listNucleos.length})</span>
+                  </div>
                   <div className="divide-y divide-zinc-100">
                     {listNucleos.map((n) => {
                       const url = `${baseUrl}/inscricao/nucleo/${n.id}`;
@@ -364,14 +447,12 @@ export function ModalLinksInscricao({
               )}
 
               {/* ATIVIDADES SECTION */}
-              {(tab === "todos" || tab === "atividades") && listAtividades.length > 0 && (
+              {listAtividades.length > 0 && (
                 <div>
-                  {tab === "todos" && (
-                    <div className="flex items-center gap-2 mb-2 pb-1 border-b border-zinc-100 text-xs font-extrabold uppercase tracking-wider text-sky-700">
-                      <Activity className="h-4 w-4" />
-                      <span>Atividades Encontradas ({listAtividades.length})</span>
-                    </div>
-                  )}
+                  <div className="flex items-center gap-2 mb-2 pb-1 border-b border-zinc-100 text-xs font-extrabold uppercase tracking-wider text-sky-700">
+                    <Activity className="h-4 w-4" />
+                    <span>Atividades ({listAtividades.length})</span>
+                  </div>
                   <div className="divide-y divide-zinc-100">
                     {listAtividades.map((a) => {
                       const url = `${baseUrl}/inscricao/atividade/${a.id}`;
