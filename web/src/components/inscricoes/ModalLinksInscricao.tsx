@@ -201,7 +201,7 @@ export function ModalLinksInscricao({
                 <select
                   value={selectedObjetoId}
                   onChange={(e) => setSelectedObjetoId(e.target.value)}
-                  className="w-full rounded-lg border border-zinc-300 bg-white px-2.5 py-1.5 text-xs text-zinc-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+                  className="w-full rounded-lg border border-zinc-300 bg-white px-2.5 py-1.5 text-xs text-zinc-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 cursor-pointer"
                 >
                   <option value="">Todos os Objetos</option>
                   {objetos.map((ob) => (
@@ -218,7 +218,7 @@ export function ModalLinksInscricao({
                 <select
                   value={selectedOrganizacaoId}
                   onChange={(e) => setSelectedOrganizacaoId(e.target.value)}
-                  className="w-full rounded-lg border border-zinc-300 bg-white px-2.5 py-1.5 text-xs text-zinc-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+                  className="w-full rounded-lg border border-zinc-300 bg-white px-2.5 py-1.5 text-xs text-zinc-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 cursor-pointer"
                 >
                   <option value="">Todas as Organizações</option>
                   {organizacoes.map((org) => (
@@ -234,7 +234,7 @@ export function ModalLinksInscricao({
               <select
                 value={selectedNucleoId}
                 onChange={(e) => setSelectedNucleoId(e.target.value)}
-                className="w-full rounded-lg border border-zinc-300 bg-white px-2.5 py-1.5 text-xs text-zinc-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+                className="w-full rounded-lg border border-zinc-300 bg-white px-2.5 py-1.5 text-xs text-zinc-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 cursor-pointer"
               >
                 <option value="">Todos os Núcleos</option>
                 {nucleos.map((n) => (
@@ -249,7 +249,7 @@ export function ModalLinksInscricao({
               <select
                 value={selectedAtividadeId}
                 onChange={(e) => setSelectedAtividadeId(e.target.value)}
-                className="w-full rounded-lg border border-zinc-300 bg-white px-2.5 py-1.5 text-xs text-zinc-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+                className="w-full rounded-lg border border-zinc-300 bg-white px-2.5 py-1.5 text-xs text-zinc-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 cursor-pointer"
               >
                 <option value="">Todas as Atividades</option>
                 {atividades.map((a) => (
@@ -264,7 +264,7 @@ export function ModalLinksInscricao({
               <select
                 value={selectedTurmaId}
                 onChange={(e) => setSelectedTurmaId(e.target.value)}
-                className="w-full rounded-lg border border-zinc-300 bg-white px-2.5 py-1.5 text-xs text-zinc-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+                className="w-full rounded-lg border border-zinc-300 bg-white px-2.5 py-1.5 text-xs text-zinc-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 cursor-pointer"
               >
                 <option value="">Todas as Turmas</option>
                 {turmas.map((t) => (
@@ -302,7 +302,7 @@ export function ModalLinksInscricao({
         </div>
 
         {/* Modal List */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-6">
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-zinc-50/30">
           {totalEncontrados === 0 ? (
             <div className="py-12 text-center text-xs text-zinc-400">
               Nenhum link de inscrição encontrado para os filtros aplicados.
@@ -311,12 +311,12 @@ export function ModalLinksInscricao({
             <>
               {/* TURMAS SECTION */}
               {listTurmas.length > 0 && (
-                <div>
-                  <div className="flex items-center gap-2 mb-2 pb-1 border-b border-zinc-100 text-xs font-extrabold uppercase tracking-wider text-sky-700">
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center gap-2 pb-1 border-b border-zinc-200 text-xs font-extrabold uppercase tracking-wider text-sky-700">
                     <Users className="h-4 w-4" />
                     <span>Turmas ({listTurmas.length})</span>
                   </div>
-                  <div className="divide-y divide-zinc-100">
+                  <div className="flex flex-col gap-3">
                     {listTurmas.map((t) => {
                       const url = `${baseUrl}/inscricao/turma/${t.id}`;
                       const isCopied = copiedId === t.id;
@@ -326,61 +326,71 @@ export function ModalLinksInscricao({
                       const obj = org?.objetoId ? objMap.get(org.objetoId) : undefined;
 
                       return (
-                        <div key={t.id} className="py-3 flex items-center justify-between gap-4 first:pt-0 last:pb-0">
-                          <div>
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <span className="font-bold text-sm text-zinc-900">{t.nome}</span>
-                              {t.atividade?.nome && (
-                                <span className="text-[10px] bg-sky-50 text-sky-700 px-2 py-0.5 rounded-full font-bold">
-                                  {t.atividade.nome}
-                                </span>
-                              )}
-                              {t.nucleo?.identificacao && (
-                                <span className="text-[10px] bg-zinc-100 text-zinc-600 px-2 py-0.5 rounded-full font-medium">
-                                  {t.nucleo.identificacao}
-                                </span>
-                              )}
-                              {org?.nome && (
-                                <span className="text-[10px] bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full font-semibold">
-                                  {org.nome}
-                                </span>
-                              )}
-                              {obj?.nome && (
-                                <span className="text-[10px] bg-purple-50 text-purple-700 px-2 py-0.5 rounded-full font-semibold">
-                                  {obj.nome}
-                                </span>
+                        <div key={t.id} className="p-4 rounded-xl border border-zinc-200/90 bg-white hover:border-sky-300 hover:shadow-xs transition-all flex flex-col gap-3">
+                          {/* Top Row: Title & Action Buttons */}
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="flex flex-col gap-1">
+                              <h4 className="font-extrabold text-sm text-zinc-900 leading-snug">{t.nome}</h4>
+                              {profsText && (
+                                <div className="flex items-center gap-1.5 text-xs text-zinc-600">
+                                  <User className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
+                                  <span>Professor: <strong className="text-zinc-800 font-semibold">{profsText}</strong></span>
+                                </div>
                               )}
                             </div>
-                            {profsText && (
-                              <div className="flex items-center gap-1.5 text-xs text-zinc-500 mt-1">
-                                <User className="h-3 w-3 text-zinc-400 shrink-0" />
-                                <span>Prof: <strong className="text-zinc-700">{profsText}</strong></span>
-                              </div>
-                            )}
-                            <span className="text-[11px] font-mono text-zinc-400 block truncate max-w-md mt-0.5">{url}</span>
+
+                            <div className="flex items-center gap-2 shrink-0">
+                              <button
+                                type="button"
+                                onClick={() => copiarParaTransferencia(url, t.id)}
+                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                                  isCopied
+                                    ? "bg-emerald-600 text-white shadow-xs"
+                                    : "bg-sky-50 text-sky-700 hover:bg-sky-100 border border-sky-200"
+                                }`}
+                              >
+                                {isCopied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                                <span>{isCopied ? "Copiado!" : "Copiar Link"}</span>
+                              </button>
+                              <a
+                                href={url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="p-1.5 text-zinc-400 hover:text-sky-600 hover:bg-zinc-100 rounded-lg transition-colors"
+                                title="Abrir página em nova guia"
+                              >
+                                <ExternalLink className="h-4 w-4" />
+                              </a>
+                            </div>
                           </div>
-                          <div className="flex items-center gap-2 shrink-0">
-                            <button
-                              type="button"
-                              onClick={() => copiarParaTransferencia(url, t.id)}
-                              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                                isCopied
-                                  ? "bg-green-600 text-white"
-                                  : "bg-sky-50 text-sky-700 hover:bg-sky-100"
-                              }`}
-                            >
-                              {isCopied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
-                              <span>{isCopied ? "Copiado!" : "Copiar Link"}</span>
-                            </button>
-                            <a
-                              href={url}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="p-1.5 text-zinc-400 hover:text-sky-600 transition-colors"
-                              title="Abrir página em nova guia"
-                            >
-                              <ExternalLink className="h-4 w-4" />
-                            </a>
+
+                          {/* Middle Row: Hierarchical Badges */}
+                          <div className="flex items-center gap-2 flex-wrap text-[11px]">
+                            {t.atividade?.nome && (
+                              <span className="inline-flex items-center gap-1 bg-sky-50 text-sky-700 px-2.5 py-1 rounded-md font-semibold border border-sky-200">
+                                ⚽ {t.atividade.nome}
+                              </span>
+                            )}
+                            {t.nucleo?.identificacao && (
+                              <span className="inline-flex items-center gap-1 bg-zinc-100 text-zinc-700 px-2.5 py-1 rounded-md font-medium border border-zinc-200">
+                                📍 {t.nucleo.identificacao}
+                              </span>
+                            )}
+                            {org?.nome && (
+                              <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-800 px-2.5 py-1 rounded-md font-medium border border-emerald-200">
+                                🏛️ {org.nome}
+                              </span>
+                            )}
+                            {obj?.nome && (
+                              <span className="inline-flex items-center gap-1 bg-purple-50 text-purple-800 px-2.5 py-1 rounded-md font-medium border border-purple-200">
+                                📄 {obj.nome}
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Bottom Row: Link Box */}
+                          <div className="flex items-center rounded-lg bg-zinc-50 border border-zinc-200 px-3 py-1.5">
+                            <span className="text-xs font-mono text-zinc-500 truncate">{url}</span>
                           </div>
                         </div>
                       );
@@ -391,53 +401,66 @@ export function ModalLinksInscricao({
 
               {/* NÚCLEOS SECTION */}
               {listNucleos.length > 0 && (
-                <div>
-                  <div className="flex items-center gap-2 mb-2 pb-1 border-b border-zinc-100 text-xs font-extrabold uppercase tracking-wider text-sky-700">
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center gap-2 pb-1 border-b border-zinc-200 text-xs font-extrabold uppercase tracking-wider text-sky-700">
                     <Building2 className="h-4 w-4" />
                     <span>Núcleos ({listNucleos.length})</span>
                   </div>
-                  <div className="divide-y divide-zinc-100">
+                  <div className="flex flex-col gap-3">
                     {listNucleos.map((n) => {
                       const url = `${baseUrl}/inscricao/nucleo/${n.id}`;
                       const isCopied = copiedId === n.id;
                       const org = n.organizacaoId ? orgMap.get(n.organizacaoId) : undefined;
+                      const obj = org?.objetoId ? objMap.get(org.objetoId) : undefined;
 
                       return (
-                        <div key={n.id} className="py-3 flex items-center justify-between gap-4 first:pt-0 last:pb-0">
-                          <div>
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <span className="font-bold text-sm text-zinc-900">{n.identificacao}</span>
-                              {org?.nome && (
-                                <span className="text-[10px] bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full font-semibold">
-                                  {org.nome}
-                                </span>
-                              )}
+                        <div key={n.id} className="p-4 rounded-xl border border-zinc-200/90 bg-white hover:border-sky-300 hover:shadow-xs transition-all flex flex-col gap-3">
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="flex flex-col gap-1">
+                              <h4 className="font-extrabold text-sm text-zinc-900 leading-snug">{n.identificacao}</h4>
+                              <span className="text-xs text-zinc-500">{[n.bairro, n.cidade].filter(Boolean).join(" · ")}</span>
                             </div>
-                            <span className="text-xs text-zinc-500 block">{[n.bairro, n.cidade].filter(Boolean).join(" · ")}</span>
-                            <span className="text-[11px] font-mono text-zinc-400 block truncate max-w-md mt-0.5">{url}</span>
+
+                            <div className="flex items-center gap-2 shrink-0">
+                              <button
+                                type="button"
+                                onClick={() => copiarParaTransferencia(url, n.id)}
+                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                                  isCopied
+                                    ? "bg-emerald-600 text-white shadow-xs"
+                                    : "bg-sky-50 text-sky-700 hover:bg-sky-100 border border-sky-200"
+                                }`}
+                              >
+                                {isCopied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                                <span>{isCopied ? "Copiado!" : "Copiar Link"}</span>
+                              </button>
+                              <a
+                                href={url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="p-1.5 text-zinc-400 hover:text-sky-600 hover:bg-zinc-100 rounded-lg transition-colors"
+                                title="Abrir página em nova guia"
+                              >
+                                <ExternalLink className="h-4 w-4" />
+                              </a>
+                            </div>
                           </div>
-                          <div className="flex items-center gap-2 shrink-0">
-                            <button
-                              type="button"
-                              onClick={() => copiarParaTransferencia(url, n.id)}
-                              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                                isCopied
-                                  ? "bg-green-600 text-white"
-                                  : "bg-sky-50 text-sky-700 hover:bg-sky-100"
-                              }`}
-                            >
-                              {isCopied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
-                              <span>{isCopied ? "Copiado!" : "Copiar Link"}</span>
-                            </button>
-                            <a
-                              href={url}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="p-1.5 text-zinc-400 hover:text-sky-600 transition-colors"
-                              title="Abrir página em nova guia"
-                            >
-                              <ExternalLink className="h-4 w-4" />
-                            </a>
+
+                          <div className="flex items-center gap-2 flex-wrap text-[11px]">
+                            {org?.nome && (
+                              <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-800 px-2.5 py-1 rounded-md font-medium border border-emerald-200">
+                                🏛️ {org.nome}
+                              </span>
+                            )}
+                            {obj?.nome && (
+                              <span className="inline-flex items-center gap-1 bg-purple-50 text-purple-800 px-2.5 py-1 rounded-md font-medium border border-purple-200">
+                                📄 {obj.nome}
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="flex items-center rounded-lg bg-zinc-50 border border-zinc-200 px-3 py-1.5">
+                            <span className="text-xs font-mono text-zinc-500 truncate">{url}</span>
                           </div>
                         </div>
                       );
@@ -448,43 +471,47 @@ export function ModalLinksInscricao({
 
               {/* ATIVIDADES SECTION */}
               {listAtividades.length > 0 && (
-                <div>
-                  <div className="flex items-center gap-2 mb-2 pb-1 border-b border-zinc-100 text-xs font-extrabold uppercase tracking-wider text-sky-700">
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center gap-2 pb-1 border-b border-zinc-200 text-xs font-extrabold uppercase tracking-wider text-sky-700">
                     <Activity className="h-4 w-4" />
                     <span>Atividades ({listAtividades.length})</span>
                   </div>
-                  <div className="divide-y divide-zinc-100">
+                  <div className="flex flex-col gap-3">
                     {listAtividades.map((a) => {
                       const url = `${baseUrl}/inscricao/atividade/${a.id}`;
                       const isCopied = copiedId === a.id;
                       return (
-                        <div key={a.id} className="py-3 flex items-center justify-between gap-4 first:pt-0 last:pb-0">
-                          <div>
-                            <span className="font-bold text-sm text-zinc-900 block">{a.nome}</span>
-                            <span className="text-[11px] font-mono text-zinc-400 block truncate max-w-md mt-0.5">{url}</span>
+                        <div key={a.id} className="p-4 rounded-xl border border-zinc-200/90 bg-white hover:border-sky-300 hover:shadow-xs transition-all flex flex-col gap-3">
+                          <div className="flex items-start justify-between gap-4">
+                            <h4 className="font-extrabold text-sm text-zinc-900 leading-snug">{a.nome}</h4>
+
+                            <div className="flex items-center gap-2 shrink-0">
+                              <button
+                                type="button"
+                                onClick={() => copiarParaTransferencia(url, a.id)}
+                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                                  isCopied
+                                    ? "bg-emerald-600 text-white shadow-xs"
+                                    : "bg-sky-50 text-sky-700 hover:bg-sky-100 border border-sky-200"
+                                }`}
+                              >
+                                {isCopied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                                <span>{isCopied ? "Copiado!" : "Copiar Link"}</span>
+                              </button>
+                              <a
+                                href={url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="p-1.5 text-zinc-400 hover:text-sky-600 hover:bg-zinc-100 rounded-lg transition-colors"
+                                title="Abrir página em nova guia"
+                              >
+                                <ExternalLink className="h-4 w-4" />
+                              </a>
+                            </div>
                           </div>
-                          <div className="flex items-center gap-2 shrink-0">
-                            <button
-                              type="button"
-                              onClick={() => copiarParaTransferencia(url, a.id)}
-                              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                                isCopied
-                                  ? "bg-green-600 text-white"
-                                  : "bg-sky-50 text-sky-700 hover:bg-sky-100"
-                              }`}
-                            >
-                              {isCopied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
-                              <span>{isCopied ? "Copiado!" : "Copiar Link"}</span>
-                            </button>
-                            <a
-                              href={url}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="p-1.5 text-zinc-400 hover:text-sky-600 transition-colors"
-                              title="Abrir página em nova guia"
-                            >
-                              <ExternalLink className="h-4 w-4" />
-                            </a>
+
+                          <div className="flex items-center rounded-lg bg-zinc-50 border border-zinc-200 px-3 py-1.5">
+                            <span className="text-xs font-mono text-zinc-500 truncate">{url}</span>
                           </div>
                         </div>
                       );
