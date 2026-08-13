@@ -1,0 +1,475 @@
+[
+  {
+    "id": 1,
+    "modulo": "1. Organizações & Projetos",
+    "tabela": "organizacoes",
+    "titulo": "Cadastrar Organização com CNPJ Válido",
+    "descricao": "Cadastrar nova entidade gestora com Razão Social, CNPJ válido, Responsável, Telefone e E-mail.",
+    "passoAPasso": [
+      "1. Acesse o menu lateral e clique em 'Organizações' (/organizacoes).",
+      "2. Clique no botão '+ Nova Organização' no canto superior direito.",
+      "3. Preencha a Razão Social (Ex: Instituto Esporte e Vida).",
+      "4. Preencha o CNPJ válido com 14 dígitos (Ex: 12.345.678/0001-90).",
+      "5. Informe o Nome do Responsável, Telefone e E-mail de contato.",
+      "6. Clique em 'Salvar Organização' e verifique se o registro aparece na listagem com status 'Ativo'."
+    ],
+    "status": "pendente"
+  },
+  {
+    "id": 2,
+    "modulo": "1. Organizações & Projetos",
+    "tabela": "organizacoes",
+    "titulo": "Validação de CNPJ Inválido",
+    "descricao": "Tentar cadastrar organização com CNPJ incorreto ou incompleto e verificar o bloqueio de envio.",
+    "passoAPasso": [
+      "1. Abra a tela de cadastro de organização (/organizacoes/novo).",
+      "2. Digite um CNPJ com dígitos verificadores incorretos (Ex: 11.111.111/1111-11).",
+      "3. Tente salvar a página.",
+      "4. Confirme se o sistema bloqueia o envio e exibe a mensagem de erro de CNPJ inválido."
+    ],
+    "status": "pendente"
+  },
+  {
+    "id": 3,
+    "modulo": "1. Organizações & Projetos",
+    "tabela": "organizacoes",
+    "titulo": "Exclusão Lógica de Organização",
+    "descricao": "Excluir organização e confirmar se o campo deleted_at é gravado no Supabase mantendo o registro.",
+    "passoAPasso": [
+      "1. Na lista de organizações, localize uma organização de teste.",
+      "2. Clique no ícone de lixeira ou opção 'Excluir'.",
+      "3. Confirme a exclusão no modal.",
+      "4. Verifique se o registro desapareceu da tela, mas permanece no banco Supabase com o campo deleted_at preenchido."
+    ],
+    "status": "pendente"
+  },
+  {
+    "id": 4,
+    "modulo": "1. Organizações & Projetos",
+    "tabela": "objetos",
+    "titulo": "Criar Objeto / Termo de Fomento",
+    "descricao": "Cadastrar projeto associado a uma organizacao_id existente com Código do Objeto e Código do Programa.",
+    "passoAPasso": [
+      "1. Acesse o menu 'Objetos / Projetos' (/objetos).",
+      "2. Clique em '+ Novo Objeto'.",
+      "3. Selecione a Organização Gestora vinculada.",
+      "4. Preencha o Nome do Objeto, Código do Objeto e Código do Programa.",
+      "5. Defina as datas de início e término da vigência e clique em 'Salvar'."
+    ],
+    "status": "pendente"
+  },
+  {
+    "id": 5,
+    "modulo": "1. Organizações & Projetos",
+    "tabela": "objetos",
+    "titulo": "Validação de Vigência do Objeto",
+    "descricao": "Inserir data_inicio posterior a data_termino e validar alerta de inconsistência de datas.",
+    "passoAPasso": [
+      "1. No formulário de objeto (/objetos/novo), preencha Data de Início como '31/12/2026'.",
+      "2. Preencha Data de Término como '01/01/2026' (anterior ao início).",
+      "3. Tente salvar e confirme a mensagem de erro impedindo datas inválidas."
+    ],
+    "status": "pendente"
+  },
+  {
+    "id": 6,
+    "modulo": "2. Núcleos & Patrimônio",
+    "tabela": "nucleos",
+    "titulo": "Cadastrar Núcleo de Atendimento",
+    "descricao": "Criar núcleo (Identificação, Endereço, Cidade, Bairro, Disponível para Pré-inscrição).",
+    "passoAPasso": [
+      "1. Acesse o menu 'Núcleos' (/nucleos) e clique em '+ Novo Núcleo'.",
+      "2. Digite a Identificação (Ex: Núcleo Esportivo Taquaralto).",
+      "3. Preencha o Endereço, Bairro, Cidade e UF.",
+      "4. Marque a opção 'Disponível para Pré-inscrição' e clique em 'Salvar'."
+    ],
+    "status": "pendente"
+  },
+  {
+    "id": 7,
+    "modulo": "2. Núcleos & Patrimônio",
+    "tabela": "nucleos",
+    "titulo": "Toggle de Pré-Inscrição no Núcleo",
+    "descricao": "Ativar disponivel_pre_inscricao = true e conferir se o núcleo é exibido na lista pública.",
+    "passoAPasso": [
+      "1. Edite um núcleo existente (/nucleos/[id]/editar).",
+      "2. Marque a opção 'Disponível para Pré-inscrição' como ativa.",
+      "3. Acesse a página pública de inscrição (/inscricao) e confirme que o núcleo aparece na listagem pública."
+    ],
+    "status": "pendente"
+  },
+  {
+    "id": 8,
+    "modulo": "2. Núcleos & Patrimônio",
+    "tabela": "equipamentos",
+    "titulo": "Cadastrar Equipamento / Estoque",
+    "descricao": "Registrar material esportivo com Nome, Categoria, Quantidade, Estado de Conservação e Núcleo.",
+    "passoAPasso": [
+      "1. Acesse a tela de 'Equipamentos' (/equipamentos) e clique em '+ Novo Equipamento'.",
+      "2. Informe o Nome do Material (Ex: Bola de Futebol Campo Penalty).",
+      "3. Defina a Quantidade (Ex: 30) e a Conservação ('Novo' ou 'Bom').",
+      "4. Selecione o Núcleo responsável e salve."
+    ],
+    "status": "pendente"
+  },
+  {
+    "id": 9,
+    "modulo": "3. Atividades & Turmas",
+    "tabela": "atividades",
+    "titulo": "Criar Atividade com Faixa Etária",
+    "descricao": "Cadastrar modalidade esportiva definindo idade_minima = 6 e idade_maxima = 17.",
+    "passoAPasso": [
+      "1. Acesse 'Atividades' (/atividades) e clique em '+ Nova Atividade'.",
+      "2. Digite o nome da Modalidade (Ex: Escolhinha de Futebol Infantil).",
+      "3. Defina Idade Mínima = 6 e Idade Máxima = 17.",
+      "4. Selecione o Núcleo correspondente e salve."
+    ],
+    "status": "pendente"
+  },
+  {
+    "id": 10,
+    "modulo": "3. Atividades & Turmas",
+    "tabela": "atividade_turnos",
+    "titulo": "Turnos da Atividade",
+    "descricao": "Cadastrar turnos de atendimento com hora_inicio anterior a hora_fim.",
+    "passoAPasso": [
+      "1. Na edição da atividade, adicione turnos de funcionamento (Ex: Manhã: 08:00 às 11:00).",
+      "2. Verifique se o sistema exige que o horário inicial seja menor que o horário final."
+    ],
+    "status": "pendente"
+  },
+  {
+    "id": 11,
+    "modulo": "3. Atividades & Turmas",
+    "tabela": "atividade_perguntas",
+    "titulo": "Questionário Personalizado por Modalidade",
+    "descricao": "Criar perguntas adicionais (texto, seleção, sim_nao) e verificar se aparecem no formulário.",
+    "passoAPasso": [
+      "1. Na aba de perguntas da atividade, clique em '+ Adicionar Pergunta'.",
+      "2. Digite a pergunta (Ex: Já praticou futebol antes?).",
+      "3. Marque obrigatoriedade e salve.",
+      "4. Acesse a inscrição da modalidade e confirme a presença da pergunta."
+    ],
+    "status": "pendente"
+  },
+  {
+    "id": 12,
+    "modulo": "3. Atividades & Turmas",
+    "tabela": "turmas",
+    "titulo": "Criar Turma e Gestão de Vagas",
+    "descricao": "Cadastrar turma com vagas_totais = 20 e associar ao núcleo e atividade.",
+    "passoAPasso": [
+      "1. Acesse 'Turmas' (/turmas) e clique em '+ Nova Turma'.",
+      "2. Digite o Nome da Turma (Ex: Turma Sub-13 Manhã).",
+      "3. Informe Vagas Totais = 20.",
+      "4. Defina o Status como 'Aberta' e salve."
+    ],
+    "status": "pendente"
+  },
+  {
+    "id": 13,
+    "modulo": "3. Atividades & Turmas",
+    "tabela": "turma_horarios",
+    "titulo": "Slots de Horários da Turma",
+    "descricao": "Adicionar horários semanais (Segunda, Quarta, Sexta) na grade da turma.",
+    "passoAPasso": [
+      "1. Na edição da turma (/turmas/[id]/editar), acesse a grade de horários.",
+      "2. Adicione horários para Segunda, Quarta e Sexta (08:00 - 09:30).",
+      "3. Salve e verifique a exibição formatada na listagem."
+    ],
+    "status": "pendente"
+  },
+  {
+    "id": 14,
+    "modulo": "3. Atividades & Turmas",
+    "tabela": "turma_responsaveis",
+    "titulo": "Alocar Professor Responsável na Turma",
+    "descricao": "Vincular funcionário com status professor_responsavel = true na turma.",
+    "passoAPasso": [
+      "1. Na turma, selecione o professor responsável na lista de funcionários.",
+      "2. Salve a alocação.",
+      "3. Logue como esse professor e confirme que a turma aparece na agenda dele (/professor/agenda)."
+    ],
+    "status": "pendente"
+  },
+  {
+    "id": 15,
+    "modulo": "4. Beneficiários & Autoinscrição",
+    "tabela": "beneficiarios",
+    "titulo": "Autoinscrição Pública Aluno Menor (<18 anos)",
+    "descricao": "Preencher autoinscrição para aluno menor e validar exibição obrigatória da Seção do Responsável.",
+    "passoAPasso": [
+      "1. Acesse o link de autoinscrição pública (/inscricao/turma/[turmaId]).",
+      "2. Digite uma Data de Nascimento de um menor de 18 anos (Ex: 10/05/2012).",
+      "3. Observe que o badge 'Beneficiário possui 13 anos' é exibido.",
+      "4. Confirme que a Seção '2. Dados do Responsável Legal' surge automaticamente exigindo preenchimento."
+    ],
+    "status": "pendente"
+  },
+  {
+    "id": 16,
+    "modulo": "4. Beneficiários & Autoinscrição",
+    "tabela": "beneficiarios",
+    "titulo": "Autoinscrição Pública Aluno PCD",
+    "descricao": "Marcar PCD = Sim e validar abertura obrigatória da Seção do Responsável e Tipo de Deficiência.",
+    "passoAPasso": [
+      "1. No formulário de autoinscrição pública, insira data de nascimento de um adulto (18+ anos).",
+      "2. A seção do responsável deve permanecer oculta.",
+      "3. Altere a opção PCD para 'Sim'.",
+      "4. Confirme que o campo 'Tipo de Deficiência' e a 'Seção do Responsável Legal' surgem imediatamente."
+    ],
+    "status": "pendente"
+  },
+  {
+    "id": 17,
+    "modulo": "4. Beneficiários & Autoinscrição",
+    "tabela": "beneficiarios",
+    "titulo": "Documento Prefix Select (RG x Certidão)",
+    "descricao": "Alternar seletor prefixado: RG (máscara) vs Certidão (32 dígitos CNJ pós-2010 ou Termo/Livro/Folha pré-2010).",
+    "passoAPasso": [
+      "1. No campo Documento do beneficiário, observe o dropdown [ RG v | ].",
+      "2. Com RG selecionado, digite o número e confirme a aplicação da máscara 00.000.000-0.",
+      "3. Mude o dropdown para 'Certidão de Nasc.'.",
+      "4. Se nascimento >= 2010, confirme a exibição da caixa para Matrícula de 32 dígitos CNJ.",
+      "5. Se nascimento < 2010, confirme a exibição dos 3 campos (Termo, Livro, Folha)."
+    ],
+    "status": "pendente"
+  },
+  {
+    "id": 18,
+    "modulo": "4. Beneficiários & Autoinscrição",
+    "tabela": "beneficiarios",
+    "titulo": "Validação Matemática de CPF",
+    "descricao": "Tentar submeter CPF com dígitos verificadores incorretos e confirmar bloqueio.",
+    "passoAPasso": [
+      "1. Preencha o CPF do beneficiário ou responsável com um número inválido (Ex: 111.111.111-11).",
+      "2. Clique em 'Confirmar Inscrição do Beneficiário'.",
+      "3. Confirme que a validação interrompe o envio com um alerta de erro claro."
+    ],
+    "status": "pendente"
+  },
+  {
+    "id": 19,
+    "modulo": "4. Beneficiários & Autoinscrição",
+    "tabela": "beneficiarios",
+    "titulo": "Auto-completar CEP via ViaCEP API",
+    "descricao": "Digitar CEP válido, desfocar o campo e confirmar preenchimento automático de Logradouro, Bairro, Cidade e UF.",
+    "passoAPasso": [
+      "1. Na seção Endereço Residencial, digite um CEP válido (Ex: 77000-000).",
+      "2. Saia do campo (blur / aperte TAB).",
+      "3. Observe o indicador 'Buscando...' e confirme se Logradouro, Bairro, Cidade e Estado preenchem automaticamente."
+    ],
+    "status": "pendente"
+  },
+  {
+    "id": 20,
+    "modulo": "4. Beneficiários & Autoinscrição",
+    "tabela": "beneficiario_parq",
+    "titulo": "PAR-Q Padrão NÃO Colapsado",
+    "descricao": "Verificar se as 10 perguntas vêm pré-selecionadas em NÃO e o acordeão vêm fechado por padrão.",
+    "passoAPasso": [
+      "1. Verifique a seção '5. PAR-Q'. Ela deve vir colapsada (fechada) por padrão.",
+      "2. Clique para expandir a seção.",
+      "3. Confirme que todas as 10 perguntas estão pré-selecionadas com a resposta 'NÃO'."
+    ],
+    "status": "pendente"
+  },
+  {
+    "id": 21,
+    "modulo": "4. Beneficiários & Autoinscrição",
+    "tabela": "beneficiario_anexos",
+    "titulo": "Upload e Download de Anexos",
+    "descricao": "Fazer upload de documento no perfil do beneficiário e testar visualização/download.",
+    "passoAPasso": [
+      "1. No painel administrativo, abra o perfil de um beneficiário (/beneficiarios/[id]).",
+      "2. Acesse a aba 'Documentos / Anexos'.",
+      "3. Faça upload de um arquivo PDF ou Imagem.",
+      "4. Clique em 'Baixar / Visualizar' e confirme a abertura correta do arquivo."
+    ],
+    "status": "pendente"
+  },
+  {
+    "id": 22,
+    "modulo": "4. Beneficiários & Autoinscrição",
+    "tabela": "beneficiario_turmas",
+    "titulo": "Matrícula via RPC matricular_beneficiario",
+    "descricao": "Executar procedimento de matrícula e validar decremento de vaga disponível na turma.",
+    "passoAPasso": [
+      "1. Vincule um beneficiário a uma turma com 5 vagas disponíveis.",
+      "2. Confirme a efetivação da matrícula.",
+      "3. Atualize a tela da turma e verifique se as vagas disponíveis caíram para 4."
+    ],
+    "status": "pendente"
+  },
+  {
+    "id": 23,
+    "modulo": "5. Inscrições & Atendimentos",
+    "tabela": "inscricoes",
+    "titulo": "Aprovação de Inscrição Pendente",
+    "descricao": "Aprovar inscrição pública pendente e validar transição de status e criação de vínculo.",
+    "passoAPasso": [
+      "1. Acesse o menu 'Inscrições' (/inscricoes) e filtre por 'Pendente'.",
+      "2. Abra a solicitação recebida via formulário público.",
+      "3. Clique em 'Aprovar Inscrição'.",
+      "4. Confirme que o status muda para 'Aprovada' e o beneficiário entra na turma."
+    ],
+    "status": "pendente"
+  },
+  {
+    "id": 24,
+    "modulo": "5. Inscrições & Atendimentos",
+    "tabela": "inscricoes",
+    "titulo": "Fila de Espera em Turma Lotada",
+    "descricao": "Inscrever beneficiário quando as vagas encerrarem e confirmar entrada em status reservada/fila.",
+    "passoAPasso": [
+      "1. Selecione uma turma com 0 vagas disponíveis que permita fila de espera.",
+      "2. Submeta uma nova inscrição pública para essa turma.",
+      "3. Confirme que o sistema aceita o envio e grava o status como 'reservada / fila de espera'."
+    ],
+    "status": "pendente"
+  },
+  {
+    "id": 25,
+    "modulo": "5. Inscrições & Atendimentos",
+    "tabela": "confirmacoes_atividade",
+    "titulo": "Confirmação Periódica de Atividade",
+    "descricao": "Registrar confirmações de frequência dos beneficiários.",
+    "passoAPasso": [
+      "1. Acesse a tela de relatórios ou atendimentos.",
+      "2. Registre a confirmação periódica do beneficiário na modalidade.",
+      "3. Verifique a gravação do registro."
+    ],
+    "status": "pendente"
+  },
+  {
+    "id": 26,
+    "modulo": "6. Recursos Humanos & Ponto",
+    "tabela": "funcionarios",
+    "titulo": "Cadastro de Professor e Busca Dinâmica",
+    "descricao": "Cadastrar funcionário com professor_responsavel = true e testar busca automática em 300ms.",
+    "passoAPasso": [
+      "1. Acesse 'Funcionários' (/funcionarios) e clique em '+ Novo Funcionário'.",
+      "2. Preencha Nome, CPF, Função e marque 'Professor Responsável = Sim'.",
+      "3. Salve e teste a busca em tempo real digitando o nome do professor no filtro (sem botão de filtrar)."
+    ],
+    "status": "pendente"
+  },
+  {
+    "id": 27,
+    "modulo": "6. Recursos Humanos & Ponto",
+    "tabela": "funcionario_jornada",
+    "titulo": "Configurar Jornada Semanal",
+    "descricao": "Definir horário de trabalho e dias da semana do funcionário.",
+    "passoAPasso": [
+      "1. Na página de detalhes do funcionário, acesse a aba 'Jornada de Trabalho'.",
+      "2. Cadastre a carga horária semanal (Ex: Segunda a Sexta, 40h semanais).",
+      "3. Salve e confirme a exibição."
+    ],
+    "status": "pendente"
+  },
+  {
+    "id": 28,
+    "modulo": "6. Recursos Humanos & Ponto",
+    "tabela": "registros_ponto",
+    "titulo": "Bater Ponto Eletrônico",
+    "descricao": "Simular batida de ponto (entrada, almoço, saída) e validar cálculo do espelho de ponto.",
+    "passoAPasso": [
+      "1. Acesse a tela de ponto (/ponto).",
+      "2. Informe a matrícula do funcionário e registre o ponto de entrada.",
+      "3. Acesse a tela do espelho de ponto (/funcionarios/[id]/ponto) e confirme a batida registrada."
+    ],
+    "status": "pendente"
+  },
+  {
+    "id": 29,
+    "modulo": "6. Recursos Humanos & Ponto",
+    "tabela": "registros_presenca",
+    "titulo": "Chamada Diária da Turma pelo Professor",
+    "descricao": "Acessar /professor/chamada, selecionar turma e lançar Presença/Falta nos alunos.",
+    "passoAPasso": [
+      "1. Logue com a conta do professor e acesse '/professor/chamada'.",
+      "2. Selecione a turma e a data de hoje.",
+      "3. Marque Presença para alguns alunos e Falta para outros.",
+      "4. Clique em 'Salvar Chamada' e verifique o resumo de frequência."
+    ],
+    "status": "pendente"
+  },
+  {
+    "id": 30,
+    "modulo": "7. Segurança & Autenticação",
+    "tabela": "usuarios",
+    "titulo": "Autenticação e Busca Dinâmica de Usuários",
+    "descricao": "Logar no sistema, filtrar usuários com busca automática em 300ms.",
+    "passoAPasso": [
+      "1. Acesse a gestão de usuários (/usuarios).",
+      "2. Teste o campo de busca em tempo real com debounce de 300ms.",
+      "3. Confirme que a lista filtra os usuários automaticamente sem necessidade de clicar no botão."
+    ],
+    "status": "pendente"
+  },
+  {
+    "id": 31,
+    "modulo": "7. Segurança & Autenticação",
+    "tabela": "perfis",
+    "titulo": "Testar Perfis de Acesso (Admin vs Professor)",
+    "descricao": "Alternar entre perfil Administrador e Professor e checar visibilidade dos menus.",
+    "passoAPasso": [
+      "1. Faça login como usuário com Perfil 'Professor'.",
+      "2. Verifique se os menus administrativos (Organizações, Configurações, RH) estão ocultos.",
+      "3. Faça login como 'Administrador' e confirme acesso total."
+    ],
+    "status": "pendente"
+  },
+  {
+    "id": 32,
+    "modulo": "7. Segurança & Autenticação",
+    "tabela": "perfil_permissoes",
+    "titulo": "Bloqueio por Permissão has_permissao",
+    "descricao": "Remover permissão de edição e verificar bloqueio de botão e endpoint.",
+    "passoAPasso": [
+      "1. No painel de controle de permissões (/usuarios/perfis), desmarque a permissão 'Editar Beneficiários' de um perfil.",
+      "2. Acesse a conta vinculada a esse perfil e confirme que o botão 'Editar' é desabilitado/ocultado."
+    ],
+    "status": "pendente"
+  },
+  {
+    "id": 33,
+    "modulo": "7. Segurança & Autenticação",
+    "tabela": "refresh_tokens",
+    "titulo": "Renovação e Logout de Sessão",
+    "descricao": "Realizar logout e verificar invalidação do token e redirecionamento para login.",
+    "passoAPasso": [
+      "1. No menu superior, clique no perfil e selecione 'Sair'.",
+      "2. Confirme o encerramento da sessão e redirecionamento para /login.",
+      "3. Tente acessar uma URL protegida (/beneficiarios) e confirme se é redirecionado de volta ao login."
+    ],
+    "status": "pendente"
+  },
+  {
+    "id": 34,
+    "modulo": "7. Segurança & Autenticação",
+    "tabela": "audit_log",
+    "titulo": "Trilha de Auditoria (Audit Log)",
+    "descricao": "Alterar um registro e verificar se uma linha é criada em audit_log com usuário e dados alterados.",
+    "passoAPasso": [
+      "1. Realize a edição de qualquer cadastro no sistema (Ex: alterar telefone de um beneficiário).",
+      "2. Acesse a tabela `audit_log` no Supabase ou relatório de auditoria.",
+      "3. Confirme que existe uma linha contendo a ação, timestamp, ID do usuário e os dados alterados."
+    ],
+    "status": "pendente"
+  },
+  {
+    "id": 35,
+    "modulo": "7. Segurança & Autenticação",
+    "tabela": "configuracoes",
+    "titulo": "Configurações Globais do Sistema",
+    "descricao": "Atualizar logotipo/nome do sistema nas configurações e validar alteração no cabeçalho.",
+    "passoAPasso": [
+      "1. Acesse 'Configurações' (/configuracoes).",
+      "2. Altere o Nome do Projeto/Sistema e envie um novo Logotipo.",
+      "3. Salve as alterações.",
+      "4. Atualize a página e confirme o novo nome e logo aplicados no cabeçalho do sistema."
+    ],
+    "status": "pendente"
+  }
+]

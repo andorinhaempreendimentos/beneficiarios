@@ -151,15 +151,15 @@ export default function DashboardPage() {
 
       {loading && <div className="px-1 text-sm text-zinc-400">Carregando…</div>}
 
-      {/* Estatísticas detalhadas */}
+      {/* Estatísticas detalhadas em ordem hierárquica */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
 
-        {/* Beneficiários */}
+        {/* 1. Objetos */}
         <Card>
           <CardHeader className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-100">Beneficiários</h3>
+            <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-100">Objetos</h3>
             <Link
-              href="/beneficiarios"
+              href="/objetos"
               className="inline-flex items-center rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-2.5 py-1 text-xs font-semibold text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors shadow-2xs"
             >
               Ver todos
@@ -168,25 +168,89 @@ export default function DashboardPage() {
           <CardBody className="flex flex-col gap-3">
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-lg bg-green-50 dark:bg-green-950/60 px-3 py-2.5">
-                <p className="text-xs text-green-700 dark:text-green-300">Ativos</p>
-                <p className="text-2xl font-bold text-green-700 dark:text-green-300">{r.beneficiariosAtivos}</p>
+                <p className="text-xs text-green-700 dark:text-green-300">Cadastrados</p>
+                <p className="text-2xl font-bold text-green-700 dark:text-green-300">{r.totalObjetos}</p>
               </div>
-              <div className="rounded-lg bg-zinc-50 dark:bg-zinc-800/80 px-3 py-2.5">
-                <p className="text-xs text-zinc-500 dark:text-zinc-400">Total cadastrado</p>
-                <p className="text-2xl font-bold text-zinc-700 dark:text-zinc-200">{r.totalBeneficiarios}</p>
+              <div className="rounded-lg bg-sky-50 dark:bg-sky-950/60 px-3 py-2.5">
+                <p className="text-xs text-sky-700 dark:text-sky-300">Vigentes</p>
+                <p className="text-2xl font-bold text-sky-700 dark:text-sky-300">{r.totalObjetos}</p>
               </div>
             </div>
             <Link
-              href="/beneficiarios/novo"
+              href="/objetos/novo"
               className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-3 py-2 text-sm font-medium text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors"
             >
-              <UserPlus className="h-4 w-4" />
-              Novo beneficiário
+              <Plus className="h-4 w-4" />
+              Novo objeto
             </Link>
           </CardBody>
         </Card>
 
-        {/* Turmas e vagas */}
+        {/* 2. Organizações */}
+        <Card>
+          <CardHeader className="flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-100">Organizações</h3>
+            <Link
+              href="/organizacoes"
+              className="inline-flex items-center rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-2.5 py-1 text-xs font-semibold text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors shadow-2xs"
+            >
+              Ver todas
+            </Link>
+          </CardHeader>
+          <CardBody className="flex flex-col gap-3">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-lg bg-green-50 dark:bg-green-950/60 px-3 py-2.5">
+                <p className="text-xs text-green-700 dark:text-green-300">Parceiras</p>
+                <p className="text-2xl font-bold text-green-700 dark:text-green-300">{r.totalOrganizacoes}</p>
+              </div>
+              <div className="rounded-lg bg-zinc-50 dark:bg-zinc-800/80 px-3 py-2.5">
+                <p className="text-xs text-zinc-500 dark:text-zinc-400">Ativas</p>
+                <p className="text-2xl font-bold text-zinc-700 dark:text-zinc-200">{r.totalOrganizacoes}</p>
+              </div>
+            </div>
+            <Link
+              href="/organizacoes/novo"
+              className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-3 py-2 text-sm font-medium text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors"
+            >
+              <Building2 className="h-4 w-4" />
+              Nova organização
+            </Link>
+          </CardBody>
+        </Card>
+
+        {/* 3. Núcleos */}
+        <Card>
+          <CardHeader className="flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-100">Núcleos</h3>
+            <Link
+              href="/nucleos"
+              className="inline-flex items-center rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-2.5 py-1 text-xs font-semibold text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors shadow-2xs"
+            >
+              Ver todos
+            </Link>
+          </CardHeader>
+          <CardBody className="flex flex-col gap-3">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-lg bg-green-50 dark:bg-green-950/60 px-3 py-2.5">
+                <p className="text-xs text-green-700 dark:text-green-300">Em operação</p>
+                <p className="text-2xl font-bold text-green-700 dark:text-green-300">{r.nucleosAtivos}</p>
+              </div>
+              <div className="rounded-lg bg-zinc-50 dark:bg-zinc-800/80 px-3 py-2.5">
+                <p className="text-xs text-zinc-500 dark:text-zinc-400">Total núcleos</p>
+                <p className="text-2xl font-bold text-zinc-700 dark:text-zinc-200">{r.totalNucleos}</p>
+              </div>
+            </div>
+            <Link
+              href="/nucleos/novo"
+              className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-3 py-2 text-sm font-medium text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors"
+            >
+              <Building2 className="h-4 w-4" />
+              Novo núcleo
+            </Link>
+          </CardBody>
+        </Card>
+
+        {/* 4. Turmas e vagas */}
         <Card>
           <CardHeader className="flex items-center justify-between">
             <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-100">Turmas e Vagas</h3>
@@ -222,7 +286,39 @@ export default function DashboardPage() {
           </CardBody>
         </Card>
 
-        {/* Funcionários */}
+        {/* 5. Beneficiários */}
+        <Card>
+          <CardHeader className="flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-100">Beneficiários</h3>
+            <Link
+              href="/beneficiarios"
+              className="inline-flex items-center rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-2.5 py-1 text-xs font-semibold text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors shadow-2xs"
+            >
+              Ver todos
+            </Link>
+          </CardHeader>
+          <CardBody className="flex flex-col gap-3">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-lg bg-green-50 dark:bg-green-950/60 px-3 py-2.5">
+                <p className="text-xs text-green-700 dark:text-green-300">Ativos</p>
+                <p className="text-2xl font-bold text-green-700 dark:text-green-300">{r.beneficiariosAtivos}</p>
+              </div>
+              <div className="rounded-lg bg-zinc-50 dark:bg-zinc-800/80 px-3 py-2.5">
+                <p className="text-xs text-zinc-500 dark:text-zinc-400">Total cadastrado</p>
+                <p className="text-2xl font-bold text-zinc-700 dark:text-zinc-200">{r.totalBeneficiarios}</p>
+              </div>
+            </div>
+            <Link
+              href="/beneficiarios/novo"
+              className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-3 py-2 text-sm font-medium text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors"
+            >
+              <UserPlus className="h-4 w-4" />
+              Novo beneficiário
+            </Link>
+          </CardBody>
+        </Card>
+
+        {/* 6. Pessoal / Funcionários */}
         <Card>
           <CardHeader className="flex items-center justify-between">
             <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-100">Pessoal</h3>
@@ -250,102 +346,6 @@ export default function DashboardPage() {
             >
               <UserCheck className="h-4 w-4" />
               Novo funcionário
-            </Link>
-          </CardBody>
-        </Card>
-
-        {/* Objetos */}
-        <Card>
-          <CardHeader className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-100">Objetos</h3>
-            <Link
-              href="/objetos"
-              className="inline-flex items-center rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-2.5 py-1 text-xs font-semibold text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors shadow-2xs"
-            >
-              Ver todos
-            </Link>
-          </CardHeader>
-          <CardBody className="flex flex-col gap-3">
-            <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-lg bg-green-50 dark:bg-green-950/60 px-3 py-2.5">
-                <p className="text-xs text-green-700 dark:text-green-300">Cadastrados</p>
-                <p className="text-2xl font-bold text-green-700 dark:text-green-300">{r.totalObjetos}</p>
-              </div>
-              <div className="rounded-lg bg-sky-50 dark:bg-sky-950/60 px-3 py-2.5">
-                <p className="text-xs text-sky-700 dark:text-sky-300">Vigentes</p>
-                <p className="text-2xl font-bold text-sky-700 dark:text-sky-300">{r.totalObjetos}</p>
-              </div>
-            </div>
-            <Link
-              href="/objetos/novo"
-              className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-3 py-2 text-sm font-medium text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors"
-            >
-              <Plus className="h-4 w-4" />
-              Novo objeto
-            </Link>
-          </CardBody>
-        </Card>
-
-        {/* Organizações */}
-        <Card>
-          <CardHeader className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-100">Organizações</h3>
-            <Link
-              href="/organizacoes"
-              className="inline-flex items-center rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-2.5 py-1 text-xs font-semibold text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors shadow-2xs"
-            >
-              Ver todas
-            </Link>
-          </CardHeader>
-          <CardBody className="flex flex-col gap-3">
-            <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-lg bg-green-50 dark:bg-green-950/60 px-3 py-2.5">
-                <p className="text-xs text-green-700 dark:text-green-300">Parceiras</p>
-                <p className="text-2xl font-bold text-green-700 dark:text-green-300">{r.totalOrganizacoes}</p>
-              </div>
-              <div className="rounded-lg bg-zinc-50 dark:bg-zinc-800/80 px-3 py-2.5">
-                <p className="text-xs text-zinc-500 dark:text-zinc-400">Ativas</p>
-                <p className="text-2xl font-bold text-zinc-700 dark:text-zinc-200">{r.totalOrganizacoes}</p>
-              </div>
-            </div>
-            <Link
-              href="/organizacoes/novo"
-              className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-3 py-2 text-sm font-medium text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors"
-            >
-              <Building2 className="h-4 w-4" />
-              Nova organização
-            </Link>
-          </CardBody>
-        </Card>
-
-        {/* Núcleos */}
-        <Card>
-          <CardHeader className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-100">Núcleos</h3>
-            <Link
-              href="/nucleos"
-              className="inline-flex items-center rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-2.5 py-1 text-xs font-semibold text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors shadow-2xs"
-            >
-              Ver todos
-            </Link>
-          </CardHeader>
-          <CardBody className="flex flex-col gap-3">
-            <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-lg bg-green-50 dark:bg-green-950/60 px-3 py-2.5">
-                <p className="text-xs text-green-700 dark:text-green-300">Em operação</p>
-                <p className="text-2xl font-bold text-green-700 dark:text-green-300">{r.nucleosAtivos}</p>
-              </div>
-              <div className="rounded-lg bg-zinc-50 dark:bg-zinc-800/80 px-3 py-2.5">
-                <p className="text-xs text-zinc-500 dark:text-zinc-400">Total núcleos</p>
-                <p className="text-2xl font-bold text-zinc-700 dark:text-zinc-200">{r.totalNucleos}</p>
-              </div>
-            </div>
-            <Link
-              href="/nucleos/novo"
-              className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-3 py-2 text-sm font-medium text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors"
-            >
-              <Building2 className="h-4 w-4" />
-              Novo núcleo
             </Link>
           </CardBody>
         </Card>
