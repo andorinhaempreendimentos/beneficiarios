@@ -16,6 +16,7 @@ export function FuncoesManager({ inicialFuncoes }: FuncoesManagerProps) {
   const [nome, setNome] = useState("");
   const [descricao, setDescricao] = useState("");
   const [permiteLogin, setPermiteLogin] = useState(true);
+  const [exigeConselho, setExigeConselho] = useState(false);
   const [editandoId, setEditandoId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -33,16 +34,18 @@ export function FuncoesManager({ inicialFuncoes }: FuncoesManagerProps) {
           nome: nome.trim(),
           descricao: descricao.trim() || undefined,
           permiteLogin,
+          exigeConselho,
         });
-        setFuncoes((prev) => prev.map((f) => (f.id === editandoId ? { ...f, ...atualizada, permiteLogin } : f)));
+        setFuncoes((prev) => prev.map((f) => (f.id === editandoId ? { ...f, ...atualizada, permiteLogin, exigeConselho } : f)));
         toast.success("Função atualizada com sucesso!");
       } else {
         const nova = await funcoesApi.create({
           nome: nome.trim(),
           descricao: descricao.trim() || undefined,
           permiteLogin,
+          exigeConselho,
         });
-        setFuncoes((prev) => [...prev, { ...nova, permiteLogin }]);
+        setFuncoes((prev) => [...prev, { ...nova, permiteLogin, exigeConselho }]);
         toast.success("Nova função cadastrada!");
       }
       limparForm();
@@ -58,6 +61,7 @@ export function FuncoesManager({ inicialFuncoes }: FuncoesManagerProps) {
     setNome(f.nome);
     setDescricao(f.descricao || "");
     setPermiteLogin(f.permiteLogin ?? true);
+    setExigeConselho(f.exigeConselho ?? false);
   }
 
   async function handleDelete(id: string) {
@@ -76,6 +80,7 @@ export function FuncoesManager({ inicialFuncoes }: FuncoesManagerProps) {
     setNome("");
     setDescricao("");
     setPermiteLogin(true);
+    setExigeConselho(false);
   }
 
   return (
@@ -119,6 +124,23 @@ export function FuncoesManager({ inicialFuncoes }: FuncoesManagerProps) {
             />
           </div>
 
+          {/* Toggle de Exige Conselho de Classe */}
+          <div className="p-3 bg-zinc-50 rounded-xl border border-zinc-200/80 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <div className={`p-1.5 rounded-lg ${exigeConselho ? "bg-purple-100 text-purple-700" : "bg-zinc-200 text-zinc-600"}`}>
+                <Shield className="h-4 w-4" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-zinc-800">Exige Conselho de Classe</p>
+                <p className="text-[11px] text-zinc-500">Ex: CREFITO, COREN, CREF</p>
+              </div>
+            </div>
+            <Switch
+              checked={exigeConselho}
+              onChange={setExigeConselho}
+            />
+          </div>
+
           <div className="flex gap-2 justify-end pt-2">
             {editandoId && (
               <Button type="button" variant="outline" onClick={limparForm}>
@@ -153,15 +175,20 @@ export function FuncoesManager({ inicialFuncoes }: FuncoesManagerProps) {
                       <Shield className="h-4 w-4" />
                     </div>
                     <div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-1.5">
                         <h4 className="font-semibold text-zinc-900 text-sm">{f.nome}</h4>
                         {temLogin ? (
                           <Badge tone="green">
-                            <Key className="h-3 w-3 mr-1 inline" /> Login Habilitado
+                            <Key className="h-3 w-3 mr-1 inline" /> Login
                           </Badge>
                         ) : (
                           <Badge tone="zinc">
                             <Lock className="h-3 w-3 mr-1 inline" /> Sem Login
+                          </Badge>
+                        )}
+                        {f.exigeConselho && (
+                          <Badge tone="sky">
+                            <Shield className="h-3 w-3 mr-1 inline" /> Conselho Obrigatório
                           </Badge>
                         )}
                       </div>

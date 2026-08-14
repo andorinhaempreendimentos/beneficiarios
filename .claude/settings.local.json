@@ -244,7 +244,8 @@
       "Bash(rtk ls *)",
       "Bash(rtk gh *)",
       "Bash(xargs grep -l \"mock.*nucleos\\\\|mock.*organizacoes\")",
-      "Bash(rtk wc *)"
+      "Bash(rtk wc *)",
+      "Bash(rtk *)"
     ]
   },
   "enableAllProjectMcpServers": true,

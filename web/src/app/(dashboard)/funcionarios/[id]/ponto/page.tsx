@@ -2,7 +2,7 @@
 
 import { notFound } from "next/navigation";
 import { use, useRef, useState } from "react";
-import { Camera, CheckCircle2, ChevronLeft, ChevronRight, LogIn, LogOut, Save, Upload, X } from "lucide-react";
+import { Camera, CheckCircle2, ChevronLeft, ChevronRight, LogIn, LogOut, Save, Upload, X, Printer } from "lucide-react";
 
 function horaAgora(): string {
   const now = new Date();
@@ -277,7 +277,15 @@ export default function FolhaPontoPage({ params }: { params: Promise<{ id: strin
       <PageHeader
         title={`Folha de Ponto — ${funcionario?.nomeCompleto ?? ''}`}
         description={`${funcionario?.funcao ?? ''} · Mat. ${funcionario?.matricula ?? ''}`}
-        actions={<LinkButton href={`/funcionarios/${id}`} variant="outline">Voltar ao funcionário</LinkButton>}
+        actions={
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => window.print()}>
+              <Printer className="h-4 w-4" />
+              Imprimir / PDF
+            </Button>
+            <LinkButton href={`/funcionarios/${id}`} variant="outline">Voltar ao funcionário</LinkButton>
+          </div>
+        }
       />
 
       {/* Painel Didático de Batida de Ponto — Destaque Máximo */}

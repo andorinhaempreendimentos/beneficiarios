@@ -1054,6 +1054,7 @@ export interface FuncaoApi {
   nome: string;
   descricao?: string;
   permiteLogin?: boolean;
+  exigeConselho?: boolean;
   criadoEm: string;
 }
 
@@ -1063,16 +1064,19 @@ function mapFuncao(r: any): FuncaoApi {
     nome: r.nome,
     descricao: r.descricao ?? undefined,
     permiteLogin: r.permite_login ?? r.permiteLogin ?? true,
+    exigeConselho: r.exige_conselho ?? r.exigeConselho ?? false,
     criadoEm: r.created_at,
   };
 }
 
 const CARGOS_OFICIAIS: FuncaoApi[] = [
-  { id: "cargo-1", nome: "Professor / Instrutor", descricao: "Aulas práticas nos núcleos e chamada de alunos.", permiteLogin: true, criadoEm: new Date().toISOString() },
-  { id: "cargo-2", nome: "Coordenador de Núcleo", descricao: "Gestão do polo esportivo físico, infraestrutura e equipamentos.", permiteLogin: true, criadoEm: new Date().toISOString() },
-  { id: "cargo-3", nome: "Coordenador de Turma", descricao: "Gestão de horários, vagas e turmas específicas.", permiteLogin: true, criadoEm: new Date().toISOString() },
-  { id: "cargo-4", nome: "Coordenador de Instrutores", descricao: "Supervisão técnica, pedagógica e equipe de professores.", permiteLogin: true, criadoEm: new Date().toISOString() },
-  { id: "cargo-5", nome: "Staff", descricao: "Apoio administrativo, logística, recepção e operações.", permiteLogin: false, criadoEm: new Date().toISOString() },
+  { id: "cargo-1", nome: "Professor / Instrutor", descricao: "Aulas práticas nos núcleos e chamada de alunos.", permiteLogin: true, exigeConselho: false, criadoEm: new Date().toISOString() },
+  { id: "cargo-2", nome: "Coordenador de Núcleo", descricao: "Gestão do polo esportivo físico, infraestrutura e equipamentos.", permiteLogin: true, exigeConselho: false, criadoEm: new Date().toISOString() },
+  { id: "cargo-3", nome: "Coordenador de Turma", descricao: "Gestão de horários, vagas e turmas específicas.", permiteLogin: true, exigeConselho: false, criadoEm: new Date().toISOString() },
+  { id: "cargo-4", nome: "Coordenador de Instrutores", descricao: "Supervisão técnica, pedagógica e equipe de professores.", permiteLogin: true, exigeConselho: false, criadoEm: new Date().toISOString() },
+  { id: "cargo-5", nome: "Fisioterapeuta", descricao: "Atendimento e reabilitação física dos alunos do projeto.", permiteLogin: true, exigeConselho: true, criadoEm: new Date().toISOString() },
+  { id: "cargo-6", nome: "Técnico de Enfermagem", descricao: "Suporte de primeiros socorros e saúde básica nos eventos.", permiteLogin: true, exigeConselho: true, criadoEm: new Date().toISOString() },
+  { id: "cargo-7", nome: "Staff", descricao: "Apoio administrativo, logística, recepção e operações.", permiteLogin: false, exigeConselho: false, criadoEm: new Date().toISOString() },
 ];
 
 export const funcoesApi = {
@@ -1082,19 +1086,20 @@ export const funcoesApi = {
     if (data && data.length > 0) return data.map(mapFuncao);
     return CARGOS_OFICIAIS;
   },
-  async create(body: { nome: string; descricao?: string; permiteLogin?: boolean }): Promise<FuncaoApi> {
+  async create(body: { nome: string; descricao?: string; permiteLogin?: boolean; exigeConselho?: boolean }): Promise<FuncaoApi> {
     const sb = createClient();
-    const payload = { nome: body.nome, descricao: body.descricao, permite_login: body.permiteLogin };
+    const payload = { nome: body.nome, descricao: body.descricao, permite_login: body.permiteLogin, exige_conselho: body.exigeConselho };
     const { data, error } = await sb.from('funcoes' as any).insert(payload).select('*').single();
     if (error) throw error;
     return mapFuncao(data);
   },
-  async update(id: string, body: { nome?: string; descricao?: string; permiteLogin?: boolean }): Promise<FuncaoApi> {
+  async update(id: string, body: { nome?: string; descricao?: string; permiteLogin?: boolean; exigeConselho?: boolean }): Promise<FuncaoApi> {
     const sb = createClient();
     const payload: any = {};
     if (body.nome !== undefined) payload.nome = body.nome;
     if (body.descricao !== undefined) payload.descricao = body.descricao;
     if (body.permiteLogin !== undefined) payload.permite_login = body.permiteLogin;
+    if (body.exigeConselho !== undefined) payload.exige_conselho = body.exigeConselho;
     const { data, error } = await sb.from('funcoes' as any).update(payload).eq('id', id).select('*').single();
     if (error) throw error;
     await sincronizarTodosFuncionariosUsuarios().catch(() => {});
