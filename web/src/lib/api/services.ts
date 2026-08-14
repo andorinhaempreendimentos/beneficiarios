@@ -1542,7 +1542,7 @@ function montarResumo(
   nucleos: { id: string; identificacao: string; em_funcionamento: boolean }[],
   funcionarios: { status: string }[],
   turmas: { id: string; atividade_id: string; vagas_totais: number }[],
-  atividades: { id: string; nome: string }[],
+  atividades: { id: string; nome: string; disponivel_pre_inscricao?: boolean }[],
   matriculas: { turma_id: string }[],
   recentes: any[],
   totalObjetos: number = 0,
@@ -1587,7 +1587,11 @@ function montarResumo(
     ? Number(calcOcupacao.toFixed(1))
     : Math.round(calcOcupacao);
 
-  const distribuicaoPorModalidade = atividades
+  const atividadesEsportivas = atividades.filter(
+    (a) => a.disponivel_pre_inscricao !== false && !a.nome.toLowerCase().includes("planejamento")
+  );
+
+  const distribuicaoPorModalidade = atividadesEsportivas
     .map((a) => ({
       nome: a.nome,
       total: turmas.filter((t) => t.atividade_id === a.id).reduce((acc, t) => acc + (ocupacaoPorTurma.get(t.id) ?? 0), 0),
@@ -1608,7 +1612,7 @@ function montarResumo(
     totalOcupadas,
     vagasLivres,
     ocupacaoGlobal,
-    totalModalidades: atividades.length,
+    totalModalidades: atividadesEsportivas.length,
     topNucleos,
     distribuicaoPorModalidade,
     recentes: recentes.map((b) => {
@@ -1650,7 +1654,7 @@ export const dashboardApi = {
       sb.from('nucleos').select('id, identificacao, em_funcionamento').is('deleted_at', null),
       sb.from('funcionarios').select('status').is('deleted_at', null),
       sb.from('turmas').select('id, atividade_id, vagas_totais').is('deleted_at', null),
-      sb.from('atividades').select('id, nome').is('deleted_at', null),
+      sb.from('atividades').select('id, nome, disponivel_pre_inscricao').is('deleted_at', null),
       sb.from('beneficiario_turmas').select('turma_id').is('deleted_at', null),
       sb.from('beneficiarios')
         .select('id, nome_completo, status, data_cadastro, created_at, nucleo_id, nucleos(identificacao), beneficiario_turmas(turmas(nucleos(identificacao)))')
