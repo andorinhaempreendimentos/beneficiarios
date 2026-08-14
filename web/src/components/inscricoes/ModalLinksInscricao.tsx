@@ -185,7 +185,7 @@ export function ModalLinksInscricao({
     return true;
   });
 
-  // Listas finais filtradas também pela busca de texto
+  // Listas finais filtradas por seleção exata de entidade + busca de texto
   const listTurmas = turmasFiltradasDropdown.filter((t) => {
     if (selectedTurmaId && t.id !== selectedTurmaId) return false;
 
@@ -222,6 +222,8 @@ export function ModalLinksInscricao({
   });
 
   const listNucleos = nucleosFiltradosDropdown.filter((n) => {
+    if (selectedNucleoId && n.id !== selectedNucleoId) return false;
+
     const org = n.organizacaoId ? orgMap.get(n.organizacaoId) : undefined;
     const obj = org?.objetoId ? objMap.get(org.objetoId) : undefined;
 
@@ -245,6 +247,8 @@ export function ModalLinksInscricao({
   });
 
   const listAtividades = atividadesFiltradasDropdown.filter((a) => {
+    if (selectedAtividadeId && a.id !== selectedAtividadeId) return false;
+
     const n = nucleoMap.get(a.nucleoId);
     const org = n?.organizacaoId ? orgMap.get(n.organizacaoId) : undefined;
     const obj = org?.objetoId ? objMap.get(org.objetoId) : undefined;
@@ -352,7 +356,7 @@ export function ModalLinksInscricao({
                 }}
                 className="w-full rounded-lg border border-zinc-300 bg-white px-2.5 py-1.5 text-xs text-zinc-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 cursor-pointer"
               >
-                <option value="">Todos os Núcleos</option>
+                <option value="">Todos os Núcleos ({nucleosFiltradosDropdown.length})</option>
                 {nucleosFiltradosDropdown.map((n) => (
                   <option key={n.id} value={n.id}>{n.identificacao}</option>
                 ))}
