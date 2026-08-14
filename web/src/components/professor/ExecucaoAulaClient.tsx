@@ -202,13 +202,13 @@ export function ExecucaoAulaClient({
     if (isDataRetroativa || isDataFutura) return true;
     const now = new Date();
     const [fimH, fimM] = horaFimPrevista.split(":").map(Number);
-    const toleranciaMinutos = 15;
+    const toleranciaMinutos = turma.nucleo?.toleranciaFimMinutos ?? 15;
     const limiteHoras = fimH + Math.floor((fimM + toleranciaMinutos) / 60);
     const limiteMinutos = (fimM + toleranciaMinutos) % 60;
     const horaAtualMinutos = now.getHours() * 60 + now.getMinutes();
     const limiteMinutosTotal = limiteHoras * 60 + limiteMinutos;
     return horaAtualMinutos > limiteMinutosTotal;
-  }, [dataAula, isDataRetroativa, isDataFutura, horaFimPrevista]);
+  }, [dataAula, isDataRetroativa, isDataFutura, horaFimPrevista, turma.nucleo]);
 
   const isForaDoHorarioRegular = isDataRetroativa || isForaDaJanelaHorario;
 
@@ -322,9 +322,15 @@ export function ExecucaoAulaClient({
 
   // STEP 1: Iniciar Aula (Play)
   const handleIniciarAula = async () => {
-    if (isForaDoHorarioRegular && !justificativaRetroativa.trim()) {
-      setShowJustificativaModal(true);
-      return;
+    if (isForaDoHorarioRegular) {
+      if (!turma.nucleo?.permitirChamadaRetroativa) {
+        toast.error("Lançamento bloqueado. Este polo não permite iniciar aulas fora da janela de horário ou em dias passados.");
+        return;
+      }
+      if (!justificativaRetroativa.trim()) {
+        setShowJustificativaModal(true);
+        return;
+      }
     }
 
     setSalvando(true);
