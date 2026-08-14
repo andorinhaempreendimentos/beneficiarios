@@ -18,21 +18,34 @@ export function useQuery<T>(
   const [error, setError] = useState<string | null>(null);
   const [tick, setTick] = useState(0);
   const fetcherRef = useRef(fetcher);
-  fetcherRef.current = fetcher;
 
   useEffect(() => {
-    setLoading(true);
-    setError(null);
+    fetcherRef.current = fetcher;
+  });
+
+  useEffect(() => {
     let cancelled = false;
 
-    fetcherRef.current()
-      .then((res) => { if (!cancelled) { setData(res); setLoading(false); } })
-      .catch((err: unknown) => {
-        if (cancelled) return;
-        const msg = err instanceof Error ? err.message : 'Erro ao carregar dados';
-        setError(msg);
-        setLoading(false);
-      });
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const res = await fetcherRef.current();
+        if (!cancelled) {
+          setData(res);
+          setLoading(false);
+        }
+      } catch (err: unknown) {
+        if (!cancelled) {
+          const msg = err instanceof Error ? err.message : 'Erro ao carregar dados';
+          setError(msg);
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchData();
 
     return () => { cancelled = true; };
   // eslint-disable-next-line react-hooks/exhaustive-deps

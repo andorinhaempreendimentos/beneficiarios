@@ -11,7 +11,7 @@ export interface NucleoComUf extends NucleoApi {
  */
 export function normalizarNucleoLocalizacao(n: NucleoApi): NucleoComUf {
   const cidadeRaw = n.cidade?.trim() || "";
-  let estadoRaw = (n as any).estado?.trim() as string | undefined;
+  let estadoRaw = (n as NucleoApi & { estado?: string }).estado?.trim();
 
   if (!estadoRaw) {
     if (cidadeRaw.toLowerCase() === "palmas") estadoRaw = "TO";

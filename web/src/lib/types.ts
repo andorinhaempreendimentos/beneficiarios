@@ -136,7 +136,7 @@ export interface Turma {
   responsaveis: string[];
   horario: string;
   dias: string[];
-  slots?: any[];
+  slots?: { dia: string; inicio: string; fim: string }[];
   vagasTotais: number;
   qtdBeneficiarios: number;
   exclusiva: boolean;
