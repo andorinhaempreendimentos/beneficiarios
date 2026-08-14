@@ -141,15 +141,6 @@ export function TopLocationBar({ nucleos: nucleosProp }: TopLocationBarProps = {
           <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100 hidden sm:inline-block">
             Filtro da Sessão:
           </span>
-          {temFiltroAtivo ? (
-            <span className="rounded-full bg-sky-100 dark:bg-sky-950/80 px-2.5 py-0.5 text-[11px] font-extrabold text-sky-800 dark:text-sky-300">
-              📍 {countFiltrosAtivos} {countFiltrosAtivos === 1 ? "filtro ativo" : "filtros ativos"}
-            </span>
-          ) : (
-            <span className="rounded-full bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 text-[11px] font-semibold text-zinc-500 dark:text-zinc-400">
-              Visão Global (Todos os locais)
-            </span>
-          )}
         </div>
       </div>
 
@@ -236,17 +227,6 @@ export function TopLocationBar({ nucleos: nucleosProp }: TopLocationBarProps = {
             <span className="hidden sm:inline">Limpar</span>
           </button>
         )}
-
-        {/* Chaveador de Modo Escuro / Claro */}
-        <button
-          type="button"
-          onClick={alternarModoEscuro}
-          className="flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-700 dark:text-amber-300 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all shadow-2xs cursor-pointer ml-1"
-          title={modoEscuro ? "Alternar para Modo Claro" : "Alternar para Modo Escuro"}
-          aria-label="Alternar modo de cor"
-        >
-          {modoEscuro ? <Sun className="h-4 w-4 text-amber-400" /> : <Moon className="h-4 w-4 text-zinc-600" />}
-        </button>
       </div>
     </header>
   );
