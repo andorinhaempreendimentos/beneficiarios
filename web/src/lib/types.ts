@@ -349,3 +349,5 @@ export interface Beneficiario {
   codigoAtleta?: string;
   anexos: Anexo[];
 }
+
+export * from "./types/execucaoAula";

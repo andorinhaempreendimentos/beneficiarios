@@ -1,7 +1,8 @@
 import { createServerClient } from '@supabase/ssr';
 import { createClient as createBrowserClient } from '@/lib/supabase/client';
 import type { Database } from '@/lib/supabase/types';
-import type { StatusInscricao } from '@/lib/types';
+import type { StatusInscricao, ExecucaoAulaApi, BeneficiarioPresencaApi } from '@/lib/types';
+export type { ExecucaoAulaApi, BeneficiarioPresencaApi };
 
 async function getSupabase() {
   if (typeof window === 'undefined') {
@@ -503,6 +504,37 @@ function mapPerfil(r: any): PerfilApi {
     id: r.id, nome: r.nome, descricao: r.descricao ?? undefined, isSistema: r.is_sistema,
     permissoes: Array.from(porModulo.entries()).map(([modulo, acoes]) => ({ modulo, acoes })),
     criadoEm: r.created_at,
+  };
+}
+
+function mapExecucaoAula(r: any): ExecucaoAulaApi {
+  return {
+    id: r.id,
+    turmaId: r.turma_id,
+    professorId: r.professor_id,
+    data: r.data,
+    horaInicioPrevista: r.hora_inicio_prevista,
+    horaFimPrevista: r.hora_fim_prevista,
+    horaInicioReal: r.hora_inicio_real ?? undefined,
+    horaFimReal: r.hora_fim_real ?? undefined,
+    status: r.status,
+    fotoComprovanteUrl: r.foto_comprovante_url ?? undefined,
+    observacoes: r.observacoes ?? undefined,
+    justificativaRetroativa: r.justificativa_retroativa ?? undefined,
+    statusAprovacao: r.status_aprovacao,
+    aprovadoPorUserId: r.aprovado_por_user_id ?? undefined,
+    aprovadoEm: r.aprovado_em ?? undefined,
+    criadoEm: r.created_at,
+  };
+}
+
+function mapBeneficiarioPresenca(r: any): BeneficiarioPresencaApi {
+  return {
+    id: r.id,
+    execucaoAulaId: r.execucao_aula_id,
+    beneficiarioId: r.beneficiario_id,
+    status: r.status,
+    observacao: r.observacao ?? undefined,
   };
 }
 
