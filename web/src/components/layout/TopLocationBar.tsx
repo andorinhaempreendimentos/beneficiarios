@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { Globe, MapPin, Filter, RotateCcw, Moon, Sun } from "lucide-react";
 import { useLocationFilter } from "@/components/providers/LocationFilterProvider";
 import { useTheme } from "@/components/providers/ThemeProvider";
