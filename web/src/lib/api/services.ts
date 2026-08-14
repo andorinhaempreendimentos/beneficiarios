@@ -2032,3 +2032,254 @@ export const areaProfessorApi = {
 };
 
 export const professoresApi = areaProfessorApi;
+
+export const execucoesAulaApi = {
+  async iniciarAula(params: {
+    turmaId: string;
+    professorId: string;
+    data: string;
+    horaInicioPrevista: string;
+    horaFimPrevista: string;
+    justificativaRetroativa?: string;
+  }): Promise<ExecucaoAulaApi> {
+    const sb = createClient();
+    const now = new Date();
+    const horaAtual = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    const horaPonto = `${horaAtual}:00`;
+    const isPendente = Boolean(params.justificativaRetroativa && params.justificativaRetroativa.trim().length > 0);
+
+    const payload = {
+      turma_id: params.turmaId,
+      professor_id: params.professorId,
+      data: params.data,
+      hora_inicio_prevista: params.horaInicioPrevista,
+      hora_fim_prevista: params.horaFimPrevista,
+      hora_inicio_real: horaAtual,
+      status: isPendente ? 'pendente_aprovacao' : 'em_andamento',
+      status_aprovacao: isPendente ? 'pendente_aprovacao' : 'aprovado',
+      justificativa_retroativa: params.justificativaRetroativa || null,
+    };
+
+    const { data, error } = await (sb as any).from('execucoes_aula')
+      .insert(payload)
+      .select('*')
+      .single();
+
+    if (error) throw error;
+    const mapped = mapExecucaoAula(data);
+
+    if (!isPendente && params.professorId) {
+      try {
+        await (sb as any).from('registros_ponto').insert({
+          funcionario_id: params.professorId,
+          data: params.data,
+          tipo: 'entrada',
+          hora: horaPonto,
+          status: 'ok',
+          observacao: `Início de aula - Turma ${params.turmaId}`,
+        });
+      } catch (e) {
+        console.warn('Aviso ao registrar ponto de entrada:', e);
+      }
+    }
+
+    return mapped;
+  },
+
+  async salvarPresencas(
+    execucaoAulaId: string,
+    presencas: Array<{
+      beneficiarioId: string;
+      status: 'presente' | 'falta' | 'falta_justificada';
+      observacao?: string;
+    }>
+  ): Promise<BeneficiarioPresencaApi[]> {
+    if (!presencas || presencas.length === 0) return [];
+    const sb = createClient();
+    const rows = presencas.map((p) => ({
+      execucao_aula_id: execucaoAulaId,
+      beneficiario_id: p.beneficiarioId,
+      status: p.status,
+      observacao: p.observacao || null,
+    }));
+
+    const { data: upsertData, error: upsertErr } = await (sb as any).from('beneficiario_presencas')
+      .upsert(rows, { onConflict: 'execucao_aula_id,beneficiario_id' })
+      .select('*');
+
+    if (upsertErr) {
+      await (sb as any).from('beneficiario_presencas')
+        .delete()
+        .eq('execucao_aula_id', execucaoAulaId);
+
+      const { data: insData, error: insErr } = await (sb as any).from('beneficiario_presencas')
+        .insert(rows)
+        .select('*');
+
+      if (insErr) throw insErr;
+      return (insData ?? []).map(mapBeneficiarioPresenca);
+    }
+
+    return (upsertData ?? []).map(mapBeneficiarioPresenca);
+  },
+
+  async getPresencas(execucaoAulaId: string): Promise<BeneficiarioPresencaApi[]> {
+    const sb = createClient();
+    const { data, error } = await (sb as any).from('beneficiario_presencas')
+      .select('*')
+      .eq('execucao_aula_id', execucaoAulaId);
+
+    if (error) throw error;
+    return (data ?? []).map(mapBeneficiarioPresenca);
+  },
+
+  async getExecucao(turmaId: string, data: string): Promise<ExecucaoAulaApi | null> {
+    const sb = createClient();
+    const { data: execData, error } = await (sb as any).from('execucoes_aula')
+      .select('*')
+      .eq('turma_id', turmaId)
+      .eq('data', data)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (error) throw error;
+    return execData ? mapExecucaoAula(execData) : null;
+  },
+
+  async getById(id: string): Promise<ExecucaoAulaApi | null> {
+    const sb = createClient();
+    const { data, error } = await (sb as any).from('execucoes_aula')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+
+    if (error) throw error;
+    return data ? mapExecucaoAula(data) : null;
+  },
+
+  async finalizarAula(
+    id: string,
+    params: { fotoComprovanteUrl: string; observacoes?: string }
+  ): Promise<ExecucaoAulaApi> {
+    const sb = createClient();
+    const now = new Date();
+    const horaAtual = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    const horaPonto = `${horaAtual}:00`;
+
+    const { data: execData, error } = await (sb as any).from('execucoes_aula')
+      .update({
+        hora_fim_real: horaAtual,
+        status: 'concluida',
+        foto_comprovante_url: params.fotoComprovanteUrl,
+        observacoes: params.observacoes || null,
+      })
+      .eq('id', id)
+      .select('*')
+      .single();
+
+    if (error) throw error;
+    const mapped = mapExecucaoAula(execData);
+
+    if (mapped.professorId) {
+      try {
+        await (sb as any).from('registros_ponto').insert({
+          funcionario_id: mapped.professorId,
+          data: mapped.data,
+          tipo: 'saida',
+          hora: horaPonto,
+          status: 'ok',
+          observacao: `Fim de aula - Turma ${mapped.turmaId}`,
+        });
+      } catch (e) {
+        console.warn('Aviso ao registrar ponto de saída:', e);
+      }
+    }
+
+    return mapped;
+  },
+
+  async listPendencias(p?: { nucleoId?: string }): Promise<ExecucaoAulaApi[]> {
+    const sb = createClient();
+    let q = (sb as any).from('execucoes_aula')
+      .select('*, turmas!inner(id, nucleo_id)')
+      .eq('status_aprovacao', 'pendente_aprovacao');
+
+    if (p?.nucleoId) {
+      q = q.eq('turmas.nucleo_id', p.nucleoId);
+    }
+
+    const { data, error } = await q.order('created_at', { ascending: false });
+    if (error) {
+      let simpleQ = (sb as any).from('execucoes_aula')
+        .select('*')
+        .eq('status_aprovacao', 'pendente_aprovacao')
+        .order('created_at', { ascending: false });
+      const { data: simpleData, error: simpleErr } = await simpleQ;
+      if (simpleErr) throw simpleErr;
+      return (simpleData ?? []).map(mapExecucaoAula);
+    }
+    return (data ?? []).map(mapExecucaoAula);
+  },
+
+  async avaliarPendencia(
+    id: string,
+    params: { aprovado: boolean; userId: string; motivoRejeicao?: string }
+  ): Promise<ExecucaoAulaApi> {
+    const sb = createClient();
+    const now = new Date().toISOString();
+    const status = params.aprovado ? 'concluida' : 'rejeitada';
+    const statusAprovacao = params.aprovado ? 'aprovado' : 'rejeitado';
+
+    const updatePayload: any = {
+      status,
+      status_aprovacao: statusAprovacao,
+      aprovado_por_user_id: params.userId,
+      aprovado_em: now,
+    };
+
+    if (params.motivoRejeicao) {
+      updatePayload.observacoes = params.motivoRejeicao;
+    }
+
+    const { data: execData, error } = await (sb as any).from('execucoes_aula')
+      .update(updatePayload)
+      .eq('id', id)
+      .select('*')
+      .single();
+
+    if (error) throw error;
+    const mapped = mapExecucaoAula(execData);
+
+    if (params.aprovado && mapped.professorId) {
+      try {
+        const horaEntrada = mapped.horaInicioReal || mapped.horaInicioPrevista || '08:00';
+        const horaSaida = mapped.horaFimReal || mapped.horaFimPrevista || '10:00';
+
+        await (sb as any).from('registros_ponto').insert([
+          {
+            funcionario_id: mapped.professorId,
+            data: mapped.data,
+            tipo: 'entrada',
+            hora: horaEntrada.length === 5 ? `${horaEntrada}:00` : horaEntrada,
+            status: 'ok',
+            observacao: `Aprovação de aula retroativa - Turma ${mapped.turmaId}`,
+          },
+          {
+            funcionario_id: mapped.professorId,
+            data: mapped.data,
+            tipo: 'saida',
+            hora: horaSaida.length === 5 ? `${horaSaida}:00` : horaSaida,
+            status: 'ok',
+            observacao: `Aprovação de aula retroativa - Turma ${mapped.turmaId}`,
+          },
+        ]);
+      } catch (e) {
+        console.warn('Aviso ao registrar ponto na aprovação:', e);
+      }
+    }
+
+    return mapped;
+  },
+};
+
