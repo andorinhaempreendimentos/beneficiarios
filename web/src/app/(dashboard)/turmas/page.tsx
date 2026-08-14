@@ -47,6 +47,14 @@ export default function TurmasPage() {
   const [turmaParaExcluir, setTurmaParaExcluir] = useState<TurmaApi | null>(null);
   const [excluindo, setExcluindo] = useState(false);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setPagina(1);
+      setAtivos(filtros);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [filtros]);
+
   const queryParams = useMemo<QP>(() => {
     const p: QP = { page: pagina, limit: PER_PAGE };
     if (ativos.busca) p.busca = ativos.busca;
@@ -82,7 +90,7 @@ export default function TurmasPage() {
       const bateEstado = estado === "Todos" || estadoUf === estado;
       const bateCidade = cidade === "Todas" || cidadeNome === cidade;
       const bateOrg = organizacaoId === "Todas" || (nucleoEncontrado?.organizacaoId === organizacaoId);
-      const bateNucleo = nucleoId === "Todos" || (t.nucleoId === nucleoId || nucleoEncontrado?.id === nucleoId);
+      const bateNucleo = nucleoId === "Todos" || (t.nucleoId ?? nucleoEncontrado?.id) === nucleoId;
       return bateEstado && bateCidade && bateOrg && bateNucleo;
     });
   }, [rawResultado, estado, cidade, organizacaoId, nucleoId, nucleos]);

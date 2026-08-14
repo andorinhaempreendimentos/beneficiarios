@@ -95,7 +95,7 @@ export default function FuncionariosPage() {
       const bateEstado = estado === "Todos" || estadoUf === estado;
       const bateCidade = cidade === "Todas" || cidadeNome === cidade;
       const bateOrg = organizacaoId === "Todas" || (nucleoEncontrado?.organizacaoId === organizacaoId);
-      const bateNucleo = nucleoId === "Todos" || (f.nucleoId === nucleoId || nucleoEncontrado?.id === nucleoId);
+      const bateNucleo = nucleoId === "Todos" || (f.nucleoId ?? nucleoEncontrado?.id) === nucleoId;
       return bateEstado && bateCidade && bateOrg && bateNucleo;
     });
   }, [rawResultado, estado, cidade, organizacaoId, nucleoId, nucleos]);

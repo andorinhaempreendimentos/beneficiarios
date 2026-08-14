@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { Globe, MapPin, Filter, Building, Compass, RotateCcw } from "lucide-react";
 import { useLocationFilter } from "@/components/providers/LocationFilterProvider";
 import type { NucleoApi } from "@/lib/api/services";
@@ -85,6 +85,25 @@ export function DashboardLocationFilterBar({ nucleos }: DashboardLocationFilterB
       })
       .sort((a, b) => a.identificacao.localeCompare(b.identificacao, "pt-BR"));
   }, [nucleosMapeados, estado, cidade, organizacaoId]);
+
+  // Validar se organizacaoId ou nucleoId salvos no localStorage sao validos
+  useEffect(() => {
+    if (organizacaoId !== "Todas" && organizacoesDisponiveis.length > 0) {
+      const orgValida = organizacoesDisponiveis.some((o) => o.id === organizacaoId);
+      if (!orgValida) {
+        setOrganizacaoId("Todas");
+      }
+    }
+  }, [organizacaoId, organizacoesDisponiveis, setOrganizacaoId]);
+
+  useEffect(() => {
+    if (nucleoId !== "Todos" && nucleosDisponiveis.length > 0) {
+      const nucleoValido = nucleosDisponiveis.some((n) => n.id === nucleoId);
+      if (!nucleoValido) {
+        setNucleoId("Todos");
+      }
+    }
+  }, [nucleoId, nucleosDisponiveis, setNucleoId]);
 
   const countFiltrosAtivos = [
     estado !== "Todos",

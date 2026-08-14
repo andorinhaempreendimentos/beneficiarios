@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { Globe, MapPin, Filter, Building, Compass, RotateCcw, Moon, Sun } from "lucide-react";
 import { useLocationFilter } from "@/components/providers/LocationFilterProvider";
 import { useTheme } from "@/components/providers/ThemeProvider";
@@ -92,6 +92,25 @@ export function TopLocationBar({ nucleos: nucleosProp }: TopLocationBarProps = {
       .sort((a, b) => a.identificacao.localeCompare(b.identificacao, "pt-BR"));
   }, [nucleosMapeados, estado, cidade, organizacaoId]);
 
+  // Validar se organizacaoId ou nucleoId salvos no localStorage sao validos
+  useEffect(() => {
+    if (organizacaoId !== "Todas" && organizacoesDisponiveis.length > 0) {
+      const orgValida = organizacoesDisponiveis.some((o) => o.id === organizacaoId);
+      if (!orgValida) {
+        setOrganizacaoId("Todas");
+      }
+    }
+  }, [organizacaoId, organizacoesDisponiveis, setOrganizacaoId]);
+
+  useEffect(() => {
+    if (nucleoId !== "Todos" && nucleosDisponiveis.length > 0) {
+      const nucleoValido = nucleosDisponiveis.some((n) => n.id === nucleoId);
+      if (!nucleoValido) {
+        setNucleoId("Todos");
+      }
+    }
+  }, [nucleoId, nucleosDisponiveis, setNucleoId]);
+
   const countFiltrosAtivos = [
     estado !== "Todos",
     cidade !== "Todas",
@@ -164,11 +183,12 @@ export function TopLocationBar({ nucleos: nucleosProp }: TopLocationBarProps = {
           <select
             value={organizacaoId}
             onChange={(e) => setOrganizacaoId(e.target.value)}
-            className="bg-transparent text-xs font-semibold text-zinc-900 dark:text-zinc-100 focus:outline-hidden cursor-pointer max-w-[130px] truncate"
+            className="bg-transparent text-xs font-semibold text-zinc-900 dark:text-zinc-100 focus:outline-hidden cursor-pointer max-w-[180px] truncate"
+            title="Filtrar por Organização"
           >
             <option value="Todas" className="dark:bg-zinc-900">Org: Todas ({organizacoesDisponiveis.length})</option>
             {organizacoesDisponiveis.map((org) => (
-              <option key={org.id} value={org.id} className="dark:bg-zinc-900">
+              <option key={org.id} value={org.id} title={org.nome} className="dark:bg-zinc-900">
                 {org.nome}
               </option>
             ))}
@@ -181,11 +201,12 @@ export function TopLocationBar({ nucleos: nucleosProp }: TopLocationBarProps = {
           <select
             value={nucleoId}
             onChange={(e) => setNucleoId(e.target.value)}
-            className="bg-transparent text-xs font-semibold text-zinc-900 dark:text-zinc-100 focus:outline-hidden cursor-pointer max-w-[130px] truncate"
+            className="bg-transparent text-xs font-semibold text-zinc-900 dark:text-zinc-100 focus:outline-hidden cursor-pointer max-w-[180px] truncate"
+            title="Filtrar por Núcleo"
           >
             <option value="Todos" className="dark:bg-zinc-900">Núcleo: Todos ({nucleosDisponiveis.length})</option>
             {nucleosDisponiveis.map((n) => (
-              <option key={n.id} value={n.id} className="dark:bg-zinc-900">
+              <option key={n.id} value={n.id} title={n.identificacao} className="dark:bg-zinc-900">
                 {n.identificacao}
               </option>
             ))}

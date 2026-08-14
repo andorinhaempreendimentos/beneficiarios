@@ -111,7 +111,7 @@ export default function InscricoesPage() {
       const bateEstado = estado === "Todos" || estadoUf === estado;
       const bateCidade = cidade === "Todas" || cidadeNome === cidade;
       const bateOrg = organizacaoId === "Todas" || (nucleo?.organizacaoId === organizacaoId);
-      const bateNucleo = nucleoId === "Todos" || (nucleo?.id === nucleoId || (i as any).nucleoId === nucleoId);
+      const bateNucleo = nucleoId === "Todos" || ((i as any).nucleoId ?? nucleo?.id) === nucleoId;
       return bateEstado && bateCidade && bateOrg && bateNucleo;
     });
   }, [rawLista, estado, cidade, organizacaoId, nucleoId, rawTurmas, rawNucleos]);

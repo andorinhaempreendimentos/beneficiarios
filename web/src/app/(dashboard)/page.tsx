@@ -56,11 +56,15 @@ export default function DashboardPage() {
     }
 
     const nucleosFiltrados = nucleosComUf.filter((n) => {
+      if (organizacaoId && organizacaoId !== "Todas" && n.organizacaoId !== organizacaoId) {
+        return false;
+      }
+      if (nucleoId && nucleoId !== "Todos" && n.id !== nucleoId) {
+        return false;
+      }
       const bateEstado = estado === "Todos" || n.estadoUf === estado;
       const bateCidade = cidade === "Todas" || n.cidadeNome === cidade;
-      const bateOrg = organizacaoId === "Todas" || n.organizacaoId === organizacaoId;
-      const bateNucleo = nucleoId === "Todos" || n.id === nucleoId;
-      return bateEstado && bateCidade && bateOrg && bateNucleo;
+      return bateEstado && bateCidade;
     });
 
     const idsFiltrados = new Set(nucleosFiltrados.map((n) => n.id));
