@@ -217,38 +217,8 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
     setDescricaoAtividade("");
   }
 
-  const acoesRapidas = [
-    {
-      id: "ponto",
-      titulo: "1. Bater Ponto",
-      descricao: "Registrar entrada/saída com data e hora em tempo real",
-      icone: Clock,
-      corIcone: "text-sky-600 bg-sky-50",
-      href: `/funcionarios/${professor.id}/ponto`,
-      badge: "Ponto de Hoje",
-      badgeTone: "sky" as const,
-    },
-    {
-      id: "confirmacao",
-      titulo: "2. Confirmação de Serviço",
-      descricao: "Upload de foto da aula e diário de atividades de campo",
-      icone: Camera,
-      corIcone: "text-indigo-600 bg-indigo-50",
-      href: "/professor/confirmacao",
-      badge: "Relatório de Aula",
-      badgeTone: "green" as const,
-    },
-    {
-      id: "chamada",
-      titulo: "3. Chamada Diária",
-      descricao: "Registrar presença e falta dos alunos inscritos",
-      icone: Users,
-      corIcone: "text-emerald-600 bg-emerald-50",
-      href: "/professor/chamada",
-      badge: "Lista de Presença",
-      badgeTone: "green" as const,
-    },
-  ];
+  const turmasHoje = turmasOrdenadas.filter(t => t.slots?.some((s: any) => s.dia === SIGLAS_DIA[hojeIndice]));
+  const outrasTurmas = turmasOrdenadas.filter(t => !t.slots?.some((s: any) => s.dia === SIGLAS_DIA[hojeIndice]));
 
   return (
     <div className="flex flex-col gap-8 max-w-6xl mx-auto py-2">
@@ -521,40 +491,91 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
         onClose={() => setModalGestaoMatriculas(false)}
       />
 
-      {/* 5. MENU DE AÇÕES RÁPIDAS */}
-      <div className="flex flex-col gap-3">
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-zinc-400 px-1">
-          Menu Operacional Rápido
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {acoesRapidas.map((acao) => {
-            const Icone = acao.icone;
-            return (
-              <Link
-                key={acao.id}
-                href={acao.href}
-                className="group flex items-start gap-4 rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm transition-all hover:border-sky-500 hover:shadow-md"
-              >
-                <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${acao.corIcone}`}>
-                  <Icone className="h-6 w-6" />
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between gap-2">
-                    <h3 className="font-bold text-zinc-900 group-hover:text-sky-600 transition-colors text-sm">
-                      {acao.titulo}
-                    </h3>
-                    <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-sky-600 transition-transform" />
-                  </div>
-                  <p className="text-xs text-zinc-500 mt-1 leading-relaxed">
-                    {acao.descricao}
-                  </p>
-                </div>
-              </Link>
-            );
-          })}
+      {/* 5. FLUXO UNIFICADO DE AULA */}
+      <div className="flex flex-col gap-4">
+        <div>
+          <h2 className="text-lg font-bold text-zinc-900 flex items-center gap-2">
+            <PlayCircle className="h-5 w-5 text-emerald-600" />
+            <span>Iniciar Aula (Fluxo Unificado)</span>
+          </h2>
+          <p className="text-xs text-zinc-500 mt-0.5">
+            Selecione a sua turma abaixo para iniciar o fluxo contínuo (Ponto, Relatório e Chamada)
+          </p>
         </div>
+
+        {turmasHoje.length > 0 && (
+          <div className="flex flex-col gap-3">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-emerald-600 px-1">
+              Turmas de Hoje ({diaSemanaAtual})
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {turmasHoje.map((turma) => (
+                <div key={turma.id} className="flex flex-col gap-4 rounded-2xl border-2 border-emerald-500/30 bg-emerald-50/20 p-5 shadow-sm transition-all hover:border-emerald-500 hover:shadow-md">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-bold text-zinc-900 truncate text-base">{turma.nome}</h3>
+                    <p className="text-xs text-zinc-500 mt-1 line-clamp-2">
+                      {turma.nucleo?.identificacao || nucleo?.identificacao || "Polo não especificado"}
+                    </p>
+                    <div className="mt-2 text-[11px] font-medium text-zinc-500 flex flex-wrap gap-1">
+                      {turma.slots?.filter((s: any) => s.dia === SIGLAS_DIA[hojeIndice]).map((s: any, idx: number) => (
+                        <span key={idx} className="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-md font-bold">
+                          Hoje {s.inicio}h às {s.fim}h
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <Link
+                    href={`/professor/aula/${turma.id}`}
+                    className="flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-bold text-white shadow-sm hover:bg-emerald-700 transition-colors active:scale-95 w-full"
+                  >
+                    <PlayCircle className="h-5 w-5" />
+                    <span>▶ INICIAR AULA</span>
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {outrasTurmas.length > 0 && (
+          <div className="flex flex-col gap-3 mt-2">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-zinc-400 px-1">
+              Outras Turmas
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {outrasTurmas.map((turma) => (
+                <div key={turma.id} className="flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm transition-all hover:border-sky-500 hover:shadow-md">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-bold text-zinc-900 truncate text-base">{turma.nome}</h3>
+                    <p className="text-xs text-zinc-500 mt-1 line-clamp-2">
+                      {turma.nucleo?.identificacao || nucleo?.identificacao || "Polo não especificado"}
+                    </p>
+                    <div className="mt-2 text-[11px] font-medium text-zinc-400 flex flex-wrap gap-1">
+                      {turma.slots?.map((s: any, idx: number) => (
+                        <span key={idx} className="bg-zinc-100 px-1.5 py-0.5 rounded">
+                          {s.dia} {s.inicio}h-{s.fim}h
+                        </span>
+                      )) || <span>Sem horários definidos</span>}
+                    </div>
+                  </div>
+                  <Link
+                    href={`/professor/aula/${turma.id}`}
+                    className="flex items-center justify-center gap-2 rounded-xl bg-sky-600 px-4 py-3 text-sm font-bold text-white shadow-sm hover:bg-sky-700 transition-colors active:scale-95 w-full"
+                  >
+                    <PlayCircle className="h-5 w-5" />
+                    <span>Ir para Aula</span>
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {turmas.length === 0 && (
+          <div className="py-8 text-center text-sm text-zinc-500 bg-zinc-50 rounded-2xl border border-dashed border-zinc-200">
+            Nenhuma turma vinculada ao seu perfil.
+          </div>
+        )}
       </div>
 
       {/* MODAL INTELIGENTE DE AÇÕES DA ATIVIDADE / TURMA */}
@@ -592,104 +613,21 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
               </div>
             </div>
 
-            {/* Opção 1: Iniciar / Finalizar Atividade e Ponto */}
-            <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4 flex flex-col gap-3">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-700 flex items-center gap-1.5">
-                <Clock className="h-4 w-4 text-sky-600" />
-                <span>1. Início de Atividade & Ponto do Professor</span>
+            <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 flex flex-col gap-3">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-1.5">
+                <PlayCircle className="h-4 w-4 text-emerald-600" />
+                <span>Fluxo Unificado de Aula</span>
               </h4>
-
-              {statusAtividade[turmaModal.id] !== "em_andamento" && statusAtividade[turmaModal.id] !== "concluido" && (() => {
-                const checkHorario = checarHorarioEncerrou(turmaModal);
-                if (checkHorario.encerrado) {
-                  return (
-                    <div className="rounded-xl bg-amber-50 p-3.5 text-xs text-amber-900 border border-amber-300 font-medium flex items-start gap-2.5 shadow-2xs">
-                      <AlertCircle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
-                      <div className="flex flex-col gap-0.5">
-                        <span className="font-bold text-amber-950">Horário Encerrado / Bloqueado</span>
-                        <span className="text-amber-800">{checkHorario.motivo} Não é permitido iniciar a atividade fora do horário previsto.</span>
-                      </div>
-                    </div>
-                  );
-                }
-                return (
-                  <Button
-                    onClick={() => handleIniciarAtividade(turmaModal)}
-                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 shadow-sm"
-                  >
-                    <PlayCircle className="h-5 w-5" />
-                    <span>Iniciar Atividade & Bater Entrada</span>
-                  </Button>
-                );
-              })()}
-
-              {statusAtividade[turmaModal.id] === "em_andamento" && (
-                <div className="flex flex-col gap-3">
-                  <div className="rounded-xl bg-emerald-100/70 p-3 text-xs text-emerald-900 font-semibold border border-emerald-300">
-                    ✓ Atividade em andamento! Entrada registrada às <span className="font-mono font-bold">{horaInicio[turmaModal.id]}</span> para a data <span className="font-mono font-bold">{dataAula.split('-').reverse().join('/')}</span>.
-                  </div>
-
-                  <Field label="Descrição da Atividade Aplicada" required>
-                    <Input
-                      placeholder="Ex: Treino de fundamentos de passe e drible"
-                      value={descricaoAtividade}
-                      onChange={(e) => setDescricaoAtividade(e.target.value)}
-                    />
-                  </Field>
-
-                  <Field label="Foto de Comprovação da Aula (Obrigatória para saída)">
-                    <div className="relative flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-zinc-300 p-4 text-center hover:bg-white transition-colors">
-                      {fotoPreview ? (
-                        <div className="flex flex-col items-center gap-1">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={fotoPreview} alt="Comprovação" className="h-32 rounded-lg object-cover" />
-                          <span className="text-[11px] text-green-600 font-semibold">Foto anexada ✓</span>
-                        </div>
-                      ) : (
-                        <>
-                          <Camera className="h-6 w-6 text-zinc-400 mb-1" />
-                          <span className="text-xs font-semibold text-zinc-700">Anexar Foto da Aula</span>
-                        </>
-                      )}
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleFoto}
-                        className="absolute inset-0 opacity-0 cursor-pointer"
-                      />
-                    </div>
-                  </Field>
-
-                  <Button
-                    onClick={() => handleFinalizarAtividade(turmaModal.id)}
-                    className="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2"
-                  >
-                    <StopCircle className="h-5 w-5" />
-                    <span>Finalizar Atividade & Confirmar Ponto de Saída</span>
-                  </Button>
-                </div>
-              )}
-
-              {statusAtividade[turmaModal.id] === "concluido" && (
-                <div className="rounded-xl bg-blue-100/70 p-3 text-xs text-blue-900 font-semibold border border-blue-300">
-                  ✓ Atividade e Ponto concluídos para {dataAula.split('-').reverse().join('/')}! Entrada: {horaInicio[turmaModal.id]} · Saída: {horaFim[turmaModal.id]}
-                </div>
-              )}
-            </div>
-
-            {/* Opção 2: Dar Presença na Data */}
-            <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4 flex flex-col gap-3">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-700 flex items-center gap-1.5">
-                <Users className="h-4 w-4 text-emerald-600" />
-                <span>2. Frequência de Beneficiários</span>
-              </h4>
+              <p className="text-xs text-emerald-700 mb-2">
+                Inicie o fluxo unificado para registrar o seu ponto, enviar o relatório fotográfico e realizar a chamada de uma só vez.
+              </p>
 
               <Link
-                href={`/professor/chamada?turmaId=${turmaModal.id}&data=${dataAula}`}
-                className="w-full justify-center flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-xs font-bold text-white shadow-sm hover:bg-emerald-700 transition-colors"
+                href={`/professor/aula/${turmaModal.id}`}
+                className="w-full justify-center flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-bold text-white shadow-sm hover:bg-emerald-700 transition-colors active:scale-95"
               >
-                <Users className="h-4 w-4" />
-                <span>Dar Presença para os Alunos em {dataAula.split('-').reverse().join('/')}</span>
+                <PlayCircle className="h-5 w-5" />
+                <span>▶ INICIAR AULA (Ponto, Relatório e Chamada)</span>
               </Link>
             </div>
           </div>

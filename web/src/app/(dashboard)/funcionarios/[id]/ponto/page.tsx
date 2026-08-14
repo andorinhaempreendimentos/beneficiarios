@@ -257,7 +257,8 @@ export default function FolhaPontoPage({ params }: { params: Promise<{ id: strin
       totais.presentes++;
       const [eh, em] = (reg.entradaReal ?? "00:00").split(":").map(Number);
       const [sh, sm] = (reg.saidaReal  ?? "00:00").split(":").map(Number);
-      totais.horas += (sh * 60 + sm) - (eh * 60 + em);
+      const minutos = (sh * 60 + sm) - (eh * 60 + em);
+      if (minutos > 0) totais.horas += minutos;
     }
     if (reg.status === "falta") totais.faltas++;
     if (reg.status === "falta_justificada") totais.justificadas++;
@@ -504,14 +505,23 @@ export default function FolhaPontoPage({ params }: { params: Promise<{ id: strin
 
                     {/* Observação */}
                     <td className="px-4 py-2.5">
-                      <input
-                        type="text"
-                        value={reg?.observacao ?? ""}
-                        onChange={(e) => atualizarCampo(iso, "observacao", e.target.value)}
-                        disabled={futuro}
-                        placeholder="—"
-                        className="w-40 rounded border border-zinc-200 px-2 py-1 text-xs focus:border-blue-400 focus:outline-none disabled:opacity-50"
-                      />
+                      {reg?.observacao?.toLowerCase().includes("retroativa") ? (
+                        <div className="flex flex-col gap-1">
+                          <span className="inline-flex items-center rounded bg-sky-100 px-2 py-0.5 text-xs font-medium text-sky-800">
+                            Aprovação Retroativa
+                          </span>
+                          <span className="text-xs text-zinc-500">{reg.observacao}</span>
+                        </div>
+                      ) : (
+                        <input
+                          type="text"
+                          value={reg?.observacao ?? ""}
+                          onChange={(e) => atualizarCampo(iso, "observacao", e.target.value)}
+                          disabled={futuro}
+                          placeholder="—"
+                          className="w-40 rounded border border-zinc-200 px-2 py-1 text-xs focus:border-blue-400 focus:outline-none disabled:opacity-50"
+                        />
+                      )}
                     </td>
                   </tr>
                 );

@@ -17,6 +17,7 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], back
   const [erro, setErro] = useState<string | null>(null);
   const [emFuncionamento, setEmFuncionamento] = useState(n?.emFuncionamento ?? true);
   const [disponivelPreInscricao, setDisponivelPreInscricao] = useState(n?.disponivelPreInscricao ?? true);
+  const [permitirChamadaRetroativa, setPermitirChamadaRetroativa] = useState(n?.permitirChamadaRetroativa ?? false);
   const [organizacaoId, setOrganizacaoId] = useState(n?.organizacaoId ?? (organizacoes[0]?.id || ""));
   const [atividadeIds, setAtividadeIds] = useState<string[]>(
     n?.atividadeIds ?? atividades.map((a) => a.id)
@@ -73,6 +74,10 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], back
       organizacaoId: orgId,
       emFuncionamento,
       disponivelPreInscricao,
+      permitirChamadaRetroativa,
+      toleranciaInicioMinutos: formData.get("toleranciaInicioMinutos") ? Number(formData.get("toleranciaInicioMinutos")) : null,
+      toleranciaFimMinutos: formData.get("toleranciaFimMinutos") ? Number(formData.get("toleranciaFimMinutos")) : null,
+      diasLimiteRetroativo: formData.get("diasLimiteRetroativo") ? Number(formData.get("diasLimiteRetroativo")) : null,
       atividadeIds,
     };
 
@@ -224,6 +229,31 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], back
             onChange={setDisponivelPreInscricao}
             label="Disponível na pré inscrição"
           />
+        </div>
+      </FormSection>
+
+      <FormSection title="Configurações de Frequência e Ponto">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 mb-4">
+          <Field label="Tolerância Início (minutos)">
+            <Input type="number" name="toleranciaInicioMinutos" defaultValue={n?.toleranciaInicioMinutos ?? 15} min={0} />
+          </Field>
+          <Field label="Tolerância Fim (minutos)">
+            <Input type="number" name="toleranciaFimMinutos" defaultValue={n?.toleranciaFimMinutos ?? 15} min={0} />
+          </Field>
+        </div>
+        <div className="flex flex-col gap-4">
+          <Switch
+            checked={permitirChamadaRetroativa}
+            onChange={setPermitirChamadaRetroativa}
+            label="Permitir aprovação de chamada retroativa"
+          />
+          {permitirChamadaRetroativa && (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 mt-2 border-l-2 border-sky-500 pl-4">
+              <Field label="Dias limite para retroativo">
+                <Input type="number" name="diasLimiteRetroativo" defaultValue={n?.diasLimiteRetroativo ?? 7} min={1} />
+              </Field>
+            </div>
+          )}
         </div>
       </FormSection>
 
