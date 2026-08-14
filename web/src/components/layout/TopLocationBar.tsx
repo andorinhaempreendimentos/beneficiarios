@@ -154,7 +154,7 @@ export function TopLocationBar({ nucleos: nucleosProp }: TopLocationBarProps = {
             <option value="Todos" className="dark:bg-zinc-900">UF: Todos</option>
             {estadosDisponiveis.map((uf) => (
               <option key={uf} value={uf} className="dark:bg-zinc-900">
-                {ESTADOS_NOMES[uf] || uf}
+                {uf}
               </option>
             ))}
           </select>

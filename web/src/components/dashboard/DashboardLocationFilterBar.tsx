@@ -150,10 +150,10 @@ export function DashboardLocationFilterBar({ nucleos }: DashboardLocationFilterB
               onChange={(e) => setEstado(e.target.value)}
               className="bg-transparent font-semibold text-zinc-900 focus:outline-hidden cursor-pointer"
             >
-              <option value="Todos">Todos os Estados (UF)</option>
+              <option value="Todos">UF: Todos</option>
               {estadosDisponiveis.map((uf) => (
                 <option key={uf} value={uf}>
-                  {ESTADOS_NOMES[uf] || `Estado (${uf})`}
+                  {uf}
                 </option>
               ))}
             </select>
