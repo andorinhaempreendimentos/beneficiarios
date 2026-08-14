@@ -485,36 +485,36 @@ export default function InscricoesPage() {
           type="button"
           onClick={() => aprovarEmLote(selectedIds)}
           disabled={processando}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-600 hover:bg-green-700 text-xs font-medium text-white transition-colors disabled:opacity-50 cursor-pointer"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-xs font-semibold text-white transition-all shadow-xs disabled:opacity-50 cursor-pointer whitespace-nowrap shrink-0"
         >
           <CheckCircle2 className="h-3.5 w-3.5" />
-          <span>Aprovar ({selectedIds.length})</span>
+          <span>Aprovar</span>
         </button>
 
         <button
           type="button"
           onClick={() => moverParaFila(selectedIds)}
           disabled={processando}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-700 text-xs font-medium text-white transition-colors disabled:opacity-50 cursor-pointer"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-xs font-semibold text-white transition-all shadow-xs disabled:opacity-50 cursor-pointer whitespace-nowrap shrink-0"
         >
           <Clock className="h-3.5 w-3.5" />
-          <span>Mover p/ Fila ({selectedIds.length})</span>
+          <span>Mover p/ Fila</span>
         </button>
 
         <button
           type="button"
           onClick={() => setModalRecusar(true)}
           disabled={processando}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-xs font-medium text-white transition-colors disabled:opacity-50 cursor-pointer"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-xs font-semibold text-white transition-all shadow-xs disabled:opacity-50 cursor-pointer whitespace-nowrap shrink-0"
         >
           <XCircle className="h-3.5 w-3.5" />
-          <span>Recusar ({selectedIds.length})</span>
+          <span>Recusar</span>
         </button>
 
         <button
           type="button"
           onClick={() => alert(`Exportando ${selectedIds.length} inscrição(ões)...`)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-zinc-100 transition-colors cursor-pointer"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-zinc-200 transition-colors cursor-pointer whitespace-nowrap shrink-0"
         >
           <Download className="h-3.5 w-3.5" />
           <span>Exportar</span>

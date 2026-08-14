@@ -374,26 +374,26 @@ export default function NucleosPage() {
           type="button"
           onClick={() => alternarFuncionamentoLote(true)}
           disabled={processando}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-600 hover:bg-green-700 text-xs font-medium text-white transition-colors disabled:opacity-50 cursor-pointer"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-xs font-semibold text-white transition-all shadow-xs disabled:opacity-50 cursor-pointer whitespace-nowrap shrink-0"
         >
           <Power className="h-3.5 w-3.5" />
-          <span>Ativar ({selectedIds.length})</span>
+          <span>Ativar</span>
         </button>
 
         <button
           type="button"
           onClick={() => alternarFuncionamentoLote(false)}
           disabled={processando}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-xs font-medium text-white transition-colors disabled:opacity-50 cursor-pointer"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-xs font-semibold text-white transition-all shadow-xs disabled:opacity-50 cursor-pointer whitespace-nowrap shrink-0"
         >
           <Power className="h-3.5 w-3.5" />
-          <span>Desativar ({selectedIds.length})</span>
+          <span>Desativar</span>
         </button>
 
         <button
           type="button"
           onClick={() => alert(`Exportando ${selectedIds.length} núcleo(s)...`)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-zinc-100 transition-colors cursor-pointer"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-zinc-200 transition-colors cursor-pointer whitespace-nowrap shrink-0"
         >
           <Download className="h-3.5 w-3.5" />
           <span>Exportar</span>
