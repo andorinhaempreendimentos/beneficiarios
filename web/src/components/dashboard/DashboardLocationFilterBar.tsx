@@ -86,24 +86,35 @@ export function DashboardLocationFilterBar({ nucleos }: DashboardLocationFilterB
       .sort((a, b) => a.identificacao.localeCompare(b.identificacao, "pt-BR"));
   }, [nucleosMapeados, estado, cidade, organizacaoId]);
 
-  // Validar se organizacaoId ou nucleoId salvos no localStorage sao validos
+  // Todas as Organizações (lista completa sem filtro geográfico) para validação de ID
+  const todasOrganizacoes = useMemo(() => {
+    const orgMap = new Map<string, string>();
+    for (const n of nucleosMapeados) {
+      if (n.organizacao) {
+        orgMap.set(n.organizacao.id, n.organizacao.nome);
+      }
+    }
+    return Array.from(orgMap.entries()).map(([id, nome]) => ({ id, nome }));
+  }, [nucleosMapeados]);
+
+  // Validar se organizacaoId ou nucleoId salvos no localStorage sao validos (contra a lista completa)
   useEffect(() => {
-    if (organizacaoId !== "Todas" && organizacoesDisponiveis.length > 0) {
-      const orgValida = organizacoesDisponiveis.some((o) => o.id === organizacaoId);
+    if (organizacaoId !== "Todas" && todasOrganizacoes.length > 0) {
+      const orgValida = todasOrganizacoes.some((o) => o.id === organizacaoId);
       if (!orgValida) {
         setOrganizacaoId("Todas");
       }
     }
-  }, [organizacaoId, organizacoesDisponiveis, setOrganizacaoId]);
+  }, [organizacaoId, todasOrganizacoes, setOrganizacaoId]);
 
   useEffect(() => {
-    if (nucleoId !== "Todos" && nucleosDisponiveis.length > 0) {
-      const nucleoValido = nucleosDisponiveis.some((n) => n.id === nucleoId);
+    if (nucleoId !== "Todos" && nucleosMapeados.length > 0) {
+      const nucleoValido = nucleosMapeados.some((n) => n.id === nucleoId);
       if (!nucleoValido) {
         setNucleoId("Todos");
       }
     }
-  }, [nucleoId, nucleosDisponiveis, setNucleoId]);
+  }, [nucleoId, nucleosMapeados, setNucleoId]);
 
   const countFiltrosAtivos = [
     estado !== "Todos",
