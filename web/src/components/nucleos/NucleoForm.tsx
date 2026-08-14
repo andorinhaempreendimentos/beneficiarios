@@ -278,11 +278,10 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], back
           {permitirChamadaRetroativa && (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 mt-2 border-l-2 border-sky-500 pl-4">
               <Field label="Dias limite para retroativo">
-                <Input type="number" name="diasLimiteRetroativo" defaultValue={n?.diasLimiteRetroativo ?? 7} min={1} />
+                 <Input type="number" name="diasLimiteRetroativo" defaultValue={n?.diasLimiteRetroativo ?? 7} min={1} />
               </Field>
             </div>
           )}
-        </div>
       </FormSection>
 
       <div className="flex justify-end gap-2">
