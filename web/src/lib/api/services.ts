@@ -56,6 +56,23 @@ export interface DashboardResumo {
   topNucleos: { id: string; identificacao: string; beneficiariosAtivos: number }[];
   distribuicaoPorModalidade: { nome: string; total: number }[];
   recentes: { id: string; nomeCompleto: string; nucleo?: string; status: string; dataCadastro: string }[];
+  nucleosDetalhados?: Array<{
+    id: string;
+    identificacao: string;
+    cidade?: string;
+    organizacaoId: string;
+    organizacao?: {
+      id: string;
+      nome: string;
+      estado?: string;
+      cidade?: string;
+    };
+  }>;
+  organizacoes?: Array<{
+    id: string;
+    nome: string;
+    estado?: string;
+  }>;
 }
 
 function paginar(page?: number, limit?: number) {
@@ -132,6 +149,13 @@ export interface NucleoApi {
   nomeResponsavel?: string;
   telefoneContato?: string;
   organizacaoId: string;
+  organizacao?: {
+    id: string;
+    nome: string;
+    objetoId?: string;
+    estado?: string;
+    cidade?: string;
+  };
   dataInicio: string;
   dataFechamento?: string;
   emFuncionamento: boolean;
@@ -322,6 +346,13 @@ function mapNucleo(r: any): NucleoApi {
     complemento: r.complemento ?? undefined, latitude: r.latitude ?? undefined,
     longitude: r.longitude ?? undefined, nomeResponsavel: r.nome_responsavel ?? undefined,
     telefoneContato: r.telefone_contato ?? undefined, organizacaoId: r.organizacao_id,
+    organizacao: r.organizacoes ? {
+      id: r.organizacoes.id,
+      nome: r.organizacoes.nome,
+      objetoId: r.organizacoes.objeto_id ?? undefined,
+      estado: r.organizacoes.estado ?? undefined,
+      cidade: r.organizacoes.cidade ?? undefined,
+    } : undefined,
     dataInicio: r.data_inicio, dataFechamento: r.data_fechamento ?? undefined,
     emFuncionamento: r.em_funcionamento, disponivelPreInscricao: r.disponivel_pre_inscricao,
     atividadeIds: r.nucleo_atividades ? r.nucleo_atividades.map((na: any) => na.atividade_id) : undefined,
@@ -1536,10 +1567,30 @@ export const configuracoesApi = {
 
 // ── Dashboard ────────────────────────────────────────────────────────────
 
+function extrairOrganizacoes(nucleos: any[]): { id: string; nome: string; estado?: string }[] {
+  const orgMap = new Map<string, { id: string; nome: string; estado?: string }>();
+  for (const n of nucleos) {
+    if (n.organizacoes && !orgMap.has(n.organizacoes.id)) {
+      orgMap.set(n.organizacoes.id, {
+        id: n.organizacoes.id,
+        nome: n.organizacoes.nome,
+        estado: n.organizacoes.estado ?? undefined,
+      });
+    } else if (n.organizacao && !orgMap.has(n.organizacao.id)) {
+      orgMap.set(n.organizacao.id, {
+        id: n.organizacao.id,
+        nome: n.organizacao.nome,
+        estado: n.organizacao.estado ?? undefined,
+      });
+    }
+  }
+  return Array.from(orgMap.values()).sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+}
+
 function montarResumo(
   totalBeneficiarios: number,
   aprovados: any[],
-  nucleos: { id: string; identificacao: string; em_funcionamento: boolean }[],
+  nucleos: any[],
   funcionarios: { status: string }[],
   turmas: { id: string; atividade_id: string; vagas_totais: number }[],
   atividades: { id: string; nome: string; disponivel_pre_inscricao?: boolean }[],
@@ -1598,6 +1649,21 @@ function montarResumo(
     }))
     .sort((a, b) => b.total - a.total);
 
+  const nucleosDetalhados = nucleos.map((n) => ({
+    id: n.id,
+    identificacao: n.identificacao,
+    cidade: n.cidade ?? undefined,
+    organizacaoId: n.organizacao_id || n.organizacaoId,
+    organizacao: n.organizacoes || n.organizacao ? {
+      id: (n.organizacoes || n.organizacao).id,
+      nome: (n.organizacoes || n.organizacao).nome,
+      estado: (n.organizacoes || n.organizacao).estado ?? undefined,
+      cidade: (n.organizacoes || n.organizacao).cidade ?? undefined,
+    } : undefined,
+  }));
+
+  const organizacoes = extrairOrganizacoes(nucleos);
+
   return {
     beneficiariosAtivos,
     totalBeneficiarios,
@@ -1615,6 +1681,8 @@ function montarResumo(
     totalModalidades: atividadesEsportivas.length,
     topNucleos,
     distribuicaoPorModalidade,
+    nucleosDetalhados,
+    organizacoes,
     recentes: recentes.map((b) => {
       let nomeDoNucleo = b.nucleo_id ? nucleoNome.get(b.nucleo_id) : undefined;
       if (!nomeDoNucleo && b.nucleos?.identificacao) {
@@ -1651,7 +1719,7 @@ export const dashboardApi = {
     ] = await Promise.all([
       sb.from('beneficiarios').select('id', { count: 'exact', head: true }).is('deleted_at', null),
       sb.from('beneficiarios').select('id, nucleo_id, beneficiario_turmas(turmas(nucleo_id))').is('deleted_at', null).eq('status', 'ativo'),
-      sb.from('nucleos').select('id, identificacao, em_funcionamento').is('deleted_at', null),
+      sb.from('nucleos').select('id, identificacao, em_funcionamento, cidade, organizacao_id, organizacoes(id, nome, estado, cidade)').is('deleted_at', null),
       sb.from('funcionarios').select('status').is('deleted_at', null),
       sb.from('turmas').select('id, atividade_id, vagas_totais').is('deleted_at', null),
       sb.from('atividades').select('id, nome, disponivel_pre_inscricao').is('deleted_at', null),

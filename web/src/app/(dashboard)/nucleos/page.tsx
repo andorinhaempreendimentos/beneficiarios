@@ -48,7 +48,7 @@ const EMPTY = {
 };
 
 export default function NucleosPage() {
-  const { estado, cidade } = useLocationFilter();
+  const { estado, cidade, organizacaoId, nucleoId } = useLocationFilter();
   const { t } = useDicionario();
   const [filtros, setFiltros] = useState(EMPTY);
   const [pagina, setPagina] = useState(1);
@@ -63,7 +63,7 @@ export default function NucleosPage() {
   const organizacoes = organizacoesRes?.data ?? [];
   const atividades = atividadesRes?.data ?? [];
 
-  const { data: pageData, loading } = useQuery<Paginated<NucleoApi & { organizacao?: { id: string; nome: string; objetoId: string } }>>(
+  const { data: pageData, loading } = useQuery<Paginated<NucleoApi>>(
     () => nucleosApi.list({ ...filtros, page: pagina, limit: PER_PAGE }),
     [filtros, pagina],
   );
@@ -81,9 +81,11 @@ export default function NucleosPage() {
       }
       const bateEstado = estado === "Todos" || estadoUf === estado;
       const bateCidade = cidade === "Todas" || cidadeNome === cidade;
-      return bateEstado && bateCidade;
+      const bateOrg = organizacaoId === "Todas" || n.organizacaoId === organizacaoId;
+      const bateNucleo = nucleoId === "Todos" || n.id === nucleoId;
+      return bateEstado && bateCidade && bateOrg && bateNucleo;
     });
-  }, [rawResultado, estado, cidade]);
+  }, [rawResultado, estado, cidade, organizacaoId, nucleoId]);
   const total = pageData?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
 

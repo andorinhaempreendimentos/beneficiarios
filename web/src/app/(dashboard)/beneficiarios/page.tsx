@@ -40,7 +40,7 @@ const PER_PAGE = 15;
 const EMPTY = { nome: "", matricula: "", cpf: "", status: "", atividadeId: "", tipoMatricula: "", nucleoId: "", idadeMin: "", idadeMax: "" };
 
 export default function BeneficiariosPage() {
-  const { estado, cidade } = useLocationFilter();
+  const { estado, cidade, organizacaoId, nucleoId } = useLocationFilter();
   const [filtros, setFiltros] = useState(EMPTY);
   const [ativos, setAtivos] = useState(EMPTY);
   const [pagina, setPagina] = useState(1);
@@ -92,9 +92,12 @@ export default function BeneficiariosPage() {
 
       const bateEstado = estado === "Todos" || estadoUf === estado;
       const bateCidade = cidade === "Todas" || cidadeNome === cidade;
-      return bateEstado && bateCidade;
+      const bateOrg = organizacaoId === "Todas" || (nucleoEncontrado?.organizacaoId === organizacaoId);
+      const bateNucleo = nucleoId === "Todos" || (b.nucleoId === nucleoId || nucleoEncontrado?.id === nucleoId);
+      return bateEstado && bateCidade && bateOrg && bateNucleo;
     });
-  }, [rawResultado, estado, cidade, nucleos]);
+  }, [rawResultado, estado, cidade, organizacaoId, nucleoId, nucleos]);
+  
   const total = pageData?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
 

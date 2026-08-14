@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { Globe, MapPin, Filter, RotateCcw } from "lucide-react";
+import { Globe, MapPin, Filter, Building, Compass, RotateCcw } from "lucide-react";
 import { useLocationFilter } from "@/components/providers/LocationFilterProvider";
 import type { NucleoApi } from "@/lib/api/services";
 import { normalizarNucleoLocalizacao } from "@/lib/location";
@@ -21,7 +21,17 @@ interface DashboardLocationFilterBarProps {
 }
 
 export function DashboardLocationFilterBar({ nucleos }: DashboardLocationFilterBarProps) {
-  const { estado, cidade, setEstado, setCidade, limparFiltros } = useLocationFilter();
+  const {
+    estado,
+    cidade,
+    organizacaoId,
+    nucleoId,
+    setEstado,
+    setCidade,
+    setOrganizacaoId,
+    setNucleoId,
+    limparFiltros,
+  } = useLocationFilter();
 
   // Mapear núcleos com estado e cidade centralizados
   const nucleosMapeados = useMemo(() => {
@@ -48,21 +58,56 @@ export function DashboardLocationFilterBar({ nucleos }: DashboardLocationFilterB
     ).sort();
   }, [nucleosMapeados, estado]);
 
-  const temFiltroAtivo = estado !== "Todos" || cidade !== "Todas";
+  // Organizações disponíveis para estado e cidade selecionados
+  const organizacoesDisponiveis = useMemo(() => {
+    const orgMap = new Map<string, string>();
+    for (const n of nucleosMapeados) {
+      if (estado !== "Todos" && n.estadoUf !== estado) continue;
+      if (cidade !== "Todas" && n.cidadeNome !== cidade) continue;
+
+      if (n.organizacao) {
+        orgMap.set(n.organizacao.id, n.organizacao.nome);
+      }
+    }
+    return Array.from(orgMap.entries())
+      .map(([id, nome]) => ({ id, nome }))
+      .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
+  }, [nucleosMapeados, estado, cidade]);
+
+  // Núcleos disponíveis para estado, cidade e organização selecionados
+  const nucleosDisponiveis = useMemo(() => {
+    return nucleosMapeados
+      .filter((n) => {
+        if (estado !== "Todos" && n.estadoUf !== estado) return false;
+        if (cidade !== "Todas" && n.cidadeNome !== cidade) return false;
+        if (organizacaoId !== "Todas" && n.organizacaoId !== organizacaoId) return false;
+        return true;
+      })
+      .sort((a, b) => a.identificacao.localeCompare(b.identificacao, "pt-BR"));
+  }, [nucleosMapeados, estado, cidade, organizacaoId]);
+
+  const countFiltrosAtivos = [
+    estado !== "Todos",
+    cidade !== "Todas",
+    organizacaoId !== "Todas",
+    nucleoId !== "Todos",
+  ].filter(Boolean).length;
+
+  const temFiltroAtivo = countFiltrosAtivos > 0;
 
   return (
     <div className="rounded-2xl border border-sky-200 bg-gradient-to-r from-sky-50/80 via-white to-sky-50/40 p-4 shadow-2xs">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-center gap-2.5">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-600 text-white shadow-2xs shrink-0">
             <Globe className="h-5 w-5" />
           </div>
           <div>
             <h2 className="text-sm font-bold text-zinc-900 flex items-center gap-2">
-              <span>Filtro de Exibição Regional</span>
+              <span>Filtro de Exibição Regional e Entidades</span>
               {temFiltroAtivo ? (
                 <span className="rounded-full bg-sky-100 px-2 py-0.5 text-[10px] font-extrabold text-sky-800 uppercase tracking-wider">
-                  Filtro Ativo na Sessão
+                  {countFiltrosAtivos} {countFiltrosAtivos === 1 ? "Filtro Ativo" : "Filtros Ativos"}
                 </span>
               ) : (
                 <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">
@@ -71,15 +116,15 @@ export function DashboardLocationFilterBar({ nucleos }: DashboardLocationFilterB
               )}
             </h2>
             <p className="text-xs text-zinc-500">
-              Defina qual Estado e Cidade terão seus dados refletidos nos indicadores do painel.
+              Filtre indicadores por Estado, Cidade, Organização ou Núcleo.
             </p>
           </div>
         </div>
 
-        {/* Seletores de Estado e Cidade */}
-        <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+        {/* Seletores Encadeados (Estado -> Cidade -> Organização -> Núcleo) */}
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
           {/* Seletor de Estado */}
-          <div className="flex items-center gap-1.5 rounded-xl border border-zinc-300 bg-white px-3 py-1.5 text-xs font-semibold text-zinc-800 shadow-2xs">
+          <div className="flex items-center gap-1.5 rounded-xl border border-zinc-300 bg-white px-2.5 py-1.5 text-xs font-semibold text-zinc-800 shadow-2xs">
             <MapPin className="h-3.5 w-3.5 text-sky-600 shrink-0" />
             <select
               value={estado}
@@ -96,7 +141,7 @@ export function DashboardLocationFilterBar({ nucleos }: DashboardLocationFilterB
           </div>
 
           {/* Seletor de Cidade */}
-          <div className="flex items-center gap-1.5 rounded-xl border border-zinc-300 bg-white px-3 py-1.5 text-xs font-semibold text-zinc-800 shadow-2xs">
+          <div className="flex items-center gap-1.5 rounded-xl border border-zinc-300 bg-white px-2.5 py-1.5 text-xs font-semibold text-zinc-800 shadow-2xs">
             <Filter className="h-3.5 w-3.5 text-sky-600 shrink-0" />
             <select
               value={cidade}
@@ -107,6 +152,40 @@ export function DashboardLocationFilterBar({ nucleos }: DashboardLocationFilterB
               {cidadesDisponiveis.map((c) => (
                 <option key={c} value={c}>
                   {c}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Seletor de Organização */}
+          <div className="flex items-center gap-1.5 rounded-xl border border-zinc-300 bg-white px-2.5 py-1.5 text-xs font-semibold text-zinc-800 shadow-2xs">
+            <Building className="h-3.5 w-3.5 text-sky-600 shrink-0" />
+            <select
+              value={organizacaoId}
+              onChange={(e) => setOrganizacaoId(e.target.value)}
+              className="bg-transparent font-semibold text-zinc-900 focus:outline-hidden cursor-pointer max-w-[180px] truncate"
+            >
+              <option value="Todas">Todas Organizações ({organizacoesDisponiveis.length})</option>
+              {organizacoesDisponiveis.map((org) => (
+                <option key={org.id} value={org.id}>
+                  {org.nome}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Seletor de Núcleo */}
+          <div className="flex items-center gap-1.5 rounded-xl border border-zinc-300 bg-white px-2.5 py-1.5 text-xs font-semibold text-zinc-800 shadow-2xs">
+            <Compass className="h-3.5 w-3.5 text-sky-600 shrink-0" />
+            <select
+              value={nucleoId}
+              onChange={(e) => setNucleoId(e.target.value)}
+              className="bg-transparent font-semibold text-zinc-900 focus:outline-hidden cursor-pointer max-w-[180px] truncate"
+            >
+              <option value="Todos">Todos os Núcleos ({nucleosDisponiveis.length})</option>
+              {nucleosDisponiveis.map((n) => (
+                <option key={n.id} value={n.id}>
+                  {n.identificacao}
                 </option>
               ))}
             </select>

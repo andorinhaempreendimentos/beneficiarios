@@ -28,35 +28,35 @@ import {
   type NucleoApi,
   type AtividadeApi,
   type BeneficiarioApi,
+  type QP,
 } from "@/lib/api/services";
 import { useLocationFilter } from "@/components/providers/LocationFilterProvider";
 
 const PER_PAGE = 15;
 const EMPTY = { busca: "", nucleoId: "", atividadeId: "", exclusiva: "" };
 
+type FiltrosForm = typeof EMPTY;
+
 export default function TurmasPage() {
-  const { estado, cidade } = useLocationFilter();
-  const [filtros, setFiltros] = useState(EMPTY);
-  const [ativos, setAtivos] = useState(EMPTY);
+  const { estado, cidade, organizacaoId, nucleoId } = useLocationFilter();
   const [pagina, setPagina] = useState(1);
+  const [filtros, setFiltros] = useState<FiltrosForm>(EMPTY);
+  const [ativos, setAtivos] = useState<FiltrosForm>(EMPTY);
   const [viewMode, setViewMode] = useState<ViewMode>("cards");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-
   const [turmaParaExcluir, setTurmaParaExcluir] = useState<TurmaApi | null>(null);
   const [excluindo, setExcluindo] = useState(false);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setPagina(1);
-      setAtivos(filtros);
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [filtros]);
+  const queryParams = useMemo<QP>(() => {
+    const p: QP = { page: pagina, limit: PER_PAGE };
+    if (ativos.busca) p.busca = ativos.busca;
+    if (ativos.nucleoId) p.nucleoId = ativos.nucleoId;
+    if (ativos.atividadeId) p.atividadeId = ativos.atividadeId;
+    if (ativos.exclusiva !== "") p.exclusiva = ativos.exclusiva === "true";
+    return p;
+  }, [pagina, ativos]);
 
-  const { data: pageData, loading, refetch } = useQuery<Paginated<TurmaApi>>(
-    () => turmasApi.list({ ...ativos, page: pagina, limit: PER_PAGE }),
-    [ativos, pagina],
-  );
+  const { data: pageData, loading, refetch } = useQuery<Paginated<TurmaApi>>(() => turmasApi.list(queryParams), [queryParams]);
   const { data: nucleosData } = useQuery<Paginated<NucleoApi>>(() => nucleosApi.list({ limit: 200 }), []);
   const { data: atividadesData } = useQuery<Paginated<AtividadeApi>>(() => atividadesApi.list({ limit: 200 }), []);
   const { data: beneficiariosData } = useQuery<Paginated<BeneficiarioApi>>(() => beneficiariosApi.list({ limit: 1000 }), []);
@@ -81,9 +81,11 @@ export default function TurmasPage() {
 
       const bateEstado = estado === "Todos" || estadoUf === estado;
       const bateCidade = cidade === "Todas" || cidadeNome === cidade;
-      return bateEstado && bateCidade;
+      const bateOrg = organizacaoId === "Todas" || (nucleoEncontrado?.organizacaoId === organizacaoId);
+      const bateNucleo = nucleoId === "Todos" || (t.nucleoId === nucleoId || nucleoEncontrado?.id === nucleoId);
+      return bateEstado && bateCidade && bateOrg && bateNucleo;
     });
-  }, [rawResultado, estado, cidade, nucleos]);
+  }, [rawResultado, estado, cidade, organizacaoId, nucleoId, nucleos]);
 
   const total = pageData?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));

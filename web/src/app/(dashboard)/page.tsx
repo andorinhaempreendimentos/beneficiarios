@@ -32,7 +32,7 @@ const VAZIO: DashboardResumo = {
 };
 
 export default function DashboardPage() {
-  const { estado, cidade } = useLocationFilter();
+  const { estado, cidade, organizacaoId, nucleoId } = useLocationFilter();
   const [modalLinksOpen, setModalLinksOpen] = useState(false);
 
   const { data, loading } = useQuery<DashboardResumo>(() => dashboardApi.resumo(), []);
@@ -47,18 +47,20 @@ export default function DashboardPage() {
   const turmas = turmasData?.data ?? [];
   const rRaw = data ?? VAZIO;
 
-  // Filtrar resumos e dados conforme estado e cidade selecionados na sessão
+  // Filtrar resumos e dados conforme estado, cidade, organização e núcleo selecionados na sessão
   const { resumoFiltrado, nucleosMapeados } = useMemo(() => {
     const nucleosComUf = rawNucleos.map(normalizarNucleoLocalizacao);
 
-    if (estado === "Todos" && cidade === "Todas") {
+    if (estado === "Todos" && cidade === "Todas" && organizacaoId === "Todas" && nucleoId === "Todos") {
       return { resumoFiltrado: rRaw, nucleosMapeados: nucleosComUf };
     }
 
     const nucleosFiltrados = nucleosComUf.filter((n) => {
       const bateEstado = estado === "Todos" || n.estadoUf === estado;
       const bateCidade = cidade === "Todas" || n.cidadeNome === cidade;
-      return bateEstado && bateCidade;
+      const bateOrg = organizacaoId === "Todas" || n.organizacaoId === organizacaoId;
+      const bateNucleo = nucleoId === "Todos" || n.id === nucleoId;
+      return bateEstado && bateCidade && bateOrg && bateNucleo;
     });
 
     const idsFiltrados = new Set(nucleosFiltrados.map((n) => n.id));
@@ -86,7 +88,7 @@ export default function DashboardPage() {
     };
 
     return { resumoFiltrado: rFiltrado, nucleosMapeados: nucleosComUf };
-  }, [rawNucleos, rRaw, estado, cidade]);
+  }, [rawNucleos, rRaw, estado, cidade, organizacaoId, nucleoId]);
 
   const r = resumoFiltrado;
 

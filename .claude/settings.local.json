@@ -242,7 +242,8 @@
       "Bash(rtk read *)",
       "Bash(rtk git *)",
       "Bash(rtk ls *)",
-      "Bash(rtk gh *)"
+      "Bash(rtk gh *)",
+      "Bash(xargs grep -l \"mock.*nucleos\\\\|mock.*organizacoes\")"
     ]
   },
   "enableAllProjectMcpServers": true,

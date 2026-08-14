@@ -53,7 +53,7 @@ const FILTROS: { value: Filtro; label: string }[] = [
 ];
 
 export default function InscricoesPage() {
-  const { estado, cidade } = useLocationFilter();
+  const { estado, cidade, organizacaoId, nucleoId } = useLocationFilter();
   const [filtro, setFiltro] = useState<Filtro>("todas");
   const [pagina, setPagina] = useState(1);
   const [viewMode, setViewMode] = useState<ViewMode>("cards");
@@ -110,9 +110,11 @@ export default function InscricoesPage() {
 
       const bateEstado = estado === "Todos" || estadoUf === estado;
       const bateCidade = cidade === "Todas" || cidadeNome === cidade;
-      return bateEstado && bateCidade;
+      const bateOrg = organizacaoId === "Todas" || (nucleo?.organizacaoId === organizacaoId);
+      const bateNucleo = nucleoId === "Todos" || (nucleo?.id === nucleoId || (i as any).nucleoId === nucleoId);
+      return bateEstado && bateCidade && bateOrg && bateNucleo;
     });
-  }, [rawLista, estado, cidade, rawTurmas, rawNucleos]);
+  }, [rawLista, estado, cidade, organizacaoId, nucleoId, rawTurmas, rawNucleos]);
 
   const total = pageData?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));

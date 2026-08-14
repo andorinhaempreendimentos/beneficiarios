@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { Globe, MapPin, Filter, RotateCcw, Moon, Sun } from "lucide-react";
+import { Globe, MapPin, Filter, Building, Compass, RotateCcw, Moon, Sun } from "lucide-react";
 import { useLocationFilter } from "@/components/providers/LocationFilterProvider";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { useQuery } from "@/lib/hooks/useQuery";
@@ -24,37 +24,82 @@ interface TopLocationBarProps {
 
 export function TopLocationBar({ nucleos: nucleosProp }: TopLocationBarProps = {}) {
   const { modoEscuro, alternarModoEscuro } = useTheme();
-  const { estado, cidade, setEstado, setCidade, limparFiltros } = useLocationFilter();
-  const { data: nucleosData } = useQuery<Paginated<NucleoApi>>(() => nucleosApi.list({ limit: 200 }), []);
+  const {
+    estado,
+    cidade,
+    organizacaoId,
+    nucleoId,
+    setEstado,
+    setCidade,
+    setOrganizacaoId,
+    setNucleoId,
+    limparFiltros,
+  } = useLocationFilter();
 
-  const nucleos = nucleosProp ?? nucleosData?.data ?? [];
+  const { data: nucleosData } = useQuery<Paginated<NucleoApi>>(() => nucleosApi.list({ limit: 200 }), []);
+  const rawNucleos = nucleosProp ?? nucleosData?.data ?? [];
 
   // Mapear núcleos com estado e cidade centralizados
-  const nucleosComUf = useMemo(() => {
-    return nucleos.map(normalizarNucleoLocalizacao);
-  }, [nucleos]);
+  const nucleosMapeados = useMemo(() => {
+    return rawNucleos.map(normalizarNucleoLocalizacao);
+  }, [rawNucleos]);
 
   // Lista única de Estados disponíveis
   const estadosDisponiveis = useMemo(() => {
-    const ufs = Array.from(new Set(nucleosComUf.map((n) => n.estadoUf))).sort();
+    const ufs = Array.from(new Set(nucleosMapeados.map((n) => n.estadoUf))).sort();
     return ufs;
-  }, [nucleosComUf]);
+  }, [nucleosMapeados]);
 
   // Lista única de Cidades disponíveis para o estado selecionado
   const cidadesDisponiveis = useMemo(() => {
     if (estado === "Todos") {
-      return Array.from(new Set(nucleosComUf.map((n) => n.cidadeNome))).sort();
+      return Array.from(new Set(nucleosMapeados.map((n) => n.cidadeNome))).sort();
     }
     return Array.from(
       new Set(
-        nucleosComUf
+        nucleosMapeados
           .filter((n) => n.estadoUf === estado)
           .map((n) => n.cidadeNome)
       )
     ).sort();
-  }, [nucleosComUf, estado]);
+  }, [nucleosMapeados, estado]);
 
-  const temFiltroAtivo = estado !== "Todos" || cidade !== "Todas";
+  // Organizações disponíveis para estado e cidade selecionados
+  const organizacoesDisponiveis = useMemo(() => {
+    const orgMap = new Map<string, string>();
+    for (const n of nucleosMapeados) {
+      if (estado !== "Todos" && n.estadoUf !== estado) continue;
+      if (cidade !== "Todas" && n.cidadeNome !== cidade) continue;
+
+      if (n.organizacao) {
+        orgMap.set(n.organizacao.id, n.organizacao.nome);
+      }
+    }
+    return Array.from(orgMap.entries())
+      .map(([id, nome]) => ({ id, nome }))
+      .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
+  }, [nucleosMapeados, estado, cidade]);
+
+  // Núcleos disponíveis para estado, cidade e organização selecionados
+  const nucleosDisponiveis = useMemo(() => {
+    return nucleosMapeados
+      .filter((n) => {
+        if (estado !== "Todos" && n.estadoUf !== estado) return false;
+        if (cidade !== "Todas" && n.cidadeNome !== cidade) return false;
+        if (organizacaoId !== "Todas" && n.organizacaoId !== organizacaoId) return false;
+        return true;
+      })
+      .sort((a, b) => a.identificacao.localeCompare(b.identificacao, "pt-BR"));
+  }, [nucleosMapeados, estado, cidade, organizacaoId]);
+
+  const countFiltrosAtivos = [
+    estado !== "Todos",
+    cidade !== "Todas",
+    organizacaoId !== "Todas",
+    nucleoId !== "Todos",
+  ].filter(Boolean).length;
+
+  const temFiltroAtivo = countFiltrosAtivos > 0;
 
   return (
     <header className="sticky top-0 z-30 flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 px-4 py-2.5 backdrop-blur-xs lg:px-8 shadow-2xs transition-colors">
@@ -68,7 +113,7 @@ export function TopLocationBar({ nucleos: nucleosProp }: TopLocationBarProps = {
           </span>
           {temFiltroAtivo ? (
             <span className="rounded-full bg-sky-100 dark:bg-sky-950/80 px-2.5 py-0.5 text-[11px] font-extrabold text-sky-800 dark:text-sky-300">
-              📍 {[cidade !== "Todas" ? cidade : null, estado !== "Todos" ? estado : null].filter(Boolean).join(" - ")}
+              📍 {countFiltrosAtivos} {countFiltrosAtivos === 1 ? "filtro ativo" : "filtros ativos"}
             </span>
           ) : (
             <span className="rounded-full bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 text-[11px] font-semibold text-zinc-500 dark:text-zinc-400">
@@ -78,36 +123,70 @@ export function TopLocationBar({ nucleos: nucleosProp }: TopLocationBarProps = {
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-1.5">
         {/* Seletor Estado */}
-        <div className="flex items-center gap-1 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/80 px-2.5 py-1 text-xs font-semibold text-zinc-800 dark:text-zinc-200 shadow-2xs">
+        <div className="flex items-center gap-1 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/80 px-2 py-1 text-xs font-semibold text-zinc-800 dark:text-zinc-200 shadow-2xs">
           <MapPin className="h-3 w-3 text-sky-600 dark:text-sky-400 shrink-0" />
           <select
             value={estado}
             onChange={(e) => setEstado(e.target.value)}
             className="bg-transparent text-xs font-semibold text-zinc-900 dark:text-zinc-100 focus:outline-hidden cursor-pointer"
           >
-            <option value="Todos" className="dark:bg-zinc-900">Todos os Estados</option>
+            <option value="Todos" className="dark:bg-zinc-900">UF: Todos</option>
             {estadosDisponiveis.map((uf) => (
               <option key={uf} value={uf} className="dark:bg-zinc-900">
-                {ESTADOS_NOMES[uf] || `Estado (${uf})`}
+                {ESTADOS_NOMES[uf] || uf}
               </option>
             ))}
           </select>
         </div>
 
         {/* Seletor Cidade */}
-        <div className="flex items-center gap-1 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/80 px-2.5 py-1 text-xs font-semibold text-zinc-800 dark:text-zinc-200 shadow-2xs">
+        <div className="flex items-center gap-1 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/80 px-2 py-1 text-xs font-semibold text-zinc-800 dark:text-zinc-200 shadow-2xs">
           <Filter className="h-3 w-3 text-sky-600 dark:text-sky-400 shrink-0" />
           <select
             value={cidade}
             onChange={(e) => setCidade(e.target.value)}
             className="bg-transparent text-xs font-semibold text-zinc-900 dark:text-zinc-100 focus:outline-hidden cursor-pointer"
           >
-            <option value="Todas" className="dark:bg-zinc-900">Todas as Cidades</option>
+            <option value="Todas" className="dark:bg-zinc-900">Cidade: Todas</option>
             {cidadesDisponiveis.map((c) => (
               <option key={c} value={c} className="dark:bg-zinc-900">
                 {c}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Seletor Organização */}
+        <div className="flex items-center gap-1 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/80 px-2 py-1 text-xs font-semibold text-zinc-800 dark:text-zinc-200 shadow-2xs">
+          <Building className="h-3 w-3 text-sky-600 dark:text-sky-400 shrink-0" />
+          <select
+            value={organizacaoId}
+            onChange={(e) => setOrganizacaoId(e.target.value)}
+            className="bg-transparent text-xs font-semibold text-zinc-900 dark:text-zinc-100 focus:outline-hidden cursor-pointer max-w-[130px] truncate"
+          >
+            <option value="Todas" className="dark:bg-zinc-900">Org: Todas ({organizacoesDisponiveis.length})</option>
+            {organizacoesDisponiveis.map((org) => (
+              <option key={org.id} value={org.id} className="dark:bg-zinc-900">
+                {org.nome}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Seletor Núcleo */}
+        <div className="flex items-center gap-1 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/80 px-2 py-1 text-xs font-semibold text-zinc-800 dark:text-zinc-200 shadow-2xs">
+          <Compass className="h-3 w-3 text-sky-600 dark:text-sky-400 shrink-0" />
+          <select
+            value={nucleoId}
+            onChange={(e) => setNucleoId(e.target.value)}
+            className="bg-transparent text-xs font-semibold text-zinc-900 dark:text-zinc-100 focus:outline-hidden cursor-pointer max-w-[130px] truncate"
+          >
+            <option value="Todos" className="dark:bg-zinc-900">Núcleo: Todos ({nucleosDisponiveis.length})</option>
+            {nucleosDisponiveis.map((n) => (
+              <option key={n.id} value={n.id} className="dark:bg-zinc-900">
+                {n.identificacao}
               </option>
             ))}
           </select>
