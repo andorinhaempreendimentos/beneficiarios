@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 
+/** Combina classes CSS com suporte a utilitários condicionais. */
 export function cn(...inputs: ClassValue[]) {
   return clsx(inputs);
 }
