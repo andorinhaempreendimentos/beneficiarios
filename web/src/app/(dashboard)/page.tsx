@@ -23,6 +23,7 @@ import { formatarData } from "@/lib/utils";
 import { statusBeneficiarioTone, statusBeneficiarioLabel, normalizarStatusBeneficiario } from "@/lib/status";
 import { useLocationFilter } from "@/components/providers/LocationFilterProvider";
 import { ModalLinksInscricao } from "@/components/inscricoes/ModalLinksInscricao";
+import { normalizarNucleoLocalizacao } from "@/lib/location";
 
 const VAZIO: DashboardResumo = {
   beneficiariosAtivos: 0, totalBeneficiarios: 0, nucleosAtivos: 0, totalNucleos: 0, totalObjetos: 0, totalOrganizacoes: 0, funcionariosAtivos: 0,
@@ -48,19 +49,7 @@ export default function DashboardPage() {
 
   // Filtrar resumos e dados conforme estado e cidade selecionados na sessão
   const { resumoFiltrado, nucleosMapeados } = useMemo(() => {
-    const nucleosComUf = rawNucleos.map((n) => {
-      let estadoUf = (n as any).estado as string | undefined;
-      if (!estadoUf) {
-        if (n.cidade?.toLowerCase() === "palmas") estadoUf = "TO";
-        else if (n.cidade?.toLowerCase() === "recife") estadoUf = "PE";
-        else estadoUf = "TO";
-      }
-      return {
-        ...n,
-        estadoUf,
-        cidadeNome: n.cidade || "Palmas",
-      };
-    });
+    const nucleosComUf = rawNucleos.map(normalizarNucleoLocalizacao);
 
     if (estado === "Todos" && cidade === "Todas") {
       return { resumoFiltrado: rRaw, nucleosMapeados: nucleosComUf };

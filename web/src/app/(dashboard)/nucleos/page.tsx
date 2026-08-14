@@ -73,12 +73,12 @@ export default function NucleosPage() {
   const resultado = useMemo(() => {
     return rawResultado.filter((n) => {
       let estadoUf = (n as any).estado as string | undefined;
+      const cidadeNome = n.cidade || "Não informada";
       if (!estadoUf) {
         if (n.cidade?.toLowerCase() === "palmas") estadoUf = "TO";
         else if (n.cidade?.toLowerCase() === "recife") estadoUf = "PE";
-        else estadoUf = "TO";
+        else estadoUf = "Não informado";
       }
-      const cidadeNome = n.cidade || "Palmas";
       const bateEstado = estado === "Todos" || estadoUf === estado;
       const bateCidade = cidade === "Todas" || cidadeNome === cidade;
       return bateEstado && bateCidade;

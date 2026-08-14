@@ -73,7 +73,7 @@ export default function BeneficiariosPage() {
   const resultado = useMemo(() => {
     return rawResultado.filter((b) => {
       let estadoUf = b.estado;
-      let cidadeNome = b.cidade || b.nucleoNome || b.turmasInfo?.[0]?.nucleoNome || "Palmas";
+      let cidadeNome = b.cidade || b.nucleoNome || b.turmasInfo?.[0]?.nucleoNome || "Não informada";
 
       const nucleoEncontrado = nucleos.find(
         (n) => n.id === b.nucleoId || n.identificacao === b.nucleoNome || n.identificacao === b.turmasInfo?.[0]?.nucleoNome
@@ -84,10 +84,10 @@ export default function BeneficiariosPage() {
         if (!estadoUf) {
           if (cidadeNome.toLowerCase() === "palmas") estadoUf = "TO";
           else if (cidadeNome.toLowerCase() === "recife") estadoUf = "PE";
-          else estadoUf = "TO";
+          else estadoUf = "Não informado";
         }
       } else if (!estadoUf) {
-        estadoUf = "TO";
+        estadoUf = "Não informado";
       }
 
       const bateEstado = estado === "Todos" || estadoUf === estado;

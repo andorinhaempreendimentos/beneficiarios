@@ -1,7 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, useMemo } from "react";
-import { Globe, MapPin, Filter, RotateCcw } from "lucide-react";
+import { createContext, useContext, useEffect, useState, useMemo, useCallback } from "react";
 
 interface LocationFilterContextValue {
   estado: string; // "Todos" ou UF (ex: "TO")
@@ -37,7 +36,7 @@ export function LocationFilterProvider({ children }: { children: React.ReactNode
     }
   }, []);
 
-  const setEstado = (uf: string) => {
+  const setEstado = useCallback((uf: string) => {
     setEstadoState(uf);
     setCidadeState("Todas"); // Reseta a cidade ao trocar o estado
     try {
@@ -46,18 +45,18 @@ export function LocationFilterProvider({ children }: { children: React.ReactNode
     } catch {
       // fallback
     }
-  };
+  }, []);
 
-  const setCidade = (c: string) => {
+  const setCidade = useCallback((c: string) => {
     setCidadeState(c);
     try {
       localStorage.setItem(STORAGE_CIDADE_KEY, c);
     } catch {
       // fallback
     }
-  };
+  }, []);
 
-  const limparFiltros = () => {
+  const limparFiltros = useCallback(() => {
     setEstadoState("Todos");
     setCidadeState("Todas");
     try {
@@ -66,11 +65,11 @@ export function LocationFilterProvider({ children }: { children: React.ReactNode
     } catch {
       // fallback
     }
-  };
+  }, []);
 
   const value = useMemo(
     () => ({ estado, cidade, setEstado, setCidade, limparFiltros }),
-    [estado, cidade]
+    [estado, cidade, setEstado, setCidade, limparFiltros]
   );
 
   return (

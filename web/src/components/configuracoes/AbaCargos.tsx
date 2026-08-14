@@ -27,7 +27,7 @@ export function AbaCargos() {
   return (
     <div className="flex flex-col gap-6 pb-8">
       {/* Resumo da Estrutura de Cargos */}
-      <Card className="shadow-xs bg-linear-to-r from-sky-900 to-indigo-900 text-white">
+      <Card className="shadow-xs bg-gradient-to-r from-sky-900 to-indigo-900 text-white">
         <CardBody className="p-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>

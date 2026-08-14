@@ -71,12 +71,12 @@ export default function TurmasPage() {
     return rawResultado.filter((t: TurmaApi) => {
       const nucleoEncontrado = nucleos.find((n) => n.id === t.nucleoId);
       let estadoUf = (nucleoEncontrado as any)?.estado as string | undefined;
-      const cidadeNome = nucleoEncontrado?.cidade || "Palmas";
+      const cidadeNome = nucleoEncontrado?.cidade || "Não informada";
 
       if (!estadoUf) {
         if (cidadeNome.toLowerCase() === "palmas") estadoUf = "TO";
         else if (cidadeNome.toLowerCase() === "recife") estadoUf = "PE";
-        else estadoUf = "TO";
+        else estadoUf = "Não informado";
       }
 
       const bateEstado = estado === "Todos" || estadoUf === estado;

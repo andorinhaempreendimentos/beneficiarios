@@ -100,12 +100,12 @@ export default function InscricoesPage() {
       const nucleo = rawNucleos.find((n) => n.id === (turma?.nucleoId || (i as any).nucleoId));
 
       let estadoUf = (nucleo as any)?.estado as string | undefined;
-      const cidadeNome = nucleo?.cidade || "Palmas";
+      const cidadeNome = nucleo?.cidade || "Não informada";
 
       if (!estadoUf) {
         if (cidadeNome.toLowerCase() === "palmas") estadoUf = "TO";
         else if (cidadeNome.toLowerCase() === "recife") estadoUf = "PE";
-        else estadoUf = "TO";
+        else estadoUf = "Não informado";
       }
 
       const bateEstado = estado === "Todos" || estadoUf === estado;

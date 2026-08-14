@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Globe, MapPin, Filter, RotateCcw, Moon, Sun } from "lucide-react";
 import { useLocationFilter } from "@/components/providers/LocationFilterProvider";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { useQuery } from "@/lib/hooks/useQuery";
 import { nucleosApi, type Paginated, type NucleoApi } from "@/lib/api/services";
+import { normalizarNucleoLocalizacao } from "@/lib/location";
 
 const ESTADOS_NOMES: Record<string, string> = {
   TO: "Tocantins (TO)",
@@ -17,28 +18,20 @@ const ESTADOS_NOMES: Record<string, string> = {
   MG: "Minas Gerais (MG)",
 };
 
-export function TopLocationBar() {
+interface TopLocationBarProps {
+  nucleos?: NucleoApi[];
+}
+
+export function TopLocationBar({ nucleos: nucleosProp }: TopLocationBarProps = {}) {
   const { modoEscuro, alternarModoEscuro } = useTheme();
   const { estado, cidade, setEstado, setCidade, limparFiltros } = useLocationFilter();
   const { data: nucleosData } = useQuery<Paginated<NucleoApi>>(() => nucleosApi.list({ limit: 200 }), []);
 
-  const nucleos = nucleosData?.data ?? [];
+  const nucleos = nucleosProp ?? nucleosData?.data ?? [];
 
-  // Mapear núcleos com estado e cidade
+  // Mapear núcleos com estado e cidade centralizados
   const nucleosComUf = useMemo(() => {
-    return nucleos.map((n) => {
-      let estadoUf = (n as any).estado as string | undefined;
-      if (!estadoUf) {
-        if (n.cidade?.toLowerCase() === "palmas") estadoUf = "TO";
-        else if (n.cidade?.toLowerCase() === "recife") estadoUf = "PE";
-        else estadoUf = "TO";
-      }
-      return {
-        ...n,
-        estadoUf,
-        cidadeNome: n.cidade || "Palmas",
-      };
-    });
+    return nucleos.map(normalizarNucleoLocalizacao);
   }, [nucleos]);
 
   // Lista única de Estados disponíveis

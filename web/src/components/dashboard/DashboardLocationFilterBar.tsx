@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { Globe, MapPin, Filter, RotateCcw } from "lucide-react";
 import { useLocationFilter } from "@/components/providers/LocationFilterProvider";
 import type { NucleoApi } from "@/lib/api/services";
+import { normalizarNucleoLocalizacao } from "@/lib/location";
 
 const ESTADOS_NOMES: Record<string, string> = {
   TO: "Tocantins (TO)",
@@ -22,21 +23,9 @@ interface DashboardLocationFilterBarProps {
 export function DashboardLocationFilterBar({ nucleos }: DashboardLocationFilterBarProps) {
   const { estado, cidade, setEstado, setCidade, limparFiltros } = useLocationFilter();
 
-  // Mapear núcleos com estado e cidade
+  // Mapear núcleos com estado e cidade centralizados
   const nucleosMapeados = useMemo(() => {
-    return nucleos.map((n) => {
-      let estadoUf = (n as any).estado as string | undefined;
-      if (!estadoUf) {
-        if (n.cidade?.toLowerCase() === "palmas") estadoUf = "TO";
-        else if (n.cidade?.toLowerCase() === "recife") estadoUf = "PE";
-        else estadoUf = "TO";
-      }
-      return {
-        ...n,
-        estadoUf,
-        cidadeNome: n.cidade || "Palmas",
-      };
-    });
+    return nucleos.map(normalizarNucleoLocalizacao);
   }, [nucleos]);
 
   // Lista única de Estados disponíveis
@@ -62,7 +51,7 @@ export function DashboardLocationFilterBar({ nucleos }: DashboardLocationFilterB
   const temFiltroAtivo = estado !== "Todos" || cidade !== "Todas";
 
   return (
-    <div className="rounded-2xl border border-sky-200 bg-linear-to-r from-sky-50/80 via-white to-sky-50/40 p-4 shadow-2xs">
+    <div className="rounded-2xl border border-sky-200 bg-gradient-to-r from-sky-50/80 via-white to-sky-50/40 p-4 shadow-2xs">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2.5">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-600 text-white shadow-2xs shrink-0">

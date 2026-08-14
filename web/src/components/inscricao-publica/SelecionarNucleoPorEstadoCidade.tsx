@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { MapPin, Globe, Building, CheckCircle2, Navigation } from "lucide-react";
 import Link from "next/link";
 import type { NucleoApi } from "@/lib/api/services";
+import { normalizarNucleoLocalizacao } from "@/lib/location";
 
 const ESTADOS_NOMES: Record<string, string> = {
   TO: "Tocantins (TO)",
@@ -20,21 +21,9 @@ interface SelecionarNucleoPorEstadoCidadeProps {
 }
 
 export function SelecionarNucleoPorEstadoCidade({ nucleos }: SelecionarNucleoPorEstadoCidadeProps) {
-  // Atribuir estado padrão para núcleos que possuem cidade cadastrada (ex: Palmas -> TO)
+  // Mapear núcleos com estado e cidade centralizados
   const nucleosComEstado = useMemo(() => {
-    return nucleos.map((n) => {
-      let estado = (n as any).estado as string | undefined;
-      if (!estado) {
-        if (n.cidade?.toLowerCase() === "palmas") estado = "TO";
-        else if (n.cidade?.toLowerCase() === "recife") estado = "PE";
-        else estado = "TO"; // fallback padrão
-      }
-      return {
-        ...n,
-        estadoUf: estado,
-        cidadeNome: n.cidade || "Palmas",
-      };
-    });
+    return nucleos.map(normalizarNucleoLocalizacao);
   }, [nucleos]);
 
   // Obter lista única de Estados
