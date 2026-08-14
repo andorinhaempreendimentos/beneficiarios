@@ -2,7 +2,8 @@
 
 import { useState, useCallback } from "react";
 import Link from "next/link";
-import { Download } from "lucide-react";
+import { Download, Wrench } from "lucide-react";
+import { useToast } from "@/components/providers/ToastProvider";
 import {
   Badge,
   Card,
@@ -26,17 +27,38 @@ const PER_PAGE = 15;
 const EMPTY = { busca: "", categoria: "", conservacao: "", nucleoId: "" };
 
 export default function EquipamentosPage() {
+  const { toast } = useToast();
   const [filtros, setFiltros] = useState(EMPTY);
   const [ativos, setAtivos] = useState(EMPTY);
   const [pagina, setPagina] = useState(1);
   const [viewMode, setViewMode] = useState<ViewMode>("cards");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [processando, setProcessando] = useState(false);
+  const [modalConservacao, setModalConservacao] = useState(false);
+  const [novaConservacao, setNovaConservacao] = useState("");
 
-  const { data: pageData, loading } = useQuery<Paginated<EquipamentoApi>>(
+  const { data: pageData, loading, refetch } = useQuery<Paginated<EquipamentoApi>>(
     () => equipamentosApi.list({ ...ativos, page: pagina, limit: PER_PAGE }),
     [ativos, pagina],
   );
   const { data: nucleosData } = useQuery<Paginated<NucleoApi>>(() => nucleosApi.list({ limit: 200 }), []);
+
+  async function alterarConservacaoLote() {
+    if (selectedIds.length === 0 || !novaConservacao) return;
+    setProcessando(true);
+    try {
+      await Promise.all(selectedIds.map((id) => equipamentosApi.update(id, { conservacao: novaConservacao })));
+      toast.success(`Conservação de ${selectedIds.length} equipamento(s) alterada para "${novaConservacao}"`);
+      setModalConservacao(false);
+      setNovaConservacao("");
+      refetch();
+      setSelectedIds([]);
+    } catch (err: any) {
+      toast.error("Erro ao alterar conservação: " + (err?.message || "Erro desconhecido"));
+    } finally {
+      setProcessando(false);
+    }
+  }
 
   const resultado = pageData?.data ?? [];
   const total = pageData?.total ?? 0;
@@ -252,13 +274,67 @@ export default function EquipamentosPage() {
       >
         <button
           type="button"
+          onClick={() => setModalConservacao(true)}
+          disabled={processando}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-700 text-xs font-medium text-white transition-colors disabled:opacity-50 cursor-pointer"
+        >
+          <Wrench className="h-3.5 w-3.5" />
+          <span>Alterar Conservação ({selectedIds.length})</span>
+        </button>
+
+        <button
+          type="button"
           onClick={() => alert(`Exportando ${selectedIds.length} equipamento(s)...`)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-zinc-100 transition-colors"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-zinc-100 transition-colors cursor-pointer"
         >
           <Download className="h-3.5 w-3.5" />
           <span>Exportar</span>
         </button>
       </BulkActionsBar>
+
+      {/* Modal de Alterar Estado de Conservação em Lote */}
+      {modalConservacao && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+            <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-2">
+              Alterar Conservação de {selectedIds.length} Equipamento(s)
+            </h3>
+            <p className="text-xs text-zinc-500 mb-4">
+              Selecione a nova condição física que será atribuída a todos os equipamentos selecionados.
+            </p>
+            <select
+              value={novaConservacao}
+              onChange={(e) => setNovaConservacao(e.target.value)}
+              className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-transparent p-3 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-hidden focus:ring-2 focus:ring-sky-500 cursor-pointer"
+            >
+              <option value="" className="dark:bg-zinc-900">Selecione o estado de conservação...</option>
+              <option value="novo" className="dark:bg-zinc-900">Novo</option>
+              <option value="bom" className="dark:bg-zinc-900">Bom</option>
+              <option value="regular" className="dark:bg-zinc-900">Regular</option>
+              <option value="ruim" className="dark:bg-zinc-900">Ruim</option>
+              <option value="danificado" className="dark:bg-zinc-900">Danificado</option>
+              <option value="descartado" className="dark:bg-zinc-900">Descartado</option>
+            </select>
+            <div className="flex gap-3 mt-5">
+              <button
+                type="button"
+                onClick={() => setModalConservacao(false)}
+                className="flex-1 rounded-lg border border-zinc-300 dark:border-zinc-700 px-4 py-2 text-sm font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={alterarConservacaoLote}
+                disabled={!novaConservacao || processando}
+                className="flex-1 rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-700 transition-colors disabled:opacity-50 cursor-pointer"
+              >
+                {processando ? "Salvando..." : "Confirmar Alteração"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

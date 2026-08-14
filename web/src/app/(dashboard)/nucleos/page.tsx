@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Building2, MapPin, Download, Trash2, Check } from "lucide-react";
+import { Building2, MapPin, Download, Trash2, Check, Power } from "lucide-react";
+import { useToast } from "@/components/providers/ToastProvider";
 import Link from "next/link";
 import {
   Badge,
@@ -48,12 +49,14 @@ const EMPTY = {
 };
 
 export default function NucleosPage() {
+  const { toast } = useToast();
   const { estado, cidade, organizacaoId, nucleoId } = useLocationFilter();
   const { t } = useDicionario();
   const [filtros, setFiltros] = useState(EMPTY);
   const [pagina, setPagina] = useState(1);
   const [viewMode, setViewMode] = useState<ViewMode>("cards");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [processando, setProcessando] = useState(false);
 
   const { data: objetosRes } = useQuery<Paginated<ObjetoApi>>(() => objetosApi.list({ limit: 100 }), []);
   const { data: organizacoesRes } = useQuery<Paginated<OrganizacaoApi>>(() => organizacoesApi.list({ limit: 100 }), []);
@@ -63,10 +66,25 @@ export default function NucleosPage() {
   const organizacoes = organizacoesRes?.data ?? [];
   const atividades = atividadesRes?.data ?? [];
 
-  const { data: pageData, loading } = useQuery<Paginated<NucleoApi>>(
+  const { data: pageData, loading, refetch } = useQuery<Paginated<NucleoApi>>(
     () => nucleosApi.list({ ...filtros, page: pagina, limit: PER_PAGE }),
     [filtros, pagina],
   );
+
+  async function alternarFuncionamentoLote(status: boolean) {
+    if (selectedIds.length === 0) return;
+    setProcessando(true);
+    try {
+      await Promise.all(selectedIds.map((id) => nucleosApi.update(id, { emFuncionamento: status })));
+      toast.success(`${selectedIds.length} núcleo(s) ${status ? "ativado(s)" : "desativado(s)"} com sucesso`);
+      refetch();
+      setSelectedIds([]);
+    } catch (err: any) {
+      toast.error("Erro ao alterar funcionamento: " + (err?.message || "Erro desconhecido"));
+    } finally {
+      setProcessando(false);
+    }
+  }
 
   const rawResultado = pageData?.data ?? [];
 
@@ -354,8 +372,28 @@ export default function NucleosPage() {
       >
         <button
           type="button"
+          onClick={() => alternarFuncionamentoLote(true)}
+          disabled={processando}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-600 hover:bg-green-700 text-xs font-medium text-white transition-colors disabled:opacity-50 cursor-pointer"
+        >
+          <Power className="h-3.5 w-3.5" />
+          <span>Ativar ({selectedIds.length})</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => alternarFuncionamentoLote(false)}
+          disabled={processando}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-xs font-medium text-white transition-colors disabled:opacity-50 cursor-pointer"
+        >
+          <Power className="h-3.5 w-3.5" />
+          <span>Desativar ({selectedIds.length})</span>
+        </button>
+
+        <button
+          type="button"
           onClick={() => alert(`Exportando ${selectedIds.length} núcleo(s)...`)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-zinc-100 transition-colors"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-zinc-100 transition-colors cursor-pointer"
         >
           <Download className="h-3.5 w-3.5" />
           <span>Exportar</span>

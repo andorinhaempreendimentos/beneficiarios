@@ -2,7 +2,8 @@
 
 import { useState, useCallback, useMemo, useEffect } from "react";
 import Link from "next/link";
-import { Download, Trash2, Dumbbell, Building2, Users, Calendar, Clock, Check } from "lucide-react";
+import { Download, Trash2, Dumbbell, Building2, Users, Calendar, Clock, Check, Copy } from "lucide-react";
+import { useToast } from "@/components/providers/ToastProvider";
 import {
   Badge,
   Card,
@@ -38,6 +39,7 @@ const EMPTY = { busca: "", nucleoId: "", atividadeId: "", exclusiva: "" };
 type FiltrosForm = typeof EMPTY;
 
 export default function TurmasPage() {
+  const { toast } = useToast();
   const { estado, cidade, organizacaoId, nucleoId } = useLocationFilter();
   const [pagina, setPagina] = useState(1);
   const [filtros, setFiltros] = useState<FiltrosForm>(EMPTY);
@@ -46,6 +48,61 @@ export default function TurmasPage() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [turmaParaExcluir, setTurmaParaExcluir] = useState<TurmaApi | null>(null);
   const [excluindo, setExcluindo] = useState(false);
+
+  const [processando, setProcessando] = useState(false);
+  const [modalVagas, setModalVagas] = useState(false);
+  const [ajusteVagas, setAjusteVagas] = useState<number>(0);
+
+  async function duplicarTurmas() {
+    if (selectedIds.length === 0) return;
+    setProcessando(true);
+    try {
+      const turmasSelecionadas = resultado.filter((t) => selectedIds.includes(t.id));
+      await Promise.all(
+        turmasSelecionadas.map(async (t) => {
+          const copia = {
+            nome: `${t.nome} (Cópia)`,
+            nucleoId: t.nucleoId,
+            atividadeId: t.atividadeId,
+            vagasTotais: t.vagasTotais,
+            exclusiva: t.exclusiva,
+            dataInicio: t.dataInicio,
+          };
+          await turmasApi.create(copia);
+        })
+      );
+      toast.success(`${selectedIds.length} turma(s) duplicada(s) com sucesso`);
+      refetch();
+      setSelectedIds([]);
+    } catch (err: any) {
+      toast.error("Erro ao duplicar turmas: " + (err?.message || "Erro desconhecido"));
+    } finally {
+      setProcessando(false);
+    }
+  }
+
+  async function ajustarVagasLote() {
+    if (selectedIds.length === 0) return;
+    setProcessando(true);
+    try {
+      const turmasSelecionadas = resultado.filter((t) => selectedIds.includes(t.id));
+      await Promise.all(
+        turmasSelecionadas.map(async (t) => {
+          const novasVagas = Math.max(0, (t.vagasTotais || 0) + ajusteVagas);
+          await turmasApi.update(t.id, { vagasTotais: novasVagas });
+        })
+      );
+      toast.success(`Vagas ajustadas com sucesso em ${selectedIds.length} turma(s)`);
+      setModalVagas(false);
+      setAjusteVagas(0);
+      refetch();
+      setSelectedIds([]);
+    } catch (err: any) {
+      toast.error("Erro ao ajustar vagas: " + (err?.message || "Erro desconhecido"));
+    } finally {
+      setProcessando(false);
+    }
+  }
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -438,6 +495,26 @@ export default function TurmasPage() {
       >
         <button
           type="button"
+          onClick={duplicarTurmas}
+          disabled={processando}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-700 text-xs font-medium text-white transition-colors disabled:opacity-50 cursor-pointer"
+        >
+          <Copy className="h-3.5 w-3.5" />
+          <span>Duplicar ({selectedIds.length})</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setModalVagas(true)}
+          disabled={processando}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-700 text-xs font-medium text-white transition-colors disabled:opacity-50 cursor-pointer"
+        >
+          <Users className="h-3.5 w-3.5" />
+          <span>Ajustar Vagas ({selectedIds.length})</span>
+        </button>
+
+        <button
+          type="button"
           onClick={() => alert(`Exportando ${selectedIds.length} turma(s)...`)}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-zinc-100 transition-colors cursor-pointer"
         >
@@ -445,6 +522,44 @@ export default function TurmasPage() {
           <span>Exportar</span>
         </button>
       </BulkActionsBar>
+
+      {/* Modal de Ajustar Vagas em Lote */}
+      {modalVagas && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+            <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-2">
+              Ajustar Vagas em {selectedIds.length} Turma(s)
+            </h3>
+            <p className="text-xs text-zinc-500 mb-4">
+              Digite a quantidade de vagas a somar ou subtrair (ex: 5 para adicionar 5 vagas, -2 para remover 2 vagas).
+            </p>
+            <input
+              type="number"
+              value={ajusteVagas}
+              onChange={(e) => setAjusteVagas(parseInt(e.target.value) || 0)}
+              placeholder="Ex: 5 ou -2"
+              className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-transparent p-3 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-hidden focus:ring-2 focus:ring-sky-500"
+            />
+            <div className="flex gap-3 mt-5">
+              <button
+                type="button"
+                onClick={() => setModalVagas(false)}
+                className="flex-1 rounded-lg border border-zinc-300 dark:border-zinc-700 px-4 py-2 text-sm font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={ajustarVagasLote}
+                disabled={processando || ajusteVagas === 0}
+                className="flex-1 rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-700 transition-colors disabled:opacity-50 cursor-pointer"
+              >
+                {processando ? "Salvando..." : "Confirmar Ajuste"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

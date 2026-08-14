@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useState, useCallback, useMemo } from "react";
-import { CheckCircle2, XCircle, Download, Link2, Check } from "lucide-react";
+import { CheckCircle2, XCircle, Download, Link2, Check, Clock } from "lucide-react";
+import { useToast } from "@/components/providers/ToastProvider";
 import {
   Badge,
   Button,
@@ -53,12 +54,67 @@ const FILTROS: { value: Filtro; label: string }[] = [
 ];
 
 export default function InscricoesPage() {
+  const { toast } = useToast();
   const { estado, cidade, organizacaoId, nucleoId } = useLocationFilter();
   const [filtro, setFiltro] = useState<Filtro>("todas");
   const [pagina, setPagina] = useState(1);
   const [viewMode, setViewMode] = useState<ViewMode>("cards");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [modalLinksOpen, setModalLinksOpen] = useState(false);
+  const [processando, setProcessando] = useState(false);
+  const [modalRecusar, setModalRecusar] = useState(false);
+  const [motivoRecusa, setMotivoRecusa] = useState("");
+
+  async function aprovarEmLote(ids: string[]) {
+    if (ids.length === 0) return;
+    setProcessando(true);
+    try {
+      await Promise.all(ids.map((id) => inscricoesApi.aprovar(id)));
+      toast.success(`${ids.length} inscrição(ões) aprovada(s) com sucesso!`);
+      refetch();
+      setSelectedIds([]);
+    } catch (err: any) {
+      toast.error("Erro ao aprovar inscrições: " + (err?.message || "Erro desconhecido"));
+    } finally {
+      setProcessando(false);
+    }
+  }
+
+  async function moverParaFila(ids: string[]) {
+    if (ids.length === 0) return;
+    setProcessando(true);
+    try {
+      await Promise.all(ids.map((id) => inscricoesApi.updateStatus(id, "reservada")));
+      toast.success(`${ids.length} inscrição(ões) movida(s) para fila de espera`);
+      refetch();
+      setSelectedIds([]);
+    } catch (err: any) {
+      toast.error("Erro ao mover para fila: " + (err?.message || "Erro desconhecido"));
+    } finally {
+      setProcessando(false);
+    }
+  }
+
+  async function recusarEmLote() {
+    if (selectedIds.length === 0) return;
+    if (!motivoRecusa.trim()) {
+      toast.error("Informe o motivo da recusa");
+      return;
+    }
+    setProcessando(true);
+    try {
+      await Promise.all(selectedIds.map((id) => inscricoesApi.recusar(id, motivoRecusa)));
+      toast.success(`${selectedIds.length} inscrição(ões) recusada(s) com sucesso`);
+      setModalRecusar(false);
+      setMotivoRecusa("");
+      refetch();
+      setSelectedIds([]);
+    } catch (err: any) {
+      toast.error("Erro ao recusar inscrições: " + (err?.message || "Erro desconhecido"));
+    } finally {
+      setProcessando(false);
+    }
+  }
 
   const { data: pageData, loading, refetch } = useQuery<Paginated<InscricaoApi>>(
     () => inscricoesApi.list({ status: filtro !== "todas" ? filtro : undefined, page: pagina, limit: PER_PAGE }),
@@ -427,13 +483,81 @@ export default function InscricoesPage() {
       >
         <button
           type="button"
+          onClick={() => aprovarEmLote(selectedIds)}
+          disabled={processando}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-600 hover:bg-green-700 text-xs font-medium text-white transition-colors disabled:opacity-50 cursor-pointer"
+        >
+          <CheckCircle2 className="h-3.5 w-3.5" />
+          <span>Aprovar ({selectedIds.length})</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => moverParaFila(selectedIds)}
+          disabled={processando}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-700 text-xs font-medium text-white transition-colors disabled:opacity-50 cursor-pointer"
+        >
+          <Clock className="h-3.5 w-3.5" />
+          <span>Mover p/ Fila ({selectedIds.length})</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setModalRecusar(true)}
+          disabled={processando}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-xs font-medium text-white transition-colors disabled:opacity-50 cursor-pointer"
+        >
+          <XCircle className="h-3.5 w-3.5" />
+          <span>Recusar ({selectedIds.length})</span>
+        </button>
+
+        <button
+          type="button"
           onClick={() => alert(`Exportando ${selectedIds.length} inscrição(ões)...`)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-zinc-100 transition-colors"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-zinc-100 transition-colors cursor-pointer"
         >
           <Download className="h-3.5 w-3.5" />
           <span>Exportar</span>
         </button>
       </BulkActionsBar>
+
+      {/* Modal de Recusa em Lote */}
+      {modalRecusar && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+            <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-2">
+              Recusar {selectedIds.length} Inscrição(ões)
+            </h3>
+            <p className="text-xs text-zinc-500 mb-4">
+              Informe o motivo da recusa. Esta justificativa será registrada no histórico das inscrições.
+            </p>
+            <textarea
+              value={motivoRecusa}
+              onChange={(e) => setMotivoRecusa(e.target.value)}
+              placeholder="Motivo da recusa (obrigatório)..."
+              className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-transparent p-3 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-hidden focus:ring-2 focus:ring-red-500"
+              rows={4}
+            />
+            <div className="flex gap-3 mt-5">
+              <button
+                type="button"
+                onClick={() => setModalRecusar(false)}
+                className="flex-1 rounded-lg border border-zinc-300 dark:border-zinc-700 px-4 py-2 text-sm font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={recusarEmLote}
+                disabled={processando || !motivoRecusa.trim()}
+                className="flex-1 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 transition-colors disabled:opacity-50 cursor-pointer"
+              >
+                {processando ? "Recusando..." : "Confirmar Recusa"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

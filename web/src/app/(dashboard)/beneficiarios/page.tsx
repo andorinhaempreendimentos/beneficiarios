@@ -2,7 +2,8 @@
 
 import { useState, useCallback, useMemo, useEffect } from "react";
 import Link from "next/link";
-import { UserCheck, UserX, Download, Trash2, Check } from "lucide-react";
+import { UserCheck, UserX, Download, Trash2, Check, RefreshCw, ArrowRightLeft } from "lucide-react";
+import { useToast } from "@/components/providers/ToastProvider";
 import {
   Badge,
   Card,
@@ -19,7 +20,8 @@ import {
   type ViewMode,
 } from "@/components/ui";
 import { useQuery } from "@/lib/hooks/useQuery";
-import { beneficiariosApi, nucleosApi, atividadesApi, type Paginated, type BeneficiarioApi, type NucleoApi, type AtividadeApi } from "@/lib/api/services";
+import { beneficiariosApi, nucleosApi, atividadesApi, turmasApi, type Paginated, type BeneficiarioApi, type NucleoApi, type AtividadeApi, type TurmaApi } from "@/lib/api/services";
+import type { StatusBeneficiario } from "@/lib/types";
 import {
   statusBeneficiarioTone,
   statusBeneficiarioLabel,
@@ -40,6 +42,7 @@ const PER_PAGE = 15;
 const EMPTY = { nome: "", matricula: "", cpf: "", status: "", atividadeId: "", tipoMatricula: "", nucleoId: "", idadeMin: "", idadeMax: "" };
 
 export default function BeneficiariosPage() {
+  const { toast } = useToast();
   const { estado, cidade, organizacaoId, nucleoId } = useLocationFilter();
   const [filtros, setFiltros] = useState(EMPTY);
   const [ativos, setAtivos] = useState(EMPTY);
@@ -50,6 +53,12 @@ export default function BeneficiariosPage() {
   const [beneficiarioParaExcluir, setBeneficiarioParaExcluir] = useState<BeneficiarioApi | null>(null);
   const [excluindo, setExcluindo] = useState(false);
 
+  const [processando, setProcessando] = useState(false);
+  const [modalStatus, setModalStatus] = useState(false);
+  const [novoStatus, setNovoStatus] = useState<StatusBeneficiario | "">("");
+  const [modalTransferir, setModalTransferir] = useState(false);
+  const [turmaDestinoId, setTurmaDestinoId] = useState("");
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setPagina(1);
@@ -58,17 +67,53 @@ export default function BeneficiariosPage() {
     return () => clearTimeout(timer);
   }, [filtros]);
 
-  const { data: pageData, loading } = useQuery<Paginated<BeneficiarioApi>>(
+  const { data: pageData, loading, refetch } = useQuery<Paginated<BeneficiarioApi>>(
     () => beneficiariosApi.list({ ...ativos, page: pagina, limit: PER_PAGE }),
     [ativos, pagina],
   );
 
   const { data: nucleosData } = useQuery<Paginated<NucleoApi>>(() => nucleosApi.list({ limit: 200 }), []);
   const { data: atividadesData } = useQuery<Paginated<AtividadeApi>>(() => atividadesApi.list({ limit: 200 }), []);
+  const { data: turmasData } = useQuery<Paginated<TurmaApi>>(() => turmasApi.list({ limit: 200 }), []);
 
   const nucleos = nucleosData?.data ?? [];
   const atividades = atividadesData?.data ?? [];
+  const turmasDisponiveis = turmasData?.data ?? [];
   const rawResultado = pageData?.data ?? [];
+
+  async function alterarStatusLote() {
+    if (selectedIds.length === 0 || !novoStatus) return;
+    setProcessando(true);
+    try {
+      await Promise.all(selectedIds.map((id) => beneficiariosApi.update(id, { status: novoStatus })));
+      toast.success(`Status de ${selectedIds.length} beneficiário(s) alterado para "${novoStatus}"`);
+      setModalStatus(false);
+      setNovoStatus("");
+      refetch();
+      setSelectedIds([]);
+    } catch (err: any) {
+      toast.error("Erro ao alterar status: " + (err?.message || "Erro desconhecido"));
+    } finally {
+      setProcessando(false);
+    }
+  }
+
+  async function transferirParaTurma() {
+    if (selectedIds.length === 0 || !turmaDestinoId) return;
+    setProcessando(true);
+    try {
+      await Promise.all(selectedIds.map((id) => turmasApi.matricular(turmaDestinoId, id)));
+      toast.success(`${selectedIds.length} beneficiário(s) matricularam-se na nova turma com sucesso`);
+      setModalTransferir(false);
+      setTurmaDestinoId("");
+      refetch();
+      setSelectedIds([]);
+    } catch (err: any) {
+      toast.error("Erro ao transferir beneficiários: " + (err?.message || "Erro desconhecido"));
+    } finally {
+      setProcessando(false);
+    }
+  }
 
   const resultado = useMemo(() => {
     return rawResultado.filter((b) => {
@@ -471,13 +516,117 @@ export default function BeneficiariosPage() {
       >
         <button
           type="button"
+          onClick={() => setModalStatus(true)}
+          disabled={processando}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-700 text-xs font-medium text-white transition-colors disabled:opacity-50 cursor-pointer"
+        >
+          <RefreshCw className="h-3.5 w-3.5" />
+          <span>Alterar Status ({selectedIds.length})</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setModalTransferir(true)}
+          disabled={processando}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-700 text-xs font-medium text-white transition-colors disabled:opacity-50 cursor-pointer"
+        >
+          <ArrowRightLeft className="h-3.5 w-3.5" />
+          <span>Transferir Turma ({selectedIds.length})</span>
+        </button>
+
+        <button
+          type="button"
           onClick={() => alert(`Exportando ${selectedIds.length} beneficiário(s)...`)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-zinc-100 transition-colors"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-zinc-100 transition-colors cursor-pointer"
         >
           <Download className="h-3.5 w-3.5" />
           <span>Exportar</span>
         </button>
       </BulkActionsBar>
+
+      {/* Modal de Alterar Status em Lote */}
+      {modalStatus && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+            <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-2">
+              Alterar Status de {selectedIds.length} Beneficiário(s)
+            </h3>
+            <p className="text-xs text-zinc-500 mb-4">
+              Selecione o novo status que será aplicado a todos os beneficiários selecionados.
+            </p>
+            <select
+              value={novoStatus}
+              onChange={(e) => setNovoStatus(e.target.value as StatusBeneficiario)}
+              className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-transparent p-3 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-hidden focus:ring-2 focus:ring-sky-500 cursor-pointer"
+            >
+              <option value="" className="dark:bg-zinc-900">Selecione o novo status...</option>
+              <option value="pendente" className="dark:bg-zinc-900">Pendente</option>
+              <option value="ativo" className="dark:bg-zinc-900">Ativo</option>
+              <option value="inativo" className="dark:bg-zinc-900">Inativo</option>
+            </select>
+            <div className="flex gap-3 mt-5">
+              <button
+                type="button"
+                onClick={() => setModalStatus(false)}
+                className="flex-1 rounded-lg border border-zinc-300 dark:border-zinc-700 px-4 py-2 text-sm font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={alterarStatusLote}
+                disabled={!novoStatus || processando}
+                className="flex-1 rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-700 transition-colors disabled:opacity-50 cursor-pointer"
+              >
+                {processando ? "Salvando..." : "Confirmar Alteração"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Transferir para Outra Turma */}
+      {modalTransferir && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+            <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-2">
+              Transferir {selectedIds.length} Beneficiário(s)
+            </h3>
+            <p className="text-xs text-zinc-500 mb-4">
+              Selecione a turma de destino para a qual os beneficiários serão matriculados.
+            </p>
+            <select
+              value={turmaDestinoId}
+              onChange={(e) => setTurmaDestinoId(e.target.value)}
+              className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-transparent p-3 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-hidden focus:ring-2 focus:ring-violet-500 cursor-pointer"
+            >
+              <option value="" className="dark:bg-zinc-900">Selecione a turma de destino...</option>
+              {turmasDisponiveis.map((t) => (
+                <option key={t.id} value={t.id} className="dark:bg-zinc-900">
+                  {t.nome} {t.nucleo?.identificacao ? `(${t.nucleo.identificacao})` : ""}
+                </option>
+              ))}
+            </select>
+            <div className="flex gap-3 mt-5">
+              <button
+                type="button"
+                onClick={() => setModalTransferir(false)}
+                className="flex-1 rounded-lg border border-zinc-300 dark:border-zinc-700 px-4 py-2 text-sm font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={transferirParaTurma}
+                disabled={!turmaDestinoId || processando}
+                className="flex-1 rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-700 transition-colors disabled:opacity-50 cursor-pointer"
+              >
+                {processando ? "Transferindo..." : "Confirmar Transferência"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

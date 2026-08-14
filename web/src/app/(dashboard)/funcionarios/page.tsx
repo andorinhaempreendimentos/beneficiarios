@@ -2,7 +2,8 @@
 
 import { useState, useCallback, useMemo, useEffect } from "react";
 import Link from "next/link";
-import { UserCheck, UserX, Download, Trash2, Clock, Users, Dumbbell, Calendar, CheckCircle2, Check } from "lucide-react";
+import { UserCheck, UserX, Download, Trash2, Clock, Users, Dumbbell, Calendar, CheckCircle2, Check, RefreshCw } from "lucide-react";
+import { useToast } from "@/components/providers/ToastProvider";
 import {
   Badge,
   Card,
@@ -41,6 +42,7 @@ const PER_PAGE = 15;
 const EMPTY = { busca: "", funcao: "", status: "", admissaoDe: "", admissaoAte: "" };
 
 export default function FuncionariosPage() {
+  const { toast } = useToast();
   const { estado, cidade, organizacaoId, nucleoId } = useLocationFilter();
   const [filtros, setFiltros] = useState(EMPTY);
   const [ativos, setAtivos] = useState(EMPTY);
@@ -53,6 +55,27 @@ export default function FuncionariosPage() {
 
   const [funcionarioPonto, setFuncionarioPonto] = useState<FuncionarioApi | null>(null);
   const [pontoRegistrado, setPontoRegistrado] = useState(false);
+
+  const [processando, setProcessando] = useState(false);
+  const [modalStatus, setModalStatus] = useState(false);
+  const [novoStatus, setNovoStatus] = useState("");
+
+  async function alterarStatusLote() {
+    if (selectedIds.length === 0 || !novoStatus) return;
+    setProcessando(true);
+    try {
+      await Promise.all(selectedIds.map((id) => funcionariosApi.update(id, { status: novoStatus })));
+      toast.success(`Status de ${selectedIds.length} funcionário(s) alterado para "${novoStatus}"`);
+      setModalStatus(false);
+      setNovoStatus("");
+      refetch();
+      setSelectedIds([]);
+    } catch (err: any) {
+      toast.error("Erro ao alterar status: " + (err?.message || "Erro desconhecido"));
+    } finally {
+      setProcessando(false);
+    }
+  }
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -533,6 +556,16 @@ export default function FuncionariosPage() {
       >
         <button
           type="button"
+          onClick={() => setModalStatus(true)}
+          disabled={processando}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-700 text-xs font-medium text-white transition-colors disabled:opacity-50 cursor-pointer"
+        >
+          <RefreshCw className="h-3.5 w-3.5" />
+          <span>Alterar Status ({selectedIds.length})</span>
+        </button>
+
+        <button
+          type="button"
           onClick={() => alert(`Exportando ${selectedIds.length} funcionário(s)...`)}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-zinc-100 transition-colors cursor-pointer"
         >
@@ -540,6 +573,49 @@ export default function FuncionariosPage() {
           <span>Exportar</span>
         </button>
       </BulkActionsBar>
+
+      {/* Modal de Alterar Status em Lote */}
+      {modalStatus && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+            <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-2">
+              Alterar Status de {selectedIds.length} Funcionário(s)
+            </h3>
+            <p className="text-xs text-zinc-500 mb-4">
+              Selecione o novo status contratual que será aplicado a todos os funcionários selecionados.
+            </p>
+            <select
+              value={novoStatus}
+              onChange={(e) => setNovoStatus(e.target.value)}
+              className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-transparent p-3 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-hidden focus:ring-2 focus:ring-sky-500 cursor-pointer"
+            >
+              <option value="" className="dark:bg-zinc-900">Selecione o novo status...</option>
+              <option value="contratado" className="dark:bg-zinc-900">Contratado</option>
+              <option value="voluntario" className="dark:bg-zinc-900">Voluntário</option>
+              <option value="ferias" className="dark:bg-zinc-900">Férias</option>
+              <option value="licenca" className="dark:bg-zinc-900">Licença</option>
+              <option value="desligado" className="dark:bg-zinc-900">Desligado</option>
+            </select>
+            <div className="flex gap-3 mt-5">
+              <button
+                type="button"
+                onClick={() => setModalStatus(false)}
+                className="flex-1 rounded-lg border border-zinc-300 dark:border-zinc-700 px-4 py-2 text-sm font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={alterarStatusLote}
+                disabled={!novoStatus || processando}
+                className="flex-1 rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-700 transition-colors disabled:opacity-50 cursor-pointer"
+              >
+                {processando ? "Salvando..." : "Confirmar Alteração"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
