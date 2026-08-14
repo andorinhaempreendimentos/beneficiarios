@@ -161,6 +161,7 @@ export interface NucleoApi {
   dataFechamento?: string;
   emFuncionamento: boolean;
   disponivelPreInscricao: boolean;
+  tipoRestricaoChamada?: 'data' | 'horario';
   permitirChamadaRetroativa?: boolean;
   toleranciaInicioMinutos?: number;
   toleranciaFimMinutos?: number;
@@ -360,6 +361,7 @@ function mapNucleo(r: any): NucleoApi {
     } : undefined,
     dataInicio: r.data_inicio, dataFechamento: r.data_fechamento ?? undefined,
     emFuncionamento: r.em_funcionamento, disponivelPreInscricao: r.disponivel_pre_inscricao,
+    tipoRestricaoChamada: (r.tipo_restricao_chamada as 'data' | 'horario') ?? 'data',
     permitirChamadaRetroativa: r.permitir_chamada_retroativa ?? undefined,
     toleranciaInicioMinutos: r.tolerancia_inicio_minutos ?? undefined,
     toleranciaFimMinutos: r.tolerancia_fim_minutos ?? undefined,
@@ -750,6 +752,7 @@ function toNucleoRow(b: Record<string, unknown>): Database['public']['Tables']['
     data_fechamento: b.dataFechamento as string | null | undefined,
     em_funcionamento: b.emFuncionamento as boolean | undefined,
     disponivel_pre_inscricao: b.disponivelPreInscricao as boolean | undefined,
+    tipo_restricao_chamada: b.tipoRestricaoChamada as 'data' | 'horario' | undefined,
     permitir_chamada_retroativa: b.permitirChamadaRetroativa as boolean | undefined,
     tolerancia_inicio_minutos: b.toleranciaInicioMinutos as number | null | undefined,
     tolerancia_fim_minutos: b.toleranciaFimMinutos as number | null | undefined,

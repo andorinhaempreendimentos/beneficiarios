@@ -200,6 +200,13 @@ export function ExecucaoAulaClient({
 
   const isForaDaJanelaHorario = useMemo(() => {
     if (isDataRetroativa || isDataFutura) return true;
+    
+    // Se a restrição for apenas por 'data', não checa horário do mesmo dia
+    if (turma.nucleo?.tipoRestricaoChamada === "data") {
+      return false;
+    }
+
+    // Se for por 'horario', verifica a janela exata
     const now = new Date();
     const [fimH, fimM] = horaFimPrevista.split(":").map(Number);
     const toleranciaMinutos = turma.nucleo?.toleranciaFimMinutos ?? 15;

@@ -17,6 +17,7 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], back
   const [erro, setErro] = useState<string | null>(null);
   const [emFuncionamento, setEmFuncionamento] = useState(n?.emFuncionamento ?? true);
   const [disponivelPreInscricao, setDisponivelPreInscricao] = useState(n?.disponivelPreInscricao ?? true);
+  const [tipoRestricaoChamada, setTipoRestricaoChamada] = useState<'data' | 'horario'>(n?.tipoRestricaoChamada ?? 'data');
   const [permitirChamadaRetroativa, setPermitirChamadaRetroativa] = useState(n?.permitirChamadaRetroativa ?? false);
   const [organizacaoId, setOrganizacaoId] = useState(n?.organizacaoId ?? (organizacoes[0]?.id || ""));
   const [atividadeIds, setAtividadeIds] = useState<string[]>(
@@ -74,6 +75,7 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], back
       organizacaoId: orgId,
       emFuncionamento,
       disponivelPreInscricao,
+      tipoRestricaoChamada,
       permitirChamadaRetroativa,
       toleranciaInicioMinutos: formData.get("toleranciaInicioMinutos") ? Number(formData.get("toleranciaInicioMinutos")) : null,
       toleranciaFimMinutos: formData.get("toleranciaFimMinutos") ? Number(formData.get("toleranciaFimMinutos")) : null,
@@ -232,8 +234,40 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], back
         </div>
       </FormSection>
 
+      {/* CONFIGURAÇÕES DE FREQUÊNCIA E PONTO */}
       <FormSection title="Configurações de Frequência e Ponto">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-1">
+          <div className="col-span-1 md:col-span-2">
+            <label className="text-sm font-semibold text-zinc-900 block mb-2">Nível de Restrição de Atraso</label>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <label className={`flex-1 p-3 rounded-xl border flex items-start gap-3 cursor-pointer transition-all ${tipoRestricaoChamada === 'data' ? 'bg-sky-50 border-sky-300 shadow-sm' : 'bg-white border-zinc-200 hover:bg-zinc-50'}`}>
+                <input type="radio" name="tipoRestricaoChamada" value="data" checked={tipoRestricaoChamada === 'data'} onChange={() => setTipoRestricaoChamada('data')} className="mt-1" />
+                <div>
+                  <div className="font-bold text-sky-900 text-sm">Por Data (Flexível)</div>
+                  <div className="text-xs text-sky-700 mt-0.5">Permite iniciar a qualquer momento do mesmo dia da aula. Bloqueia se a data virar.</div>
+                </div>
+              </label>
+              <label className={`flex-1 p-3 rounded-xl border flex items-start gap-3 cursor-pointer transition-all ${tipoRestricaoChamada === 'horario' ? 'bg-amber-50 border-amber-300 shadow-sm' : 'bg-white border-zinc-200 hover:bg-zinc-50'}`}>
+                <input type="radio" name="tipoRestricaoChamada" value="horario" checked={tipoRestricaoChamada === 'horario'} onChange={() => setTipoRestricaoChamada('horario')} className="mt-1" />
+                <div>
+                  <div className="font-bold text-amber-900 text-sm">Por Horário (Rigoroso)</div>
+                  <div className="text-xs text-amber-700 mt-0.5">Bloqueia se tentar iniciar fora do período exato (+ tolerância) da aula.</div>
+                </div>
+              </label>
+            </div>
+          </div>
+          <div className="col-span-1 md:col-span-2 flex flex-col gap-1.5 p-4 bg-zinc-50 rounded-xl border border-zinc-200">
+            <Switch
+              label="Permitir Aprovação Retroativa pelo Coordenador?"
+              checked={permitirChamadaRetroativa}
+              onChange={setPermitirChamadaRetroativa}
+            />
+            <p className="text-xs text-zinc-500 ml-12">
+              Se ativado, quando o professor estourar a restrição acima, ele não será bloqueado. A aula ficará com status "Pendente de Aprovação" para análise.
+            </p>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 mb-4 mt-6">
           <Field label="Tolerância Início (minutos)">
             <Input type="number" name="toleranciaInicioMinutos" defaultValue={n?.toleranciaInicioMinutos ?? 15} min={0} />
           </Field>
@@ -241,12 +275,6 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], back
             <Input type="number" name="toleranciaFimMinutos" defaultValue={n?.toleranciaFimMinutos ?? 15} min={0} />
           </Field>
         </div>
-        <div className="flex flex-col gap-4">
-          <Switch
-            checked={permitirChamadaRetroativa}
-            onChange={setPermitirChamadaRetroativa}
-            label="Permitir aprovação de chamada retroativa"
-          />
           {permitirChamadaRetroativa && (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 mt-2 border-l-2 border-sky-500 pl-4">
               <Field label="Dias limite para retroativo">
