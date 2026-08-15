@@ -996,13 +996,15 @@ export const beneficiariosApi = {
         .is('deleted_at', null);
       if (eV) throw eV;
       beneficiarioIds = Array.from(new Set((vinculos ?? []).map((v) => v.beneficiario_id)));
+      if (beneficiarioIds.length === 0) return { data: [], total: 0, page, limit };
     } else if (p?.atividadeId) {
       const { data: turmas, error: eT } = await sb.from('turmas').select('id').eq('atividade_id', String(p.atividadeId));
       if (eT) throw eT;
       const turmaIds = (turmas ?? []).map((t) => t.id);
-      const { data: vinculos, error: eV } = await sb.from('beneficiario_turmas').select('beneficiario_id').in('turma_id', turmaIds.length ? turmaIds : ['—']);
+      const { data: vinculos, error: eV } = await sb.from('beneficiario_turmas').select('beneficiario_id').in('turma_id', turmaIds.length ? turmaIds : ['00000000-0000-0000-0000-000000000000']);
       if (eV) throw eV;
       beneficiarioIds = Array.from(new Set((vinculos ?? []).map((v) => v.beneficiario_id)));
+      if (beneficiarioIds.length === 0) return { data: [], total: 0, page, limit };
     }
     const BENEFICIARIO_FULL_SELECT = '*, nucleos(*), beneficiario_turmas(*, turmas(*, nucleos(*), atividades(*)))';
     let q = sb.from('beneficiarios').select(BENEFICIARIO_FULL_SELECT, { count: 'exact' }).is('deleted_at', null);
@@ -1012,7 +1014,7 @@ export const beneficiariosApi = {
     if (p?.status) q = q.eq('status', String(p.status));
     if (p?.tipoMatricula) q = q.eq('tipo_matricula', String(p.tipoMatricula));
     if (p?.nucleoId) q = q.eq('nucleo_id', String(p.nucleoId));
-    if (beneficiarioIds) q = q.in('id', beneficiarioIds.length ? beneficiarioIds : ['—']);
+    if (beneficiarioIds) q = q.in('id', beneficiarioIds);
     const idadeMin = num(p?.idadeMin);
     const idadeMax = num(p?.idadeMax);
     if (idadeMin !== undefined) q = q.lte('data_nascimento', dataNascimentoMaxima(idadeMin));
@@ -1028,7 +1030,7 @@ export const beneficiariosApi = {
       if (p?.status) qFallback = qFallback.eq('status', String(p.status));
       if (p?.tipoMatricula) qFallback = qFallback.eq('tipo_matricula', String(p.tipoMatricula));
       if (p?.nucleoId) qFallback = qFallback.eq('nucleo_id', String(p.nucleoId));
-      if (beneficiarioIds) qFallback = qFallback.in('id', beneficiarioIds.length ? beneficiarioIds : ['—']);
+      if (beneficiarioIds) qFallback = qFallback.in('id', beneficiarioIds);
       if (idadeMin !== undefined) qFallback = qFallback.lte('data_nascimento', dataNascimentoMaxima(idadeMin));
       if (idadeMax !== undefined) qFallback = qFallback.gte('data_nascimento', dataNascimentoMinima(idadeMax));
       const resFallback = await qFallback.order('created_at', { ascending: false }).range(from, to);
@@ -2073,7 +2075,7 @@ export const execucoesAulaApi = {
       data: params.data,
       hora_inicio_prevista: params.horaInicioPrevista,
       hora_fim_prevista: params.horaFimPrevista,
-      hora_inicio_real: horaAtual,
+      hora_inicio_real: now.toISOString(),
       status: isPendente ? 'pendente_aprovacao' : 'em_andamento',
       status_aprovacao: isPendente ? 'pendente_aprovacao' : 'aprovado',
       justificativa_retroativa: params.justificativaRetroativa || null,
