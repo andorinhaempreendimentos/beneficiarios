@@ -14,7 +14,7 @@ END $$;
 CREATE TABLE IF NOT EXISTS public.execucoes_aula (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   turma_id UUID NOT NULL REFERENCES public.turmas(id) ON DELETE CASCADE,
-  professor_id UUID NOT NULL REFERENCES public.usuarios(id) ON DELETE CASCADE,
+  professor_id UUID NOT NULL REFERENCES public.funcionarios(id) ON DELETE CASCADE,
   data DATE NOT NULL,
   hora_inicio_prevista TIME NOT NULL,
   hora_fim_prevista TIME NOT NULL,
