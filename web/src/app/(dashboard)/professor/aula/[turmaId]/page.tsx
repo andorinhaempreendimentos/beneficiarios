@@ -29,6 +29,8 @@ export default async function AulaTurmaPage({ params, searchParams }: AulaTurmaP
     ? await execucoesAulaApi.getPresencas(execucaoExistente.id).catch(() => [])
     : [];
 
+  const autoStart = sp?.autoStart === "true";
+
   return (
     <ExecucaoAulaClient
       turma={turma}
@@ -37,6 +39,7 @@ export default async function AulaTurmaPage({ params, searchParams }: AulaTurmaP
       dataQuery={dataQuery}
       execucaoInicial={execucaoExistente}
       presencasIniciais={presencasIniciais}
+      autoStart={autoStart}
     />
   );
 }

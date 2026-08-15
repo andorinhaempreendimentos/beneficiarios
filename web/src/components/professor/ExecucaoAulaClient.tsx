@@ -49,6 +49,7 @@ interface ExecucaoAulaClientProps {
   dataQuery: string;
   execucaoInicial: ExecucaoAulaApi | null;
   presencasIniciais: BeneficiarioPresencaApi[];
+  autoStart?: boolean;
 }
 
 function parseHora(timeStr: string | null | undefined, fallback = "00:00"): string {
@@ -98,10 +99,13 @@ export function ExecucaoAulaClient({
   dataQuery,
   execucaoInicial,
   presencasIniciais,
+  autoStart,
 }: ExecucaoAulaClientProps) {
   const { toast } = useToast();
   const { user } = useAuth();
   const router = useRouter();
+
+  const autoStartRef = useRef(autoStart);
 
   const [execucao, setExecucao] = useState<ExecucaoAulaApi | null>(execucaoInicial);
   const [dataAula, setDataAula] = useState<string>(
@@ -394,6 +398,13 @@ export function ExecucaoAulaClient({
       setSalvando(false);
     }
   };
+
+  useEffect(() => {
+    if (autoStartRef.current && etapa === "inicio" && !execucao && !salvando) {
+      autoStartRef.current = false; // Garante que rode apenas uma vez
+      handleIniciarAula();
+    }
+  }, [etapa, execucao, salvando]);
 
   // Salvar rascunho de presenças
   const handleSalvarRascunhoPresencas = async () => {
