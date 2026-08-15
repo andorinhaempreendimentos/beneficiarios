@@ -51,6 +51,22 @@ interface ExecucaoAulaClientProps {
   presencasIniciais: BeneficiarioPresencaApi[];
 }
 
+function parseHora(timeStr: string | null | undefined, fallback = "00:00"): string {
+  if (!timeStr) return fallback;
+  if (timeStr.includes("T")) {
+    const d = new Date(timeStr);
+    if (isNaN(d.getTime())) return fallback;
+    return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+  }
+  return timeStr.slice(0, 5);
+}
+
+function parseHoraMinutos(timeStr: string | null | undefined): [number, number] {
+  const formatado = parseHora(timeStr, "00:00");
+  const [h, m] = formatado.split(":").map(Number);
+  return [isNaN(h) ? 0 : h, isNaN(m) ? 0 : m];
+}
+
 const DIAS_SEMANA_MAP: Record<number, string> = {
   0: "Domingo",
   1: "Segunda-feira",
@@ -224,7 +240,7 @@ export function ExecucaoAulaClient({
     if (etapa === "concluida" || !execucao?.horaInicioReal) return;
 
     function calcularSegundos() {
-      const [hIni, mIni] = (execucao?.horaInicioReal || "00:00").split(":").map(Number);
+      const [hIni, mIni] = parseHoraMinutos(execucao?.horaInicioReal);
       const agora = new Date();
       const inicio = new Date();
       inicio.setHours(hIni, mIni, 0, 0);
@@ -683,7 +699,7 @@ export function ExecucaoAulaClient({
                 <span className="text-[10px] uppercase font-bold text-zinc-400 block leading-none">
                   Aula em Andamento
                 </span>
-                <span className="text-xs text-zinc-300 font-medium">Início: {execucao?.horaInicioReal || "08:00"}</span>
+                <span className="text-xs text-zinc-300 font-medium">Início: {parseHora(execucao?.horaInicioReal, "08:00")}</span>
               </div>
             </div>
 
@@ -1090,12 +1106,12 @@ export function ExecucaoAulaClient({
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-left">
             <div className="p-3 rounded-xl bg-zinc-50 border border-zinc-200">
               <span className="text-[10px] uppercase font-bold text-zinc-400 block">Ponto Entrada</span>
-              <span className="text-sm font-bold text-zinc-900">{execucao?.horaInicioReal || "08:00"}</span>
+              <span className="text-sm font-bold text-zinc-900">{parseHora(execucao?.horaInicioReal, "08:00")}</span>
             </div>
 
             <div className="p-3 rounded-xl bg-zinc-50 border border-zinc-200">
               <span className="text-[10px] uppercase font-bold text-zinc-400 block">Ponto Saída</span>
-              <span className="text-sm font-bold text-zinc-900">{execucao?.horaFimReal || "10:00"}</span>
+              <span className="text-sm font-bold text-zinc-900">{parseHora(execucao?.horaFimReal, "10:00")}</span>
             </div>
 
             <div className="p-3 rounded-xl bg-zinc-50 border border-zinc-200">
