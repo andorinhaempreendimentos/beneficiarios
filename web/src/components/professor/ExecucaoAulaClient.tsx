@@ -30,8 +30,7 @@ import {
   HelpCircle,
   Award,
 } from "lucide-react";
-import { Button, Badge, Input } from "@/components/ui";
-import { Card } from "@/components/ui/card";
+import { Button, Card, Badge, Input } from "@/components/ui";
 import { getDataHojeBrasil } from "@/lib/dateUtils";
 import { useToast } from "@/components/providers/ToastProvider";
 import { useAuth } from "@/components/providers/AuthProvider";
