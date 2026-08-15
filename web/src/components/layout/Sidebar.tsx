@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import {
   Box,
+  BookOpen,
   Building2,
   CalendarCheck,
   ChevronDown,
@@ -178,6 +179,7 @@ export function Sidebar() {
               </div>
 
               {navLink("/atividades", t("atividade", "Atividade", true), Dumbbell)}
+              {navLink("/aulas", "Aulas", BookOpen)}
 
               {/* Beneficiários com subitem */}
               <div>

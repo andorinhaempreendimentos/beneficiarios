@@ -2333,5 +2333,19 @@ export const execucoesAulaApi = {
 
     return mapped;
   },
+
+  async listAll(p?: { turmaId?: string; professorId?: string; status?: string; data?: string; limit?: number }): Promise<ExecucaoAulaApi[]> {
+    const sb = await getSupabase();
+    let q = (sb as any).from('execucoes_aula').select('*');
+
+    if (p?.turmaId) q = q.eq('turma_id', p.turmaId);
+    if (p?.professorId) q = q.eq('professor_id', p.professorId);
+    if (p?.status) q = q.eq('status', p.status);
+    if (p?.data) q = q.eq('data', p.data);
+
+    const { data, error } = await q.order('criado_em', { ascending: false }).limit(p?.limit || 200);
+    if (error) throw error;
+    return (data ?? []).map(mapExecucaoAula);
+  },
 };
 
