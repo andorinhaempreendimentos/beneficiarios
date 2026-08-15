@@ -2,6 +2,7 @@ import { createServerClient } from '@supabase/ssr';
 import { createClient as createBrowserClient } from '@/lib/supabase/client';
 import type { Database } from '@/lib/supabase/types';
 import type { StatusInscricao, ExecucaoAulaApi, BeneficiarioPresencaApi } from '@/lib/types';
+import { getDataHojeBrasil, getHoraAgoraBrasil } from '@/lib/dateUtils';
 export type { ExecucaoAulaApi, BeneficiarioPresencaApi };
 
 async function getSupabase() {
@@ -2022,9 +2023,8 @@ export const areaProfessorApi = {
 
   async salvarBatidaPonto(payload: { funcionarioId: string; tipo: 'entrada' | 'saida'; data?: string; hora?: string; observacao?: string }) {
     const sb = createClient();
-    const dataHoje = payload.data || new Date().toISOString().slice(0, 10);
-    const now = new Date();
-    const horaAtual = payload.hora || `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
+    const dataHoje = payload.data || getDataHojeBrasil();
+    const horaAtual = payload.hora || `${getHoraAgoraBrasil()}:00`;
     
     const { data, error } = await (sb.from('registros_ponto') as any).insert({
       funcionario_id: payload.funcionarioId,
@@ -2065,8 +2065,7 @@ export const execucoesAulaApi = {
   }): Promise<ExecucaoAulaApi> {
     const sb = createClient();
     const now = new Date();
-    const horaAtual = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-    const horaPonto = `${horaAtual}:00`;
+    const horaPonto = `${getHoraAgoraBrasil()}:00`;
     const isPendente = Boolean(params.justificativaRetroativa && params.justificativaRetroativa.trim().length > 0);
 
     // Evita duplicatas: se já existir aula em andamento para a turma na data, retorna ela
@@ -2217,8 +2216,7 @@ export const execucoesAulaApi = {
   ): Promise<ExecucaoAulaApi> {
     const sb = createClient();
     const now = new Date();
-    const horaAtual = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-    const horaPonto = `${horaAtual}:00`;
+    const horaPonto = `${getHoraAgoraBrasil()}:00`;
 
     const { data: execData, error } = await (sb as any).from('execucoes_aula')
       .update({

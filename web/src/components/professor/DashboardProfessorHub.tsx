@@ -29,6 +29,7 @@ import { Badge, Button, Card, Field, Input, Textarea } from "@/components/ui";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useToast } from "@/components/providers/ToastProvider";
 import { GestaoMatriculasProfessor } from "./GestaoMatriculasProfessor";
+import { getDataHojeBrasil } from "@/lib/dateUtils";
 import { GradeSemanalProfessor } from "./GradeSemanalProfessor";
 import type { FuncionarioApi, TurmaApi, NucleoApi, BeneficiarioApi, SlotAulaGrid } from "@/lib/api/services";
 import { areaProfessorApi } from "@/lib/api/services";
@@ -71,8 +72,8 @@ export function DashboardProfessorHub({
   const { toast } = useToast();
   const [slideAtual, setSlideAtual] = useState(0);
 
-  // Data da aula selecionada para aplicacao/ponto (padrao YYYY-MM-DD hoje)
-  const [dataAula, setDataAula] = useState<string>(new Date().toISOString().split("T")[0]);
+  // Data da aula selecionada para aplicacao/ponto (padrao YYYY-MM-DD hoje no Brasil)
+  const [dataAula, setDataAula] = useState<string>(getDataHojeBrasil());
 
   // Estado e filtro para busca dinâmica instantânea de beneficiários do professor
   const [buscaBeneficiario, setBuscaBeneficiario] = useState("");
@@ -478,7 +479,7 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
           slotsGrid={slotsGrid ?? []}
           onSelectSlot={(slot, turma) => {
             setTurmaModal(turma);
-            setDataAula(new Date().toISOString().split("T")[0]);
+            setDataAula(getDataHojeBrasil());
           }}
         />
       </div>

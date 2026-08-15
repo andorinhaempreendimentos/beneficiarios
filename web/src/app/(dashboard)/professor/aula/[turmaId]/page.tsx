@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { turmasApi, beneficiariosApi, funcionariosApi, execucoesAulaApi } from "@/lib/api/services";
 import { ExecucaoAulaClient } from "@/components/professor/ExecucaoAulaClient";
+import { getDataHojeBrasil } from "@/lib/dateUtils";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +13,7 @@ interface AulaTurmaPageProps {
 export default async function AulaTurmaPage({ params, searchParams }: AulaTurmaPageProps) {
   const { turmaId } = await params;
   const sp = await searchParams;
-  const dataQuery = (typeof sp?.data === "string" ? sp.data : undefined) || new Date().toISOString().slice(0, 10);
+  const dataQuery = (typeof sp?.data === "string" ? sp.data : undefined) || getDataHojeBrasil();
 
   const [turma, beneficiariosRes, funcionariosRes, execucaoExistente] = await Promise.all([
     turmasApi.get(turmaId).catch(() => null),

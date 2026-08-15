@@ -30,7 +30,9 @@ import {
   HelpCircle,
   Award,
 } from "lucide-react";
-import { Button, Card, Badge, Input } from "@/components/ui";
+import { Button, Badge, Input } from "@/components/ui";
+import { Card } from "@/components/ui/card";
+import { getDataHojeBrasil } from "@/lib/dateUtils";
 import { useToast } from "@/components/providers/ToastProvider";
 import { useAuth } from "@/components/providers/AuthProvider";
 import {
@@ -109,7 +111,7 @@ export function ExecucaoAulaClient({
 
   const [execucao, setExecucao] = useState<ExecucaoAulaApi | null>(execucaoInicial);
   const [dataAula, setDataAula] = useState<string>(
-    execucaoInicial?.data || dataQuery || new Date().toISOString().slice(0, 10)
+    execucaoInicial?.data || dataQuery || getDataHojeBrasil()
   );
 
   // Etapas: "inicio" (Step 1) | "chamada" (Step 2) | "finalizacao" (Step 3) | "concluida"
@@ -214,7 +216,7 @@ export function ExecucaoAulaClient({
   }, [slotHoje]);
 
   // Verificação de Janela e Retroatividade
-  const hojeStr = useMemo(() => new Date().toISOString().slice(0, 10), []);
+  const hojeStr = useMemo(() => getDataHojeBrasil(), []);
   const isDataRetroativa = dataAula < hojeStr;
   const isDataFutura = dataAula > hojeStr;
 
