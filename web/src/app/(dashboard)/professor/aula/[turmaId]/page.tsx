@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import { turmasApi, beneficiariosApi, funcionariosApi, execucoesAulaApi } from "@/lib/api/services";
 import { ExecucaoAulaClient } from "@/components/professor/ExecucaoAulaClient";
 
+export const dynamic = "force-dynamic";
+
 interface AulaTurmaPageProps {
   params: Promise<{ turmaId: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
