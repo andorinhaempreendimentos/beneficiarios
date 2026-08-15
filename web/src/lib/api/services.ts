@@ -2157,7 +2157,7 @@ export const execucoesAulaApi = {
   },
 
   async getPresencas(execucaoAulaId: string): Promise<BeneficiarioPresencaApi[]> {
-    const sb = createClient();
+    const sb = await getSupabase();
     const { data, error } = await (sb as any).from('beneficiario_presencas')
       .select('*')
       .eq('execucao_aula_id', execucaoAulaId);
@@ -2167,7 +2167,7 @@ export const execucoesAulaApi = {
   },
 
   async getExecucao(turmaId: string, data?: string): Promise<ExecucaoAulaApi | null> {
-    const sb = createClient();
+    const sb = await getSupabase();
 
     // 1. Prioridade: se houver aula em andamento para esta turma, recupera ela
     const { data: emAndamento, error: errAndamento } = await (sb as any).from('execucoes_aula')
@@ -2200,7 +2200,7 @@ export const execucoesAulaApi = {
   },
 
   async getById(id: string): Promise<ExecucaoAulaApi | null> {
-    const sb = createClient();
+    const sb = await getSupabase();
     const { data, error } = await (sb as any).from('execucoes_aula')
       .select('*')
       .eq('id', id)
