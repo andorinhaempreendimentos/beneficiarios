@@ -538,7 +538,7 @@ function mapExecucaoAula(r: any): ExecucaoAulaApi {
     statusAprovacao: r.status_aprovacao,
     aprovadoPorUserId: r.aprovado_por_user_id ?? undefined,
     aprovadoEm: r.aprovado_em ?? undefined,
-    criadoEm: r.created_at,
+    criadoEm: r.criado_em || r.created_at,
   };
 }
 
@@ -2069,6 +2069,19 @@ export const execucoesAulaApi = {
     const horaPonto = `${horaAtual}:00`;
     const isPendente = Boolean(params.justificativaRetroativa && params.justificativaRetroativa.trim().length > 0);
 
+    // Evita duplicatas: se já existir aula em andamento para a turma na data, retorna ela
+    const { data: existente } = await (sb as any).from('execucoes_aula')
+      .select('*')
+      .eq('turma_id', params.turmaId)
+      .eq('data', params.data)
+      .order('criado_em', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (existente) {
+      return mapExecucaoAula(existente);
+    }
+
     const payload = {
       turma_id: params.turmaId,
       professor_id: params.professorId,
@@ -2154,18 +2167,37 @@ export const execucoesAulaApi = {
     return (data ?? []).map(mapBeneficiarioPresenca);
   },
 
-  async getExecucao(turmaId: string, data: string): Promise<ExecucaoAulaApi | null> {
+  async getExecucao(turmaId: string, data?: string): Promise<ExecucaoAulaApi | null> {
     const sb = createClient();
-    const { data: execData, error } = await (sb as any).from('execucoes_aula')
+
+    // 1. Prioridade: se houver aula em andamento para esta turma, recupera ela
+    const { data: emAndamento, error: errAndamento } = await (sb as any).from('execucoes_aula')
       .select('*')
       .eq('turma_id', turmaId)
-      .eq('data', data)
-      .order('created_at', { ascending: false })
+      .eq('status', 'em_andamento')
+      .order('criado_em', { ascending: false })
       .limit(1)
       .maybeSingle();
 
-    if (error) throw error;
-    return execData ? mapExecucaoAula(execData) : null;
+    if (!errAndamento && emAndamento) {
+      return mapExecucaoAula(emAndamento);
+    }
+
+    // 2. Se informada a data, busca por data
+    if (data) {
+      const { data: execData, error } = await (sb as any).from('execucoes_aula')
+        .select('*')
+        .eq('turma_id', turmaId)
+        .eq('data', data)
+        .order('criado_em', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (error) throw error;
+      return execData ? mapExecucaoAula(execData) : null;
+    }
+
+    return null;
   },
 
   async getById(id: string): Promise<ExecucaoAulaApi | null> {
@@ -2190,10 +2222,11 @@ export const execucoesAulaApi = {
 
     const { data: execData, error } = await (sb as any).from('execucoes_aula')
       .update({
-        hora_fim_real: horaAtual,
+        hora_fim_real: now.toISOString(),
         status: 'concluida',
         foto_comprovante_url: params.fotoComprovanteUrl,
         observacoes: params.observacoes || null,
+        atualizado_em: now.toISOString(),
       })
       .eq('id', id)
       .select('*')
@@ -2230,12 +2263,12 @@ export const execucoesAulaApi = {
       q = q.eq('turmas.nucleo_id', p.nucleoId);
     }
 
-    const { data, error } = await q.order('created_at', { ascending: false });
+    const { data, error } = await q.order('criado_em', { ascending: false });
     if (error) {
       let simpleQ = (sb as any).from('execucoes_aula')
         .select('*')
         .eq('status_aprovacao', 'pendente_aprovacao')
-        .order('created_at', { ascending: false });
+        .order('criado_em', { ascending: false });
       const { data: simpleData, error: simpleErr } = await simpleQ;
       if (simpleErr) throw simpleErr;
       return (simpleData ?? []).map(mapExecucaoAula);

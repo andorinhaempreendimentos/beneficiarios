@@ -410,6 +410,23 @@ export function ExecucaoAulaClient({
     }
   }, [etapa, execucao, salvando]);
 
+  useEffect(() => {
+    if (execucaoInicial) {
+      setExecucao(execucaoInicial);
+      if (execucaoInicial.status === "concluida") {
+        setEtapa("concluida");
+      } else {
+        setEtapa((prev) => (prev === "inicio" ? "chamada" : prev));
+      }
+      if (execucaoInicial.fotoComprovanteUrl) {
+        setFotoPreview(formatStorageUrl(execucaoInicial.fotoComprovanteUrl));
+      }
+      if (execucaoInicial.observacoes) {
+        setObservacoes(execucaoInicial.observacoes);
+      }
+    }
+  }, [execucaoInicial]);
+
   // Salvar rascunho de presenças
   const handleSalvarRascunhoPresencas = async () => {
     if (!execucao) return;
