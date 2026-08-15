@@ -158,6 +158,10 @@ export function ExecucaoAulaClient({
   );
   const [showJustificativaModal, setShowJustificativaModal] = useState(false);
 
+  // Estados de Encerramento Antecipado
+  const [showEncerrarAntecipadoModal, setShowEncerrarAntecipadoModal] = useState(false);
+  const [justificativaEncerramento, setJustificativaEncerramento] = useState("");
+
   // Estados de Carregamento
   const [salvando, setSalvando] = useState(false);
   const [salvandoPresencas, setSalvandoPresencas] = useState(false);
@@ -458,6 +462,25 @@ export function ExecucaoAulaClient({
     }
   };
 
+  // Verificar se está antes do horário previsto de fim
+  const isAntesDoFimPrevisto = useMemo(() => {
+    if (!horaFimPrevista) return false;
+    const now = new Date();
+    const [fH, fM] = horaFimPrevista.split(":").map(Number);
+    const fimPrevisto = new Date();
+    fimPrevisto.setHours(fH, fM, 0, 0);
+    return now < fimPrevisto;
+  }, [horaFimPrevista, segundosDecorridos]);
+
+  const minutosRestantes = useMemo(() => {
+    if (!horaFimPrevista) return 0;
+    const now = new Date();
+    const [fH, fM] = horaFimPrevista.split(":").map(Number);
+    const fimPrevisto = new Date();
+    fimPrevisto.setHours(fH, fM, 0, 0);
+    return Math.max(0, Math.ceil((fimPrevisto.getTime() - now.getTime()) / 60000));
+  }, [horaFimPrevista, segundosDecorridos]);
+
   // STEP 3: Encerrar Aula (Stop)
   const handleEncerrarAula = async () => {
     if (!execucao) {
@@ -467,6 +490,12 @@ export function ExecucaoAulaClient({
 
     if (!fotoFile && !fotoPreview) {
       toast.error("A foto comprobatória da turma reunida é obrigatória para encerrar a aula.");
+      return;
+    }
+
+    // Se antes do horário previsto e ainda não justificou, mostrar modal
+    if (isAntesDoFimPrevisto && !justificativaEncerramento.trim()) {
+      setShowEncerrarAntecipadoModal(true);
       return;
     }
 
@@ -489,14 +518,22 @@ export function ExecucaoAulaClient({
       }));
       await execucoesAulaApi.salvarPresencas(execucao.id, lista);
 
+      // Montar observações com justificativa de encerramento antecipado
+      let obsFinais = observacoes.trim();
+      if (justificativaEncerramento.trim()) {
+        const prefixo = `[ENCERRAMENTO ANTECIPADO - ${minutosRestantes}min antes] ${justificativaEncerramento.trim()}`;
+        obsFinais = obsFinais ? `${prefixo}\n\n${obsFinais}` : prefixo;
+      }
+
       // Finaliza a aula e registra ponto de saída
       const aulaConcluida = await execucoesAulaApi.finalizarAula(execucao.id, {
         fotoComprovanteUrl: finalFotoUrl,
-        observacoes: observacoes.trim() || undefined,
+        observacoes: obsFinais || undefined,
       });
 
       setExecucao(aulaConcluida);
       setEtapa("concluida");
+      setShowEncerrarAntecipadoModal(false);
       toast.success("⏹ Aula finalizada com sucesso! Ponto de saída e relatório registrados.");
     } catch (err: any) {
       toast.error(`Erro ao finalizar aula: ${err.message || "Tente novamente."}`);
@@ -1092,6 +1129,62 @@ export function ExecucaoAulaClient({
             )}
           </button>
         </Card>
+      )}
+
+      {/* MODAL: ENCERRAMENTO ANTECIPADO */}
+      {showEncerrarAntecipadoModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl flex flex-col gap-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 text-amber-600 shrink-0">
+                <AlertTriangle className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-zinc-900">Encerramento Antecipado</h3>
+                <p className="text-xs text-zinc-500">
+                  Faltam <strong className="text-amber-600">{minutosRestantes} minutos</strong> para o fim previsto ({horaFimPrevista}).
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-800">
+              <strong>Atenção:</strong> Você está encerrando a aula antes do horário previsto. É obrigatório informar o motivo.
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-bold text-zinc-700">Motivo do encerramento antecipado *</label>
+              <textarea
+                value={justificativaEncerramento}
+                onChange={(e) => setJustificativaEncerramento(e.target.value)}
+                placeholder="Ex: Chuva forte impossibilitou continuidade da aula ao ar livre..."
+                rows={3}
+                className="w-full text-xs p-3 rounded-xl border border-zinc-200 bg-zinc-50 focus:bg-white focus:outline-none focus:border-amber-500"
+                autoFocus
+              />
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-1">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowEncerrarAntecipadoModal(false);
+                  setJustificativaEncerramento("");
+                }}
+                className="rounded-xl border border-zinc-300 px-4 py-2 text-xs font-semibold text-zinc-700 hover:bg-zinc-100 cursor-pointer"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleEncerrarAula}
+                disabled={!justificativaEncerramento.trim() || salvando}
+                className="rounded-xl bg-amber-600 px-4 py-2 text-xs font-semibold text-white hover:bg-amber-700 disabled:opacity-50 cursor-pointer"
+              >
+                {salvando ? "Encerrando..." : "Confirmar Encerramento"}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* ========================================================================= */}
