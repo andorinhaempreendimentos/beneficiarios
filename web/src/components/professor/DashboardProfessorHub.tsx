@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -31,8 +31,8 @@ import { useToast } from "@/components/providers/ToastProvider";
 import { GestaoMatriculasProfessor } from "./GestaoMatriculasProfessor";
 import { getDataHojeBrasil } from "@/lib/dateUtils";
 import { GradeSemanalProfessor } from "./GradeSemanalProfessor";
-import type { FuncionarioApi, TurmaApi, NucleoApi, BeneficiarioApi, SlotAulaGrid } from "@/lib/api/services";
-import { areaProfessorApi } from "@/lib/api/services";
+import type { FuncionarioApi, TurmaApi, NucleoApi, BeneficiarioApi, SlotAulaGrid, ExecucaoAulaApi } from "@/lib/api/services";
+import { areaProfessorApi, execucoesAulaApi } from "@/lib/api/services";
 
 interface DashboardProfessorHubProps {
   professor: FuncionarioApi;
@@ -99,6 +99,30 @@ export function DashboardProfessorHub({
 
   // Estado da Modal de Ação da Atividade
   const [turmaModal, setTurmaModal] = useState<TurmaApi | null>(null);
+  const [execucaoAtiva, setExecucaoAtiva] = useState<ExecucaoAulaApi | null>(null);
+  const [verificandoExecucao, setVerificandoExecucao] = useState(false);
+
+  // Verificar se existe aula em andamento ao abrir modal
+  useEffect(() => {
+    if (!turmaModal) {
+      setExecucaoAtiva(null);
+      return;
+    }
+    let cancelled = false;
+    setVerificandoExecucao(true);
+    execucoesAulaApi.getExecucao(turmaModal.id).then((exec) => {
+      if (!cancelled) {
+        setExecucaoAtiva(exec?.status === "em_andamento" ? exec : null);
+        setVerificandoExecucao(false);
+      }
+    }).catch(() => {
+      if (!cancelled) {
+        setExecucaoAtiva(null);
+        setVerificandoExecucao(false);
+      }
+    });
+    return () => { cancelled = true; };
+  }, [turmaModal]);
 
   // Estados de controle do ponto / atividade da modal
   const [statusAtividade, setStatusAtividade] = useState<Record<string, "em_andamento" | "concluido">>({});
@@ -623,13 +647,27 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
                 Inicie o fluxo unificado para registrar o seu ponto, enviar o relatório fotográfico e realizar a chamada de uma só vez.
               </p>
 
-              <Link
-                href={`/professor/aula/${turmaModal.id}`}
-                className="w-full justify-center flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-bold text-white shadow-sm hover:bg-emerald-700 transition-colors active:scale-95"
-              >
-                <PlayCircle className="h-5 w-5" />
-                <span>▶ INICIAR AULA (Ponto, Relatório e Chamada)</span>
-              </Link>
+              {verificandoExecucao ? (
+                <div className="w-full flex items-center justify-center gap-2 rounded-xl bg-zinc-100 px-4 py-3 text-sm font-medium text-zinc-500">
+                  <span className="animate-pulse">Verificando aula...</span>
+                </div>
+              ) : execucaoAtiva ? (
+                <Link
+                  href={`/professor/aula/${turmaModal.id}`}
+                  className="w-full justify-center flex items-center gap-2 rounded-xl bg-sky-600 px-4 py-3 text-sm font-bold text-white shadow-sm hover:bg-sky-700 transition-colors active:scale-95"
+                >
+                  <StopCircle className="h-5 w-5" />
+                  <span>⏩ CONTINUAR AULA EM ANDAMENTO</span>
+                </Link>
+              ) : (
+                <Link
+                  href={`/professor/aula/${turmaModal.id}`}
+                  className="w-full justify-center flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-bold text-white shadow-sm hover:bg-emerald-700 transition-colors active:scale-95"
+                >
+                  <PlayCircle className="h-5 w-5" />
+                  <span>▶ INICIAR AULA (Ponto, Relatório e Chamada)</span>
+                </Link>
+              )}
             </div>
           </div>
         </div>
