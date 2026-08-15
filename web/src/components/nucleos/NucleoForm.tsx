@@ -21,8 +21,10 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], back
   const [permitirChamadaRetroativa, setPermitirChamadaRetroativa] = useState(n?.permitirChamadaRetroativa ?? false);
   const [organizacaoId, setOrganizacaoId] = useState(n?.organizacaoId ?? (organizacoes[0]?.id || ""));
   const [atividadeIds, setAtividadeIds] = useState<string[]>(
-    n?.atividadeIds ?? atividades.map((a) => a.id)
+    n?.atividadeIds ?? atividades.filter(a => !a.usoInterno).map((a) => a.id)
   );
+
+  const atividadesVisiveis = atividades.filter(a => !a.usoInterno);
 
   const [cep, setCep] = useState(n?.cep ?? "");
   const [endereco, setEndereco] = useState(n?.endereco ?? "");
@@ -144,8 +146,8 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], back
         {atividades.length === 0 ? (
           <p className="text-sm text-zinc-400">Nenhuma atividade cadastrada no sistema.</p>
         ) : (
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {atividades.map((a) => {
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {atividadesVisiveis.map((a) => {
               const checked = atividadeIds.includes(a.id);
               return (
                 <label

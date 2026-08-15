@@ -4,8 +4,8 @@ import { atividadesApi, organizacoesApi } from "@/lib/api/services";
 
 export default async function NovoNucleoPage() {
   const [atividadesRes, organizacoesRes] = await Promise.all([
-    atividadesApi.list({ limit: 100 }).catch(() => ({ data: [] })),
-    organizacoesApi.list({ limit: 100 }).catch(() => ({ data: [] })),
+    atividadesApi.list({ limit: 1000 }).catch(() => ({ data: [] })),
+    organizacoesApi.list({ limit: 1000 }).catch(() => ({ data: [] })),
   ]);
 
   return (

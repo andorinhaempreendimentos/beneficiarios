@@ -7,8 +7,8 @@ export default async function EditarNucleoPage({ params }: { params: Promise<{ i
   const { id } = await params;
   const [nucleo, atividadesRes, organizacoesRes] = await Promise.all([
     nucleosApi.get(id).catch(() => null),
-    atividadesApi.list({ limit: 100 }).catch(() => ({ data: [] })),
-    organizacoesApi.list({ limit: 100 }).catch(() => ({ data: [] })),
+    atividadesApi.list({ limit: 1000 }).catch(() => ({ data: [] })),
+    organizacoesApi.list({ limit: 1000 }).catch(() => ({ data: [] })),
   ]);
   if (!nucleo) notFound();
 

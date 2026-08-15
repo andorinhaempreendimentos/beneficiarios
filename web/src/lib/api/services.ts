@@ -175,6 +175,7 @@ export interface AtividadeApi {
   nome: string;
   descricao?: string;
   disponivelPreInscricao: boolean;
+  usoInterno: boolean;
   tipoAprovacao: 'automatica' | 'manual';
   turnos: string[];
   idadeMinima?: number;
@@ -373,8 +374,11 @@ function mapNucleo(r: any): NucleoApi {
 
 function mapAtividade(r: any): AtividadeApi {
   return {
-    id: r.id, nome: r.nome, descricao: r.descricao ?? undefined,
-    disponivelPreInscricao: r.disponivel_pre_inscricao, tipoAprovacao: r.tipo_aprovacao,
+    id: r.id,    nome: r.nome,
+    descricao: r.descricao ?? undefined,
+    disponivelPreInscricao: r.disponivel_pre_inscricao,
+    usoInterno: r.uso_interno ?? false,
+    tipoAprovacao: r.tipo_aprovacao,
     turnos: (r.atividade_turnos ?? []).map((t: any) => t.nome),
     idadeMinima: r.idade_minima ?? undefined, idadeMaxima: r.idade_maxima ?? undefined,
     perguntas: (r.atividade_perguntas ?? []).map((p: any) => ({
