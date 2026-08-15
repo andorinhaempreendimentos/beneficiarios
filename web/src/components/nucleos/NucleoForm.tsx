@@ -207,14 +207,7 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], back
           </Field>
         </div>
 
-        <div className="mt-4">
-          <Field label="Localização no mapa">
-            <div className="flex h-48 items-center justify-center gap-2 rounded-lg border border-dashed border-zinc-300 bg-zinc-50 text-zinc-400">
-              <MapPin className="h-5 w-5" />
-              <span className="text-sm">Mapa interativo (Google Maps API)</span>
-            </div>
-          </Field>
-        </div>
+
       </FormSection>
 
       <FormSection title="Funcionamento">
