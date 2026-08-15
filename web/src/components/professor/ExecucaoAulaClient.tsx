@@ -244,10 +244,14 @@ export function ExecucaoAulaClient({
     if (etapa === "concluida" || !execucao?.horaInicioReal) return;
 
     function calcularSegundos() {
-      const [hIni, mIni] = parseHoraMinutos(execucao?.horaInicioReal);
+      let inicio = new Date();
+      if (execucao?.horaInicioReal?.includes("T")) {
+        inicio = new Date(execucao.horaInicioReal);
+      } else {
+        const [hIni, mIni] = parseHoraMinutos(execucao?.horaInicioReal);
+        inicio.setHours(hIni, mIni, 0, 0);
+      }
       const agora = new Date();
-      const inicio = new Date();
-      inicio.setHours(hIni, mIni, 0, 0);
 
       const diff = Math.max(0, Math.floor((agora.getTime() - inicio.getTime()) / 1000));
       setSegundosDecorridos(diff);
