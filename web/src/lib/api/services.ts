@@ -2068,6 +2068,18 @@ export const execucoesAulaApi = {
     const horaPonto = `${getHoraAgoraBrasil()}:00`;
     const isPendente = Boolean(params.justificativaRetroativa && params.justificativaRetroativa.trim().length > 0);
 
+    // Bloqueia se tiver aula auto-encerrada pendente de confirmação
+    const { data: autoEncerradas } = await (sb as any).from('execucoes_aula')
+      .select('id')
+      .eq('professor_id', params.professorId)
+      .eq('status', 'encerrada_automaticamente')
+      .limit(1)
+      .maybeSingle();
+
+    if (autoEncerradas) {
+      throw new Error('Você possui uma aula encerrada automaticamente que precisa ser confirmada antes de iniciar uma nova.');
+    }
+
     // Evita duplicatas: se já existir aula em andamento para a turma na data, retorna ela
     const { data: existente } = await (sb as any).from('execucoes_aula')
       .select('*')
@@ -2346,6 +2358,46 @@ export const execucoesAulaApi = {
     const { data, error } = await q.order('criado_em', { ascending: false }).limit(p?.limit || 200);
     if (error) throw error;
     return (data ?? []).map(mapExecucaoAula);
+  },
+
+  async getAutoEncerradas(professorId: string): Promise<ExecucaoAulaApi[]> {
+    const sb = await getSupabase();
+    const { data, error } = await (sb as any).from('execucoes_aula')
+      .select('*')
+      .eq('professor_id', professorId)
+      .eq('status', 'encerrada_automaticamente')
+      .order('criado_em', { ascending: false });
+
+    if (error) throw error;
+    return (data ?? []).map(mapExecucaoAula);
+  },
+
+  async confirmarEncerramento(
+    id: string,
+    params: { fotoComprovanteUrl?: string; observacoes?: string }
+  ): Promise<ExecucaoAulaApi> {
+    const sb = createClient();
+    const updatePayload: Record<string, unknown> = {
+      status: 'concluida',
+      atualizado_em: new Date().toISOString(),
+    };
+
+    if (params.fotoComprovanteUrl) {
+      updatePayload.foto_comprovante_url = params.fotoComprovanteUrl;
+    }
+
+    if (params.observacoes) {
+      updatePayload.observacoes = params.observacoes;
+    }
+
+    const { data, error } = await (sb as any).from('execucoes_aula')
+      .update(updatePayload)
+      .eq('id', id)
+      .select('*')
+      .single();
+
+    if (error) throw error;
+    return mapExecucaoAula(data);
   },
 };
 

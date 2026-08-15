@@ -32,7 +32,7 @@ import { GestaoMatriculasProfessor } from "./GestaoMatriculasProfessor";
 import { getDataHojeBrasil } from "@/lib/dateUtils";
 import { GradeSemanalProfessor } from "./GradeSemanalProfessor";
 import type { FuncionarioApi, TurmaApi, NucleoApi, BeneficiarioApi, SlotAulaGrid, ExecucaoAulaApi } from "@/lib/api/services";
-import { areaProfessorApi, execucoesAulaApi } from "@/lib/api/services";
+import { areaProfessorApi, execucoesAulaApi, professoresApi } from "@/lib/api/services";
 
 interface DashboardProfessorHubProps {
   professor: FuncionarioApi;
@@ -123,6 +123,20 @@ export function DashboardProfessorHub({
     });
     return () => { cancelled = true; };
   }, [turmaModal]);
+
+  // Auto-encerradas pendentes de confirmação
+  const [autoEncerradas, setAutoEncerradas] = useState<ExecucaoAulaApi[]>([]);
+  const [confirmandoAuto, setConfirmandoAuto] = useState(false);
+  const [fotoAutoFile, setFotoAutoFile] = useState<File | null>(null);
+  const [fotoAutoPreview, setFotoAutoPreview] = useState<string | null>(null);
+  const [mostrarDivergencia, setMostrarDivergencia] = useState(false);
+
+  useEffect(() => {
+    if (!professor?.id) return;
+    execucoesAulaApi.getAutoEncerradas(professor.id)
+      .then((lista) => setAutoEncerradas(lista))
+      .catch(() => setAutoEncerradas([]));
+  }, [professor?.id]);
 
   // Estados de controle do ponto / atividade da modal
   const [statusAtividade, setStatusAtividade] = useState<Record<string, "em_andamento" | "concluido">>({});
@@ -669,6 +683,121 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
                 </Link>
               )}
             </div>
+          </div>
+        </div>
+      )}
+      {/* MODAL BLOQUEANTE: AULA AUTO-ENCERRADA */}
+      {autoEncerradas.length > 0 && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+          <div className="w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl flex flex-col gap-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 text-amber-600 shrink-0">
+                <AlertCircle className="h-6 w-6" />
+              </div>
+              <div>
+                <h3 className="text-lg font-extrabold text-zinc-900">Aula Encerrada Automaticamente</h3>
+                <p className="text-xs text-zinc-500">Confirme o encerramento para continuar usando o sistema.</p>
+              </div>
+            </div>
+
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-900">
+              <p className="font-bold mb-1">Sua aula não foi encerrada manualmente.</p>
+              <p className="text-xs text-amber-700">
+                O sistema registrou o encerramento no horário previsto. Confirme abaixo para liberar o sistema.
+              </p>
+            </div>
+
+            {autoEncerradas.map((ae) => {
+              const turmaInfo = turmas.find((t) => t.id === ae.turmaId);
+              return (
+                <div key={ae.id} className="rounded-xl border border-zinc-200 bg-zinc-50 p-4 flex flex-col gap-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-xs font-bold text-zinc-500 uppercase">Turma</span>
+                      <p className="text-sm font-bold text-zinc-900">{turmaInfo?.nome || ae.turmaId.slice(0, 8)}</p>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-xs font-bold text-zinc-500 uppercase">Data</span>
+                      <p className="text-sm font-mono text-zinc-900">
+                        {ae.data ? ae.data.split('-').reverse().join('/') : '—'}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4 text-xs text-zinc-600">
+                    <span>Início previsto: <strong>{ae.horaInicioPrevista?.slice(0, 5)}</strong></span>
+                    <span>Fim registrado: <strong>{ae.horaFimPrevista?.slice(0, 5)}</strong></span>
+                  </div>
+
+                  {/* Foto opcional */}
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xs font-semibold text-zinc-600">Foto comprobatória (opcional)</label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      capture="environment"
+                      onChange={(e) => {
+                        const f = e.target.files?.[0];
+                        if (f) {
+                          setFotoAutoFile(f);
+                          setFotoAutoPreview(URL.createObjectURL(f));
+                        }
+                      }}
+                      className="text-xs file:mr-2 file:rounded-lg file:border-0 file:bg-zinc-200 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-zinc-700 hover:file:bg-zinc-300 cursor-pointer"
+                    />
+                    {fotoAutoPreview && (
+                      <img src={fotoAutoPreview} alt="Preview" className="h-24 w-auto rounded-lg object-cover border" />
+                    )}
+                  </div>
+
+                  {/* Divergência escondida */}
+                  <button
+                    type="button"
+                    onClick={() => setMostrarDivergencia(!mostrarDivergencia)}
+                    className="text-[10px] text-zinc-400 hover:text-zinc-600 underline self-start cursor-pointer"
+                  >
+                    {mostrarDivergencia ? 'Ocultar opções' : 'Houve divergência no horário?'}
+                  </button>
+
+                  {mostrarDivergencia && (
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-xs text-red-800 flex flex-col gap-2">
+                      <p className="font-bold">⚠ Solicitar revisão de horário</p>
+                      <p>Se o horário registrado não corresponde à realidade, esta informação será enviada ao coordenador para análise.</p>
+                      <p className="text-[10px] text-red-500">Obs: O horário atual permanecerá até aprovação do coordenador.</p>
+                    </div>
+                  )}
+
+                  {/* Botão confirmar */}
+                  <button
+                    type="button"
+                    disabled={confirmandoAuto}
+                    onClick={async () => {
+                      setConfirmandoAuto(true);
+                      try {
+                        let fotoUrl: string | undefined;
+                        if (fotoAutoFile) {
+                          fotoUrl = await professoresApi.uploadComprovacao(fotoAutoFile, fotoAutoFile.name);
+                        }
+                        await execucoesAulaApi.confirmarEncerramento(ae.id, {
+                          fotoComprovanteUrl: fotoUrl,
+                        });
+                        setAutoEncerradas((prev) => prev.filter((x) => x.id !== ae.id));
+                        setFotoAutoFile(null);
+                        setFotoAutoPreview(null);
+                        setMostrarDivergencia(false);
+                        toast.success('Encerramento confirmado com sucesso.');
+                      } catch (err: any) {
+                        toast.error(err.message || 'Erro ao confirmar.');
+                      } finally {
+                        setConfirmandoAuto(false);
+                      }
+                    }}
+                    className="w-full rounded-xl bg-amber-600 px-4 py-3 text-sm font-bold text-white hover:bg-amber-700 disabled:opacity-50 cursor-pointer transition-colors"
+                  >
+                    {confirmandoAuto ? 'Confirmando...' : '✓ Confirmar Encerramento'}
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}

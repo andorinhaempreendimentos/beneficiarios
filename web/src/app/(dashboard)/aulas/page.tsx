@@ -38,6 +38,7 @@ const STATUS_MAP: Record<string, { label: string; tone: string; icon: React.Elem
   em_andamento: { label: "Em Andamento", tone: "sky", icon: Play },
   concluida: { label: "Concluída", tone: "emerald", icon: CheckCircle2 },
   pendente_aprovacao: { label: "Pendente", tone: "amber", icon: AlertTriangle },
+  encerrada_automaticamente: { label: "Auto-Encerrada", tone: "amber", icon: Clock },
   rejeitada: { label: "Rejeitada", tone: "red", icon: Square },
 };
 
@@ -197,6 +198,7 @@ export default function AulasAdminPage() {
             <option value="em_andamento">Em Andamento</option>
             <option value="concluida">Concluída</option>
             <option value="pendente_aprovacao">Pendente Aprovação</option>
+            <option value="encerrada_automaticamente">Auto-Encerrada</option>
             <option value="rejeitada">Rejeitada</option>
           </Select>
         </Field>
