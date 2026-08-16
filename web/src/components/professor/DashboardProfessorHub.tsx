@@ -257,6 +257,22 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
     setDescricaoAtividade("");
   }
 
+  // Calcular datas reais da semana atual
+  const datasSemanaDia = useMemo(() => {
+    const hoje = new Date();
+    const diaAtual = hoje.getDay();
+    const mapa: Record<string, string> = {};
+    for (const [idx, sigla] of Object.entries(SIGLAS_DIA)) {
+      const diff = Number(idx) - diaAtual;
+      const d = new Date(hoje);
+      d.setDate(hoje.getDate() + diff);
+      mapa[sigla] = `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}`;
+    }
+    return mapa;
+  }, []);
+
+  const hojeFormatado = datasSemanaDia[SIGLAS_DIA[hojeIndice]] || '';
+
   const turmasHoje = turmasOrdenadas.filter(t => t.slots?.some((s: any) => s.dia === SIGLAS_DIA[hojeIndice]));
   const outrasTurmas = turmasOrdenadas.filter(t => !t.slots?.some((s: any) => s.dia === SIGLAS_DIA[hojeIndice]));
 
@@ -554,7 +570,7 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
         {turmasHoje.length > 0 && (
           <div className="flex flex-col gap-3">
             <h3 className="text-sm font-semibold uppercase tracking-wider text-emerald-600 px-1">
-              Turmas de Hoje ({diaSemanaAtual})
+              Turmas de Hoje ({diaSemanaAtual} — {hojeFormatado})
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {turmasHoje.map((turma) => (
@@ -567,7 +583,7 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
                     <div className="mt-2 text-[11px] font-medium text-zinc-500 flex flex-wrap gap-1">
                       {turma.slots?.filter((s: any) => s.dia === SIGLAS_DIA[hojeIndice]).map((s: any, idx: number) => (
                         <span key={idx} className="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-md font-bold">
-                          Hoje {s.inicio}h às {s.fim}h
+                          Hoje {hojeFormatado} {s.inicio}h às {s.fim}h
                         </span>
                       ))}
                     </div>
@@ -601,7 +617,7 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
                     <div className="mt-2 text-[11px] font-medium text-zinc-400 flex flex-wrap gap-1">
                       {turma.slots?.map((s: any, idx: number) => (
                         <span key={idx} className="bg-zinc-100 px-1.5 py-0.5 rounded">
-                          {s.dia} {s.inicio}h-{s.fim}h
+                          {s.dia} {datasSemanaDia[s.dia] || ''} {s.inicio}h-{s.fim}h
                         </span>
                       )) || <span>Sem horários definidos</span>}
                     </div>
