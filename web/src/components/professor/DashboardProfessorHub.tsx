@@ -918,13 +918,13 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
         });
 
         const textoResumo = diasSemana.map(dia => {
-          const header = `📅 ${dia.nome} (${dia.data})${dia.isHoje ? ' ← HOJE' : ''}`;
-          if (dia.slots.length === 0) return `${header}\n   — Sem aulas`;
-          const linhas = dia.slots.map(s => `   🕐 ${String(s.inicio).padStart(2, "0")}h às ${String(s.fim).padStart(2, "0")}h — ${s.turma}\n   📍 ${s.nucleo}`);
+          const header = `*${dia.nome} (${dia.data})*${dia.isHoje ? ' ← _hoje_' : ''}`;
+          if (dia.slots.length === 0) return `${header}\n— Sem aulas`;
+          const linhas = dia.slots.map(s => `🕐 ${String(s.inicio).padStart(2, "0")}h às ${String(s.fim).padStart(2, "0")}h — *${s.turma}*\n📍 _${s.nucleo}_`);
           return `${header}\n${linhas.join("\n")}`;
         }).join("\n\n");
 
-        const textoCompleto = `📋 RESUMO SEMANAL — ${professor?.nomeCompleto || "Professor"}\n${"─".repeat(30)}\n\n${textoResumo}\n\n${"─".repeat(30)}\n✅ Total: ${turmas.length} turma(s)`;
+        const textoCompleto = `*GRADE SEMANAL*\n_${professor?.nomeCompleto || "Professor"}_\n\n${textoResumo}\n\n✅ *${turmas.length} turma(s) no total*`;
 
         return (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm animate-in fade-in">
