@@ -551,6 +551,22 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
               return;
             }
 
+            // Validar limite de retroatividade
+            if (dataStr < hojeStr) {
+              const diasLimite = nucleo?.diasLimiteRetroativo ?? 7;
+              const dataLimite = new Date();
+              dataLimite.setDate(dataLimite.getDate() - diasLimite);
+              const dataLimiteStr = dataLimite.toISOString().slice(0, 10);
+              if (dataStr < dataLimiteStr) {
+                toast.error(`Prazo de retroatividade expirado. Limite: ${diasLimite} dia(s) atrás.`);
+                return;
+              }
+              if (!nucleo?.permitirChamadaRetroativa) {
+                toast.error("Este polo não permite chamada retroativa.");
+                return;
+              }
+            }
+
             setTurmaModal(turma);
             setDataAula(dataStr);
           }}

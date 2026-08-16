@@ -50,6 +50,13 @@ export function GradeSemanalProfessor({
   const diasLimite = nucleo?.diasLimiteRetroativo ?? 7;
   const podeNavegar = permitirRetroativa && tipoRestricao === "data";
 
+  // Data limite para retroatividade
+  const dataLimiteRetro = useMemo(() => {
+    const d = new Date();
+    d.setDate(d.getDate() - diasLimite);
+    return d.toISOString().slice(0, 10);
+  }, [diasLimite]);
+
   // Calcular limites de navegação
   const semanasMaxRetro = Math.ceil(diasLimite / 7);
   const podeVoltar = podeNavegar && semanaOffset > -semanasMaxRetro;
@@ -58,21 +65,26 @@ export function GradeSemanalProfessor({
   // Datas da semana exibida
   const segundaBase = useMemo(() => getSegundaDaSemana(semanaOffset), [semanaOffset]);
 
+  const hojeStr = new Date().toISOString().slice(0, 10);
+  const isSemanAtual = semanaOffset === 0;
+
   const datasColuna = useMemo(() => {
     return DIAS_COLUNA.map((col) => {
       const d = new Date(segundaBase);
       d.setDate(segundaBase.getDate() + (col.num - 1));
+      const dStr = d.toISOString().slice(0, 10);
       return {
         ...col,
         data: d,
-        dataStr: d.toISOString().slice(0, 10),
+        dataStr: dStr,
         dataFormatada: `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}`,
+        isFuturo: dStr > hojeStr,
+        isHoje: dStr === hojeStr,
+        isPassado: dStr < hojeStr,
+        foraDoLimite: dStr < dataLimiteRetro,
       };
     });
-  }, [segundaBase]);
-
-  const hojeStr = new Date().toISOString().slice(0, 10);
-  const isSemanAtual = semanaOffset === 0;
+  }, [segundaBase, hojeStr, dataLimiteRetro]);
 
   // Slots
   const items: SlotAulaGrid[] = [];
@@ -154,20 +166,18 @@ export function GradeSemanalProfessor({
             ))}
           </div>
 
-          {datasColuna.map(({ key, label, dataFormatada, dataStr }) => {
-            const isHoje = dataStr === hojeStr;
-            const isPassado = dataStr < hojeStr;
-            const isFuturo = dataStr > hojeStr;
+          {datasColuna.map(({ key, label, dataFormatada, dataStr, isFuturo, isHoje, isPassado, foraDoLimite }) => {
+            const bloqueado = isFuturo || foraDoLimite;
 
             return (
               <div key={key + dataStr} className="flex flex-1 flex-col border-r border-zinc-100 last:border-r-0">
                 <div className={`flex h-12 items-center justify-center border-b border-zinc-100 font-extrabold text-xs uppercase tracking-wider flex-col leading-tight ${
-                  isHoje ? 'bg-emerald-50 text-emerald-700' : isPassado ? 'bg-amber-50/50 text-zinc-500' : 'bg-zinc-50 text-zinc-400'
+                  isHoje ? 'bg-emerald-50 text-emerald-700' : foraDoLimite ? 'bg-red-50/30 text-zinc-400' : isPassado ? 'bg-amber-50/50 text-zinc-500' : 'bg-zinc-50 text-zinc-400'
                 }`}>
                   <span className="hidden sm:inline">{label}</span>
                   <span className="sm:hidden">{key}</span>
-                  <span className={`text-[9px] font-mono font-normal normal-case ${isHoje ? 'text-emerald-500' : 'text-zinc-400'}`}>
-                    {dataFormatada}{isHoje ? ' (hoje)' : ''}
+                  <span className={`text-[9px] font-mono font-normal normal-case ${isHoje ? 'text-emerald-500' : foraDoLimite ? 'text-red-400' : 'text-zinc-400'}`}>
+                    {dataFormatada}{isHoje ? ' (hoje)' : foraDoLimite ? ' (fora do prazo)' : ''}
                   </span>
                 </div>
 
@@ -180,7 +190,7 @@ export function GradeSemanalProfessor({
                       <div
                         key={hora}
                         className={`relative h-12 border-b border-zinc-100 transition-colors ${
-                          isFuturo ? 'bg-zinc-50/30' : 'hover:bg-sky-50/50'
+                          bloqueado ? 'bg-zinc-50/30' : 'hover:bg-sky-50/50'
                         }`}
                       >
                         {isStart && slot && (
@@ -198,12 +208,12 @@ export function GradeSemanalProfessor({
                               };
                               onSelectSlot(slot, tEncontrada, dataStr);
                             }}
-                            className={`absolute inset-x-1 z-10 rounded-xl text-white p-2 text-xs font-semibold leading-tight shadow-md cursor-pointer transition-all border active:scale-95 flex flex-col justify-between ${
-                              isFuturo
+                            className={`absolute inset-x-1 z-10 rounded-xl text-white p-2 text-xs font-semibold leading-tight shadow-md transition-all border active:scale-95 flex flex-col justify-between ${
+                              bloqueado
                                 ? 'bg-gradient-to-b from-zinc-400 to-zinc-500 border-zinc-300/40 cursor-not-allowed opacity-60'
                                 : isPassado
-                                  ? 'bg-gradient-to-b from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 border-amber-400/40'
-                                  : 'bg-gradient-to-b from-sky-600 to-sky-700 hover:from-sky-500 hover:to-sky-600 border-sky-400/40'
+                                  ? 'bg-gradient-to-b from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 border-amber-400/40 cursor-pointer'
+                                  : 'bg-gradient-to-b from-sky-600 to-sky-700 hover:from-sky-500 hover:to-sky-600 border-sky-400/40 cursor-pointer'
                             }`}
                             style={{ top: 2, height: `calc(${(slot.fim - slot.inicio) * 48}px - 4px)` }}
                           >
