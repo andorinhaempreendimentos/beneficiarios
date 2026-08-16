@@ -24,6 +24,8 @@ import {
   X,
   PlayCircle,
   StopCircle,
+  FileText,
+  Copy,
 } from "lucide-react";
 import { Badge, Button, Card, Field, Input, Textarea } from "@/components/ui";
 import { useAuth } from "@/components/providers/AuthProvider";
@@ -155,6 +157,7 @@ export function DashboardProfessorHub({
 
   // Estado para Modal de Gestão de Matrículas do Professor
   const [modalGestaoMatriculas, setModalGestaoMatriculas] = useState(false);
+  const [showResumoSemana, setShowResumoSemana] = useState(false);
 
   // Cálculos Dinâmicos
   const totalTurmas = turmas.length;
@@ -534,7 +537,17 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
             <Calendar className="h-5 w-5 text-sky-600" />
             <span>Grade Semanal de Treinos do Professor</span>
           </h2>
-          <p className="text-xs text-zinc-500">Matriz de horários (Segunda a Sábado). Clique no bloco da aula para registrar ponto, relatório e chamada.</p>
+          <div className="flex items-center gap-2 mt-1">
+            <p className="text-xs text-zinc-500 flex-1">Matriz de horários (Domingo a Sábado). Clique no bloco da aula para registrar ponto, relatório e chamada.</p>
+            <button
+              type="button"
+              onClick={() => setShowResumoSemana(true)}
+              className="flex items-center gap-1.5 rounded-lg bg-sky-50 border border-sky-200 px-3 py-1.5 text-xs font-semibold text-sky-700 hover:bg-sky-100 transition-colors shrink-0"
+            >
+              <FileText className="h-3.5 w-3.5" />
+              <span>Resumo da Semana</span>
+            </button>
+          </div>
         </div>
 
         <GradeSemanalProfessor
@@ -873,6 +886,82 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
           </div>
         </div>
       )}
+      {/* MODAL DE RESUMO SEMANAL (TEXTO) */}
+      {showResumoSemana && (() => {
+        const SIGLAS_DIA_MAP: Record<number, string> = { 0: "Dom", 1: "Seg", 2: "Ter", 3: "Qua", 4: "Qui", 5: "Sex", 6: "Sáb" };
+        const NOMES_DIA: Record<string, string> = { Dom: "Domingo", Seg: "Segunda-feira", Ter: "Terça-feira", Qua: "Quarta-feira", Qui: "Quinta-feira", Sex: "Sexta-feira", "Sáb": "Sábado" };
+        const hoje = new Date();
+        const diaAtual = hoje.getDay();
+
+        // Calcular datas da semana
+        const diasSemana = [0, 1, 2, 3, 4, 5, 6].map(num => {
+          const diff = num - diaAtual;
+          const d = new Date(hoje);
+          d.setDate(hoje.getDate() + diff);
+          const sigla = SIGLAS_DIA_MAP[num];
+          const slotsNoDia = turmas.flatMap(t =>
+            (t.slots ?? []).filter((s: any) => s.dia === sigla).map((s: any) => ({
+              turma: t.nome,
+              nucleo: t.nucleo?.identificacao || nucleo?.identificacao || "Polo",
+              inicio: s.inicio,
+              fim: s.fim,
+            }))
+          ).sort((a, b) => a.inicio - b.inicio);
+
+          return {
+            sigla,
+            nome: NOMES_DIA[sigla],
+            data: `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}`,
+            isHoje: num === diaAtual,
+            slots: slotsNoDia,
+          };
+        });
+
+        const textoResumo = diasSemana.map(dia => {
+          const header = `📅 ${dia.nome} (${dia.data})${dia.isHoje ? ' ← HOJE' : ''}`;
+          if (dia.slots.length === 0) return `${header}\n   — Sem aulas`;
+          const linhas = dia.slots.map(s => `   🕐 ${String(s.inicio).padStart(2, "0")}h às ${String(s.fim).padStart(2, "0")}h — ${s.turma}\n   📍 ${s.nucleo}`);
+          return `${header}\n${linhas.join("\n")}`;
+        }).join("\n\n");
+
+        const textoCompleto = `📋 RESUMO SEMANAL — ${professor?.nome || "Professor"}\n${"─".repeat(30)}\n\n${textoResumo}\n\n${"─".repeat(30)}\n✅ Total: ${turmas.length} turma(s)`;
+
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm animate-in fade-in">
+            <div className="w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl border border-zinc-200 flex flex-col gap-4 max-h-[85vh]">
+              <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+                <div>
+                  <span className="text-[10px] font-bold uppercase text-sky-600 tracking-wider">Resumo Textual</span>
+                  <h3 className="text-lg font-extrabold text-zinc-900">Grade da Semana</h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowResumoSemana(false)}
+                  className="rounded-full p-1 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              <div className="overflow-y-auto flex-1 rounded-xl bg-zinc-50 border border-zinc-200 p-4">
+                <pre className="text-xs text-zinc-800 font-mono whitespace-pre-wrap leading-relaxed">{textoCompleto}</pre>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText(textoCompleto);
+                  toast.success("Resumo copiado!");
+                }}
+                className="flex items-center justify-center gap-2 rounded-xl bg-sky-600 px-4 py-3 text-sm font-bold text-white shadow-sm hover:bg-sky-700 transition-colors active:scale-95 w-full"
+              >
+                <Copy className="h-4 w-4" />
+                <span>Copiar Resumo</span>
+              </button>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }
