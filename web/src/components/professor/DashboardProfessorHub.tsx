@@ -540,6 +540,7 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
         <GradeSemanalProfessor
           turmas={turmas}
           slotsGrid={slotsGrid ?? []}
+          nucleo={nucleo}
           onSelectSlot={(slot, turma) => {
             // Verificar se o slot é de data futura
             const SIGLAS_NUM: Record<string, number> = { Seg: 1, Ter: 2, Qua: 3, Qui: 4, Sex: 5, "Sáb": 6, Dom: 0 };
