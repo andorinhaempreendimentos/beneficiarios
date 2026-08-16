@@ -12,6 +12,7 @@ interface GradeSemanalProfessorProps {
 }
 
 const DIAS_COLUNA = [
+  { key: "Dom", label: "Domingo", num: 0 },
   { key: "Seg", label: "Segunda", num: 1 },
   { key: "Ter", label: "Terça", num: 2 },
   { key: "Qua", label: "Quarta", num: 3 },
@@ -26,14 +27,14 @@ function formatHora(h: number) {
   return `${String(h).padStart(2, "0")}:00`;
 }
 
-function getSegundaDaSemana(offset: number): Date {
+function getDomingoDaSemana(offset: number): Date {
   const hoje = new Date();
   const dia = hoje.getDay();
-  const diffParaSegunda = dia === 0 ? -6 : 1 - dia;
-  const segunda = new Date(hoje);
-  segunda.setDate(hoje.getDate() + diffParaSegunda + offset * 7);
-  segunda.setHours(0, 0, 0, 0);
-  return segunda;
+  const diffParaDomingo = -dia;
+  const domingo = new Date(hoje);
+  domingo.setDate(hoje.getDate() + diffParaDomingo + offset * 7);
+  domingo.setHours(0, 0, 0, 0);
+  return domingo;
 }
 
 export function GradeSemanalProfessor({
@@ -63,15 +64,15 @@ export function GradeSemanalProfessor({
   const podeAvancar = semanaOffset < 0;
 
   // Datas da semana exibida
-  const segundaBase = useMemo(() => getSegundaDaSemana(semanaOffset), [semanaOffset]);
+  const domBase = useMemo(() => getDomingoDaSemana(semanaOffset), [semanaOffset]);
 
   const hojeStr = new Date().toISOString().slice(0, 10);
   const isSemanAtual = semanaOffset === 0;
 
   const datasColuna = useMemo(() => {
     return DIAS_COLUNA.map((col) => {
-      const d = new Date(segundaBase);
-      d.setDate(segundaBase.getDate() + (col.num - 1));
+      const d = new Date(domBase);
+      d.setDate(domBase.getDate() + col.num);
       const dStr = d.toISOString().slice(0, 10);
       return {
         ...col,
