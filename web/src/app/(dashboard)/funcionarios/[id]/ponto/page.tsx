@@ -1,7 +1,7 @@
 "use client";
 
 import { notFound } from "next/navigation";
-import { use, useRef, useState } from "react";
+import { use, useRef, useState, useEffect } from "react";
 import { Camera, CheckCircle2, ChevronLeft, ChevronRight, LogIn, LogOut, Save, Upload, X, Printer } from "lucide-react";
 
 function horaAgora(): string {
@@ -9,7 +9,7 @@ function horaAgora(): string {
   return `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
 }
 import { Badge, Button, Card, CardBody, CardHeader, LinkButton, PageHeader } from "@/components/ui";
-import { funcionariosApi } from "@/lib/api/services";
+import { funcionariosApi, registrosPontoApi } from "@/lib/api/services";
 import { useQuery } from "@/lib/hooks/useQuery";
 import type { ConfirmacaoAtividade, RegistroPonto, StatusPonto } from "@/lib/types";
 
@@ -168,6 +168,42 @@ export default function FolhaPontoPage({ params }: { params: Promise<{ id: strin
 
   // Registro de ponto local
   const [registros, setRegistros] = useState<Record<string, RegistroPonto>>({});
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const raw = await registrosPontoApi.listByFuncionarioMes(id, ano, mes);
+        setRegistros((prev) => {
+          const newState = { ...prev };
+          const byDate: Record<string, any> = {};
+          
+          for (const r of raw) {
+            if (!byDate[r.data]) byDate[r.data] = {};
+            if (r.tipo === 'entrada' && !byDate[r.data].entradaReal) byDate[r.data].entradaReal = r.hora.substring(0, 5);
+            if (r.tipo === 'saida' && !byDate[r.data].saidaReal) byDate[r.data].saidaReal = r.hora.substring(0, 5);
+          }
+
+          for (const d in byDate) {
+            const hasBoth = byDate[d].entradaReal && byDate[d].saidaReal;
+            if (!newState[d] || (!newState[d].entradaReal && !newState[d].saidaReal)) {
+              newState[d] = {
+                id: `bd-${d}`,
+                funcionarioId: id,
+                data: d,
+                status: hasBoth ? 'presente' : newState[d]?.status ?? 'falta',
+                criadoEm: new Date().toISOString(),
+                ...byDate[d]
+              };
+            }
+          }
+          return newState;
+        });
+      } catch (err) {
+        console.error("Erro ao carregar registros de ponto:", err);
+      }
+    }
+    load();
+  }, [id, ano, mes]);
 
   // Confirmações de atividade local
   const [confirmacoes, setConfirmacoes] = useState<Record<string, ConfirmacaoAtividade>>({});

@@ -2418,3 +2418,19 @@ export const execucoesAulaApi = {
   },
 };
 
+export const registrosPontoApi = {
+  async listByFuncionarioMes(funcionarioId: string, ano: number, mes: number) {
+    const sb = await getSupabase();
+    const dataInicio = `${ano}-${String(mes).padStart(2, '0')}-01`;
+    const dataFim = `${ano}-${String(mes).padStart(2, '0')}-${new Date(ano, mes, 0).getDate()}`;
+    const { data, error } = await (sb as any).from('registros_ponto')
+      .select('*')
+      .eq('funcionario_id', funcionarioId)
+      .gte('data', dataInicio)
+      .lte('data', dataFim)
+      .order('data', { ascending: true })
+      .order('hora', { ascending: true });
+    if (error) throw error;
+    return data ?? [];
+  },
+};
