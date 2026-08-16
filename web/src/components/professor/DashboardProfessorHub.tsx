@@ -541,26 +541,18 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
           turmas={turmas}
           slotsGrid={slotsGrid ?? []}
           nucleo={nucleo}
-          onSelectSlot={(slot, turma) => {
-            // Verificar se o slot é de data futura
-            const SIGLAS_NUM: Record<string, number> = { Seg: 1, Ter: 2, Qua: 3, Qui: 4, Sex: 5, "Sáb": 6, Dom: 0 };
-            const hoje = new Date();
-            const diaAtual = hoje.getDay();
-            const diaSlot = SIGLAS_NUM[slot.dia] ?? 0;
-            const diff = diaSlot - diaAtual;
-            const dataSlot = new Date(hoje);
-            dataSlot.setDate(hoje.getDate() + diff);
-            const dataSlotStr = dataSlot.toISOString().slice(0, 10);
-            const hojeStr = hoje.toISOString().slice(0, 10);
+          onSelectSlot={(slot, turma, dataStr) => {
+            const hojeStr = new Date().toISOString().slice(0, 10);
 
-            if (dataSlotStr > hojeStr) {
-              const dataFormatada = `${String(dataSlot.getDate()).padStart(2, '0')}/${String(dataSlot.getMonth() + 1).padStart(2, '0')}`;
+            if (dataStr > hojeStr) {
+              const parts = dataStr.split('-');
+              const dataFormatada = `${parts[2]}/${parts[1]}`;
               toast.error(`Esta aula é no dia ${dataFormatada}. Volte no dia para iniciá-la.`);
               return;
             }
 
             setTurmaModal(turma);
-            setDataAula(dataSlotStr);
+            setDataAula(dataStr);
           }}
         />
       </div>

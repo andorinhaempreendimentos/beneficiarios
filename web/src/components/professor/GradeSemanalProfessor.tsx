@@ -7,7 +7,7 @@ import type { TurmaApi, SlotAulaGrid, NucleoApi } from "@/lib/api/services";
 interface GradeSemanalProfessorProps {
   turmas: TurmaApi[];
   slotsGrid: SlotAulaGrid[];
-  onSelectSlot: (slot: SlotAulaGrid, turma: TurmaApi) => void;
+  onSelectSlot: (slot: SlotAulaGrid, turma: TurmaApi, dataStr: string) => void;
   nucleo?: NucleoApi;
 }
 
@@ -196,7 +196,7 @@ export function GradeSemanalProfessor({
                                 atividadeId: slot.atividadeId || "",
                                 responsaveis: [],
                               };
-                              onSelectSlot(slot, tEncontrada);
+                              onSelectSlot(slot, tEncontrada, dataStr);
                             }}
                             className={`absolute inset-x-1 z-10 rounded-xl text-white p-2 text-xs font-semibold leading-tight shadow-md cursor-pointer transition-all border active:scale-95 flex flex-col justify-between ${
                               isFuturo
