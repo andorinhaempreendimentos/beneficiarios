@@ -588,14 +588,14 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
         {outrasTurmas.length > 0 && (
           <div className="flex flex-col gap-3 mt-2">
             <h3 className="text-sm font-semibold uppercase tracking-wider text-zinc-400 px-1">
-              Outras Turmas
+              Outras Turmas (sem aula hoje)
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {outrasTurmas.map((turma) => (
-                <div key={turma.id} className="flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm transition-all hover:border-sky-500 hover:shadow-md">
+                <div key={turma.id} className="flex flex-col gap-3 rounded-2xl border border-zinc-200 bg-zinc-50/50 p-5 opacity-70">
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-zinc-900 truncate text-base">{turma.nome}</h3>
-                    <p className="text-xs text-zinc-500 mt-1 line-clamp-2">
+                    <h3 className="font-bold text-zinc-700 truncate text-base">{turma.nome}</h3>
+                    <p className="text-xs text-zinc-400 mt-1 line-clamp-2">
                       {turma.nucleo?.identificacao || nucleo?.identificacao || "Polo não especificado"}
                     </p>
                     <div className="mt-2 text-[11px] font-medium text-zinc-400 flex flex-wrap gap-1">
@@ -606,16 +606,18 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
                       )) || <span>Sem horários definidos</span>}
                     </div>
                   </div>
-                  <Link
-                    href={`/professor/aula/${turma.id}`}
-                    className="flex items-center justify-center gap-2 rounded-xl bg-sky-600 px-4 py-3 text-sm font-bold text-white shadow-sm hover:bg-sky-700 transition-colors active:scale-95 w-full"
-                  >
-                    <PlayCircle className="h-5 w-5" />
-                    <span>Ir para Aula</span>
-                  </Link>
+                  <div className="text-[11px] text-zinc-400 italic text-center">
+                    Disponível apenas nos dias da grade
+                  </div>
                 </div>
               ))}
             </div>
+          </div>
+        )}
+
+        {turmasHoje.length === 0 && outrasTurmas.length > 0 && (
+          <div className="py-6 text-center text-sm text-zinc-500 bg-zinc-50 rounded-2xl border border-dashed border-zinc-200">
+            Você não tem aulas programadas para hoje ({diaSemanaAtual}).
           </div>
         )}
 
