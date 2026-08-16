@@ -2085,6 +2085,12 @@ export const execucoesAulaApi = {
     const horaPonto = `${getHoraAgoraBrasil()}:00`;
     const isPendente = Boolean(params.justificativaRetroativa && params.justificativaRetroativa.trim().length > 0);
 
+    // Bloqueio absoluto: data futura
+    const hojeISO = now.toISOString().slice(0, 10);
+    if (params.data > hojeISO) {
+      throw new Error('Não é permitido iniciar uma aula em data futura.');
+    }
+
     // Bloqueia se tiver aula auto-encerrada pendente de confirmação
     const { data: autoEncerradas } = await (sb as any).from('execucoes_aula')
       .select('id')

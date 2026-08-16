@@ -655,6 +655,7 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
                 <input
                   type="date"
                   value={dataAula}
+                  max={new Date().toISOString().slice(0, 10)}
                   onChange={(e) => setDataAula(e.target.value)}
                   className="text-xs font-bold text-zinc-900 bg-white px-2 py-1 rounded-lg border border-sky-300 focus:outline-none cursor-pointer mt-0.5"
                 />

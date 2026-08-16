@@ -375,6 +375,10 @@ export function ExecucaoAulaClient({
 
   // STEP 1: Iniciar Aula (Play)
   const handleIniciarAula = async () => {
+    if (isDataFutura) {
+      toast.error("Não é possível iniciar uma aula em data futura.");
+      return;
+    }
     if (isAntesDaJanela) {
       const [iniH, iniM] = horaInicioPrevista.split(":").map(Number);
       const tol = turma.nucleo?.toleranciaInicioMinutos ?? 15;
@@ -722,8 +726,34 @@ export function ExecucaoAulaClient({
             </p>
           </div>
 
+          {/* ALERTA DE DATA FUTURA — BLOQUEIO RÍGIDO */}
+          {isDataFutura && (
+            <div className="rounded-xl bg-red-50 border border-red-200 p-4 text-xs text-red-900 flex flex-col gap-2">
+              <div className="flex items-center gap-2 font-bold text-red-900">
+                <AlertTriangle className="h-4 w-4 text-red-600 flex-shrink-0" />
+                <span>Aula Futura — Início Bloqueado</span>
+              </div>
+              <p className="text-red-800">
+                Não é possível iniciar uma aula em data futura. Volte no dia da aula para iniciá-la.
+              </p>
+            </div>
+          )}
+
+          {/* ALERTA DE HORÁRIO ANTECIPADO — BLOQUEIO RÍGIDO */}
+          {!isDataFutura && isAntesDaJanela && (
+            <div className="rounded-xl bg-red-50 border border-red-200 p-4 text-xs text-red-900 flex flex-col gap-2">
+              <div className="flex items-center gap-2 font-bold text-red-900">
+                <AlertTriangle className="h-4 w-4 text-red-600 flex-shrink-0" />
+                <span>Fora do Horário — Cedo Demais</span>
+              </div>
+              <p className="text-red-800">
+                A aula está prevista para {horaInicioPrevista}. Aguarde o horário permitido (tolerância de {turma.nucleo?.toleranciaInicioMinutos ?? 15} min antes).
+              </p>
+            </div>
+          )}
+
           {/* ALERTA DE TOLERÂNCIA / RETROATIVIDADE */}
-          {isForaDoHorarioRegular && (
+          {isForaDoHorarioRegular && !isDataFutura && !isAntesDaJanela && (
             <div className="rounded-xl bg-amber-50 border border-amber-200 p-4 text-xs text-amber-900 flex flex-col gap-2">
               <div className="flex items-center gap-2 font-bold text-amber-900">
                 <AlertTriangle className="h-4 w-4 text-amber-600 flex-shrink-0" />
@@ -752,8 +782,12 @@ export function ExecucaoAulaClient({
           <button
             type="button"
             onClick={handleIniciarAula}
-            disabled={salvando}
-            className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 active:scale-[0.99] text-white font-extrabold py-5 rounded-2xl text-lg shadow-xl shadow-emerald-600/25 flex items-center justify-center gap-3 transition-all cursor-pointer disabled:opacity-50"
+            disabled={salvando || isDataFutura || isAntesDaJanela}
+            className={`w-full font-extrabold py-5 rounded-2xl text-lg shadow-xl flex items-center justify-center gap-3 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
+              isDataFutura || isAntesDaJanela
+                ? 'bg-zinc-400 text-zinc-200 shadow-none'
+                : 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 active:scale-[0.99] text-white shadow-emerald-600/25'
+            }`}
           >
             {salvando ? (
               <RefreshCw className="h-6 w-6 animate-spin" />
@@ -771,6 +805,7 @@ export function ExecucaoAulaClient({
             <input
               type="date"
               value={dataAula}
+              max={hojeStr}
               onChange={(e) => setDataAula(e.target.value)}
               className="font-bold text-zinc-800 bg-zinc-50 border border-zinc-200 rounded-lg px-2.5 py-1 text-xs focus:outline-none focus:border-sky-500"
             />
