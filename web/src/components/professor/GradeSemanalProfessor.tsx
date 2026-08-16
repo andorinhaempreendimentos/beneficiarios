@@ -85,7 +85,7 @@ export function GradeSemanalProfessor({
         foraDoLimite: dStr < dataLimiteRetro,
       };
     });
-  }, [segundaBase, hojeStr, dataLimiteRetro]);
+  }, [domBase, hojeStr, dataLimiteRetro]);
 
   // Slots
   const items: SlotAulaGrid[] = [];
