@@ -2433,4 +2433,32 @@ export const registrosPontoApi = {
     if (error) throw error;
     return data ?? [];
   },
+
+  async salvar(funcionarioId: string, registros: { data: string; entrada?: string; saida?: string; observacao?: string }[]): Promise<void> {
+    const sb = createClient();
+    for (const reg of registros) {
+      if (reg.entrada) {
+        await (sb as any).from('registros_ponto').upsert({
+          funcionario_id: funcionarioId,
+          data: reg.data,
+          tipo: 'entrada',
+          hora: reg.entrada + ':00',
+          status: 'presente',
+          observacao: reg.observacao || null,
+          updated_at: new Date().toISOString(),
+        }, { onConflict: 'funcionario_id,data,tipo', ignoreDuplicates: false });
+      }
+      if (reg.saida) {
+        await (sb as any).from('registros_ponto').upsert({
+          funcionario_id: funcionarioId,
+          data: reg.data,
+          tipo: 'saida',
+          hora: reg.saida + ':00',
+          status: 'presente',
+          observacao: reg.observacao || null,
+          updated_at: new Date().toISOString(),
+        }, { onConflict: 'funcionario_id,data,tipo', ignoreDuplicates: false });
+      }
+    }
+  },
 };

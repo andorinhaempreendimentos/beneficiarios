@@ -12,6 +12,7 @@ import { Badge, Button, Card, CardBody, CardHeader, LinkButton, PageHeader } fro
 import { funcionariosApi, registrosPontoApi } from "@/lib/api/services";
 import { useQuery } from "@/lib/hooks/useQuery";
 import type { ConfirmacaoAtividade, RegistroPonto, StatusPonto } from "@/lib/types";
+import { useToast } from "@/components/providers/ToastProvider";
 
 const MESES = [
   "Janeiro","Fevereiro","Março","Abril","Maio","Junho",
@@ -159,6 +160,7 @@ function ModalConfirmacao({ data, onConfirmar, onFechar }: ModalConfirmacaoProps
 export default function FolhaPontoPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const { data: funcionario } = useQuery(() => funcionariosApi.get(id), [id]);
+  const { toast } = useToast();
 
   const hoje = new Date();
   const [ano, setAno] = useState(hoje.getFullYear());
@@ -210,6 +212,8 @@ export default function FolhaPontoPage({ params }: { params: Promise<{ id: strin
 
   const [modalData, setModalData] = useState<string | null>(null);
   const [salvo, setSalvo] = useState(false);
+  const [salvando, setSalvando] = useState(false);
+  const [diasEditados, setDiasEditados] = useState<Set<string>>(new Set());
 
   const hojeIso = isoDate(hoje);
   const regHoje = registros[hojeIso];
@@ -217,7 +221,7 @@ export default function FolhaPontoPage({ params }: { params: Promise<{ id: strin
     regHoje?.entradaReal && !regHoje?.saidaReal ? "saida" : "entrada";
   const [batidaRegistrada, setBatidaRegistrada] = useState<string | null>(null);
 
-  function baterPonto() {
+  async function baterPonto() {
     const hora = horaAgora();
     const campo = tipoBatida === "entrada" ? "entradaReal" : "saidaReal";
     setSalvo(false);
@@ -234,6 +238,17 @@ export default function FolhaPontoPage({ params }: { params: Promise<{ id: strin
       },
     }));
     setBatidaRegistrada(hora);
+
+    // Persistir imediatamente
+    try {
+      await registrosPontoApi.salvar(id, [{
+        data: hojeIso,
+        ...(tipoBatida === "entrada" ? { entrada: hora } : { saida: hora }),
+      }]);
+      toast.success(`Ponto de ${tipoBatida} registrado: ${hora}`);
+    } catch (err: any) {
+      toast.error(err.message || 'Erro ao salvar ponto.');
+    }
   }
 
   const isInstrutor = funcionario?.funcao === "Instrutor" || funcionario?.funcao === "Monitor";
@@ -251,6 +266,7 @@ export default function FolhaPontoPage({ params }: { params: Promise<{ id: strin
 
   function atualizarCampo(data: string, campo: "entradaReal"|"saidaReal"|"observacao", valor: string) {
     setSalvo(false);
+    setDiasEditados((prev) => new Set(prev).add(data));
     setRegistros((prev) => ({
       ...prev,
       [data]: {
@@ -571,9 +587,39 @@ export default function FolhaPontoPage({ params }: { params: Promise<{ id: strin
         {salvo && (
           <span className="self-center text-sm text-green-600">Ponto salvo com sucesso.</span>
         )}
-        <Button onClick={() => setSalvo(true)} variant="primary">
+        <Button
+          onClick={async () => {
+            setSalvando(true);
+            try {
+              const editados = Array.from(diasEditados)
+                .map((d) => registros[d])
+                .filter(Boolean)
+                .map((r) => ({
+                  data: r.data,
+                  entrada: r.entradaReal,
+                  saida: r.saidaReal,
+                  observacao: r.observacao,
+                }));
+              if (editados.length === 0) {
+                toast.info('Nenhuma edição para salvar.');
+                setSalvando(false);
+                return;
+              }
+              await registrosPontoApi.salvar(id, editados);
+              setSalvo(true);
+              setDiasEditados(new Set());
+              toast.success(`${editados.length} registro(s) salvo(s).`);
+            } catch (err: any) {
+              toast.error(err.message || 'Erro ao salvar.');
+            } finally {
+              setSalvando(false);
+            }
+          }}
+          variant="primary"
+          disabled={salvando || diasEditados.size === 0}
+        >
           <Save className="h-4 w-4" />
-          Salvar ponto
+          {salvando ? 'Salvando...' : `Salvar ponto${diasEditados.size > 0 ? ` (${diasEditados.size})` : ''}`}
         </Button>
       </div>
     </div>
