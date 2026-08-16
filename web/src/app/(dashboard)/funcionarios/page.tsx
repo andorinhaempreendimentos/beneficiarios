@@ -96,7 +96,7 @@ export default function FuncionariosPage() {
   const { data: statsDes } = useQuery<Paginated<FuncionarioApi>>(() => funcionariosApi.list({ status: "demitido", limit: 1 }), []);
   const { data: nucleosData } = useQuery<Paginated<NucleoApi>>(() => nucleosApi.list({ limit: 200 }), []);
   const { data: turmasData } = useQuery<Paginated<TurmaApi>>(() => turmasApi.list({ limit: 500 }), []);
-  const { data: beneficiariosData } = useQuery<Paginated<BeneficiarioApi>>(() => beneficiariosApi.list({ limit: 1000 }), []);
+  const { data: beneficiariosData } = useQuery<Paginated<BeneficiarioApi>>(() => beneficiariosApi.list({ limit: 100 }), []);
 
   const nucleos = nucleosData?.data ?? [];
   const turmas = turmasData?.data ?? [];

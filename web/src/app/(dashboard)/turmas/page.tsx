@@ -124,7 +124,7 @@ export default function TurmasPage() {
   const { data: pageData, loading, refetch } = useQuery<Paginated<TurmaApi>>(() => turmasApi.list(queryParams), [queryParams]);
   const { data: nucleosData } = useQuery<Paginated<NucleoApi>>(() => nucleosApi.list({ limit: 200 }), []);
   const { data: atividadesData } = useQuery<Paginated<AtividadeApi>>(() => atividadesApi.list({ limit: 200 }), []);
-  const { data: beneficiariosData } = useQuery<Paginated<BeneficiarioApi>>(() => beneficiariosApi.list({ limit: 1000 }), []);
+  const { data: beneficiariosData } = useQuery<Paginated<BeneficiarioApi>>(() => beneficiariosApi.list({ limit: 100 }), []);
 
   const nucleos = nucleosData?.data ?? [];
   const atividades = atividadesData?.data ?? [];

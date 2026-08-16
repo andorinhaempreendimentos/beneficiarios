@@ -1069,6 +1069,23 @@ export const beneficiariosApi = {
     const { error } = await sb.from('beneficiarios').update({ deleted_at: new Date().toISOString() }).eq('id', id);
     if (error) throw error;
   },
+
+  async search(term: string, limit = 20): Promise<{ id: string; nomeCompleto: string; cpf?: string }[]> {
+    const sb = await getSupabase();
+    const { data, error } = await sb
+      .from('beneficiarios')
+      .select('id, nome_completo, cpf')
+      .is('deleted_at', null)
+      .ilike('nome_completo', `%${term}%`)
+      .order('nome_completo', { ascending: true })
+      .limit(limit);
+    if (error) throw error;
+    return (data ?? []).map((r: any) => ({
+      id: r.id,
+      nomeCompleto: r.nome_completo,
+      cpf: r.cpf,
+    }));
+  },
 };
 
 function parseSexoDb(v: unknown): Database['public']['Enums']['sexo_beneficiario'] {
