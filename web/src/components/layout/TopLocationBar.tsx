@@ -1,11 +1,13 @@
 "use client";
 
 import { useMemo, useEffect } from "react";
-import { Globe, MapPin, Filter, Building, Compass, RotateCcw, Moon, Sun } from "lucide-react";
+import Link from "next/link";
+import { Globe, MapPin, Filter, Building, Compass, RotateCcw, Moon, Sun, Bell } from "lucide-react";
 import { useLocationFilter } from "@/components/providers/LocationFilterProvider";
 import { useTheme } from "@/components/providers/ThemeProvider";
+import { useAuth } from "@/components/providers/AuthProvider";
 import { useQuery } from "@/lib/hooks/useQuery";
-import { nucleosApi, type Paginated, type NucleoApi } from "@/lib/api/services";
+import { nucleosApi, execucoesAulaApi, type Paginated, type NucleoApi } from "@/lib/api/services";
 import { normalizarNucleoLocalizacao } from "@/lib/location";
 
 const ESTADOS_NOMES: Record<string, string> = {
@@ -24,6 +26,8 @@ interface TopLocationBarProps {
 
 export function TopLocationBar({ nucleos: nucleosProp }: TopLocationBarProps = {}) {
   const { modoEscuro, alternarModoEscuro } = useTheme();
+  const { user } = useAuth();
+  const isAdmin = user && user.tipo !== 'funcionario' && !user.isProfessor;
   const {
     estado,
     cidade,
@@ -131,6 +135,12 @@ export function TopLocationBar({ nucleos: nucleosProp }: TopLocationBarProps = {
 
   const temFiltroAtivo = countFiltrosAtivos > 0;
 
+  // Pendências para admin/coordenador
+  const { data: pendenciasCount } = useQuery<number>(
+    () => (isAdmin ? execucoesAulaApi.countPendencias() : Promise.resolve(0)),
+    [isAdmin]
+  );
+
   return (
     <header className="sticky top-0 z-30 flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 px-4 py-2.5 backdrop-blur-xs lg:px-8 shadow-2xs transition-colors">
       <div className="flex items-center gap-2">
@@ -226,6 +236,21 @@ export function TopLocationBar({ nucleos: nucleosProp }: TopLocationBarProps = {
             <RotateCcw className="h-3 w-3" />
             <span className="hidden sm:inline">Limpar</span>
           </button>
+        )}
+
+        {/* Pendências */}
+        {isAdmin && (pendenciasCount ?? 0) > 0 && (
+          <Link
+            href="/aulas?status=pendente_aprovacao"
+            className="relative flex items-center gap-1 rounded-lg border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/30 px-2 py-1 text-xs font-semibold text-amber-800 dark:text-amber-200 hover:bg-amber-100 dark:hover:bg-amber-800/40 transition-colors shadow-2xs"
+            title={`${pendenciasCount} pendência(s) de aprovação`}
+          >
+            <Bell className="h-3 w-3" />
+            <span className="hidden sm:inline">Pendências</span>
+            <span className="flex h-4 min-w-[16px] items-center justify-center rounded-full bg-amber-500 px-1 text-[10px] font-bold text-white">
+              {pendenciasCount}
+            </span>
+          </Link>
         )}
       </div>
     </header>

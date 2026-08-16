@@ -2303,6 +2303,15 @@ export const execucoesAulaApi = {
     return (data ?? []).map(mapExecucaoAula);
   },
 
+  async countPendencias(): Promise<number> {
+    const sb = await getSupabase();
+    const { count, error } = await (sb as any).from('execucoes_aula')
+      .select('id', { count: 'exact', head: true })
+      .eq('status_aprovacao', 'pendente_aprovacao');
+    if (error) return 0;
+    return count ?? 0;
+  },
+
   async avaliarPendencia(
     id: string,
     params: { aprovado: boolean; userId: string; motivoRejeicao?: string }

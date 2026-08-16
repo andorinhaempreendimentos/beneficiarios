@@ -3,7 +3,14 @@
 import { useState } from "react";
 import { Button, Field, FormSection, Input, LinkButton, Select } from "@/components/ui";
 import type { TipoDuracao } from "@/lib/types";
+import { z } from "zod";
 import { objetosApi, type ObjetoApi } from "@/lib/api/services";
+
+const objetoSchema = z.object({
+  nome: z.string().min(2, "Nome deve ter no mínimo 2 caracteres"),
+});
+
+type FieldErrors = Partial<Record<string, string>>;
 
 interface ObjetoFormProps {
   objeto?: ObjetoApi;
@@ -14,11 +21,13 @@ export function ObjetoForm({ objeto: o, backHref }: ObjetoFormProps) {
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [tipoDuracao, setTipoDuracao] = useState<TipoDuracao>((o?.tipoDuracao as TipoDuracao) ?? "periodo");
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setLoading(true);
     setErro(null);
+    setFieldErrors({});
 
     const formData = new FormData(event.currentTarget);
     const data = {
@@ -34,6 +43,22 @@ export function ObjetoForm({ objeto: o, backHref }: ObjetoFormProps) {
       dataTermino: tipoDuracao === "periodo" ? ((formData.get("dataTermino") as string) || null) : null,
       status: (formData.get("status") as string) || "ativo",
     };
+
+    const parsed = objetoSchema.safeParse({
+      nome: data.nome,
+    });
+
+    if (!parsed.success) {
+      const errors: FieldErrors = {};
+      parsed.error.issues.forEach((err) => {
+        if (err.path[0]) {
+          errors[err.path[0].toString()] = err.message;
+        }
+      });
+      setFieldErrors(errors);
+      setLoading(false);
+      return;
+    }
 
     try {
       if (o?.id) {
@@ -58,7 +83,7 @@ export function ObjetoForm({ objeto: o, backHref }: ObjetoFormProps) {
       )}
       <FormSection title="Dados do Objeto">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Field label="Nome do Projeto" required>
+          <Field label="Nome do Projeto" required error={fieldErrors.nome}>
             <Input name="nome" defaultValue={o?.nome} placeholder="Ex: Esporte na Comunidade" />
           </Field>
           <Field label="Termo de Fomento">

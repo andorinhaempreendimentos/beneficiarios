@@ -2,8 +2,17 @@
 
 import { useState } from "react";
 import { Button, Field, FormSection, Input, LinkButton, Select } from "@/components/ui";
+import { z } from "zod";
 import { usuariosApi, type UsuarioApi, type PerfilApi } from "@/lib/api/services";
 import { validarEmail } from "@/lib/mascaras";
+
+const usuarioSchema = z.object({
+  nome: z.string().min(3, "Nome deve ter no mínimo 3 caracteres"),
+  email: z.string().email("Endereço de e-mail inválido"),
+  perfilId: z.string().min(1, "Perfil é obrigatório"),
+});
+
+type FieldErrors = Partial<Record<string, string>>;
 
 interface UsuarioFormProps {
   usuario?: UsuarioApi;
@@ -14,11 +23,13 @@ interface UsuarioFormProps {
 export function UsuarioForm({ usuario: u, perfis = [], backHref }: UsuarioFormProps) {
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setLoading(true);
     setErro(null);
+    setFieldErrors({});
 
     const formData = new FormData(event.currentTarget);
     const email = (formData.get("email") as string) || "";
@@ -36,6 +47,24 @@ export function UsuarioForm({ usuario: u, perfis = [], backHref }: UsuarioFormPr
       isProfessor: formData.get("isProfessor") === "on",
       ativo: formData.get("status") !== "inativo",
     };
+
+    const parsed = usuarioSchema.safeParse({
+      nome: data.nomeCompleto,
+      email: data.email,
+      perfilId: data.perfilId,
+    });
+
+    if (!parsed.success) {
+      const errors: FieldErrors = {};
+      parsed.error.issues.forEach((err) => {
+        if (err.path[0]) {
+          errors[err.path[0].toString()] = err.message;
+        }
+      });
+      setFieldErrors(errors);
+      setLoading(false);
+      return;
+    }
 
     try {
       if (u?.id) {
@@ -60,10 +89,10 @@ export function UsuarioForm({ usuario: u, perfis = [], backHref }: UsuarioFormPr
       )}
       <FormSection title="Dados do Usuário">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Field label="Nome completo" required>
+          <Field label="Nome completo" required error={fieldErrors.nome}>
             <Input name="nome" defaultValue={u?.nomeCompleto} placeholder="Ex: Ana Beatriz Lima" />
           </Field>
-          <Field label="E-mail" required>
+          <Field label="E-mail" required error={fieldErrors.email}>
             <Input name="email" type="email" defaultValue={u?.email} placeholder="usuario@andorinha.org" />
           </Field>
           {!u && (
@@ -81,7 +110,7 @@ export function UsuarioForm({ usuario: u, perfis = [], backHref }: UsuarioFormPr
 
       <FormSection title="Acesso e Perfil">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Field label="Perfil de acesso" required>
+          <Field label="Perfil de acesso" required error={fieldErrors.perfilId}>
             <Select name="perfilId" defaultValue={u?.perfilId ?? ""}>
               <option value="" disabled>Selecione</option>
               {perfis.map((p) => (

@@ -10,6 +10,7 @@ import {
   CalendarCheck,
   ChevronDown,
   ClipboardList,
+  Clock,
   Dumbbell,
   FileBarChart,
   FolderKanban,
@@ -128,6 +129,7 @@ export function Sidebar() {
           {isFuncionario ? (
             <>
               {navLink("/professor", "Área do Professor", CalendarCheck)}
+              {navLink("/professor/ponto", "Meu Ponto", Clock)}
               {navLink("/turmas", "Minhas Turmas", GraduationCap)}
               {navLink("/beneficiarios", "Beneficiários", Users)}
             </>

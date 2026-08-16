@@ -3,9 +3,19 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronDown, CheckCircle } from "lucide-react";
+import { z } from "zod";
 import type { PerguntaParQ } from "@/lib/types";
 import { validarCpf, validarEmail } from "@/lib/mascaras";
 import { beneficiariosApi, inscricoesApi, turmasApi } from "@/lib/api/services";
+
+const inscricaoSchema = z.object({
+  nomeCompleto: z.string().min(3, "Nome deve ter no mínimo 3 caracteres"),
+  dataNascimento: z.string().min(1, "Data de nascimento é obrigatória"),
+  nomeResponsavel: z.string().min(3, "Nome do responsável deve ter no mínimo 3 caracteres").optional().or(z.literal("")),
+  whatsappResponsavel: z.string().min(1, "Telefone do responsável é obrigatório").optional().or(z.literal("")),
+});
+
+type FieldErrors = Partial<Record<string, string>>;
 
 const PERGUNTAS_PARQ = [
   "Algum médico já disse que possui problema de coração e recomendou só praticar atividade física supervisionado?",
@@ -60,6 +70,7 @@ export function InscricaoPublicaForm({ turmaId, onSubmit }: InscricaoPublicaForm
   // Feedback e submissão
   const [erro, setErro] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
   // Cálculo de Idade
   function handleDataNascimentoChange(dataStr: string) {
@@ -112,6 +123,7 @@ export function InscricaoPublicaForm({ turmaId, onSubmit }: InscricaoPublicaForm
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setErro(null);
+    setFieldErrors({});
 
     const formData = new FormData(e.currentTarget);
     const cpf = String(formData.get("cpf") || "").trim();
@@ -133,6 +145,48 @@ export function InscricaoPublicaForm({ turmaId, onSubmit }: InscricaoPublicaForm
     if (emailResponsavel && !validarEmail(emailResponsavel)) {
       setErro("Endereço de e-mail do responsável inválido.");
       return;
+    }
+
+    const parsed = inscricaoSchema.safeParse({
+      nomeCompleto: formData.get("nomeCompleto") as string,
+      dataNascimento,
+      nomeResponsavel: formData.get("nomeResponsavel") as string,
+      whatsappResponsavel: formData.get("whatsappResponsavel") as string,
+    });
+
+    if (!parsed.success) {
+      const errors: FieldErrors = {};
+      parsed.error.issues.forEach((err) => {
+        if (err.path[0]) {
+          errors[err.path[0].toString()] = err.message;
+        }
+      });
+      setFieldErrors(errors);
+      
+      if (precisaResponsavel && (!formData.get("nomeResponsavel") || !formData.get("whatsappResponsavel"))) {
+        if (!formData.get("nomeResponsavel")) errors.nomeResponsavel = "Nome do responsável é obrigatório";
+        if (!formData.get("whatsappResponsavel")) errors.whatsappResponsavel = "Telefone do responsável é obrigatório";
+        setFieldErrors(errors);
+      } else if (parsed.error.issues.some(e => e.path[0] === 'nomeResponsavel' || e.path[0] === 'whatsappResponsavel') && !precisaResponsavel) {
+         // se nao precisa responsavel ignora erros de responsavel
+         delete errors.nomeResponsavel;
+         delete errors.whatsappResponsavel;
+         setFieldErrors(errors);
+      }
+
+      if (Object.keys(errors).length > 0) {
+        setErro("Corrija os erros destacados no formulário.");
+        return;
+      }
+    } else {
+       if (precisaResponsavel && (!formData.get("nomeResponsavel") || !formData.get("whatsappResponsavel"))) {
+         const errors: FieldErrors = {};
+         if (!formData.get("nomeResponsavel")) errors.nomeResponsavel = "Nome do responsável é obrigatório";
+         if (!formData.get("whatsappResponsavel")) errors.whatsappResponsavel = "Telefone do responsável é obrigatório";
+         setFieldErrors(errors);
+         setErro("Corrija os erros destacados no formulário.");
+         return;
+       }
     }
 
     // Validação de Faixa etária da turma
@@ -262,6 +316,7 @@ export function InscricaoPublicaForm({ turmaId, onSubmit }: InscricaoPublicaForm
               placeholder="Digite o nome completo do beneficiário"
               className="w-full rounded-xl border border-zinc-300 px-3.5 py-2.5 text-sm transition-all focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none"
             />
+            {fieldErrors.nomeCompleto && <span className="text-[11px] text-red-500">{fieldErrors.nomeCompleto}</span>}
           </div>
 
           <div className="flex flex-col gap-1.5">
@@ -274,6 +329,7 @@ export function InscricaoPublicaForm({ turmaId, onSubmit }: InscricaoPublicaForm
               onChange={(e) => handleDataNascimentoChange(e.target.value)}
               className="w-full rounded-xl border border-zinc-300 px-3.5 py-2.5 text-sm transition-all focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none"
             />
+            {fieldErrors.dataNascimento && <span className="text-[11px] text-red-500">{fieldErrors.dataNascimento}</span>}
             {idade !== null && (
               <span className="text-[11px] font-medium text-sky-600">
                 Beneficiário possui {idade} anos
@@ -482,6 +538,7 @@ export function InscricaoPublicaForm({ turmaId, onSubmit }: InscricaoPublicaForm
                 placeholder="Digite o nome completo do responsável"
                 className="w-full rounded-xl border border-zinc-300 px-3.5 py-2.5 text-sm bg-white transition-all focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none"
               />
+              {fieldErrors.nomeResponsavel && <span className="text-[11px] text-red-500">{fieldErrors.nomeResponsavel}</span>}
             </div>
 
             <div className="flex flex-col gap-1.5">
@@ -522,6 +579,7 @@ export function InscricaoPublicaForm({ turmaId, onSubmit }: InscricaoPublicaForm
                 maxLength={15}
                 className="w-full rounded-xl border border-zinc-300 px-3.5 py-2.5 text-sm bg-white transition-all focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none"
               />
+              {fieldErrors.whatsappResponsavel && <span className="text-[11px] text-red-500">{fieldErrors.whatsappResponsavel}</span>}
             </div>
 
             <div className="flex flex-col gap-1.5">

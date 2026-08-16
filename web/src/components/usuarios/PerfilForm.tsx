@@ -2,8 +2,15 @@
 
 import { useState } from "react";
 import { Button, Field, FormSection, Input, LinkButton } from "@/components/ui";
+import { z } from "zod";
 import type { ModuloSistema, AcaoPermissao } from "@/lib/types";
 import { perfisApi, type PerfilApi } from "@/lib/api/services";
+
+const perfilSchema = z.object({
+  nome: z.string().min(2, "Nome deve ter no mínimo 2 caracteres"),
+});
+
+type FieldErrors = Partial<Record<string, string>>;
 
 const MODULOS: { key: ModuloSistema; label: string }[] = [
   { key: "objetos",       label: "Objetos" },
@@ -48,11 +55,13 @@ export function PerfilForm({ perfil: p, backHref }: PerfilFormProps) {
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [perms, setPerms] = useState<PermMap>(() => buildPermMap(p));
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setLoading(true);
     setErro(null);
+    setFieldErrors({});
 
     const formData = new FormData(event.currentTarget);
     const permissoes = Object.entries(perms).map(([modulo, acoesSet]) => ({
@@ -65,6 +74,22 @@ export function PerfilForm({ perfil: p, backHref }: PerfilFormProps) {
       descricao: (formData.get("descricao") as string) || undefined,
       permissoes,
     };
+
+    const parsed = perfilSchema.safeParse({
+      nome: data.nome,
+    });
+
+    if (!parsed.success) {
+      const errors: FieldErrors = {};
+      parsed.error.issues.forEach((err) => {
+        if (err.path[0]) {
+          errors[err.path[0].toString()] = err.message;
+        }
+      });
+      setFieldErrors(errors);
+      setLoading(false);
+      return;
+    }
 
     try {
       if (p?.id) {
@@ -112,7 +137,7 @@ export function PerfilForm({ perfil: p, backHref }: PerfilFormProps) {
       )}
       <FormSection title="Dados do Perfil">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Field label="Nome do perfil" required>
+          <Field label="Nome do perfil" required error={fieldErrors.nome}>
             <Input name="nome" defaultValue={p?.nome} placeholder="Ex: Coordenador" />
           </Field>
           <Field label="Descrição">

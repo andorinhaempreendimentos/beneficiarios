@@ -3,7 +3,15 @@
 import { useState } from "react";
 import { Button, Field, FileUpload, FormSection, Input, LinkButton, Select } from "@/components/ui";
 import type { CategoriaEquipamento, ConservacaoEquipamento } from "@/lib/types";
+import { z } from "zod";
 import { equipamentosApi, type EquipamentoApi, type NucleoApi, type ObjetoApi } from "@/lib/api/services";
+
+const equipamentoSchema = z.object({
+  nome: z.string().min(2, "Nome deve ter no mínimo 2 caracteres"),
+  categoria: z.string().min(1, "Categoria é obrigatória"),
+});
+
+type FieldErrors = Partial<Record<string, string>>;
 
 interface EquipamentoFormProps {
   equipamento?: EquipamentoApi;
@@ -24,11 +32,13 @@ const CONSERVACOES: { value: ConservacaoEquipamento; label: string }[] = [
 export function EquipamentoForm({ equipamento: e, nucleos = [], objetos = [], backHref }: EquipamentoFormProps) {
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setLoading(true);
     setErro(null);
+    setFieldErrors({});
 
     const formData = new FormData(event.currentTarget);
     const data = {
@@ -42,6 +52,23 @@ export function EquipamentoForm({ equipamento: e, nucleos = [], objetos = [], ba
       objetoId: (formData.get("objetoId") as string) || null,
       notaFiscal: (formData.get("notaFiscal") as string) || null,
     };
+
+    const parsed = equipamentoSchema.safeParse({
+      nome: data.nome,
+      categoria: data.categoria,
+    });
+
+    if (!parsed.success) {
+      const errors: FieldErrors = {};
+      parsed.error.issues.forEach((err) => {
+        if (err.path[0]) {
+          errors[err.path[0].toString()] = err.message;
+        }
+      });
+      setFieldErrors(errors);
+      setLoading(false);
+      return;
+    }
 
     try {
       if (e?.id) {
@@ -66,10 +93,10 @@ export function EquipamentoForm({ equipamento: e, nucleos = [], objetos = [], ba
       )}
       <FormSection title="Dados do Equipamento">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Field label="Nome" required>
+          <Field label="Nome" required error={fieldErrors.nome}>
             <Input name="nome" defaultValue={e?.nome} placeholder="Ex: Bola de Futebol Oficial" />
           </Field>
-          <Field label="Categoria" required>
+          <Field label="Categoria" required error={fieldErrors.categoria}>
             <Select name="categoria" defaultValue={e?.categoria ?? ""}>
               <option value="" disabled>Selecione</option>
               {CATEGORIAS.map((c) => (

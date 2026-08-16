@@ -326,6 +326,14 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
                 <span className="text-sm font-extrabold font-mono text-white">{professor.matricula}</span>
               </div>
 
+              <Link
+                href="/professor/ponto"
+                className="flex items-center gap-2 rounded-2xl bg-sky-500/20 px-4 py-3.5 text-xs font-bold text-sky-100 hover:bg-sky-500/30 border border-sky-400/30 transition-all shadow-md active:scale-95"
+              >
+                <Clock className="h-4 w-4" />
+                <span>Meu Ponto</span>
+              </Link>
+
               <button
                 type="button"
                 onClick={handleLogout}
