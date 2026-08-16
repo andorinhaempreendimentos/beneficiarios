@@ -924,7 +924,7 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
           return `${header}\n${linhas.join("\n")}`;
         }).join("\n\n");
 
-        const textoCompleto = `📋 RESUMO SEMANAL — ${professor?.nome || "Professor"}\n${"─".repeat(30)}\n\n${textoResumo}\n\n${"─".repeat(30)}\n✅ Total: ${turmas.length} turma(s)`;
+        const textoCompleto = `📋 RESUMO SEMANAL — ${professor?.nomeCompleto || "Professor"}\n${"─".repeat(30)}\n\n${textoResumo}\n\n${"─".repeat(30)}\n✅ Total: ${turmas.length} turma(s)`;
 
         return (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm animate-in fade-in">
