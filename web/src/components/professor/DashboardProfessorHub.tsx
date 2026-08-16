@@ -889,40 +889,42 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
       {/* MODAL DE RESUMO SEMANAL (TEXTO) */}
       {showResumoSemana && (() => {
         const SIGLAS_DIA_MAP: Record<number, string> = { 0: "Dom", 1: "Seg", 2: "Ter", 3: "Qua", 4: "Qui", 5: "Sex", 6: "Sáb" };
-        const NOMES_DIA: Record<string, string> = { Dom: "Domingo", Seg: "Segunda-feira", Ter: "Terça-feira", Qua: "Quarta-feira", Qui: "Quinta-feira", Sex: "Sexta-feira", "Sáb": "Sábado" };
         const hoje = new Date();
         const diaAtual = hoje.getDay();
 
-        // Calcular datas da semana
-        const diasSemana = [0, 1, 2, 3, 4, 5, 6].map(num => {
+        // Mapa de data por dia da semana
+        const dataPorSigla: Record<string, string> = {};
+        [0, 1, 2, 3, 4, 5, 6].forEach(num => {
           const diff = num - diaAtual;
           const d = new Date(hoje);
           d.setDate(hoje.getDate() + diff);
           const sigla = SIGLAS_DIA_MAP[num];
-          const slotsNoDia = turmas.flatMap(t =>
-            (t.slots ?? []).filter((s: any) => s.dia === sigla).map((s: any) => ({
-              turma: t.nome,
-              nucleo: t.nucleo?.identificacao || nucleo?.identificacao || "Polo",
-              inicio: s.inicio,
-              fim: s.fim,
-            }))
-          ).sort((a, b) => a.inicio - b.inicio);
-
-          return {
-            sigla,
-            nome: NOMES_DIA[sigla],
-            data: `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}`,
-            isHoje: num === diaAtual,
-            slots: slotsNoDia,
-          };
+          dataPorSigla[sigla] = `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}`;
         });
 
-        const textoResumo = diasSemana.map(dia => {
-          const header = `*${dia.nome} (${dia.data})*${dia.isHoje ? ' ← _hoje_' : ''}`;
-          if (dia.slots.length === 0) return `${header}\n— Sem aulas`;
-          const linhas = dia.slots.map(s => `🕐 ${String(s.inicio).padStart(2, "0")}h às ${String(s.fim).padStart(2, "0")}h — *${s.turma}*\n📍 _${s.nucleo}_`);
-          return `${header}\n${linhas.join("\n")}`;
-        }).join("\n\n");
+        const NOMES_CURTOS: Record<string, string> = { Dom: "Dom", Seg: "Seg", Ter: "Ter", Qua: "Qua", Qui: "Qui", Sex: "Sex", "Sáb": "Sáb" };
+
+        // Agrupar por turma
+        const blocosPorTurma = turmas.map(t => {
+          const nucleoNome = t.nucleo?.identificacao || nucleo?.identificacao || "Polo";
+          const diasDaTurma = (t.slots ?? [])
+            .sort((a: any, b: any) => {
+              const ordem: Record<string, number> = { Dom: 0, Seg: 1, Ter: 2, Qua: 3, Qui: 4, Sex: 5, "Sáb": 6 };
+              return (ordem[a.dia] ?? 9) - (ordem[b.dia] ?? 9);
+            })
+            .map((s: any) => {
+              const data = dataPorSigla[s.dia] || "";
+              return `• ${NOMES_CURTOS[s.dia] ?? s.dia} (${data}) — ${String(s.inicio).padStart(2, "0")}h às ${String(s.fim).padStart(2, "0")}h`;
+            });
+
+          if (diasDaTurma.length === 0) return null;
+
+          return `*${t.nome}*\n📍 _${nucleoNome}_\n${diasDaTurma.join("\n")}`;
+        }).filter(Boolean);
+
+        const textoResumo = blocosPorTurma.length > 0
+          ? blocosPorTurma.join("\n\n")
+          : "Nenhuma aula programada para esta semana.";
 
         const textoCompleto = `*GRADE SEMANAL*\n_${professor?.nomeCompleto || "Professor"}_\n\n${textoResumo}\n\n✅ *${turmas.length} turma(s) no total*`;
 
