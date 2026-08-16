@@ -60,6 +60,21 @@ export function GradeSemanalProfessor({
     return items.find((s) => s.dia === dia && s.inicio === hora);
   }
 
+  // Calcular datas reais da semana
+  const datasSemanaDia: Record<string, string> = (() => {
+    const hoje = new Date();
+    const diaAtual = hoje.getDay();
+    const SIGLAS_MAP: Record<string, number> = { Seg: 1, Ter: 2, Qua: 3, Qui: 4, Sex: 5, "Sáb": 6 };
+    const mapa: Record<string, string> = {};
+    for (const [sigla, idx] of Object.entries(SIGLAS_MAP)) {
+      const diff = idx - diaAtual;
+      const d = new Date(hoje);
+      d.setDate(hoje.getDate() + diff);
+      mapa[sigla] = `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}`;
+    }
+    return mapa;
+  })();
+
   return (
     <div className="overflow-x-auto rounded-2xl border border-zinc-200 bg-white select-none shadow-sm">
       <div className="flex min-w-[700px]">
@@ -76,9 +91,10 @@ export function GradeSemanalProfessor({
 
         {DIAS_COLUNA.map(({ key, label }) => (
           <div key={key} className="flex flex-1 flex-col border-r border-zinc-100 last:border-r-0">
-            <div className="flex h-10 items-center justify-center border-b border-zinc-100 bg-zinc-50 font-extrabold text-xs text-zinc-700 uppercase tracking-wider">
+            <div className="flex h-10 items-center justify-center border-b border-zinc-100 bg-zinc-50 font-extrabold text-xs text-zinc-700 uppercase tracking-wider flex-col leading-tight">
               <span className="hidden sm:inline">{label}</span>
               <span className="sm:hidden">{key}</span>
+              <span className="text-[9px] font-mono font-normal text-zinc-400 normal-case">{datasSemanaDia[key] || ''}</span>
             </div>
 
             <div className="relative">
