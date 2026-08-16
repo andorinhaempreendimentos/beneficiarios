@@ -1,11 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { z } from "zod";
 import { HelpCircle, Plus, Trash2, Globe, Lock } from "lucide-react";
 import { Button, Field, FormSection, Input, LinkButton, Switch } from "@/components/ui";
 import type { PerguntaAtividade, Turno } from "@/lib/types";
 import { atividadesApi, type AtividadeApi } from "@/lib/api/services";
 import { useToast } from "@/components/providers/ToastProvider";
+
+const atividadeSchema = z.object({
+  nome: z.string().min(2, "Nome deve ter pelo menos 2 caracteres."),
+});
+
+type FieldErrors = Partial<Record<string, string>>;
 
 interface AtividadeFormProps {
   atividade?: AtividadeApi;
@@ -16,6 +23,7 @@ export function AtividadeForm({ atividade: a, backHref }: AtividadeFormProps) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [disponivelPreInscricao, setDisponivelPreInscricao] = useState(a?.disponivelPreInscricao ?? false);
   const [turnos, setTurnos] = useState<Set<Turno>>(new Set((a?.turnos ?? []) as Turno[]));
   const [perguntas, setPerguntas] = useState<PerguntaAtividade[]>(a?.perguntas ?? []);
@@ -28,19 +36,25 @@ export function AtividadeForm({ atividade: a, backHref }: AtividadeFormProps) {
     const formData = new FormData(e.currentTarget);
     const nome = formData.get("nome") as string;
 
-    if (!nome || !nome.trim()) {
-      setErro("O nome da atividade é obrigatório.");
-      toast.error("O nome da atividade é obrigatório.");
-      setLoading(false);
-      return;
-    }
-
     const data = {
       nome: nome.trim(),
       disponivelPreInscricao,
       turnos: Array.from(turnos),
       perguntas,
     };
+
+    const validation = atividadeSchema.safeParse(data);
+    if (!validation.success) {
+      const errs: FieldErrors = {};
+      for (const issue of validation.error.issues) {
+        const key = issue.path[0] as string;
+        if (!errs[key]) errs[key] = issue.message;
+      }
+      setFieldErrors(errs);
+      setLoading(false);
+      return;
+    }
+    setFieldErrors({});
 
     try {
       if (a?.id) {
@@ -94,7 +108,7 @@ export function AtividadeForm({ atividade: a, backHref }: AtividadeFormProps) {
 
       <FormSection title="Dados da Atividade">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Field label="Nome da atividade" required>
+          <Field label="Nome da atividade" required error={fieldErrors.nome}>
             <Input name="nome" defaultValue={a?.nome} placeholder="Ex: Futebol, Planejamento Pedagógico, Karatê" required />
           </Field>
         </div>

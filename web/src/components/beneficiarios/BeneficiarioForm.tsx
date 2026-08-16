@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { z } from "zod";
 import { Plus, Trash2, User, ArrowUpRight } from "lucide-react";
 import {
   Button,
@@ -31,6 +32,14 @@ const PERGUNTAS_PARQ = [
   "Está gestante ou suspeita estar gestante?",
 ];
 
+const beneficiarioSchema = z.object({
+  nomeCompleto: z.string().min(3, "Nome deve ter pelo menos 3 caracteres."),
+  dataNascimento: z.string().min(1, "Data de nascimento é obrigatória."),
+  sexo: z.string().min(1, "Sexo é obrigatório."),
+});
+
+type FieldErrors = Partial<Record<string, string>>;
+
 interface BeneficiarioFormProps {
   beneficiario?: Beneficiario;
   nucleos?: NucleoApi[];
@@ -41,6 +50,7 @@ interface BeneficiarioFormProps {
 export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], backHref }: BeneficiarioFormProps) {
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [sexo, setSexo] = useState(b?.sexo || "Masculino");
   const [pcd, setPcd] = useState(b?.pcd ?? false);
   const [vinculos, setVinculos] = useState<VinculoTurma[]>(() => {
@@ -138,6 +148,19 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
       status: normalizarStatusBeneficiario(formData.get("status") as string | null),
     };
 
+    const validation = beneficiarioSchema.safeParse(data);
+    if (!validation.success) {
+      const errs: FieldErrors = {};
+      for (const issue of validation.error.issues) {
+        const key = issue.path[0] as string;
+        if (!errs[key]) errs[key] = issue.message;
+      }
+      setFieldErrors(errs);
+      setLoading(false);
+      return;
+    }
+    setFieldErrors({});
+
     try {
       let benSavedId = b?.id;
       if (benSavedId) {
@@ -201,13 +224,13 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
               <FileUpload label="Enviar foto de perfil" />
             )}
           </Field>
-          <Field label="Nome completo" required>
+          <Field label="Nome completo" required error={fieldErrors.nomeCompleto}>
             <Input name="nomeCompleto" defaultValue={b?.nomeCompleto} />
           </Field>
           <Field label="Nome social">
             <Input name="nomeSocial" defaultValue={b?.nomeSocial} />
           </Field>
-          <Field label="Data de Nasc." required>
+          <Field label="Data de Nasc." required error={fieldErrors.dataNascimento}>
             <Input type="date" name="dataNascimento" defaultValue={b?.dataNascimento} />
           </Field>
           <Field label="Raça">
@@ -221,7 +244,7 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
               <option>Outras</option>
             </Select>
           </Field>
-          <Field label="Sexo" required>
+          <Field label="Sexo" required error={fieldErrors.sexo}>
             <RadioGroup
               name="sexo"
               options={["Masculino", "Feminino", "Não Informar"]}

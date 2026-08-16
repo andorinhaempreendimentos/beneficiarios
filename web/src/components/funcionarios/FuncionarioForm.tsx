@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { z } from "zod";
 import { User, KeyRound, ShieldCheck, Eye, EyeOff, AlertCircle, Lock } from "lucide-react";
 import {
   Button,
@@ -29,6 +30,14 @@ const DIAS_SEMANA: DiaJornada["dia"][] = [
   "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo",
 ];
 
+const funcionarioSchema = z.object({
+  nomeCompleto: z.string().min(3, "Nome deve ter pelo menos 3 caracteres."),
+  cpf: z.string().min(11, "CPF inválido."),
+  funcao: z.string().min(1, "Função é obrigatória."),
+});
+
+type FieldErrors = Partial<Record<string, string>>;
+
 interface FuncionarioFormProps {
   funcionario?: FuncionarioApi;
   nucleos?: NucleoApi[];
@@ -41,6 +50,7 @@ export function FuncionarioForm({ funcionario: f, nucleos = [], funcoes = [], ba
   
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   
   // Dados do Funcionário
   const [funcao, setFuncao] = useState<string>((f?.funcao as string) || "Professor / Instrutor");
@@ -109,6 +119,19 @@ export function FuncionarioForm({ funcionario: f, nucleos = [], funcoes = [], ba
       senhaLogin: senhaNova.trim() || undefined,
     };
 
+    const validation = funcionarioSchema.safeParse(data);
+    if (!validation.success) {
+      const errs: FieldErrors = {};
+      for (const issue of validation.error.issues) {
+        const key = issue.path[0] as string;
+        if (!errs[key]) errs[key] = issue.message;
+      }
+      setFieldErrors(errs);
+      setLoading(false);
+      return;
+    }
+    setFieldErrors({});
+
     try {
       if (f?.id) {
         await funcionariosApi.update(f.id, data);
@@ -159,11 +182,11 @@ export function FuncionarioForm({ funcionario: f, nucleos = [], funcoes = [], ba
             )}
           </Field>
 
-          <Field label="Nome completo" required>
+          <Field label="Nome completo" required error={fieldErrors.nomeCompleto}>
             <Input name="nomeCompleto" defaultValue={f?.nomeCompleto} required placeholder="Ex: Aleksandro Soares de Sousa" />
           </Field>
 
-          <Field label="CPF">
+          <Field label="CPF" error={fieldErrors.cpf}>
             <Input name="cpf" mask="cpf" defaultValue={f?.cpf} placeholder="000.000.000-00" />
           </Field>
 
@@ -215,7 +238,7 @@ export function FuncionarioForm({ funcionario: f, nucleos = [], funcoes = [], ba
       {/* Vínculo e Função */}
       <FormSection title="Vínculo Institucional & Cargo">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <Field label="Cargo / Função (RH)" required>
+          <Field label="Cargo / Função (RH)" required error={fieldErrors.funcao}>
             <Select
               name="funcao"
               value={funcao}

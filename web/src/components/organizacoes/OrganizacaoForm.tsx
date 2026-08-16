@@ -1,10 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { z } from "zod";
 import { Button, Field, FormSection, Input, LinkButton, Select } from "@/components/ui";
 import type { TipoOrganizacao } from "@/lib/types";
 import { organizacoesApi, type OrganizacaoApi, type ObjetoApi } from "@/lib/api/services";
 import { validarCnpj, validarCep, validarEmail } from "@/lib/mascaras";
+
+const organizacaoSchema = z.object({
+  nome: z.string().min(2, "Nome deve ter pelo menos 2 caracteres."),
+  cnpj: z.string().min(1, "CNPJ é obrigatório."),
+});
+
+type FieldErrors = Partial<Record<string, string>>;
 
 interface OrganizacaoFormProps {
   organizacao?: OrganizacaoApi;
@@ -17,6 +25,7 @@ const TIPOS: TipoOrganizacao[] = ["Instituto", "ONG", "Associação", "Fundaçã
 export function OrganizacaoForm({ organizacao: o, objetos = [], backHref }: OrganizacaoFormProps) {
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [objetoId, setObjetoId] = useState(o?.objetoId ?? (objetos[0]?.id || ""));
 
   const [cep, setCep] = useState(o?.cep ?? "");
@@ -86,6 +95,19 @@ export function OrganizacaoForm({ organizacao: o, objetos = [], backHref }: Orga
       status: (formData.get("status") as string) || "ativa",
     };
 
+    const validation = organizacaoSchema.safeParse(data);
+    if (!validation.success) {
+      const errs: FieldErrors = {};
+      for (const issue of validation.error.issues) {
+        const key = issue.path[0] as string;
+        if (!errs[key]) errs[key] = issue.message;
+      }
+      setFieldErrors(errs);
+      setLoading(false);
+      return;
+    }
+    setFieldErrors({});
+
     try {
       if (o?.id) {
         await organizacoesApi.update(o.id, data);
@@ -109,7 +131,7 @@ export function OrganizacaoForm({ organizacao: o, objetos = [], backHref }: Orga
       )}
       <FormSection title="Dados da Organização">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Field label="Nome" required>
+          <Field label="Nome" required error={fieldErrors.nome}>
             <Input name="nome" defaultValue={o?.nome} placeholder="Ex: Instituto Vida Ativa" />
           </Field>
           <Field label="Tipo" required>
@@ -120,7 +142,7 @@ export function OrganizacaoForm({ organizacao: o, objetos = [], backHref }: Orga
               ))}
             </Select>
           </Field>
-          <Field label="CNPJ">
+          <Field label="CNPJ" error={fieldErrors.cnpj}>
             <Input name="cnpj" mask="cnpj" defaultValue={o?.cnpj} placeholder="00.000.000/0000-00" />
           </Field>
           <Field label="Nome do responsável">

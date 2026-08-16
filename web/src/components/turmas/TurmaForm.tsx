@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { z } from "zod";
 import { Button, Field, FormSection, Input, LinkButton, Select, Switch } from "@/components/ui";
 import { GradeSemanal } from "./GradeSemanal";
 import {
@@ -11,6 +12,15 @@ import {
   type AtividadeApi,
   type FuncionarioApi,
 } from "@/lib/api/services";
+
+const turmaSchema = z.object({
+  nome: z.string().min(2, "Nome deve ter pelo menos 2 caracteres."),
+  nucleoId: z.string().min(1, "Selecione um núcleo."),
+  atividadeId: z.string().min(1, "Selecione uma atividade."),
+  vagasTotais: z.number().min(1, "Mínimo 1 vaga."),
+});
+
+type FieldErrors = Partial<Record<string, string>>;
 
 interface TurmaFormProps {
   turma?: TurmaApi;
@@ -26,6 +36,7 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [exclusiva, setExclusiva] = useState(t?.exclusiva ?? false);
   const [nucleoId, setNucleoId] = useState(t?.nucleoId ?? "");
   const [atividadeId, setAtividadeId] = useState(t?.atividadeId ?? "");
@@ -103,21 +114,6 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
     const nId = (formData.get("nucleoId") as string) || nucleoId;
     const aId = (formData.get("atividadeId") as string) || atividadeId;
 
-    if (!nId) {
-      const msg = "Por favor, selecione um núcleo.";
-      setErro(msg);
-      toast.error(msg);
-      setLoading(false);
-      return;
-    }
-    if (!aId) {
-      const msg = "Por favor, selecione uma atividade.";
-      setErro(msg);
-      toast.error(msg);
-      setLoading(false);
-      return;
-    }
-
     const data = {
       nome: formData.get("nome") as string,
       nucleoId: nId,
@@ -131,6 +127,19 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
       dataInicio: (formData.get("dataInicio") as string) || null,
       dataFim: (formData.get("dataFim") as string) || null,
     };
+
+    const validation = turmaSchema.safeParse(data);
+    if (!validation.success) {
+      const errs: FieldErrors = {};
+      for (const issue of validation.error.issues) {
+        const key = issue.path[0] as string;
+        if (!errs[key]) errs[key] = issue.message;
+      }
+      setFieldErrors(errs);
+      setLoading(false);
+      return;
+    }
+    setFieldErrors({});
 
     try {
       let savedTurma: TurmaApi;
@@ -166,10 +175,10 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
       )}
       <FormSection title="Dados da Turma">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Field label="Nome" required>
+          <Field label="Nome" required error={fieldErrors.nome}>
             <Input name="nome" defaultValue={t?.nome} placeholder="Ex: Futebol Manhã A" />
           </Field>
-          <Field label="Núcleo" required>
+          <Field label="Núcleo" required error={fieldErrors.nucleoId}>
             <Select name="nucleoId" value={nucleoId} onChange={(e) => handleNucleoChange(e.target.value)}>
               <option value="" disabled>Selecione</option>
               {nucleos.map((n) => (
@@ -177,7 +186,7 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
               ))}
             </Select>
           </Field>
-          <Field label="Atividade" required hint={t?.id ? "A atividade principal não pode ser alterada após a criação" : undefined}>
+          <Field label="Atividade" required hint={t?.id ? "A atividade principal não pode ser alterada após a criação" : undefined} error={fieldErrors.atividadeId}>
             <Select name="atividadeId" value={atividadeId} onChange={(e) => setAtividadeId(e.target.value)} disabled={Boolean(t?.id) || !nucleoId}>
               <option value="" disabled>{!nucleoId ? "Selecione primeiro o núcleo" : "Selecione a atividade"}</option>
               {atividadesParaTurma.map((a) => (
@@ -237,7 +246,7 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
 
       <FormSection title="Horários e Vagas">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Field label="Vagas totais" required>
+          <Field label="Vagas totais" required error={fieldErrors.vagasTotais}>
             <Input name="vagasTotais" type="number" defaultValue={t?.vagasTotais?.toString() || "30"} placeholder="30" />
           </Field>
           <Field label="Idade Mínima (anos)" required hint="Ex: 6 anos">
