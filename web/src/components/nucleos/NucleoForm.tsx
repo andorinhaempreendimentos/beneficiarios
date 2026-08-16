@@ -2,8 +2,21 @@
 
 import { useState } from "react";
 import { MapPin } from "lucide-react";
+import { z } from "zod";
 import { Button, Field, FormSection, Input, LinkButton, Switch } from "@/components/ui";
 import { nucleosApi, type NucleoApi, type OrganizacaoApi, type AtividadeApi } from "@/lib/api/services";
+
+const nucleoSchema = z.object({
+  identificacao: z.string().min(3, "Identificação deve ter pelo menos 3 caracteres."),
+  organizacaoId: z.string().min(1, "Selecione uma organização."),
+  dataInicio: z.string().min(1, "Data de início é obrigatória."),
+  telefoneContato: z.string().optional().nullable(),
+  toleranciaInicioMinutos: z.number().min(0, "Tolerância não pode ser negativa.").nullable().optional(),
+  toleranciaFimMinutos: z.number().min(0, "Tolerância não pode ser negativa.").nullable().optional(),
+  diasLimiteRetroativo: z.number().min(1, "Mínimo 1 dia.").nullable().optional(),
+});
+
+type FieldErrors = Partial<Record<string, string>>;
 
 interface NucleoFormProps {
   nucleo?: NucleoApi;
@@ -15,6 +28,7 @@ interface NucleoFormProps {
 export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], backHref }: NucleoFormProps) {
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [emFuncionamento, setEmFuncionamento] = useState(n?.emFuncionamento ?? true);
   const [disponivelPreInscricao, setDisponivelPreInscricao] = useState(n?.disponivelPreInscricao ?? true);
   const [tipoRestricaoChamada, setTipoRestricaoChamada] = useState<'data' | 'horario'>(n?.tipoRestricaoChamada ?? 'data');
@@ -74,6 +88,7 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], back
       bairro: (formData.get("bairro") as string) || null,
       cidade: (formData.get("cidade") as string) || null,
       complemento: (formData.get("complemento") as string) || null,
+      dataInicio: (formData.get("dataInicio") as string) || "",
       organizacaoId: orgId,
       emFuncionamento,
       disponivelPreInscricao,
@@ -84,6 +99,20 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], back
       diasLimiteRetroativo: formData.get("diasLimiteRetroativo") ? Number(formData.get("diasLimiteRetroativo")) : null,
       atividadeIds,
     };
+
+    // Validação Zod
+    const validation = nucleoSchema.safeParse(data);
+    if (!validation.success) {
+      const errs: FieldErrors = {};
+      for (const issue of validation.error.issues) {
+        const key = issue.path[0] as string;
+        if (!errs[key]) errs[key] = issue.message;
+      }
+      setFieldErrors(errs);
+      setLoading(false);
+      return;
+    }
+    setFieldErrors({});
 
     try {
       if (n?.id) {
@@ -108,10 +137,10 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], back
       )}
       <FormSection title="Identificação">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Field label="Identificação" required>
+          <Field label="Identificação" required error={fieldErrors.identificacao}>
             <Input name="identificacao" defaultValue={n?.identificacao} placeholder="Ex: Núcleo Vila Esperança" />
           </Field>
-          <Field label="Organização Responsável" required>
+          <Field label="Organização Responsável" required error={fieldErrors.organizacaoId}>
             <select
               name="organizacaoId"
               value={organizacaoId}
@@ -212,7 +241,7 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], back
 
       <FormSection title="Funcionamento">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Field label="Data de início" required>
+          <Field label="Data de início" required error={fieldErrors.dataInicio}>
             <Input type="date" name="dataInicio" defaultValue={n?.dataInicio} />
           </Field>
           <Field label="Data de fechamento">
