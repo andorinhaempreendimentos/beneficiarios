@@ -130,6 +130,7 @@ export function DashboardProfessorHub({
   const [fotoAutoFile, setFotoAutoFile] = useState<File | null>(null);
   const [fotoAutoPreview, setFotoAutoPreview] = useState<string | null>(null);
   const [mostrarDivergencia, setMostrarDivergencia] = useState(false);
+  const [justificativaDivergencia, setJustificativaDivergencia] = useState("");
 
   useEffect(() => {
     if (!professor?.id) return;
@@ -761,7 +762,14 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
                   {mostrarDivergencia && (
                     <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-xs text-red-800 flex flex-col gap-2">
                       <p className="font-bold">⚠ Solicitar revisão de horário</p>
-                      <p>Se o horário registrado não corresponde à realidade, esta informação será enviada ao coordenador para análise.</p>
+                      <p>Descreva o que aconteceu. A informação será enviada ao coordenador para análise.</p>
+                      <textarea
+                        value={justificativaDivergencia}
+                        onChange={(e) => setJustificativaDivergencia(e.target.value)}
+                        rows={3}
+                        placeholder="Ex: A aula terminou 20 minutos antes porque..."
+                        className="w-full rounded-lg border border-red-300 bg-white px-3 py-2 text-xs text-zinc-900 focus:border-red-500 focus:outline-none"
+                      />
                       <p className="text-[10px] text-red-500">Obs: O horário atual permanecerá até aprovação do coordenador.</p>
                     </div>
                   )}
@@ -771,6 +779,10 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
                     type="button"
                     disabled={confirmandoAuto}
                     onClick={async () => {
+                      if (mostrarDivergencia && !justificativaDivergencia.trim()) {
+                        toast.error('Descreva a divergência antes de confirmar.');
+                        return;
+                      }
                       setConfirmandoAuto(true);
                       try {
                         let fotoUrl: string | undefined;
@@ -779,12 +791,19 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
                         }
                         await execucoesAulaApi.confirmarEncerramento(ae.id, {
                           fotoComprovanteUrl: fotoUrl,
+                          divergencia: mostrarDivergencia,
+                          justificativaDivergencia: mostrarDivergencia ? justificativaDivergencia.trim() : undefined,
                         });
                         setAutoEncerradas((prev) => prev.filter((x) => x.id !== ae.id));
                         setFotoAutoFile(null);
                         setFotoAutoPreview(null);
                         setMostrarDivergencia(false);
-                        toast.success('Encerramento confirmado com sucesso.');
+                        setJustificativaDivergencia("");
+                        toast.success(
+                          mostrarDivergencia
+                            ? 'Divergência registrada. Aguardando aprovação do coordenador.'
+                            : 'Encerramento confirmado com sucesso.'
+                        );
                       } catch (err: any) {
                         toast.error(err.message || 'Erro ao confirmar.');
                       } finally {

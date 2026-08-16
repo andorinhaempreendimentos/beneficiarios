@@ -2391,7 +2391,12 @@ export const execucoesAulaApi = {
 
   async confirmarEncerramento(
     id: string,
-    params: { fotoComprovanteUrl?: string; observacoes?: string }
+    params: {
+      fotoComprovanteUrl?: string;
+      observacoes?: string;
+      divergencia?: boolean;
+      justificativaDivergencia?: string;
+    }
   ): Promise<ExecucaoAulaApi> {
     const sb = createClient();
     const updatePayload: Record<string, unknown> = {
@@ -2403,7 +2408,10 @@ export const execucoesAulaApi = {
       updatePayload.foto_comprovante_url = params.fotoComprovanteUrl;
     }
 
-    if (params.observacoes) {
+    if (params.divergencia && params.justificativaDivergencia) {
+      updatePayload.status_aprovacao = 'pendente_aprovacao';
+      updatePayload.observacoes = `[DIVERGÊNCIA DE HORÁRIO] ${params.justificativaDivergencia}`;
+    } else if (params.observacoes) {
       updatePayload.observacoes = params.observacoes;
     }
 
