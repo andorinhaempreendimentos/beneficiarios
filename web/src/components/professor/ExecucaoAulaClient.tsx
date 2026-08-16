@@ -170,6 +170,10 @@ export function ExecucaoAulaClient({
   // Cronômetro ao Vivo
   const [segundosDecorridos, setSegundosDecorridos] = useState(0);
 
+  // Hydration-safe: evita mismatch SSR vs client em cálculos com new Date()
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+
   // Referências para inputs de arquivo
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
@@ -242,7 +246,7 @@ export function ExecucaoAulaClient({
     return horaAtualMinutos > limiteMinutosTotal;
   }, [dataAula, isDataRetroativa, isDataFutura, horaFimPrevista, turma.nucleo]);
 
-  const isForaDoHorarioRegular = isDataRetroativa || isForaDaJanelaHorario;
+  const isForaDoHorarioRegular = mounted ? (isDataRetroativa || isForaDaJanelaHorario) : false;
 
   // Atualização do Cronômetro ao Vivo quando a aula estiver em andamento
   useEffect(() => {
@@ -544,7 +548,7 @@ export function ExecucaoAulaClient({
   };
 
   return (
-    <div className="flex flex-col gap-5 max-w-2xl mx-auto py-2 px-3 sm:px-4">
+    <div className="flex flex-col gap-5 max-w-2xl mx-auto py-2 px-3 sm:px-4" suppressHydrationWarning>
       {/* NAVEGAÇÃO SUPERIOR & TÍTULO */}
       <div className="flex items-center justify-between">
         <Link
