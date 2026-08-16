@@ -246,6 +246,19 @@ export function ExecucaoAulaClient({
     return horaAtualMinutos > limiteMinutosTotal;
   }, [dataAula, isDataRetroativa, isDataFutura, horaFimPrevista, turma.nucleo]);
 
+  // Verificar se é cedo demais para iniciar
+  const isAntesDaJanela = useMemo(() => {
+    if (isDataRetroativa || isDataFutura) return false;
+    if (turma.nucleo?.tipoRestricaoChamada === "data") return false;
+
+    const now = new Date();
+    const [iniH, iniM] = horaInicioPrevista.split(":").map(Number);
+    const toleranciaMinutos = turma.nucleo?.toleranciaInicioMinutos ?? 15;
+    const inicioPermitidoMinutos = (iniH * 60 + iniM) - toleranciaMinutos;
+    const horaAtualMinutos = now.getHours() * 60 + now.getMinutes();
+    return horaAtualMinutos < inicioPermitidoMinutos;
+  }, [dataAula, isDataRetroativa, isDataFutura, horaInicioPrevista, turma.nucleo]);
+
   const isForaDoHorarioRegular = mounted ? (isDataRetroativa || isForaDaJanelaHorario) : false;
 
   // Atualização do Cronômetro ao Vivo quando a aula estiver em andamento
@@ -362,6 +375,14 @@ export function ExecucaoAulaClient({
 
   // STEP 1: Iniciar Aula (Play)
   const handleIniciarAula = async () => {
+    if (isAntesDaJanela) {
+      const [iniH, iniM] = horaInicioPrevista.split(":").map(Number);
+      const tol = turma.nucleo?.toleranciaInicioMinutos ?? 15;
+      const min = (iniH * 60 + iniM) - tol;
+      const hStr = `${String(Math.floor(min / 60)).padStart(2, "0")}:${String(min % 60).padStart(2, "0")}`;
+      toast.error(`Ainda não está no horário. Você poderá iniciar a partir das ${hStr}.`);
+      return;
+    }
     if (isForaDoHorarioRegular) {
       if (!turma.nucleo?.permitirChamadaRetroativa) {
         toast.error("Lançamento bloqueado. Este polo não permite iniciar aulas fora da janela de horário ou em dias passados.");
