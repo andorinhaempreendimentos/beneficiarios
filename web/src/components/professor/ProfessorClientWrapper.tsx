@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DashboardProfessorHub } from "@/components/professor/DashboardProfessorHub";
 import type { FuncionarioApi, TurmaApi, NucleoApi, BeneficiarioApi, SlotAulaGrid } from "@/lib/api/services";
 import { areaProfessorApi } from "@/lib/api/services";
@@ -41,10 +41,22 @@ export function ProfessorClientWrapper({
       )
     : null);
 
+  // Armazenar o professor do usuário para não perder a referência durante o logout
+  const [professorCongelado, setProfessorCongelado] = useState<FuncionarioApi | null>(null);
+
+  useEffect(() => {
+    if (profDoUsuario && !isAdmin) {
+      setProfessorCongelado(profDoUsuario);
+    }
+  }, [profDoUsuario, isAdmin]);
+
   const [selectedProfessorId, setSelectedProfessorId] = useState<string>(initialProfessorId);
 
-  const targetId = !isAdmin && profDoUsuario ? profDoUsuario.id : selectedProfessorId;
-  const professorAtual = professores.find((p) => p.id === targetId) || profDoUsuario || professores[0];
+  const targetProf = !isAdmin
+    ? (profDoUsuario || professorCongelado)
+    : (professores.find((p) => p.id === selectedProfessorId) || professores[0]);
+
+  const professorAtual = targetProf || profDoUsuario || professorCongelado || professores[0];
   const nucleoAtual = nucleos.find((n) => n.id === professorAtual?.nucleoId);
 
   const listaProfessoresDisponiveis = isAdmin ? professores : professorAtual ? [professorAtual] : [];
