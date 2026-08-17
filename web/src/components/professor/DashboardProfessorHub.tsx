@@ -373,14 +373,6 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
                 </div>
 
                 <div className="flex items-center gap-2.5">
-                  <Link
-                    href="/professor/ponto"
-                    className="flex items-center gap-2 rounded-xl border border-sky-400/80 bg-sky-500/10 px-4 py-2 text-xs font-semibold text-sky-200 hover:bg-sky-500/25 hover:text-white transition-all shadow-xs active:scale-95"
-                  >
-                    <Clock className="h-4 w-4 text-sky-400" />
-                    <span>Ponto</span>
-                  </Link>
-
                   <button
                     type="button"
                     onClick={handleLogout}
@@ -393,7 +385,7 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
               </div>
             </div>
 
-            {/* Rodapé no Mobile: Matrícula à esquerda, Botões à direita */}
+            {/* Rodapé no Mobile: Matrícula à esquerda, Botão Sair à direita */}
             <div className="flex items-center justify-between pt-3.5 mt-2 border-t border-white/10 md:hidden">
               <div className="flex flex-col">
                 <span className="text-[10px] font-semibold uppercase tracking-wider text-sky-200/70">
@@ -405,14 +397,6 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
               </div>
 
               <div className="flex items-center gap-2">
-                <Link
-                  href="/professor/ponto"
-                  className="flex items-center gap-1.5 rounded-xl border border-sky-400/80 bg-sky-500/10 px-3.5 py-2 text-xs font-semibold text-sky-200 hover:bg-sky-500/25 hover:text-white transition-all shadow-xs active:scale-95"
-                >
-                  <Clock className="h-3.5 w-3.5 text-sky-400" />
-                  <span>Ponto</span>
-                </Link>
-
                 <button
                   type="button"
                   onClick={handleLogout}
