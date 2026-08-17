@@ -26,6 +26,8 @@ import {
   StopCircle,
   FileText,
   Copy,
+  MoreVertical,
+  UserCheck,
 } from "lucide-react";
 import { Badge, Button, Card, Field, Input, Textarea } from "@/components/ui";
 import { useAuth } from "@/components/providers/AuthProvider";
@@ -317,50 +319,109 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
 
       {/* 1. SEÇÃO DE IDENTIFICAÇÃO E RÉGUA DE MÉTRICAS 360° */}
       <div className="flex flex-col gap-4">
-        {/* Banner Superior */}
-        <div className="rounded-3xl bg-gradient-to-r from-sky-900 via-sky-800 to-indigo-950 p-6 text-white shadow-2xl border border-sky-700/50">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-4">
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/10 text-3xl font-bold backdrop-blur-md border border-white/20 shadow-inner">
+        {/* Banner Superior com novo design e anatomia */}
+        <div className="rounded-3xl bg-gradient-to-r from-[#0d3b66] via-[#092d4f] to-[#1e1b4b] p-5 sm:p-6 text-white shadow-xl border border-sky-800/40 relative">
+          {/* Barra superior de ações rápidas no mobile */}
+          <div className="flex items-center justify-between mb-3 md:hidden">
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="rounded-lg p-1.5 text-sky-200/80 hover:bg-white/10 hover:text-white transition-colors"
+              title="Voltar"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <span className="text-sky-200/60 text-xs font-medium">Painel do Professor</span>
+            <div className="p-1.5 text-sky-200/80">
+              <MoreVertical className="h-4 w-4" />
+            </div>
+          </div>
+
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            {/* Bloco de Perfil (Avatar + Informações) */}
+            <div className="flex items-center gap-4 min-w-0">
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-700 text-3xl shadow-lg border border-blue-400/30">
                 👔
               </div>
-              <div>
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-sky-400/20 px-3 py-0.5 text-xs font-bold text-sky-200 backdrop-blur-md border border-sky-300/30">
-                  <Sparkles className="h-3 w-3 text-sky-300" />
-                  {professor.funcao || "Professor / Instrutor Esportivo"}
-                </span>
-                <h1 className="text-2xl font-extrabold text-white mt-1 tracking-tight">
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-1.5 text-xs text-sky-300 font-medium truncate">
+                  <UserCheck className="h-3.5 w-3.5 text-sky-400 shrink-0" />
+                  <span className="truncate">{professor.funcao || "Professor / Instrutor Esportivo"}</span>
+                </div>
+                <h1 className="text-xl sm:text-2xl font-bold text-white mt-0.5 tracking-tight truncate">
                   {professor.nomeCompleto}
                 </h1>
-                <p className="text-xs text-sky-200 flex items-center gap-1.5 mt-1 font-medium">
-                  <MapPin className="h-3.5 w-3.5 text-sky-300" />
-                  Polo: {nucleo ? nucleo.identificacao : "Polo Esportivo Palmas/TO"}
+                <p className="text-xs text-sky-200/80 flex items-center gap-1.5 mt-1 font-normal truncate">
+                  <MapPin className="h-3.5 w-3.5 text-sky-400 shrink-0" />
+                  <span className="truncate">Polo: {nucleo ? nucleo.identificacao : "Polo Esportivo"}</span>
                 </p>
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2 mt-2 sm:mt-0">
-              <div className="rounded-2xl bg-white/10 p-3 backdrop-blur-md text-right border border-white/10">
-                <span className="block text-[10px] text-sky-200 uppercase font-bold tracking-wider">Matrícula</span>
-                <span className="text-sm font-extrabold font-mono text-white">{professor.matricula}</span>
+            {/* Divisor vertical e Bloco de Matrícula + Ações no Desktop */}
+            <div className="hidden md:flex md:items-center">
+              <div className="h-12 w-px bg-white/15 mx-6" />
+
+              <div className="flex items-center gap-6">
+                <div className="flex flex-col">
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-sky-200/70">
+                    Matrícula
+                  </span>
+                  <span className="text-base font-bold text-white tracking-wide font-mono">
+                    {professor.matricula}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2.5">
+                  <Link
+                    href="/professor/ponto"
+                    className="flex items-center gap-2 rounded-xl border border-sky-400/80 bg-sky-500/10 px-4 py-2 text-xs font-semibold text-sky-200 hover:bg-sky-500/25 hover:text-white transition-all shadow-xs active:scale-95"
+                  >
+                    <Clock className="h-4 w-4 text-sky-400" />
+                    <span>Ponto</span>
+                  </Link>
+
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="flex items-center gap-2 rounded-xl border border-rose-500/80 bg-rose-500/10 px-4 py-2 text-xs font-semibold text-rose-300 hover:bg-rose-500/25 hover:text-rose-100 transition-all shadow-xs active:scale-95 cursor-pointer"
+                  >
+                    <LogOut className="h-4 w-4 text-rose-400" />
+                    <span>Sair</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Rodapé no Mobile: Matrícula à esquerda, Botões à direita */}
+            <div className="flex items-center justify-between pt-3.5 mt-2 border-t border-white/10 md:hidden">
+              <div className="flex flex-col">
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-sky-200/70">
+                  Matrícula
+                </span>
+                <span className="text-sm font-bold text-white tracking-wide font-mono">
+                  {professor.matricula}
+                </span>
               </div>
 
-              <Link
-                href="/professor/ponto"
-                className="flex items-center gap-2 rounded-2xl bg-sky-500/20 px-3 py-2.5 text-xs font-bold text-sky-100 hover:bg-sky-500/30 border border-sky-400/30 transition-all shadow-md active:scale-95"
-              >
-                <Clock className="h-4 w-4" />
-                <span>Ponto</span>
-              </Link>
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/professor/ponto"
+                  className="flex items-center gap-1.5 rounded-xl border border-sky-400/80 bg-sky-500/10 px-3.5 py-2 text-xs font-semibold text-sky-200 hover:bg-sky-500/25 hover:text-white transition-all shadow-xs active:scale-95"
+                >
+                  <Clock className="h-3.5 w-3.5 text-sky-400" />
+                  <span>Ponto</span>
+                </Link>
 
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="flex items-center gap-2 rounded-2xl bg-red-500/20 px-3 py-2.5 text-xs font-bold text-red-100 hover:bg-red-500/30 border border-red-400/30 transition-all shadow-md active:scale-95"
-              >
-                <LogOut className="h-4 w-4" />
-                <span>Sair</span>
-              </button>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="flex items-center gap-1.5 rounded-xl border border-rose-500/80 bg-rose-500/10 px-3.5 py-2 text-xs font-semibold text-rose-300 hover:bg-rose-500/25 hover:text-rose-100 transition-all shadow-xs active:scale-95 cursor-pointer"
+                >
+                  <LogOut className="h-3.5 w-3.5 text-rose-400" />
+                  <span>Sair</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
