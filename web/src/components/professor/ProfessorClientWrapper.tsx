@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { DashboardProfessorHub } from "@/components/professor/DashboardProfessorHub";
 import type { FuncionarioApi, TurmaApi, NucleoApi, BeneficiarioApi, SlotAulaGrid } from "@/lib/api/services";
 import { areaProfessorApi } from "@/lib/api/services";
@@ -43,9 +43,16 @@ export function ProfessorClientWrapper({
       )
     : null);
 
-  // Para não-admins: bloquear render até ter o professor identificado.
-  // Isso evita flashes de outro professor durante carregamento ou logout.
-  const aguardando = authLoading || (!isAdmin && dbLoading && !profDoUsuario);
+  // Cache imutável: uma vez identificado, nunca perde a referência.
+  // Resolve flashes durante re-renders transitórios (ex: dadosSupabase refetch).
+  const professorCache = useRef<FuncionarioApi | null>(null);
+  if (profDoUsuario && !isAdmin) {
+    professorCache.current = profDoUsuario;
+  }
+
+  // Bloquear render APENAS enquanto auth ainda não resolveu.
+  // Depois que user existe, usar cache se disponível.
+  const aguardando = authLoading || (!isAdmin && !user);
 
   if (aguardando) {
     return (
@@ -58,10 +65,11 @@ export function ProfessorClientWrapper({
     );
   }
 
-  // Nunca usar professores[0] para não-admins
+  // Nunca usar professores[0] para não-admins.
+  // Para não-admins: usa profDoUsuario atual OU o cache anterior — nunca fica em branco.
   const professorAtual: FuncionarioApi | undefined = isAdmin
     ? (professores.find((p) => p.id === selectedProfessorId) ?? professores[0])
-    : profDoUsuario ?? undefined;
+    : (profDoUsuario ?? professorCache.current ?? undefined);
 
   if (!professorAtual) {
     return (
