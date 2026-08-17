@@ -50,9 +50,11 @@ export function ProfessorClientWrapper({
     professorCache.current = profDoUsuario;
   }
 
-  // Bloquear render APENAS enquanto auth ainda não resolveu.
-  // Depois que user existe, usar cache se disponível.
-  const aguardando = authLoading || (!isAdmin && !user);
+  // Bloquear render enquanto:
+  // 1. Auth ainda carregando
+  // 2. Não-admin sem professor identificado E banco ainda carregando
+  const professorIdentificado = !!profDoUsuario || !!professorCache.current;
+  const aguardando = authLoading || (!isAdmin && !professorIdentificado && dbLoading);
 
   if (aguardando) {
     return (
