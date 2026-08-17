@@ -1889,8 +1889,8 @@ export const areaProfessorApi = {
     if (!isAdmin && turmaIds.length > 0) {
       queryTurmas = queryTurmas.in('id', turmaIds);
     } else if (!isAdmin && funcionarioId) {
-      if (funcionario?.nucleo_id) {
-        queryTurmas = queryTurmas.eq('nucleo_id', funcionario.nucleo_id);
+      if (funcionario?.nucleoId) {
+        queryTurmas = queryTurmas.eq('nucleo_id', funcionario.nucleoId);
       }
     }
 
