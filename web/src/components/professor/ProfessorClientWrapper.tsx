@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { DashboardProfessorHub } from "@/components/professor/DashboardProfessorHub";
 import type { FuncionarioApi, TurmaApi, NucleoApi, BeneficiarioApi, SlotAulaGrid } from "@/lib/api/services";
 import { areaProfessorApi } from "@/lib/api/services";
@@ -22,15 +22,17 @@ export function ProfessorClientWrapper({
   todosBeneficiarios,
   initialProfessorId,
 }: ProfessorClientWrapperProps) {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const isAdmin = user?.tipo === "admin";
 
-  // Busca relacional rica no Supabase para o usuário logado
-  const { data: dadosSupabase, loading } = useQuery(
+  const { data: dadosSupabase, loading: dbLoading } = useQuery(
     () => (user?.id ? areaProfessorApi.getDadosProfessor(user.id) : Promise.resolve(null)),
     [user?.id]
   );
 
+  const [selectedProfessorId, setSelectedProfessorId] = useState<string>(initialProfessorId);
+
+  // Identificar o professor do usuário logado
   const profDoUsuario = dadosSupabase?.funcionario || (user
     ? professores.find(
         (p) =>
@@ -41,49 +43,56 @@ export function ProfessorClientWrapper({
       )
     : null);
 
-  // Armazenar o professor do usuário para não perder a referência durante o logout
-  const [professorCongelado, setProfessorCongelado] = useState<FuncionarioApi | null>(null);
+  // Para não-admins: bloquear render até ter o professor identificado.
+  // Isso evita flashes de outro professor durante carregamento ou logout.
+  const aguardando = authLoading || (!isAdmin && dbLoading && !profDoUsuario);
 
-  useEffect(() => {
-    if (profDoUsuario && !isAdmin) {
-      setProfessorCongelado(profDoUsuario);
-    }
-  }, [profDoUsuario, isAdmin]);
+  if (aguardando) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-sky-600 border-t-transparent" />
+          <span className="text-xs text-zinc-400 font-medium">Carregando...</span>
+        </div>
+      </div>
+    );
+  }
 
-  const [selectedProfessorId, setSelectedProfessorId] = useState<string>(initialProfessorId);
+  // Nunca usar professores[0] para não-admins
+  const professorAtual: FuncionarioApi | undefined = isAdmin
+    ? (professores.find((p) => p.id === selectedProfessorId) ?? professores[0])
+    : profDoUsuario ?? undefined;
 
-  const targetProf = !isAdmin
-    ? (profDoUsuario || professorCongelado)
-    : (professores.find((p) => p.id === selectedProfessorId) || professores[0]);
+  if (!professorAtual) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <span className="text-sm text-zinc-500">Nenhum professor vinculado ao seu perfil.</span>
+      </div>
+    );
+  }
 
-  const professorAtual = targetProf || profDoUsuario || professorCongelado || professores[0];
-  const nucleoAtual = nucleos.find((n) => n.id === professorAtual?.nucleoId);
+  const nucleoAtual = nucleos.find((n) => n.id === professorAtual.nucleoId);
+  const listaProfessoresDisponiveis = isAdmin ? professores : [professorAtual];
 
-  const listaProfessoresDisponiveis = isAdmin ? professores : professorAtual ? [professorAtual] : [];
-
-  const turmasDoProfessor = dadosSupabase?.turmas && !isAdmin
+  const turmasDoProfessor = (dadosSupabase?.turmas && !isAdmin)
     ? dadosSupabase.turmas
     : turmas.filter((t) => {
-        if (!professorAtual) return false;
         const nomeProfLower = professorAtual.nomeCompleto.toLowerCase();
-        const responsavelDireto = (t.responsaveis ?? []).some((resp) => resp.toLowerCase().includes(nomeProfLower));
-        const responsavelNome = (t.responsaveisNomes ?? []).some((resp) => resp.toLowerCase().includes(nomeProfLower));
+        const responsavelDireto = (t.responsaveis ?? []).some((r) => r.toLowerCase().includes(nomeProfLower));
+        const responsavelNome = (t.responsaveisNomes ?? []).some((r) => r.toLowerCase().includes(nomeProfLower));
         const mesmoNucleo = professorAtual.nucleoId && t.nucleoId === professorAtual.nucleoId;
         return responsavelDireto || responsavelNome || mesmoNucleo;
       });
 
-  const beneficiariosDoProfessor = dadosSupabase?.beneficiarios && !isAdmin
+  const beneficiariosDoProfessor = (dadosSupabase?.beneficiarios && !isAdmin)
     ? dadosSupabase.beneficiarios
     : (() => {
-        const idsTurmasDoProf = new Set(turmasDoProfessor.map((t) => t.id));
+        const idsTurmas = new Set(turmasDoProfessor.map((t) => t.id));
         return todosBeneficiarios.filter((b) => {
-          if (!professorAtual) return false;
-          const temTurmaDoProf = (b.turmasInfo ?? []).some((ti) => ti.turmaId && idsTurmasDoProf.has(ti.turmaId));
-          if (temTurmaDoProf) return true;
+          if ((b.turmasInfo ?? []).some((ti) => ti.turmaId && idsTurmas.has(ti.turmaId))) return true;
           if (professorAtual.nucleoId) {
             if (b.nucleoId === professorAtual.nucleoId) return true;
-            const temNucleoDoProf = (b.turmasInfo ?? []).some((ti) => ti.nucleoId === professorAtual.nucleoId);
-            if (temNucleoDoProf) return true;
+            if ((b.turmasInfo ?? []).some((ti) => ti.nucleoId === professorAtual.nucleoId)) return true;
           }
           return false;
         });
@@ -101,7 +110,7 @@ export function ProfessorClientWrapper({
       slotsGrid={slotsGrid}
       todosBeneficiarios={beneficiariosDoProfessor}
       pontoHoje={dadosSupabase?.pontoHoje}
-      loading={loading}
+      loading={dbLoading}
     />
   );
 }
