@@ -702,20 +702,19 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
               </button>
             </div>
 
-            {/* SELETOR DE DATA DA AULA */}
+            {/* DATA DA AULA (somente leitura) */}
             <div className="flex items-center gap-3 rounded-2xl bg-sky-50/80 p-3.5 border border-sky-200 text-sky-950">
               <Calendar className="h-5 w-5 text-sky-600 shrink-0" />
               <div className="flex-1">
-                <label className="text-[10px] font-extrabold uppercase tracking-wider text-sky-800 block">
-                  Data da Aula para Aplicação & Ponto
-                </label>
-                <input
-                  type="date"
-                  value={dataAula}
-                  max={new Date().toISOString().slice(0, 10)}
-                  onChange={(e) => setDataAula(e.target.value)}
-                  className="text-xs font-bold text-zinc-900 bg-white px-2 py-1 rounded-lg border border-sky-300 focus:outline-none cursor-pointer mt-0.5"
-                />
+                <span className="text-[10px] font-extrabold uppercase tracking-wider text-sky-800 block">
+                  Data da Aula
+                </span>
+                <span className="text-sm font-bold text-zinc-900 mt-0.5 block">
+                  {(() => {
+                    const [y, m, d] = dataAula.split('-');
+                    return `${d}/${m}/${y}`;
+                  })()}
+                </span>
               </div>
             </div>
 
