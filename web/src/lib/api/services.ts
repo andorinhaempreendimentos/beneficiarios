@@ -1865,7 +1865,7 @@ export const areaProfessorApi = {
         .select('*, nucleos(*)')
         .eq('id', funcionarioId)
         .maybeSingle();
-      funcionario = f;
+      funcionario = f ? mapFuncionario(f) : null;
     }
 
     const isAdmin = usuario?.tipo === 'admin';
