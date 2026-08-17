@@ -224,7 +224,7 @@ export default function NucleosPage() {
                     return (
                       <div
                         key={nucleo.id}
-                        className={`group relative overflow-hidden rounded-2xl border transition-all flex flex-col justify-between gap-3 p-4 ${
+                        className={`group relative overflow-hidden rounded-2xl border transition-all flex flex-col justify-between gap-3 p-4 pt-3 ${
                           isSelected
                             ? "border-sky-500 bg-sky-50/30 ring-2 ring-sky-500/20 shadow-xs"
                             : "border-zinc-200 bg-white hover:border-zinc-300 hover:shadow-xs"
@@ -247,32 +247,43 @@ export default function NucleosPage() {
                           <Check className={`h-4 w-4 stroke-[3] transition-transform ${isSelected ? "scale-100 text-white" : "scale-85 text-zinc-400 opacity-60 group-hover:opacity-100"}`} />
                         </label>
 
-                        <div className="flex items-start justify-between gap-2 pl-7">
-                          <div className="flex items-center gap-2">
-                            <Building2 className="h-4 w-4 text-zinc-400 shrink-0" />
-                            <div>
-                              <Link href={`/nucleos/${nucleo.id}`} className="font-bold text-zinc-900 text-sm hover:text-sky-600">
-                                {nucleo.identificacao}
-                              </Link>
-                              {nucleo.nomeLocal && <span className="text-xs text-zinc-400 block">{nucleo.nomeLocal}</span>}
-                            </div>
-                          </div>
+                        {/* Topo: Status badge alinhado à direita */}
+                        <div className="flex items-center justify-end min-h-[26px]">
                           <StatusNucleoBadge nucleoId={nucleo.id} emFuncionamento={nucleo.emFuncionamento} />
                         </div>
 
-                        <div className="flex items-center gap-1.5 text-xs text-zinc-600 border-t border-zinc-100 pt-2.5">
-                          <MapPin className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
-                          <span>{[nucleo.bairro, nucleo.cidade].filter(Boolean).join(" · ") || "—"}</span>
+                        {/* Título e Subtítulo com largura total alinhados à esquerda */}
+                        <div className="flex flex-col gap-1 -mt-1">
+                          <Link
+                            href={`/nucleos/${nucleo.id}`}
+                            className="font-bold text-zinc-900 text-sm leading-snug hover:text-sky-600 transition-colors"
+                          >
+                            {nucleo.identificacao}
+                          </Link>
+                          {nucleo.nomeLocal && (
+                            <span className="text-xs text-zinc-400 leading-tight">
+                              {nucleo.nomeLocal}
+                            </span>
+                          )}
                         </div>
 
+                        {/* Localização */}
+                        <div className="flex items-center gap-1.5 text-xs text-zinc-600 border-t border-zinc-100 pt-2.5">
+                          <MapPin className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
+                          <span className="truncate">{[nucleo.bairro, nucleo.cidade].filter(Boolean).join(" · ") || "—"}</span>
+                        </div>
+
+                        {/* Rodapé: Organização e Ações */}
                         <div className="flex items-center justify-between text-xs text-zinc-500 border-t border-zinc-100/60 pt-2">
-                          <span className="truncate max-w-[60%]">{nucleo.organizacao?.nome || "—"}</span>
-                          <div className="flex items-center gap-3">
-                            <Link href={`/nucleos/${nucleo.id}`} className="text-xs font-semibold text-sky-600 hover:underline">
+                          <span className="truncate max-w-[55%] font-medium text-zinc-600" title={nucleo.organizacao?.nome || ""}>
+                            {nucleo.organizacao?.nome || "—"}
+                          </span>
+                          <div className="flex items-center gap-2 shrink-0">
+                            <Link href={`/nucleos/${nucleo.id}`} className="text-xs font-semibold text-sky-600 hover:text-sky-700 transition-colors">
                               Acessar
                             </Link>
-                            <span className="text-zinc-300">|</span>
-                            <Link href={`/nucleos/${nucleo.id}/editar`} className="text-xs text-zinc-500 hover:underline">
+                            <span className="text-zinc-200">|</span>
+                            <Link href={`/nucleos/${nucleo.id}/editar`} className="text-xs text-zinc-500 hover:text-zinc-700 transition-colors">
                               Editar
                             </Link>
                           </div>
