@@ -411,74 +411,74 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
         </div>
 
         {/* Régua de Métricas */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <button
             type="button"
             onClick={() => setModalGestaoMatriculas(true)}
-            className="text-left p-4 border-l-4 border-l-sky-500 bg-white hover:bg-gradient-to-br hover:from-sky-50/70 hover:to-white rounded-2xl border border-zinc-200 shadow-sm hover:shadow-md hover:border-sky-300 transition-all active:scale-[0.98] group flex flex-col justify-between"
+            className="text-left p-3.5 sm:p-4 border-l-4 border-l-sky-500 bg-white hover:bg-gradient-to-br hover:from-sky-50/70 hover:to-white rounded-2xl border border-zinc-200 shadow-sm hover:shadow-md hover:border-sky-300 transition-all active:scale-[0.98] group flex flex-col justify-between overflow-hidden"
           >
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-[11px] font-extrabold uppercase tracking-wider text-zinc-400 group-hover:text-sky-600 transition-colors">
-                Beneficiários Atendidos
+            <div className="flex items-center justify-between gap-1">
+              <span className="text-[11px] font-extrabold uppercase tracking-wider text-zinc-400 group-hover:text-sky-600 transition-colors truncate">
+                Beneficiários
               </span>
-              <span className="inline-flex items-center gap-1 rounded-xl bg-sky-600 px-2.5 py-1 text-[10px] font-extrabold text-white shadow-xs group-hover:bg-sky-700 group-hover:scale-105 transition-all">
+              <span className="inline-flex items-center gap-1 rounded-lg bg-sky-600 p-1 sm:px-2 sm:py-0.5 text-[10px] font-extrabold text-white shadow-xs group-hover:bg-sky-700 transition-all shrink-0">
                 <UserPlus className="h-3 w-3" />
-                <span>Gerenciar</span>
+                <span className="hidden sm:inline">Gerenciar</span>
               </span>
             </div>
 
-            <div className="mt-2 flex items-baseline gap-2">
-              <span className="text-2xl font-extrabold text-zinc-900 group-hover:text-sky-600 transition-colors">{totalAlunos}</span>
-              <span className="text-xs text-sky-600 font-bold">Beneficiários</span>
+            <div className="mt-1.5 sm:mt-2 flex items-baseline gap-1.5">
+              <span className="text-xl sm:text-2xl font-extrabold text-zinc-900 group-hover:text-sky-600 transition-colors">{totalAlunos}</span>
+              <span className="text-xs text-sky-600 font-bold">Alunos</span>
             </div>
             
-            <p className="text-[11px] text-zinc-500 font-medium mt-1 flex items-center gap-1 group-hover:text-sky-700 transition-colors">
-              <span>Clique para matricular / transferir</span>
-              <ChevronRight className="h-3 w-3 text-sky-500 transition-transform group-hover:translate-x-0.5" />
+            <p className="text-[10px] sm:text-[11px] text-zinc-500 font-medium mt-1 flex items-center gap-1 group-hover:text-sky-700 transition-colors truncate">
+              <span className="truncate">Matricular / transferir</span>
+              <ChevronRight className="h-3 w-3 text-sky-500 shrink-0 transition-transform group-hover:translate-x-0.5" />
             </p>
           </button>
 
-          <Card className="p-4 border-l-4 border-l-indigo-500 bg-white shadow-sm">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Turmas Ativas</span>
-            <div className="mt-1 flex items-baseline gap-2">
-              <span className="text-2xl font-extrabold text-zinc-900">{totalTurmas}</span>
+          <Card className="p-3.5 sm:p-4 border-l-4 border-l-indigo-500 bg-white shadow-sm flex flex-col justify-between overflow-hidden">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 truncate">Turmas Ativas</span>
+            <div className="mt-1.5 sm:mt-2 flex items-baseline gap-1.5">
+              <span className="text-xl sm:text-2xl font-extrabold text-zinc-900">{totalTurmas}</span>
               <span className="text-xs text-indigo-600 font-semibold">Turmas</span>
             </div>
-            <p className="text-[11px] text-zinc-500 mt-0.5">Sob sua coordenação</p>
+            <p className="text-[10px] sm:text-[11px] text-zinc-500 mt-1 truncate">Sob sua coordenação</p>
           </Card>
 
-          <Card className="p-4 border-l-4 border-l-emerald-500 bg-white shadow-sm">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Carga Horária</span>
-            <div className="mt-1 flex items-baseline gap-2">
-              <span className="text-2xl font-extrabold text-zinc-900">{cargaHorariaSemanal}h</span>
+          <Card className="p-3.5 sm:p-4 border-l-4 border-l-emerald-500 bg-white shadow-sm flex flex-col justify-between overflow-hidden">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 truncate">Carga Horária</span>
+            <div className="mt-1.5 sm:mt-2 flex items-baseline gap-1.5">
+              <span className="text-xl sm:text-2xl font-extrabold text-zinc-900">{cargaHorariaSemanal}h</span>
               <span className="text-xs text-emerald-600 font-semibold">/semana</span>
             </div>
-            <p className="text-[11px] text-zinc-500 mt-0.5">Treinos programados</p>
+            <p className="text-[10px] sm:text-[11px] text-zinc-500 mt-1 truncate">Treinos programados</p>
           </Card>
 
-          <Card className={`p-4 border-l-4 ${pontoHoje?.registrado ? 'border-l-emerald-500' : 'border-l-amber-500'} bg-white shadow-sm`}>
-            <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Status Ponto Hoje</span>
-            <div className="mt-1 flex items-center gap-1.5">
+          <Card className={`p-3.5 sm:p-4 border-l-4 ${pontoHoje?.registrado ? 'border-l-emerald-500' : 'border-l-amber-500'} bg-white shadow-sm flex flex-col justify-between overflow-hidden`}>
+            <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 truncate">Ponto Hoje</span>
+            <div className="mt-1.5 sm:mt-2 flex items-center gap-1.5 min-w-0">
               {pontoHoje?.registrado ? (
                 <>
-                  <CheckCircle2 className="h-5 w-5 text-emerald-500" />
-                  <span className="text-sm font-bold text-zinc-900">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+                  <span className="text-xs sm:text-sm font-bold text-zinc-900 truncate">
                     Entrada {pontoHoje.entrada || 'registrada'}
                   </span>
                 </>
               ) : (
                 <>
-                  <AlertCircle className="h-5 w-5 text-amber-500" />
-                  <span className="text-sm font-bold text-zinc-900">Ponto Não Registrado</span>
+                  <AlertCircle className="h-4 w-4 text-amber-500 shrink-0" />
+                  <span className="text-xs sm:text-sm font-bold text-zinc-900 truncate">Não Registrado</span>
                 </>
               )}
             </div>
-            <p className={`text-[11px] font-semibold mt-0.5 ${pontoHoje?.registrado ? 'text-emerald-600' : 'text-amber-600'}`}>
+            <p className={`text-[10px] sm:text-[11px] font-semibold mt-1 truncate ${pontoHoje?.registrado ? 'text-emerald-600' : 'text-amber-600'}`}>
               {pontoHoje?.registrado
                 ? pontoHoje.saida
-                  ? `Saída registrada às ${pontoHoje.saida}`
-                  : "Jornada em andamento"
-                : "Aguardando entrada de hoje"}
+                  ? `Saída às ${pontoHoje.saida}`
+                  : "Jornada ativa"
+                : "Aguardando início"}
             </p>
           </Card>
         </div>
