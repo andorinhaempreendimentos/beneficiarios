@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Globe, MapPin, Filter, Building, Compass, RotateCcw, Moon, Sun, Bell } from "lucide-react";
 import { useLocationFilter } from "@/components/providers/LocationFilterProvider";
@@ -25,9 +26,13 @@ interface TopLocationBarProps {
 }
 
 export function TopLocationBar({ nucleos: nucleosProp }: TopLocationBarProps = {}) {
+  const pathname = usePathname();
   const { modoEscuro, alternarModoEscuro } = useTheme();
   const { user } = useAuth();
   const isAdmin = user && user.tipo !== 'funcionario' && !user.isProfessor;
+
+  // Ocultar barra na área do professor
+  if (pathname?.startsWith('/professor')) return null;
   const {
     estado,
     cidade,
