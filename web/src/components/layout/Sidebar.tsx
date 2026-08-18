@@ -20,8 +20,11 @@ import {
   Link as LinkIcon,
   LogOut,
   Menu,
+  Package,
   Settings,
   ShieldCheck,
+  AlertCircle,
+  ClipboardCheck,
   UserPlus,
   Users,
   UsersRound,
@@ -290,12 +293,16 @@ export function Sidebar() {
               </div>
 
               {navLink("/equipamentos", "Equipamentos", Box)}
+              {navLink("/estoque", "Estoque", Package)}
+              {navLink("/supervisoes", "Supervisões", ClipboardCheck)}
+              {navLink("/pendencias-gerais", "Pendências", AlertCircle)}
 
               <div className="my-2 border-t border-zinc-100" />
 
               {navLink("/relatorios", "Relatórios", FileBarChart)}
               {navLink("/usuarios", "Usuários", ShieldCheck)}
               {navLink("/configuracoes", "Configurações", Settings)}
+
             </>
           )}
         </nav>

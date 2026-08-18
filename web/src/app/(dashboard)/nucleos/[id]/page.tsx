@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ClipboardList, MapPin, Plus, Search, Users2, CalendarClock } from "lucide-react";
+import { ClipboardList, MapPin, Plus, Search, Users2, CalendarClock, Package, ClipboardCheck, AlertCircle } from "lucide-react";
 import {
   Badge,
   Button,
@@ -176,6 +176,46 @@ export default async function DetalhesNucleoPage({ params }: { params: Promise<{
           </table>
         </div>
       </Card>
+
+      {/* Acesso rápido: Estoque e Supervisões */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Link
+          href={`/estoque/nucleos/${nucleo.id}`}
+          className="flex items-center gap-4 rounded-2xl border border-zinc-200 bg-white p-5 hover:border-sky-300 hover:shadow-sm transition-all group"
+        >
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-50 text-sky-600 group-hover:bg-sky-100 transition-colors shrink-0">
+            <Package className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-zinc-800">Estoque</p>
+            <p className="text-xs text-zinc-400">Materiais disponíveis</p>
+          </div>
+        </Link>
+        <Link
+          href={`/supervisoes?nucleoId=${nucleo.id}`}
+          className="flex items-center gap-4 rounded-2xl border border-zinc-200 bg-white p-5 hover:border-sky-300 hover:shadow-sm transition-all group"
+        >
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 text-violet-600 group-hover:bg-violet-100 transition-colors shrink-0">
+            <ClipboardCheck className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-zinc-800">Supervisões</p>
+            <p className="text-xs text-zinc-400">Visitas realizadas</p>
+          </div>
+        </Link>
+        <Link
+          href={`/pendencias-gerais?nucleoId=${nucleo.id}`}
+          className="flex items-center gap-4 rounded-2xl border border-zinc-200 bg-white p-5 hover:border-red-300 hover:shadow-sm transition-all group"
+        >
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 text-red-500 group-hover:bg-red-100 transition-colors shrink-0">
+            <AlertCircle className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-zinc-800">Pendências</p>
+            <p className="text-xs text-zinc-400">Ocorrências em aberto</p>
+          </div>
+        </Link>
+      </div>
     </div>
   );
 }

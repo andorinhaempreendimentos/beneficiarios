@@ -8,7 +8,7 @@ import { useLocationFilter } from "@/components/providers/LocationFilterProvider
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useQuery } from "@/lib/hooks/useQuery";
-import { nucleosApi, execucoesAulaApi, type Paginated, type NucleoApi } from "@/lib/api/services";
+import { nucleosApi, execucoesAulaApi, pendenciasGeraisApi, type Paginated, type NucleoApi } from "@/lib/api/services";
 import { normalizarNucleoLocalizacao } from "@/lib/location";
 
 const ESTADOS_NOMES: Record<string, string> = {
@@ -146,6 +146,13 @@ export function TopLocationBar({ nucleos: nucleosProp }: TopLocationBarProps = {
     [isAdmin]
   );
 
+  const { data: pendenciasGeraisCount } = useQuery<number>(
+    () => (isAdmin
+      ? pendenciasGeraisApi.list({ status: "aberta", limit: 1 }).then((r) => r.total)
+      : Promise.resolve(0)),
+    [isAdmin]
+  );
+
   return (
     <header className="sticky top-0 z-30 flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 px-4 py-2.5 backdrop-blur-xs lg:px-8 shadow-2xs transition-colors">
       <div className="flex items-center gap-2">
@@ -254,6 +261,19 @@ export function TopLocationBar({ nucleos: nucleosProp }: TopLocationBarProps = {
             <span className="hidden sm:inline">Pendências</span>
             <span className="flex h-4 min-w-[16px] items-center justify-center rounded-full bg-amber-500 px-1 text-[10px] font-bold text-white">
               {pendenciasCount}
+            </span>
+          </Link>
+        )}
+        {isAdmin && (pendenciasGeraisCount ?? 0) > 0 && (
+          <Link
+            href="/pendencias-gerais"
+            className="relative flex items-center gap-1 rounded-lg border border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/30 px-2 py-1 text-xs font-semibold text-red-800 dark:text-red-200 hover:bg-red-100 dark:hover:bg-red-800/40 transition-colors shadow-2xs"
+            title={`${pendenciasGeraisCount} pendência(s) em aberto`}
+          >
+            <Bell className="h-3 w-3" />
+            <span className="hidden sm:inline">Ocorrências</span>
+            <span className="flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+              {pendenciasGeraisCount}
             </span>
           </Link>
         )}

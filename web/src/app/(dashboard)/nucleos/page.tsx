@@ -275,14 +275,14 @@ export default function NucleosPage() {
 
                         {/* Rodapé: Organização e Ações */}
                         <div className="flex items-center justify-between text-xs text-zinc-500 border-t border-zinc-100/60 pt-2">
-                          <span className="truncate max-w-[55%] font-medium text-zinc-600" title={nucleo.organizacao?.nome || ""}>
+                          <span className="truncate max-w-[70%] font-medium text-zinc-600" title={nucleo.organizacao?.nome || ""}>
                             {nucleo.organizacao?.nome || "—"}
                           </span>
                           <div className="flex items-center gap-2 shrink-0">
-                            <Link href={`/nucleos/${nucleo.id}`} className="text-xs font-semibold text-sky-600 hover:text-sky-700 transition-colors">
+                            <Link href={`/nucleos/${nucleo.id}`} className="hidden text-xs font-semibold text-sky-600 hover:text-sky-700 transition-colors">
                               Acessar
                             </Link>
-                            <span className="text-zinc-200">|</span>
+                            <span className="hidden text-zinc-200">|</span>
                             <Link href={`/nucleos/${nucleo.id}/editar`} className="text-xs text-zinc-500 hover:text-zinc-700 transition-colors">
                               Editar
                             </Link>

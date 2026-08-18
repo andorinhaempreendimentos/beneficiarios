@@ -2485,3 +2485,15 @@ export const registrosPontoApi = {
     }
   },
 };
+
+// ============================================================
+// Re-exports: Estoque, Supervisao, Pendencias
+// ============================================================
+export type { MaterialApi, EstoqueNucleoApi, MovimentacaoEstoqueApi, TermoEntregaApi } from './estoque';
+export { materiaisApi, estoqueNucleosApi, movimentacoesEstoqueApi, termosEntregaApi } from './estoque';
+
+export type { AvaliacaoNivel, SupervisaoFotoApi, SupervisaoApi } from './supervisoes';
+export { supervisoesApi, supervisoesFotosApi } from './supervisoes';
+
+export type { TipoPendencia, GravidadePendencia, StatusPendencia, PendenciaGeralApi } from './pendencias';
+export { pendenciasGeraisApi } from './pendencias';
