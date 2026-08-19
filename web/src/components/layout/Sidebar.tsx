@@ -139,13 +139,21 @@ export function Sidebar() {
               {navLink("/turmas", "Minhas Turmas", GraduationCap)}
               {navLink("/beneficiarios", "Beneficiários", Users)}
             </>
+          ) : isCoordenador ? (
+            <>
+              {navLink("/coordenador", "Meu Painel", UserCog)}
+              {navLink("/nucleos", t("local", "Núcleo", true), Building2)}
+              {navLink("/supervisoes", "Supervisões", ClipboardCheck)}
+              {navLink("/estoque", "Estoque", Package)}
+              {navLink("/pendencias-gerais", "Pendências", AlertCircle)}
+            </>
           ) : (
             <>
               {navLink("/", "Painel", LayoutDashboard)}
-              {isCoordenador && navLink("/coordenador", "Meu Painel", UserCog)}
               {navLink("/objetos", t("objeto", "Objeto", true), FolderKanban)}
               {navLink("/organizacoes", t("organizacao", "Organização", true), Landmark)}
               {navLink("/nucleos", t("local", "Núcleo", true), Building2)}
+
 
               {/* Turmas com subitem */}
               <div>
