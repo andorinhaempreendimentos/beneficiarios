@@ -31,7 +31,7 @@ function LoginForm() {
       login(profile);
       const next = searchParams.get("next");
       router.push(
-        next && next.startsWith("/") ? next : rotaInicial(profile.tipo)
+        next && next.startsWith("/") ? next : rotaInicial(profile)
       );
     } catch (err) {
       setErro(err instanceof AuthError ? err.message : "Erro ao conectar com o servidor.");
