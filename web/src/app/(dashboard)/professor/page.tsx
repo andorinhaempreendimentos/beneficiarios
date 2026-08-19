@@ -9,14 +9,11 @@ export default async function AreaProfessorPage() {
     beneficiariosApi.list({ limit: 500 }).catch(() => ({ data: [] })),
   ]);
 
-  // Filtra funcionários com perfil ou função de professor/instrutor/monitor
+  // Professor = quem tem professorResponsavel=true OU funcao exatamente "Professor / Instrutor"
   const professores = funcionariosRes.data.filter(
     (f) =>
       f.professorResponsavel ||
-      f.funcao?.toLowerCase().includes("profess") ||
-      f.funcao?.toLowerCase().includes("instrutor") ||
-      f.funcao?.toLowerCase().includes("monitor") ||
-      f.funcao?.toLowerCase().includes("coordenador")
+      f.funcao === "Professor / Instrutor"
   );
 
   const listaProfessores = professores.length > 0 ? professores : funcionariosRes.data;
