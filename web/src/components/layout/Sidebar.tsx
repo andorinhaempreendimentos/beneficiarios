@@ -42,8 +42,9 @@ export function Sidebar() {
   const router = useRouter();
   const { user, logout } = useAuth();
   const { t } = useDicionario();
-  const isFuncionario = user?.isProfessor || user?.tipo === "funcionario" || pathname.startsWith("/professor");
   const isCoordenador = Boolean((user as any)?.isCoordenador);
+  const isFuncionario = !isCoordenador && (user?.isProfessor || user?.tipo === "funcionario" || pathname.startsWith("/professor"));
+
 
   if (isFuncionario) {
     return null;

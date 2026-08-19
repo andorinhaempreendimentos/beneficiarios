@@ -47,9 +47,20 @@ export async function proxy(request: NextRequest) {
   }
 
   const tipo = user.app_metadata?.tipo as string | undefined;
-  if (tipo === "funcionario" && !pathname.startsWith("/professor") && !pathname.startsWith("/funcionarios")) {
+  const perfilId = user.app_metadata?.perfil_id as string | undefined;
+  const PERFIL_COORDENADOR = '1bea5f77-95ef-4969-bf87-4cd4647f6c0a';
+  const isCoordenador = perfilId === PERFIL_COORDENADOR;
+
+  if (
+    tipo === "funcionario" &&
+    !isCoordenador &&
+    !pathname.startsWith("/professor") &&
+    !pathname.startsWith("/funcionarios") &&
+    !pathname.startsWith("/coordenador")
+  ) {
     return NextResponse.redirect(new URL("/professor", request.url));
   }
+
 
   return response;
 }
