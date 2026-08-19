@@ -28,6 +28,7 @@ import {
   UserPlus,
   Users,
   UsersRound,
+  UserCog,
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -42,6 +43,7 @@ export function Sidebar() {
   const { user, logout } = useAuth();
   const { t } = useDicionario();
   const isFuncionario = user?.isProfessor || user?.tipo === "funcionario" || pathname.startsWith("/professor");
+  const isCoordenador = Boolean((user as any)?.isCoordenador);
 
   if (isFuncionario) {
     return null;
@@ -139,6 +141,7 @@ export function Sidebar() {
           ) : (
             <>
               {navLink("/", "Painel", LayoutDashboard)}
+              {isCoordenador && navLink("/coordenador", "Meu Painel", UserCog)}
               {navLink("/objetos", t("objeto", "Objeto", true), FolderKanban)}
               {navLink("/organizacoes", t("organizacao", "Organização", true), Landmark)}
               {navLink("/nucleos", t("local", "Núcleo", true), Building2)}
@@ -293,9 +296,11 @@ export function Sidebar() {
               </div>
 
               {navLink("/equipamentos", "Equipamentos", Box)}
+              {navLink("/coordenadores", "Coordenadores", UserCog)}
               {navLink("/estoque", "Estoque", Package)}
               {navLink("/supervisoes", "Supervisões", ClipboardCheck)}
               {navLink("/pendencias-gerais", "Pendências", AlertCircle)}
+
 
               <div className="my-2 border-t border-zinc-100" />
 

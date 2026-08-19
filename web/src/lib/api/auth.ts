@@ -1,11 +1,14 @@
 import { createClient } from "@/lib/supabase/client";
 
+const PERFIL_COORDENADOR = '1bea5f77-95ef-4969-bf87-4cd4647f6c0a';
+
 export interface AuthProfile {
   id: string;
   nome: string;
   email: string;
   tipo: "admin" | "gestor" | "funcionario" | "beneficiario";
   isProfessor?: boolean;
+  isCoordenador?: boolean;
   perfilId: string;
   entidadeId: string | null;
 }
@@ -41,6 +44,7 @@ export async function fetchProfile(userId: string): Promise<AuthProfile> {
       email: data.email,
       tipo: data.tipo,
       isProfessor: Boolean(data.is_professor),
+      isCoordenador: data.perfil_id === PERFIL_COORDENADOR,
       perfilId: data.perfil_id,
       entidadeId: data.entidade_id,
     };
