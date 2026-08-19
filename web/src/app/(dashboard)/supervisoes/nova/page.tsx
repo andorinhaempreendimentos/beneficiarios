@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/providers/ToastProvider";
 import { Card, PageHeader, Field, Input, Select, Textarea, LinkButton, Badge } from "@/components/ui";
@@ -14,6 +14,9 @@ import {
   type Paginated,
   type AvaliacaoNivel,
 } from "@/lib/api/services";
+import { coordenadoresApi } from "@/lib/api/coordenadores";
+import { useAuth } from "@/components/providers/AuthProvider";
+import { AlertCircle } from "lucide-react";
 
 type Step = "identificacao" | "presenca" | "avaliacao" | "observacoes";
 
@@ -43,6 +46,9 @@ const avaliacaoTone: Record<AvaliacaoNivel, string> = {
 export default function NovaSupervisaoPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const { user } = useAuth();
+  const isCoordenador = Boolean((user as any)?.isCoordenador);
+
   const [step, setStep] = useState<Step>("identificacao");
   const [salvando, setSalvando] = useState(false);
 
@@ -66,10 +72,35 @@ export default function NovaSupervisaoPage() {
     observacoesGerais: "",
   });
 
-  const { data: nucleosData } = useQuery<Paginated<NucleoApi>>(() => nucleosApi.list({ limit: 200 }), []);
-  const { data: funcData } = useQuery<Paginated<FuncionarioApi>>(() => funcionariosApi.list({ limit: 200 }), []);
-  const nucleos = nucleosData?.data ?? [];
+  // Núcleos disponíveis: coordenador vê só os seus; admin vê todos
+  const { data: meusNucleos } = useQuery<NucleoApi[]>(
+    () => isCoordenador ? coordenadoresApi.getMeusNucleos() : Promise.resolve([] as NucleoApi[]),
+    [isCoordenador],
+  );
+  const { data: nucleosData } = useQuery<Paginated<NucleoApi>>(
+    () => isCoordenador
+      ? Promise.resolve({ data: [] as NucleoApi[], total: 0, page: 1, limit: 200 })
+      : nucleosApi.list({ limit: 200 }),
+    [isCoordenador],
+  );
+  const { data: funcData } = useQuery<Paginated<FuncionarioApi>>(
+    () => isCoordenador
+      ? Promise.resolve({ data: [] as FuncionarioApi[], total: 0, page: 1, limit: 200 })
+      : funcionariosApi.list({ limit: 200 }),
+    [isCoordenador],
+  );
+
+  const nucleosDisponiveis: NucleoApi[] = isCoordenador ? (meusNucleos ?? []) : (nucleosData?.data ?? []);
   const funcionarios = funcData?.data ?? [];
+  const semNucleos = isCoordenador && (meusNucleos?.length ?? 1) === 0;
+
+
+  // Pré-preenche coordenadorId com o funcionário logado
+  useEffect(() => {
+    if (isCoordenador && user?.entidadeId && !form.coordenadorId) {
+      setForm((f) => ({ ...f, coordenadorId: user.entidadeId! }));
+    }
+  }, [isCoordenador, user?.entidadeId]);
 
   function set(campo: string, valor: unknown) {
     setForm((f) => ({ ...f, [campo]: valor }));
@@ -134,6 +165,33 @@ export default function NovaSupervisaoPage() {
   const idx = stepIndex();
   const isLast = idx === STEPS.length - 1;
 
+  // Coordenador sem núcleos: bloqueia acesso ao formulário
+  if (semNucleos) {
+    return (
+      <div className="flex flex-col gap-6 pb-12">
+        <PageHeader
+          title="Nova Supervisão"
+          description="Registro de visita de supervisão ao núcleo"
+          actions={<LinkButton href="/supervisoes" variant="secondary">Voltar</LinkButton>}
+        />
+        <Card>
+          <div className="flex flex-col items-center gap-4 py-16 px-5 text-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-zinc-100">
+              <AlertCircle className="h-7 w-7 text-zinc-400" />
+            </div>
+            <p className="font-medium text-zinc-700">Nenhum núcleo atribuído</p>
+            <p className="text-sm text-zinc-400 max-w-sm">
+              Você precisa ter ao menos um núcleo atribuído para registrar uma supervisão.
+              Entre em contato com o administrador.
+            </p>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
+
+
   return (
     <div className="flex flex-col gap-6 pb-12">
       <PageHeader
@@ -181,15 +239,18 @@ export default function NovaSupervisaoPage() {
                 <Field label="Núcleo" required>
                   <Select value={form.nucleoId} onChange={(e) => set("nucleoId", e.target.value)} required>
                     <option value="">Selecione…</option>
-                    {nucleos.map((n) => <option key={n.id} value={n.id}>{n.identificacao}</option>)}
+                    {nucleosDisponiveis.map((n) => <option key={n.id} value={n.id}>{n.identificacao}</option>)}
                   </Select>
                 </Field>
-                <Field label="Coordenador" required>
-                  <Select value={form.coordenadorId} onChange={(e) => set("coordenadorId", e.target.value)} required>
-                    <option value="">Selecione…</option>
-                    {funcionarios.map((f) => <option key={f.id} value={f.id}>{f.nomeCompleto}</option>)}
-                  </Select>
-                </Field>
+                {!isCoordenador && (
+                  <Field label="Coordenador" required>
+                    <Select value={form.coordenadorId} onChange={(e) => set("coordenadorId", e.target.value)} required>
+                      <option value="">Selecione…</option>
+                      {funcionarios.map((f) => <option key={f.id} value={f.id}>{f.nomeCompleto}</option>)}
+                    </Select>
+                  </Field>
+                )}
+
                 <Field label="Data" required>
                   <Input type="date" value={form.dataSupervisao} onChange={(e) => set("dataSupervisao", e.target.value)} required />
                 </Field>

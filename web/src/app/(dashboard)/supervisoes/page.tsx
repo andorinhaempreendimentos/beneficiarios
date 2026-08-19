@@ -21,6 +21,8 @@ import {
   type SupervisaoApi,
   type NucleoApi,
 } from "@/lib/api/services";
+import { coordenadoresApi } from "@/lib/api/coordenadores";
+import { useAuth } from "@/components/providers/AuthProvider";
 import { formatarData } from "@/lib/utils";
 
 const PER_PAGE = 15;
@@ -37,27 +39,50 @@ const statusTone: Record<string, "zinc" | "amber" | "green"> = {
 
 export default function SupervisoesPage() {
   const { toast } = useToast();
+  const { user } = useAuth();
+  const isCoordenador = Boolean((user as any)?.isCoordenador);
+
   const [filtros, setFiltros] = useState(EMPTY);
   const [ativos, setAtivos] = useState(EMPTY);
   const [pagina, setPagina] = useState(1);
   const [removendo, setRemovendo] = useState<string | null>(null);
 
+  // Núcleos do coordenador logado (se for coordenador)
+  const { data: meusNucleos } = useQuery<NucleoApi[]>(
+    () => isCoordenador ? coordenadoresApi.getMeusNucleos() : Promise.resolve([]),
+    [isCoordenador],
+  );
+  const semNucleos = isCoordenador && meusNucleos != null && meusNucleos.length === 0;
+
+  // Filtros de query: coordenador com 1 núcleo filtra direto; com vários filtra client-side
+  const meusNucleosIds = (meusNucleos ?? []).map((n) => n.id);
+  const filtroNucleoQuery = isCoordenador && meusNucleosIds.length === 1
+    ? meusNucleosIds[0]
+    : ativos.nucleoId;
+  const queryParams = { ...ativos, nucleoId: filtroNucleoQuery, page: pagina, limit: PER_PAGE };
+
   const { data: pageData, loading, refetch } = useQuery<Paginated<SupervisaoApi>>(
-    () => supervisoesApi.list({ ...ativos, page: pagina, limit: PER_PAGE }),
-    [ativos, pagina],
+    () => supervisoesApi.list(queryParams),
+    [ativos, pagina, meusNucleos],
   );
   const { data: nucleosData } = useQuery<Paginated<NucleoApi>>(
     () => nucleosApi.list({ limit: 200 }),
     [],
   );
 
-  const resultado = pageData?.data ?? [];
+  // Filtra client-side quando coordenador tem múltiplos núcleos
+  const rawResultado = pageData?.data ?? [];
+  const resultado = isCoordenador && meusNucleosIds.length > 1
+    ? rawResultado.filter((s) => s.nucleoId != null && meusNucleosIds.includes(s.nucleoId))
+    : rawResultado;
   const total = pageData?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
-  const nucleos = nucleosData?.data ?? [];
+  const nucleosFiltro = isCoordenador ? (meusNucleos ?? []) : (nucleosData?.data ?? []);
+
 
   const aplicar = useCallback(() => { setPagina(1); setAtivos(filtros); }, [filtros]);
   const limpar = useCallback(() => { setFiltros(EMPTY); setAtivos(EMPTY); setPagina(1); }, []);
+
 
   async function remover(id: string) {
     if (!confirm("Remover supervisão?")) return;
@@ -79,22 +104,29 @@ export default function SupervisoesPage() {
         title="Supervisões"
         description="Formulários de visita de supervisão aos núcleos"
         actions={
-          <LinkButton href="/supervisoes/nova">Nova supervisão</LinkButton>
+          semNucleos ? (
+            <span className="text-sm text-zinc-400 italic">Sem núcleos atribuídos</span>
+          ) : (
+            <LinkButton href="/supervisoes/nova">Nova supervisão</LinkButton>
+          )
         }
       />
 
       <FilterBar onFilter={aplicar} onClear={limpar}>
-        <Field label="Núcleo">
-          <Select
-            value={filtros.nucleoId}
-            onChange={(e) => setFiltros((f) => ({ ...f, nucleoId: e.target.value }))}
-          >
-            <option value="">Todos</option>
-            {nucleos.map((n) => (
-              <option key={n.id} value={n.id}>{n.identificacao}</option>
-            ))}
-          </Select>
-        </Field>
+        {!isCoordenador && (
+          <Field label="Núcleo">
+            <Select
+              value={filtros.nucleoId}
+              onChange={(e) => setFiltros((f) => ({ ...f, nucleoId: e.target.value }))}
+            >
+              <option value="">Todos</option>
+              {nucleosFiltro.map((n) => (
+                <option key={n.id} value={n.id}>{n.identificacao}</option>
+              ))}
+            </Select>
+          </Field>
+        )}
+
         <Field label="Status">
           <Select
             value={filtros.status}
