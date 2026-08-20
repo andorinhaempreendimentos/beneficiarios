@@ -78,6 +78,7 @@ export interface DashboardResumo {
     totalMatriculados: number;
     vagasLivres: number;
     taxaOcupacao: number;
+    atividadeIds?: string[];
   }>;
   nucleosDetalhados?: Array<{
     id: string;
@@ -1751,18 +1752,19 @@ function montarResumo(
     }))
     .sort((a, b) => b.total - a.total);
 
-  const turmasPorNucleo = new Map<string, { vagas: number; ids: string[] }>();
+  const turmasPorNucleo = new Map<string, { vagas: number; ids: string[]; atividadeIds: Set<string> }>();
   for (const t of turmas) {
     const nid = (t as any).nucleo_id;
     if (!nid) continue;
-    const atual = turmasPorNucleo.get(nid) || { vagas: 0, ids: [] };
+    const atual = turmasPorNucleo.get(nid) || { vagas: 0, ids: [], atividadeIds: new Set<string>() };
     atual.vagas += t.vagas_totais || 0;
     atual.ids.push(t.id);
+    if (t.atividade_id) atual.atividadeIds.add(t.atividade_id);
     turmasPorNucleo.set(nid, atual);
   }
 
   const mapaNucleos = nucleos.map((n) => {
-    const infoTurmas = turmasPorNucleo.get(n.id) || { vagas: 0, ids: [] };
+    const infoTurmas = turmasPorNucleo.get(n.id) || { vagas: 0, ids: [], atividadeIds: new Set<string>() };
     const vagasDoNucleo = infoTurmas.vagas;
     let matriculadosDoNucleo = 0;
     for (const tid of infoTurmas.ids) {
@@ -1772,6 +1774,13 @@ function montarResumo(
       matriculadosDoNucleo = porNucleo.get(n.id) || 0;
     }
     const taxaOcupacao = vagasDoNucleo > 0 ? (matriculadosDoNucleo / vagasDoNucleo) * 100 : 0;
+
+    const ativSet = new Set<string>(infoTurmas.atividadeIds);
+    if (Array.isArray(n.nucleo_atividades)) {
+      n.nucleo_atividades.forEach((na: any) => {
+        if (na?.atividade_id) ativSet.add(na.atividade_id);
+      });
+    }
 
     return {
       id: n.id,
@@ -1793,6 +1802,7 @@ function montarResumo(
       totalMatriculados: matriculadosDoNucleo,
       vagasLivres: Math.max(0, vagasDoNucleo - matriculadosDoNucleo),
       taxaOcupacao: Number(taxaOcupacao.toFixed(1)),
+      atividadeIds: Array.from(ativSet),
     };
   });
 
@@ -1867,7 +1877,7 @@ export const dashboardApi = {
     ] = await Promise.all([
       sb.from('beneficiarios').select('id', { count: 'exact', head: true }).is('deleted_at', null),
       sb.from('beneficiarios').select('id, nucleo_id, beneficiario_turmas(turmas(nucleo_id))').is('deleted_at', null).eq('status', 'ativo'),
-      sb.from('nucleos').select('id, identificacao, nome_local, cep, endereco, numero, bairro, cidade, complemento, latitude, longitude, em_funcionamento, organizacao_id, organizacoes(id, nome, estado, cidade)').is('deleted_at', null),
+      sb.from('nucleos').select('id, identificacao, nome_local, cep, endereco, numero, bairro, cidade, complemento, latitude, longitude, em_funcionamento, organizacao_id, organizacoes(id, nome, estado, cidade), nucleo_atividades(atividade_id)').is('deleted_at', null),
       sb.from('funcionarios').select('status').is('deleted_at', null),
       sb.from('turmas').select('id, nucleo_id, atividade_id, vagas_totais').is('deleted_at', null),
       sb.from('atividades').select('id, nome, disponivel_pre_inscricao').is('deleted_at', null),

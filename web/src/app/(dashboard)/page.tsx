@@ -105,7 +105,7 @@ export default function DashboardPage() {
       {loading && <div className="px-1 text-sm text-zinc-400">Carregando…</div>}
 
       {/* Mapa dos Polos */}
-      <MapaPolos nucleos={r.mapaNucleos || []} />
+      <MapaPolos nucleos={r.mapaNucleos || []} atividades={atividades} />
 
       {/* Estatísticas detalhadas em ordem hierárquica */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">

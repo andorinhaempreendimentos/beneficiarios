@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import { useDicionario } from "@/components/providers/DictionaryProvider";
 
 export interface NucleoMapaData {
@@ -25,67 +25,91 @@ export interface NucleoMapaData {
   totalMatriculados: number;
   vagasLivres: number;
   taxaOcupacao: number;
+  atividadeIds?: string[];
+}
+
+export interface AtividadeMapaOpcao {
+  id: string;
+  nome: string;
 }
 
 interface MapaPolosProps {
   nucleos: NucleoMapaData[];
+  atividades?: AtividadeMapaOpcao[];
   className?: string;
 }
 
-function getCorOcupacao(taxa: number): { cor: string; label: string; bgClass: string; borderClass: string } {
+function getCorOcupacao(taxa: number): { cor: string; label: string } {
   if (taxa < 50) {
-    return {
-      cor: "#dc2626",
-      label: "Menos de 50%",
-      bgClass: "bg-red-600",
-      borderClass: "border-red-600",
-    };
+    return { cor: "#dc2626", label: "Menos de 50%" };
   }
   if (taxa < 75) {
-    return {
-      cor: "#f59e0b",
-      label: "De 50% a 74,99%",
-      bgClass: "bg-amber-500",
-      borderClass: "border-amber-500",
-    };
+    return { cor: "#f59e0b", label: "De 50% a 74,99%" };
   }
   if (taxa < 100) {
-    return {
-      cor: "#0284c7",
-      label: "De 75% a 99,99%",
-      bgClass: "bg-sky-600",
-      borderClass: "border-sky-600",
-    };
+    return { cor: "#0284c7", label: "De 75% a 99,99%" };
   }
-  return {
-    cor: "#16a34a",
-    label: "100% ou mais",
-    bgClass: "bg-green-600",
-    borderClass: "border-green-600",
-  };
+  return { cor: "#16a34a", label: "100% ou mais" };
 }
 
 function criarIconePin(cor: string) {
-  const svg = `
+  return `
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 34" width="28" height="38" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">
       <path d="M12 0C5.373 0 0 5.373 0 12c0 9 12 22 12 22s12-13 12-22c0-6.627-5.373-12-12-12z" fill="${cor}" stroke="#ffffff" stroke-width="1.5"/>
       <circle cx="12" cy="11" r="4.5" fill="#ffffff"/>
     </svg>
   `;
-  return svg;
 }
 
-export function MapaPolos({ nucleos, className = "" }: MapaPolosProps) {
+export function MapaPolos({ nucleos, atividades = [], className = "" }: MapaPolosProps) {
   const { t } = useDicionario();
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
+
+  const [filtroNucleoId, setFiltroNucleoId] = useState("");
+  const [filtroAtividadeId, setFiltroAtividadeId] = useState("");
   const [nucleoSelecionado, setNucleoSelecionado] = useState<NucleoMapaData | null>(null);
 
-  // Filtrar apenas núcleos com coordenadas válidas
-  const nucleosComCoords = nucleos.filter(
-    (n) => typeof n.latitude === "number" && typeof n.longitude === "number" && !isNaN(n.latitude) && !isNaN(n.longitude)
-  );
+  // Lista de atividades disponíveis apenas nos núcleos fornecidos (respeitando o filtro de sessão)
+  const atividadesDisponiveis = useMemo(() => {
+    const ativIdsPresentes = new Set<string>();
+    nucleos.forEach((n) => {
+      n.atividadeIds?.forEach((aid) => ativIdsPresentes.add(aid));
+    });
+
+    if (atividades.length > 0) {
+      return atividades.filter((a) => ativIdsPresentes.has(a.id));
+    }
+    return [];
+  }, [nucleos, atividades]);
+
+  // Aplicar filtros internos de núcleo e atividade sobre a listagem da sessão
+  const nucleosExibidos = useMemo(() => {
+    return nucleos.filter((n) => {
+      if (filtroNucleoId && n.id !== filtroNucleoId) {
+        return false;
+      }
+      if (filtroAtividadeId && (!n.atividadeIds || !n.atividadeIds.includes(filtroAtividadeId))) {
+        return false;
+      }
+      return true;
+    });
+  }, [nucleos, filtroNucleoId, filtroAtividadeId]);
+
+  // Filtrar apenas núcleos com coordenadas válidas para pinar
+  const nucleosComCoords = useMemo(() => {
+    return nucleosExibidos.filter(
+      (n) => typeof n.latitude === "number" && typeof n.longitude === "number" && !isNaN(n.latitude) && !isNaN(n.longitude)
+    );
+  }, [nucleosExibidos]);
+
+  // Se o núcleo atualmente selecionado no card sair do filtro, fechar o card
+  useEffect(() => {
+    if (nucleoSelecionado && !nucleosComCoords.some((n) => n.id === nucleoSelecionado.id)) {
+      setNucleoSelecionado(null);
+    }
+  }, [nucleosComCoords, nucleoSelecionado]);
 
   useEffect(() => {
     let isMounted = true;
@@ -96,11 +120,7 @@ export function MapaPolos({ nucleos, className = "" }: MapaPolosProps) {
 
       if (!isMounted) return;
 
-      // Se já existir mapa, limpar marcadores
-      if (mapInstanceRef.current) {
-        markersRef.current.forEach((m) => m.remove());
-        markersRef.current = [];
-      } else {
+      if (!mapInstanceRef.current) {
         // Centro padrão: Palmas - TO (-10.249091, -48.324285)
         const defaultCenter: [number, number] = [-10.249091, -48.324285];
         const map = L.map(mapContainerRef.current, {
@@ -120,7 +140,11 @@ export function MapaPolos({ nucleos, className = "" }: MapaPolosProps) {
       const map = mapInstanceRef.current;
       if (!map) return;
 
-      // Adicionar marcadores
+      // Limpar marcadores anteriores
+      markersRef.current.forEach((m) => m.remove());
+      markersRef.current = [];
+
+      // Adicionar novos marcadores
       const bounds: [number, number][] = [];
 
       nucleosComCoords.forEach((n) => {
@@ -148,8 +172,10 @@ export function MapaPolos({ nucleos, className = "" }: MapaPolosProps) {
         markersRef.current.push(marker);
       });
 
-      // Ajustar visualização do mapa para caber todos os pontos
-      if (bounds.length > 0) {
+      // Se filtrou um único núcleo, centralizar nele com zoom mais próximo
+      if (bounds.length === 1) {
+        map.setView(bounds[0], 15);
+      } else if (bounds.length > 1) {
         map.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
       }
     }
@@ -163,24 +189,68 @@ export function MapaPolos({ nucleos, className = "" }: MapaPolosProps) {
 
   return (
     <div className={`relative flex flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-xs dark:border-zinc-800 dark:bg-zinc-900 ${className}`}>
-      {/* Header */}
-      <div className="flex items-center justify-between border-b border-zinc-200 bg-zinc-50/80 px-4 py-3 dark:border-zinc-800 dark:bg-zinc-800/50">
+      {/* Header com Título e Filtros */}
+      <div className="flex flex-col gap-3 border-b border-zinc-200 bg-zinc-50/80 p-3 sm:flex-row sm:items-center sm:justify-between dark:border-zinc-800 dark:bg-zinc-800/50">
         <div className="flex items-center gap-2">
           <span className="h-3 w-3 rounded-xs bg-amber-400" />
           <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-800 dark:text-zinc-200">
             {t("mapa_polos", "Mapa dos Polos", true)}
           </h3>
+          <span className="ml-1 rounded-full bg-zinc-200/80 px-2 py-0.5 text-[11px] font-semibold text-zinc-700 dark:bg-zinc-700 dark:text-zinc-300">
+            {nucleosComCoords.length}
+          </span>
         </div>
-        <span className="text-xs text-zinc-500 dark:text-zinc-400">
-          {nucleosComCoords.length} {t("local", "núcleo", true).toLowerCase()}(s) no mapa
-        </span>
+
+        {/* Filtros de Núcleo e Atividade */}
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Dropdown de Núcleo */}
+          <select
+            value={filtroNucleoId}
+            onChange={(e) => setFiltroNucleoId(e.target.value)}
+            className="h-8 rounded-lg border border-zinc-300 bg-white px-2.5 text-xs text-zinc-800 shadow-2xs focus:border-sky-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200"
+          >
+            <option value="">Todos os núcleos</option>
+            {nucleos.map((n) => (
+              <option key={n.id} value={n.id}>
+                {n.identificacao}
+              </option>
+            ))}
+          </select>
+
+          {/* Dropdown de Atividade */}
+          <select
+            value={filtroAtividadeId}
+            onChange={(e) => setFiltroAtividadeId(e.target.value)}
+            className="h-8 rounded-lg border border-zinc-300 bg-white px-2.5 text-xs text-zinc-800 shadow-2xs focus:border-sky-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200"
+          >
+            <option value="">Todas as atividades</option>
+            {atividadesDisponiveis.map((a) => (
+              <option key={a.id} value={a.id}>
+                {a.nome}
+              </option>
+            ))}
+          </select>
+
+          {(filtroNucleoId || filtroAtividadeId) && (
+            <button
+              type="button"
+              onClick={() => {
+                setFiltroNucleoId("");
+                setFiltroAtividadeId("");
+              }}
+              className="h-8 rounded-lg border border-zinc-200 bg-white px-2 text-xs font-medium text-zinc-600 hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700 transition-colors"
+            >
+              Limpar
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Container do Mapa */}
-      <div className="relative h-[420px] w-full bg-zinc-100 dark:bg-zinc-950">
+      <div className="relative h-[440px] w-full bg-zinc-100 dark:bg-zinc-950">
         <div ref={mapContainerRef} className="h-full w-full z-0" />
 
-        {/* Card Flutuante de Detalhes ao Clicar no Pin */}
+        {/* Card Flutuante de Informações ao Clicar no Pin */}
         {nucleoSelecionado && (
           <div className="absolute top-4 left-4 z-1000 max-w-sm w-[90%] sm:w-80 rounded-xl bg-white p-4 shadow-xl border border-zinc-200/80 dark:bg-zinc-900 dark:border-zinc-700 animate-in fade-in zoom-in-95 duration-150">
             {/* Fechar */}
