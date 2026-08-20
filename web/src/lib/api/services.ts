@@ -166,6 +166,7 @@ export interface NucleoApi {
   endereco?: string;
   numero?: string;
   cidade?: string;
+  estado?: string;
   bairro?: string;
   complemento?: string;
   latitude?: number;
@@ -372,7 +373,7 @@ function mapNucleo(r: any): NucleoApi {
   return {
     id: r.id, identificacao: r.identificacao, nomeLocal: r.nome_local ?? undefined,
     regiao: r.regiao ?? undefined, cep: r.cep ?? undefined, endereco: r.endereco ?? undefined,
-    numero: r.numero ?? undefined, cidade: r.cidade ?? undefined, bairro: r.bairro ?? undefined,
+    numero: r.numero ?? undefined, cidade: r.cidade ?? undefined, estado: r.estado ?? undefined, bairro: r.bairro ?? undefined,
     complemento: r.complemento ?? undefined, latitude: r.latitude ?? undefined,
     longitude: r.longitude ?? undefined, nomeResponsavel: r.nome_responsavel ?? undefined,
     telefoneContato: r.telefone_contato ?? undefined, organizacaoId: r.organizacao_id,
@@ -768,6 +769,7 @@ function toNucleoRow(b: Record<string, unknown>): Database['public']['Tables']['
     endereco: b.endereco as string | null | undefined,
     numero: b.numero as string | null | undefined,
     cidade: b.cidade as string | null | undefined,
+    estado: b.estado as string | null | undefined,
     bairro: b.bairro as string | null | undefined,
     complemento: b.complemento as string | null | undefined,
     latitude: b.latitude as number | null | undefined,
@@ -1791,7 +1793,7 @@ function montarResumo(
       numero: n.numero ?? undefined,
       bairro: n.bairro ?? undefined,
       cidade: n.cidade ?? undefined,
-      estado: (n.organizacoes || n.organizacao)?.estado ?? undefined,
+      estado: n.estado ?? undefined,
       complemento: n.complemento ?? undefined,
       latitude: n.latitude ? Number(n.latitude) : undefined,
       longitude: n.longitude ? Number(n.longitude) : undefined,
@@ -1810,6 +1812,7 @@ function montarResumo(
     id: n.id,
     identificacao: n.identificacao,
     cidade: n.cidade ?? undefined,
+    estado: n.estado ?? undefined,
     organizacaoId: n.organizacao_id || n.organizacaoId,
     organizacao: n.organizacoes || n.organizacao ? {
       id: (n.organizacoes || n.organizacao).id,
@@ -1877,7 +1880,7 @@ export const dashboardApi = {
     ] = await Promise.all([
       sb.from('beneficiarios').select('id', { count: 'exact', head: true }).is('deleted_at', null),
       sb.from('beneficiarios').select('id, nucleo_id, beneficiario_turmas(turmas(nucleo_id))').is('deleted_at', null).eq('status', 'ativo'),
-      sb.from('nucleos').select('id, identificacao, nome_local, cep, endereco, numero, bairro, cidade, complemento, latitude, longitude, em_funcionamento, organizacao_id, organizacoes(id, nome, estado, cidade), nucleo_atividades(atividade_id)').is('deleted_at', null),
+      sb.from('nucleos').select('id, identificacao, nome_local, cep, endereco, numero, bairro, cidade, estado, complemento, latitude, longitude, em_funcionamento, organizacao_id, organizacoes(id, nome, estado, cidade), nucleo_atividades(atividade_id)').is('deleted_at', null),
       sb.from('funcionarios').select('status').is('deleted_at', null),
       sb.from('turmas').select('id, nucleo_id, atividade_id, vagas_totais').is('deleted_at', null),
       sb.from('atividades').select('id, nome, disponivel_pre_inscricao').is('deleted_at', null),

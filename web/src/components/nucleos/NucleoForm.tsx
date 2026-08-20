@@ -45,6 +45,7 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], back
   const [endereco, setEndereco] = useState(n?.endereco ?? "");
   const [bairro, setBairro] = useState(n?.bairro ?? "");
   const [cidade, setCidade] = useState(n?.cidade ?? "");
+  const [estado, setEstado] = useState(n?.estado ?? "");
 
   async function handleCepBlur() {
     if (!cep) return;
@@ -54,6 +55,7 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], back
       if (res.logradouro) setEndereco(res.logradouro);
       if (res.bairro) setBairro(res.bairro);
       if (res.localidade) setCidade(res.localidade);
+      if (res.uf) setEstado(res.uf);
     }
   }
 
@@ -88,6 +90,7 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], back
       numero: (formData.get("numero") as string) || null,
       bairro: (formData.get("bairro") as string) || null,
       cidade: (formData.get("cidade") as string) || null,
+      estado: (formData.get("estado") as string) || estado || null,
       complemento: (formData.get("complemento") as string) || null,
       dataInicio: (formData.get("dataInicio") as string) || "",
       organizacaoId: orgId,
@@ -123,6 +126,7 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], back
         numero: data.numero,
         bairro: data.bairro,
         cidade: data.cidade,
+        estado: data.estado,
       });
 
       const payload = {
@@ -247,7 +251,16 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], back
               onChange={(e) => setCidade(e.target.value)}
             />
           </Field>
-          <Field label="Complemento" className="lg:col-span-3">
+          <Field label="Estado (UF)">
+            <Input
+              name="estado"
+              value={estado}
+              onChange={(e) => setEstado(e.target.value.toUpperCase())}
+              placeholder="Ex: TO"
+              maxLength={2}
+            />
+          </Field>
+          <Field label="Complemento" className="lg:col-span-2">
             <Input name="complemento" defaultValue={n?.complemento} />
           </Field>
         </div>
