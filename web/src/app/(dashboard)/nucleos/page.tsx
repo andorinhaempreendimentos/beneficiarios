@@ -35,6 +35,8 @@ import {
 import { formatarData } from "@/lib/utils";
 
 import { useLocationFilter } from "@/components/providers/LocationFilterProvider";
+import { useAuth } from "@/components/providers/AuthProvider";
+import { coordenadoresApi } from "@/lib/api/coordenadores";
 import { useMemo } from "react";
 
 const PER_PAGE = 15;
@@ -50,6 +52,8 @@ const EMPTY = {
 
 export default function NucleosPage() {
   const { toast } = useToast();
+  const { user } = useAuth();
+  const isCoordenador = Boolean((user as any)?.isCoordenador);
   const { estado, cidade, organizacaoId, nucleoId } = useLocationFilter();
   const { t } = useDicionario();
   const [filtros, setFiltros] = useState(EMPTY);
@@ -57,6 +61,14 @@ export default function NucleosPage() {
   const [viewMode, setViewMode] = useState<ViewMode>("cards");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [processando, setProcessando] = useState(false);
+
+  const { data: meusNucleos, loading: loadingMeusNucleos } = useQuery<NucleoApi[]>(
+    () => isCoordenador ? coordenadoresApi.getMeusNucleos() : Promise.resolve([] as NucleoApi[]),
+    [isCoordenador],
+  );
+  const semNucleos = isCoordenador && meusNucleos != null && meusNucleos.length === 0;
+  const meusNucleosIds = useMemo(() => (meusNucleos ?? []).map((n) => n.id), [meusNucleos]);
+
 
   const { data: objetosRes } = useQuery<Paginated<ObjetoApi>>(() => objetosApi.list({ limit: 100 }), []);
   const { data: organizacoesRes } = useQuery<Paginated<OrganizacaoApi>>(() => organizacoesApi.list({ limit: 100 }), []);
@@ -67,8 +79,18 @@ export default function NucleosPage() {
   const atividades = atividadesRes?.data ?? [];
 
   const { data: pageData, loading, refetch } = useQuery<Paginated<NucleoApi>>(
-    () => nucleosApi.list({ ...filtros, page: pagina, limit: PER_PAGE }),
-    [filtros, pagina],
+    () => {
+      if (isCoordenador) {
+        if (meusNucleosIds.length === 1) {
+          return nucleosApi.list({ ...filtros, nucleoId: meusNucleosIds[0], page: pagina, limit: PER_PAGE });
+        }
+        if (semNucleos) {
+          return Promise.resolve({ data: [] as NucleoApi[], total: 0, page: 1, limit: PER_PAGE });
+        }
+      }
+      return nucleosApi.list({ ...filtros, page: pagina, limit: PER_PAGE });
+    },
+    [filtros, pagina, isCoordenador, meusNucleosIds, semNucleos],
   );
 
   async function alternarFuncionamentoLote(status: boolean) {
@@ -90,6 +112,9 @@ export default function NucleosPage() {
 
   const resultado = useMemo(() => {
     return rawResultado.filter((n) => {
+      if (isCoordenador && !meusNucleosIds.includes(n.id)) {
+        return false;
+      }
       let estadoUf = (n as any).estado as string | undefined;
       const cidadeNome = n.cidade || "Não informada";
       if (!estadoUf) {
@@ -103,7 +128,7 @@ export default function NucleosPage() {
       const bateNucleo = nucleoId === "Todos" || n.id === nucleoId;
       return bateEstado && bateCidade && bateOrg && bateNucleo;
     });
-  }, [rawResultado, estado, cidade, organizacaoId, nucleoId]);
+  }, [rawResultado, estado, cidade, organizacaoId, nucleoId, isCoordenador, meusNucleosIds]);
   const total = pageData?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
 
@@ -138,10 +163,13 @@ export default function NucleosPage() {
         actions={
           <div className="flex items-center gap-3">
             <ViewToggle mode={viewMode} onChange={setViewMode} />
-            <LinkButton href="/nucleos/novo">{`Novo ${t("local", "Núcleo").toLowerCase()}`}</LinkButton>
+            {!isCoordenador && (
+              <LinkButton href="/nucleos/novo">{`Novo ${t("local", "Núcleo").toLowerCase()}`}</LinkButton>
+            )}
           </div>
         }
       />
+
 
       <FilterBar onClear={limpar}>
         <Field label="Busca">
@@ -230,22 +258,24 @@ export default function NucleosPage() {
                             : "border-zinc-200 bg-white hover:border-zinc-300 hover:shadow-xs"
                         }`}
                       >
-                        {/* Checkbox Elegante no Canto Superior Esquerdo */}
-                        <label
-                          className={`absolute top-0 left-0 z-10 flex h-8 w-9 items-center justify-center rounded-br-xl border-r border-b transition-all cursor-pointer ${
-                            isSelected
-                              ? "bg-sky-600 border-sky-600 text-white shadow-2xs"
-                              : "bg-zinc-100/90 border-zinc-200/80 text-zinc-400 group-hover:bg-zinc-200/80 group-hover:border-zinc-300"
-                          }`}
-                        >
-                          <input
-                            type="checkbox"
-                            checked={isSelected}
-                            onChange={() => toggleSelectOne(nucleo.id)}
-                            className="sr-only"
-                          />
-                          <Check className={`h-4 w-4 stroke-[3] transition-transform ${isSelected ? "scale-100 text-white" : "scale-85 text-zinc-400 opacity-60 group-hover:opacity-100"}`} />
-                        </label>
+                        {/* Checkbox Elegante no Canto Superior Esquerdo (Apenas Admin) */}
+                        {!isCoordenador && (
+                          <label
+                            className={`absolute top-0 left-0 z-10 flex h-8 w-9 items-center justify-center rounded-br-xl border-r border-b transition-all cursor-pointer ${
+                              isSelected
+                                ? "bg-sky-600 border-sky-600 text-white shadow-2xs"
+                                : "bg-zinc-100/90 border-zinc-200/80 text-zinc-400 group-hover:bg-zinc-200/80 group-hover:border-zinc-300"
+                            }`}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={() => toggleSelectOne(nucleo.id)}
+                              className="sr-only"
+                            />
+                            <Check className={`h-4 w-4 stroke-[3] transition-transform ${isSelected ? "scale-100 text-white" : "scale-85 text-zinc-400 opacity-60 group-hover:opacity-100"}`} />
+                          </label>
+                        )}
 
                         {/* Topo: Status badge alinhado à direita */}
                         <div className="flex items-center justify-end min-h-[26px]">
@@ -279,13 +309,17 @@ export default function NucleosPage() {
                             {nucleo.organizacao?.nome || "—"}
                           </span>
                           <div className="flex items-center gap-2 shrink-0">
-                            <Link href={`/nucleos/${nucleo.id}`} className="hidden text-xs font-semibold text-sky-600 hover:text-sky-700 transition-colors">
+                            <Link href={`/nucleos/${nucleo.id}`} className="text-xs font-semibold text-sky-600 hover:text-sky-700 transition-colors">
                               Acessar
                             </Link>
-                            <span className="hidden text-zinc-200">|</span>
-                            <Link href={`/nucleos/${nucleo.id}/editar`} className="text-xs text-zinc-500 hover:text-zinc-700 transition-colors">
-                              Editar
-                            </Link>
+                            {!isCoordenador && (
+                              <>
+                                <span className="text-zinc-200">|</span>
+                                <Link href={`/nucleos/${nucleo.id}/editar`} className="text-xs text-zinc-500 hover:text-zinc-700 transition-colors">
+                                  Editar
+                                </Link>
+                              </>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -298,14 +332,16 @@ export default function NucleosPage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-zinc-200 text-left text-xs font-medium uppercase tracking-wide text-zinc-500 bg-zinc-50/50">
-                      <th className="px-4 py-3 w-10">
-                        <input
-                          type="checkbox"
-                          checked={allSelected}
-                          onChange={toggleSelectAll}
-                          className="h-4 w-4 rounded border-zinc-300 text-sky-600 focus:ring-sky-500 cursor-pointer"
-                        />
-                      </th>
+                      {!isCoordenador && (
+                        <th className="px-4 py-3 w-10">
+                          <input
+                            type="checkbox"
+                            checked={allSelected}
+                            onChange={toggleSelectAll}
+                            className="h-4 w-4 rounded border-zinc-300 text-sky-600 focus:ring-sky-500 cursor-pointer"
+                          />
+                        </th>
+                      )}
                       <th className="px-5 py-3">{t("local", "Núcleo")}</th>
                       <th className="px-5 py-3">Cidade / Bairro</th>
                       <th className="px-5 py-3">{t("organizacao", "Organização")}</th>
@@ -317,7 +353,7 @@ export default function NucleosPage() {
                   <tbody>
                     {resultado.length === 0 ? (
                       <tr>
-                        <td colSpan={7} className="px-5 py-8 text-center text-sm text-zinc-400">
+                        <td colSpan={isCoordenador ? 6 : 7} className="px-5 py-8 text-center text-sm text-zinc-400">
                           Nenhum {t("local", "Núcleo").toLowerCase()} encontrado para os filtros selecionados.
                         </td>
                       </tr>
@@ -326,14 +362,16 @@ export default function NucleosPage() {
                         const isSelected = selectedIds.includes(nucleo.id);
                         return (
                           <tr key={nucleo.id} className={`border-b border-zinc-100 last:border-0 hover:bg-zinc-50 ${isSelected ? "bg-sky-50/30" : ""}`}>
-                            <td className="px-4 py-3">
-                              <input
-                                type="checkbox"
-                                checked={isSelected}
-                                onChange={() => toggleSelectOne(nucleo.id)}
-                                className="h-4 w-4 rounded border-zinc-300 text-sky-600 focus:ring-sky-500 cursor-pointer"
-                              />
-                            </td>
+                            {!isCoordenador && (
+                              <td className="px-4 py-3">
+                                <input
+                                  type="checkbox"
+                                  checked={isSelected}
+                                  onChange={() => toggleSelectOne(nucleo.id)}
+                                  className="h-4 w-4 rounded border-zinc-300 text-sky-600 focus:ring-sky-500 cursor-pointer"
+                                />
+                              </td>
+                            )}
                             <td className="px-5 py-3">
                               <div className="flex items-center gap-2">
                                 <Building2 className="h-4 w-4 text-zinc-400 shrink-0" />
@@ -358,8 +396,12 @@ export default function NucleosPage() {
                             <td className="px-5 py-3 text-zinc-600 text-xs">{formatarData(nucleo.dataInicio)}</td>
                             <td className="px-5 py-3 text-right">
                               <Link href={`/nucleos/${nucleo.id}`} className="text-sky-600 hover:underline">Acessar</Link>
-                              <span className="mx-1.5 text-zinc-300">|</span>
-                              <Link href={`/nucleos/${nucleo.id}/editar`} className="text-zinc-500 hover:underline">Editar</Link>
+                              {!isCoordenador && (
+                                <>
+                                  <span className="mx-1.5 text-zinc-300">|</span>
+                                  <Link href={`/nucleos/${nucleo.id}/editar`} className="text-zinc-500 hover:underline">Editar</Link>
+                                </>
+                              )}
                             </td>
                           </tr>
                         );
@@ -374,42 +416,45 @@ export default function NucleosPage() {
         <Pagination currentPage={pagina} totalPages={totalPages} totalItems={total} itemsPerPage={PER_PAGE} onPageChange={setPagina} />
       </Card>
 
-      <BulkActionsBar
-        selectedCount={selectedIds.length}
-        totalCount={resultado.length}
-        allSelected={allSelected}
-        onSelectAll={toggleSelectAll}
-        onClearSelection={() => setSelectedIds([])}
-      >
-        <button
-          type="button"
-          onClick={() => alternarFuncionamentoLote(true)}
-          disabled={processando}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-xs font-semibold text-white transition-all shadow-xs disabled:opacity-50 cursor-pointer whitespace-nowrap shrink-0"
+      {!isCoordenador && (
+        <BulkActionsBar
+          selectedCount={selectedIds.length}
+          totalCount={resultado.length}
+          allSelected={allSelected}
+          onSelectAll={toggleSelectAll}
+          onClearSelection={() => setSelectedIds([])}
         >
-          <Power className="h-3.5 w-3.5" />
-          <span>Ativar</span>
-        </button>
+          <button
+            type="button"
+            onClick={() => alternarFuncionamentoLote(true)}
+            disabled={processando}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-xs font-semibold text-white transition-all shadow-xs disabled:opacity-50 cursor-pointer whitespace-nowrap shrink-0"
+          >
+            <Power className="h-3.5 w-3.5" />
+            <span>Ativar</span>
+          </button>
 
-        <button
-          type="button"
-          onClick={() => alternarFuncionamentoLote(false)}
-          disabled={processando}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-xs font-semibold text-white transition-all shadow-xs disabled:opacity-50 cursor-pointer whitespace-nowrap shrink-0"
-        >
-          <Power className="h-3.5 w-3.5" />
-          <span>Desativar</span>
-        </button>
+          <button
+            type="button"
+            onClick={() => alternarFuncionamentoLote(false)}
+            disabled={processando}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-xs font-semibold text-white transition-all shadow-xs disabled:opacity-50 cursor-pointer whitespace-nowrap shrink-0"
+          >
+            <Power className="h-3.5 w-3.5" />
+            <span>Desativar</span>
+          </button>
 
-        <button
-          type="button"
-          onClick={() => alert(`Exportando ${selectedIds.length} núcleo(s)...`)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-zinc-200 transition-colors cursor-pointer whitespace-nowrap shrink-0"
-        >
-          <Download className="h-3.5 w-3.5" />
-          <span>Exportar</span>
-        </button>
-      </BulkActionsBar>
+          <button
+            type="button"
+            onClick={() => alert(`Exportando ${selectedIds.length} núcleo(s)...`)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-zinc-200 transition-colors cursor-pointer whitespace-nowrap shrink-0"
+          >
+            <Download className="h-3.5 w-3.5" />
+            <span>Exportar</span>
+          </button>
+        </BulkActionsBar>
+      )}
+
     </div>
   );
 }
