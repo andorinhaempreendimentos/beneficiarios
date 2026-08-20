@@ -104,6 +104,9 @@ export default function DashboardPage() {
 
       {loading && <div className="px-1 text-sm text-zinc-400">Carregando…</div>}
 
+      {/* Mapa dos Polos */}
+      <MapaPolos nucleos={r.mapaNucleos || []} />
+
       {/* Estatísticas detalhadas em ordem hierárquica */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
 
@@ -313,9 +316,6 @@ export default function DashboardPage() {
           </CardBody>
         </Card>
       </div>
-
-      {/* Mapa dos Polos */}
-      <MapaPolos nucleos={r.mapaNucleos || []} />
 
       {/* Distribuição por modalidade */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
