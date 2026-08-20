@@ -5,6 +5,7 @@ import { MapPin } from "lucide-react";
 import { z } from "zod";
 import { Button, Field, FormSection, Input, LinkButton, Switch } from "@/components/ui";
 import { nucleosApi, type NucleoApi, type OrganizacaoApi, type AtividadeApi } from "@/lib/api/services";
+import { obterCoordenadasEndereco } from "@/lib/geocoding";
 
 const nucleoSchema = z.object({
   identificacao: z.string().min(3, "Identificação deve ter pelo menos 3 caracteres."),
@@ -115,10 +116,25 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], back
     setFieldErrors({});
 
     try {
+      // Obter latitude e longitude automaticamente sem exigir digitação do usuário
+      const coords = await obterCoordenadasEndereco({
+        cep: data.cep,
+        endereco: data.endereco,
+        numero: data.numero,
+        bairro: data.bairro,
+        cidade: data.cidade,
+      });
+
+      const payload = {
+        ...data,
+        latitude: coords?.latitude ?? n?.latitude ?? null,
+        longitude: coords?.longitude ?? n?.longitude ?? null,
+      };
+
       if (n?.id) {
-        await nucleosApi.update(n.id, data);
+        await nucleosApi.update(n.id, payload);
       } else {
-        await nucleosApi.create(data);
+        await nucleosApi.create(payload);
       }
       window.location.href = backHref;
     } catch (err: any) {

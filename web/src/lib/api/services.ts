@@ -58,6 +58,27 @@ export interface DashboardResumo {
   topNucleos: { id: string; identificacao: string; beneficiariosAtivos: number }[];
   distribuicaoPorModalidade: { nome: string; total: number }[];
   recentes: { id: string; nomeCompleto: string; nucleo?: string; status: string; dataCadastro: string }[];
+  mapaNucleos?: Array<{
+    id: string;
+    identificacao: string;
+    nomeLocal?: string;
+    cep?: string;
+    endereco?: string;
+    numero?: string;
+    bairro?: string;
+    cidade?: string;
+    estado?: string;
+    complemento?: string;
+    latitude?: number;
+    longitude?: number;
+    emFuncionamento: boolean;
+    organizacaoId: string;
+    organizacaoNome?: string;
+    totalVagas: number;
+    totalMatriculados: number;
+    vagasLivres: number;
+    taxaOcupacao: number;
+  }>;
   nucleosDetalhados?: Array<{
     id: string;
     identificacao: string;
@@ -1730,6 +1751,51 @@ function montarResumo(
     }))
     .sort((a, b) => b.total - a.total);
 
+  const turmasPorNucleo = new Map<string, { vagas: number; ids: string[] }>();
+  for (const t of turmas) {
+    const nid = (t as any).nucleo_id;
+    if (!nid) continue;
+    const atual = turmasPorNucleo.get(nid) || { vagas: 0, ids: [] };
+    atual.vagas += t.vagas_totais || 0;
+    atual.ids.push(t.id);
+    turmasPorNucleo.set(nid, atual);
+  }
+
+  const mapaNucleos = nucleos.map((n) => {
+    const infoTurmas = turmasPorNucleo.get(n.id) || { vagas: 0, ids: [] };
+    const vagasDoNucleo = infoTurmas.vagas;
+    let matriculadosDoNucleo = 0;
+    for (const tid of infoTurmas.ids) {
+      matriculadosDoNucleo += ocupacaoPorTurma.get(tid) || 0;
+    }
+    if (matriculadosDoNucleo === 0 && porNucleo.has(n.id)) {
+      matriculadosDoNucleo = porNucleo.get(n.id) || 0;
+    }
+    const taxaOcupacao = vagasDoNucleo > 0 ? (matriculadosDoNucleo / vagasDoNucleo) * 100 : 0;
+
+    return {
+      id: n.id,
+      identificacao: n.identificacao,
+      nomeLocal: n.nome_local ?? undefined,
+      cep: n.cep ?? undefined,
+      endereco: n.endereco ?? undefined,
+      numero: n.numero ?? undefined,
+      bairro: n.bairro ?? undefined,
+      cidade: n.cidade ?? undefined,
+      estado: (n.organizacoes || n.organizacao)?.estado ?? undefined,
+      complemento: n.complemento ?? undefined,
+      latitude: n.latitude ? Number(n.latitude) : undefined,
+      longitude: n.longitude ? Number(n.longitude) : undefined,
+      emFuncionamento: n.em_funcionamento !== false,
+      organizacaoId: n.organizacao_id || n.organizacaoId,
+      organizacaoNome: (n.organizacoes || n.organizacao)?.nome,
+      totalVagas: vagasDoNucleo,
+      totalMatriculados: matriculadosDoNucleo,
+      vagasLivres: Math.max(0, vagasDoNucleo - matriculadosDoNucleo),
+      taxaOcupacao: Number(taxaOcupacao.toFixed(1)),
+    };
+  });
+
   const nucleosDetalhados = nucleos.map((n) => ({
     id: n.id,
     identificacao: n.identificacao,
@@ -1762,6 +1828,7 @@ function montarResumo(
     totalModalidades: atividadesEsportivas.length,
     topNucleos,
     distribuicaoPorModalidade,
+    mapaNucleos,
     nucleosDetalhados,
     organizacoes,
     recentes: recentes.map((b) => {
@@ -1800,9 +1867,9 @@ export const dashboardApi = {
     ] = await Promise.all([
       sb.from('beneficiarios').select('id', { count: 'exact', head: true }).is('deleted_at', null),
       sb.from('beneficiarios').select('id, nucleo_id, beneficiario_turmas(turmas(nucleo_id))').is('deleted_at', null).eq('status', 'ativo'),
-      sb.from('nucleos').select('id, identificacao, em_funcionamento, cidade, organizacao_id, organizacoes(id, nome, estado, cidade)').is('deleted_at', null),
+      sb.from('nucleos').select('id, identificacao, nome_local, cep, endereco, numero, bairro, cidade, complemento, latitude, longitude, em_funcionamento, organizacao_id, organizacoes(id, nome, estado, cidade)').is('deleted_at', null),
       sb.from('funcionarios').select('status').is('deleted_at', null),
-      sb.from('turmas').select('id, atividade_id, vagas_totais').is('deleted_at', null),
+      sb.from('turmas').select('id, nucleo_id, atividade_id, vagas_totais').is('deleted_at', null),
       sb.from('atividades').select('id, nome, disponivel_pre_inscricao').is('deleted_at', null),
       sb.from('beneficiario_turmas').select('turma_id').is('deleted_at', null),
       sb.from('beneficiarios')

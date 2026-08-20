@@ -24,6 +24,7 @@ import { statusBeneficiarioTone, statusBeneficiarioLabel, normalizarStatusBenefi
 import { useLocationFilter } from "@/components/providers/LocationFilterProvider";
 import { ModalLinksInscricao } from "@/components/inscricoes/ModalLinksInscricao";
 import { normalizarNucleoLocalizacao } from "@/lib/location";
+import { MapaPolos } from "@/components/dashboard/MapaPolos";
 
 const VAZIO: DashboardResumo = {
   beneficiariosAtivos: 0, totalBeneficiarios: 0, nucleosAtivos: 0, totalNucleos: 0, totalObjetos: 0, totalOrganizacoes: 0, funcionariosAtivos: 0,
@@ -81,6 +82,7 @@ export default function DashboardPage() {
     );
 
     const nucleosAtivosCount = nucleosFiltrados.filter((n) => n.emFuncionamento !== false).length;
+    const mapaNucleosFiltrados = (rRaw.mapaNucleos || []).filter((n) => idsFiltrados.has(n.id));
 
     const rFiltrado: DashboardResumo = {
       ...rRaw,
@@ -89,6 +91,7 @@ export default function DashboardPage() {
       beneficiariosAtivos: totalBeneficiariosAtivosFiltrados,
       topNucleos: topNucleosFiltrados,
       recentes: recentesFiltrados,
+      mapaNucleos: mapaNucleosFiltrados,
     };
 
     return { resumoFiltrado: rFiltrado, nucleosMapeados: nucleosComUf };
@@ -310,6 +313,9 @@ export default function DashboardPage() {
           </CardBody>
         </Card>
       </div>
+
+      {/* Mapa dos Polos */}
+      <MapaPolos nucleos={r.mapaNucleos || []} />
 
       {/* Distribuição por modalidade */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
