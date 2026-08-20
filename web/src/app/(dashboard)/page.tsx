@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Building2, ClipboardList, Dumbbell, FileBarChart, Link2, Plus, ShieldCheck, UserCheck, UserPlus, Users, UsersRound } from "lucide-react";
+import { Building2, ClipboardList, Dumbbell, FileBarChart, Link2, MapPin, Package, Plus, ShieldCheck, UserCheck, UserPlus, Users, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { Badge, Card, CardBody, CardHeader, StatCard } from "@/components/ui";
 import { useQuery } from "@/lib/hooks/useQuery";
@@ -108,213 +108,225 @@ export default function DashboardPage() {
       <MapaPolos nucleos={r.mapaNucleos || []} atividades={atividades} />
 
       {/* Estatísticas detalhadas em ordem hierárquica */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
 
         {/* 1. Objetos */}
-        <Card>
-          <CardHeader className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-100">Objetos</h3>
-            <Link
-              href="/objetos"
-              className="inline-flex items-center rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-2.5 py-1 text-xs font-semibold text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors shadow-2xs"
-            >
+        <div className="flex flex-col overflow-hidden rounded-xl border border-zinc-200/90 bg-white shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
+          <div className="flex items-center justify-between border-b border-zinc-100 bg-zinc-50/70 px-3.5 py-2 dark:border-zinc-800 dark:bg-zinc-800/40">
+            <div className="flex items-center gap-2">
+              <span className="flex h-5 w-5 items-center justify-center rounded-md bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
+                <Package className="h-3 w-3" />
+              </span>
+              <h3 className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">Objetos</h3>
+            </div>
+            <Link href="/objetos" className="text-[11px] font-medium text-sky-600 hover:text-sky-700 dark:text-sky-400 hover:underline">
               Ver todos
             </Link>
-          </CardHeader>
-          <CardBody className="flex flex-col gap-3">
-            <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-lg bg-green-50 dark:bg-green-950/60 px-3 py-2.5">
-                <p className="text-xs text-green-700 dark:text-green-300">Cadastrados</p>
-                <p className="text-2xl font-bold text-green-700 dark:text-green-300">{r.totalObjetos}</p>
+          </div>
+          <div className="flex flex-1 flex-col justify-between gap-3 p-3">
+            <div className="grid grid-cols-2 gap-2">
+              <div className="flex items-center justify-between rounded-lg bg-emerald-50/80 px-2.5 py-1.5 border border-emerald-200/40 dark:bg-emerald-950/30 dark:border-emerald-900/40">
+                <span className="text-[11px] font-medium text-emerald-700 dark:text-emerald-400">Cadastrados</span>
+                <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300">{r.totalObjetos}</span>
               </div>
-              <div className="rounded-lg bg-sky-50 dark:bg-sky-950/60 px-3 py-2.5">
-                <p className="text-xs text-sky-700 dark:text-sky-300">Vigentes</p>
-                <p className="text-2xl font-bold text-sky-700 dark:text-sky-300">{r.totalObjetos}</p>
+              <div className="flex items-center justify-between rounded-lg bg-sky-50/80 px-2.5 py-1.5 border border-sky-200/40 dark:bg-sky-950/30 dark:border-sky-900/40">
+                <span className="text-[11px] font-medium text-sky-700 dark:text-sky-400">Vigentes</span>
+                <span className="text-xs font-bold text-sky-800 dark:text-sky-300">{r.totalObjetos}</span>
               </div>
             </div>
             <Link
               href="/objetos/novo"
-              className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-3 py-2 text-sm font-medium text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors"
+              className="flex h-7 items-center justify-center gap-1.5 rounded-lg border border-sky-200 bg-sky-50/70 px-2.5 text-xs font-medium text-sky-700 hover:bg-sky-100 dark:border-sky-800/80 dark:bg-sky-950/40 dark:text-sky-300 dark:hover:bg-sky-900/60 transition-colors"
             >
-              <Plus className="h-4 w-4" />
-              Novo objeto
+              <Plus className="h-3 w-3" />
+              <span>Novo objeto</span>
             </Link>
-          </CardBody>
-        </Card>
+          </div>
+        </div>
 
         {/* 2. Organizações */}
-        <Card>
-          <CardHeader className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-100">Organizações</h3>
-            <Link
-              href="/organizacoes"
-              className="inline-flex items-center rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-2.5 py-1 text-xs font-semibold text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors shadow-2xs"
-            >
+        <div className="flex flex-col overflow-hidden rounded-xl border border-zinc-200/90 bg-white shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
+          <div className="flex items-center justify-between border-b border-zinc-100 bg-zinc-50/70 px-3.5 py-2 dark:border-zinc-800 dark:bg-zinc-800/40">
+            <div className="flex items-center gap-2">
+              <span className="flex h-5 w-5 items-center justify-center rounded-md bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300">
+                <Building2 className="h-3 w-3" />
+              </span>
+              <h3 className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">Organizações</h3>
+            </div>
+            <Link href="/organizacoes" className="text-[11px] font-medium text-sky-600 hover:text-sky-700 dark:text-sky-400 hover:underline">
               Ver todas
             </Link>
-          </CardHeader>
-          <CardBody className="flex flex-col gap-3">
-            <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-lg bg-green-50 dark:bg-green-950/60 px-3 py-2.5">
-                <p className="text-xs text-green-700 dark:text-green-300">Parceiras</p>
-                <p className="text-2xl font-bold text-green-700 dark:text-green-300">{r.totalOrganizacoes}</p>
+          </div>
+          <div className="flex flex-1 flex-col justify-between gap-3 p-3">
+            <div className="grid grid-cols-2 gap-2">
+              <div className="flex items-center justify-between rounded-lg bg-emerald-50/80 px-2.5 py-1.5 border border-emerald-200/40 dark:bg-emerald-950/30 dark:border-emerald-900/40">
+                <span className="text-[11px] font-medium text-emerald-700 dark:text-emerald-400">Parceiras</span>
+                <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300">{r.totalOrganizacoes}</span>
               </div>
-              <div className="rounded-lg bg-zinc-50 dark:bg-zinc-800/80 px-3 py-2.5">
-                <p className="text-xs text-zinc-500 dark:text-zinc-400">Ativas</p>
-                <p className="text-2xl font-bold text-zinc-700 dark:text-zinc-200">{r.totalOrganizacoes}</p>
+              <div className="flex items-center justify-between rounded-lg bg-zinc-100/80 px-2.5 py-1.5 border border-zinc-200/50 dark:bg-zinc-800/50 dark:border-zinc-700/50">
+                <span className="text-[11px] font-medium text-zinc-600 dark:text-zinc-400">Ativas</span>
+                <span className="text-xs font-bold text-zinc-800 dark:text-zinc-200">{r.totalOrganizacoes}</span>
               </div>
             </div>
             <Link
               href="/organizacoes/novo"
-              className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-3 py-2 text-sm font-medium text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors"
+              className="flex h-7 items-center justify-center gap-1.5 rounded-lg border border-sky-200 bg-sky-50/70 px-2.5 text-xs font-medium text-sky-700 hover:bg-sky-100 dark:border-sky-800/80 dark:bg-sky-950/40 dark:text-sky-300 dark:hover:bg-sky-900/60 transition-colors"
             >
-              <Building2 className="h-4 w-4" />
-              Nova organização
+              <Plus className="h-3 w-3" />
+              <span>Nova organização</span>
             </Link>
-          </CardBody>
-        </Card>
+          </div>
+        </div>
 
         {/* 3. Núcleos */}
-        <Card>
-          <CardHeader className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-100">Núcleos</h3>
-            <Link
-              href="/nucleos"
-              className="inline-flex items-center rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-2.5 py-1 text-xs font-semibold text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors shadow-2xs"
-            >
+        <div className="flex flex-col overflow-hidden rounded-xl border border-zinc-200/90 bg-white shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
+          <div className="flex items-center justify-between border-b border-zinc-100 bg-zinc-50/70 px-3.5 py-2 dark:border-zinc-800 dark:bg-zinc-800/40">
+            <div className="flex items-center gap-2">
+              <span className="flex h-5 w-5 items-center justify-center rounded-md bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+                <MapPin className="h-3 w-3" />
+              </span>
+              <h3 className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">Núcleos</h3>
+            </div>
+            <Link href="/nucleos" className="text-[11px] font-medium text-sky-600 hover:text-sky-700 dark:text-sky-400 hover:underline">
               Ver todos
             </Link>
-          </CardHeader>
-          <CardBody className="flex flex-col gap-3">
-            <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-lg bg-green-50 dark:bg-green-950/60 px-3 py-2.5">
-                <p className="text-xs text-green-700 dark:text-green-300">Em operação</p>
-                <p className="text-2xl font-bold text-green-700 dark:text-green-300">{r.nucleosAtivos}</p>
+          </div>
+          <div className="flex flex-1 flex-col justify-between gap-3 p-3">
+            <div className="grid grid-cols-2 gap-2">
+              <div className="flex items-center justify-between rounded-lg bg-emerald-50/80 px-2.5 py-1.5 border border-emerald-200/40 dark:bg-emerald-950/30 dark:border-emerald-900/40">
+                <span className="text-[11px] font-medium text-emerald-700 dark:text-emerald-400">Em operação</span>
+                <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300">{r.nucleosAtivos}</span>
               </div>
-              <div className="rounded-lg bg-zinc-50 dark:bg-zinc-800/80 px-3 py-2.5">
-                <p className="text-xs text-zinc-500 dark:text-zinc-400">Total núcleos</p>
-                <p className="text-2xl font-bold text-zinc-700 dark:text-zinc-200">{r.totalNucleos}</p>
+              <div className="flex items-center justify-between rounded-lg bg-zinc-100/80 px-2.5 py-1.5 border border-zinc-200/50 dark:bg-zinc-800/50 dark:border-zinc-700/50">
+                <span className="text-[11px] font-medium text-zinc-600 dark:text-zinc-400">Total núcleos</span>
+                <span className="text-xs font-bold text-zinc-800 dark:text-zinc-200">{r.totalNucleos}</span>
               </div>
             </div>
             <Link
               href="/nucleos/novo"
-              className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-3 py-2 text-sm font-medium text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors"
+              className="flex h-7 items-center justify-center gap-1.5 rounded-lg border border-sky-200 bg-sky-50/70 px-2.5 text-xs font-medium text-sky-700 hover:bg-sky-100 dark:border-sky-800/80 dark:bg-sky-950/40 dark:text-sky-300 dark:hover:bg-sky-900/60 transition-colors"
             >
-              <Building2 className="h-4 w-4" />
-              Novo núcleo
+              <Plus className="h-3 w-3" />
+              <span>Novo núcleo</span>
             </Link>
-          </CardBody>
-        </Card>
+          </div>
+        </div>
 
         {/* 4. Turmas e vagas */}
-        <Card>
-          <CardHeader className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-100">Turmas e Vagas</h3>
-            <Link
-              href="/turmas"
-              className="inline-flex items-center rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-2.5 py-1 text-xs font-semibold text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors shadow-2xs"
-            >
+        <div className="flex flex-col overflow-hidden rounded-xl border border-zinc-200/90 bg-white shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
+          <div className="flex items-center justify-between border-b border-zinc-100 bg-zinc-50/70 px-3.5 py-2 dark:border-zinc-800 dark:bg-zinc-800/40">
+            <div className="flex items-center gap-2">
+              <span className="flex h-5 w-5 items-center justify-center rounded-md bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300">
+                <UsersRound className="h-3 w-3" />
+              </span>
+              <h3 className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">Turmas e Vagas</h3>
+            </div>
+            <Link href="/turmas" className="text-[11px] font-medium text-sky-600 hover:text-sky-700 dark:text-sky-400 hover:underline">
               Ver turmas
             </Link>
-          </CardHeader>
-          <CardBody className="flex flex-col gap-3">
-            <div className="grid grid-cols-3 gap-2">
-              <div className="rounded-lg bg-zinc-50 dark:bg-zinc-800/80 px-3 py-2.5 text-center">
-                <p className="text-xs text-zinc-500 dark:text-zinc-400">Turmas</p>
-                <p className="text-2xl font-bold text-zinc-700 dark:text-zinc-200">{r.totalTurmas}</p>
+          </div>
+          <div className="flex flex-1 flex-col justify-between gap-3 p-3">
+            <div className="grid grid-cols-3 gap-1.5">
+              <div className="flex items-center justify-between rounded-lg bg-zinc-100/80 px-2 py-1.5 border border-zinc-200/50 dark:bg-zinc-800/50 dark:border-zinc-700/50">
+                <span className="text-[11px] font-medium text-zinc-600 dark:text-zinc-400 truncate">Turmas</span>
+                <span className="text-xs font-bold text-zinc-800 dark:text-zinc-200 shrink-0 ml-1">{r.totalTurmas}</span>
               </div>
-              <div className="rounded-lg bg-green-50 dark:bg-green-950/60 px-3 py-2.5 text-center">
-                <p className="text-xs text-green-700 dark:text-green-300">Vagas livres</p>
-                <p className="text-2xl font-bold text-green-700 dark:text-green-300">{r.vagasLivres}</p>
+              <div className="flex items-center justify-between rounded-lg bg-emerald-50/80 px-2 py-1.5 border border-emerald-200/40 dark:bg-emerald-950/30 dark:border-emerald-900/40">
+                <span className="text-[11px] font-medium text-emerald-700 dark:text-emerald-400 truncate">Livres</span>
+                <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300 shrink-0 ml-1">{r.vagasLivres}</span>
               </div>
-              <div className="rounded-lg bg-sky-50 dark:bg-sky-950/60 px-3 py-2.5 text-center">
-                <p className="text-xs text-sky-700 dark:text-sky-300">Ocupação</p>
-                <p className="text-2xl font-bold text-sky-700 dark:text-sky-300">{r.ocupacaoGlobal}%</p>
+              <div className="flex items-center justify-between rounded-lg bg-sky-50/80 px-2 py-1.5 border border-sky-200/40 dark:bg-sky-950/30 dark:border-sky-900/40">
+                <span className="text-[11px] font-medium text-sky-700 dark:text-sky-400 truncate">Ocupação</span>
+                <span className="text-xs font-bold text-sky-800 dark:text-sky-300 shrink-0 ml-1">{r.ocupacaoGlobal}%</span>
               </div>
             </div>
             <Link
               href="/turmas/novo"
-              className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-3 py-2 text-sm font-medium text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors"
+              className="flex h-7 items-center justify-center gap-1.5 rounded-lg border border-sky-200 bg-sky-50/70 px-2.5 text-xs font-medium text-sky-700 hover:bg-sky-100 dark:border-sky-800/80 dark:bg-sky-950/40 dark:text-sky-300 dark:hover:bg-sky-900/60 transition-colors"
             >
-              <Plus className="h-4 w-4" />
-              Nova turma
+              <Plus className="h-3 w-3" />
+              <span>Nova turma</span>
             </Link>
-          </CardBody>
-        </Card>
+          </div>
+        </div>
 
         {/* 5. Beneficiários */}
-        <Card>
-          <CardHeader className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-100">Beneficiários</h3>
-            <Link
-              href="/beneficiarios"
-              className="inline-flex items-center rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-2.5 py-1 text-xs font-semibold text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors shadow-2xs"
-            >
+        <div className="flex flex-col overflow-hidden rounded-xl border border-zinc-200/90 bg-white shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
+          <div className="flex items-center justify-between border-b border-zinc-100 bg-zinc-50/70 px-3.5 py-2 dark:border-zinc-800 dark:bg-zinc-800/40">
+            <div className="flex items-center gap-2">
+              <span className="flex h-5 w-5 items-center justify-center rounded-md bg-teal-100 text-teal-700 dark:bg-teal-950 dark:text-teal-300">
+                <Users className="h-3 w-3" />
+              </span>
+              <h3 className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">Beneficiários</h3>
+            </div>
+            <Link href="/beneficiarios" className="text-[11px] font-medium text-sky-600 hover:text-sky-700 dark:text-sky-400 hover:underline">
               Ver todos
             </Link>
-          </CardHeader>
-          <CardBody className="flex flex-col gap-3">
-            <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-lg bg-green-50 dark:bg-green-950/60 px-3 py-2.5">
-                <p className="text-xs text-green-700 dark:text-green-300">Ativos</p>
-                <p className="text-2xl font-bold text-green-700 dark:text-green-300">{r.beneficiariosAtivos}</p>
+          </div>
+          <div className="flex flex-1 flex-col justify-between gap-3 p-3">
+            <div className="grid grid-cols-2 gap-2">
+              <div className="flex items-center justify-between rounded-lg bg-emerald-50/80 px-2.5 py-1.5 border border-emerald-200/40 dark:bg-emerald-950/30 dark:border-emerald-900/40">
+                <span className="text-[11px] font-medium text-emerald-700 dark:text-emerald-400">Ativos</span>
+                <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300">{r.beneficiariosAtivos}</span>
               </div>
-              <div className="rounded-lg bg-zinc-50 dark:bg-zinc-800/80 px-3 py-2.5">
-                <p className="text-xs text-zinc-500 dark:text-zinc-400">Total cadastrado</p>
-                <p className="text-2xl font-bold text-zinc-700 dark:text-zinc-200">{r.totalBeneficiarios}</p>
+              <div className="flex items-center justify-between rounded-lg bg-zinc-100/80 px-2.5 py-1.5 border border-zinc-200/50 dark:bg-zinc-800/50 dark:border-zinc-700/50">
+                <span className="text-[11px] font-medium text-zinc-600 dark:text-zinc-400">Total</span>
+                <span className="text-xs font-bold text-zinc-800 dark:text-zinc-200">{r.totalBeneficiarios}</span>
               </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-1.5">
               <Link
                 href="/beneficiarios/novo"
-                className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-3 py-2 text-xs font-semibold text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors"
+                className="flex h-7 items-center justify-center gap-1 rounded-lg border border-sky-200 bg-sky-50/70 px-2 text-[11px] font-medium text-sky-700 hover:bg-sky-100 dark:border-sky-800/80 dark:bg-sky-950/40 dark:text-sky-300 dark:hover:bg-sky-900/60 transition-colors"
               >
-                <UserPlus className="h-4 w-4" />
-                Novo beneficiário
+                <UserPlus className="h-3 w-3" />
+                <span>Novo</span>
               </Link>
               <button
                 type="button"
                 onClick={() => setModalLinksOpen(true)}
-                className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-3 py-2 text-xs font-semibold text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors cursor-pointer"
+                className="flex h-7 items-center justify-center gap-1 rounded-lg border border-sky-200 bg-sky-50/70 px-2 text-[11px] font-medium text-sky-700 hover:bg-sky-100 dark:border-sky-800/80 dark:bg-sky-950/40 dark:text-sky-300 dark:hover:bg-sky-900/60 cursor-pointer transition-colors"
               >
-                <Link2 className="h-4 w-4" />
-                Links de Autocadastro
+                <Link2 className="h-3 w-3" />
+                <span>Links</span>
               </button>
             </div>
-          </CardBody>
-        </Card>
+          </div>
+        </div>
 
         {/* 6. Pessoal / Funcionários */}
-        <Card>
-          <CardHeader className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-100">Pessoal</h3>
-            <Link
-              href="/funcionarios"
-              className="inline-flex items-center rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-2.5 py-1 text-xs font-semibold text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors shadow-2xs"
-            >
+        <div className="flex flex-col overflow-hidden rounded-xl border border-zinc-200/90 bg-white shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
+          <div className="flex items-center justify-between border-b border-zinc-100 bg-zinc-50/70 px-3.5 py-2 dark:border-zinc-800 dark:bg-zinc-800/40">
+            <div className="flex items-center gap-2">
+              <span className="flex h-5 w-5 items-center justify-center rounded-md bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300">
+                <UserCheck className="h-3 w-3" />
+              </span>
+              <h3 className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">Pessoal</h3>
+            </div>
+            <Link href="/funcionarios" className="text-[11px] font-medium text-sky-600 hover:text-sky-700 dark:text-sky-400 hover:underline">
               Ver todos
             </Link>
-          </CardHeader>
-          <CardBody className="flex flex-col gap-3">
-            <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-lg bg-green-50 dark:bg-green-950/60 px-3 py-2.5">
-                <p className="text-xs text-green-700 dark:text-green-300">Contratados</p>
-                <p className="text-2xl font-bold text-green-700 dark:text-green-300">{r.funcionariosAtivos}</p>
+          </div>
+          <div className="flex flex-1 flex-col justify-between gap-3 p-3">
+            <div className="grid grid-cols-2 gap-2">
+              <div className="flex items-center justify-between rounded-lg bg-emerald-50/80 px-2.5 py-1.5 border border-emerald-200/40 dark:bg-emerald-950/30 dark:border-emerald-900/40">
+                <span className="text-[11px] font-medium text-emerald-700 dark:text-emerald-400">Contratados</span>
+                <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300">{r.funcionariosAtivos}</span>
               </div>
-              <div className="rounded-lg bg-amber-50 dark:bg-amber-950/60 px-3 py-2.5">
-                <p className="text-xs text-amber-700 dark:text-amber-300">Em licença</p>
-                <p className="text-2xl font-bold text-amber-700 dark:text-amber-300">{r.funcionariosLicenca}</p>
+              <div className="flex items-center justify-between rounded-lg bg-amber-50/80 px-2.5 py-1.5 border border-amber-200/40 dark:bg-amber-950/30 dark:border-amber-900/40">
+                <span className="text-[11px] font-medium text-amber-700 dark:text-amber-400">Em licença</span>
+                <span className="text-xs font-bold text-amber-800 dark:text-amber-300">{r.funcionariosLicenca}</span>
               </div>
             </div>
             <Link
               href="/funcionarios/novo"
-              className="flex items-center justify-center gap-2 rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-3 py-2 text-sm font-medium text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/80 transition-colors"
+              className="flex h-7 items-center justify-center gap-1.5 rounded-lg border border-sky-200 bg-sky-50/70 px-2.5 text-xs font-medium text-sky-700 hover:bg-sky-100 dark:border-sky-800/80 dark:bg-sky-950/40 dark:text-sky-300 dark:hover:bg-sky-900/60 transition-colors"
             >
-              <UserCheck className="h-4 w-4" />
-              Novo funcionário
+              <Plus className="h-3 w-3" />
+              <span>Novo funcionário</span>
             </Link>
-          </CardBody>
-        </Card>
+          </div>
+        </div>
       </div>
 
       {/* Distribuição por modalidade */}

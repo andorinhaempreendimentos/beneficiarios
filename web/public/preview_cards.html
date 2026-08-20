@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preview: Cards do Dashboard Compactos</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-zinc-100 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100 min-h-screen p-6 font-sans transition-colors duration-150">
+
+  <div class="max-w-6xl mx-auto flex flex-col gap-6">
+
+    <!-- Header do Preview com Toggle de Tema -->
+    <div class="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-4">
+      <div>
+        <h1 class="text-lg font-bold text-zinc-900 dark:text-zinc-100">Preview: Cards do Dashboard Compactos</h1>
+        <p class="text-xs text-zinc-500 dark:text-zinc-400">Layout refinado com cabeçalho sutil, badges compactas e botões inferiores</p>
+      </div>
+      <button 
+        onclick="document.documentElement.classList.toggle('dark')" 
+        class="inline-flex items-center gap-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-1.5 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-700 shadow-sm cursor-pointer transition-colors"
+      >
+        <i data-lucide="moon" class="w-3.5 h-3.5"></i>
+        <span>Alternar Tema Claro/Escuro</span>
+      </button>
+    </div>
+
+    <!-- Grid dos 6 Cards -->
+    <div class="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
+
+      <!-- 1. Objetos -->
+      <div class="flex flex-col overflow-hidden rounded-xl border border-zinc-200/90 bg-white shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
+        <!-- Header -->
+        <div class="flex items-center justify-between border-b border-zinc-100 bg-zinc-50/70 px-3.5 py-2 dark:border-zinc-800 dark:bg-zinc-800/40">
+          <div class="flex items-center gap-2">
+            <span class="flex h-5 w-5 items-center justify-center rounded-md bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
+              <i data-lucide="package" class="h-3 w-3"></i>
+            </span>
+            <h3 class="text-xs font-semibold text-zinc-800 dark:text-zinc-200">Objetos</h3>
+          </div>
+          <a href="#" class="text-[11px] font-medium text-sky-600 hover:text-sky-700 dark:text-sky-400 hover:underline">Ver todos</a>
+        </div>
+        <!-- Body -->
+        <div class="flex flex-1 flex-col justify-between gap-3 p-3">
+          <div class="grid grid-cols-2 gap-2">
+            <div class="flex items-center justify-between rounded-lg bg-emerald-50/80 px-2.5 py-1.5 border border-emerald-200/40 dark:bg-emerald-950/30 dark:border-emerald-900/40">
+              <span class="text-[11px] font-medium text-emerald-700 dark:text-emerald-400">Cadastrados</span>
+              <span class="text-xs font-bold text-emerald-800 dark:text-emerald-300">1</span>
+            </div>
+            <div class="flex items-center justify-between rounded-lg bg-sky-50/80 px-2.5 py-1.5 border border-sky-200/40 dark:bg-sky-950/30 dark:border-sky-900/40">
+              <span class="text-[11px] font-medium text-sky-700 dark:text-sky-400">Vigentes</span>
+              <span class="text-xs font-bold text-sky-800 dark:text-sky-300">1</span>
+            </div>
+          </div>
+          <a href="#" class="flex h-7 items-center justify-center gap-1.5 rounded-lg border border-sky-200 bg-sky-50/70 px-2.5 text-xs font-medium text-sky-700 hover:bg-sky-100 dark:border-sky-800/80 dark:bg-sky-950/40 dark:text-sky-300 dark:hover:bg-sky-900/60 transition-colors">
+            <i data-lucide="plus" class="h-3 w-3"></i>
+            <span>Novo objeto</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- 2. Organizações -->
+      <div class="flex flex-col overflow-hidden rounded-xl border border-zinc-200/90 bg-white shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
+        <!-- Header -->
+        <div class="flex items-center justify-between border-b border-zinc-100 bg-zinc-50/70 px-3.5 py-2 dark:border-zinc-800 dark:bg-zinc-800/40">
+          <div class="flex items-center gap-2">
+            <span class="flex h-5 w-5 items-center justify-center rounded-md bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300">
+              <i data-lucide="building-2" class="h-3 w-3"></i>
+            </span>
+            <h3 class="text-xs font-semibold text-zinc-800 dark:text-zinc-200">Organizações</h3>
+          </div>
+          <a href="#" class="text-[11px] font-medium text-sky-600 hover:text-sky-700 dark:text-sky-400 hover:underline">Ver todas</a>
+        </div>
+        <!-- Body -->
+        <div class="flex flex-1 flex-col justify-between gap-3 p-3">
+          <div class="grid grid-cols-2 gap-2">
+            <div class="flex items-center justify-between rounded-lg bg-emerald-50/80 px-2.5 py-1.5 border border-emerald-200/40 dark:bg-emerald-950/30 dark:border-emerald-900/40">
+              <span class="text-[11px] font-medium text-emerald-700 dark:text-emerald-400">Parceiras</span>
+              <span class="text-xs font-bold text-emerald-800 dark:text-emerald-300">2</span>
+            </div>
+            <div class="flex items-center justify-between rounded-lg bg-zinc-100/80 px-2.5 py-1.5 border border-zinc-200/50 dark:bg-zinc-800/50 dark:border-zinc-700/50">
+              <span class="text-[11px] font-medium text-zinc-600 dark:text-zinc-400">Ativas</span>
+              <span class="text-xs font-bold text-zinc-800 dark:text-zinc-200">2</span>
+            </div>
+          </div>
+          <a href="#" class="flex h-7 items-center justify-center gap-1.5 rounded-lg border border-sky-200 bg-sky-50/70 px-2.5 text-xs font-medium text-sky-700 hover:bg-sky-100 dark:border-sky-800/80 dark:bg-sky-950/40 dark:text-sky-300 dark:hover:bg-sky-900/60 transition-colors">
+            <i data-lucide="plus" class="h-3 w-3"></i>
+            <span>Nova organização</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- 3. Núcleos -->
+      <div class="flex flex-col overflow-hidden rounded-xl border border-zinc-200/90 bg-white shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
+        <!-- Header -->
+        <div class="flex items-center justify-between border-b border-zinc-100 bg-zinc-50/70 px-3.5 py-2 dark:border-zinc-800 dark:bg-zinc-800/40">
+          <div class="flex items-center gap-2">
+            <span class="flex h-5 w-5 items-center justify-center rounded-md bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+              <i data-lucide="map-pin" class="h-3 w-3"></i>
+            </span>
+            <h3 class="text-xs font-semibold text-zinc-800 dark:text-zinc-200">Núcleos</h3>
+          </div>
+          <a href="#" class="text-[11px] font-medium text-sky-600 hover:text-sky-700 dark:text-sky-400 hover:underline">Ver todos</a>
+        </div>
+        <!-- Body -->
+        <div class="flex flex-1 flex-col justify-between gap-3 p-3">
+          <div class="grid grid-cols-2 gap-2">
+            <div class="flex items-center justify-between rounded-lg bg-emerald-50/80 px-2.5 py-1.5 border border-emerald-200/40 dark:bg-emerald-950/30 dark:border-emerald-900/40">
+              <span class="text-[11px] font-medium text-emerald-700 dark:text-emerald-400">Em operação</span>
+              <span class="text-xs font-bold text-emerald-800 dark:text-emerald-300">20</span>
+            </div>
+            <div class="flex items-center justify-between rounded-lg bg-zinc-100/80 px-2.5 py-1.5 border border-zinc-200/50 dark:bg-zinc-800/50 dark:border-zinc-700/50">
+              <span class="text-[11px] font-medium text-zinc-600 dark:text-zinc-400">Total núcleos</span>
+              <span class="text-xs font-bold text-zinc-800 dark:text-zinc-200">20</span>
+            </div>
+          </div>
+          <a href="#" class="flex h-7 items-center justify-center gap-1.5 rounded-lg border border-sky-200 bg-sky-50/70 px-2.5 text-xs font-medium text-sky-700 hover:bg-sky-100 dark:border-sky-800/80 dark:bg-sky-950/40 dark:text-sky-300 dark:hover:bg-sky-900/60 transition-colors">
+            <i data-lucide="plus" class="h-3 w-3"></i>
+            <span>Novo núcleo</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- 4. Turmas e Vagas -->
+      <div class="flex flex-col overflow-hidden rounded-xl border border-zinc-200/90 bg-white shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
+        <!-- Header -->
+        <div class="flex items-center justify-between border-b border-zinc-100 bg-zinc-50/70 px-3.5 py-2 dark:border-zinc-800 dark:bg-zinc-800/40">
+          <div class="flex items-center gap-2">
+            <span class="flex h-5 w-5 items-center justify-center rounded-md bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300">
+              <i data-lucide="users-round" class="h-3 w-3"></i>
+            </span>
+            <h3 class="text-xs font-semibold text-zinc-800 dark:text-zinc-200">Turmas e Vagas</h3>
+          </div>
+          <a href="#" class="text-[11px] font-medium text-sky-600 hover:text-sky-700 dark:text-sky-400 hover:underline">Ver turmas</a>
+        </div>
+        <!-- Body -->
+        <div class="flex flex-1 flex-col justify-between gap-3 p-3">
+          <div class="grid grid-cols-3 gap-1.5">
+            <div class="flex items-center justify-between rounded-lg bg-zinc-100/80 px-2 py-1.5 border border-zinc-200/50 dark:bg-zinc-800/50 dark:border-zinc-700/50">
+              <span class="text-[11px] font-medium text-zinc-600 dark:text-zinc-400 truncate">Turmas</span>
+              <span class="text-xs font-bold text-zinc-800 dark:text-zinc-200 shrink-0 ml-1">40</span>
+            </div>
+            <div class="flex items-center justify-between rounded-lg bg-emerald-50/80 px-2 py-1.5 border border-emerald-200/40 dark:bg-emerald-950/30 dark:border-emerald-900/40">
+              <span class="text-[11px] font-medium text-emerald-700 dark:text-emerald-400 truncate">Livres</span>
+              <span class="text-xs font-bold text-emerald-800 dark:text-emerald-300 shrink-0 ml-1">1196</span>
+            </div>
+            <div class="flex items-center justify-between rounded-lg bg-sky-50/80 px-2 py-1.5 border border-sky-200/40 dark:bg-sky-950/30 dark:border-sky-900/40">
+              <span class="text-[11px] font-medium text-sky-700 dark:text-sky-400 truncate">Ocupação</span>
+              <span class="text-xs font-bold text-sky-800 dark:text-sky-300 shrink-0 ml-1">0.3%</span>
+            </div>
+          </div>
+          <a href="#" class="flex h-7 items-center justify-center gap-1.5 rounded-lg border border-sky-200 bg-sky-50/70 px-2.5 text-xs font-medium text-sky-700 hover:bg-sky-100 dark:border-sky-800/80 dark:bg-sky-950/40 dark:text-sky-300 dark:hover:bg-sky-900/60 transition-colors">
+            <i data-lucide="plus" class="h-3 w-3"></i>
+            <span>Nova turma</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- 5. Beneficiários -->
+      <div class="flex flex-col overflow-hidden rounded-xl border border-zinc-200/90 bg-white shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
+        <!-- Header -->
+        <div class="flex items-center justify-between border-b border-zinc-100 bg-zinc-50/70 px-3.5 py-2 dark:border-zinc-800 dark:bg-zinc-800/40">
+          <div class="flex items-center gap-2">
+            <span class="flex h-5 w-5 items-center justify-center rounded-md bg-teal-100 text-teal-700 dark:bg-teal-950 dark:text-teal-300">
+              <i data-lucide="users" class="h-3 w-3"></i>
+            </span>
+            <h3 class="text-xs font-semibold text-zinc-800 dark:text-zinc-200">Beneficiários</h3>
+          </div>
+          <a href="#" class="text-[11px] font-medium text-sky-600 hover:text-sky-700 dark:text-sky-400 hover:underline">Ver todos</a>
+        </div>
+        <!-- Body -->
+        <div class="flex flex-1 flex-col justify-between gap-3 p-3">
+          <div class="grid grid-cols-2 gap-2">
+            <div class="flex items-center justify-between rounded-lg bg-emerald-50/80 px-2.5 py-1.5 border border-emerald-200/40 dark:bg-emerald-950/30 dark:border-emerald-900/40">
+              <span class="text-[11px] font-medium text-emerald-700 dark:text-emerald-400">Ativos</span>
+              <span class="text-xs font-bold text-emerald-800 dark:text-emerald-300">3</span>
+            </div>
+            <div class="flex items-center justify-between rounded-lg bg-zinc-100/80 px-2.5 py-1.5 border border-zinc-200/50 dark:bg-zinc-800/50 dark:border-zinc-700/50">
+              <span class="text-[11px] font-medium text-zinc-600 dark:text-zinc-400">Total</span>
+              <span class="text-xs font-bold text-zinc-800 dark:text-zinc-200">5</span>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-1.5">
+            <a href="#" class="flex h-7 items-center justify-center gap-1 rounded-lg border border-sky-200 bg-sky-50/70 px-2 text-[11px] font-medium text-sky-700 hover:bg-sky-100 dark:border-sky-800/80 dark:bg-sky-950/40 dark:text-sky-300 dark:hover:bg-sky-900/60 transition-colors">
+              <i data-lucide="plus" class="h-3 w-3"></i>
+              <span>Novo</span>
+            </a>
+            <button class="flex h-7 items-center justify-center gap-1 rounded-lg border border-sky-200 bg-sky-50/70 px-2 text-[11px] font-medium text-sky-700 hover:bg-sky-100 dark:border-sky-800/80 dark:bg-sky-950/40 dark:text-sky-300 dark:hover:bg-sky-900/60 cursor-pointer transition-colors">
+              <i data-lucide="link-2" class="h-3 w-3"></i>
+              <span>Links</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. Pessoal -->
+      <div class="flex flex-col overflow-hidden rounded-xl border border-zinc-200/90 bg-white shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
+        <!-- Header -->
+        <div class="flex items-center justify-between border-b border-zinc-100 bg-zinc-50/70 px-3.5 py-2 dark:border-zinc-800 dark:bg-zinc-800/40">
+          <div class="flex items-center gap-2">
+            <span class="flex h-5 w-5 items-center justify-center rounded-md bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300">
+              <i data-lucide="user-check" class="h-3 w-3"></i>
+            </span>
+            <h3 class="text-xs font-semibold text-zinc-800 dark:text-zinc-200">Pessoal</h3>
+          </div>
+          <a href="#" class="text-[11px] font-medium text-sky-600 hover:text-sky-700 dark:text-sky-400 hover:underline">Ver todos</a>
+        </div>
+        <!-- Body -->
+        <div class="flex flex-1 flex-col justify-between gap-3 p-3">
+          <div class="grid grid-cols-2 gap-2">
+            <div class="flex items-center justify-between rounded-lg bg-emerald-50/80 px-2.5 py-1.5 border border-emerald-200/40 dark:bg-emerald-950/30 dark:border-emerald-900/40">
+              <span class="text-[11px] font-medium text-emerald-700 dark:text-emerald-400">Contratados</span>
+              <span class="text-xs font-bold text-emerald-800 dark:text-emerald-300">21</span>
+            </div>
+            <div class="flex items-center justify-between rounded-lg bg-amber-50/80 px-2.5 py-1.5 border border-amber-200/40 dark:bg-amber-950/30 dark:border-amber-900/40">
+              <span class="text-[11px] font-medium text-amber-700 dark:text-amber-400">Em licença</span>
+              <span class="text-xs font-bold text-amber-800 dark:text-amber-300">0</span>
+            </div>
+          </div>
+          <a href="#" class="flex h-7 items-center justify-center gap-1.5 rounded-lg border border-sky-200 bg-sky-50/70 px-2.5 text-xs font-medium text-sky-700 hover:bg-sky-100 dark:border-sky-800/80 dark:bg-sky-950/40 dark:text-sky-300 dark:hover:bg-sky-900/60 transition-colors">
+            <i data-lucide="plus" class="h-3 w-3"></i>
+            <span>Novo funcionário</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>
