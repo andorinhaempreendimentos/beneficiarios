@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import { MapPin } from "lucide-react";
 import { useDicionario } from "@/components/providers/DictionaryProvider";
 
 export interface NucleoMapaData {
@@ -192,9 +193,11 @@ export function MapaPolos({ nucleos, atividades = [], className = "" }: MapaPolo
       {/* Header com Título e Filtros */}
       <div className="flex flex-col gap-3 border-b border-zinc-200 bg-zinc-50/80 p-3 sm:flex-row sm:items-center sm:justify-between dark:border-zinc-800 dark:bg-zinc-800/50">
         <div className="flex items-center gap-2">
-          <span className="h-3 w-3 rounded-xs bg-amber-400" />
+          <span className="flex h-5 w-5 items-center justify-center rounded-md bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+            <MapPin className="h-3.5 w-3.5" />
+          </span>
           <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-800 dark:text-zinc-200">
-            {t("mapa_polos", "Mapa dos Polos", true)}
+            Mapa dos Núcleos
           </h3>
           <span className="ml-1 rounded-full bg-zinc-200/80 px-2 py-0.5 text-[11px] font-semibold text-zinc-700 dark:bg-zinc-700 dark:text-zinc-300">
             {nucleosComCoords.length}
