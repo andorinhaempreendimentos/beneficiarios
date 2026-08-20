@@ -173,9 +173,9 @@ export function MapaPolos({ nucleos, atividades = [], className = "" }: MapaPolo
         markersRef.current.push(marker);
       });
 
-      // Se filtrou um único núcleo, centralizar nele com zoom mais próximo
+      // Se filtrou um único núcleo, centralizar nele com zoom de rua aproximado
       if (bounds.length === 1) {
-        map.setView(bounds[0], 15);
+        map.flyTo(bounds[0], 17, { duration: 1.2 });
       } else if (bounds.length > 1) {
         map.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
       }
