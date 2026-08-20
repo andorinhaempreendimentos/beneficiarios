@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
-import { MapPin } from "lucide-react";
+import { MapPin, ExternalLink } from "lucide-react";
 import { useDicionario } from "@/components/providers/DictionaryProvider";
 
 export interface NucleoMapaData {
@@ -325,14 +325,14 @@ export function MapaPolos({ nucleos, atividades = [], className = "" }: MapaPolo
             </div>
 
             {/* Endereço */}
-            <div className="text-xs text-zinc-600 dark:text-zinc-300 italic flex flex-col gap-1 border-t border-zinc-100 pt-2 dark:border-zinc-800">
+            <div className="text-xs text-zinc-600 dark:text-zinc-300 italic flex flex-col gap-1.5 border-t border-zinc-100 pt-2.5 dark:border-zinc-800">
               <p>
                 {[
                   nucleoSelecionado.endereco,
                   nucleoSelecionado.numero ? `nº ${nucleoSelecionado.numero}` : "SN",
                   nucleoSelecionado.bairro,
-                  nucleoSelecionado.cidade || "Palmas",
-                  nucleoSelecionado.estado || "TO",
+                  nucleoSelecionado.cidade,
+                  nucleoSelecionado.estado,
                 ]
                   .filter(Boolean)
                   .join(", ")}
@@ -343,6 +343,33 @@ export function MapaPolos({ nucleos, atividades = [], className = "" }: MapaPolo
                   <strong>Complemento:</strong> {nucleoSelecionado.complemento}
                 </p>
               )}
+
+              {/* Botão Google Maps */}
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                  [
+                    nucleoSelecionado.endereco,
+                    nucleoSelecionado.numero ? `nº ${nucleoSelecionado.numero}` : "SN",
+                    nucleoSelecionado.bairro,
+                    nucleoSelecionado.cidade,
+                    nucleoSelecionado.estado,
+                    nucleoSelecionado.cep ? `CEP ${nucleoSelecionado.cep}` : "",
+                  ]
+                    .filter(Boolean)
+                    .join(", ")
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-1 inline-flex items-center justify-between gap-2 rounded-lg border border-zinc-200 bg-zinc-50/80 px-2.5 py-1.5 text-xs font-medium not-italic text-zinc-700 hover:bg-sky-50 hover:border-sky-200 hover:text-sky-700 dark:border-zinc-700 dark:bg-zinc-800/80 dark:text-zinc-200 dark:hover:bg-sky-950/50 dark:hover:border-sky-800 dark:hover:text-sky-300 transition-all shadow-2xs cursor-pointer"
+              >
+                <div className="flex items-center gap-1.5">
+                  <svg className="h-3.5 w-3.5 shrink-0 text-sky-600 dark:text-sky-400" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                  </svg>
+                  <span>Ver no Google Maps</span>
+                </div>
+                <ExternalLink className="h-3 w-3 opacity-60" />
+              </a>
             </div>
           </div>
         )}
