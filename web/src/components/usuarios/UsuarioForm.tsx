@@ -134,8 +134,9 @@ export function UsuarioForm({ usuario: u, perfis = [], backHref }: UsuarioFormPr
                 className="h-4 w-4 rounded border-zinc-300 text-sky-600 focus:ring-sky-500"
               />
               <span className="text-sm font-medium text-zinc-800">
-                Este usuário é um Professor / Instrutor Esportivo
+                Este usuário é um Professor / Instrutor
               </span>
+
             </label>
           </Field>
         </div>

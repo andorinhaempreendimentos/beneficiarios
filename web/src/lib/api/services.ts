@@ -1221,10 +1221,9 @@ export const funcionariosApi = {
   async list(p?: QP): Promise<Paginated<FuncionarioApi>> {
     const sb = await getSupabase();
     const { page, limit, from, to } = paginar(num(p?.page), num(p?.limit));
-    let q = sb.from('funcionarios').select('*', { count: 'exact' }).is('deleted_at', null);
+    let q = sb.from('funcionarios').select('*, funcoes:funcao_id(id, nome, perfil_id, permite_login, exige_conselho)', { count: 'exact' }).is('deleted_at', null);
     if (p?.busca) q = q.ilike('nome_completo', `%${p.busca}%`);
     if (p?.funcaoId) q = q.eq('funcao_id', String(p.funcaoId));
-    if (p?.funcao) q = q.eq('funcao', String(p.funcao));
     if (p?.status) {
       const valores = String(p.status).split(',').filter(Boolean);
       q = valores.length > 1 ? q.in('status', valores) : q.eq('status', valores[0]);
@@ -1237,7 +1236,7 @@ export const funcionariosApi = {
   },
   async get(id: string): Promise<FuncionarioApi> {
     const sb = await getSupabase();
-    const { data, error } = await sb.from('funcionarios').select('*').eq('id', id).single();
+    const { data, error } = await sb.from('funcionarios').select('*, funcoes:funcao_id(id, nome, perfil_id, permite_login, exige_conselho)').eq('id', id).single();
     if (error) throw error;
     return mapFuncionario(data);
   },
@@ -1282,20 +1281,13 @@ export const funcionariosApi = {
   },
 };
 
-/** Resolve perfil_id do cargo da tabela funcoes e sincroniza o usuario correspondente */
+/** Resolve perfil_id do cargo da tabela funcoes via funcao_id e sincroniza o usuario */
 async function resolverESincronizar(sb: ReturnType<typeof createClient>, data: any) {
   let funcDb: any = null;
   if (data.funcao_id) {
     const { data: f } = await (sb.from('funcoes' as any) as any)
       .select('id, nome, permite_login, perfil_id')
       .eq('id', data.funcao_id)
-      .maybeSingle();
-    funcDb = f;
-  }
-  if (!funcDb && data.funcao) {
-    const { data: f } = await (sb.from('funcoes' as any) as any)
-      .select('id, nome, permite_login, perfil_id')
-      .ilike('nome', data.funcao)
       .maybeSingle();
     funcDb = f;
   }
@@ -1313,11 +1305,9 @@ export async function sincronizarTodosFuncionariosUsuarios() {
 
   const { data: funcoesDb } = await (sb.from('funcoes' as any) as any).select('id, nome, permite_login, perfil_id');
   const funcoesMapById = new Map((funcoesDb ?? []).map((fd: any) => [fd.id, fd]));
-  const funcoesMapByName = new Map((funcoesDb ?? []).map((fd: any) => [String(fd.nome).toLowerCase(), fd]));
 
   for (const f of funcs) {
-    const funcDb: any = (f.funcao_id ? funcoesMapById.get(f.funcao_id) : null) ||
-      (f.funcao ? funcoesMapByName.get(String(f.funcao).toLowerCase()) : null);
+    const funcDb: any = f.funcao_id ? funcoesMapById.get(f.funcao_id) : null;
     const permite = Boolean(funcDb?.permite_login);
     const perfilId: string | undefined = funcDb?.perfil_id ?? undefined;
 
@@ -1385,7 +1375,6 @@ function toFuncionarioRow(b: Record<string, unknown>): Database['public']['Table
     nome_completo: b.nomeCompleto as string,
     foto_url: b.fotoUrl as string | null | undefined,
     status: b.status as string | undefined,
-    funcao: b.funcao as string | null | undefined,
     funcao_id: uuidOrNull(b.funcaoId) as any,
     professor_responsavel: b.professorResponsavel as boolean | undefined,
     data_admissao: b.dataAdmissao as string | null | undefined,
@@ -1401,6 +1390,7 @@ function toFuncionarioRow(b: Record<string, unknown>): Database['public']['Table
     remuneracao: b.remuneracao as number | null | undefined,
   } as any;
 }
+
 
 
 // ── Equipamentos ─────────────────────────────────────────────────────────

@@ -25,7 +25,7 @@ const DIAS_SEMANA: DiaJornada["dia"][] = [
 const funcionarioSchema = z.object({
   nomeCompleto: z.string().min(3, "Nome deve ter pelo menos 3 caracteres."),
   cpf: z.string().min(11, "CPF inválido."),
-  funcao: z.string().min(1, "Função é obrigatória."),
+  funcaoId: z.string().min(1, "Função é obrigatória."),
 });
 
 type FieldErrors = Partial<Record<string, string>>;
@@ -107,16 +107,15 @@ export function FuncionarioForm({ funcionario: f, nucleos = [], funcoes = [], ba
       dataNascimento: formData.get("dataNascimento") as string,
       celular: formData.get("celular") as string,
       email: emailVal.trim(),
-      funcaoId: funcaoObj?.id || f?.funcaoId || null,
-      funcao: funcaoNome,
+      funcaoId: funcaoObj?.id || f?.funcaoId || "",
       status: (formData.get("status") as string) || "ativo",
-
       nucleoId: (formData.get("nucleoId") as string) || null,
       alocadoEm: (formData.get("alocadoEm") as string) || "Administração",
       professorResponsavel,
       permitirLogin: categoriaPermiteLogin,
       senhaLogin: senhaNova.trim() || undefined,
     };
+
 
     const validation = funcionarioSchema.safeParse(data);
     if (!validation.success) {
@@ -237,12 +236,13 @@ export function FuncionarioForm({ funcionario: f, nucleos = [], funcoes = [], ba
       {/* Vínculo e Função */}
       <FormSection title="Vínculo Institucional & Cargo">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <Field label="Cargo / Função (RH)" required error={fieldErrors.funcao}>
+          <Field label="Cargo / Função (RH)" required error={fieldErrors.funcaoId}>
             <Select
               name="funcaoId"
               value={funcaoId}
               onChange={(e) => setFuncaoId(e.target.value)}
             >
+
               {funcoes.map((fn) => (
                 <option key={fn.id} value={fn.id}>{fn.nome}</option>
               ))}

@@ -39,7 +39,8 @@ import { StatusFuncionarioBadge } from "@/components/funcionarios/StatusFunciona
 import { useLocationFilter } from "@/components/providers/LocationFilterProvider";
 
 const PER_PAGE = 15;
-const EMPTY = { busca: "", funcao: "", status: "", admissaoDe: "", admissaoAte: "" };
+const EMPTY = { busca: "", funcaoId: "", status: "", admissaoDe: "", admissaoAte: "" };
+
 
 export default function FuncionariosPage() {
   const { toast } = useToast();
@@ -196,13 +197,14 @@ export default function FuncionariosPage() {
             onChange={(e) => setCampo("busca", e.target.value)} />
         </Field>
         <Field label="Função">
-          <Select value={filtros.funcao} onChange={(e) => setCampo("funcao", e.target.value)}>
+          <Select value={filtros.funcaoId} onChange={(e) => setCampo("funcaoId", e.target.value)}>
             <option value="">Todas as funções</option>
             {funcoes.map((fn) => (
-              <option key={fn.id} value={fn.nome}>{fn.nome}</option>
+              <option key={fn.id} value={fn.id}>{fn.nome}</option>
             ))}
           </Select>
         </Field>
+
         <Field label="Status">
           <Select value={filtros.status} onChange={(e) => setCampo("status", e.target.value)}>
             <option value="">Todos os status</option>
