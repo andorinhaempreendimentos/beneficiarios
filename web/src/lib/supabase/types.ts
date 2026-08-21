@@ -711,6 +711,7 @@ export type Database = {
           email: string | null
           foto_url: string | null
           funcao: string | null
+          funcao_id: string | null
           id: string
           matricula: string
           nome_completo: string
@@ -734,6 +735,7 @@ export type Database = {
           email?: string | null
           foto_url?: string | null
           funcao?: string | null
+          funcao_id?: string | null
           id?: string
           matricula: string
           nome_completo: string
@@ -757,6 +759,7 @@ export type Database = {
           email?: string | null
           foto_url?: string | null
           funcao?: string | null
+          funcao_id?: string | null
           id?: string
           matricula?: string
           nome_completo?: string
@@ -767,6 +770,7 @@ export type Database = {
           status?: string
           updated_at?: string
         }
+
         Relationships: [
           {
             foreignKeyName: "funcionarios_nucleo_id_fkey"

@@ -16,15 +16,7 @@ import {
 } from "@/components/ui";
 import type { DiaJornada } from "@/lib/types";
 import { statusFuncionarioLabel } from "@/lib/status";
-import { funcionariosApi, type FuncionarioApi, type NucleoApi } from "@/lib/api/services";
-
-const CARGOS_PADRAO = [
-  "Professor / Instrutor",
-  "Coordenador de Núcleo",
-  "Coordenador de Turma",
-  "Coordenador de Instrutores",
-  "Staff",
-];
+import { funcionariosApi, type FuncionarioApi, type NucleoApi, type FuncaoApi } from "@/lib/api/services";
 
 const DIAS_SEMANA: DiaJornada["dia"][] = [
   "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo",
@@ -41,26 +33,30 @@ type FieldErrors = Partial<Record<string, string>>;
 interface FuncionarioFormProps {
   funcionario?: FuncionarioApi;
   nucleos?: NucleoApi[];
-  funcoes?: { id: string; nome: string }[];
+  funcoes?: FuncaoApi[];
   backHref: string;
 }
 
 export function FuncionarioForm({ funcionario: f, nucleos = [], funcoes = [], backHref }: FuncionarioFormProps) {
-  const listaFuncoes = funcoes.length > 0 ? funcoes.map((fn) => fn.nome) : CARGOS_PADRAO;
-  
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   
   // Dados do Funcionário
-  const [funcao, setFuncao] = useState<string>((f?.funcao as string) || "Professor / Instrutor");
+  const [funcaoId, setFuncaoId] = useState<string>(
+    f?.funcaoId || funcoes.find((fn) => fn.nome === f?.funcao)?.id || (funcoes[0]?.id ?? "")
+  );
+
+  const funcaoObj = funcoes.find((fn) => fn.id === funcaoId) || funcoes.find((fn) => fn.nome === f?.funcao);
+  const funcaoNome = funcaoObj?.nome || f?.funcao || "";
+
   const [emailVal, setEmailVal] = useState<string>(f?.email || "");
   const [erroEmail, setErroEmail] = useState<string | null>(null);
   const [checandoEmail, setChecandoEmail] = useState(false);
   const [professorResponsavel, setProfessorResponsavel] = useState(f?.professorResponsavel ?? false);
   
-  // Credenciais de Acesso (Geridas pela Categoria do Cargo)
-  const categoriaPermiteLogin = funcao !== "Staff";
+  // Credenciais de Acesso (Geridas dinamicamente pela Categoria do Cargo)
+  const categoriaPermiteLogin = funcaoObj ? funcaoObj.permiteLogin : (funcaoNome !== "Staff");
   const [senhaNova, setSenhaNova] = useState<string>("");
   const [mostrarSenha, setMostrarSenha] = useState<boolean>(false);
 
@@ -71,7 +67,8 @@ export function FuncionarioForm({ funcionario: f, nucleos = [], funcoes = [], ba
   const [entradaPadrao, setEntradaPadrao] = useState("08:00");
   const [saidaPadrao, setSaidaPadrao] = useState("17:00");
 
-  const exigeConselho = funcao === "Fisioterapeuta" || funcao === "Técnico de Enfermagem";
+  const exigeConselho = funcaoObj ? Boolean(funcaoObj.exigeConselho) : false;
+
 
   // Checagem de unicidade de e-mail em tempo real (onBlur)
   async function handleBlurEmail() {
@@ -110,8 +107,10 @@ export function FuncionarioForm({ funcionario: f, nucleos = [], funcoes = [], ba
       dataNascimento: formData.get("dataNascimento") as string,
       celular: formData.get("celular") as string,
       email: emailVal.trim(),
-      funcao: funcao,
+      funcaoId: funcaoObj?.id || f?.funcaoId || null,
+      funcao: funcaoNome,
       status: (formData.get("status") as string) || "ativo",
+
       nucleoId: (formData.get("nucleoId") as string) || null,
       alocadoEm: (formData.get("alocadoEm") as string) || "Administração",
       professorResponsavel,
@@ -240,15 +239,16 @@ export function FuncionarioForm({ funcionario: f, nucleos = [], funcoes = [], ba
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <Field label="Cargo / Função (RH)" required error={fieldErrors.funcao}>
             <Select
-              name="funcao"
-              value={funcao}
-              onChange={(e) => setFuncao(e.target.value)}
+              name="funcaoId"
+              value={funcaoId}
+              onChange={(e) => setFuncaoId(e.target.value)}
             >
-              {listaFuncoes.map((fn) => (
-                <option key={fn} value={fn}>{fn}</option>
+              {funcoes.map((fn) => (
+                <option key={fn.id} value={fn.id}>{fn.nome}</option>
               ))}
             </Select>
           </Field>
+
 
           <Field label="Status do Vínculo" required>
             <Select name="status" defaultValue={f?.status ?? "ativo"}>
@@ -320,8 +320,9 @@ export function FuncionarioForm({ funcionario: f, nucleos = [], funcoes = [], ba
                   {categoriaPermiteLogin ? "Acesso ao Painel Permitido" : "Acesso ao Painel Bloqueado para esta Categoria"}
                 </h4>
                 <p className="text-xs text-zinc-500 mt-0.5">
-                  Regra herdada do perfil de acesso: <span className="font-bold text-sky-900 bg-sky-100 px-1.5 py-0.5 rounded">{funcao}</span>
+                  Regra herdada do perfil de acesso: <span className="font-bold text-sky-900 bg-sky-100 px-1.5 py-0.5 rounded">{funcaoNome}</span>
                 </p>
+
               </div>
             </div>
 
@@ -370,8 +371,9 @@ export function FuncionarioForm({ funcionario: f, nucleos = [], funcoes = [], ba
             </div>
           ) : (
             <p className="text-xs text-zinc-600 font-medium bg-white p-3 rounded-lg border border-zinc-200">
-              🔒 Os colaboradores cadastrados na categoria <strong>{funcao}</strong> não possuem permissão de login no painel. Para habilitar acesso, altere o cargo ou a regra do perfil em <em>Configurações &gt; Permissões RBAC</em>.
+              🔒 Os colaboradores cadastrados na categoria <strong>{funcaoNome}</strong> não possuem permissão de login no painel. Para habilitar acesso, altere o cargo ou a regra do perfil em <em>Configurações &gt; Permissões RBAC</em>.
             </p>
+
           )}
         </div>
       </FormSection>

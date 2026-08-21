@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Trash2, Edit2, CheckCircle2, Shield, Key, Lock } from "lucide-react";
-import { Badge, Button, Card, Field, Input, Switch, Textarea } from "@/components/ui";
-import { funcoesApi, type FuncaoApi } from "@/lib/api/services";
+import { Plus, Trash2, Edit2, CheckCircle2, Shield, Key, Lock, ShieldCheck } from "lucide-react";
+import { Badge, Button, Card, Field, Input, Select, Switch, Textarea } from "@/components/ui";
+import { funcoesApi, perfisApi, type FuncaoApi, type PerfilApi } from "@/lib/api/services";
 import { useToast } from "@/components/providers/ToastProvider";
+import { useQuery } from "@/lib/hooks/useQuery";
 
 interface FuncoesManagerProps {
   inicialFuncoes: FuncaoApi[];
@@ -12,9 +13,13 @@ interface FuncoesManagerProps {
 
 export function FuncoesManager({ inicialFuncoes }: FuncoesManagerProps) {
   const { toast } = useToast();
+  const { data: perfisRes } = useQuery(() => perfisApi.list({ limit: 100 }), []);
+  const perfis = perfisRes?.data ?? [];
+
   const [funcoes, setFuncoes] = useState<FuncaoApi[]>(inicialFuncoes);
   const [nome, setNome] = useState("");
   const [descricao, setDescricao] = useState("");
+  const [perfilId, setPerfilId] = useState("");
   const [permiteLogin, setPermiteLogin] = useState(true);
   const [exigeConselho, setExigeConselho] = useState(false);
   const [editandoId, setEditandoId] = useState<string | null>(null);
@@ -26,6 +31,10 @@ export function FuncoesManager({ inicialFuncoes }: FuncoesManagerProps) {
       toast.error("Por favor, informe o nome da função.");
       return;
     }
+    if (!perfilId) {
+      toast.error("Por favor, selecione o perfil de acesso vinculado.");
+      return;
+    }
 
     setLoading(true);
     try {
@@ -35,8 +44,9 @@ export function FuncoesManager({ inicialFuncoes }: FuncoesManagerProps) {
           descricao: descricao.trim() || undefined,
           permiteLogin,
           exigeConselho,
+          perfilId,
         });
-        setFuncoes((prev) => prev.map((f) => (f.id === editandoId ? { ...f, ...atualizada, permiteLogin, exigeConselho } : f)));
+        setFuncoes((prev) => prev.map((f) => (f.id === editandoId ? { ...f, ...atualizada, permiteLogin, exigeConselho, perfilId } : f)));
         toast.success("Função atualizada com sucesso!");
       } else {
         const nova = await funcoesApi.create({
@@ -44,8 +54,9 @@ export function FuncoesManager({ inicialFuncoes }: FuncoesManagerProps) {
           descricao: descricao.trim() || undefined,
           permiteLogin,
           exigeConselho,
+          perfilId,
         });
-        setFuncoes((prev) => [...prev, { ...nova, permiteLogin, exigeConselho }]);
+        setFuncoes((prev) => [...prev, { ...nova, permiteLogin, exigeConselho, perfilId }]);
         toast.success("Nova função cadastrada!");
       }
       limparForm();
@@ -60,6 +71,7 @@ export function FuncoesManager({ inicialFuncoes }: FuncoesManagerProps) {
     setEditandoId(f.id);
     setNome(f.nome);
     setDescricao(f.descricao || "");
+    setPerfilId(f.perfilId || "");
     setPermiteLogin(f.permiteLogin ?? true);
     setExigeConselho(f.exigeConselho ?? false);
   }
@@ -79,9 +91,11 @@ export function FuncoesManager({ inicialFuncoes }: FuncoesManagerProps) {
     setEditandoId(null);
     setNome("");
     setDescricao("");
+    setPerfilId("");
     setPermiteLogin(true);
     setExigeConselho(false);
   }
+
 
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -105,6 +119,18 @@ export function FuncoesManager({ inicialFuncoes }: FuncoesManagerProps) {
               onChange={(e) => setDescricao(e.target.value)}
               rows={3}
             />
+          </Field>
+
+          <Field label="Perfil de Acesso Vinculado (RBAC)" required>
+            <Select
+              value={perfilId}
+              onChange={(e) => setPerfilId(e.target.value)}
+            >
+              <option value="">Selecione o perfil de acesso...</option>
+              {perfis.map((p) => (
+                <option key={p.id} value={p.id}>{p.nome}</option>
+              ))}
+            </Select>
           </Field>
 
           {/* Toggle de Direito a Login */}
@@ -168,6 +194,7 @@ export function FuncoesManager({ inicialFuncoes }: FuncoesManagerProps) {
           <div className="divide-y divide-zinc-100">
             {funcoes.map((f) => {
               const temLogin = f.permiteLogin ?? (f.nome !== "Staff");
+              const perfilVinculado = perfis.find((p) => p.id === f.perfilId);
               return (
                 <div key={f.id} className="py-3.5 flex items-center justify-between gap-4 hover:bg-zinc-50/60 p-2 rounded-xl transition-colors">
                   <div className="flex items-start gap-3">
@@ -177,6 +204,11 @@ export function FuncoesManager({ inicialFuncoes }: FuncoesManagerProps) {
                     <div>
                       <div className="flex flex-wrap items-center gap-1.5">
                         <h4 className="font-semibold text-zinc-900 text-sm">{f.nome}</h4>
+                        {perfilVinculado && (
+                          <Badge tone="sky">
+                            <ShieldCheck className="h-3 w-3 mr-1 inline" /> {perfilVinculado.nome}
+                          </Badge>
+                        )}
                         {temLogin ? (
                           <Badge tone="green">
                             <Key className="h-3 w-3 mr-1 inline" /> Login
@@ -187,10 +219,11 @@ export function FuncoesManager({ inicialFuncoes }: FuncoesManagerProps) {
                           </Badge>
                         )}
                         {f.exigeConselho && (
-                          <Badge tone="sky">
+                          <Badge tone="violet">
                             <Shield className="h-3 w-3 mr-1 inline" /> Conselho Obrigatório
                           </Badge>
                         )}
+
                       </div>
                       {f.descricao ? (
                         <p className="text-xs text-zinc-500 mt-0.5">{f.descricao}</p>
@@ -199,6 +232,7 @@ export function FuncoesManager({ inicialFuncoes }: FuncoesManagerProps) {
                       )}
                     </div>
                   </div>
+
                   <div className="flex items-center gap-1.5 shrink-0">
                     <button
                       type="button"

@@ -281,6 +281,7 @@ export interface FuncionarioApi {
   fotoUrl?: string;
   status: string;
   funcao?: string;
+  funcaoId?: string;
   professorResponsavel: boolean;
   dataAdmissao?: string;
   dataDemissao?: string;
@@ -288,6 +289,7 @@ export interface FuncionarioApi {
   alocadoEm?: string;
   criadoEm: string;
 }
+
 
 export interface EquipamentoApi {
   id: string;
@@ -496,12 +498,14 @@ function mapFuncionario(r: any): FuncionarioApi {
     observacao: r.observacao ?? undefined,
     jornada: r.jornada ?? [],
     fotoUrl: r.foto_url ?? undefined, status: r.status, funcao: r.funcao ?? undefined,
+    funcaoId: r.funcao_id ?? undefined,
     professorResponsavel: r.professor_responsavel,
     dataAdmissao: r.data_admissao ?? undefined, dataDemissao: r.data_demissao ?? undefined,
     nucleoId: r.nucleo_id ?? undefined, alocadoEm: r.alocado_em ?? undefined,
     criadoEm: r.created_at,
   };
 }
+
 
 function mapEquipamento(r: any): EquipamentoApi {
   return {
@@ -1148,9 +1152,9 @@ export interface FuncaoApi {
   id: string;
   nome: string;
   descricao?: string;
-  permiteLogin?: boolean;
-  exigeConselho?: boolean;
-  perfilId?: string;
+  permiteLogin: boolean;
+  exigeConselho: boolean;
+  perfilId: string;
   criadoEm: string;
 }
 
@@ -1159,59 +1163,54 @@ function mapFuncao(r: any): FuncaoApi {
     id: r.id,
     nome: r.nome,
     descricao: r.descricao ?? undefined,
-    permiteLogin: r.permite_login ?? r.permiteLogin ?? true,
-    exigeConselho: r.exige_conselho ?? r.exigeConselho ?? false,
-    perfilId: r.perfil_id ?? undefined,
+    permiteLogin: Boolean(r.permite_login ?? r.permiteLogin ?? false),
+    exigeConselho: Boolean(r.exige_conselho ?? r.exigeConselho ?? false),
+    perfilId: r.perfil_id ?? '',
     criadoEm: r.created_at,
   };
 }
 
-// UUIDs fixos dos perfis (fonte de verdade estável)
-const PERFIL_PROFESSOR    = 'b9def33a-a2a0-477d-8580-ec213d642808';
-const PERFIL_COORD_NUCLEO = '1bea5f77-95ef-4969-bf87-4cd4647f6c0a';
-const PERFIL_COORD_TURMA  = '698c2c08-3606-4276-b554-17b576d5d12b';
-const PERFIL_COORD_INST   = '7f9706e8-d9f9-4953-9e1f-e0f7e87b25e3';
-
-const CARGOS_OFICIAIS: FuncaoApi[] = [
-  { id: 'cargo-1', nome: 'Professor / Instrutor',       descricao: 'Aulas práticas nos núcleos e chamada de alunos.',                   permiteLogin: true,  exigeConselho: false, perfilId: PERFIL_PROFESSOR,    criadoEm: new Date().toISOString() },
-  { id: 'cargo-2', nome: 'Coordenador de Núcleo',       descricao: 'Gestão do polo esportivo físico, infraestrutura e equipamentos.',    permiteLogin: true,  exigeConselho: false, perfilId: PERFIL_COORD_NUCLEO, criadoEm: new Date().toISOString() },
-  { id: 'cargo-3', nome: 'Coordenador de Turma',        descricao: 'Gestão de horários, vagas e turmas específicas.',                   permiteLogin: true,  exigeConselho: false, perfilId: PERFIL_COORD_TURMA,  criadoEm: new Date().toISOString() },
-  { id: 'cargo-4', nome: 'Coordenador de Instrutores',  descricao: 'Supervisão técnica, pedagógica e equipe de professores.',           permiteLogin: true,  exigeConselho: false, perfilId: PERFIL_COORD_INST,   criadoEm: new Date().toISOString() },
-  { id: 'cargo-5', nome: 'Fisioterapeuta',              descricao: 'Atendimento e reabilitação física dos alunos do projeto.',          permiteLogin: true,  exigeConselho: true,  perfilId: undefined,           criadoEm: new Date().toISOString() },
-  { id: 'cargo-6', nome: 'Técnico de Enfermagem',       descricao: 'Suporte de primeiros socorros e saúde básica nos eventos.',         permiteLogin: true,  exigeConselho: true,  perfilId: undefined,           criadoEm: new Date().toISOString() },
-  { id: 'cargo-7', nome: 'Staff',                       descricao: 'Apoio administrativo, logística, recepção e operações.',           permiteLogin: false, exigeConselho: false, perfilId: undefined,           criadoEm: new Date().toISOString() },
-];
-
+// UUID do perfil Professor / Instrutor para sinalizador is_professor
+const PERFIL_PROFESSOR = 'b9def33a-a2a0-477d-8580-ec213d642808';
 
 export const funcoesApi = {
   async list(): Promise<FuncaoApi[]> {
     const sb = await getSupabase();
-    const { data } = await sb.from('funcoes' as any).select('*').is('deleted_at', null).order('created_at', { ascending: true });
-    if (data && data.length > 0) return data.map(mapFuncao);
-    return CARGOS_OFICIAIS;
+    const { data } = await (sb.from('funcoes' as any) as any)
+      .select('*')
+      .is('deleted_at', null)
+      .order('nome', { ascending: true });
+    return (data ?? []).map(mapFuncao);
   },
-  async create(body: { nome: string; descricao?: string; permiteLogin?: boolean; exigeConselho?: boolean }): Promise<FuncaoApi> {
+  async create(body: { nome: string; descricao?: string; permiteLogin?: boolean; exigeConselho?: boolean; perfilId: string }): Promise<FuncaoApi> {
     const sb = createClient();
-    const payload = { nome: body.nome, descricao: body.descricao, permite_login: body.permiteLogin, exige_conselho: body.exigeConselho };
-    const { data, error } = await sb.from('funcoes' as any).insert(payload).select('*').single();
+    const payload = {
+      nome: body.nome,
+      descricao: body.descricao,
+      permite_login: body.permiteLogin ?? false,
+      exige_conselho: body.exigeConselho ?? false,
+      perfil_id: body.perfilId,
+    };
+    const { data, error } = await (sb.from('funcoes' as any) as any).insert(payload).select('*').single();
     if (error) throw error;
     return mapFuncao(data);
   },
-  async update(id: string, body: { nome?: string; descricao?: string; permiteLogin?: boolean; exigeConselho?: boolean }): Promise<FuncaoApi> {
+  async update(id: string, body: { nome?: string; descricao?: string; permiteLogin?: boolean; exigeConselho?: boolean; perfilId?: string }): Promise<FuncaoApi> {
     const sb = createClient();
     const payload: any = {};
     if (body.nome !== undefined) payload.nome = body.nome;
     if (body.descricao !== undefined) payload.descricao = body.descricao;
     if (body.permiteLogin !== undefined) payload.permite_login = body.permiteLogin;
     if (body.exigeConselho !== undefined) payload.exige_conselho = body.exigeConselho;
-    const { data, error } = await sb.from('funcoes' as any).update(payload).eq('id', id).select('*').single();
+    if (body.perfilId !== undefined) payload.perfil_id = body.perfilId;
+    const { data, error } = await (sb.from('funcoes' as any) as any).update(payload).eq('id', id).select('*').single();
     if (error) throw error;
     await sincronizarTodosFuncionariosUsuarios().catch(() => {});
     return mapFuncao(data);
   },
   async delete(id: string): Promise<void> {
     const sb = createClient();
-    const { error } = await sb.from('funcoes' as any).update({ deleted_at: new Date().toISOString() }).eq('id', id);
+    const { error } = await (sb.from('funcoes' as any) as any).update({ deleted_at: new Date().toISOString() }).eq('id', id);
     if (error) throw error;
   },
 };
@@ -1224,6 +1223,7 @@ export const funcionariosApi = {
     const { page, limit, from, to } = paginar(num(p?.page), num(p?.limit));
     let q = sb.from('funcionarios').select('*', { count: 'exact' }).is('deleted_at', null);
     if (p?.busca) q = q.ilike('nome_completo', `%${p.busca}%`);
+    if (p?.funcaoId) q = q.eq('funcao_id', String(p.funcaoId));
     if (p?.funcao) q = q.eq('funcao', String(p.funcao));
     if (p?.status) {
       const valores = String(p.status).split(',').filter(Boolean);
@@ -1282,20 +1282,25 @@ export const funcionariosApi = {
   },
 };
 
-/** Resolve perfil_id do cargo e chama a sync — usado em create/update de funcionário */
+/** Resolve perfil_id do cargo da tabela funcoes e sincroniza o usuario correspondente */
 async function resolverESincronizar(sb: ReturnType<typeof createClient>, data: any) {
-  const { data: funcoesDb } = await sb.from('funcoes' as any).select('nome, permite_login, perfil_id');
-  const funcDb = (funcoesDb ?? []).find(
-    (fd: any) => fd.nome?.toLowerCase() === (data.funcao || '').toLowerCase()
-  );
-  const fd = funcDb as any;
-  const permite: boolean = fd?.permite_login !== undefined
-    ? Boolean(fd.permite_login)
-    : (CARGOS_OFICIAIS.find((c) => c.nome.toLowerCase() === (data.funcao || '').toLowerCase())?.permiteLogin
-        ?? ((data.funcao || '').toLowerCase() !== 'staff'));
-  const perfilId: string | undefined =
-    fd?.perfil_id ??
-    CARGOS_OFICIAIS.find((c) => c.nome.toLowerCase() === (data.funcao || '').toLowerCase())?.perfilId;
+  let funcDb: any = null;
+  if (data.funcao_id) {
+    const { data: f } = await (sb.from('funcoes' as any) as any)
+      .select('id, nome, permite_login, perfil_id')
+      .eq('id', data.funcao_id)
+      .maybeSingle();
+    funcDb = f;
+  }
+  if (!funcDb && data.funcao) {
+    const { data: f } = await (sb.from('funcoes' as any) as any)
+      .select('id, nome, permite_login, perfil_id')
+      .ilike('nome', data.funcao)
+      .maybeSingle();
+    funcDb = f;
+  }
+  const permite = Boolean(funcDb?.permite_login);
+  const perfilId: string | undefined = funcDb?.perfil_id ?? undefined;
   await sincronizarUsuarioFuncionario(
     sb, data.id, data.nome_completo, data.email ?? undefined, data.status ?? undefined, permite, perfilId
   );
@@ -1306,30 +1311,19 @@ export async function sincronizarTodosFuncionariosUsuarios() {
   const { data: funcs } = await sb.from('funcionarios').select('*').is('deleted_at', null);
   if (!funcs || funcs.length === 0) return;
 
-  // Busca funcoes com perfil_id (estável por UUID)
-  const { data: funcoesDb } = await sb.from('funcoes' as any).select('nome, permite_login, perfil_id');
+  const { data: funcoesDb } = await (sb.from('funcoes' as any) as any).select('id, nome, permite_login, perfil_id');
+  const funcoesMapById = new Map((funcoesDb ?? []).map((fd: any) => [fd.id, fd]));
+  const funcoesMapByName = new Map((funcoesDb ?? []).map((fd: any) => [String(fd.nome).toLowerCase(), fd]));
 
   for (const f of funcs) {
-    const funcDb = (funcoesDb ?? []).find(
-      (fd: any) => fd.nome.toLowerCase() === (f.funcao || '').toLowerCase()
-    );
-    // permite_login: usa DB se achar, senão fallback CARGOS_OFICIAIS por nome, senão true (exceto staff)
-    let permite: boolean;
-    if (funcDb && (funcDb as any).permite_login !== undefined) {
-      permite = Boolean((funcDb as any).permite_login);
-    } else {
-      const oficial = CARGOS_OFICIAIS.find((c) => c.nome.toLowerCase() === (f.funcao || '').toLowerCase());
-      permite = oficial?.permiteLogin ?? ((f.funcao || '').toLowerCase() !== 'staff');
-    }
-    // perfilId: usa UUID do banco se achar, senão fallback CARGOS_OFICIAIS
-    const perfilId: string | undefined =
-      (funcDb as any)?.perfil_id ??
-      CARGOS_OFICIAIS.find((c) => c.nome.toLowerCase() === (f.funcao || '').toLowerCase())?.perfilId;
+    const funcDb: any = (f.funcao_id ? funcoesMapById.get(f.funcao_id) : null) ||
+      (f.funcao ? funcoesMapByName.get(String(f.funcao).toLowerCase()) : null);
+    const permite = Boolean(funcDb?.permite_login);
+    const perfilId: string | undefined = funcDb?.perfil_id ?? undefined;
 
     await sincronizarUsuarioFuncionario(sb as any, f.id, f.nome_completo, f.email, f.status, permite, perfilId);
   }
 }
-
 
 async function sincronizarUsuarioFuncionario(
   sb: ReturnType<typeof createClient>,
@@ -1385,7 +1379,6 @@ async function sincronizarUsuarioFuncionario(
   }
 }
 
-
 function toFuncionarioRow(b: Record<string, unknown>): Database['public']['Tables']['funcionarios']['Insert'] {
   return {
     matricula: b.matricula as string,
@@ -1393,6 +1386,7 @@ function toFuncionarioRow(b: Record<string, unknown>): Database['public']['Table
     foto_url: b.fotoUrl as string | null | undefined,
     status: b.status as string | undefined,
     funcao: b.funcao as string | null | undefined,
+    funcao_id: uuidOrNull(b.funcaoId) as any,
     professor_responsavel: b.professorResponsavel as boolean | undefined,
     data_admissao: b.dataAdmissao as string | null | undefined,
     data_demissao: b.dataDemissao as string | null | undefined,
@@ -1405,8 +1399,9 @@ function toFuncionarioRow(b: Record<string, unknown>): Database['public']['Table
     conselho: b.conselho as string | null | undefined,
     registro_conselho: b.registroConselho as string | null | undefined,
     remuneracao: b.remuneracao as number | null | undefined,
-  };
+  } as any;
 }
+
 
 // ── Equipamentos ─────────────────────────────────────────────────────────
 

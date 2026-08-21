@@ -76,8 +76,11 @@ export function AbaCargos() {
               {(funcoes ?? []).map((f) => {
                 const Icon = CARGO_ICONS[f.nome] ?? Briefcase;
                 const perfilCorrespondente = perfis.find(
+                  (p) => p.id === f.perfilId
+                ) || perfis.find(
                   (p) => p.nome.toLowerCase() === f.nome.toLowerCase()
                 );
+
                 const countFunc = funcionarios.filter((emp) => emp.funcao === f.nome).length;
                 const countUsers = perfilCorrespondente
                   ? usuarios.filter((u) => u.perfilId === perfilCorrespondente.id).length
