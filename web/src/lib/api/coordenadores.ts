@@ -134,7 +134,7 @@ export const coordenadoresApi = {
         id, nome_completo, email, status, celular, foto_url,
         coordenador_nucleos(
           nucleo_id, ativo, created_at,
-          nucleo:nucleos(id, identificacao, nome_local, endereco, numero, bairro, cidade, estado, cep, status, organizacao_id)
+          nucleo:nucleos(id, identificacao, nome_local, endereco, numero, bairro, cidade, estado, cep, em_funcionamento, organizacao_id)
         )
       `)
       .eq('id', id)
@@ -143,6 +143,7 @@ export const coordenadoresApi = {
     if (error) throw error;
     return mapCoordenador(data);
   },
+
 
   async getNucleos(coordenadorId: string): Promise<VinculoNucleoApi[]> {
     const supabase = await getSupabase();
