@@ -4,7 +4,8 @@ import { useState } from "react";
 import { formatarData } from "@/lib/utils";
 import type { DadosRelatorioPrestacaoContas } from "@/lib/api/prestacaoContas";
 import { Badge, Button } from "@/components/ui";
-import { Printer, Download, Save, Edit3, CheckCircle2, AlertCircle } from "lucide-react";
+import { Printer, FileDown, Save, Edit3, CheckCircle2, AlertCircle } from "lucide-react";
+import { exportarRelatorioPrestacaoContasDocx } from "@/lib/export/exportarPrestacaoContasDocx";
 
 interface Props {
   dados: DadosRelatorioPrestacaoContas;
@@ -43,9 +44,33 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
   });
 
   const [modoEdicao, setModoEdicao] = useState(false);
+  const [exportandoDocx, setExportandoDocx] = useState(false);
 
   function handlePrint() {
     window.print();
+  }
+
+  async function handleExportarDocx() {
+    setExportandoDocx(true);
+    try {
+      await exportarRelatorioPrestacaoContasDocx(
+        dados,
+        {
+          justificativaMetas,
+          impactoSocialTexto,
+          conclusaoTexto,
+        },
+        {
+          responsavelElaboracao,
+          coordenadorGeral,
+          representanteLegal,
+        }
+      );
+    } catch (err: any) {
+      alert("Erro ao exportar DOCX: " + (err.message || err));
+    } finally {
+      setExportandoDocx(false);
+    }
   }
 
   function handleSalvar() {
@@ -99,6 +124,18 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
             </Button>
           )}
 
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={handleExportarDocx}
+            disabled={exportandoDocx}
+            className="border-sky-300 text-sky-800 hover:bg-sky-50"
+          >
+            <FileDown className="mr-1.5 h-3.5 w-3.5 text-sky-600" />
+            {exportandoDocx ? "Gerando Word..." : "Baixar em Word (.DOCX)"}
+          </Button>
+
           <Button type="button" size="sm" onClick={handlePrint}>
             <Printer className="mr-1.5 h-3.5 w-3.5" />
             Imprimir / Exportar PDF
@@ -107,7 +144,7 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
       </div>
 
       {/* DOCUMENTO OFICIAL FORMATADO (PRESTACÃO DE CONTAS) */}
-      <div className="bg-white p-8 md:p-12 shadow-sm rounded-xl border border-zinc-200 print:border-none print:shadow-none print:p-0 text-zinc-900 leading-relaxed font-sans">
+      <div id="relatorio-prestacao-contas-folha" className="bg-white p-8 md:p-12 shadow-sm rounded-xl border border-zinc-200 print:border-none print:shadow-none print:p-0 text-zinc-900 leading-relaxed font-sans">
         
         {/* CABEÇALHO OFICIAL */}
         <div className="border-b-2 border-zinc-900 pb-6 mb-8 text-center">
