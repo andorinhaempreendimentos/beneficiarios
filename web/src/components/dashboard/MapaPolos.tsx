@@ -127,7 +127,17 @@ export function MapaPolos({ nucleos, atividades = [], className = "" }: MapaPolo
         const map = L.map(mapContainerRef.current, {
           center: defaultCenter,
           zoom: 12,
-          scrollWheelZoom: true,
+          scrollWheelZoom: false,
+        });
+
+        // Habilitar zoom por scroll apenas após o usuário clicar no mapa
+        map.on("click", () => {
+          map.scrollWheelZoom.enable();
+        });
+
+        // Desabilitar zoom por scroll quando o mouse sai do mapa para não travar a rolagem da página
+        map.getContainer().addEventListener("mouseleave", () => {
+          map.scrollWheelZoom.disable();
         });
 
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -189,9 +199,9 @@ export function MapaPolos({ nucleos, atividades = [], className = "" }: MapaPolo
   }, [nucleosComCoords]);
 
   return (
-    <div className={`relative flex flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-xs dark:border-zinc-800 dark:bg-zinc-900 ${className}`}>
+    <div className={`relative -mx-4 -mt-6 lg:-mx-8 flex flex-col overflow-hidden border-b border-zinc-200 bg-white shadow-xs dark:border-zinc-800 dark:bg-zinc-900 ${className}`}>
       {/* Header com Título e Filtros */}
-      <div className="flex flex-col gap-3 border-b border-zinc-200 bg-zinc-50/80 p-3 sm:flex-row sm:items-center sm:justify-between dark:border-zinc-800 dark:bg-zinc-800/50">
+      <div className="flex flex-col gap-3 border-b border-zinc-200 bg-zinc-50/80 px-4 py-3 sm:flex-row sm:items-center sm:justify-between lg:px-8 dark:border-zinc-800 dark:bg-zinc-800/50">
         <div className="flex items-center gap-2">
           <span className="flex h-5 w-5 items-center justify-center rounded-md bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
             <MapPin className="h-3.5 w-3.5" />
@@ -376,7 +386,7 @@ export function MapaPolos({ nucleos, atividades = [], className = "" }: MapaPolo
       </div>
 
       {/* Legenda de Ocupação */}
-      <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 border-t border-zinc-200 bg-zinc-50/60 px-4 py-2.5 text-xs text-zinc-600 dark:border-zinc-800 dark:bg-zinc-800/40 dark:text-zinc-400">
+      <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 border-t border-zinc-200 bg-zinc-50/60 px-4 py-2.5 lg:px-8 text-xs text-zinc-600 dark:border-zinc-800 dark:bg-zinc-800/40 dark:text-zinc-400">
         <span className="font-semibold text-zinc-800 dark:text-zinc-200">Legenda de ocupação:</span>
 
         <div className="flex items-center gap-1.5">
