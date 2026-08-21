@@ -1,7 +1,9 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Badge, Card, CardHeader } from "@/components/ui";
 import { beneficiariosApi, turmasApi, nucleosApi } from "@/lib/api/services";
+import { createClient } from "@/lib/supabase/client";
 import { useQuery } from "@/lib/hooks/useQuery";
 import { statusBeneficiarioTone, statusBeneficiarioLabel, normalizarStatusBeneficiario } from "@/lib/status";
 import type { FiltrosState } from "./FiltrosRelatorio";
@@ -12,10 +14,31 @@ export function TabelaPresenca({ filtros }: Props) {
   const { data: bRes } = useQuery(() => beneficiariosApi.list({ limit: 200 }), []);
   const { data: tRes } = useQuery(() => turmasApi.list({ limit: 100 }), []);
   const { data: nRes } = useQuery(() => nucleosApi.list({ limit: 100 }), []);
+  const [presencasMap, setPresencasMap] = useState<Record<string, { presencas: number; total: number }>>({});
 
   const beneficiarios = bRes?.data ?? [];
   const turmas = tRes?.data ?? [];
   const nucleos = nRes?.data ?? [];
+
+  useEffect(() => {
+    const sb = createClient();
+    sb.from("beneficiario_presencas")
+      .select("beneficiario_id, status")
+      .then(({ data }) => {
+        if (!data) return;
+        const map: Record<string, { presencas: number; total: number }> = {};
+        for (const item of data) {
+          if (!map[item.beneficiario_id]) {
+            map[item.beneficiario_id] = { presencas: 0, total: 0 };
+          }
+          map[item.beneficiario_id].total++;
+          if (item.status === "presente") {
+            map[item.beneficiario_id].presencas++;
+          }
+        }
+        setPresencasMap(map);
+      });
+  }, []);
 
   const linhas = beneficiarios
     .filter((b) => {
@@ -25,15 +48,16 @@ export function TabelaPresenca({ filtros }: Props) {
     })
     .map((b) => {
       const nucleo = nucleos.find((n) => n.id === b.nucleoId);
-      const presenca = 100;
-      return { b, vt: { frequenciaPercent: 100, dataMatricula: b.criadoEm }, turma: turmas[0], nucleo, presenca };
+      const stats = presencasMap[b.id];
+      const presenca = stats && stats.total > 0 ? Math.round((stats.presencas / stats.total) * 100) : 100;
+      return { b, vt: { frequenciaPercent: presenca, dataMatricula: b.criadoEm }, turma: turmas[0], nucleo, presenca, totalChamadas: stats?.total ?? 0 };
     });
 
   return (
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-medium text-zinc-700">Frequência / Presença</h3>
+          <h3 className="text-sm font-medium text-zinc-700">Frequência / Presença Real</h3>
           <span className="text-xs text-zinc-400">{linhas.length} vínculo(s)</span>
         </div>
       </CardHeader>
@@ -45,14 +69,14 @@ export function TabelaPresenca({ filtros }: Props) {
               <th className="px-5 py-3">Turma</th>
               <th className="px-5 py-3">Núcleo</th>
               <th className="px-5 py-3">Status vínculo</th>
-              <th className="px-5 py-3">Presença</th>
+              <th className="px-5 py-3">Presença Real</th>
             </tr>
           </thead>
           <tbody>
             {linhas.length === 0 && (
               <tr><td colSpan={5} className="px-5 py-8 text-center text-zinc-400">Nenhum resultado.</td></tr>
             )}
-            {linhas.map(({ b, vt, turma, nucleo, presenca }, i) => (
+            {linhas.map(({ b, vt, turma, nucleo, presenca, totalChamadas }, i) => (
               <tr key={`${b.id}-${i}`} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
                 <td className="px-5 py-3 font-medium text-zinc-800">{b.nomeCompleto}</td>
                 <td className="px-5 py-3 text-zinc-600">{turma?.nome ?? "—"}</td>
@@ -71,7 +95,7 @@ export function TabelaPresenca({ filtros }: Props) {
                       />
                     </div>
                     <span className={`text-xs font-medium ${presenca >= 75 ? "text-green-700" : presenca >= 50 ? "text-amber-600" : "text-red-600"}`}>
-                      {presenca}%
+                      {presenca}% {totalChamadas > 0 ? `(${totalChamadas} aulas)` : ""}
                     </span>
                   </div>
                 </td>

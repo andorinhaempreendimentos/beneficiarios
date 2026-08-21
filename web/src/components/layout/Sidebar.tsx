@@ -196,6 +196,7 @@ export function Sidebar() {
               </div>
 
               {navLink("/atividades", t("atividade", "Atividade", true), Dumbbell)}
+              {navLink("/atividades-complementares", "Atividades Especiais", CalendarCheck)}
               {navLink("/aulas", "Aulas", BookOpen)}
 
               {/* Beneficiários com subitem */}

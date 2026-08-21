@@ -124,6 +124,15 @@ function uuidOrNull(v: unknown): string | null {
 
 // ── Tipos ─────────────────────────────────────────────────────────────────
 
+export interface ObjetoCargoPrevistoApi {
+  id: string;
+  objetoId: string;
+  cargoNome: string;
+  quantidadePrevista: number;
+  remuneracaoMensal?: number;
+  cargaHorariaSemanal?: string;
+}
+
 export interface ObjetoApi {
   id: string;
   nome: string;
@@ -137,6 +146,31 @@ export interface ObjetoApi {
   dataInicio?: string;
   dataTermino?: string;
   status: string;
+  concedenteId?: string;
+  concedente?: {
+    id: string;
+    nome: string;
+    cnpj?: string;
+    esfera?: string;
+    cidade?: string;
+    estado?: string;
+    responsavelNome?: string;
+    responsavelCargo?: string;
+  };
+  modalidadeParceria?: 'termo_colaboracao' | 'termo_fomento' | 'acordo_cooperacao';
+  numeroProcessoAdm?: string;
+  editalNumero?: string;
+  contaBancariaBanco?: string;
+  contaBancariaAgencia?: string;
+  contaBancariaConta?: string;
+  metaBeneficiarios: number;
+  metaNucleos: number;
+  metaAulasAno: number;
+  metaFrequenciaMinima: number;
+  metaVulnerabilidadeMinima: number;
+  metaEventosAno: number;
+  metaReunioesAno: number;
+  cargosPrevistos?: ObjetoCargoPrevistoApi[];
   criadoEm: string;
 }
 
@@ -350,14 +384,51 @@ export interface ConfiguracaoApi {
 
 function mapObjeto(r: any): ObjetoApi {
   return {
-    id: r.id, nome: r.nome, descricao: r.descricao ?? undefined,
+    id: r.id,
+    nome: r.nome,
+    descricao: r.descricao ?? undefined,
     termoDeFomento: r.termo_de_fomento ?? undefined,
     codigoObjeto: r.codigo_objeto ?? undefined,
     codigoPrograma: r.codigo_programa ?? undefined,
     nomePrograma: r.nome_programa ?? undefined,
-    tipoDuracao: r.tipo_duracao, dataEvento: r.data_evento ?? undefined,
-    dataInicio: r.data_inicio ?? undefined, dataTermino: r.data_termino ?? undefined,
-    status: r.status, criadoEm: r.created_at,
+    tipoDuracao: r.tipo_duracao,
+    dataEvento: r.data_evento ?? undefined,
+    dataInicio: r.data_inicio ?? undefined,
+    dataTermino: r.data_termino ?? undefined,
+    status: r.status,
+    concedenteId: r.concedente_id ?? undefined,
+    concedente: r.concedentes ? {
+      id: r.concedentes.id,
+      nome: r.concedentes.nome,
+      cnpj: r.concedentes.cnpj ?? undefined,
+      esfera: r.concedentes.esfera ?? undefined,
+      cidade: r.concedentes.cidade ?? undefined,
+      estado: r.concedentes.estado ?? undefined,
+      responsavelNome: r.concedentes.responsavel_nome ?? undefined,
+      responsavelCargo: r.concedentes.responsavel_cargo ?? undefined,
+    } : undefined,
+    modalidadeParceria: r.modalidade_parceria ?? undefined,
+    numeroProcessoAdm: r.numero_processo_adm ?? undefined,
+    editalNumero: r.edital_numero ?? undefined,
+    contaBancariaBanco: r.conta_bancaria_banco ?? undefined,
+    contaBancariaAgencia: r.conta_bancaria_agencia ?? undefined,
+    contaBancariaConta: r.conta_bancaria_conta ?? undefined,
+    metaBeneficiarios: r.meta_beneficiarios ?? 0,
+    metaNucleos: r.meta_nucleos ?? 0,
+    metaAulasAno: r.meta_aulas_ano ?? 0,
+    metaFrequenciaMinima: Number(r.meta_frequencia_minima ?? 75),
+    metaVulnerabilidadeMinima: Number(r.meta_vulnerabilidade_minima ?? 70),
+    metaEventosAno: r.meta_eventos_ano ?? 0,
+    metaReunioesAno: r.meta_reunioes_ano ?? 0,
+    cargosPrevistos: Array.isArray(r.objeto_cargos_previstos) ? r.objeto_cargos_previstos.map((c: any) => ({
+      id: c.id,
+      objetoId: c.objeto_id,
+      cargoNome: c.cargo_nome,
+      quantidadePrevista: c.quantidade_prevista,
+      remuneracaoMensal: c.remuneracao_mensal ? Number(c.remuneracao_mensal) : undefined,
+      cargaHorariaSemanal: c.carga_horaria_semanal ?? undefined,
+    })) : undefined,
+    criadoEm: r.created_at,
   };
 }
 
@@ -586,9 +657,10 @@ export const objetosApi = {
   async list(p?: QP): Promise<Paginated<ObjetoApi>> {
     const sb = await getSupabase();
     const { page, limit, from, to } = paginar(num(p?.page), num(p?.limit));
-    let q = sb.from('objetos').select('*', { count: 'exact' }).is('deleted_at', null);
+    let q = sb.from('objetos').select('*, concedentes(*), objeto_cargos_previstos(*)', { count: 'exact' }).is('deleted_at', null);
     if (p?.busca) q = q.ilike('nome', `%${p.busca}%`);
     if (p?.status) q = q.eq('status', String(p.status));
+    if (p?.concedenteId) q = q.eq('concedente_id', String(p.concedenteId));
     if (p?.tipoDuracao) q = q.eq('tipo_duracao', String(p.tipoDuracao) as Database['public']['Enums']['tipo_duracao_atividade']);
     const { data, count, error } = await q.order('created_at', { ascending: false }).range(from, to);
     if (error) throw error;
@@ -596,21 +668,44 @@ export const objetosApi = {
   },
   async get(id: string): Promise<ObjetoApi> {
     const sb = await getSupabase();
-    const { data, error } = await sb.from('objetos').select('*').eq('id', id).single();
+    const { data, error } = await sb.from('objetos').select('*, concedentes(*), objeto_cargos_previstos(*)').eq('id', id).single();
     if (error) throw error;
     return mapObjeto(data);
   },
   async create(body: Record<string, unknown>): Promise<ObjetoApi> {
     const sb = createClient();
-    const { data, error } = await sb.from('objetos').insert(toObjetoRow(body)).select('*').single();
+    const { data, error } = await sb.from('objetos').insert(toObjetoRow(body)).select('*, concedentes(*), objeto_cargos_previstos(*)').single();
     if (error) throw error;
+    if (Array.isArray(body.cargosPrevistos) && data?.id) {
+      await objetosApi.syncCargos(data.id, body.cargosPrevistos as Partial<ObjetoCargoPrevistoApi>[]);
+      return objetosApi.get(data.id);
+    }
     return mapObjeto(data);
   },
   async update(id: string, body: Record<string, unknown>): Promise<ObjetoApi> {
     const sb = createClient();
-    const { data, error } = await sb.from('objetos').update(toObjetoRow(body)).eq('id', id).select('*').single();
+    const { data, error } = await sb.from('objetos').update(toObjetoRow(body)).eq('id', id).select('*, concedentes(*), objeto_cargos_previstos(*)').single();
     if (error) throw error;
+    if (Array.isArray(body.cargosPrevistos)) {
+      await objetosApi.syncCargos(id, body.cargosPrevistos as Partial<ObjetoCargoPrevistoApi>[]);
+      return objetosApi.get(id);
+    }
     return mapObjeto(data);
+  },
+  async syncCargos(objetoId: string, cargos: Partial<ObjetoCargoPrevistoApi>[]): Promise<void> {
+    const sb = createClient();
+    await sb.from('objeto_cargos_previstos').delete().eq('objeto_id', objetoId);
+    if (cargos.length > 0) {
+      const inserts = cargos.map((c) => ({
+        objeto_id: objetoId,
+        cargo_nome: String(c.cargoNome ?? ''),
+        quantidade_prevista: Number(c.quantidadePrevista ?? 1),
+        remuneracao_mensal: c.remuneracaoMensal !== undefined ? Number(c.remuneracaoMensal) : null,
+        carga_horaria_semanal: c.cargaHorariaSemanal ?? null,
+      }));
+      const { error } = await sb.from('objeto_cargos_previstos').insert(inserts);
+      if (error) throw error;
+    }
   },
   async remove(id: string): Promise<void> {
     const sb = createClient();
@@ -632,6 +727,20 @@ function toObjetoRow(b: Record<string, unknown>): Database['public']['Tables']['
     data_inicio: (b.dataInicio as string | null | undefined) ?? null,
     data_termino: (b.dataTermino as string | null | undefined) ?? null,
     status: (b.status as string) ?? 'ativo',
+    concedente_id: (b.concedenteId as string | null | undefined) || null,
+    modalidade_parceria: (b.modalidadeParceria as string | null | undefined) || 'termo_colaboracao',
+    numero_processo_adm: (b.numeroProcessoAdm as string | null | undefined) || null,
+    edital_numero: (b.editalNumero as string | null | undefined) || null,
+    conta_bancaria_banco: (b.contaBancariaBanco as string | null | undefined) || null,
+    conta_bancaria_agencia: (b.contaBancariaAgencia as string | null | undefined) || null,
+    conta_bancaria_conta: (b.contaBancariaConta as string | null | undefined) || null,
+    meta_beneficiarios: Number(b.metaBeneficiarios ?? 0),
+    meta_nucleos: Number(b.metaNucleos ?? 0),
+    meta_aulas_ano: Number(b.metaAulasAno ?? 0),
+    meta_frequencia_minima: Number(b.metaFrequenciaMinima ?? 75),
+    meta_vulnerabilidade_minima: Number(b.metaVulnerabilidadeMinima ?? 70),
+    meta_eventos_ano: Number(b.metaEventosAno ?? 0),
+    meta_reunioes_ano: Number(b.metaReunioesAno ?? 0),
   };
 }
 
@@ -2567,3 +2676,26 @@ export { supervisoesApi, supervisoesFotosApi } from './supervisoes';
 
 export type { TipoPendencia, GravidadePendencia, StatusPendencia, PendenciaGeralApi } from './pendencias';
 export { pendenciasGeraisApi } from './pendencias';
+
+export type { ConcedenteApi } from './concedentes';
+export { concedentesApi } from './concedentes';
+
+export type { TipoAtividadeComplementar, AtividadeComplementarApi } from './atividadesComplementares';
+export { atividadesComplementaresApi } from './atividadesComplementares';
+
+export type {
+  AlertaProntidao,
+  IndicadorMetaExecucao,
+  ExecucaoNucleoItem,
+  DemonstrativoBeneficiarios,
+  FrequenciaNucleoItem,
+  AulaRealizadaItem,
+  VisitaSupervisaoItem,
+  CargoRHItem,
+  ProfissionalItem,
+  MaterialItem,
+  FotoComprovacaoItem,
+  OcorrenciaItem,
+  DadosRelatorioPrestacaoContas,
+} from './prestacaoContas';
+export { prestacaoContasApi } from './prestacaoContas';

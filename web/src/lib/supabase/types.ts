@@ -109,9 +109,10 @@ export type Database = {
           idade_maxima: number | null
           idade_minima: number | null
           nome: string
-          nucleo_id: string
+          nucleo_id: string | null
           tipo_aprovacao: Database["public"]["Enums"]["tipo_aprovacao"]
           updated_at: string
+          uso_interno: boolean | null
         }
         Insert: {
           created_at?: string
@@ -122,9 +123,10 @@ export type Database = {
           idade_maxima?: number | null
           idade_minima?: number | null
           nome: string
-          nucleo_id: string
+          nucleo_id?: string | null
           tipo_aprovacao?: Database["public"]["Enums"]["tipo_aprovacao"]
           updated_at?: string
+          uso_interno?: boolean | null
         }
         Update: {
           created_at?: string
@@ -135,9 +137,10 @@ export type Database = {
           idade_maxima?: number | null
           idade_minima?: number | null
           nome?: string
-          nucleo_id?: string
+          nucleo_id?: string | null
           tipo_aprovacao?: Database["public"]["Enums"]["tipo_aprovacao"]
           updated_at?: string
+          uso_interno?: boolean | null
         }
         Relationships: [
           {
@@ -145,6 +148,82 @@ export type Database = {
             columns: ["nucleo_id"]
             isOneToOne: false
             referencedRelation: "nucleos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      atividades_complementares: {
+        Row: {
+          created_at: string
+          data: string
+          deleted_at: string | null
+          descricao: string | null
+          fotos_urls: string[] | null
+          horario_fim: string | null
+          horario_inicio: string | null
+          id: string
+          nucleo_id: string | null
+          objeto_id: string
+          quantidade_participantes: number
+          responsavel_id: string | null
+          tipo: string
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          data: string
+          deleted_at?: string | null
+          descricao?: string | null
+          fotos_urls?: string[] | null
+          horario_fim?: string | null
+          horario_inicio?: string | null
+          id?: string
+          nucleo_id?: string | null
+          objeto_id: string
+          quantidade_participantes?: number
+          responsavel_id?: string | null
+          tipo: string
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          data?: string
+          deleted_at?: string | null
+          descricao?: string | null
+          fotos_urls?: string[] | null
+          horario_fim?: string | null
+          horario_inicio?: string | null
+          id?: string
+          nucleo_id?: string | null
+          objeto_id?: string
+          quantidade_participantes?: number
+          responsavel_id?: string | null
+          tipo?: string
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "atividades_complementares_nucleo_id_fkey"
+            columns: ["nucleo_id"]
+            isOneToOne: false
+            referencedRelation: "nucleos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "atividades_complementares_objeto_id_fkey"
+            columns: ["objeto_id"]
+            isOneToOne: false
+            referencedRelation: "objetos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "atividades_complementares_responsavel_id_fkey"
+            columns: ["responsavel_id"]
+            isOneToOne: false
+            referencedRelation: "funcionarios"
             referencedColumns: ["id"]
           },
         ]
@@ -264,6 +343,48 @@ export type Database = {
           },
         ]
       }
+      beneficiario_presencas: {
+        Row: {
+          beneficiario_id: string
+          criado_em: string
+          execucao_aula_id: string
+          id: string
+          observacao: string | null
+          status: Database["public"]["Enums"]["status_presenca"]
+        }
+        Insert: {
+          beneficiario_id: string
+          criado_em?: string
+          execucao_aula_id: string
+          id?: string
+          observacao?: string | null
+          status?: Database["public"]["Enums"]["status_presenca"]
+        }
+        Update: {
+          beneficiario_id?: string
+          criado_em?: string
+          execucao_aula_id?: string
+          id?: string
+          observacao?: string | null
+          status?: Database["public"]["Enums"]["status_presenca"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "beneficiario_presencas_beneficiario_id_fkey"
+            columns: ["beneficiario_id"]
+            isOneToOne: false
+            referencedRelation: "beneficiarios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "beneficiario_presencas_execucao_aula_id_fkey"
+            columns: ["execucao_aula_id"]
+            isOneToOne: false
+            referencedRelation: "execucoes_aula"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       beneficiario_turmas: {
         Row: {
           beneficiario_id: string
@@ -319,7 +440,7 @@ export type Database = {
         Row: {
           bairro: string | null
           beneficio_socioassistencial: string | null
-          celular: string
+          celular: string | null
           celular_responsavel: string | null
           cep: string | null
           cidade: string | null
@@ -353,6 +474,7 @@ export type Database = {
           observacoes: string | null
           ocupacao_atual: string | null
           orgao_expedidor: string | null
+          origem: string | null
           pcd: boolean
           pessoas_em_casa: string | null
           raca: string | null
@@ -378,7 +500,7 @@ export type Database = {
         Insert: {
           bairro?: string | null
           beneficio_socioassistencial?: string | null
-          celular: string
+          celular?: string | null
           celular_responsavel?: string | null
           cep?: string | null
           cidade?: string | null
@@ -412,6 +534,7 @@ export type Database = {
           observacoes?: string | null
           ocupacao_atual?: string | null
           orgao_expedidor?: string | null
+          origem?: string | null
           pcd?: boolean
           pessoas_em_casa?: string | null
           raca?: string | null
@@ -437,7 +560,7 @@ export type Database = {
         Update: {
           bairro?: string | null
           beneficio_socioassistencial?: string | null
-          celular?: string
+          celular?: string | null
           celular_responsavel?: string | null
           cep?: string | null
           cidade?: string | null
@@ -471,6 +594,7 @@ export type Database = {
           observacoes?: string | null
           ocupacao_atual?: string | null
           orgao_expedidor?: string | null
+          origem?: string | null
           pcd?: boolean
           pessoas_em_casa?: string | null
           raca?: string | null
@@ -502,6 +626,54 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      concedentes: {
+        Row: {
+          cidade: string | null
+          cnpj: string | null
+          created_at: string
+          deleted_at: string | null
+          email: string | null
+          esfera: string
+          estado: string | null
+          id: string
+          nome: string
+          responsavel_cargo: string | null
+          responsavel_nome: string | null
+          telefone: string | null
+          updated_at: string
+        }
+        Insert: {
+          cidade?: string | null
+          cnpj?: string | null
+          created_at?: string
+          deleted_at?: string | null
+          email?: string | null
+          esfera?: string
+          estado?: string | null
+          id?: string
+          nome: string
+          responsavel_cargo?: string | null
+          responsavel_nome?: string | null
+          telefone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          cidade?: string | null
+          cnpj?: string | null
+          created_at?: string
+          deleted_at?: string | null
+          email?: string | null
+          esfera?: string
+          estado?: string | null
+          id?: string
+          nome?: string
+          responsavel_cargo?: string | null
+          responsavel_nome?: string | null
+          telefone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       configuracoes: {
         Row: {
@@ -574,6 +746,42 @@ export type Database = {
             columns: ["turma_id"]
             isOneToOne: false
             referencedRelation: "turmas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      coordenador_nucleos: {
+        Row: {
+          ativo: boolean
+          coordenador_id: string
+          created_at: string
+          nucleo_id: string
+        }
+        Insert: {
+          ativo?: boolean
+          coordenador_id: string
+          created_at?: string
+          nucleo_id: string
+        }
+        Update: {
+          ativo?: boolean
+          coordenador_id?: string
+          created_at?: string
+          nucleo_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coordenador_nucleos_coordenador_id_fkey"
+            columns: ["coordenador_id"]
+            isOneToOne: false
+            referencedRelation: "funcionarios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coordenador_nucleos_nucleo_id_fkey"
+            columns: ["nucleo_id"]
+            isOneToOne: false
+            referencedRelation: "nucleos"
             referencedColumns: ["id"]
           },
         ]
@@ -652,6 +860,127 @@ export type Database = {
             columns: ["objeto_id"]
             isOneToOne: false
             referencedRelation: "objetos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      estoque_nucleos: {
+        Row: {
+          localizacao: string | null
+          material_id: string
+          nucleo_id: string
+          quantidade_atual: number
+          updated_at: string
+        }
+        Insert: {
+          localizacao?: string | null
+          material_id: string
+          nucleo_id: string
+          quantidade_atual?: number
+          updated_at?: string
+        }
+        Update: {
+          localizacao?: string | null
+          material_id?: string
+          nucleo_id?: string
+          quantidade_atual?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "estoque_nucleos_material_id_fkey"
+            columns: ["material_id"]
+            isOneToOne: false
+            referencedRelation: "materiais"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "estoque_nucleos_nucleo_id_fkey"
+            columns: ["nucleo_id"]
+            isOneToOne: false
+            referencedRelation: "nucleos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      execucoes_aula: {
+        Row: {
+          aprovado_em: string | null
+          aprovado_por_user_id: string | null
+          atualizado_em: string
+          criado_em: string
+          data: string
+          foto_comprovante_url: string | null
+          hora_fim_prevista: string
+          hora_fim_real: string | null
+          hora_inicio_prevista: string
+          hora_inicio_real: string | null
+          id: string
+          justificativa_retroativa: string | null
+          observacoes: string | null
+          professor_id: string
+          status: Database["public"]["Enums"]["status_execucao_aula"]
+          status_aprovacao: Database["public"]["Enums"]["status_aprovacao_aula"]
+          turma_id: string
+        }
+        Insert: {
+          aprovado_em?: string | null
+          aprovado_por_user_id?: string | null
+          atualizado_em?: string
+          criado_em?: string
+          data: string
+          foto_comprovante_url?: string | null
+          hora_fim_prevista: string
+          hora_fim_real?: string | null
+          hora_inicio_prevista: string
+          hora_inicio_real?: string | null
+          id?: string
+          justificativa_retroativa?: string | null
+          observacoes?: string | null
+          professor_id: string
+          status?: Database["public"]["Enums"]["status_execucao_aula"]
+          status_aprovacao?: Database["public"]["Enums"]["status_aprovacao_aula"]
+          turma_id: string
+        }
+        Update: {
+          aprovado_em?: string | null
+          aprovado_por_user_id?: string | null
+          atualizado_em?: string
+          criado_em?: string
+          data?: string
+          foto_comprovante_url?: string | null
+          hora_fim_prevista?: string
+          hora_fim_real?: string | null
+          hora_inicio_prevista?: string
+          hora_inicio_real?: string | null
+          id?: string
+          justificativa_retroativa?: string | null
+          observacoes?: string | null
+          professor_id?: string
+          status?: Database["public"]["Enums"]["status_execucao_aula"]
+          status_aprovacao?: Database["public"]["Enums"]["status_aprovacao_aula"]
+          turma_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "execucoes_aula_aprovado_por_user_id_fkey"
+            columns: ["aprovado_por_user_id"]
+            isOneToOne: false
+            referencedRelation: "usuarios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "execucoes_aula_professor_id_fkey"
+            columns: ["professor_id"]
+            isOneToOne: false
+            referencedRelation: "funcionarios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "execucoes_aula_turma_id_fkey"
+            columns: ["turma_id"]
+            isOneToOne: false
+            referencedRelation: "turmas"
             referencedColumns: ["id"]
           },
         ]
@@ -770,13 +1099,63 @@ export type Database = {
           status?: string
           updated_at?: string
         }
-
         Relationships: [
+          {
+            foreignKeyName: "funcionarios_funcao_id_fkey"
+            columns: ["funcao_id"]
+            isOneToOne: false
+            referencedRelation: "funcoes"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "funcionarios_nucleo_id_fkey"
             columns: ["nucleo_id"]
             isOneToOne: false
             referencedRelation: "nucleos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      funcoes: {
+        Row: {
+          created_at: string
+          deleted_at: string | null
+          descricao: string | null
+          exige_conselho: boolean | null
+          id: string
+          nome: string
+          perfil_id: string
+          permite_login: boolean
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          deleted_at?: string | null
+          descricao?: string | null
+          exige_conselho?: boolean | null
+          id?: string
+          nome: string
+          perfil_id: string
+          permite_login?: boolean
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          deleted_at?: string | null
+          descricao?: string | null
+          exige_conselho?: boolean | null
+          id?: string
+          nome?: string
+          perfil_id?: string
+          permite_login?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "funcoes_perfil_id_fkey"
+            columns: ["perfil_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
             referencedColumns: ["id"]
           },
         ]
@@ -835,6 +1214,174 @@ export type Database = {
           },
         ]
       }
+      materiais: {
+        Row: {
+          ativo: boolean
+          categoria: string
+          created_at: string
+          deleted_at: string | null
+          descricao: string | null
+          estoque_minimo: number
+          foto_url: string | null
+          id: string
+          nome: string
+          unidade_medida: string
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          categoria: string
+          created_at?: string
+          deleted_at?: string | null
+          descricao?: string | null
+          estoque_minimo?: number
+          foto_url?: string | null
+          id?: string
+          nome: string
+          unidade_medida: string
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          categoria?: string
+          created_at?: string
+          deleted_at?: string | null
+          descricao?: string | null
+          estoque_minimo?: number
+          foto_url?: string | null
+          id?: string
+          nome?: string
+          unidade_medida?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      movimentacoes_estoque: {
+        Row: {
+          beneficiario_id: string | null
+          created_at: string
+          data_movimentacao: string
+          destino_nucleo_id: string | null
+          foto_comprovante_url: string | null
+          id: string
+          material_id: string
+          motivo: string | null
+          nucleo_id: string
+          observacoes: string | null
+          quantidade: number
+          quantidade_anterior: number
+          quantidade_posterior: number
+          responsavel_id: string
+          termo_assinado: boolean
+          tipo: string
+        }
+        Insert: {
+          beneficiario_id?: string | null
+          created_at?: string
+          data_movimentacao?: string
+          destino_nucleo_id?: string | null
+          foto_comprovante_url?: string | null
+          id?: string
+          material_id: string
+          motivo?: string | null
+          nucleo_id: string
+          observacoes?: string | null
+          quantidade: number
+          quantidade_anterior?: number
+          quantidade_posterior?: number
+          responsavel_id: string
+          termo_assinado?: boolean
+          tipo: string
+        }
+        Update: {
+          beneficiario_id?: string | null
+          created_at?: string
+          data_movimentacao?: string
+          destino_nucleo_id?: string | null
+          foto_comprovante_url?: string | null
+          id?: string
+          material_id?: string
+          motivo?: string | null
+          nucleo_id?: string
+          observacoes?: string | null
+          quantidade?: number
+          quantidade_anterior?: number
+          quantidade_posterior?: number
+          responsavel_id?: string
+          termo_assinado?: boolean
+          tipo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "movimentacoes_estoque_beneficiario_id_fkey"
+            columns: ["beneficiario_id"]
+            isOneToOne: false
+            referencedRelation: "beneficiarios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "movimentacoes_estoque_destino_nucleo_id_fkey"
+            columns: ["destino_nucleo_id"]
+            isOneToOne: false
+            referencedRelation: "nucleos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "movimentacoes_estoque_material_id_fkey"
+            columns: ["material_id"]
+            isOneToOne: false
+            referencedRelation: "materiais"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "movimentacoes_estoque_nucleo_id_fkey"
+            columns: ["nucleo_id"]
+            isOneToOne: false
+            referencedRelation: "nucleos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "movimentacoes_estoque_responsavel_id_fkey"
+            columns: ["responsavel_id"]
+            isOneToOne: false
+            referencedRelation: "funcionarios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      nucleo_atividades: {
+        Row: {
+          atividade_id: string
+          created_at: string
+          nucleo_id: string
+        }
+        Insert: {
+          atividade_id: string
+          created_at?: string
+          nucleo_id: string
+        }
+        Update: {
+          atividade_id?: string
+          created_at?: string
+          nucleo_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nucleo_atividades_atividade_id_fkey"
+            columns: ["atividade_id"]
+            isOneToOne: false
+            referencedRelation: "atividades"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "nucleo_atividades_nucleo_id_fkey"
+            columns: ["nucleo_id"]
+            isOneToOne: false
+            referencedRelation: "nucleos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       nucleos: {
         Row: {
           bairro: string | null
@@ -845,9 +1392,11 @@ export type Database = {
           data_fechamento: string | null
           data_inicio: string
           deleted_at: string | null
+          dias_limite_retroativo: number | null
           disponivel_pre_inscricao: boolean
           em_funcionamento: boolean
           endereco: string | null
+          estado: string | null
           id: string
           identificacao: string
           latitude: number | null
@@ -856,8 +1405,12 @@ export type Database = {
           nome_responsavel: string | null
           numero: string | null
           organizacao_id: string
+          permitir_chamada_retroativa: boolean | null
           regiao: string | null
           telefone_contato: string | null
+          tipo_restricao_chamada: string | null
+          tolerancia_fim_minutos: number | null
+          tolerancia_inicio_minutos: number | null
           updated_at: string
         }
         Insert: {
@@ -869,9 +1422,11 @@ export type Database = {
           data_fechamento?: string | null
           data_inicio: string
           deleted_at?: string | null
+          dias_limite_retroativo?: number | null
           disponivel_pre_inscricao?: boolean
           em_funcionamento?: boolean
           endereco?: string | null
+          estado?: string | null
           id?: string
           identificacao: string
           latitude?: number | null
@@ -880,8 +1435,12 @@ export type Database = {
           nome_responsavel?: string | null
           numero?: string | null
           organizacao_id: string
+          permitir_chamada_retroativa?: boolean | null
           regiao?: string | null
           telefone_contato?: string | null
+          tipo_restricao_chamada?: string | null
+          tolerancia_fim_minutos?: number | null
+          tolerancia_inicio_minutos?: number | null
           updated_at?: string
         }
         Update: {
@@ -893,9 +1452,11 @@ export type Database = {
           data_fechamento?: string | null
           data_inicio?: string
           deleted_at?: string | null
+          dias_limite_retroativo?: number | null
           disponivel_pre_inscricao?: boolean
           em_funcionamento?: boolean
           endereco?: string | null
+          estado?: string | null
           id?: string
           identificacao?: string
           latitude?: number | null
@@ -904,8 +1465,12 @@ export type Database = {
           nome_responsavel?: string | null
           numero?: string | null
           organizacao_id?: string
+          permitir_chamada_retroativa?: boolean | null
           regiao?: string | null
           telefone_contato?: string | null
+          tipo_restricao_chamada?: string | null
+          tolerancia_fim_minutos?: number | null
+          tolerancia_inicio_minutos?: number | null
           updated_at?: string
         }
         Relationships: [
@@ -918,19 +1483,74 @@ export type Database = {
           },
         ]
       }
+      objeto_cargos_previstos: {
+        Row: {
+          carga_horaria_semanal: string | null
+          cargo_nome: string
+          created_at: string
+          id: string
+          objeto_id: string
+          quantidade_prevista: number
+          remuneracao_mensal: number | null
+          updated_at: string
+        }
+        Insert: {
+          carga_horaria_semanal?: string | null
+          cargo_nome: string
+          created_at?: string
+          id?: string
+          objeto_id: string
+          quantidade_prevista?: number
+          remuneracao_mensal?: number | null
+          updated_at?: string
+        }
+        Update: {
+          carga_horaria_semanal?: string | null
+          cargo_nome?: string
+          created_at?: string
+          id?: string
+          objeto_id?: string
+          quantidade_prevista?: number
+          remuneracao_mensal?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "objeto_cargos_previstos_objeto_id_fkey"
+            columns: ["objeto_id"]
+            isOneToOne: false
+            referencedRelation: "objetos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       objetos: {
         Row: {
           codigo_objeto: string | null
           codigo_programa: string | null
+          concedente_id: string | null
+          conta_bancaria_agencia: string | null
+          conta_bancaria_banco: string | null
+          conta_bancaria_conta: string | null
           created_at: string
           data_evento: string | null
           data_inicio: string | null
           data_termino: string | null
           deleted_at: string | null
           descricao: string | null
+          edital_numero: string | null
           id: string
+          meta_aulas_ano: number | null
+          meta_beneficiarios: number | null
+          meta_eventos_ano: number | null
+          meta_frequencia_minima: number | null
+          meta_nucleos: number | null
+          meta_reunioes_ano: number | null
+          meta_vulnerabilidade_minima: number | null
+          modalidade_parceria: string | null
           nome: string
           nome_programa: string | null
+          numero_processo_adm: string | null
           status: string
           termo_de_fomento: string | null
           tipo_duracao: Database["public"]["Enums"]["tipo_duracao_atividade"]
@@ -939,15 +1559,29 @@ export type Database = {
         Insert: {
           codigo_objeto?: string | null
           codigo_programa?: string | null
+          concedente_id?: string | null
+          conta_bancaria_agencia?: string | null
+          conta_bancaria_banco?: string | null
+          conta_bancaria_conta?: string | null
           created_at?: string
           data_evento?: string | null
           data_inicio?: string | null
           data_termino?: string | null
           deleted_at?: string | null
           descricao?: string | null
+          edital_numero?: string | null
           id?: string
+          meta_aulas_ano?: number | null
+          meta_beneficiarios?: number | null
+          meta_eventos_ano?: number | null
+          meta_frequencia_minima?: number | null
+          meta_nucleos?: number | null
+          meta_reunioes_ano?: number | null
+          meta_vulnerabilidade_minima?: number | null
+          modalidade_parceria?: string | null
           nome: string
           nome_programa?: string | null
+          numero_processo_adm?: string | null
           status?: string
           termo_de_fomento?: string | null
           tipo_duracao?: Database["public"]["Enums"]["tipo_duracao_atividade"]
@@ -956,21 +1590,43 @@ export type Database = {
         Update: {
           codigo_objeto?: string | null
           codigo_programa?: string | null
+          concedente_id?: string | null
+          conta_bancaria_agencia?: string | null
+          conta_bancaria_banco?: string | null
+          conta_bancaria_conta?: string | null
           created_at?: string
           data_evento?: string | null
           data_inicio?: string | null
           data_termino?: string | null
           deleted_at?: string | null
           descricao?: string | null
+          edital_numero?: string | null
           id?: string
+          meta_aulas_ano?: number | null
+          meta_beneficiarios?: number | null
+          meta_eventos_ano?: number | null
+          meta_frequencia_minima?: number | null
+          meta_nucleos?: number | null
+          meta_reunioes_ano?: number | null
+          meta_vulnerabilidade_minima?: number | null
+          modalidade_parceria?: string | null
           nome?: string
           nome_programa?: string | null
+          numero_processo_adm?: string | null
           status?: string
           termo_de_fomento?: string | null
           tipo_duracao?: Database["public"]["Enums"]["tipo_duracao_atividade"]
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "objetos_concedente_id_fkey"
+            columns: ["concedente_id"]
+            isOneToOne: false
+            referencedRelation: "concedentes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       organizacoes: {
         Row: {
@@ -1033,6 +1689,105 @@ export type Database = {
             columns: ["objeto_id"]
             isOneToOne: false
             referencedRelation: "objetos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pendencias_gerais: {
+        Row: {
+          created_at: string
+          created_by_id: string
+          data_resolucao: string | null
+          deleted_at: string | null
+          descricao: string
+          gravidade: string
+          id: string
+          nucleo_id: string
+          observacoes_resolucao: string | null
+          prazo: string | null
+          providencias: string | null
+          resolvido_por_id: string | null
+          responsavel_id: string | null
+          status: string
+          supervisao_id: string | null
+          tipo: string
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by_id: string
+          data_resolucao?: string | null
+          deleted_at?: string | null
+          descricao: string
+          gravidade: string
+          id?: string
+          nucleo_id: string
+          observacoes_resolucao?: string | null
+          prazo?: string | null
+          providencias?: string | null
+          resolvido_por_id?: string | null
+          responsavel_id?: string | null
+          status?: string
+          supervisao_id?: string | null
+          tipo: string
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by_id?: string
+          data_resolucao?: string | null
+          deleted_at?: string | null
+          descricao?: string
+          gravidade?: string
+          id?: string
+          nucleo_id?: string
+          observacoes_resolucao?: string | null
+          prazo?: string | null
+          providencias?: string | null
+          resolvido_por_id?: string | null
+          responsavel_id?: string | null
+          status?: string
+          supervisao_id?: string | null
+          tipo?: string
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pendencias_gerais_created_by_id_fkey"
+            columns: ["created_by_id"]
+            isOneToOne: false
+            referencedRelation: "funcionarios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pendencias_gerais_nucleo_id_fkey"
+            columns: ["nucleo_id"]
+            isOneToOne: false
+            referencedRelation: "nucleos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pendencias_gerais_resolvido_por_id_fkey"
+            columns: ["resolvido_por_id"]
+            isOneToOne: false
+            referencedRelation: "funcionarios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pendencias_gerais_responsavel_id_fkey"
+            columns: ["responsavel_id"]
+            isOneToOne: false
+            referencedRelation: "funcionarios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pendencias_gerais_supervisao_id_fkey"
+            columns: ["supervisao_id"]
+            isOneToOne: false
+            referencedRelation: "supervisoes"
             referencedColumns: ["id"]
           },
         ]
@@ -1244,6 +1999,260 @@ export type Database = {
           },
         ]
       }
+      relatorios_prestacao_contas: {
+        Row: {
+          created_at: string
+          dados_snapshot: Json
+          data_fim: string
+          data_inicio: string
+          emitido_por_id: string | null
+          id: string
+          objeto_id: string
+          pareceres: Json
+          signatarios: Json
+          status: string
+          tipo_periodo: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          dados_snapshot?: Json
+          data_fim: string
+          data_inicio: string
+          emitido_por_id?: string | null
+          id?: string
+          objeto_id: string
+          pareceres?: Json
+          signatarios?: Json
+          status?: string
+          tipo_periodo?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          dados_snapshot?: Json
+          data_fim?: string
+          data_inicio?: string
+          emitido_por_id?: string | null
+          id?: string
+          objeto_id?: string
+          pareceres?: Json
+          signatarios?: Json
+          status?: string
+          tipo_periodo?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "relatorios_prestacao_contas_emitido_por_id_fkey"
+            columns: ["emitido_por_id"]
+            isOneToOne: false
+            referencedRelation: "usuarios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "relatorios_prestacao_contas_objeto_id_fkey"
+            columns: ["objeto_id"]
+            isOneToOne: false
+            referencedRelation: "objetos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      supervisoes: {
+        Row: {
+          beneficiarios_esperados: number | null
+          beneficiarios_presentes: number | null
+          coordenador_id: string
+          created_at: string
+          data_supervisao: string
+          deleted_at: string | null
+          estrutura_avaliacao: string | null
+          estrutura_observacoes: string | null
+          grade_cumprida: boolean | null
+          grade_observacoes: string | null
+          hora_entrada: string
+          hora_saida: string | null
+          id: string
+          materiais_avaliacao: string | null
+          materiais_observacoes: string | null
+          nucleo_id: string
+          observacoes_gerais: string | null
+          professor_presente: boolean | null
+          professores_ids: string[] | null
+          status: string
+          uniformes_avaliacao: string | null
+          uniformes_observacoes: string | null
+          updated_at: string
+        }
+        Insert: {
+          beneficiarios_esperados?: number | null
+          beneficiarios_presentes?: number | null
+          coordenador_id: string
+          created_at?: string
+          data_supervisao: string
+          deleted_at?: string | null
+          estrutura_avaliacao?: string | null
+          estrutura_observacoes?: string | null
+          grade_cumprida?: boolean | null
+          grade_observacoes?: string | null
+          hora_entrada: string
+          hora_saida?: string | null
+          id?: string
+          materiais_avaliacao?: string | null
+          materiais_observacoes?: string | null
+          nucleo_id: string
+          observacoes_gerais?: string | null
+          professor_presente?: boolean | null
+          professores_ids?: string[] | null
+          status?: string
+          uniformes_avaliacao?: string | null
+          uniformes_observacoes?: string | null
+          updated_at?: string
+        }
+        Update: {
+          beneficiarios_esperados?: number | null
+          beneficiarios_presentes?: number | null
+          coordenador_id?: string
+          created_at?: string
+          data_supervisao?: string
+          deleted_at?: string | null
+          estrutura_avaliacao?: string | null
+          estrutura_observacoes?: string | null
+          grade_cumprida?: boolean | null
+          grade_observacoes?: string | null
+          hora_entrada?: string
+          hora_saida?: string | null
+          id?: string
+          materiais_avaliacao?: string | null
+          materiais_observacoes?: string | null
+          nucleo_id?: string
+          observacoes_gerais?: string | null
+          professor_presente?: boolean | null
+          professores_ids?: string[] | null
+          status?: string
+          uniformes_avaliacao?: string | null
+          uniformes_observacoes?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supervisoes_coordenador_id_fkey"
+            columns: ["coordenador_id"]
+            isOneToOne: false
+            referencedRelation: "funcionarios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "supervisoes_nucleo_id_fkey"
+            columns: ["nucleo_id"]
+            isOneToOne: false
+            referencedRelation: "nucleos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      supervisoes_fotos: {
+        Row: {
+          categoria: string
+          created_at: string
+          id: string
+          legenda: string | null
+          ordem: number
+          supervisao_id: string
+          url: string
+        }
+        Insert: {
+          categoria: string
+          created_at?: string
+          id?: string
+          legenda?: string | null
+          ordem?: number
+          supervisao_id: string
+          url: string
+        }
+        Update: {
+          categoria?: string
+          created_at?: string
+          id?: string
+          legenda?: string | null
+          ordem?: number
+          supervisao_id?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supervisoes_fotos_supervisao_id_fkey"
+            columns: ["supervisao_id"]
+            isOneToOne: false
+            referencedRelation: "supervisoes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      termos_entrega: {
+        Row: {
+          assinatura_url: string | null
+          created_at: string
+          data_devolucao_prev: string | null
+          data_devolucao_real: string | null
+          data_entrega: string
+          entregador_id: string
+          id: string
+          movimentacao_id: string
+          observacoes: string | null
+          recebedor_id: string
+          recebedor_tipo: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          assinatura_url?: string | null
+          created_at?: string
+          data_devolucao_prev?: string | null
+          data_devolucao_real?: string | null
+          data_entrega?: string
+          entregador_id: string
+          id?: string
+          movimentacao_id: string
+          observacoes?: string | null
+          recebedor_id: string
+          recebedor_tipo: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          assinatura_url?: string | null
+          created_at?: string
+          data_devolucao_prev?: string | null
+          data_devolucao_real?: string | null
+          data_entrega?: string
+          entregador_id?: string
+          id?: string
+          movimentacao_id?: string
+          observacoes?: string | null
+          recebedor_id?: string
+          recebedor_tipo?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "termos_entrega_entregador_id_fkey"
+            columns: ["entregador_id"]
+            isOneToOne: false
+            referencedRelation: "funcionarios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "termos_entrega_movimentacao_id_fkey"
+            columns: ["movimentacao_id"]
+            isOneToOne: false
+            referencedRelation: "movimentacoes_estoque"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       turma_horarios: {
         Row: {
           created_at: string
@@ -1330,8 +2339,8 @@ export type Database = {
           deleted_at: string | null
           exclusiva: boolean
           id: string
-          idade_minima: number | null
           idade_maxima: number | null
+          idade_minima: number | null
           nome: string
           nucleo_id: string
           permitir_fila_espera: boolean
@@ -1347,8 +2356,8 @@ export type Database = {
           deleted_at?: string | null
           exclusiva?: boolean
           id?: string
-          idade_minima?: number | null
           idade_maxima?: number | null
+          idade_minima?: number | null
           nome: string
           nucleo_id: string
           permitir_fila_espera?: boolean
@@ -1364,8 +2373,8 @@ export type Database = {
           deleted_at?: string | null
           exclusiva?: boolean
           id?: string
-          idade_minima?: number | null
           idade_maxima?: number | null
+          idade_minima?: number | null
           nome?: string
           nucleo_id?: string
           permitir_fila_espera?: boolean
@@ -1398,6 +2407,7 @@ export type Database = {
           email: string
           entidade_id: string | null
           id: string
+          is_professor: boolean | null
           nome_completo: string
           perfil_id: string
           tipo: Database["public"]["Enums"]["tipo_usuario"]
@@ -1410,6 +2420,7 @@ export type Database = {
           email: string
           entidade_id?: string | null
           id: string
+          is_professor?: boolean | null
           nome_completo: string
           perfil_id: string
           tipo?: Database["public"]["Enums"]["tipo_usuario"]
@@ -1422,6 +2433,7 @@ export type Database = {
           email?: string
           entidade_id?: string | null
           id?: string
+          is_professor?: boolean | null
           nome_completo?: string
           perfil_id?: string
           tipo?: Database["public"]["Enums"]["tipo_usuario"]
@@ -1463,6 +2475,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      auto_encerrar_aulas: { Args: never; Returns: undefined }
       cancelar_inscricao: {
         Args: { p_id: string }
         Returns: {
@@ -1512,10 +2525,27 @@ export type Database = {
       }
       current_entidade_id: { Args: never; Returns: string }
       current_tipo_usuario: { Args: never; Returns: string }
+      desmatricular_beneficiario: {
+        Args: { p_beneficiario_id: string; p_turma_id: string }
+        Returns: undefined
+      }
       get_logo_url: { Args: never; Returns: string }
       has_permissao: {
         Args: { p_acao: string; p_modulo: string }
         Returns: boolean
+      }
+      lembrete_supervisoes_rascunho: { Args: never; Returns: undefined }
+      matricular_beneficiario: {
+        Args: { p_beneficiario_id: string; p_turma_id: string }
+        Returns: undefined
+      }
+      migrar_beneficiario_turma: {
+        Args: {
+          p_beneficiario_id: string
+          p_turma_destino: string
+          p_turma_origem: string
+        }
+        Returns: undefined
       }
       recusar_inscricao: {
         Args: { p_id: string; p_observacoes?: string }
@@ -1539,11 +2569,20 @@ export type Database = {
         }
       }
       unaccent: { Args: { "": string }; Returns: string }
+      verificar_estoques_baixos: { Args: never; Returns: undefined }
+      verificar_termos_atrasados: { Args: never; Returns: undefined }
     }
     Enums: {
       estado_equipamento: "otimo" | "bom" | "regular" | "ruim" | "inativo"
       sexo_beneficiario: "M" | "F" | "O" | "N"
+      status_aprovacao_aula: "aprovado" | "pendente_aprovacao" | "rejeitado"
       status_beneficiario_turma: "ativo" | "evadido" | "transferido"
+      status_execucao_aula:
+        | "em_andamento"
+        | "concluida"
+        | "pendente_aprovacao"
+        | "rejeitada"
+        | "encerrada_automaticamente"
       status_inscricao:
         | "pendente"
         | "reservada"
@@ -1551,6 +2590,7 @@ export type Database = {
         | "recusada"
         | "expirada"
         | "cancelada"
+      status_presenca: "presente" | "falta" | "falta_justificada"
       tipo_anexo:
         | "atestado_medico"
         | "rg"
@@ -1696,7 +2736,15 @@ export const Constants = {
     Enums: {
       estado_equipamento: ["otimo", "bom", "regular", "ruim", "inativo"],
       sexo_beneficiario: ["M", "F", "O", "N"],
+      status_aprovacao_aula: ["aprovado", "pendente_aprovacao", "rejeitado"],
       status_beneficiario_turma: ["ativo", "evadido", "transferido"],
+      status_execucao_aula: [
+        "em_andamento",
+        "concluida",
+        "pendente_aprovacao",
+        "rejeitada",
+        "encerrada_automaticamente",
+      ],
       status_inscricao: [
         "pendente",
         "reservada",
@@ -1705,6 +2753,7 @@ export const Constants = {
         "expirada",
         "cancelada",
       ],
+      status_presenca: ["presente", "falta", "falta_justificada"],
       tipo_anexo: [
         "atestado_medico",
         "rg",
