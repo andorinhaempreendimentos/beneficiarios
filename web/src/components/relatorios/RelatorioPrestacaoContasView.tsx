@@ -13,6 +13,14 @@ interface Props {
   salvando?: boolean;
 }
 
+function getSituacaoMeta(realizado: number, previsto: number): { texto: string; tone: "green" | "amber" | "zinc" } {
+  if (previsto <= 0) return { texto: "Cumprida", tone: "green" };
+  const pct = (realizado / previsto) * 100;
+  if (pct >= 100) return { texto: "Cumprida", tone: "green" };
+  if (pct > 0) return { texto: "Em Execução", tone: "amber" };
+  return { texto: "Não Iniciada", tone: "zinc" };
+}
+
 export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Props) {
   const { objeto, organizacao, periodo, resumoIndicadores, execucaoPorNucleo, beneficiarios, frequencia, atividadesRealizadas, supervisoes, recursosHumanos, materiais, cumprimentoMetas, registroFotografico, ocorrencias } = dados;
 
@@ -218,42 +226,72 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
                   <td className="p-2.5 text-center">{resumoIndicadores.nucleos.previsto}</td>
                   <td className="p-2.5 text-center font-semibold">{resumoIndicadores.nucleos.realizado}</td>
                   <td className="p-2.5 text-center">{Math.round((resumoIndicadores.nucleos.realizado / (resumoIndicadores.nucleos.previsto || 1)) * 100)}%</td>
-                  <td className="p-2.5 text-center"><Badge tone="green">100% Implantado</Badge></td>
+                  <td className="p-2.5 text-center">
+                    {(() => {
+                      const sit = getSituacaoMeta(resumoIndicadores.nucleos.realizado, resumoIndicadores.nucleos.previsto);
+                      return <Badge tone={sit.tone}>{sit.texto}</Badge>;
+                    })()}
+                  </td>
                 </tr>
                 <tr>
                   <td className="p-2.5 font-medium">Beneficiários Atendidos (Matriculados Ativos)</td>
                   <td className="p-2.5 text-center">{resumoIndicadores.beneficiarios.previsto}</td>
                   <td className="p-2.5 text-center font-semibold">{resumoIndicadores.beneficiarios.realizado}</td>
                   <td className="p-2.5 text-center">{Math.round((resumoIndicadores.beneficiarios.realizado / (resumoIndicadores.beneficiarios.previsto || 1)) * 100)}%</td>
-                  <td className="p-2.5 text-center"><Badge tone={resumoIndicadores.beneficiarios.realizado >= resumoIndicadores.beneficiarios.previsto ? "green" : "amber"}>Atendido</Badge></td>
+                  <td className="p-2.5 text-center">
+                    {(() => {
+                      const sit = getSituacaoMeta(resumoIndicadores.beneficiarios.realizado, resumoIndicadores.beneficiarios.previsto);
+                      return <Badge tone={sit.tone}>{sit.texto}</Badge>;
+                    })()}
+                  </td>
                 </tr>
                 <tr>
                   <td className="p-2.5 font-medium">Turmas Esportivas Ativas</td>
                   <td className="p-2.5 text-center">{resumoIndicadores.turmas.previsto}</td>
                   <td className="p-2.5 text-center font-semibold">{resumoIndicadores.turmas.realizado}</td>
                   <td className="p-2.5 text-center">{Math.round((resumoIndicadores.turmas.realizado / (resumoIndicadores.turmas.previsto || 1)) * 100)}%</td>
-                  <td className="p-2.5 text-center"><Badge tone="green">Regular</Badge></td>
+                  <td className="p-2.5 text-center">
+                    {(() => {
+                      const sit = getSituacaoMeta(resumoIndicadores.turmas.realizado, resumoIndicadores.turmas.previsto);
+                      return <Badge tone={sit.tone}>{sit.texto}</Badge>;
+                    })()}
+                  </td>
                 </tr>
                 <tr>
                   <td className="p-2.5 font-medium">Professores / Instrutores Alocados</td>
                   <td className="p-2.5 text-center">{resumoIndicadores.professores.previsto}</td>
                   <td className="p-2.5 text-center font-semibold">{resumoIndicadores.professores.realizado}</td>
                   <td className="p-2.5 text-center">{Math.round((resumoIndicadores.professores.realizado / (resumoIndicadores.professores.previsto || 1)) * 100)}%</td>
-                  <td className="p-2.5 text-center"><Badge tone="green">Quadro Completo</Badge></td>
+                  <td className="p-2.5 text-center">
+                    {(() => {
+                      const sit = getSituacaoMeta(resumoIndicadores.professores.realizado, resumoIndicadores.professores.previsto);
+                      return <Badge tone={sit.tone}>{sit.texto}</Badge>;
+                    })()}
+                  </td>
                 </tr>
                 <tr>
                   <td className="p-2.5 font-medium">Aulas e Treinamentos Concluídos no Período</td>
                   <td className="p-2.5 text-center">{resumoIndicadores.aulas.previsto}</td>
                   <td className="p-2.5 text-center font-semibold">{resumoIndicadores.aulas.realizado}</td>
                   <td className="p-2.5 text-center">{Math.round((resumoIndicadores.aulas.realizado / (resumoIndicadores.aulas.previsto || 1)) * 100)}%</td>
-                  <td className="p-2.5 text-center"><Badge tone="green">Em Dia</Badge></td>
+                  <td className="p-2.5 text-center">
+                    {(() => {
+                      const sit = getSituacaoMeta(resumoIndicadores.aulas.realizado, resumoIndicadores.aulas.previsto);
+                      return <Badge tone={sit.tone}>{sit.texto}</Badge>;
+                    })()}
+                  </td>
                 </tr>
                 <tr>
                   <td className="p-2.5 font-medium">Visitas de Supervisão Pedagógica Realizadas</td>
                   <td className="p-2.5 text-center">{resumoIndicadores.supervisoes.previsto}</td>
                   <td className="p-2.5 text-center font-semibold">{resumoIndicadores.supervisoes.realizado}</td>
                   <td className="p-2.5 text-center">{Math.round((resumoIndicadores.supervisoes.realizado / (resumoIndicadores.supervisoes.previsto || 1)) * 100)}%</td>
-                  <td className="p-2.5 text-center"><Badge tone="green">Supervisionado</Badge></td>
+                  <td className="p-2.5 text-center">
+                    {(() => {
+                      const sit = getSituacaoMeta(resumoIndicadores.supervisoes.realizado, resumoIndicadores.supervisoes.previsto);
+                      return <Badge tone={sit.tone}>{sit.texto}</Badge>;
+                    })()}
+                  </td>
                 </tr>
               </tbody>
             </table>

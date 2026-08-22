@@ -106,6 +106,14 @@ function createSectionHeading(title: string): Paragraph {
   });
 }
 
+function getSituacaoMeta(realizado: number, previsto: number): string {
+  if (previsto <= 0) return 'Cumprida';
+  const pct = (realizado / previsto) * 100;
+  if (pct >= 100) return 'Cumprida';
+  if (pct > 0) return 'Em Execução';
+  return 'Não Iniciada';
+}
+
 export async function exportarRelatorioPrestacaoContasDocx(
   dados: DadosRelatorioPrestacaoContas,
   pareceresEditados?: {
@@ -259,7 +267,7 @@ export async function exportarRelatorioPrestacaoContasDocx(
             createDataCell(String(resumoIndicadores.nucleos.previsto), 1300, AlignmentType.CENTER),
             createDataCell(String(resumoIndicadores.nucleos.realizado), 1300, AlignmentType.CENTER, true),
             createDataCell(`${Math.round((resumoIndicadores.nucleos.realizado / (resumoIndicadores.nucleos.previsto || 1)) * 100)}%`, 1300, AlignmentType.CENTER),
-            createDataCell('100% Implantado', 1300, AlignmentType.CENTER),
+            createDataCell(getSituacaoMeta(resumoIndicadores.nucleos.realizado, resumoIndicadores.nucleos.previsto), 1300, AlignmentType.CENTER),
           ],
         }),
         new TableRow({
@@ -268,7 +276,7 @@ export async function exportarRelatorioPrestacaoContasDocx(
             createDataCell(String(resumoIndicadores.beneficiarios.previsto), 1300, AlignmentType.CENTER),
             createDataCell(String(resumoIndicadores.beneficiarios.realizado), 1300, AlignmentType.CENTER, true),
             createDataCell(`${Math.round((resumoIndicadores.beneficiarios.realizado / (resumoIndicadores.beneficiarios.previsto || 1)) * 100)}%`, 1300, AlignmentType.CENTER),
-            createDataCell('Atendido', 1300, AlignmentType.CENTER),
+            createDataCell(getSituacaoMeta(resumoIndicadores.beneficiarios.realizado, resumoIndicadores.beneficiarios.previsto), 1300, AlignmentType.CENTER),
           ],
         }),
         new TableRow({
@@ -277,7 +285,7 @@ export async function exportarRelatorioPrestacaoContasDocx(
             createDataCell(String(resumoIndicadores.turmas.previsto), 1300, AlignmentType.CENTER),
             createDataCell(String(resumoIndicadores.turmas.realizado), 1300, AlignmentType.CENTER, true),
             createDataCell(`${Math.round((resumoIndicadores.turmas.realizado / (resumoIndicadores.turmas.previsto || 1)) * 100)}%`, 1300, AlignmentType.CENTER),
-            createDataCell('Regular', 1300, AlignmentType.CENTER),
+            createDataCell(getSituacaoMeta(resumoIndicadores.turmas.realizado, resumoIndicadores.turmas.previsto), 1300, AlignmentType.CENTER),
           ],
         }),
         new TableRow({
@@ -286,7 +294,7 @@ export async function exportarRelatorioPrestacaoContasDocx(
             createDataCell(String(resumoIndicadores.professores.previsto), 1300, AlignmentType.CENTER),
             createDataCell(String(resumoIndicadores.professores.realizado), 1300, AlignmentType.CENTER, true),
             createDataCell(`${Math.round((resumoIndicadores.professores.realizado / (resumoIndicadores.professores.previsto || 1)) * 100)}%`, 1300, AlignmentType.CENTER),
-            createDataCell('Quadro Completo', 1300, AlignmentType.CENTER),
+            createDataCell(getSituacaoMeta(resumoIndicadores.professores.realizado, resumoIndicadores.professores.previsto), 1300, AlignmentType.CENTER),
           ],
         }),
         new TableRow({
@@ -295,7 +303,7 @@ export async function exportarRelatorioPrestacaoContasDocx(
             createDataCell(String(resumoIndicadores.aulas.previsto), 1300, AlignmentType.CENTER),
             createDataCell(String(resumoIndicadores.aulas.realizado), 1300, AlignmentType.CENTER, true),
             createDataCell(`${Math.round((resumoIndicadores.aulas.realizado / (resumoIndicadores.aulas.previsto || 1)) * 100)}%`, 1300, AlignmentType.CENTER),
-            createDataCell('Em Dia', 1300, AlignmentType.CENTER),
+            createDataCell(getSituacaoMeta(resumoIndicadores.aulas.realizado, resumoIndicadores.aulas.previsto), 1300, AlignmentType.CENTER),
           ],
         }),
       ],
