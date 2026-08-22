@@ -151,7 +151,8 @@ export function Sidebar() {
             <>
               {navLink("/", "Painel", LayoutDashboard)}
               {navLink("/objetos", t("objeto", "Objeto", true), FolderKanban)}
-              {navLink("/organizacoes", t("organizacao", "Organização", true), Landmark)}
+              {navLink("/concedentes", "Concedentes", Landmark)}
+              {navLink("/organizacoes", t("organizacao", "Organização", true), Building2)}
               {navLink("/nucleos", t("local", "Núcleo", true), Building2)}
 
 

@@ -11,7 +11,8 @@ import {
   type ConcedenteApi,
   type ObjetoCargoPrevistoApi,
 } from "@/lib/api/services";
-import { Plus, Trash2, Building2 } from "lucide-react";
+import { Plus, Trash2, Building2, Edit2 } from "lucide-react";
+import { ModalConcedenteForm } from "@/components/concedentes/ModalConcedenteForm";
 
 const objetoSchema = z.object({
   nome: z.string().min(2, "Nome deve ter no mínimo 2 caracteres"),
@@ -33,6 +34,10 @@ export function ObjetoForm({ objeto: o, backHref }: ObjetoFormProps) {
   const [modalidadeParceria, setModalidadeParceria] = useState<string>(o?.modalidadeParceria ?? "termo_colaboracao");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
+  // Modal de Concedente
+  const [modalConcedenteAberto, setModalConcedenteAberto] = useState(false);
+  const [concedenteParaEditar, setConcedenteParaEditar] = useState<ConcedenteApi | null>(null);
+
   // Quadro dinâmico de cargos previstos
   const [cargos, setCargos] = useState<Partial<ObjetoCargoPrevistoApi>[]>(
     o?.cargosPrevistos && o.cargosPrevistos.length > 0
@@ -52,6 +57,26 @@ export function ObjetoForm({ objeto: o, backHref }: ObjetoFormProps) {
       }
     });
   }, [concedenteId, o?.id]);
+
+  function handleAbrirNovoConcedente() {
+    setConcedenteParaEditar(null);
+    setModalConcedenteAberto(true);
+  }
+
+  function handleAbrirEditarConcedente() {
+    const encontrado = concedentes.find((c) => c.id === concedenteId);
+    if (encontrado) {
+      setConcedenteParaEditar(encontrado);
+      setModalConcedenteAberto(true);
+    }
+  }
+
+  function handleConcedenteSalvo(novoConcedente: ConcedenteApi) {
+    concedentesApi.list({ limit: 100 }).then((res) => {
+      setConcedentes(res.data);
+      setConcedenteId(novoConcedente.id);
+    });
+  }
 
   function handleAddCargo() {
     setCargos((prev) => [
@@ -189,19 +214,44 @@ export function ObjetoForm({ objeto: o, backHref }: ObjetoFormProps) {
       {/* 2. Órgão Concedente e Processo Administrativo */}
       <FormSection title="2. Órgão Concedente e Processo Administrativo (MROSC)">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Field label="Órgão Concedente (Poder Público)">
-            <Select
-              name="concedenteId"
-              value={concedenteId}
-              onChange={(e) => setConcedenteId(e.target.value)}
-            >
-              <option value="">Nenhum / Selecione</option>
-              {concedentes.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.nome} ({c.esfera})
-                </option>
-              ))}
-            </Select>
+          <Field label="Órgão Concedente (Poder Público)" className="sm:col-span-2">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <Select
+                name="concedenteId"
+                value={concedenteId}
+                onChange={(e) => setConcedenteId(e.target.value)}
+                className="flex-1"
+              >
+                <option value="">Nenhum / Selecione o Órgão Concedente</option>
+                {concedentes.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.nome} ({c.esfera.toUpperCase()}{c.cidade ? ` - ${c.cidade}/${c.estado}` : c.estado ? ` - ${c.estado}` : ""})
+                  </option>
+                ))}
+              </Select>
+              <div className="flex items-center gap-2 shrink-0">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleAbrirNovoConcedente}
+                  title="Cadastrar Novo Órgão Concedente"
+                >
+                  <Plus className="h-4 w-4 mr-1 text-sky-600" /> Novo Concedente
+                </Button>
+                {concedenteId && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleAbrirEditarConcedente}
+                    title="Editar Órgão Concedente Selecionado"
+                  >
+                    <Edit2 className="h-4 w-4 text-zinc-600 mr-1" /> Editar
+                  </Button>
+                )}
+              </div>
+            </div>
           </Field>
           <Field label="Nº do Processo Administrativo">
             <Input name="numeroProcessoAdm" defaultValue={o?.numeroProcessoAdm} placeholder="Ex: 00000.0.028571/2026" />
@@ -209,11 +259,11 @@ export function ObjetoForm({ objeto: o, backHref }: ObjetoFormProps) {
           <Field label="Nº do Edital de Chamamento Público">
             <Input name="editalNumero" defaultValue={o?.editalNumero} placeholder="Ex: 002/2026 – SEJUVES" />
           </Field>
-          <Field label="Conta Bancária Exclusiva da Parceria">
-            <div className="grid grid-cols-3 gap-2">
-              <Input name="contaBancariaBanco" defaultValue={o?.contaBancariaBanco} placeholder="Banco" />
-              <Input name="contaBancariaAgencia" defaultValue={o?.contaBancariaAgencia} placeholder="Agência" />
-              <Input name="contaBancariaConta" defaultValue={o?.contaBancariaConta} placeholder="Conta Corrente" />
+          <Field label="Conta Bancária Exclusiva da Parceria" className="sm:col-span-2">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+              <Input name="contaBancariaBanco" defaultValue={o?.contaBancariaBanco} placeholder="Banco (ex: Banco do Brasil)" />
+              <Input name="contaBancariaAgencia" defaultValue={o?.contaBancariaAgencia} placeholder="Agência (ex: 1505-9)" />
+              <Input name="contaBancariaConta" defaultValue={o?.contaBancariaConta} placeholder="Conta Corrente (ex: 102938-4)" />
             </div>
           </Field>
         </div>
@@ -377,6 +427,13 @@ export function ObjetoForm({ objeto: o, backHref }: ObjetoFormProps) {
           {loading ? "Salvando..." : o ? "Salvar Alterações" : "Cadastrar Objeto"}
         </Button>
       </div>
+
+      <ModalConcedenteForm
+        isOpen={modalConcedenteAberto}
+        onClose={() => setModalConcedenteAberto(false)}
+        onSuccess={handleConcedenteSalvo}
+        concedenteParaEditar={concedenteParaEditar}
+      />
     </form>
   );
 }
