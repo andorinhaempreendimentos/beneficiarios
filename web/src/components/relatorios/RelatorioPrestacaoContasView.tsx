@@ -18,7 +18,7 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
 
   // Estados editáveis para justificativas e pareceres
   const [justificativaMetas, setJustificativaMetas] = useState(
-    "Todas as metas pactuadas no Plano de Trabalho foram integralmente executadas dentro dos padrões de excelência técnica e metodológica estabelecidos, com ampla adesão comunitária e frequência superior à meta contratual mínima."
+    "Todas as metas pactuadas no Plano de Trabalho foram integralmente executadas dentro dos padrões de excelência técnica e metodológica estabelecidos, com ampla adesão comunitária e frequência superior à meta mínima pactuada."
   );
 
   const [impactoSocialTexto, setImpactoSocialTexto] = useState(
@@ -355,7 +355,7 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
               <strong>Frequência Média Global do Projeto:</strong> {frequencia.frequenciaMediaGeral}%
             </span>
             <span>
-              <strong>Meta Contratual Mínima:</strong> {frequencia.metaMinima}% •{" "}
+              <strong>Meta Mínima Pactuada:</strong> {frequencia.metaMinima}% •{" "}
               <strong className="text-emerald-700">Meta {frequencia.frequenciaMediaGeral >= frequencia.metaMinima ? "Superada" : "Em Acompanhamento"}</strong>
             </span>
           </div>
@@ -593,7 +593,7 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
             <table className="w-full text-xs text-left">
               <thead className="bg-zinc-100 text-zinc-700 font-semibold uppercase">
                 <tr>
-                  <th className="p-2.5">Meta / Indicador Contratual</th>
+                  <th className="p-2.5">Meta / Indicador Pactuado</th>
                   <th className="p-2.5 text-center">Unidade</th>
                   <th className="p-2.5 text-center">Previsto</th>
                   <th className="p-2.5 text-center">Realizado</th>

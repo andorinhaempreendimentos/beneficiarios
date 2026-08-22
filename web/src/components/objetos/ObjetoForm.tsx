@@ -269,8 +269,8 @@ export function ObjetoForm({ objeto: o, backHref }: ObjetoFormProps) {
         </div>
       </FormSection>
 
-      {/* 3. Metas Contratuais do Plano de Trabalho */}
-      <FormSection title="3. Metas Contratuais Pactuadas (Plano de Trabalho)">
+      {/* 3. Metas Pactuadas no Plano de Trabalho */}
+      <FormSection title="3. Metas Pactuadas no Plano de Trabalho">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <Field label="Meta de Beneficiários Atendidos" required>
             <Input type="number" name="metaBeneficiarios" defaultValue={o?.metaBeneficiarios ?? 2000} placeholder="Ex: 2000" />

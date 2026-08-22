@@ -197,7 +197,7 @@ export default function RelatoriosPage() {
           <Card className="print:hidden">
             <CardBody className="grid grid-cols-1 gap-4 sm:grid-cols-4">
               <div className="sm:col-span-2">
-                <label className="text-xs font-semibold text-zinc-700">Objeto / Parceria (Contrato)</label>
+                <label className="text-xs font-semibold text-zinc-700">Objeto / Parceria</label>
                 <Select
                   value={objetoSelecionadoId}
                   onChange={(e) => setObjetoSelecionadoId(e.target.value)}

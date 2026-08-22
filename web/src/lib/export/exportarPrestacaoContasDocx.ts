@@ -432,7 +432,7 @@ export async function exportarRelatorioPrestacaoContasDocx(
   // 11. QUADRO GERAL DE CUMPRIMENTO DAS METAS PACTUADAS
   const justMetas =
     pareceresEditados?.justificativaMetas ||
-    'Todas as metas pactuadas no Plano de Trabalho foram integralmente executadas dentro dos padrões de excelência técnica e metodológica estabelecidos, com ampla adesão comunitária e frequência superior à meta contratual mínima.';
+    'Todas as metas pactuadas no Plano de Trabalho foram integralmente executadas dentro dos padrões de excelência técnica e metodológica estabelecidos, com ampla adesão comunitária e frequência superior à meta mínima pactuada.';
 
   docChildren.push(
     createSectionHeading('11. QUADRO GERAL DE CUMPRIMENTO DAS METAS PACTUADAS'),
@@ -443,7 +443,7 @@ export async function exportarRelatorioPrestacaoContasDocx(
         new TableRow({
           tableHeader: true,
           children: [
-            createHeaderCell('Meta / Indicador Contratual', 4000),
+            createHeaderCell('Meta / Indicador Pactuado', 4000),
             createHeaderCell('Unidade', 1200, AlignmentType.CENTER),
             createHeaderCell('Previsto', 1400, AlignmentType.CENTER),
             createHeaderCell('Realizado', 1400, AlignmentType.CENTER),
