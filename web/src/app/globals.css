@@ -88,13 +88,14 @@ textarea:disabled,
 @media print {
   @page {
     size: A4 portrait;
-    margin: 10mm 10mm 12mm 10mm;
+    margin: 8mm 8mm 10mm 8mm;
   }
 
   html, body {
     background: #ffffff !important;
     color: #000000 !important;
-    font-size: 10.5pt !important;
+    font-size: 8.5pt !important;
+    line-height: 1.25 !important;
     width: 100% !important;
     height: auto !important;
     min-height: 100% !important;
@@ -105,7 +106,7 @@ textarea:disabled,
     print-color-adjust: exact !important;
   }
 
-  /* Ocultar rigorosamente elementos de navegação, modais, botões e cabeçalhos do app */
+  /* Ocultar rigorosamente navegação, modais, botões e cabeçalhos da interface */
   aside,
   header,
   nav,
@@ -141,11 +142,23 @@ textarea:disabled,
     color: #000000 !important;
   }
 
-  /* Paginação de tabelas e seções */
+  /* Tabelas compactas em impressão */
   table {
     width: 100% !important;
     border-collapse: collapse !important;
-    page-break-inside: auto !important;
+    font-size: 8pt !important;
+  }
+
+  th {
+    padding: 3px 4px !important;
+    font-size: 7.5pt !important;
+    background-color: #f3f4f6 !important;
+    color: #1f2937 !important;
+  }
+
+  td {
+    padding: 2.5px 4px !important;
+    font-size: 7.5pt !important;
   }
 
   thead {
@@ -157,14 +170,21 @@ textarea:disabled,
     page-break-inside: avoid !important;
   }
 
+  /* Seções com espaçamento reduzido */
   .print-section {
-    break-inside: avoid !important;
-    page-break-inside: avoid !important;
-    margin-bottom: 1.2rem !important;
+    margin-bottom: 0.6rem !important;
+    break-inside: auto !important;
   }
 
-  .print-page-break,
-  .print\:break-before-page {
+  /* Assinaturas NUNCA separam */
+  .print-signatures {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    margin-top: 1rem !important;
+    padding-top: 0.5rem !important;
+  }
+
+  .print-page-break {
     break-before: page !important;
     page-break-before: always !important;
   }
