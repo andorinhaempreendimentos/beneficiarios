@@ -315,32 +315,46 @@ export async function exportarRelatorioPrestacaoContasDocx(
     })
   );
 
-  // 4. EXECUÇÃO DETALHADA POR NÚCLEO ESPORTIVO
+  // 4. EXECUÇÃO POR NÚCLEO
   docChildren.push(
-    createSectionHeading('4. EXECUÇÃO DETALHADA POR NÚCLEO ESPORTIVO'),
+    createSectionHeading('4. EXECUÇÃO POR NÚCLEO'),
+    new Paragraph({
+      spacing: { after: 150 },
+      children: [
+        new TextRun({
+          text: 'Apresentar a execução individualizada de cada núcleo.',
+          size: 19,
+          color: '374151',
+        }),
+      ],
+    }),
     new Table({
       width: { size: TABLE_WIDTH, type: WidthType.DXA },
-      columnWidths: [3000, 2000, 2000, 1300, 1300],
+      columnWidths: [2200, 1600, 1400, 1600, 800, 1000, 1000],
       rows: [
         new TableRow({
           tableHeader: true,
           children: [
-            createHeaderCell('Núcleo Esportivo', 3000),
-            createHeaderCell('Região / Bairro', 2000),
-            createHeaderCell('Professores Vinculados', 2000),
-            createHeaderCell('Alunos', 1300, AlignmentType.CENTER),
-            createHeaderCell('Aulas', 1300, AlignmentType.CENTER),
+            createHeaderCell('Núcleo', 2200),
+            createHeaderCell('Região/Bairro', 1600),
+            createHeaderCell('Modalidade', 1400),
+            createHeaderCell('Professor', 1600),
+            createHeaderCell('Nº Turmas', 800, AlignmentType.CENTER),
+            createHeaderCell('Beneficiários', 1000, AlignmentType.CENTER),
+            createHeaderCell('Aulas', 1000, AlignmentType.CENTER),
           ],
         }),
         ...execucaoPorNucleo.map(
           (item) =>
             new TableRow({
               children: [
-                createDataCell(item.identificacao, 3000, AlignmentType.LEFT, true),
-                createDataCell(item.bairro || item.regiao || '—', 2000),
-                createDataCell(item.professores.join(', '), 2000),
-                createDataCell(String(item.beneficiariosAtendidos), 1300, AlignmentType.CENTER, true),
-                createDataCell(String(item.aulasRealizadas), 1300, AlignmentType.CENTER),
+                createDataCell(item.identificacao, 2200, AlignmentType.LEFT, true),
+                createDataCell(item.bairro || item.regiao || '—', 1600),
+                createDataCell(item.modalidades.join(', ') || '—', 1400),
+                createDataCell(item.professores.join(', ') || '—', 1600),
+                createDataCell(String(item.totalTurmas), 800, AlignmentType.CENTER),
+                createDataCell(String(item.beneficiariosAtendidos), 1000, AlignmentType.CENTER, true),
+                createDataCell(String(item.aulasRealizadas), 1000, AlignmentType.CENTER),
               ],
             })
         ),
@@ -348,30 +362,112 @@ export async function exportarRelatorioPrestacaoContasDocx(
     })
   );
 
-  // 5. DEMONSTRATIVO DE BENEFICIÁRIOS E PERFIL SOCIODEMOGRÁFICO
+  // 5. BENEFICIÁRIOS ATENDIDOS
   docChildren.push(
-    createSectionHeading('5. DEMONSTRATIVO DE BENEFICIÁRIOS E PERFIL SOCIODEMOGRÁFICO'),
+    createSectionHeading('5. BENEFICIÁRIOS ATENDIDOS'),
+    new Paragraph({
+      spacing: { after: 150 },
+      children: [
+        new TextRun({
+          text: `No período analisado, o projeto registrou o atendimento de ${beneficiarios.totalCadastrados} beneficiários, distribuídos entre os diferentes núcleos e turmas.`,
+          size: 19,
+          color: '374151',
+        }),
+      ],
+    }),
+    new Paragraph({
+      spacing: { after: 100 },
+      children: [
+        new TextRun({
+          text: '5.1 Demonstrativo de beneficiários',
+          bold: true,
+          size: 19,
+        }),
+      ],
+    }),
     new Table({
-      width: { size: TABLE_WIDTH, type: WidthType.DXA },
-      columnWidths: [1920, 1920, 1920, 1920, 1920],
+      width: { size: 6000, type: WidthType.DXA },
+      columnWidths: [4000, 2000],
       rows: [
         new TableRow({
           tableHeader: true,
           children: [
-            createHeaderCell('Total Cadastrados', 1920, AlignmentType.CENTER),
-            createHeaderCell('Alunos Ativos', 1920, AlignmentType.CENTER),
-            createHeaderCell('Feminino (%)', 1920, AlignmentType.CENTER),
-            createHeaderCell('Masculino (%)', 1920, AlignmentType.CENTER),
-            createHeaderCell('Vulnerabilidade (%)', 1920, AlignmentType.CENTER),
+            createHeaderCell('Indicador', 4000),
+            createHeaderCell('Quantidade', 2000, AlignmentType.CENTER),
           ],
         }),
         new TableRow({
           children: [
-            createDataCell(String(beneficiarios.totalCadastrados), 1920, AlignmentType.CENTER, true),
-            createDataCell(String(beneficiarios.ativos), 1920, AlignmentType.CENTER, true),
-            createDataCell(`${beneficiarios.feminino} (${beneficiarios.totalCadastrados > 0 ? Math.round((beneficiarios.feminino / beneficiarios.totalCadastrados) * 100) : 0}%)`, 1920, AlignmentType.CENTER),
-            createDataCell(`${beneficiarios.masculino} (${beneficiarios.totalCadastrados > 0 ? Math.round((beneficiarios.masculino / beneficiarios.totalCadastrados) * 100) : 0}%)`, 1920, AlignmentType.CENTER),
-            createDataCell(`${beneficiarios.percentualVulnerabilidade}%`, 1920, AlignmentType.CENTER, true),
+            createDataCell('Beneficiários cadastrados', 4000),
+            createDataCell(String(beneficiarios.totalCadastrados), 2000, AlignmentType.CENTER, true),
+          ],
+        }),
+        new TableRow({
+          children: [
+            createDataCell('Beneficiários ativos', 4000),
+            createDataCell(String(beneficiarios.ativos), 2000, AlignmentType.CENTER, true),
+          ],
+        }),
+        new TableRow({
+          children: [
+            createDataCell('Novos beneficiários no período', 4000),
+            createDataCell(String(beneficiarios.novosNoPeriodo), 2000, AlignmentType.CENTER),
+          ],
+        }),
+        new TableRow({
+          children: [
+            createDataCell('Beneficiários desligados/desistentes', 4000),
+            createDataCell(String(beneficiarios.desligadosDesistentes), 2000, AlignmentType.CENTER),
+          ],
+        }),
+        new TableRow({
+          children: [
+            createDataCell('Beneficiários do sexo feminino', 4000),
+            createDataCell(String(beneficiarios.feminino), 2000, AlignmentType.CENTER),
+          ],
+        }),
+        new TableRow({
+          children: [
+            createDataCell('Beneficiários do sexo masculino', 4000),
+            createDataCell(String(beneficiarios.masculino), 2000, AlignmentType.CENTER),
+          ],
+        }),
+      ],
+    }),
+    new Paragraph({
+      spacing: { before: 150, after: 100 },
+      children: [
+        new TextRun({
+          text: 'Quando necessário, deverão ser apresentados demonstrativos por núcleo, turma, modalidade, faixa etária e período de atendimento.',
+          italics: true,
+          size: 17,
+          color: '6B7280',
+        }),
+      ],
+    }),
+    new Table({
+      width: { size: TABLE_WIDTH, type: WidthType.DXA },
+      columnWidths: [2600, 1400, 1400, 1400, 1400, 1400],
+      rows: [
+        new TableRow({
+          tableHeader: true,
+          children: [
+            createHeaderCell('Faixa Etária', 2600),
+            createHeaderCell('06 a 09 anos', 1400, AlignmentType.CENTER),
+            createHeaderCell('10 a 12 anos', 1400, AlignmentType.CENTER),
+            createHeaderCell('13 a 15 anos', 1400, AlignmentType.CENTER),
+            createHeaderCell('16 a 18 anos', 1400, AlignmentType.CENTER),
+            createHeaderCell('Total Atendido', 1400, AlignmentType.CENTER),
+          ],
+        }),
+        new TableRow({
+          children: [
+            createDataCell('Quantidade de Alunos', 2600),
+            createDataCell(String(beneficiarios.faixasEtarias.de06a09), 1400, AlignmentType.CENTER),
+            createDataCell(String(beneficiarios.faixasEtarias.de10a12), 1400, AlignmentType.CENTER),
+            createDataCell(String(beneficiarios.faixasEtarias.de13a15), 1400, AlignmentType.CENTER),
+            createDataCell(String(beneficiarios.faixasEtarias.de16a18), 1400, AlignmentType.CENTER),
+            createDataCell(String(beneficiarios.totalCadastrados), 1400, AlignmentType.CENTER, true),
           ],
         }),
       ],
@@ -441,67 +537,277 @@ export async function exportarRelatorioPrestacaoContasDocx(
     })
   );
 
-  // 9. QUADRO DE RECURSOS HUMANOS
+  // 7. ATIVIDADES REALIZADAS
   docChildren.push(
-    createSectionHeading('9. QUADRO DE RECURSOS HUMANOS E EQUIPE TÉCNICA'),
+    createSectionHeading('7. ATIVIDADES REALIZADAS'),
+    new Paragraph({
+      alignment: AlignmentType.JUSTIFIED,
+      spacing: { after: 150 },
+      children: [
+        new TextRun({
+          text: 'As atividades desenvolvidas no período compreenderam aulas e treinamentos de futebol e futsal, além de outras ações previstas no planejamento do projeto.',
+          size: 19,
+          color: '374151',
+        }),
+      ],
+    }),
     new Table({
       width: { size: TABLE_WIDTH, type: WidthType.DXA },
-      columnWidths: [3600, 2000, 2000, 2000],
+      columnWidths: [1400, 2200, 1600, 2200, 1200, 1000],
       rows: [
         new TableRow({
           tableHeader: true,
           children: [
-            createHeaderCell('Cargo / Função Prevista', 3600),
-            createHeaderCell('Qtd. Prevista', 2000, AlignmentType.CENTER),
-            createHeaderCell('Qtd. Realizada/Ativa', 2000, AlignmentType.CENTER),
-            createHeaderCell('% Cumprimento', 2000, AlignmentType.CENTER),
+            createHeaderCell('Data', 1400),
+            createHeaderCell('Núcleo', 2200),
+            createHeaderCell('Modalidade', 1600),
+            createHeaderCell('Atividade', 2200),
+            createHeaderCell('Professor', 1200),
+            createHeaderCell('Partic.', 1000, AlignmentType.CENTER),
           ],
         }),
-        ...recursosHumanos.cargosComparativo.map(
-          (c) =>
-            new TableRow({
-              children: [
-                createDataCell(c.cargoNome, 3600, AlignmentType.LEFT, true),
-                createDataCell(String(c.quantidadePrevista), 2000, AlignmentType.CENTER),
-                createDataCell(String(c.quantidadeAtiva), 2000, AlignmentType.CENTER, true),
-                createDataCell(`${c.percentualExecucao}%`, 2000, AlignmentType.CENTER),
-              ],
-            })
-        ),
+        ...(atividadesRealizadas.length > 0
+          ? atividadesRealizadas.slice(0, 15).map(
+              (a) =>
+                new TableRow({
+                  children: [
+                    createDataCell(formatarData(a.data), 1400),
+                    createDataCell(a.nucleoNome, 2200),
+                    createDataCell(a.modalidade || '—', 1600),
+                    createDataCell(a.atividadeDescricao || a.turmaNome, 2200),
+                    createDataCell(a.professorNome || '—', 1200),
+                    createDataCell(String(a.participantesPresentes), 1000, AlignmentType.CENTER, true),
+                  ],
+                })
+            )
+          : [
+              new TableRow({
+                children: [createDataCell('Nenhuma atividade registrada no período.', TABLE_WIDTH, AlignmentType.CENTER)],
+              }),
+            ]),
       ],
     })
   );
 
-  // 11. QUADRO GERAL DE CUMPRIMENTO DAS METAS PACTUADAS
+  // 8. ACOMPANHAMENTO E SUPERVISÃO DOS NÚCLEOS
+  docChildren.push(
+    createSectionHeading('8. ACOMPANHAMENTO E SUPERVISÃO DOS NÚCLEOS'),
+    new Paragraph({
+      alignment: AlignmentType.JUSTIFIED,
+      spacing: { after: 150 },
+      children: [
+        new TextRun({
+          text: 'Durante a execução do projeto, deverão ser realizadas visitas periódicas aos núcleos pela coordenação, com o objetivo de acompanhar o funcionamento das atividades e verificar as condições de execução.',
+          size: 19,
+          color: '374151',
+        }),
+      ],
+    }),
+    new Paragraph({
+      spacing: { after: 100 },
+      children: [new TextRun({ text: 'Demonstrativo das visitas', bold: true, size: 19 })],
+    }),
+    new Table({
+      width: { size: TABLE_WIDTH, type: WidthType.DXA },
+      columnWidths: [1400, 2400, 2000, 1800, 1000, 1000],
+      rows: [
+        new TableRow({
+          tableHeader: true,
+          children: [
+            createHeaderCell('Data', 1400),
+            createHeaderCell('Núcleo', 2400),
+            createHeaderCell('Coordenador', 2000),
+            createHeaderCell('Professor', 1800),
+            createHeaderCell('Presentes', 1000, AlignmentType.CENTER),
+            createHeaderCell('Situação', 1000, AlignmentType.CENTER),
+          ],
+        }),
+        ...(supervisoes.length > 0
+          ? supervisoes.map(
+              (s) =>
+                new TableRow({
+                  children: [
+                    createDataCell(formatarData(s.data), 1400),
+                    createDataCell(s.nucleoNome || '—', 2400),
+                    createDataCell(s.coordenadorNome || '—', 2000),
+                    createDataCell(s.professorPresente ? 'Presente' : 'Ausente', 1800),
+                    createDataCell(String(s.beneficiariosPresentes), 1000, AlignmentType.CENTER),
+                    createDataCell(s.situacao, 1000, AlignmentType.CENTER, true),
+                  ],
+                })
+            )
+          : [
+              new TableRow({
+                children: [createDataCell('Nenhuma visita de supervisão registrada no período.', TABLE_WIDTH, AlignmentType.CENTER)],
+              }),
+            ]),
+      ],
+    })
+  );
+
+  // 9. RECURSOS HUMANOS
+  docChildren.push(
+    createSectionHeading('9. RECURSOS HUMANOS'),
+    new Paragraph({
+      alignment: AlignmentType.JUSTIFIED,
+      spacing: { after: 150 },
+      children: [
+        new TextRun({
+          text: 'Apresentar os profissionais que efetivamente atuaram durante o período.',
+          size: 19,
+          color: '374151',
+        }),
+      ],
+    }),
+    new Table({
+      width: { size: TABLE_WIDTH, type: WidthType.DXA },
+      columnWidths: [2600, 2000, 2200, 1600, 1200],
+      rows: [
+        new TableRow({
+          tableHeader: true,
+          children: [
+            createHeaderCell('Profissional', 2600),
+            createHeaderCell('Função', 2000),
+            createHeaderCell('Núcleo/Área', 2200),
+            createHeaderCell('Período de Atuação', 1600, AlignmentType.CENTER),
+            createHeaderCell('Situação', 1200, AlignmentType.CENTER),
+          ],
+        }),
+        ...(recursosHumanos.profissionais.length > 0
+          ? recursosHumanos.profissionais.map(
+              (p) =>
+                new TableRow({
+                  children: [
+                    createDataCell(p.nomeCompleto, 2600, AlignmentType.LEFT, true),
+                    createDataCell(p.funcao || '—', 2000),
+                    createDataCell(p.nucleoOuAlocacao || '—', 2200),
+                    createDataCell(`${formatarData(periodo.dataInicio)} a ${formatarData(periodo.dataFim)}`, 1600, AlignmentType.CENTER),
+                    createDataCell(p.situacao || 'Ativo', 1200, AlignmentType.CENTER, true),
+                  ],
+                })
+            )
+          : [
+              new TableRow({
+                children: [createDataCell('Nenhum profissional vinculado no período.', TABLE_WIDTH, AlignmentType.CENTER)],
+              }),
+            ]),
+      ],
+    }),
+    new Paragraph({
+      spacing: { before: 100, after: 200 },
+      children: [
+        new TextRun({
+          text: 'Deverão ser mantidos os documentos comprobatórios referentes à contratação e atuação dos profissionais, conforme as exigências do instrumento e do Plano de Trabalho.',
+          italics: true,
+          size: 17,
+          color: '6B7280',
+        }),
+      ],
+    })
+  );
+
+  // 10. MATERIAIS E UNIFORMES
+  docChildren.push(
+    createSectionHeading('10. MATERIAIS E UNIFORMES'),
+    new Paragraph({
+      alignment: AlignmentType.JUSTIFIED,
+      spacing: { after: 150 },
+      children: [
+        new TextRun({
+          text: 'Apresentar os materiais adquiridos, recebidos, distribuídos ou utilizados durante a execução do projeto.',
+          size: 19,
+          color: '374151',
+        }),
+      ],
+    }),
+    new Table({
+      width: { size: TABLE_WIDTH, type: WidthType.DXA },
+      columnWidths: [2800, 1800, 1800, 1800, 1400],
+      rows: [
+        new TableRow({
+          tableHeader: true,
+          children: [
+            createHeaderCell('Item', 2800),
+            createHeaderCell('Qtd. Prevista', 1800, AlignmentType.CENTER),
+            createHeaderCell('Qtd. Adquirida/Recebida', 1800, AlignmentType.CENTER),
+            createHeaderCell('Qtd. Distribuída', 1800, AlignmentType.CENTER),
+            createHeaderCell('Destinação', 1400),
+          ],
+        }),
+        ...(materiais.length > 0
+          ? materiais.map(
+              (m) =>
+                new TableRow({
+                  children: [
+                    createDataCell(m.nome, 2800, AlignmentType.LEFT, true),
+                    createDataCell(`${m.quantidadePrevista} ${m.unidadeMedida}`, 1800, AlignmentType.CENTER),
+                    createDataCell(`${m.quantidadeAdquirida} ${m.unidadeMedida}`, 1800, AlignmentType.CENTER),
+                    createDataCell(`${m.quantidadeDistribuida} ${m.unidadeMedida}`, 1800, AlignmentType.CENTER, true),
+                    createDataCell(m.destinacao || '—', 1400),
+                  ],
+                })
+            )
+          : [
+              new TableRow({
+                children: [createDataCell('Nenhum material movimentado no período.', TABLE_WIDTH, AlignmentType.CENTER)],
+              }),
+            ]),
+      ],
+    }),
+    new Paragraph({
+      spacing: { before: 100, after: 200 },
+      children: [
+        new TextRun({
+          text: 'Quando houver entrega individual de materiais ou uniformes aos beneficiários ou profissionais, recomenda-se manter termo/lista de entrega e recebimento, contendo identificação, quantidade, data e assinatura do destinatário.',
+          italics: true,
+          size: 17,
+          color: '6B7280',
+        }),
+      ],
+    })
+  );
+
+  // 11. CUMPRIMENTO DAS METAS
   const justMetas =
     pareceresEditados?.justificativaMetas ||
     'Todas as metas pactuadas no Plano de Trabalho foram integralmente executadas dentro dos padrões de excelência técnica e metodológica estabelecidos, com ampla adesão comunitária e frequência superior à meta mínima pactuada.';
 
   docChildren.push(
-    createSectionHeading('11. QUADRO GERAL DE CUMPRIMENTO DAS METAS PACTUADAS'),
+    createSectionHeading('11. CUMPRIMENTO DAS METAS'),
+    new Paragraph({
+      alignment: AlignmentType.JUSTIFIED,
+      spacing: { after: 150 },
+      children: [
+        new TextRun({
+          text: 'A análise deverá comparar diretamente aquilo que foi previsto no Plano de Trabalho com o resultado efetivamente alcançado.',
+          size: 19,
+          color: '374151',
+        }),
+      ],
+    }),
     new Table({
       width: { size: TABLE_WIDTH, type: WidthType.DXA },
-      columnWidths: [4000, 1200, 1400, 1400, 1600],
+      columnWidths: [3600, 1600, 1600, 1600, 1200],
       rows: [
         new TableRow({
           tableHeader: true,
           children: [
-            createHeaderCell('Meta / Indicador Pactuado', 4000),
-            createHeaderCell('Unidade', 1200, AlignmentType.CENTER),
-            createHeaderCell('Previsto', 1400, AlignmentType.CENTER),
-            createHeaderCell('Realizado', 1400, AlignmentType.CENTER),
-            createHeaderCell('% Execução', 1600, AlignmentType.CENTER),
+            createHeaderCell('Meta/Indicador', 3600),
+            createHeaderCell('Previsto', 1600, AlignmentType.CENTER),
+            createHeaderCell('Executado', 1600, AlignmentType.CENTER),
+            createHeaderCell('Percentual de Execução', 1600, AlignmentType.CENTER),
+            createHeaderCell('Situação', 1200, AlignmentType.CENTER),
           ],
         }),
         ...cumprimentoMetas.map(
           (m) =>
             new TableRow({
               children: [
-                createDataCell(m.meta, 4000),
-                createDataCell(m.unidade, 1200, AlignmentType.CENTER),
-                createDataCell(String(m.previsto), 1400, AlignmentType.CENTER),
-                createDataCell(String(m.realizado), 1400, AlignmentType.CENTER, true),
+                createDataCell(m.meta, 3600),
+                createDataCell(`${m.previsto} ${m.unidade}`, 1600, AlignmentType.CENTER),
+                createDataCell(`${m.realizado} ${m.unidade}`, 1600, AlignmentType.CENTER, true),
                 createDataCell(`${m.percentualExecucao}%`, 1600, AlignmentType.CENTER, true),
+                createDataCell(m.situacao, 1200, AlignmentType.CENTER),
               ],
             })
         ),
@@ -510,19 +816,78 @@ export async function exportarRelatorioPrestacaoContasDocx(
     new Paragraph({
       spacing: { before: 150, after: 200 },
       children: [
-        new TextRun({ text: 'Justificativa e Análise do Cumprimento de Metas: ', bold: true, size: 19 }),
+        new TextRun({ text: 'Análise do cumprimento das metas: ', bold: true, size: 19 }),
         new TextRun({ text: justMetas, size: 19, color: '374151' }),
       ],
     })
   );
 
-  // 14. RESULTADOS ALCANÇADOS E IMPACTO SOCIAL
+  // 12. REGISTRO FOTOGRÁFICO
+  docChildren.push(
+    createSectionHeading('12. REGISTRO FOTOGRÁFICO'),
+    new Paragraph({
+      alignment: AlignmentType.JUSTIFIED,
+      spacing: { after: 150 },
+      children: [
+        new TextRun({
+          text: 'Inserir registros fotográficos que demonstrem a efetiva realização das atividades.',
+          size: 19,
+          color: '374151',
+        }),
+      ],
+    })
+  );
+
+  // 13. PRINCIPAIS OCORRÊNCIAS E PROVIDÊNCIAS
+  docChildren.push(
+    createSectionHeading('13. PRINCIPAIS OCORRÊNCIAS E PROVIDÊNCIAS'),
+    new Table({
+      width: { size: TABLE_WIDTH, type: WidthType.DXA },
+      columnWidths: [3000, 1800, 3200, 1600],
+      rows: [
+        new TableRow({
+          tableHeader: true,
+          children: [
+            createHeaderCell('Ocorrência / Desafio Registrado', 3000),
+            createHeaderCell('Gravidade', 1800),
+            createHeaderCell('Providência Adotada', 3200),
+            createHeaderCell('Status', 1600, AlignmentType.CENTER),
+          ],
+        }),
+        ...(dados.ocorrencias.length > 0
+          ? dados.ocorrencias.map(
+              (o) =>
+                new TableRow({
+                  children: [
+                    createDataCell(o.titulo, 3000),
+                    createDataCell(o.gravidade, 1800),
+                    createDataCell(o.providencias || '—', 3200),
+                    createDataCell(o.status, 1600, AlignmentType.CENTER, true),
+                  ],
+                })
+            )
+          : [
+              new TableRow({
+                children: [
+                  createDataCell(
+                    'Operação sem intercorrências graves no período. Todas as rotinas foram mantidas com normalidade.',
+                    TABLE_WIDTH,
+                    AlignmentType.CENTER
+                  ),
+                ],
+              }),
+            ]),
+      ],
+    })
+  );
+
+  // 14. RESULTADOS ALCANÇADOS
   const resTexto =
     pareceresEditados?.impactoSocialTexto ||
     `Durante o período de ${formatarData(periodo.dataInicio)} a ${formatarData(periodo.dataFim)}, a execução do projeto ${objeto.nome} gerou impacto direto na vida de ${beneficiarios.totalCadastrados} crianças e adolescentes, com foco prioritário em famílias em situação de vulnerabilidade social (${beneficiarios.percentualVulnerabilidade}% dos matriculados). Destacam-se o fortalecimento da convivência comunitária, a promoção da disciplina e cooperação por meio do futebol/futsal com metodologia Gol do Brasil da CBF, e a melhoria no rendimento escolar dos participantes.`;
 
   docChildren.push(
-    createSectionHeading('14. RESULTADOS ALCANÇADOS E IMPACTO SOCIAL'),
+    createSectionHeading('14. RESULTADOS ALCANÇADOS'),
     new Paragraph({
       alignment: AlignmentType.JUSTIFIED,
       spacing: { after: 200 },
@@ -530,13 +895,13 @@ export async function exportarRelatorioPrestacaoContasDocx(
     })
   );
 
-  // 15. CONCLUSÃO E PARECER FINAL
+  // 15. CONCLUSÃO
   const concTexto =
     pareceresEditados?.conclusaoTexto ||
     `Diante do exposto, atesta-se que as atividades previstas no Plano de Trabalho foram rigorosamente executadas, atendendo aos objetivos da parceria celebrada sob o ${objeto.termoDeFomento || 'Termo de Parceria'} com o ${objeto.concedente?.nome || 'Órgão Concedente'}, demonstrando a boa e regular aplicação dos recursos e o cumprimento pleno da finalidade pública e social.`;
 
   docChildren.push(
-    createSectionHeading('15. CONCLUSÃO E PARECER FINAL'),
+    createSectionHeading('15. CONCLUSÃO'),
     new Paragraph({
       alignment: AlignmentType.JUSTIFIED,
       spacing: { after: 200 },
@@ -544,9 +909,9 @@ export async function exportarRelatorioPrestacaoContasDocx(
     })
   );
 
-  // 16. DOCUMENTOS COMPROBATÓRIOS (ANEXOS)
+  // 16. DOCUMENTOS COMPROBATÓRIOS / ANEXOS
   docChildren.push(
-    createSectionHeading('16. RELAÇÃO DE DOCUMENTOS COMPROBATÓRIOS (ANEXOS OFICIAIS)'),
+    createSectionHeading('16. DOCUMENTOS COMPROBATÓRIOS / ANEXOS'),
     new Paragraph({
       spacing: { after: 80 },
       children: [new TextRun({ text: '1. Anexo I: Diários de classe e relatórios consolidados de frequência por turma e núcleo;', size: 18 })],

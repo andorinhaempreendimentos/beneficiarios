@@ -252,21 +252,24 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
         </section>
 
         {/* 4. EXECUÇÃO POR NÚCLEO */}
-        <section className="mb-8">
+        <section className="mb-8 print-section">
           <h2 className="text-sm font-bold uppercase tracking-wider bg-zinc-100 px-3 py-1.5 text-zinc-800 border-l-4 border-sky-600 mb-3">
-            4. Execução Detalhada por Núcleo Esportivo
+            4. Execução por Núcleo
           </h2>
+          <p className="text-xs text-zinc-600 mb-3 leading-relaxed">
+            Apresentar a execução individualizada de cada núcleo.
+          </p>
           <div className="overflow-x-auto border border-zinc-200 rounded-lg">
             <table className="w-full text-xs text-left">
               <thead className="bg-zinc-100 text-zinc-700 font-semibold uppercase">
                 <tr>
                   <th className="p-2.5">Núcleo</th>
-                  <th className="p-2.5">Região / Bairro</th>
+                  <th className="p-2.5">Região/Bairro</th>
                   <th className="p-2.5">Modalidade</th>
-                  <th className="p-2.5">Professores Vinculados</th>
-                  <th className="p-2.5 text-center">Turmas</th>
-                  <th className="p-2.5 text-center">Alunos</th>
-                  <th className="p-2.5 text-center">Aulas</th>
+                  <th className="p-2.5">Professor</th>
+                  <th className="p-2.5 text-center">Nº de Turmas</th>
+                  <th className="p-2.5 text-center">Beneficiários Atendidos</th>
+                  <th className="p-2.5 text-center">Aulas Realizadas</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-200">
@@ -274,8 +277,8 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
                   <tr key={idx} className="hover:bg-zinc-50">
                     <td className="p-2.5 font-semibold text-zinc-800">{item.identificacao}</td>
                     <td className="p-2.5 text-zinc-600">{item.bairro || item.regiao || "—"}</td>
-                    <td className="p-2.5 text-zinc-600">{item.modalidades.join(", ")}</td>
-                    <td className="p-2.5 text-zinc-600">{item.professores.join(", ")}</td>
+                    <td className="p-2.5 text-zinc-600">{item.modalidades.join(", ") || "—"}</td>
+                    <td className="p-2.5 text-zinc-600">{item.professores.join(", ") || "—"}</td>
                     <td className="p-2.5 text-center font-medium">{item.totalTurmas}</td>
                     <td className="p-2.5 text-center font-semibold text-sky-800">{item.beneficiariosAtendidos}</td>
                     <td className="p-2.5 text-center font-medium">{item.aulasRealizadas}</td>
@@ -286,29 +289,59 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
           </div>
         </section>
 
-        {/* 5. BENEFICIÁRIOS ATENDIDOS (DEMONSTRATIVO SOCIODEMOGRÁFICO) */}
-        <section className="mb-8">
+        {/* 5. BENEFICIÁRIOS ATENDIDOS */}
+        <section className="mb-8 print-section">
           <h2 className="text-sm font-bold uppercase tracking-wider bg-zinc-100 px-3 py-1.5 text-zinc-800 border-l-4 border-sky-600 mb-3">
-            5. Demonstrativo de Beneficiários e Perfil Sociodemográfico
+            5. Beneficiários Atendidos
           </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4 text-xs">
-            <div className="border border-zinc-200 rounded-lg p-3 bg-zinc-50/50">
-              <span className="text-zinc-500">Total Cadastrados</span>
-              <p className="text-lg font-bold text-zinc-900 mt-0.5">{beneficiarios.totalCadastrados}</p>
-            </div>
-            <div className="border border-zinc-200 rounded-lg p-3 bg-zinc-50/50">
-              <span className="text-zinc-500">Alunos Ativos</span>
-              <p className="text-lg font-bold text-emerald-700 mt-0.5">{beneficiarios.ativos}</p>
-            </div>
-            <div className="border border-zinc-200 rounded-lg p-3 bg-zinc-50/50">
-              <span className="text-zinc-500">Gênero Feminino</span>
-              <p className="text-lg font-bold text-pink-700 mt-0.5">{beneficiarios.feminino} ({beneficiarios.totalCadastrados > 0 ? Math.round((beneficiarios.feminino / beneficiarios.totalCadastrados) * 100) : 0}%)</p>
-            </div>
-            <div className="border border-zinc-200 rounded-lg p-3 bg-zinc-50/50">
-              <span className="text-zinc-500">Vulnerabilidade / Rede Pública</span>
-              <p className="text-lg font-bold text-sky-700 mt-0.5">{beneficiarios.percentualVulnerabilidade}% (Meta: {objeto.metaVulnerabilidadeMinima}%)</p>
+          <p className="text-xs text-zinc-600 mb-3 leading-relaxed">
+            No período analisado, o projeto registrou o atendimento de <strong>{beneficiarios.totalCadastrados}</strong> beneficiários, distribuídos entre os diferentes núcleos e turmas.
+          </p>
+
+          {/* 5.1 Demonstrativo de beneficiários */}
+          <div className="mb-4">
+            <h3 className="text-xs font-bold uppercase text-zinc-700 mb-2">5.1 Demonstrativo de beneficiários</h3>
+            <div className="overflow-x-auto border border-zinc-200 rounded-lg max-w-xl">
+              <table className="w-full text-xs text-left">
+                <thead className="bg-zinc-100 text-zinc-700 font-semibold uppercase">
+                  <tr>
+                    <th className="p-2.5">Indicador</th>
+                    <th className="p-2.5 text-center w-36">Quantidade</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-200">
+                  <tr>
+                    <td className="p-2.5 font-medium">Beneficiários cadastrados</td>
+                    <td className="p-2.5 text-center font-bold text-zinc-900">{beneficiarios.totalCadastrados}</td>
+                  </tr>
+                  <tr>
+                    <td className="p-2.5 font-medium">Beneficiários ativos</td>
+                    <td className="p-2.5 text-center font-bold text-emerald-700">{beneficiarios.ativos}</td>
+                  </tr>
+                  <tr>
+                    <td className="p-2.5 font-medium">Novos beneficiários no período</td>
+                    <td className="p-2.5 text-center font-medium">{beneficiarios.novosNoPeriodo}</td>
+                  </tr>
+                  <tr>
+                    <td className="p-2.5 font-medium">Beneficiários desligados/desistentes</td>
+                    <td className="p-2.5 text-center font-medium text-zinc-500">{beneficiarios.desligadosDesistentes}</td>
+                  </tr>
+                  <tr>
+                    <td className="p-2.5 font-medium">Beneficiários do sexo feminino</td>
+                    <td className="p-2.5 text-center font-medium">{beneficiarios.feminino}</td>
+                  </tr>
+                  <tr>
+                    <td className="p-2.5 font-medium">Beneficiários do sexo masculino</td>
+                    <td className="p-2.5 text-center font-medium">{beneficiarios.masculino}</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
+
+          <p className="text-xs text-zinc-600 mb-2 italic">
+            Quando necessário, deverão ser apresentados demonstrativos por núcleo, turma, modalidade, faixa etária e período de atendimento.
+          </p>
 
           <div className="overflow-x-auto border border-zinc-200 rounded-lg">
             <table className="w-full text-xs text-left">
@@ -380,21 +413,24 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
           </div>
         </section>
 
-        {/* 7. DIÁRIO DE AULAS REALIZADAS */}
-        <section className="mb-8">
+        {/* 7. ATIVIDADES REALIZADAS */}
+        <section className="mb-8 print-section">
           <h2 className="text-sm font-bold uppercase tracking-wider bg-zinc-100 px-3 py-1.5 text-zinc-800 border-l-4 border-sky-600 mb-3">
-            7. Diário de Aulas e Atividades Esportivas Realizadas (Amostragem do Período)
+            7. Atividades Realizadas
           </h2>
+          <p className="text-xs text-zinc-600 mb-3 leading-relaxed">
+            As atividades desenvolvidas no período compreenderam aulas e treinamentos de futebol e futsal, além de outras ações previstas no planejamento do projeto.
+          </p>
           <div className="overflow-x-auto border border-zinc-200 rounded-lg">
             <table className="w-full text-xs text-left">
               <thead className="bg-zinc-100 text-zinc-700 font-semibold uppercase">
                 <tr>
                   <th className="p-2.5 w-24">Data</th>
                   <th className="p-2.5">Núcleo</th>
-                  <th className="p-2.5">Turma / Modalidade</th>
-                  <th className="p-2.5">Professor Responsável</th>
-                  <th className="p-2.5">Conteúdo / Fundamento Técnico Aplicado</th>
-                  <th className="p-2.5 text-center w-20">Alunos</th>
+                  <th className="p-2.5">Modalidade</th>
+                  <th className="p-2.5">Atividade</th>
+                  <th className="p-2.5">Professor</th>
+                  <th className="p-2.5 text-center w-24">Participantes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-200">
@@ -402,9 +438,9 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
                   <tr key={idx} className="hover:bg-zinc-50">
                     <td className="p-2.5 font-mono text-zinc-600">{formatarData(a.data)}</td>
                     <td className="p-2.5 font-medium">{a.nucleoNome}</td>
-                    <td className="p-2.5 text-zinc-600">{a.turmaNome} ({a.modalidade})</td>
-                    <td className="p-2.5 text-zinc-600">{a.professorNome}</td>
-                    <td className="p-2.5 text-zinc-700">{a.atividadeDescricao}</td>
+                    <td className="p-2.5 text-zinc-600">{a.modalidade || "—"}</td>
+                    <td className="p-2.5 text-zinc-700">{a.atividadeDescricao || a.turmaNome}</td>
+                    <td className="p-2.5 text-zinc-600">{a.professorNome || "—"}</td>
                     <td className="p-2.5 text-center font-semibold text-sky-700">{a.participantesPresentes}</td>
                   </tr>
                 ))}
@@ -418,7 +454,7 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
                 {atividadesRealizadas.length === 0 && (
                   <tr>
                     <td colSpan={6} className="p-4 text-center text-zinc-400">
-                      Nenhuma aula registrada no período selecionado.
+                      Nenhuma atividade registrada no período selecionado.
                     </td>
                   </tr>
                 )}
@@ -427,21 +463,25 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
           </div>
         </section>
 
-        {/* 8. ACOMPANHAMENTO E SUPERVISÃO PEDAGÓGICA */}
-        <section className="mb-8">
+        {/* 8. ACOMPANHAMENTO E SUPERVISÃO DOS NÚCLEOS */}
+        <section className="mb-8 print-section">
           <h2 className="text-sm font-bold uppercase tracking-wider bg-zinc-100 px-3 py-1.5 text-zinc-800 border-l-4 border-sky-600 mb-3">
-            8. Acompanhamento e Supervisão Pedagógica In Loco
+            8. Acompanhamento e Supervisão dos Núcleos
           </h2>
+          <p className="text-xs text-zinc-600 mb-3 leading-relaxed">
+            Durante a execução do projeto, deverão ser realizadas visitas periódicas aos núcleos pela coordenação, com o objetivo de acompanhar o funcionamento das atividades e verificar as condições de execução.
+          </p>
+
+          <h3 className="text-xs font-bold uppercase text-zinc-700 mb-2">Demonstrativo das visitas</h3>
           <div className="overflow-x-auto border border-zinc-200 rounded-lg">
             <table className="w-full text-xs text-left">
               <thead className="bg-zinc-100 text-zinc-700 font-semibold uppercase">
                 <tr>
                   <th className="p-2.5 w-24">Data</th>
-                  <th className="p-2.5">Núcleo Visitado</th>
-                  <th className="p-2.5">Supervisor / Coordenador</th>
-                  <th className="p-2.5 text-center">Professor Presente</th>
-                  <th className="p-2.5 text-center">Alunos Presentes</th>
-                  <th className="p-2.5">Estrutura & Materiais</th>
+                  <th className="p-2.5">Núcleo</th>
+                  <th className="p-2.5">Coordenador</th>
+                  <th className="p-2.5">Professor</th>
+                  <th className="p-2.5 text-center">Beneficiários Presentes</th>
                   <th className="p-2.5 text-center">Situação</th>
                 </tr>
               </thead>
@@ -451,9 +491,8 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
                     <td className="p-2.5 font-mono text-zinc-600">{formatarData(s.data)}</td>
                     <td className="p-2.5 font-semibold">{s.nucleoNome || "—"}</td>
                     <td className="p-2.5 text-zinc-600">{s.coordenadorNome || "—"}</td>
-                    <td className="p-2.5 text-center font-medium text-emerald-700">{s.professorPresente ? "Sim" : "Não"}</td>
+                    <td className="p-2.5 text-zinc-600">{s.professorPresente ? "Presente" : "Ausente"}</td>
                     <td className="p-2.5 text-center font-medium">{s.beneficiariosPresentes}</td>
-                    <td className="p-2.5 text-zinc-600">Estrutura: {s.estruturaAvaliacao || "—"} • Materiais: {s.materiaisAvaliacao || "—"}</td>
                     <td className="p-2.5 text-center">
                       <Badge tone={s.situacao === "Regular" ? "green" : "amber"}>{s.situacao}</Badge>
                     </td>
@@ -461,7 +500,7 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
                 ))}
                 {supervisoes.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="p-4 text-center text-zinc-400">
+                    <td colSpan={6} className="p-4 text-center text-zinc-400">
                       Nenhuma visita de supervisão registrada no período.
                     </td>
                   </tr>
@@ -472,80 +511,66 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
         </section>
 
         {/* 9. RECURSOS HUMANOS */}
-        <section className="mb-8">
+        <section className="mb-8 print-section">
           <h2 className="text-sm font-bold uppercase tracking-wider bg-zinc-100 px-3 py-1.5 text-zinc-800 border-l-4 border-sky-600 mb-3">
-            9. Quadro de Recursos Humanos e Equipe Técnica
+            9. Recursos Humanos
           </h2>
-          <div className="mb-4 overflow-x-auto border border-zinc-200 rounded-lg">
+          <p className="text-xs text-zinc-600 mb-3 leading-relaxed">
+            Apresentar os profissionais que efetivamente atuaram durante o período.
+          </p>
+
+          <div className="overflow-x-auto border border-zinc-200 rounded-lg mb-3">
             <table className="w-full text-xs text-left">
               <thead className="bg-zinc-100 text-zinc-700 font-semibold uppercase">
                 <tr>
-                  <th className="p-2.5">Cargo / Função Prevista no Plano de Trabalho</th>
-                  <th className="p-2.5 text-center">Qtd. Prevista</th>
-                  <th className="p-2.5 text-center">Qtd. Realizada / Ativa</th>
-                  <th className="p-2.5 text-center">% Cumprimento</th>
+                  <th className="p-2.5">Profissional</th>
+                  <th className="p-2.5">Função</th>
+                  <th className="p-2.5">Núcleo/Área</th>
+                  <th className="p-2.5 text-center">Período de Atuação</th>
                   <th className="p-2.5 text-center">Situação</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-200">
-                {recursosHumanos.cargosComparativo.map((c, idx) => (
+                {recursosHumanos.profissionais.map((p, idx) => (
                   <tr key={idx} className="hover:bg-zinc-50">
-                    <td className="p-2.5 font-medium">{c.cargoNome}</td>
-                    <td className="p-2.5 text-center">{c.quantidadePrevista}</td>
-                    <td className="p-2.5 text-center font-bold text-zinc-900">{c.quantidadeAtiva}</td>
-                    <td className="p-2.5 text-center">{c.percentualExecucao}%</td>
-                    <td className="p-2.5 text-center">
-                      <Badge tone={c.percentualExecucao >= 100 ? "green" : "amber"}>
-                        {c.percentualExecucao >= 100 ? "Integral" : "Parcial"}
-                      </Badge>
+                    <td className="p-2.5 font-medium">{p.nomeCompleto}</td>
+                    <td className="p-2.5 text-zinc-600">{p.funcao || "—"}</td>
+                    <td className="p-2.5 text-zinc-600">{p.nucleoOuAlocacao || "—"}</td>
+                    <td className="p-2.5 text-center text-zinc-500 font-mono text-[11px]">{formatarData(periodo.dataInicio)} a {formatarData(periodo.dataFim)}</td>
+                    <td className="p-2.5 text-center font-medium text-emerald-700">{p.situacao || "Ativo"}</td>
+                  </tr>
+                ))}
+                {recursosHumanos.profissionais.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="p-4 text-center text-zinc-400">
+                      Nenhum profissional vinculado no período.
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>
-
-          <h3 className="text-xs font-bold uppercase text-zinc-700 mb-2">Relação Nominal dos Profissionais Alocados</h3>
-          <div className="overflow-x-auto border border-zinc-200 rounded-lg">
-            <table className="w-full text-xs text-left">
-              <thead className="bg-zinc-50 text-zinc-600 font-semibold uppercase">
-                <tr>
-                  <th className="p-2">Nome Completo</th>
-                  <th className="p-2">Função</th>
-                  <th className="p-2">Núcleo / Alocação</th>
-                  <th className="p-2 text-center">Carga Horária</th>
-                  <th className="p-2 text-center">Situação</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-zinc-200">
-                {recursosHumanos.profissionais.slice(0, 15).map((p, idx) => (
-                  <tr key={idx} className="hover:bg-zinc-50">
-                    <td className="p-2 font-medium">{p.nomeCompleto}</td>
-                    <td className="p-2 text-zinc-600">{p.funcao || "—"}</td>
-                    <td className="p-2 text-zinc-600">{p.nucleoOuAlocacao || "—"}</td>
-                    <td className="p-2 text-center text-zinc-500">{p.cargaHorariaSemanal || "—"}</td>
-                    <td className="p-2 text-center font-medium text-emerald-700">{p.situacao || "—"}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <p className="text-[11px] text-zinc-500 italic">
+            Deverão ser mantidos os documentos comprobatórios referentes à contratação e atuação dos profissionais, conforme as exigências do instrumento e do Plano de Trabalho.
+          </p>
         </section>
 
         {/* 10. MATERIAIS E UNIFORMES */}
-        <section className="mb-8">
+        <section className="mb-8 print-section">
           <h2 className="text-sm font-bold uppercase tracking-wider bg-zinc-100 px-3 py-1.5 text-zinc-800 border-l-4 border-sky-600 mb-3">
-            10. Materiais Esportivos, Equipamentos e Uniformes
+            10. Materiais e Uniformes
           </h2>
-          <div className="overflow-x-auto border border-zinc-200 rounded-lg">
+          <p className="text-xs text-zinc-600 mb-3 leading-relaxed">
+            Apresentar os materiais adquiridos, recebidos, distribuídos ou utilizados durante a execução do projeto.
+          </p>
+          <div className="overflow-x-auto border border-zinc-200 rounded-lg mb-3">
             <table className="w-full text-xs text-left">
               <thead className="bg-zinc-100 text-zinc-700 font-semibold uppercase">
                 <tr>
-                  <th className="p-2.5">Item / Descrição</th>
-                  <th className="p-2.5 text-center">Unidade</th>
-                  <th className="p-2.5 text-center">Qtd. Prevista</th>
-                  <th className="p-2.5 text-center">Qtd. Adquirida</th>
-                  <th className="p-2.5 text-center">Qtd. Distribuída aos Núcleos</th>
+                  <th className="p-2.5">Item</th>
+                  <th className="p-2.5 text-center">Quantidade Prevista</th>
+                  <th className="p-2.5 text-center">Quantidade Adquirida/Recebida</th>
+                  <th className="p-2.5 text-center">Quantidade Distribuída</th>
                   <th className="p-2.5">Destinação</th>
                 </tr>
               </thead>
@@ -553,16 +578,15 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
                 {materiais.map((m, idx) => (
                   <tr key={idx} className="hover:bg-zinc-50">
                     <td className="p-2.5 font-medium">{m.nome}</td>
-                    <td className="p-2.5 text-center text-zinc-500">{m.unidadeMedida}</td>
-                    <td className="p-2.5 text-center">{m.quantidadePrevista}</td>
-                    <td className="p-2.5 text-center font-medium">{m.quantidadeAdquirida}</td>
-                    <td className="p-2.5 text-center font-bold text-sky-800">{m.quantidadeDistribuida}</td>
-                    <td className="p-2.5 text-zinc-600">{m.destinacao}</td>
+                    <td className="p-2.5 text-center">{m.quantidadePrevista} {m.unidadeMedida}</td>
+                    <td className="p-2.5 text-center font-medium">{m.quantidadeAdquirida} {m.unidadeMedida}</td>
+                    <td className="p-2.5 text-center font-bold text-sky-800">{m.quantidadeDistribuida} {m.unidadeMedida}</td>
+                    <td className="p-2.5 text-zinc-600">{m.destinacao || "—"}</td>
                   </tr>
                 ))}
                 {materiais.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="p-4 text-center text-zinc-400">
+                    <td colSpan={5} className="p-4 text-center text-zinc-400">
                       Nenhum material movimentado no período.
                     </td>
                   </tr>
@@ -570,22 +594,27 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
               </tbody>
             </table>
           </div>
+          <p className="text-[11px] text-zinc-500 italic">
+            Quando houver entrega individual de materiais ou uniformes aos beneficiários ou profissionais, recomenda-se manter termo/lista de entrega e recebimento, contendo identificação, quantidade, data e assinatura do destinatário.
+          </p>
         </section>
 
-        {/* 11. CUMPRIMENTO DAS METAS PACTUADAS */}
-        <section className="mb-8">
+        {/* 11. CUMPRIMENTO DAS METAS */}
+        <section className="mb-8 print-section">
           <h2 className="text-sm font-bold uppercase tracking-wider bg-zinc-100 px-3 py-1.5 text-zinc-800 border-l-4 border-sky-600 mb-3">
-            11. Quadro Geral de Cumprimento das Metas Pactuadas
+            11. Cumprimento das Metas
           </h2>
+          <p className="text-xs text-zinc-600 mb-3 leading-relaxed">
+            A análise deverá comparar diretamente aquilo que foi previsto no Plano de Trabalho com o resultado efetivamente alcançado.
+          </p>
           <div className="overflow-x-auto border border-zinc-200 rounded-lg">
             <table className="w-full text-xs text-left">
               <thead className="bg-zinc-100 text-zinc-700 font-semibold uppercase">
                 <tr>
-                  <th className="p-2.5">Meta / Indicador Pactuado</th>
-                  <th className="p-2.5 text-center">Unidade</th>
+                  <th className="p-2.5">Meta/Indicador</th>
                   <th className="p-2.5 text-center">Previsto</th>
-                  <th className="p-2.5 text-center">Realizado</th>
-                  <th className="p-2.5 text-center">% Execução</th>
+                  <th className="p-2.5 text-center">Executado</th>
+                  <th className="p-2.5 text-center">Percentual de Execução</th>
                   <th className="p-2.5 text-center">Situação</th>
                 </tr>
               </thead>
@@ -593,9 +622,8 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
                 {cumprimentoMetas.map((m, idx) => (
                   <tr key={idx} className="hover:bg-zinc-50">
                     <td className="p-2.5 font-medium">{m.meta}</td>
-                    <td className="p-2.5 text-center text-zinc-500">{m.unidade}</td>
-                    <td className="p-2.5 text-center">{m.previsto}</td>
-                    <td className="p-2.5 text-center font-bold text-zinc-900">{m.realizado}</td>
+                    <td className="p-2.5 text-center">{m.previsto} {m.unidade}</td>
+                    <td className="p-2.5 text-center font-bold text-zinc-900">{m.realizado} {m.unidade}</td>
                     <td className="p-2.5 text-center font-semibold text-emerald-700">{m.percentualExecucao}%</td>
                     <td className="p-2.5 text-center">
                       <Badge tone={m.situacao === "Cumprida" ? "green" : "amber"}>{m.situacao}</Badge>
@@ -607,7 +635,7 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
           </div>
 
           <div className="mt-3">
-            <label className="text-xs font-semibold text-zinc-700">Justificativa e Análise do Cumprimento de Metas:</label>
+            <label className="text-xs font-semibold text-zinc-700">Análise do cumprimento das metas: Caso alguma meta não tenha sido integralmente alcançada, deverão ser apresentadas as justificativas e as providências adotadas.</label>
             {modoEdicao ? (
               <textarea
                 value={justificativaMetas}
@@ -624,10 +652,13 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
         </section>
 
         {/* 12. REGISTRO FOTOGRÁFICO */}
-        <section className="mb-8">
+        <section className="mb-8 print-section">
           <h2 className="text-sm font-bold uppercase tracking-wider bg-zinc-100 px-3 py-1.5 text-zinc-800 border-l-4 border-sky-600 mb-3">
-            12. Registro Fotográfico Comprobatório
+            12. Registro Fotográfico
           </h2>
+          <p className="text-xs text-zinc-600 mb-3 leading-relaxed">
+            Inserir registros fotográficos que demonstrem a efetiva realização das atividades.
+          </p>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {registroFotografico.map((f, idx) => (
               <div key={idx} className="border border-zinc-200 rounded-lg overflow-hidden bg-zinc-50">
@@ -647,10 +678,10 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
           </div>
         </section>
 
-        {/* 13. OCORRÊNCIAS E PROVIDÊNCIAS */}
-        <section className="mb-8">
+        {/* 13. PRINCIPAIS OCORRÊNCIAS E PROVIDÊNCIAS */}
+        <section className="mb-8 print-section">
           <h2 className="text-sm font-bold uppercase tracking-wider bg-zinc-100 px-3 py-1.5 text-zinc-800 border-l-4 border-sky-600 mb-3">
-            13. Principais Ocorrências e Providências Adotadas
+            13. Principais Ocorrências e Providências
           </h2>
           <div className="overflow-x-auto border border-zinc-200 rounded-lg">
             <table className="w-full text-xs text-left">
@@ -684,9 +715,9 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
         </section>
 
         {/* 14. RESULTADOS ALCANÇADOS */}
-        <section className="mb-8">
+        <section className="mb-8 print-section">
           <h2 className="text-sm font-bold uppercase tracking-wider bg-zinc-100 px-3 py-1.5 text-zinc-800 border-l-4 border-sky-600 mb-3">
-            14. Resultados Alcançados e Impacto Social
+            14. Resultados Alcançados
           </h2>
           {modoEdicao ? (
             <textarea
@@ -703,9 +734,9 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
         </section>
 
         {/* 15. CONCLUSÃO */}
-        <section className="mb-8">
+        <section className="mb-8 print-section">
           <h2 className="text-sm font-bold uppercase tracking-wider bg-zinc-100 px-3 py-1.5 text-zinc-800 border-l-4 border-sky-600 mb-3">
-            15. Conclusão e Parecer Final
+            15. Conclusão
           </h2>
           {modoEdicao ? (
             <textarea
@@ -721,10 +752,10 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
           )}
         </section>
 
-        {/* 16. DOCUMENTOS COMPROBATÓRIOS (ANEXOS) */}
-        <section className="mb-12">
+        {/* 16. DOCUMENTOS COMPROBATÓRIOS / ANEXOS */}
+        <section className="mb-12 print-section">
           <h2 className="text-sm font-bold uppercase tracking-wider bg-zinc-100 px-3 py-1.5 text-zinc-800 border-l-4 border-sky-600 mb-3">
-            16. Relação de Documentos Comprobatórios (Anexos Oficiais)
+            16. Documentos Comprobatórios / Anexos
           </h2>
           <ol className="list-decimal list-inside text-xs text-zinc-700 space-y-1 bg-zinc-50/50 p-4 rounded-lg border border-zinc-200">
             <li><strong>Anexo I:</strong> Diários de classe e relatórios consolidados de frequência por turma e núcleo;</li>
