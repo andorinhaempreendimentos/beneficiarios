@@ -51,7 +51,11 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
     cargo: `Representante legal${organizacao?.nome ? ` - ${organizacao.nome}` : ""}`,
   });
 
-  const [modoEdicao, setModoEdicao] = useState(false);
+  // Estados individuais de edição
+  const [editandoMetas, setEditandoMetas] = useState(false);
+  const [editandoResultados, setEditandoResultados] = useState(false);
+  const [editandoConclusao, setEditandoConclusao] = useState(false);
+  const [editandoSignatarios, setEditandoSignatarios] = useState(false);
   const [exportandoDocx, setExportandoDocx] = useState(false);
 
   function handlePrint() {
@@ -109,16 +113,6 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => setModoEdicao((v) => !v)}
-          >
-            <Edit3 className="mr-1.5 h-3.5 w-3.5" />
-            {modoEdicao ? "Concluir Edição de Textos" : "Editar Textos e Pareceres"}
-          </Button>
-
           {onSalvar && (
             <Button
               type="button"
@@ -126,8 +120,9 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
               size="sm"
               onClick={handleSalvar}
               disabled={salvando}
+              className="border-emerald-300 text-emerald-800 hover:bg-emerald-50"
             >
-              <Save className="mr-1.5 h-3.5 w-3.5" />
+              <Save className="mr-1.5 h-3.5 w-3.5 text-emerald-600" />
               {salvando ? "Salvando..." : "Salvar no Histórico"}
             </Button>
           )}
@@ -635,13 +630,23 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
           </div>
 
           <div className="mt-3">
-            <label className="text-xs font-semibold text-zinc-700">Análise do cumprimento das metas: Caso alguma meta não tenha sido integralmente alcançada, deverão ser apresentadas as justificativas e as providências adotadas.</label>
-            {modoEdicao ? (
+            <div className="flex items-center justify-between gap-2 mb-1">
+              <label className="text-xs font-semibold text-zinc-700">Análise do cumprimento das metas: Caso alguma meta não tenha sido integralmente alcançada, deverão ser apresentadas as justificativas e as providências adotadas.</label>
+              <button
+                type="button"
+                onClick={() => setEditandoMetas((v) => !v)}
+                className="shrink-0 flex items-center gap-1 text-[11px] font-medium text-sky-700 hover:text-sky-900 border border-sky-200 bg-sky-50 px-2 py-0.5 rounded print:hidden"
+              >
+                {editandoMetas ? <CheckCircle2 className="w-3 h-3 text-emerald-600" /> : <Edit3 className="w-3 h-3" />}
+                {editandoMetas ? "Concluir" : "Editar"}
+              </button>
+            </div>
+            {editandoMetas ? (
               <textarea
                 value={justificativaMetas}
                 onChange={(e) => setJustificativaMetas(e.target.value)}
                 rows={3}
-                className="mt-1 w-full rounded-lg border border-zinc-300 p-2.5 text-xs text-zinc-800"
+                className="mt-1 w-full rounded-lg border border-zinc-300 p-2.5 text-xs text-zinc-800 focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
               />
             ) : (
               <p className="mt-1 text-xs text-zinc-700 text-justify bg-zinc-50/70 p-3 rounded-lg border border-zinc-200">
@@ -716,15 +721,25 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
 
         {/* 14. RESULTADOS ALCANÇADOS */}
         <section className="mb-8 print-section">
-          <h2 className="text-sm font-bold uppercase tracking-wider bg-zinc-100 px-3 py-1.5 text-zinc-800 border-l-4 border-sky-600 mb-3">
-            14. Resultados Alcançados
-          </h2>
-          {modoEdicao ? (
+          <div className="flex items-center justify-between bg-zinc-100 px-3 py-1.5 border-l-4 border-sky-600 mb-3">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-zinc-800">
+              14. Resultados Alcançados
+            </h2>
+            <button
+              type="button"
+              onClick={() => setEditandoResultados((v) => !v)}
+              className="flex items-center gap-1 text-[11px] font-medium text-sky-700 hover:text-sky-900 border border-sky-200 bg-white px-2 py-0.5 rounded print:hidden"
+            >
+              {editandoResultados ? <CheckCircle2 className="w-3 h-3 text-emerald-600" /> : <Edit3 className="w-3 h-3" />}
+              {editandoResultados ? "Concluir" : "Editar"}
+            </button>
+          </div>
+          {editandoResultados ? (
             <textarea
               value={impactoSocialTexto}
               onChange={(e) => setImpactoSocialTexto(e.target.value)}
               rows={4}
-              className="w-full rounded-lg border border-zinc-300 p-2.5 text-xs text-zinc-800"
+              className="w-full rounded-lg border border-zinc-300 p-2.5 text-xs text-zinc-800 focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
             />
           ) : (
             <p className="text-xs text-zinc-700 text-justify leading-relaxed bg-zinc-50/50 p-4 rounded-lg border border-zinc-200">
@@ -735,15 +750,25 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
 
         {/* 15. CONCLUSÃO */}
         <section className="mb-8 print-section">
-          <h2 className="text-sm font-bold uppercase tracking-wider bg-zinc-100 px-3 py-1.5 text-zinc-800 border-l-4 border-sky-600 mb-3">
-            15. Conclusão
-          </h2>
-          {modoEdicao ? (
+          <div className="flex items-center justify-between bg-zinc-100 px-3 py-1.5 border-l-4 border-sky-600 mb-3">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-zinc-800">
+              15. Conclusão
+            </h2>
+            <button
+              type="button"
+              onClick={() => setEditandoConclusao((v) => !v)}
+              className="flex items-center gap-1 text-[11px] font-medium text-sky-700 hover:text-sky-900 border border-sky-200 bg-white px-2 py-0.5 rounded print:hidden"
+            >
+              {editandoConclusao ? <CheckCircle2 className="w-3 h-3 text-emerald-600" /> : <Edit3 className="w-3 h-3" />}
+              {editandoConclusao ? "Concluir" : "Editar"}
+            </button>
+          </div>
+          {editandoConclusao ? (
             <textarea
               value={conclusaoTexto}
               onChange={(e) => setConclusaoTexto(e.target.value)}
               rows={4}
-              className="w-full rounded-lg border border-zinc-300 p-2.5 text-xs text-zinc-800"
+              className="w-full rounded-lg border border-zinc-300 p-2.5 text-xs text-zinc-800 focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
             />
           ) : (
             <p className="text-xs text-zinc-700 text-justify leading-relaxed bg-zinc-50/50 p-4 rounded-lg border border-zinc-200">
@@ -768,10 +793,20 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
 
         {/* SIGNATÁRIOS E ASSINATURAS */}
         <section className="mt-16 pt-8 border-t border-zinc-300">
+          <div className="flex items-center justify-end mb-4 print:hidden">
+            <button
+              type="button"
+              onClick={() => setEditandoSignatarios((v) => !v)}
+              className="flex items-center gap-1 text-[11px] font-medium text-sky-700 hover:text-sky-900 border border-sky-200 bg-sky-50 px-2 py-0.5 rounded"
+            >
+              {editandoSignatarios ? <CheckCircle2 className="w-3 h-3 text-emerald-600" /> : <Edit3 className="w-3 h-3" />}
+              {editandoSignatarios ? "Concluir Edição de Signatários" : "Editar Signatários"}
+            </button>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center text-xs">
             <div className="flex flex-col items-center">
               <div className="w-4/5 border-t border-zinc-900 pt-2 mb-1">
-                {modoEdicao ? (
+                {editandoSignatarios ? (
                   <input
                     value={responsavelElaboracao.nome}
                     onChange={(e) => setResponsavelElaboracao({ ...responsavelElaboracao, nome: e.target.value })}
@@ -786,7 +821,7 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
 
             <div className="flex flex-col items-center">
               <div className="w-4/5 border-t border-zinc-900 pt-2 mb-1">
-                {modoEdicao ? (
+                {editandoSignatarios ? (
                   <input
                     value={coordenadorGeral.nome}
                     onChange={(e) => setCoordenadorGeral({ ...coordenadorGeral, nome: e.target.value })}
@@ -801,7 +836,7 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
 
             <div className="flex flex-col items-center">
               <div className="w-4/5 border-t border-zinc-900 pt-2 mb-1">
-                {modoEdicao ? (
+                {editandoSignatarios ? (
                   <input
                     value={representanteLegal.nome}
                     onChange={(e) => setRepresentanteLegal({ ...representanteLegal, nome: e.target.value })}
