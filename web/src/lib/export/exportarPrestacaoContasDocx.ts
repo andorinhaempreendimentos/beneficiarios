@@ -244,66 +244,73 @@ export async function exportarRelatorioPrestacaoContasDocx(
     })
   );
 
-  // 3. RESUMO DA EXECUÇÃO DOS INDICADORES GERAIS
+  // 3. RESUMO DA EXECUÇÃO
   docChildren.push(
-    createSectionHeading('3. RESUMO DA EXECUÇÃO DOS INDICADORES GERAIS'),
+    createSectionHeading('3. RESUMO DA EXECUÇÃO'),
+    new Paragraph({
+      alignment: AlignmentType.JUSTIFIED,
+      spacing: { after: 150 },
+      children: [
+        new TextRun({
+          text:
+            'Durante o período de referência, foram desenvolvidas atividades regulares de futebol e futsal nos núcleos integrantes do projeto, conforme cronograma e planejamento estabelecidos. A execução foi acompanhada por meio do cadastro dos beneficiários, controle de frequência, registros das aulas, acompanhamento dos profissionais e visitas de supervisão realizadas pela coordenação.',
+          size: 19,
+          color: '374151',
+        }),
+      ],
+    }),
     new Table({
       width: { size: TABLE_WIDTH, type: WidthType.DXA },
-      columnWidths: [4400, 1300, 1300, 1300, 1300],
+      columnWidths: [4800, 2400, 2400],
       rows: [
         new TableRow({
           tableHeader: true,
           children: [
-            createHeaderCell('Indicador Operacional', 4400),
-            createHeaderCell('Meta Prev.', 1300, AlignmentType.CENTER),
-            createHeaderCell('Executado', 1300, AlignmentType.CENTER),
-            createHeaderCell('% Exec.', 1300, AlignmentType.CENTER),
-            createHeaderCell('Situação', 1300, AlignmentType.CENTER),
+            createHeaderCell('Indicador', 4800),
+            createHeaderCell('Previsto', 2400, AlignmentType.CENTER),
+            createHeaderCell('Realizado', 2400, AlignmentType.CENTER),
           ],
         }),
         new TableRow({
           children: [
-            createDataCell('Núcleos em Funcionamento', 4400),
-            createDataCell(String(resumoIndicadores.nucleos.previsto), 1300, AlignmentType.CENTER),
-            createDataCell(String(resumoIndicadores.nucleos.realizado), 1300, AlignmentType.CENTER, true),
-            createDataCell(`${Math.round((resumoIndicadores.nucleos.realizado / (resumoIndicadores.nucleos.previsto || 1)) * 100)}%`, 1300, AlignmentType.CENTER),
-            createDataCell(getSituacaoMeta(resumoIndicadores.nucleos.realizado, resumoIndicadores.nucleos.previsto), 1300, AlignmentType.CENTER),
+            createDataCell('Núcleos', 4800),
+            createDataCell(String(resumoIndicadores.nucleos.previsto), 2400, AlignmentType.CENTER),
+            createDataCell(String(resumoIndicadores.nucleos.realizado), 2400, AlignmentType.CENTER, true),
           ],
         }),
         new TableRow({
           children: [
-            createDataCell('Beneficiários Atendidos (Matriculados)', 4400),
-            createDataCell(String(resumoIndicadores.beneficiarios.previsto), 1300, AlignmentType.CENTER),
-            createDataCell(String(resumoIndicadores.beneficiarios.realizado), 1300, AlignmentType.CENTER, true),
-            createDataCell(`${Math.round((resumoIndicadores.beneficiarios.realizado / (resumoIndicadores.beneficiarios.previsto || 1)) * 100)}%`, 1300, AlignmentType.CENTER),
-            createDataCell(getSituacaoMeta(resumoIndicadores.beneficiarios.realizado, resumoIndicadores.beneficiarios.previsto), 1300, AlignmentType.CENTER),
+            createDataCell('Beneficiários', 4800),
+            createDataCell(String(resumoIndicadores.beneficiarios.previsto), 2400, AlignmentType.CENTER),
+            createDataCell(String(resumoIndicadores.beneficiarios.realizado), 2400, AlignmentType.CENTER, true),
           ],
         }),
         new TableRow({
           children: [
-            createDataCell('Turmas Esportivas Ativas', 4400),
-            createDataCell(String(resumoIndicadores.turmas.previsto), 1300, AlignmentType.CENTER),
-            createDataCell(String(resumoIndicadores.turmas.realizado), 1300, AlignmentType.CENTER, true),
-            createDataCell(`${Math.round((resumoIndicadores.turmas.realizado / (resumoIndicadores.turmas.previsto || 1)) * 100)}%`, 1300, AlignmentType.CENTER),
-            createDataCell(getSituacaoMeta(resumoIndicadores.turmas.realizado, resumoIndicadores.turmas.previsto), 1300, AlignmentType.CENTER),
+            createDataCell('Turmas', 4800),
+            createDataCell(String(resumoIndicadores.turmas.previsto), 2400, AlignmentType.CENTER),
+            createDataCell(String(resumoIndicadores.turmas.realizado), 2400, AlignmentType.CENTER, true),
           ],
         }),
         new TableRow({
           children: [
-            createDataCell('Professores / Instrutores Alocados', 4400),
-            createDataCell(String(resumoIndicadores.professores.previsto), 1300, AlignmentType.CENTER),
-            createDataCell(String(resumoIndicadores.professores.realizado), 1300, AlignmentType.CENTER, true),
-            createDataCell(`${Math.round((resumoIndicadores.professores.realizado / (resumoIndicadores.professores.previsto || 1)) * 100)}%`, 1300, AlignmentType.CENTER),
-            createDataCell(getSituacaoMeta(resumoIndicadores.professores.realizado, resumoIndicadores.professores.previsto), 1300, AlignmentType.CENTER),
+            createDataCell('Professores', 4800),
+            createDataCell(String(resumoIndicadores.professores.previsto), 2400, AlignmentType.CENTER),
+            createDataCell(String(resumoIndicadores.professores.realizado), 2400, AlignmentType.CENTER, true),
           ],
         }),
         new TableRow({
           children: [
-            createDataCell('Aulas Realizadas no Período', 4400),
-            createDataCell(String(resumoIndicadores.aulas.previsto), 1300, AlignmentType.CENTER),
-            createDataCell(String(resumoIndicadores.aulas.realizado), 1300, AlignmentType.CENTER, true),
-            createDataCell(`${Math.round((resumoIndicadores.aulas.realizado / (resumoIndicadores.aulas.previsto || 1)) * 100)}%`, 1300, AlignmentType.CENTER),
-            createDataCell(getSituacaoMeta(resumoIndicadores.aulas.realizado, resumoIndicadores.aulas.previsto), 1300, AlignmentType.CENTER),
+            createDataCell('Aulas/atividades', 4800),
+            createDataCell(String(resumoIndicadores.aulas.previsto), 2400, AlignmentType.CENTER),
+            createDataCell(String(resumoIndicadores.aulas.realizado), 2400, AlignmentType.CENTER, true),
+          ],
+        }),
+        new TableRow({
+          children: [
+            createDataCell('Visitas de supervisão', 4800),
+            createDataCell(String(resumoIndicadores.supervisoes.previsto), 2400, AlignmentType.CENTER),
+            createDataCell(String(resumoIndicadores.supervisoes.realizado), 2400, AlignmentType.CENTER, true),
           ],
         }),
       ],
