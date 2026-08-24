@@ -54,6 +54,17 @@ export interface ExecucaoNucleoItem {
   aulasRealizadas: number;
 }
 
+export interface BeneficiarioListaItem {
+  id: string;
+  nomeCompleto: string;
+  dataNascimento?: string;
+  idade: number;
+  sexo: string;
+  nucleoNome: string;
+  status: string;
+  vulneravel: boolean;
+}
+
 export interface DemonstrativoBeneficiarios {
   totalCadastrados: number;
   ativos: number;
@@ -177,6 +188,7 @@ export interface DadosRelatorioPrestacaoContas {
   };
   execucaoPorNucleo: ExecucaoNucleoItem[];
   beneficiarios: DemonstrativoBeneficiarios;
+  beneficiariosLista: BeneficiarioListaItem[];
   frequencia: {
     porNucleo: FrequenciaNucleoItem[];
     frequenciaMediaGeral: number;
@@ -301,7 +313,7 @@ export const prestacaoContasApi = {
     // 5. Beneficiários
     const { data: beneficiariosRaw } = await sb
       .from('beneficiarios')
-      .select('*, beneficiario_turmas(*)')
+      .select('*, nucleos(identificacao), beneficiario_turmas(*)')
       .in('nucleo_id', nucleosIds.length > 0 ? nucleosIds : ['00000000-0000-0000-0000-000000000000'])
       .is('deleted_at', null);
     const beneficiarios = beneficiariosRaw ?? [];
@@ -403,6 +415,23 @@ export const prestacaoContasApi = {
       else if (idade >= 16 && idade <= 18) de16a18++;
       else outrasFaixas++;
     }
+
+    // Lista individual para Anexo II
+    const beneficiariosLista: BeneficiarioListaItem[] = beneficiarios.map((b: any) => {
+      const isRedePublica = b.rede_ensino && b.rede_ensino.toLowerCase().includes('pública');
+      const hasNIS = !!b.numero_nis && b.numero_nis.trim() !== '';
+      const hasBeneficio = !!b.beneficio_socioassistencial && b.beneficio_socioassistencial.trim() !== '';
+      return {
+        id: b.id,
+        nomeCompleto: b.nome_completo,
+        dataNascimento: b.data_nascimento ?? undefined,
+        idade: calcularIdade(b.data_nascimento),
+        sexo: b.sexo || '—',
+        nucleoNome: b.nucleos?.identificacao || 'Não vinculado',
+        status: b.status === 'ativo' ? 'Ativo' : b.status || 'Pendente',
+        vulneravel: isRedePublica || hasNIS || hasBeneficio,
+      };
+    });
 
     // Execução por Núcleo
     const execucaoPorNucleo: ExecucaoNucleoItem[] = nucleos.map((n: any) => {
@@ -692,6 +721,7 @@ export const prestacaoContasApi = {
           outras: outrasFaixas,
         },
       },
+      beneficiariosLista,
       frequencia: {
         porNucleo: frequenciaPorNucleo,
         frequenciaMediaGeral,

@@ -22,7 +22,7 @@ function getSituacaoMeta(realizado: number, previsto: number): { texto: string; 
 }
 
 export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Props) {
-  const { objeto, organizacao, periodo, resumoIndicadores, execucaoPorNucleo, beneficiarios, frequencia, atividadesRealizadas, supervisoes, recursosHumanos, materiais, cumprimentoMetas, registroFotografico, ocorrencias } = dados;
+  const { objeto, organizacao, periodo, resumoIndicadores, execucaoPorNucleo, beneficiarios, beneficiariosLista, frequencia, atividadesRealizadas, supervisoes, recursosHumanos, materiais, cumprimentoMetas, registroFotografico, ocorrencias } = dados;
 
   // Estados editáveis para justificativas e pareceres
   const [justificativaMetas, setJustificativaMetas] = useState(
@@ -56,6 +56,31 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
   const [editandoResultados, setEditandoResultados] = useState(false);
   const [editandoConclusao, setEditandoConclusao] = useState(false);
   const [editandoSignatarios, setEditandoSignatarios] = useState(false);
+  // Estados de seleção de anexos para o dossiê (todos pré-marcados)
+  const [anexosSelecionados, setAnexosSelecionados] = useState({
+    anexo1_nucleos: true,
+    anexo2_beneficiarios: true,
+    anexo3_frequencias: true,
+    anexo4_atividades: true,
+    anexo5_supervisoes: true,
+    anexo6_rh: true,
+    anexo7_materiais: true,
+    anexo8_metas: true,
+  });
+
+  function toggleTodosAnexos(marcar: boolean) {
+    setAnexosSelecionados({
+      anexo1_nucleos: marcar,
+      anexo2_beneficiarios: marcar,
+      anexo3_frequencias: marcar,
+      anexo4_atividades: marcar,
+      anexo5_supervisoes: marcar,
+      anexo6_rh: marcar,
+      anexo7_materiais: marcar,
+      anexo8_metas: marcar,
+    });
+  }
+
   const [exportandoDocx, setExportandoDocx] = useState(false);
 
   function handlePrint() {
@@ -76,7 +101,8 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
           responsavelElaboracao,
           coordenadorGeral,
           representanteLegal,
-        }
+        },
+        anexosSelecionados
       );
     } catch (err: any) {
       alert("Erro ao exportar DOCX: " + (err.message || err));
@@ -779,16 +805,144 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
 
         {/* 16. DOCUMENTOS COMPROBATÓRIOS / ANEXOS */}
         <section className="mb-12 print-section">
-          <h2 className="text-sm font-bold uppercase tracking-wider bg-zinc-100 px-3 py-1.5 text-zinc-800 border-l-4 border-sky-600 mb-3">
-            16. Documentos Comprobatórios / Anexos
-          </h2>
-          <ol className="list-decimal list-inside text-xs text-zinc-700 space-y-1 bg-zinc-50/50 p-4 rounded-lg border border-zinc-200">
-            <li><strong>Anexo I:</strong> Diários de classe e relatórios consolidados de frequência por turma e núcleo;</li>
-            <li><strong>Anexo II:</strong> Relatórios individuais de supervisão pedagógica in loco com registros fotográficos;</li>
-            <li><strong>Anexo III:</strong> Termos de entrega e cautela de materiais esportivos e uniformes assinados pelos responsáveis;</li>
-            <li><strong>Anexo IV:</strong> Relatórios de registro de ponto eletrônico e frequência da equipe de profissionais;</li>
-            <li><strong>Anexo V:</strong> Extratos bancários da conta corrente específica da parceria e comprovantes de pagamentos.</li>
-          </ol>
+          <div className="flex flex-wrap items-center justify-between gap-2 bg-zinc-100 px-3 py-1.5 border-l-4 border-sky-600 mb-3">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-zinc-800">
+              16. Documentos Comprobatórios / Anexos Oficiais
+            </h2>
+            <div className="flex items-center gap-2 print:hidden">
+              <button
+                type="button"
+                onClick={() => toggleTodosAnexos(true)}
+                className="text-[11px] font-medium text-sky-700 hover:text-sky-900 bg-white border border-sky-200 px-2 py-0.5 rounded shadow-sm"
+              >
+                Marcar Todos
+              </button>
+              <button
+                type="button"
+                onClick={() => toggleTodosAnexos(false)}
+                className="text-[11px] font-medium text-zinc-600 hover:text-zinc-900 bg-white border border-zinc-200 px-2 py-0.5 rounded shadow-sm"
+              >
+                Desmarcar Todos
+              </button>
+            </div>
+          </div>
+          <p className="text-xs text-zinc-600 mb-3 print:hidden">
+            Selecione quais relatórios detalhados devem ser compilados como anexos no dossiê final (impressão/PDF e Word .DOCX):
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 bg-zinc-50/70 p-3.5 rounded-lg border border-zinc-200 text-xs">
+            <label className="flex items-start gap-2.5 p-2 rounded hover:bg-white transition-colors cursor-pointer border border-transparent hover:border-zinc-200">
+              <input
+                type="checkbox"
+                checked={anexosSelecionados.anexo1_nucleos}
+                onChange={(e) => setAnexosSelecionados({ ...anexosSelecionados, anexo1_nucleos: e.target.checked })}
+                className="mt-0.5 rounded text-sky-600 focus:ring-sky-500"
+              />
+              <div>
+                <span className="font-semibold text-zinc-900">Anexo I: Relação dos Núcleos em Funcionamento</span>
+                <span className="ml-1 text-[11px] text-zinc-500">({execucaoPorNucleo.length} núcleos)</span>
+                <p className="text-[11px] text-zinc-500 mt-0.5">Detalhamento dos locais, endereços, turmas e professores.</p>
+              </div>
+            </label>
+
+            <label className="flex items-start gap-2.5 p-2 rounded hover:bg-white transition-colors cursor-pointer border border-transparent hover:border-zinc-200">
+              <input
+                type="checkbox"
+                checked={anexosSelecionados.anexo2_beneficiarios}
+                onChange={(e) => setAnexosSelecionados({ ...anexosSelecionados, anexo2_beneficiarios: e.target.checked })}
+                className="mt-0.5 rounded text-sky-600 focus:ring-sky-500"
+              />
+              <div>
+                <span className="font-semibold text-zinc-900">Anexo II: Relação Nominal de Beneficiários</span>
+                <span className="ml-1 text-[11px] text-zinc-500">({beneficiariosLista?.length || beneficiarios.totalCadastrados} alunos)</span>
+                <p className="text-[11px] text-zinc-500 mt-0.5">Listagem nominal de matrículas, idade, gênero e vulnerabilidade.</p>
+              </div>
+            </label>
+
+            <label className="flex items-start gap-2.5 p-2 rounded hover:bg-white transition-colors cursor-pointer border border-transparent hover:border-zinc-200">
+              <input
+                type="checkbox"
+                checked={anexosSelecionados.anexo3_frequencias}
+                onChange={(e) => setAnexosSelecionados({ ...anexosSelecionados, anexo3_frequencias: e.target.checked })}
+                className="mt-0.5 rounded text-sky-600 focus:ring-sky-500"
+              />
+              <div>
+                <span className="font-semibold text-zinc-900">Anexo III: Relatórios e Listas de Frequência</span>
+                <span className="ml-1 text-[11px] text-zinc-500">({frequencia.porNucleo.length} núcleos)</span>
+                <p className="text-[11px] text-zinc-500 mt-0.5">Consolidação de presenças, faltas e percentual médio por núcleo.</p>
+              </div>
+            </label>
+
+            <label className="flex items-start gap-2.5 p-2 rounded hover:bg-white transition-colors cursor-pointer border border-transparent hover:border-zinc-200">
+              <input
+                type="checkbox"
+                checked={anexosSelecionados.anexo4_atividades}
+                onChange={(e) => setAnexosSelecionados({ ...anexosSelecionados, anexo4_atividades: e.target.checked })}
+                className="mt-0.5 rounded text-sky-600 focus:ring-sky-500"
+              />
+              <div>
+                <span className="font-semibold text-zinc-900">Anexo IV: Relatório de Atividades e Aulas</span>
+                <span className="ml-1 text-[11px] text-zinc-500">({atividadesRealizadas.length} aulas)</span>
+                <p className="text-[11px] text-zinc-500 mt-0.5">Diário cronológico de aulas, temas pedagógicos e participantes.</p>
+              </div>
+            </label>
+
+            <label className="flex items-start gap-2.5 p-2 rounded hover:bg-white transition-colors cursor-pointer border border-transparent hover:border-zinc-200">
+              <input
+                type="checkbox"
+                checked={anexosSelecionados.anexo5_supervisoes}
+                onChange={(e) => setAnexosSelecionados({ ...anexosSelecionados, anexo5_supervisoes: e.target.checked })}
+                className="mt-0.5 rounded text-sky-600 focus:ring-sky-500"
+              />
+              <div>
+                <span className="font-semibold text-zinc-900">Anexo V: Relatórios de Supervisão com Fotos</span>
+                <span className="ml-1 text-[11px] text-zinc-500">({supervisoes.length} visitas)</span>
+                <p className="text-[11px] text-zinc-500 mt-0.5">Fichas de visitas in loco da coordenação e registros fotográficos.</p>
+              </div>
+            </label>
+
+            <label className="flex items-start gap-2.5 p-2 rounded hover:bg-white transition-colors cursor-pointer border border-transparent hover:border-zinc-200">
+              <input
+                type="checkbox"
+                checked={anexosSelecionados.anexo6_rh}
+                onChange={(e) => setAnexosSelecionados({ ...anexosSelecionados, anexo6_rh: e.target.checked })}
+                className="mt-0.5 rounded text-sky-600 focus:ring-sky-500"
+              />
+              <div>
+                <span className="font-semibold text-zinc-900">Anexo VI: Relação dos Profissionais (RH)</span>
+                <span className="ml-1 text-[11px] text-zinc-500">({recursosHumanos.profissionais.length} profissionais)</span>
+                <p className="text-[11px] text-zinc-500 mt-0.5">Quadro funcional, funções contratadas e períodos de atuação.</p>
+              </div>
+            </label>
+
+            <label className="flex items-start gap-2.5 p-2 rounded hover:bg-white transition-colors cursor-pointer border border-transparent hover:border-zinc-200">
+              <input
+                type="checkbox"
+                checked={anexosSelecionados.anexo7_materiais}
+                onChange={(e) => setAnexosSelecionados({ ...anexosSelecionados, anexo7_materiais: e.target.checked })}
+                className="mt-0.5 rounded text-sky-600 focus:ring-sky-500"
+              />
+              <div>
+                <span className="font-semibold text-zinc-900">Anexo VII: Termos de Materiais e Uniformes</span>
+                <span className="ml-1 text-[11px] text-zinc-500">({materiais.length} itens)</span>
+                <p className="text-[11px] text-zinc-500 mt-0.5">Controle de materiais esportivos, aquisições e distribuição.</p>
+              </div>
+            </label>
+
+            <label className="flex items-start gap-2.5 p-2 rounded hover:bg-white transition-colors cursor-pointer border border-transparent hover:border-zinc-200">
+              <input
+                type="checkbox"
+                checked={anexosSelecionados.anexo8_metas}
+                onChange={(e) => setAnexosSelecionados({ ...anexosSelecionados, anexo8_metas: e.target.checked })}
+                className="mt-0.5 rounded text-sky-600 focus:ring-sky-500"
+              />
+              <div>
+                <span className="font-semibold text-zinc-900">Anexo VIII: Demonstrativo Analítico de Metas</span>
+                <span className="ml-1 text-[11px] text-zinc-500">({cumprimentoMetas.length} indicadores)</span>
+                <p className="text-[11px] text-zinc-500 mt-0.5">Quadro comparativo analítico das metas pactuadas no Plano.</p>
+              </div>
+            </label>
+          </div>
         </section>
 
         {/* SIGNATÁRIOS E ASSINATURAS */}
@@ -850,6 +1004,375 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
             </div>
           </div>
         </section>
+
+        {/* ── APÊNDICES: ANEXOS OFICIAIS DETALHADOS DO DOSSIÊ ──────────────── */}
+
+        {/* ANEXO I - NÚCLEOS */}
+        {anexosSelecionados.anexo1_nucleos && (
+          <section className="mt-16 pt-8 border-t-2 border-zinc-300 print:break-before-page print-section">
+            <div className="bg-zinc-800 text-white px-3 py-2 rounded-t-lg mb-3">
+              <h3 className="text-sm font-bold uppercase tracking-wider">
+                ANEXO I — RELAÇÃO DOS NÚCLEOS ESPORTIVOS EM FUNCIONAMENTO
+              </h3>
+              <p className="text-[11px] text-zinc-300">
+                Objeto: {objeto.nome} • Termo: {objeto.termoDeFomento || "—"}
+              </p>
+            </div>
+            <div className="overflow-x-auto border border-zinc-200 rounded-lg">
+              <table className="w-full text-xs text-left">
+                <thead className="bg-zinc-100 text-zinc-700 font-semibold uppercase">
+                  <tr>
+                    <th className="p-2.5">Núcleo Esportivo</th>
+                    <th className="p-2.5">Região / Bairro</th>
+                    <th className="p-2.5">Modalidades</th>
+                    <th className="p-2.5">Professores Vinculados</th>
+                    <th className="p-2.5 text-center">Nº Turmas</th>
+                    <th className="p-2.5 text-center">Beneficiários</th>
+                    <th className="p-2.5 text-center">Aulas</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-200">
+                  {execucaoPorNucleo.map((item, idx) => (
+                    <tr key={idx} className="hover:bg-zinc-50">
+                      <td className="p-2.5 font-medium">{item.identificacao}</td>
+                      <td className="p-2.5 text-zinc-600">{item.bairro || item.regiao || "—"}</td>
+                      <td className="p-2.5 text-zinc-600">{item.modalidades.join(", ") || "—"}</td>
+                      <td className="p-2.5 text-zinc-600">{item.professores.join(", ") || "—"}</td>
+                      <td className="p-2.5 text-center">{item.totalTurmas}</td>
+                      <td className="p-2.5 text-center font-bold">{item.beneficiariosAtendidos}</td>
+                      <td className="p-2.5 text-center">{item.aulasRealizadas}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
+
+        {/* ANEXO II - BENEFICIÁRIOS */}
+        {anexosSelecionados.anexo2_beneficiarios && (
+          <section className="mt-16 pt-8 border-t-2 border-zinc-300 print:break-before-page print-section">
+            <div className="bg-zinc-800 text-white px-3 py-2 rounded-t-lg mb-3">
+              <h3 className="text-sm font-bold uppercase tracking-wider">
+                ANEXO II — RELAÇÃO NOMINAL DE BENEFICIÁRIOS ATENDIDOS
+              </h3>
+              <p className="text-[11px] text-zinc-300">
+                Total de Cadastrados: {beneficiarios.totalCadastrados} • Ativos: {beneficiarios.ativos}
+              </p>
+            </div>
+            <div className="overflow-x-auto border border-zinc-200 rounded-lg">
+              <table className="w-full text-xs text-left">
+                <thead className="bg-zinc-100 text-zinc-700 font-semibold uppercase">
+                  <tr>
+                    <th className="p-2.5">Nome do Beneficiário</th>
+                    <th className="p-2.5">Núcleo</th>
+                    <th className="p-2.5 text-center">Idade</th>
+                    <th className="p-2.5 text-center">Sexo</th>
+                    <th className="p-2.5 text-center">Vulnerabilidade</th>
+                    <th className="p-2.5 text-center">Situação</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-200">
+                  {(beneficiariosLista ?? []).map((b, idx) => (
+                    <tr key={idx} className="hover:bg-zinc-50">
+                      <td className="p-2.5 font-medium">{b.nomeCompleto}</td>
+                      <td className="p-2.5 text-zinc-600">{b.nucleoNome}</td>
+                      <td className="p-2.5 text-center">{b.idade > 0 ? `${b.idade} anos` : "—"}</td>
+                      <td className="p-2.5 text-center">{b.sexo}</td>
+                      <td className="p-2.5 text-center">
+                        <Badge tone={b.vulneravel ? "sky" : "zinc"}>{b.vulneravel ? "Sim" : "Não"}</Badge>
+                      </td>
+                      <td className="p-2.5 text-center">
+                        <Badge tone={b.status === "Ativo" ? "green" : "amber"}>{b.status}</Badge>
+                      </td>
+                    </tr>
+                  ))}
+                  {(beneficiariosLista ?? []).length === 0 && (
+                    <tr>
+                      <td colSpan={6} className="p-3 text-center text-zinc-500 bg-zinc-50/50">
+                        Nenhum beneficiário cadastrado no período.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
+
+        {/* ANEXO III - FREQUÊNCIAS */}
+        {anexosSelecionados.anexo3_frequencias && (
+          <section className="mt-16 pt-8 border-t-2 border-zinc-300 print:break-before-page print-section">
+            <div className="bg-zinc-800 text-white px-3 py-2 rounded-t-lg mb-3">
+              <h3 className="text-sm font-bold uppercase tracking-wider">
+                ANEXO III — RELATÓRIOS CONSOLIDADOS DE FREQUÊNCIA POR NÚCLEO
+              </h3>
+              <p className="text-[11px] text-zinc-300">
+                Frequência Média Global: {frequencia.frequenciaMediaGeral}% (Meta Mínima: {frequencia.metaMinima}%)
+              </p>
+            </div>
+            <div className="overflow-x-auto border border-zinc-200 rounded-lg">
+              <table className="w-full text-xs text-left">
+                <thead className="bg-zinc-100 text-zinc-700 font-semibold uppercase">
+                  <tr>
+                    <th className="p-2.5">Núcleo Esportivo</th>
+                    <th className="p-2.5 text-center">Beneficiários Ativos</th>
+                    <th className="p-2.5 text-center">Presenças Registradas</th>
+                    <th className="p-2.5 text-center">Faltas Registradas</th>
+                    <th className="p-2.5 text-center">Frequência Média</th>
+                    <th className="p-2.5 text-center">Status Meta</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-200">
+                  {frequencia.porNucleo.map((fn, idx) => (
+                    <tr key={idx} className="hover:bg-zinc-50">
+                      <td className="p-2.5 font-medium">{fn.nucleoNome}</td>
+                      <td className="p-2.5 text-center">{fn.beneficiariosAtivos}</td>
+                      <td className="p-2.5 text-center font-bold text-emerald-700">{fn.presencasRegistradas}</td>
+                      <td className="p-2.5 text-center font-bold text-rose-700">{fn.faltasRegistradas}</td>
+                      <td className="p-2.5 text-center font-bold">{fn.frequenciaMedia}%</td>
+                      <td className="p-2.5 text-center">
+                        <Badge tone={fn.frequenciaMedia >= frequencia.metaMinima ? "green" : fn.frequenciaMedia > 0 ? "amber" : "zinc"}>
+                          {fn.frequenciaMedia >= frequencia.metaMinima ? "Atingida" : fn.frequenciaMedia > 0 ? "Abaixo" : "Sem Registro"}
+                        </Badge>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
+
+        {/* ANEXO IV - ATIVIDADES / AULAS */}
+        {anexosSelecionados.anexo4_atividades && (
+          <section className="mt-16 pt-8 border-t-2 border-zinc-300 print:break-before-page print-section">
+            <div className="bg-zinc-800 text-white px-3 py-2 rounded-t-lg mb-3">
+              <h3 className="text-sm font-bold uppercase tracking-wider">
+                ANEXO IV — RELATÓRIO DE ATIVIDADES E AULAS REALIZADAS
+              </h3>
+              <p className="text-[11px] text-zinc-300">
+                Total de Aulas Executadas no Período: {atividadesRealizadas.length}
+              </p>
+            </div>
+            <div className="overflow-x-auto border border-zinc-200 rounded-lg">
+              <table className="w-full text-xs text-left">
+                <thead className="bg-zinc-100 text-zinc-700 font-semibold uppercase">
+                  <tr>
+                    <th className="p-2.5">Data</th>
+                    <th className="p-2.5">Núcleo</th>
+                    <th className="p-2.5">Modalidade</th>
+                    <th className="p-2.5">Conteúdo / Atividade</th>
+                    <th className="p-2.5">Professor</th>
+                    <th className="p-2.5 text-center">Participantes</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-200">
+                  {atividadesRealizadas.map((a, idx) => (
+                    <tr key={idx} className="hover:bg-zinc-50">
+                      <td className="p-2.5 font-mono">{formatarData(a.data)}</td>
+                      <td className="p-2.5 font-medium">{a.nucleoNome}</td>
+                      <td className="p-2.5 text-zinc-600">{a.modalidade || "—"}</td>
+                      <td className="p-2.5 text-zinc-800">{a.atividadeDescricao || a.turmaNome}</td>
+                      <td className="p-2.5 text-zinc-600">{a.professorNome || "—"}</td>
+                      <td className="p-2.5 text-center font-bold">{a.participantesPresentes}</td>
+                    </tr>
+                  ))}
+                  {atividadesRealizadas.length === 0 && (
+                    <tr>
+                      <td colSpan={6} className="p-3 text-center text-zinc-500 bg-zinc-50/50">
+                        Nenhuma atividade registrada no período selecionado.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
+
+        {/* ANEXO V - SUPERVISÕES */}
+        {anexosSelecionados.anexo5_supervisoes && (
+          <section className="mt-16 pt-8 border-t-2 border-zinc-300 print:break-before-page print-section">
+            <div className="bg-zinc-800 text-white px-3 py-2 rounded-t-lg mb-3">
+              <h3 className="text-sm font-bold uppercase tracking-wider">
+                ANEXO V — RELATÓRIOS INDIVIDUAIS DE SUPERVISÃO PEDAGÓGICA COM FOTOS
+              </h3>
+              <p className="text-[11px] text-zinc-300">
+                Total de Visitas Realizadas: {supervisoes.length}
+              </p>
+            </div>
+            <div className="overflow-x-auto border border-zinc-200 rounded-lg">
+              <table className="w-full text-xs text-left">
+                <thead className="bg-zinc-100 text-zinc-700 font-semibold uppercase">
+                  <tr>
+                    <th className="p-2.5">Data</th>
+                    <th className="p-2.5">Núcleo</th>
+                    <th className="p-2.5">Coordenador</th>
+                    <th className="p-2.5">Professor Presente</th>
+                    <th className="p-2.5 text-center">Beneficiários</th>
+                    <th className="p-2.5 text-center">Situação</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-200">
+                  {supervisoes.map((s, idx) => (
+                    <tr key={idx} className="hover:bg-zinc-50">
+                      <td className="p-2.5 font-mono">{formatarData(s.data)}</td>
+                      <td className="p-2.5 font-medium">{s.nucleoNome || "—"}</td>
+                      <td className="p-2.5 text-zinc-600">{s.coordenadorNome || "—"}</td>
+                      <td className="p-2.5 text-zinc-600">{s.professorPresente ? "Presente" : "Ausente"}</td>
+                      <td className="p-2.5 text-center font-bold">{s.beneficiariosPresentes}</td>
+                      <td className="p-2.5 text-center">
+                        <Badge tone={s.situacao === "Regular" ? "green" : "amber"}>{s.situacao}</Badge>
+                      </td>
+                    </tr>
+                  ))}
+                  {supervisoes.length === 0 && (
+                    <tr>
+                      <td colSpan={6} className="p-3 text-center text-zinc-500 bg-zinc-50/50">
+                        Nenhuma visita de supervisão registrada no período selecionado.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
+
+        {/* ANEXO VI - RECURSOS HUMANOS */}
+        {anexosSelecionados.anexo6_rh && (
+          <section className="mt-16 pt-8 border-t-2 border-zinc-300 print:break-before-page print-section">
+            <div className="bg-zinc-800 text-white px-3 py-2 rounded-t-lg mb-3">
+              <h3 className="text-sm font-bold uppercase tracking-wider">
+                ANEXO VI — RELAÇÃO DOS PROFISSIONAIS E EQUIPE TÉCNICA
+              </h3>
+              <p className="text-[11px] text-zinc-300">
+                Total de Profissionais Atuantes: {recursosHumanos.profissionais.length}
+              </p>
+            </div>
+            <div className="overflow-x-auto border border-zinc-200 rounded-lg">
+              <table className="w-full text-xs text-left">
+                <thead className="bg-zinc-100 text-zinc-700 font-semibold uppercase">
+                  <tr>
+                    <th className="p-2.5">Profissional</th>
+                    <th className="p-2.5">Função</th>
+                    <th className="p-2.5">Núcleo / Alocação</th>
+                    <th className="p-2.5 text-center">Período de Atuação</th>
+                    <th className="p-2.5 text-center">Situação</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-200">
+                  {recursosHumanos.profissionais.map((p, idx) => (
+                    <tr key={idx} className="hover:bg-zinc-50">
+                      <td className="p-2.5 font-medium">{p.nomeCompleto}</td>
+                      <td className="p-2.5 text-zinc-600">{p.funcao || "—"}</td>
+                      <td className="p-2.5 text-zinc-600">{p.nucleoOuAlocacao || "—"}</td>
+                      <td className="p-2.5 text-center font-mono text-zinc-500">
+                        {formatarData(periodo.dataInicio)} a {formatarData(periodo.dataFim)}
+                      </td>
+                      <td className="p-2.5 text-center">
+                        <Badge tone={p.situacao === "Ativo" ? "green" : "zinc"}>{p.situacao || "Ativo"}</Badge>
+                      </td>
+                    </tr>
+                  ))}
+                  {recursosHumanos.profissionais.length === 0 && (
+                    <tr>
+                      <td colSpan={5} className="p-3 text-center text-zinc-500 bg-zinc-50/50">
+                        Nenhum profissional vinculado no período.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
+
+        {/* ANEXO VII - MATERIAIS E UNIFORMES */}
+        {anexosSelecionados.anexo7_materiais && (
+          <section className="mt-16 pt-8 border-t-2 border-zinc-300 print:break-before-page print-section">
+            <div className="bg-zinc-800 text-white px-3 py-2 rounded-t-lg mb-3">
+              <h3 className="text-sm font-bold uppercase tracking-wider">
+                ANEXO VII — DEMONSTRATIVO DE MATERIAIS E UNIFORMES DISTRIBUÍDOS
+              </h3>
+              <p className="text-[11px] text-zinc-300">
+                Itens Gerenciados no Estoque do Projeto: {materiais.length}
+              </p>
+            </div>
+            <div className="overflow-x-auto border border-zinc-200 rounded-lg">
+              <table className="w-full text-xs text-left">
+                <thead className="bg-zinc-100 text-zinc-700 font-semibold uppercase">
+                  <tr>
+                    <th className="p-2.5">Item / Equipamento</th>
+                    <th className="p-2.5 text-center">Qtd. Prevista</th>
+                    <th className="p-2.5 text-center">Qtd. Adquirida/Recebida</th>
+                    <th className="p-2.5 text-center">Qtd. Distribuída</th>
+                    <th className="p-2.5">Destinação</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-200">
+                  {materiais.map((m, idx) => (
+                    <tr key={idx} className="hover:bg-zinc-50">
+                      <td className="p-2.5 font-medium">{m.nome}</td>
+                      <td className="p-2.5 text-center">{m.quantidadePrevista} {m.unidadeMedida}</td>
+                      <td className="p-2.5 text-center">{m.quantidadeAdquirida} {m.unidadeMedida}</td>
+                      <td className="p-2.5 text-center font-bold text-emerald-700">{m.quantidadeDistribuida} {m.unidadeMedida}</td>
+                      <td className="p-2.5 text-zinc-600">{m.destinacao || "—"}</td>
+                    </tr>
+                  ))}
+                  {materiais.length === 0 && (
+                    <tr>
+                      <td colSpan={5} className="p-3 text-center text-zinc-500 bg-zinc-50/50">
+                        Nenhum material movimentado no período.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
+
+        {/* ANEXO VIII - METAS */}
+        {anexosSelecionados.anexo8_metas && (
+          <section className="mt-16 pt-8 border-t-2 border-zinc-300 print:break-before-page print-section">
+            <div className="bg-zinc-800 text-white px-3 py-2 rounded-t-lg mb-3">
+              <h3 className="text-sm font-bold uppercase tracking-wider">
+                ANEXO VIII — DEMONSTRATIVO ANALÍTICO DE CUMPRIMENTO DAS METAS
+              </h3>
+              <p className="text-[11px] text-zinc-300">
+                Comparativo Geral do Plano de Trabalho
+              </p>
+            </div>
+            <div className="overflow-x-auto border border-zinc-200 rounded-lg">
+              <table className="w-full text-xs text-left">
+                <thead className="bg-zinc-100 text-zinc-700 font-semibold uppercase">
+                  <tr>
+                    <th className="p-2.5">Meta / Indicador Pactuado</th>
+                    <th className="p-2.5 text-center">Previsto</th>
+                    <th className="p-2.5 text-center">Executado</th>
+                    <th className="p-2.5 text-center">Percentual de Execução</th>
+                    <th className="p-2.5 text-center">Situação</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-200">
+                  {cumprimentoMetas.map((m, idx) => (
+                    <tr key={idx} className="hover:bg-zinc-50">
+                      <td className="p-2.5 font-medium">{m.meta}</td>
+                      <td className="p-2.5 text-center">{m.previsto} {m.unidade}</td>
+                      <td className="p-2.5 text-center font-bold text-zinc-900">{m.realizado} {m.unidade}</td>
+                      <td className="p-2.5 text-center font-semibold text-emerald-700">{m.percentualExecucao}%</td>
+                      <td className="p-2.5 text-center">
+                        <Badge tone={m.situacao === "Cumprida" ? "green" : "amber"}>{m.situacao}</Badge>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
 
       </div>
     </div>

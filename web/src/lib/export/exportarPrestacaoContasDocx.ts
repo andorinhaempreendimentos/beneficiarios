@@ -125,6 +125,16 @@ export async function exportarRelatorioPrestacaoContasDocx(
     responsavelElaboracao?: { nome: string; cargo: string };
     coordenadorGeral?: { nome: string; cargo: string };
     representanteLegal?: { nome: string; cargo: string };
+  },
+  anexosSelecionados?: {
+    anexo1_nucleos?: boolean;
+    anexo2_beneficiarios?: boolean;
+    anexo3_frequencias?: boolean;
+    anexo4_atividades?: boolean;
+    anexo5_supervisoes?: boolean;
+    anexo6_rh?: boolean;
+    anexo7_materiais?: boolean;
+    anexo8_metas?: boolean;
   }
 ) {
   const {
@@ -134,6 +144,7 @@ export async function exportarRelatorioPrestacaoContasDocx(
     resumoIndicadores,
     execucaoPorNucleo,
     beneficiarios,
+    beneficiariosLista,
     frequencia,
     atividadesRealizadas,
     supervisoes,
@@ -911,26 +922,38 @@ export async function exportarRelatorioPrestacaoContasDocx(
 
   // 16. DOCUMENTOS COMPROBATÓRIOS / ANEXOS
   docChildren.push(
-    createSectionHeading('16. DOCUMENTOS COMPROBATÓRIOS / ANEXOS'),
+    createSectionHeading('16. DOCUMENTOS COMPROBATÓRIOS / ANEXOS OFICIAIS'),
     new Paragraph({
-      spacing: { after: 80 },
-      children: [new TextRun({ text: '1. Anexo I: Diários de classe e relatórios consolidados de frequência por turma e núcleo;', size: 18 })],
+      spacing: { after: 60 },
+      children: [new TextRun({ text: '1. Anexo I: Relação dos núcleos esportivos em funcionamento e execução territorial;', size: 18 })],
     }),
     new Paragraph({
-      spacing: { after: 80 },
-      children: [new TextRun({ text: '2. Anexo II: Relatórios individuais de supervisão pedagógica in loco com fotos comprobatórias;', size: 18 })],
+      spacing: { after: 60 },
+      children: [new TextRun({ text: '2. Anexo II: Relação nominal analítica de beneficiários atendidos e matriculados;', size: 18 })],
     }),
     new Paragraph({
-      spacing: { after: 80 },
-      children: [new TextRun({ text: '3. Anexo III: Termos de entrega e cautela de materiais esportivos e uniformes assinados;', size: 18 })],
+      spacing: { after: 60 },
+      children: [new TextRun({ text: '3. Anexo III: Relatórios consolidados e listas de frequência dos beneficiários;', size: 18 })],
     }),
     new Paragraph({
-      spacing: { after: 80 },
-      children: [new TextRun({ text: '4. Anexo IV: Relatórios de registro de ponto eletrônico e frequência da equipe de profissionais;', size: 18 })],
+      spacing: { after: 60 },
+      children: [new TextRun({ text: '4. Anexo IV: Relatório cronológico de atividades e aulas realizadas;', size: 18 })],
     }),
     new Paragraph({
-      spacing: { after: 300 },
-      children: [new TextRun({ text: '5. Anexo V: Extratos bancários da conta corrente específica da parceria e comprovantes de despesas.', size: 18 })],
+      spacing: { after: 60 },
+      children: [new TextRun({ text: '5. Anexo V: Relatórios individuais de supervisão pedagógica in loco com fotos comprobatórias;', size: 18 })],
+    }),
+    new Paragraph({
+      spacing: { after: 60 },
+      children: [new TextRun({ text: '6. Anexo VI: Relação dos profissionais e equipe técnica;', size: 18 })],
+    }),
+    new Paragraph({
+      spacing: { after: 60 },
+      children: [new TextRun({ text: '7. Anexo VII: Demonstrativo de materiais e uniformes distribuídos;', size: 18 })],
+    }),
+    new Paragraph({
+      spacing: { after: 200 },
+      children: [new TextRun({ text: '8. Anexo VIII: Demonstrativo analítico de cumprimento das metas pactuadas.', size: 18 })],
     })
   );
 
@@ -979,6 +1002,347 @@ export async function exportarRelatorioPrestacaoContasDocx(
       ],
     })
   );
+
+  // ── APÊNDICES: ANEXOS OFICIAIS SELECIONADOS NO DOCX ─────────────────────
+
+  const incl = {
+    anexo1: anexosSelecionados?.anexo1_nucleos ?? true,
+    anexo2: anexosSelecionados?.anexo2_beneficiarios ?? true,
+    anexo3: anexosSelecionados?.anexo3_frequencias ?? true,
+    anexo4: anexosSelecionados?.anexo4_atividades ?? true,
+    anexo5: anexosSelecionados?.anexo5_supervisoes ?? true,
+    anexo6: anexosSelecionados?.anexo6_rh ?? true,
+    anexo7: anexosSelecionados?.anexo7_materiais ?? true,
+    anexo8: anexosSelecionados?.anexo8_metas ?? true,
+  };
+
+  // ANEXO I - NÚCLEOS
+  if (incl.anexo1) {
+    docChildren.push(
+      new Paragraph({ children: [new PageBreak()] }),
+      createSectionHeading('ANEXO I — RELAÇÃO DOS NÚCLEOS ESPORTIVOS EM FUNCIONAMENTO'),
+      new Table({
+        width: { size: TABLE_WIDTH, type: WidthType.DXA },
+        columnWidths: [2200, 1600, 1400, 1600, 800, 1000, 1000],
+        rows: [
+          new TableRow({
+            tableHeader: true,
+            children: [
+              createHeaderCell('Núcleo', 2200),
+              createHeaderCell('Região/Bairro', 1600),
+              createHeaderCell('Modalidades', 1400),
+              createHeaderCell('Professores', 1600),
+              createHeaderCell('Turmas', 800, AlignmentType.CENTER),
+              createHeaderCell('Alunos', 1000, AlignmentType.CENTER),
+              createHeaderCell('Aulas', 1000, AlignmentType.CENTER),
+            ],
+          }),
+          ...execucaoPorNucleo.map(
+            (item) =>
+              new TableRow({
+                children: [
+                  createDataCell(item.identificacao, 2200, AlignmentType.LEFT, true),
+                  createDataCell(item.bairro || item.regiao || '—', 1600),
+                  createDataCell(item.modalidades.join(', ') || '—', 1400),
+                  createDataCell(item.professores.join(', ') || '—', 1600),
+                  createDataCell(String(item.totalTurmas), 800, AlignmentType.CENTER),
+                  createDataCell(String(item.beneficiariosAtendidos), 1000, AlignmentType.CENTER, true),
+                  createDataCell(String(item.aulasRealizadas), 1000, AlignmentType.CENTER),
+                ],
+              })
+          ),
+        ],
+      })
+    );
+  }
+
+  // ANEXO II - BENEFICIÁRIOS
+  if (incl.anexo2) {
+    docChildren.push(
+      new Paragraph({ children: [new PageBreak()] }),
+      createSectionHeading('ANEXO II — RELAÇÃO NOMINAL DE BENEFICIÁRIOS ATENDIDOS'),
+      new Table({
+        width: { size: TABLE_WIDTH, type: WidthType.DXA },
+        columnWidths: [3600, 2200, 1000, 800, 1000, 1000],
+        rows: [
+          new TableRow({
+            tableHeader: true,
+            children: [
+              createHeaderCell('Nome do Beneficiário', 3600),
+              createHeaderCell('Núcleo', 2200),
+              createHeaderCell('Idade', 1000, AlignmentType.CENTER),
+              createHeaderCell('Sexo', 800, AlignmentType.CENTER),
+              createHeaderCell('Vulnerável', 1000, AlignmentType.CENTER),
+              createHeaderCell('Situação', 1000, AlignmentType.CENTER),
+            ],
+          }),
+          ...((beneficiariosLista ?? []).length > 0
+            ? (beneficiariosLista ?? []).map(
+                (b) =>
+                  new TableRow({
+                    children: [
+                      createDataCell(b.nomeCompleto, 3600, AlignmentType.LEFT, true),
+                      createDataCell(b.nucleoNome, 2200),
+                      createDataCell(b.idade > 0 ? `${b.idade} anos` : '—', 1000, AlignmentType.CENTER),
+                      createDataCell(b.sexo, 800, AlignmentType.CENTER),
+                      createDataCell(b.vulneravel ? 'Sim' : 'Não', 1000, AlignmentType.CENTER),
+                      createDataCell(b.status, 1000, AlignmentType.CENTER, true),
+                    ],
+                  })
+              )
+            : [
+                new TableRow({
+                  children: [createDataCell('Nenhum beneficiário cadastrado no período.', TABLE_WIDTH, AlignmentType.CENTER)],
+                }),
+              ]),
+        ],
+      })
+    );
+  }
+
+  // ANEXO III - FREQUÊNCIAS
+  if (incl.anexo3) {
+    docChildren.push(
+      new Paragraph({ children: [new PageBreak()] }),
+      createSectionHeading('ANEXO III — RELATÓRIOS CONSOLIDADOS DE FREQUÊNCIA POR NÚCLEO'),
+      new Table({
+        width: { size: TABLE_WIDTH, type: WidthType.DXA },
+        columnWidths: [3200, 1600, 1600, 1600, 1600],
+        rows: [
+          new TableRow({
+            tableHeader: true,
+            children: [
+              createHeaderCell('Núcleo Esportivo', 3200),
+              createHeaderCell('Alunos Ativos', 1600, AlignmentType.CENTER),
+              createHeaderCell('Presenças', 1600, AlignmentType.CENTER),
+              createHeaderCell('Faltas', 1600, AlignmentType.CENTER),
+              createHeaderCell('Freq. Média', 1600, AlignmentType.CENTER),
+            ],
+          }),
+          ...frequencia.porNucleo.map(
+            (fn) =>
+              new TableRow({
+                children: [
+                  createDataCell(fn.nucleoNome, 3200),
+                  createDataCell(String(fn.beneficiariosAtivos), 1600, AlignmentType.CENTER),
+                  createDataCell(String(fn.presencasRegistradas), 1600, AlignmentType.CENTER),
+                  createDataCell(String(fn.faltasRegistradas), 1600, AlignmentType.CENTER),
+                  createDataCell(`${fn.frequenciaMedia}%`, 1600, AlignmentType.CENTER, true),
+                ],
+              })
+          ),
+        ],
+      })
+    );
+  }
+
+  // ANEXO IV - ATIVIDADES / AULAS
+  if (incl.anexo4) {
+    docChildren.push(
+      new Paragraph({ children: [new PageBreak()] }),
+      createSectionHeading('ANEXO IV — RELATÓRIO DE ATIVIDADES E AULAS REALIZADAS'),
+      new Table({
+        width: { size: TABLE_WIDTH, type: WidthType.DXA },
+        columnWidths: [1400, 2200, 1400, 2400, 1200, 1000],
+        rows: [
+          new TableRow({
+            tableHeader: true,
+            children: [
+              createHeaderCell('Data', 1400),
+              createHeaderCell('Núcleo', 2200),
+              createHeaderCell('Modalidade', 1400),
+              createHeaderCell('Conteúdo/Turma', 2400),
+              createHeaderCell('Professor', 1200),
+              createHeaderCell('Partic.', 1000, AlignmentType.CENTER),
+            ],
+          }),
+          ...(atividadesRealizadas.length > 0
+            ? atividadesRealizadas.map(
+                (a) =>
+                  new TableRow({
+                    children: [
+                      createDataCell(formatarData(a.data), 1400),
+                      createDataCell(a.nucleoNome, 2200),
+                      createDataCell(a.modalidade || '—', 1400),
+                      createDataCell(a.atividadeDescricao || a.turmaNome, 2400),
+                      createDataCell(a.professorNome || '—', 1200),
+                      createDataCell(String(a.participantesPresentes), 1000, AlignmentType.CENTER, true),
+                    ],
+                  })
+              )
+            : [
+                new TableRow({
+                  children: [createDataCell('Nenhuma atividade registrada no período.', TABLE_WIDTH, AlignmentType.CENTER)],
+                }),
+              ]),
+        ],
+      })
+    );
+  }
+
+  // ANEXO V - SUPERVISÕES
+  if (incl.anexo5) {
+    docChildren.push(
+      new Paragraph({ children: [new PageBreak()] }),
+      createSectionHeading('ANEXO V — RELATÓRIOS INDIVIDUAIS DE SUPERVISÃO PEDAGÓGICA'),
+      new Table({
+        width: { size: TABLE_WIDTH, type: WidthType.DXA },
+        columnWidths: [1400, 2400, 2000, 1800, 1000, 1000],
+        rows: [
+          new TableRow({
+            tableHeader: true,
+            children: [
+              createHeaderCell('Data', 1400),
+              createHeaderCell('Núcleo', 2400),
+              createHeaderCell('Coordenador', 2000),
+              createHeaderCell('Professor', 1800),
+              createHeaderCell('Presentes', 1000, AlignmentType.CENTER),
+              createHeaderCell('Situação', 1000, AlignmentType.CENTER),
+            ],
+          }),
+          ...(supervisoes.length > 0
+            ? supervisoes.map(
+                (s) =>
+                  new TableRow({
+                    children: [
+                      createDataCell(formatarData(s.data), 1400),
+                      createDataCell(s.nucleoNome || '—', 2400),
+                      createDataCell(s.coordenadorNome || '—', 2000),
+                      createDataCell(s.professorPresente ? 'Presente' : 'Ausente', 1800),
+                      createDataCell(String(s.beneficiariosPresentes), 1000, AlignmentType.CENTER),
+                      createDataCell(s.situacao, 1000, AlignmentType.CENTER, true),
+                    ],
+                  })
+              )
+            : [
+                new TableRow({
+                  children: [createDataCell('Nenhuma visita de supervisão registrada no período.', TABLE_WIDTH, AlignmentType.CENTER)],
+                }),
+              ]),
+        ],
+      })
+    );
+  }
+
+  // ANEXO VI - RECURSOS HUMANOS
+  if (incl.anexo6) {
+    docChildren.push(
+      new Paragraph({ children: [new PageBreak()] }),
+      createSectionHeading('ANEXO VI — RELAÇÃO DOS PROFISSIONAIS E EQUIPE TÉCNICA'),
+      new Table({
+        width: { size: TABLE_WIDTH, type: WidthType.DXA },
+        columnWidths: [2600, 2000, 2200, 1600, 1200],
+        rows: [
+          new TableRow({
+            tableHeader: true,
+            children: [
+              createHeaderCell('Profissional', 2600),
+              createHeaderCell('Função', 2000),
+              createHeaderCell('Núcleo/Área', 2200),
+              createHeaderCell('Período de Atuação', 1600, AlignmentType.CENTER),
+              createHeaderCell('Situação', 1200, AlignmentType.CENTER),
+            ],
+          }),
+          ...(recursosHumanos.profissionais.length > 0
+            ? recursosHumanos.profissionais.map(
+                (p) =>
+                  new TableRow({
+                    children: [
+                      createDataCell(p.nomeCompleto, 2600, AlignmentType.LEFT, true),
+                      createDataCell(p.funcao || '—', 2000),
+                      createDataCell(p.nucleoOuAlocacao || '—', 2200),
+                      createDataCell(`${formatarData(periodo.dataInicio)} a ${formatarData(periodo.dataFim)}`, 1600, AlignmentType.CENTER),
+                      createDataCell(p.situacao || 'Ativo', 1200, AlignmentType.CENTER, true),
+                    ],
+                  })
+              )
+            : [
+                new TableRow({
+                  children: [createDataCell('Nenhum profissional vinculado no período.', TABLE_WIDTH, AlignmentType.CENTER)],
+                }),
+              ]),
+        ],
+      })
+    );
+  }
+
+  // ANEXO VII - MATERIAIS E UNIFORMES
+  if (incl.anexo7) {
+    docChildren.push(
+      new Paragraph({ children: [new PageBreak()] }),
+      createSectionHeading('ANEXO VII — DEMONSTRATIVO DE MATERIAIS E UNIFORMES DISTRIBUÍDOS'),
+      new Table({
+        width: { size: TABLE_WIDTH, type: WidthType.DXA },
+        columnWidths: [2800, 1800, 1800, 1800, 1400],
+        rows: [
+          new TableRow({
+            tableHeader: true,
+            children: [
+              createHeaderCell('Item', 2800),
+              createHeaderCell('Qtd. Prevista', 1800, AlignmentType.CENTER),
+              createHeaderCell('Qtd. Adquirida', 1800, AlignmentType.CENTER),
+              createHeaderCell('Qtd. Distribuída', 1800, AlignmentType.CENTER),
+              createHeaderCell('Destinação', 1400),
+            ],
+          }),
+          ...(materiais.length > 0
+            ? materiais.map(
+                (m) =>
+                  new TableRow({
+                    children: [
+                      createDataCell(m.nome, 2800, AlignmentType.LEFT, true),
+                      createDataCell(`${m.quantidadePrevista} ${m.unidadeMedida}`, 1800, AlignmentType.CENTER),
+                      createDataCell(`${m.quantidadeAdquirida} ${m.unidadeMedida}`, 1800, AlignmentType.CENTER),
+                      createDataCell(`${m.quantidadeDistribuida} ${m.unidadeMedida}`, 1800, AlignmentType.CENTER, true),
+                      createDataCell(m.destinacao || '—', 1400),
+                    ],
+                  })
+              )
+            : [
+                new TableRow({
+                  children: [createDataCell('Nenhum material movimentado no período.', TABLE_WIDTH, AlignmentType.CENTER)],
+                }),
+              ]),
+        ],
+      })
+    );
+  }
+
+  // ANEXO VIII - METAS
+  if (incl.anexo8) {
+    docChildren.push(
+      new Paragraph({ children: [new PageBreak()] }),
+      createSectionHeading('ANEXO VIII — DEMONSTRATIVO ANALÍTICO DE CUMPRIMENTO DE METAS'),
+      new Table({
+        width: { size: TABLE_WIDTH, type: WidthType.DXA },
+        columnWidths: [3600, 1600, 1600, 1600, 1200],
+        rows: [
+          new TableRow({
+            tableHeader: true,
+            children: [
+              createHeaderCell('Meta / Indicador', 3600),
+              createHeaderCell('Previsto', 1600, AlignmentType.CENTER),
+              createHeaderCell('Realizado', 1600, AlignmentType.CENTER),
+              createHeaderCell('% Execução', 1600, AlignmentType.CENTER),
+              createHeaderCell('Situação', 1200, AlignmentType.CENTER),
+            ],
+          }),
+          ...cumprimentoMetas.map(
+            (m) =>
+              new TableRow({
+                children: [
+                  createDataCell(m.meta, 3600),
+                  createDataCell(`${m.previsto} ${m.unidade}`, 1600, AlignmentType.CENTER),
+                  createDataCell(`${m.realizado} ${m.unidade}`, 1600, AlignmentType.CENTER, true),
+                  createDataCell(`${m.percentualExecucao}%`, 1600, AlignmentType.CENTER, true),
+                  createDataCell(m.situacao, 1200, AlignmentType.CENTER),
+                ],
+              })
+          ),
+        ],
+      })
+    );
+  }
 
   // Criar Documento Docx
   const doc = new Document({
