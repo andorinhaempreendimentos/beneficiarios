@@ -6,6 +6,7 @@ import type { DadosRelatorioPrestacaoContas } from "@/lib/api/prestacaoContas";
 import { Badge, Button } from "@/components/ui";
 import { Printer, FileDown, Save, Edit3, CheckCircle2, AlertCircle } from "lucide-react";
 import { exportarRelatorioPrestacaoContasDocx } from "@/lib/export/exportarPrestacaoContasDocx";
+import { exportarRelatorioPrestacaoContasPdf } from "@/lib/export/exportarPrestacaoContasPdf";
 
 interface Props {
   dados: DadosRelatorioPrestacaoContas;
@@ -56,7 +57,11 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
   const [editandoResultados, setEditandoResultados] = useState(false);
   const [editandoConclusao, setEditandoConclusao] = useState(false);
   const [editandoSignatarios, setEditandoSignatarios] = useState(false);
-  // Estados de seleção de anexos para o dossiê (todos pré-marcados)
+  
+  const [exportandoDocx, setExportandoDocx] = useState(false);
+  const [exportandoPdf, setExportandoPdf] = useState(false);
+
+  // Seleção dinâmica dos anexos a gerar no dossiê
   const [anexosSelecionados, setAnexosSelecionados] = useState({
     anexo1_nucleos: true,
     anexo2_beneficiarios: true,
@@ -68,23 +73,41 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
     anexo8_metas: true,
   });
 
-  function toggleTodosAnexos(marcar: boolean) {
+  function toggleTodosAnexos(valor: boolean) {
     setAnexosSelecionados({
-      anexo1_nucleos: marcar,
-      anexo2_beneficiarios: marcar,
-      anexo3_frequencias: marcar,
-      anexo4_atividades: marcar,
-      anexo5_supervisoes: marcar,
-      anexo6_rh: marcar,
-      anexo7_materiais: marcar,
-      anexo8_metas: marcar,
+      anexo1_nucleos: valor,
+      anexo2_beneficiarios: valor,
+      anexo3_frequencias: valor,
+      anexo4_atividades: valor,
+      anexo5_supervisoes: valor,
+      anexo6_rh: valor,
+      anexo7_materiais: valor,
+      anexo8_metas: valor,
     });
   }
 
-  const [exportandoDocx, setExportandoDocx] = useState(false);
-
-  function handlePrint() {
-    window.print();
+  async function handleExportarPdf() {
+    setExportandoPdf(true);
+    try {
+      await exportarRelatorioPrestacaoContasPdf(
+        dados,
+        {
+          justificativaMetas,
+          impactoSocialTexto,
+          conclusaoTexto,
+        },
+        {
+          responsavelElaboracao,
+          coordenadorGeral,
+          representanteLegal,
+        },
+        anexosSelecionados
+      );
+    } catch (err: any) {
+      alert("Erro ao gerar PDF oficial: " + (err.message || err));
+    } finally {
+      setExportandoPdf(false);
+    }
   }
 
   async function handleExportarDocx() {
@@ -109,6 +132,10 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
     } finally {
       setExportandoDocx(false);
     }
+  }
+
+  function handlePrint() {
+    window.print();
   }
 
   function handleSalvar() {
@@ -155,19 +182,30 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
 
           <Button
             type="button"
+            size="sm"
+            onClick={handleExportarPdf}
+            disabled={exportandoPdf}
+            className="bg-sky-600 hover:bg-sky-700 text-white shadow-sm"
+          >
+            <FileDown className="mr-1.5 h-3.5 w-3.5" />
+            {exportandoPdf ? "Gerando PDF Oficial..." : "Baixar Relatório em PDF (.PDF)"}
+          </Button>
+
+          <Button
+            type="button"
             variant="outline"
             size="sm"
             onClick={handleExportarDocx}
             disabled={exportandoDocx}
-            className="border-sky-300 text-sky-800 hover:bg-sky-50"
+            className="border-zinc-300 text-zinc-800 hover:bg-zinc-50"
           >
-            <FileDown className="mr-1.5 h-3.5 w-3.5 text-sky-600" />
+            <FileDown className="mr-1.5 h-3.5 w-3.5 text-zinc-600" />
             {exportandoDocx ? "Gerando Word..." : "Baixar em Word (.DOCX)"}
           </Button>
 
           <Button type="button" size="sm" onClick={handlePrint}>
             <Printer className="mr-1.5 h-3.5 w-3.5" />
-            Imprimir / Exportar PDF
+            Imprimir
           </Button>
         </div>
       </div>
