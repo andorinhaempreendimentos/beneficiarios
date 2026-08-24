@@ -142,23 +142,25 @@ export default function RelatoriosPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <PageHeader
-        title="Relatórios & Prestação de Contas"
-        description="Gere o Relatório Oficial de Execução do Objeto e relatórios operacionais consolidados"
-        actions={
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setModalHistoricoAberto(true)}
-            >
-              <History className="mr-1.5 h-3.5 w-3.5" />
-              Histórico de Emissões
-            </Button>
-          </div>
-        }
-      />
+    <div className="flex flex-col gap-6 print:gap-0">
+      <div className="print:hidden">
+        <PageHeader
+          title="Relatórios & Prestação de Contas"
+          description="Gere o Relatório Oficial de Execução do Objeto e relatórios operacionais consolidados"
+          actions={
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setModalHistoricoAberto(true)}
+              >
+                <History className="mr-1.5 h-3.5 w-3.5" />
+                Histórico de Emissões
+              </Button>
+            </div>
+          }
+        />
+      </div>
 
       {/* Seletor de Tipo de Relatório */}
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6 print:hidden">
