@@ -163,7 +163,7 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
             {objeto.nome}
           </p>
           <p className="text-xs text-zinc-500 mt-0.5">
-            Período Avaliado: {formatarData(periodo.dataInicio)} a {formatarData(periodo.dataFim)} • Instrumento: {objeto.termoDeFomento || "Termo de Colaboração"}
+            Período Avaliado: {formatarData(periodo.dataInicio)} a {formatarData(periodo.dataFim)} • Instrumento: {objeto.termoDeFomento || "—"}
           </p>
         </div>
 
@@ -173,17 +173,17 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
             1. Identificação do Projeto e Parceria
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 text-xs border border-zinc-200 rounded-lg p-4 bg-zinc-50/50">
-            <div><strong>Objeto da Parceria:</strong> {objeto.nome}</div>
-            <div><strong>Órgão Concedente:</strong> {objeto.concedente?.nome || "Secretaria Municipal de Esportes e Lazer"}</div>
-            <div><strong>Organização Executora (OSC):</strong> {organizacao?.nome || "Andorinha Empreendimentos Sociais"}</div>
-            <div><strong>CNPJ da OSC:</strong> {organizacao?.cnpj || "00.000.000/0001-00"}</div>
-            <div><strong>Instrumento / Termo nº:</strong> {objeto.termoDeFomento || "002/2026"}</div>
-            <div><strong>Processo Administrativo nº:</strong> {objeto.numeroProcessoAdm || "00000.0.028571/2026"}</div>
-            <div><strong>Edital de Chamamento nº:</strong> {objeto.editalNumero || "002/2026"}</div>
-            <div><strong>Vigência do Instrumento:</strong> {objeto.dataInicio ? formatarData(objeto.dataInicio) : "01/01/2026"} até {objeto.dataTermino ? formatarData(objeto.dataTermino) : "31/12/2026"}</div>
-            <div><strong>Município / UF:</strong> {objeto.concedente?.cidade || organizacao?.cidade || "Palmas"} / {objeto.concedente?.estado || organizacao?.estado || "TO"}</div>
+            <div><strong>Objeto da Parceria:</strong> {objeto.nome || "—"}</div>
+            <div><strong>Órgão Concedente:</strong> {objeto.concedente?.nome || "—"}</div>
+            <div><strong>Organização Executora (OSC):</strong> {organizacao?.nome || "—"}</div>
+            <div><strong>CNPJ da OSC:</strong> {organizacao?.cnpj || "—"}</div>
+            <div><strong>Instrumento / Termo nº:</strong> {objeto.termoDeFomento || "—"}</div>
+            <div><strong>Processo Administrativo nº:</strong> {objeto.numeroProcessoAdm || "—"}</div>
+            <div><strong>Edital de Chamamento nº:</strong> {objeto.editalNumero || "—"}</div>
+            <div><strong>Vigência do Instrumento:</strong> {objeto.dataInicio && objeto.dataTermino ? `${formatarData(objeto.dataInicio)} até ${formatarData(objeto.dataTermino)}` : "—"}</div>
+            <div><strong>Município / UF:</strong> {objeto.concedente?.cidade || organizacao?.cidade ? `${objeto.concedente?.cidade || organizacao?.cidade} / ${objeto.concedente?.estado || organizacao?.estado || ""}` : "—"}</div>
             <div>
-              <strong>Conta Bancária Exclusiva:</strong> Banco {objeto.contaBancariaBanco || "Banco do Brasil"} • Ag: {objeto.contaBancariaAgencia || "0000-0"} • CC: {objeto.contaBancariaConta || "00000-0"}
+              <strong>Conta Bancária Exclusiva:</strong> {objeto.contaBancariaBanco ? `Banco ${objeto.contaBancariaBanco} • Ag: ${objeto.contaBancariaAgencia || "—"} • CC: ${objeto.contaBancariaConta || "—"}` : "—"}
             </div>
           </div>
         </section>
@@ -194,13 +194,7 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
             2. Objeto e Finalidade do Projeto
           </h2>
           <div className="text-xs text-zinc-700 leading-relaxed text-justify border border-zinc-200 rounded-lg p-4 bg-zinc-50/30">
-            {objeto.descricao ? (
-              <p>{objeto.descricao}</p>
-            ) : (
-              <p>
-                O presente projeto tem por finalidade democratizar o acesso à prática esportiva de qualidade por meio da oferta de aulas regulares e estruturadas de futebol e futsal para crianças e adolescentes, prioritariamente matriculados na rede pública de ensino ou em situação de vulnerabilidade socioeconômica no município de {objeto.concedente?.cidade || "Palmas"}/{objeto.concedente?.estado || "TO"}. A intervenção pedagógica orienta-se pela metodologia oficial &ldquo;Gol do Brasil&rdquo; da CBF Social, estimulando as dez habilidades para a vida recomendadas pela Organização Mundial da Saúde (OMS), o trabalho em equipe, a cidadania e o desenvolvimento integral.
-              </p>
-            )}
+            <p>{objeto.descricao || "—"}</p>
           </div>
         </section>
 
@@ -343,30 +337,23 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
         </section>
 
         {/* 6. FREQUÊNCIA DOS BENEFICIÁRIOS */}
-        <section className="mb-8">
+        <section className="mb-8 print-section">
           <h2 className="text-sm font-bold uppercase tracking-wider bg-zinc-100 px-3 py-1.5 text-zinc-800 border-l-4 border-sky-600 mb-3">
-            6. Frequência Apurada e Assiduidade
+            6. Frequência dos Beneficiários
           </h2>
-          <div className="mb-3 flex items-center justify-between border border-emerald-200 bg-emerald-50/70 p-3 rounded-lg text-xs text-emerald-900">
-            <span>
-              <strong>Frequência Média Global do Projeto:</strong> {frequencia.frequenciaMediaGeral}%
-            </span>
-            <span>
-              <strong>Meta Mínima Pactuada:</strong> {frequencia.metaMinima}% •{" "}
-              <strong className="text-emerald-700">Meta {frequencia.frequenciaMediaGeral >= frequencia.metaMinima ? "Superada" : "Em Acompanhamento"}</strong>
-            </span>
-          </div>
+          <p className="text-xs text-zinc-600 mb-3 leading-relaxed">
+            A frequência dos beneficiários deverá ser acompanhada durante todo o período de execução das atividades, permitindo verificar a participação efetiva no projeto.
+          </p>
 
           <div className="overflow-x-auto border border-zinc-200 rounded-lg">
             <table className="w-full text-xs text-left">
               <thead className="bg-zinc-100 text-zinc-700 font-semibold uppercase">
                 <tr>
-                  <th className="p-2.5">Núcleo Esportivo</th>
-                  <th className="p-2.5 text-center">Alunos Ativos</th>
-                  <th className="p-2.5 text-center">Presenças Lançadas</th>
-                  <th className="p-2.5 text-center">Faltas Registradas</th>
-                  <th className="p-2.5 text-center">Frequência (%)</th>
-                  <th className="p-2.5 text-center">Situação</th>
+                  <th className="p-2.5">Núcleo</th>
+                  <th className="p-2.5 text-center">Beneficiários Ativos</th>
+                  <th className="p-2.5 text-center">Presenças Registradas</th>
+                  <th className="p-2.5 text-center">Faltas</th>
+                  <th className="p-2.5 text-center">Frequência Média</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-200">
@@ -376,16 +363,20 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
                     <td className="p-2.5 text-center">{fn.beneficiariosAtivos}</td>
                     <td className="p-2.5 text-center text-emerald-700 font-medium">{fn.presencasRegistradas}</td>
                     <td className="p-2.5 text-center text-zinc-500">{fn.faltasRegistradas}</td>
-                    <td className="p-2.5 text-center font-bold">{fn.frequenciaMedia}%</td>
-                    <td className="p-2.5 text-center">
-                      <Badge tone={fn.frequenciaMedia >= frequencia.metaMinima ? "green" : "amber"}>
-                        {fn.frequenciaMedia >= frequencia.metaMinima ? "Atingida" : "Abaixo da Meta"}
-                      </Badge>
-                    </td>
+                    <td className="p-2.5 text-center font-bold text-zinc-900">{fn.frequenciaMedia}%</td>
                   </tr>
                 ))}
               </tbody>
             </table>
+          </div>
+
+          <div className="mt-3 p-3 bg-zinc-50 border border-zinc-200 rounded-lg text-xs text-zinc-700 flex flex-col gap-1">
+            <div>
+              <strong>Frequência média geral do projeto:</strong> <span className="font-bold text-zinc-900">{frequencia.frequenciaMediaGeral}%</span>
+            </div>
+            <p className="text-zinc-500 italic text-[11px]">
+              Os registros de frequência deverão permanecer arquivados como documentação comprobatória da execução.
+            </p>
           </div>
         </section>
 

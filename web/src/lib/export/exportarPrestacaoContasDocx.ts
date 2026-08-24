@@ -176,7 +176,7 @@ export async function exportarRelatorioPrestacaoContasDocx(
       spacing: { after: 300 },
       children: [
         new TextRun({
-          text: `Período de Execução: ${formatarData(periodo.dataInicio)} a ${formatarData(periodo.dataFim)} • Instrumento: ${objeto.termoDeFomento || 'Termo de Colaboração'}`,
+          text: `Período de Execução: ${formatarData(periodo.dataInicio)} a ${formatarData(periodo.dataFim)} • Instrumento: ${objeto.termoDeFomento || '—'}`,
           italics: true,
           size: 18,
           color: '6B7280',
@@ -194,32 +194,32 @@ export async function exportarRelatorioPrestacaoContasDocx(
       rows: [
         new TableRow({
           children: [
-            createDataCell(`Objeto: ${objeto.nome}`, 4800, AlignmentType.LEFT, true),
-            createDataCell(`Órgão Concedente: ${objeto.concedente?.nome || 'SEJUVES'}`, 4800),
+            createDataCell(`Objeto: ${objeto.nome || '—'}`, 4800, AlignmentType.LEFT, true),
+            createDataCell(`Órgão Concedente: ${objeto.concedente?.nome || '—'}`, 4800),
           ],
         }),
         new TableRow({
           children: [
-            createDataCell(`OSC Executora: ${organizacao?.nome || 'Andorinha Empreendimentos Sociais'}`, 4800),
+            createDataCell(`OSC Executora: ${organizacao?.nome || '—'}`, 4800),
             createDataCell(`CNPJ da OSC: ${organizacao?.cnpj || '—'}`, 4800),
           ],
         }),
         new TableRow({
           children: [
-            createDataCell(`Termo de Parceria nº: ${objeto.termoDeFomento || '002/2026'}`, 4800),
-            createDataCell(`Processo Administrativo nº: ${objeto.numeroProcessoAdm || '00000.0.028571/2026'}`, 4800),
+            createDataCell(`Termo de Parceria nº: ${objeto.termoDeFomento || '—'}`, 4800),
+            createDataCell(`Processo Administrativo nº: ${objeto.numeroProcessoAdm || '—'}`, 4800),
           ],
         }),
         new TableRow({
           children: [
-            createDataCell(`Edital de Chamamento nº: ${objeto.editalNumero || '002/2026'}`, 4800),
-            createDataCell(`Vigência: ${objeto.dataInicio ? formatarData(objeto.dataInicio) : '01/01/2026'} a ${objeto.dataTermino ? formatarData(objeto.dataTermino) : '31/12/2026'}`, 4800),
+            createDataCell(`Edital de Chamamento nº: ${objeto.editalNumero || '—'}`, 4800),
+            createDataCell(`Vigência: ${objeto.dataInicio && objeto.dataTermino ? `${formatarData(objeto.dataInicio)} a ${formatarData(objeto.dataTermino)}` : '—'}`, 4800),
           ],
         }),
         new TableRow({
           children: [
-            createDataCell(`Município / UF: ${objeto.concedente?.cidade || 'Palmas'} / ${objeto.concedente?.estado || 'TO'}`, 4800),
-            createDataCell(`Conta Bancária: Banco ${objeto.contaBancariaBanco || 'Banco do Brasil'} • Ag: ${objeto.contaBancariaAgencia || '1505-9'} • CC: ${objeto.contaBancariaConta || '102938-4'}`, 4800),
+            createDataCell(`Município / UF: ${objeto.concedente?.cidade || organizacao?.cidade ? `${objeto.concedente?.cidade || organizacao?.cidade} / ${objeto.concedente?.estado || organizacao?.estado || ''}` : '—'}`, 4800),
+            createDataCell(`Conta Bancária: ${objeto.contaBancariaBanco ? `Banco ${objeto.contaBancariaBanco} • Ag: ${objeto.contaBancariaAgencia || '—'} • CC: ${objeto.contaBancariaConta || '—'}` : '—'}`, 4800),
           ],
         }),
       ],
@@ -234,9 +234,7 @@ export async function exportarRelatorioPrestacaoContasDocx(
       spacing: { after: 200 },
       children: [
         new TextRun({
-          text:
-            objeto.descricao ||
-            `O presente projeto tem por finalidade democratizar o acesso à prática esportiva de qualidade por meio da oferta de aulas regulares e estruturadas de futebol e futsal para crianças e adolescentes, prioritariamente matriculados na rede pública de ensino ou em situação de vulnerabilidade socioeconômica no município de ${objeto.concedente?.cidade || 'Palmas'}/${objeto.concedente?.estado || 'TO'}. A intervenção pedagógica orienta-se pela metodologia oficial "Gol do Brasil" da CBF Social, estimulando as habilidades para a vida, trabalho em equipe, cidadania e desenvolvimento integral.`,
+          text: objeto.descricao || '—',
           size: 19,
           color: '374151',
         }),
@@ -380,9 +378,21 @@ export async function exportarRelatorioPrestacaoContasDocx(
     })
   );
 
-  // 6. FREQUÊNCIA APURADA E ASSIDUIDADE
+  // 6. FREQUÊNCIA DOS BENEFICIÁRIOS
   docChildren.push(
-    createSectionHeading('6. FREQUÊNCIA APURADA E ASSIDUIDADE'),
+    createSectionHeading('6. FREQUÊNCIA DOS BENEFICIÁRIOS'),
+    new Paragraph({
+      alignment: AlignmentType.JUSTIFIED,
+      spacing: { after: 150 },
+      children: [
+        new TextRun({
+          text:
+            'A frequência dos beneficiários deverá ser acompanhada durante todo o período de execução das atividades, permitindo verificar a participação efetiva no projeto.',
+          size: 19,
+          color: '374151',
+        }),
+      ],
+    }),
     new Table({
       width: { size: TABLE_WIDTH, type: WidthType.DXA },
       columnWidths: [3600, 1500, 1500, 1500, 1500],
@@ -390,11 +400,11 @@ export async function exportarRelatorioPrestacaoContasDocx(
         new TableRow({
           tableHeader: true,
           children: [
-            createHeaderCell('Núcleo Esportivo', 3600),
-            createHeaderCell('Alunos Ativos', 1500, AlignmentType.CENTER),
-            createHeaderCell('Presenças', 1500, AlignmentType.CENTER),
+            createHeaderCell('Núcleo', 3600),
+            createHeaderCell('Beneficiários Ativos', 1500, AlignmentType.CENTER),
+            createHeaderCell('Presenças Registradas', 1500, AlignmentType.CENTER),
             createHeaderCell('Faltas', 1500, AlignmentType.CENTER),
-            createHeaderCell('Frequência (%)', 1500, AlignmentType.CENTER),
+            createHeaderCell('Frequência Média', 1500, AlignmentType.CENTER),
           ],
         }),
         ...frequencia.porNucleo.map(
@@ -409,6 +419,24 @@ export async function exportarRelatorioPrestacaoContasDocx(
               ],
             })
         ),
+      ],
+    }),
+    new Paragraph({
+      spacing: { before: 150, after: 80 },
+      children: [
+        new TextRun({ text: 'Frequência média geral do projeto: ', bold: true, size: 19 }),
+        new TextRun({ text: `${frequencia.frequenciaMediaGeral}%`, bold: true, size: 19, color: '111827' }),
+      ],
+    }),
+    new Paragraph({
+      spacing: { after: 200 },
+      children: [
+        new TextRun({
+          text: 'Os registros de frequência deverão permanecer arquivados como documentação comprobatória da execução.',
+          italics: true,
+          size: 17,
+          color: '6B7280',
+        }),
       ],
     })
   );
