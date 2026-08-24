@@ -570,9 +570,9 @@ export async function exportarRelatorioPrestacaoContasDocx(
   );
 
   // SIGNATÁRIOS E ASSINATURAS
-  const respElab = signatariosEditados?.responsavelElaboracao || { nome: 'Equipe Técnica e Pedagógica', cargo: 'Coordenação de Monitoramento' };
-  const coordGeral = signatariosEditados?.coordenadorGeral || { nome: 'Coordenador Geral do Projeto', cargo: 'Coordenador Geral do Objeto' };
-  const repLegal = signatariosEditados?.representanteLegal || { nome: organizacao?.nomeResponsavel || 'Representante Legal da OSC', cargo: `Presidente - ${organizacao?.nome || 'OSC Executora'}` };
+  const respElab = signatariosEditados?.responsavelElaboracao || { nome: '—', cargo: 'Responsável pela elaboração do relatório' };
+  const coordGeral = signatariosEditados?.coordenadorGeral || { nome: '—', cargo: 'Coordenação do Projeto' };
+  const repLegal = signatariosEditados?.representanteLegal || { nome: organizacao?.nomeResponsavel || '—', cargo: `Representante legal${organizacao?.nome ? ` - ${organizacao.nome}` : ''}` };
 
   docChildren.push(
     new Paragraph({ spacing: { before: 400, after: 200 } }),

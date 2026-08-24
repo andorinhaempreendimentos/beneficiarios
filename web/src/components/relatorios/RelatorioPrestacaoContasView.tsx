@@ -39,16 +39,16 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
 
   // Signatários
   const [responsavelElaboracao, setResponsavelElaboracao] = useState({
-    nome: "Equipe Técnica e Pedagógica",
-    cargo: "Coordenação de Monitoramento e Avaliação",
+    nome: "—",
+    cargo: "Responsável pela elaboração do relatório",
   });
   const [coordenadorGeral, setCoordenadorGeral] = useState({
-    nome: "Coordenador Geral do Projeto",
-    cargo: "Coordenador Geral do Objeto",
+    nome: "—",
+    cargo: "Coordenação do Projeto",
   });
   const [representanteLegal, setRepresentanteLegal] = useState({
-    nome: organizacao?.nomeResponsavel || "Representante Legal da OSC",
-    cargo: `Presidente / Diretor Executivo - ${organizacao?.nome || "OSC Executora"}`,
+    nome: organizacao?.nomeResponsavel || "—",
+    cargo: `Representante legal${organizacao?.nome ? ` - ${organizacao.nome}` : ""}`,
   });
 
   const [modoEdicao, setModoEdicao] = useState(false);
@@ -449,11 +449,11 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
                 {supervisoes.map((s, idx) => (
                   <tr key={idx} className="hover:bg-zinc-50">
                     <td className="p-2.5 font-mono text-zinc-600">{formatarData(s.data)}</td>
-                    <td className="p-2.5 font-semibold">{s.nucleoNome}</td>
-                    <td className="p-2.5 text-zinc-600">{s.coordenadorNome}</td>
+                    <td className="p-2.5 font-semibold">{s.nucleoNome || "—"}</td>
+                    <td className="p-2.5 text-zinc-600">{s.coordenadorNome || "—"}</td>
                     <td className="p-2.5 text-center font-medium text-emerald-700">{s.professorPresente ? "Sim" : "Não"}</td>
                     <td className="p-2.5 text-center font-medium">{s.beneficiariosPresentes}</td>
-                    <td className="p-2.5 text-zinc-600">Estrutura: {s.estruturaAvaliacao || "Boa"} • Materiais: {s.materiaisAvaliacao || "Adequados"}</td>
+                    <td className="p-2.5 text-zinc-600">Estrutura: {s.estruturaAvaliacao || "—"} • Materiais: {s.materiaisAvaliacao || "—"}</td>
                     <td className="p-2.5 text-center">
                       <Badge tone={s.situacao === "Regular" ? "green" : "amber"}>{s.situacao}</Badge>
                     </td>
@@ -521,10 +521,10 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
                 {recursosHumanos.profissionais.slice(0, 15).map((p, idx) => (
                   <tr key={idx} className="hover:bg-zinc-50">
                     <td className="p-2 font-medium">{p.nomeCompleto}</td>
-                    <td className="p-2 text-zinc-600">{p.funcao}</td>
-                    <td className="p-2 text-zinc-600">{p.nucleoOuAlocacao}</td>
-                    <td className="p-2 text-center text-zinc-500">{p.cargaHorariaSemanal || "20h/sem"}</td>
-                    <td className="p-2 text-center font-medium text-emerald-700">{p.situacao}</td>
+                    <td className="p-2 text-zinc-600">{p.funcao || "—"}</td>
+                    <td className="p-2 text-zinc-600">{p.nucleoOuAlocacao || "—"}</td>
+                    <td className="p-2 text-center text-zinc-500">{p.cargaHorariaSemanal || "—"}</td>
+                    <td className="p-2 text-center font-medium text-emerald-700">{p.situacao || "—"}</td>
                   </tr>
                 ))}
               </tbody>
@@ -667,7 +667,7 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
                   <tr key={idx} className="hover:bg-zinc-50">
                     <td className="p-2.5 font-medium">{o.titulo}</td>
                     <td className="p-2.5 text-zinc-600">{o.gravidade}</td>
-                    <td className="p-2.5 text-zinc-700">{o.providencias || "Providência técnica realizada pela coordenação."}</td>
+                    <td className="p-2.5 text-zinc-700">{o.providencias || "—"}</td>
                     <td className="p-2.5 text-center font-medium text-emerald-700">{o.status}</td>
                   </tr>
                 ))}
