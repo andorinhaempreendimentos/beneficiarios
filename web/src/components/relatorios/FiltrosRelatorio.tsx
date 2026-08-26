@@ -1,9 +1,10 @@
 "use client";
 
-import { Card, CardBody, CardHeader, Field, Select } from "@/components/ui";
+import { Card, CardBody, Select, Button } from "@/components/ui";
 import { objetosApi, nucleosApi, atividadesApi, turmasApi } from "@/lib/api/services";
 import { useQuery } from "@/lib/hooks/useQuery";
 import { STATUS_BENEFICIARIO_OPCOES } from "@/lib/status";
+import { Filter, RotateCcw } from "lucide-react";
 
 export interface FiltrosState {
   objetoId?: string;
@@ -39,84 +40,146 @@ export function FiltrosRelatorio({ filtros, onChange }: FiltrosRelatorioProps) {
     ? turmas.filter((t) => t.nucleoId === filtros.nucleoId)
     : turmas;
 
+  const temFiltroAtivo =
+    Boolean(filtros.nucleoId) ||
+    Boolean(filtros.atividadeId) ||
+    Boolean(filtros.turmaId) ||
+    Boolean(filtros.status) ||
+    Boolean(filtros.dataInicio && filtros.dataInicio !== "2026-01-01") ||
+    Boolean(filtros.dataFim && filtros.dataFim !== "2026-03-31");
+
   return (
-    <Card>
-      <CardHeader>
-        <h3 className="text-sm font-medium text-zinc-700">Filtros</h3>
-      </CardHeader>
-      <CardBody className="flex flex-col gap-4">
-        <Field label="Objeto / Parceria">
-          <Select value={filtros.objetoId || ""} onChange={(e) => set("objetoId", e.target.value)}>
-            <option value="">Todos os Projetos</option>
-            {objetos.map((o) => (
-              <option key={o.id} value={o.id}>
-                {o.nome} {o.termoDeFomento ? `(${o.termoDeFomento})` : ""}
-              </option>
-            ))}
-          </Select>
-        </Field>
+    <Card className="print:hidden border-zinc-200 shadow-xs">
+      <CardBody className="p-4 flex flex-col gap-3">
+        {/* Cabeçalho da Barra de Filtros */}
+        <div className="flex items-center justify-between border-b border-zinc-100 pb-2.5">
+          <div className="flex items-center gap-2">
+            <Filter className="h-4 w-4 text-sky-600" />
+            <span className="text-xs font-bold text-zinc-800 uppercase tracking-wider">
+              Parâmetros e Filtros do Relatório
+            </span>
+          </div>
+          {temFiltroAtivo && (
+            <button
+              type="button"
+              onClick={() =>
+                onChange({
+                  objetoId: filtros.objetoId || (objetos[0]?.id ?? ""),
+                  nucleoId: "",
+                  atividadeId: "",
+                  turmaId: "",
+                  status: "",
+                  dataInicio: "2026-01-01",
+                  dataFim: "2026-03-31",
+                })
+              }
+              className="flex items-center gap-1 text-xs text-zinc-500 hover:text-zinc-900 transition-colors font-medium cursor-pointer"
+            >
+              <RotateCcw className="h-3 w-3" />
+              Limpar Filtros
+            </button>
+          )}
+        </div>
 
-        <Field label="Núcleo">
-          <Select value={filtros.nucleoId} onChange={(e) => set("nucleoId", e.target.value)}>
-            <option value="">Todos</option>
-            {nucleos.map((n) => (
-              <option key={n.id} value={n.id}>{n.identificacao}</option>
-            ))}
-          </Select>
-        </Field>
+        {/* Grid de Campos na Horizontal */}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5 items-end">
+          {/* 1. Objeto / Parceria */}
+          <div>
+            <label className="text-[11px] font-semibold text-zinc-700 block mb-1">
+              Objeto / Parceria
+            </label>
+            <Select
+              value={filtros.objetoId || ""}
+              onChange={(e) => set("objetoId", e.target.value)}
+              className="text-xs h-9"
+            >
+              <option value="">Todos os Projetos</option>
+              {objetos.map((o) => (
+                <option key={o.id} value={o.id}>
+                  {o.nome} {o.termoDeFomento ? `(${o.termoDeFomento})` : ""}
+                </option>
+              ))}
+            </Select>
+          </div>
 
-        <Field label="Atividade">
-          <Select value={filtros.atividadeId} onChange={(e) => set("atividadeId", e.target.value)}>
-            <option value="">Todas</option>
-            {atividades.map((a) => (
-              <option key={a.id} value={a.id}>{a.nome}</option>
-            ))}
-          </Select>
-        </Field>
+          {/* 2. Núcleo */}
+          <div>
+            <label className="text-[11px] font-semibold text-zinc-700 block mb-1">
+              Núcleo
+            </label>
+            <Select
+              value={filtros.nucleoId}
+              onChange={(e) => set("nucleoId", e.target.value)}
+              className="text-xs h-9"
+            >
+              <option value="">Todos os Núcleos</option>
+              {nucleos.map((n) => (
+                <option key={n.id} value={n.id}>
+                  {n.identificacao}
+                </option>
+              ))}
+            </Select>
+          </div>
 
-        <Field label="Turma">
-          <Select value={filtros.turmaId} onChange={(e) => set("turmaId", e.target.value)}>
-            <option value="">Todas</option>
-            {turmasFiltradas.map((t) => (
-              <option key={t.id} value={t.id}>{t.nome}</option>
-            ))}
-          </Select>
-        </Field>
+          {/* 3. Turma */}
+          <div>
+            <label className="text-[11px] font-semibold text-zinc-700 block mb-1">
+              Turma
+            </label>
+            <Select
+              value={filtros.turmaId}
+              onChange={(e) => set("turmaId", e.target.value)}
+              className="text-xs h-9"
+            >
+              <option value="">Todas as Turmas</option>
+              {turmasFiltradas.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.nome}
+                </option>
+              ))}
+            </Select>
+          </div>
 
-        <Field label="Status do beneficiário">
-          <Select value={filtros.status} onChange={(e) => set("status", e.target.value)}>
-            <option value="">Todos</option>
-            {STATUS_BENEFICIARIO_OPCOES.map((o) => (
-              <option key={o.value} value={o.value}>{o.label}</option>
-            ))}
-          </Select>
-        </Field>
+          {/* 4. Status */}
+          <div>
+            <label className="text-[11px] font-semibold text-zinc-700 block mb-1">
+              Status do Aluno
+            </label>
+            <Select
+              value={filtros.status}
+              onChange={(e) => set("status", e.target.value)}
+              className="text-xs h-9"
+            >
+              <option value="">Todos os Status</option>
+              {STATUS_BENEFICIARIO_OPCOES.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </Select>
+          </div>
 
-        <Field label="Data início">
-          <input
-            type="date"
-            value={filtros.dataInicio}
-            onChange={(e) => set("dataInicio", e.target.value)}
-            className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
-          />
-        </Field>
-
-        <Field label="Data fim">
-          <input
-            type="date"
-            value={filtros.dataFim}
-            onChange={(e) => set("dataFim", e.target.value)}
-            className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
-          />
-        </Field>
-
-        <button
-          type="button"
-          onClick={() => onChange({ objetoId: "", nucleoId: "", atividadeId: "", turmaId: "", status: "", dataInicio: "", dataFim: "" })}
-          className="text-xs text-zinc-400 hover:text-zinc-700 text-left"
-        >
-          Limpar filtros
-        </button>
+          {/* 5. Período (Data Início / Fim) */}
+          <div>
+            <label className="text-[11px] font-semibold text-zinc-700 block mb-1">
+              Período de Execução
+            </label>
+            <div className="grid grid-cols-2 gap-1.5">
+              <input
+                type="date"
+                value={filtros.dataInicio}
+                onChange={(e) => set("dataInicio", e.target.value)}
+                className="w-full rounded-lg border border-zinc-200 bg-white px-2 py-1.5 text-xs text-zinc-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 h-9"
+              />
+              <input
+                type="date"
+                value={filtros.dataFim}
+                onChange={(e) => set("dataFim", e.target.value)}
+                className="w-full rounded-lg border border-zinc-200 bg-white px-2 py-1.5 text-xs text-zinc-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 h-9"
+              />
+            </div>
+          </div>
+        </div>
       </CardBody>
     </Card>
   );

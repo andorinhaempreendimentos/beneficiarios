@@ -273,12 +273,10 @@ export default function RelatoriosPage() {
 
       {/* SEÇÃO 2: RELATÓRIOS OPERACIONAIS AUXILIARES */}
       {tipo !== "prestacao_contas" && (
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-          <div className="w-full shrink-0 lg:w-64">
-            <FiltrosRelatorio filtros={filtros} onChange={setFiltros} />
-          </div>
+        <div className="flex flex-col gap-5">
+          <FiltrosRelatorio filtros={filtros} onChange={setFiltros} />
 
-          <div className="min-w-0 flex-1">
+          <div className="w-full">
             {tipo === "participacao" && <TabelaParticipacao filtros={filtros} />}
             {tipo === "presenca" && <TabelaPresenca filtros={filtros} />}
             {tipo === "rh" && <TabelaRH filtros={filtros} />}
