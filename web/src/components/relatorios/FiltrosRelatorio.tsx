@@ -1,11 +1,12 @@
 "use client";
 
 import { Card, CardBody, CardHeader, Field, Select } from "@/components/ui";
-import { nucleosApi, atividadesApi, turmasApi } from "@/lib/api/services";
+import { objetosApi, nucleosApi, atividadesApi, turmasApi } from "@/lib/api/services";
 import { useQuery } from "@/lib/hooks/useQuery";
 import { STATUS_BENEFICIARIO_OPCOES } from "@/lib/status";
 
 export interface FiltrosState {
+  objetoId?: string;
   nucleoId: string;
   atividadeId: string;
   turmaId: string;
@@ -20,10 +21,12 @@ interface FiltrosRelatorioProps {
 }
 
 export function FiltrosRelatorio({ filtros, onChange }: FiltrosRelatorioProps) {
+  const { data: objetosRes } = useQuery(() => objetosApi.list({ limit: 50 }), []);
   const { data: nucleosRes } = useQuery(() => nucleosApi.list({ limit: 100 }), []);
   const { data: atividadesRes } = useQuery(() => atividadesApi.list({ limit: 100 }), []);
   const { data: turmasRes } = useQuery(() => turmasApi.list({ limit: 100 }), []);
 
+  const objetos = objetosRes?.data ?? [];
   const nucleos = nucleosRes?.data ?? [];
   const atividades = atividadesRes?.data ?? [];
   const turmas = turmasRes?.data ?? [];
@@ -42,6 +45,17 @@ export function FiltrosRelatorio({ filtros, onChange }: FiltrosRelatorioProps) {
         <h3 className="text-sm font-medium text-zinc-700">Filtros</h3>
       </CardHeader>
       <CardBody className="flex flex-col gap-4">
+        <Field label="Objeto / Parceria">
+          <Select value={filtros.objetoId || ""} onChange={(e) => set("objetoId", e.target.value)}>
+            <option value="">Todos os Projetos</option>
+            {objetos.map((o) => (
+              <option key={o.id} value={o.id}>
+                {o.nome} {o.termoDeFomento ? `(${o.termoDeFomento})` : ""}
+              </option>
+            ))}
+          </Select>
+        </Field>
+
         <Field label="Núcleo">
           <Select value={filtros.nucleoId} onChange={(e) => set("nucleoId", e.target.value)}>
             <option value="">Todos</option>
@@ -98,7 +112,7 @@ export function FiltrosRelatorio({ filtros, onChange }: FiltrosRelatorioProps) {
 
         <button
           type="button"
-          onClick={() => onChange({ nucleoId: "", atividadeId: "", turmaId: "", status: "", dataInicio: "", dataFim: "" })}
+          onClick={() => onChange({ objetoId: "", nucleoId: "", atividadeId: "", turmaId: "", status: "", dataInicio: "", dataFim: "" })}
           className="text-xs text-zinc-400 hover:text-zinc-700 text-left"
         >
           Limpar filtros

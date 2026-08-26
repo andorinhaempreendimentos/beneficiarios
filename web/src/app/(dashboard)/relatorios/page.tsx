@@ -45,12 +45,13 @@ const TIPOS: { id: TipoRelatorio; label: string; desc: string; destaque?: boolea
 ];
 
 const FILTROS_INICIAL: FiltrosState = {
+  objetoId: "",
   nucleoId: "",
   atividadeId: "",
   turmaId: "",
   status: "",
-  dataInicio: "",
-  dataFim: "",
+  dataInicio: "2026-01-01",
+  dataFim: "2026-03-31",
 };
 
 export default function RelatoriosPage() {
@@ -75,8 +76,9 @@ export default function RelatoriosPage() {
   useEffect(() => {
     objetosApi.list({ limit: 50 }).then((res) => {
       setObjetos(res.data);
-      if (res.data.length > 0 && !objetoSelecionadoId) {
-        setObjetoSelecionadoId(res.data[0].id);
+      if (res.data.length > 0) {
+        if (!objetoSelecionadoId) setObjetoSelecionadoId(res.data[0].id);
+        setFiltros((prev) => ({ ...prev, objetoId: prev.objetoId || res.data[0].id }));
       }
     });
   }, [objetoSelecionadoId]);
