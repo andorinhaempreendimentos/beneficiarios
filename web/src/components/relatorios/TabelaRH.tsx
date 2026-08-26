@@ -24,7 +24,6 @@ import {
   CheckCircle2,
   Calendar,
   AlertCircle,
-  ShieldCheck,
 } from "lucide-react";
 
 interface Props {
@@ -303,7 +302,6 @@ export function TabelaRH({ filtros }: Props) {
       "CPF",
       "Categoria",
       "Função",
-      "Conselho / Registro",
       "Núcleo",
       "Carga Horária Semanal",
       "Remuneração",
@@ -318,7 +316,6 @@ export function TabelaRH({ filtros }: Props) {
       `"${l.f.cpf || ""}"`,
       `"${CATEGORIA_LABEL[l.categoria]}"`,
       `"${l.f.funcao || l.funcaoObj?.nome || "—"}"`,
-      `"${l.f.conselho ? `${l.f.conselho}: ${l.f.registroConselho || "Sim"}` : "—"}"`,
       `"${l.nucleo?.identificacao || l.f.alocadoEm || "—"}"`,
       `"${l.cargaHorariaFormatada}"`,
       `"${l.f.remuneracao || "—"}"`,
@@ -452,7 +449,7 @@ export function TabelaRH({ filtros }: Props) {
             <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-zinc-400" />
             <input
               type="text"
-              placeholder="Buscar por nome, CPF ou conselho..."
+              placeholder="Buscar por nome ou CPF..."
               value={busca}
               onChange={(e) => setBusca(e.target.value)}
               className="pl-8 pr-3 py-1.5 text-xs rounded-lg border border-zinc-200 bg-white focus:outline-none focus:ring-1 focus:ring-sky-500 w-48 sm:w-60"
@@ -505,7 +502,6 @@ export function TabelaRH({ filtros }: Props) {
                   <th className="px-4 py-3">Profissional</th>
                   <th className="px-4 py-3">Categoria</th>
                   <th className="px-4 py-3">Função</th>
-                  <th className="px-4 py-3">Conselho de Classe</th>
                   <th className="px-4 py-3">Núcleo / Alocação</th>
                   <th className="px-4 py-3 text-center">Carga Horária</th>
                   <th className="px-4 py-3">Remuneração</th>
@@ -526,19 +522,6 @@ export function TabelaRH({ filtros }: Props) {
                     </td>
                     <td className="px-4 py-3 font-medium text-zinc-700">
                       {f.funcao || funcaoObj?.nome || "—"}
-                    </td>
-                    <td className="px-4 py-3 text-zinc-600">
-                      {f.conselho ? (
-                        <div className="flex items-center gap-1">
-                          <ShieldCheck className="h-3.5 w-3.5 text-sky-600" />
-                          <span className="font-medium text-zinc-800">{f.conselho}</span>
-                          {f.registroConselho && (
-                            <span className="text-[11px] text-zinc-500">({f.registroConselho})</span>
-                          )}
-                        </div>
-                      ) : (
-                        <span className="text-zinc-300">—</span>
-                      )}
                     </td>
                     <td className="px-4 py-3 text-zinc-600">
                       {nucleo?.identificacao || f.alocadoEm || "Todos os Núcleos"}
