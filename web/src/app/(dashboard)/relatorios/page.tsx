@@ -11,11 +11,9 @@ import {
 } from "lucide-react";
 import { Button, Card, CardBody, PageHeader, Select, Input } from "@/components/ui";
 import { FiltrosRelatorio, type FiltrosState } from "@/components/relatorios/FiltrosRelatorio";
-import { TabelaParticipacao } from "@/components/relatorios/TabelaParticipacao";
 import { TabelaPresenca } from "@/components/relatorios/TabelaPresenca";
 import { TabelaRH } from "@/components/relatorios/TabelaRH";
 import { TabelaCidade } from "@/components/relatorios/TabelaCidade";
-import { TabelaMinisterio } from "@/components/relatorios/TabelaMinisterio";
 import { PainelProntidao } from "@/components/relatorios/PainelProntidao";
 import { RelatorioPrestacaoContasView } from "@/components/relatorios/RelatorioPrestacaoContasView";
 import { HistoricoRelatoriosModal } from "@/components/relatorios/HistoricoRelatoriosModal";
@@ -28,7 +26,7 @@ import {
   type DadosRelatorioPrestacaoContas,
 } from "@/lib/api/services";
 
-type TipoRelatorio = "prestacao_contas" | "participacao" | "presenca" | "rh" | "cidade" | "ministerio";
+type TipoRelatorio = "prestacao_contas" | "presenca" | "rh" | "cidade";
 
 const TIPOS: { id: TipoRelatorio; label: string; desc: string; destaque?: boolean }[] = [
   {
@@ -37,11 +35,9 @@ const TIPOS: { id: TipoRelatorio; label: string; desc: string; destaque?: boolea
     desc: "Relatório de Execução Oficial (16 Seções)",
     destaque: true,
   },
-  { id: "participacao", label: "Participação", desc: "Beneficiários por turma e status" },
-  { id: "presenca", label: "Presença", desc: "Frequência por beneficiário e turma" },
-  { id: "rh", label: "Recursos Humanos", desc: "Pessoal por função e carga horária" },
-  { id: "cidade", label: "Por cidade", desc: "Distribuição geográfica de beneficiários" },
-  { id: "ministerio", label: "Ministério do Esporte", desc: "Formato oficial para prestação de contas" },
+  { id: "presenca", label: "Presença", desc: "Frequência individual e Diário de Classe" },
+  { id: "rh", label: "Recursos Humanos", desc: "Pessoal por função e escala de trabalho" },
+  { id: "cidade", label: "Por cidade", desc: "Distribuição geográfica e territorial" },
 ];
 
 const FILTROS_INICIAL: FiltrosState = {
@@ -165,7 +161,7 @@ export default function RelatoriosPage() {
       </div>
 
       {/* Seletor de Tipo de Relatório */}
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6 print:hidden">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-2 lg:grid-cols-4 print:hidden">
         {TIPOS.map((t) => (
           <button
             key={t.id}
@@ -277,11 +273,9 @@ export default function RelatoriosPage() {
           <FiltrosRelatorio filtros={filtros} onChange={setFiltros} />
 
           <div className="w-full">
-            {tipo === "participacao" && <TabelaParticipacao filtros={filtros} />}
             {tipo === "presenca" && <TabelaPresenca filtros={filtros} />}
             {tipo === "rh" && <TabelaRH filtros={filtros} />}
             {tipo === "cidade" && <TabelaCidade filtros={filtros} />}
-            {tipo === "ministerio" && <TabelaMinisterio filtros={filtros} />}
           </div>
         </div>
       )}
