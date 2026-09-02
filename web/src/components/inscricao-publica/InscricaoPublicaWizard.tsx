@@ -23,11 +23,13 @@ import { normalizarNucleoLocalizacao } from "@/lib/location";
 import {
   obterGeolocalizacaoNavegador,
   validarConformidadeLocalizacao,
+  calcularDistanciaKm,
   type GeolocalizacaoConfig,
   type CoordenadasUsuario,
   type ResultadoValidacaoGeo,
 } from "@/lib/geolocation";
 import { InstrucoesInscricaoBanner } from "./InstrucoesInscricaoBanner";
+import { LocalizadorProximidade, type ReferenciaLocalizacao } from "./LocalizadorProximidade";
 
 const ESTADOS_NOMES: Record<string, string> = {
   TO: "Tocantins (TO)",
@@ -111,6 +113,9 @@ export function InscricaoPublicaWizard({
   const [atividadeId, setAtividadeId] = useState<string>("");
   const [turnoFiltro, setTurnoFiltro] = useState<TurnoFiltro>("todos");
 
+  // Referência de Localização para ordenação de proximidade (GPS ou Rua digitada)
+  const [refLocalizacao, setRefLocalizacao] = useState<ReferenciaLocalizacao | null>(null);
+
   // Estado de geolocalização do usuário
   const [coordsUser, setCoordsUser] = useState<CoordenadasUsuario | null>(null);
   const [geoValidacao, setGeoValidacao] = useState<ResultadoValidacaoGeo | null>(null);
@@ -190,15 +195,34 @@ export function InscricaoPublicaWizard({
           0
         );
 
+        let distanciaKm: number | undefined;
+        if (refLocalizacao && nucleo.latitude != null && nucleo.longitude != null) {
+          distanciaKm = calcularDistanciaKm(
+            refLocalizacao.latitude,
+            refLocalizacao.longitude,
+            nucleo.latitude,
+            nucleo.longitude
+          );
+        }
+
         return {
           nucleo,
           turmas: turmasFiltradas,
           vagasDisponiveis: vagasTotais,
+          distanciaKm,
           primeiraTurmaId: turmasFiltradas[0]?.id || null,
         };
       })
-      .filter((item) => item.turmas.length > 0);
-  }, [nucleosDaCidade, turmasDaAtividadeNaCidade, atividadeId, turnoFiltro]);
+      .filter((item) => item.turmas.length > 0)
+      .sort((a, b) => {
+        if (a.distanciaKm != null && b.distanciaKm != null) {
+          return a.distanciaKm - b.distanciaKm;
+        }
+        if (a.distanciaKm != null) return -1;
+        if (b.distanciaKm != null) return 1;
+        return 0;
+      });
+  }, [nucleosDaCidade, turmasDaAtividadeNaCidade, atividadeId, turnoFiltro, refLocalizacao]);
 
   // Handlers de navegação
   const handleSelecionarEstado = (uf: string) => {
@@ -547,9 +571,17 @@ export function InscricaoPublicaWizard({
             </p>
           </div>
 
-          {/* Lista de Núcleos Filtrados */}
+          {/* Localizador por Proximidade (GPS + Autocomplete de Ruas) */}
+          <LocalizadorProximidade
+            cidade={cidadeSelecionada}
+            estadoUf={estadoSelecionado}
+            localizacaoAtiva={refLocalizacao}
+            onSelecionarLocalizacao={setRefLocalizacao}
+          />
+
+          {/* Lista de Núcleos Filtrados e Ordenados por Proximidade */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {nucleosCompativeis.map(({ nucleo, turmas: turmasDoPolo, vagasDisponiveis, primeiraTurmaId }) => {
+            {nucleosCompativeis.map(({ nucleo, turmas: turmasDoPolo, vagasDisponiveis, distanciaKm, primeiraTurmaId }) => {
               const linkDestino = primeiraTurmaId
                 ? `/inscricao/turma/${primeiraTurmaId}`
                 : `/inscricao/nucleo/${nucleo.id}`;
@@ -561,10 +593,18 @@ export function InscricaoPublicaWizard({
                   className="group flex flex-col justify-between gap-4 rounded-2xl border border-zinc-200 bg-white p-5 transition-all hover:border-violet-400 hover:bg-violet-50/40 hover:shadow-md"
                 >
                   <div className="space-y-2">
-                    <div className="flex items-start justify-between gap-2">
-                      <span className="rounded-md bg-violet-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-violet-700">
-                        Núcleo de Atendimento
-                      </span>
+                    <div className="flex items-start justify-between gap-2 flex-wrap">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="rounded-md bg-violet-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-violet-700">
+                          Núcleo de Atendimento
+                        </span>
+                        {distanciaKm !== undefined && (
+                          <span className="inline-flex items-center gap-1 rounded-md bg-sky-100 px-2 py-0.5 text-[10px] font-extrabold text-sky-800">
+                            <Navigation className="h-3 w-3 text-sky-600" />
+                            {distanciaKm < 1 ? `A ${Math.round(distanciaKm * 1000)}m de você` : `A ${distanciaKm.toFixed(1).replace('.', ',')} km`}
+                          </span>
+                        )}
+                      </div>
                       <span
                         className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${
                           vagasDisponiveis > 0
