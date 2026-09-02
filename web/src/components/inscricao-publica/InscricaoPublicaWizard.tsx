@@ -46,6 +46,33 @@ interface InscricaoPublicaWizardProps {
   configGeo?: GeolocalizacaoConfig | null;
 }
 
+type TurnoFiltro = "todos" | "manha" | "tarde" | "noite";
+
+const OPCOES_TURNOS: { id: TurnoFiltro; label: string; sub: string; icone: string }[] = [
+  { id: "todos", label: "Qualquer Período", sub: "Todos os turnos disponíveis", icone: "🗓️" },
+  { id: "manha", label: "Manhã", sub: "Turno matutino (7h às 12h)", icone: "☀️" },
+  { id: "tarde", label: "Tarde", sub: "Turno vespertino (13h às 18h)", icone: "⛅" },
+  { id: "noite", label: "Noite", sub: "Turno noturno (18h às 22h)", icone: "🌙" },
+];
+
+function turmaPertenceAoTurno(t: TurmaApi, turno: TurnoFiltro): boolean {
+  if (turno === "todos") return true;
+  const nomeLower = (t.nome || "").toLowerCase();
+  if (turno === "manha") {
+    if (nomeLower.includes("manhã") || nomeLower.includes("manha") || nomeLower.includes("matutino")) return true;
+    if (Array.isArray(t.slots) && t.slots.some((s: any) => Number(s.inicio) < 12)) return true;
+  }
+  if (turno === "tarde") {
+    if (nomeLower.includes("tarde") || nomeLower.includes("vespertino")) return true;
+    if (Array.isArray(t.slots) && t.slots.some((s: any) => Number(s.inicio) >= 12 && Number(s.inicio) < 18)) return true;
+  }
+  if (turno === "noite") {
+    if (nomeLower.includes("noite") || nomeLower.includes("noturno")) return true;
+    if (Array.isArray(t.slots) && t.slots.some((s: any) => Number(s.inicio) >= 18)) return true;
+  }
+  return false;
+}
+
 export function InscricaoPublicaWizard({
   nucleos,
   atividades,
@@ -80,9 +107,9 @@ export function InscricaoPublicaWizard({
     ).sort();
   }, [nucleosComEstado, estadoSelecionado]);
 
-  // Atividade e Horário selecionados
+  // Atividade e Período selecionados
   const [atividadeId, setAtividadeId] = useState<string>("");
-  const [horarioFiltro, setHorarioFiltro] = useState<string>("todos"); // "todos" | "manha" | "tarde" | "noite" | string específico
+  const [turnoFiltro, setTurnoFiltro] = useState<TurnoFiltro>("todos");
 
   // Estado de geolocalização do usuário
   const [coordsUser, setCoordsUser] = useState<CoordenadasUsuario | null>(null);
@@ -146,27 +173,7 @@ export function InscricaoPublicaWizard({
     return turmasDaCidade.filter((t) => t.atividadeId === atividadeId);
   }, [turmasDaCidade, atividadeId]);
 
-  // Opções de horários e turnos disponíveis para a atividade na cidade
-  const horariosDisponiveis = useMemo(() => {
-    const turnosSet = new Set<string>();
-    turmasDaAtividadeNaCidade.forEach((t) => {
-      const nomeLower = (t.nome || "").toLowerCase();
-      if (nomeLower.includes("manhã") || nomeLower.includes("manha")) turnosSet.add("Manhã");
-      if (nomeLower.includes("tarde")) turnosSet.add("Tarde");
-      if (nomeLower.includes("noite")) turnosSet.add("Noite");
-
-      if (Array.isArray(t.slots) && t.slots.length > 0) {
-        t.slots.forEach((s: any) => {
-          if (s.inicio && s.fim) {
-            turnosSet.add(`${s.dia ? s.dia + " · " : ""}${s.inicio}h às ${s.fim}h`);
-          }
-        });
-      }
-    });
-    return Array.from(turnosSet).filter(Boolean);
-  }, [turmasDaAtividadeNaCidade]);
-
-  // Núcleos compatíveis na Etapa 3 (que possuem turmas da atividade + horário escolhido)
+  // Núcleos compatíveis na Etapa 3 (que possuem turmas da atividade + período escolhido)
   const nucleosCompativeis = useMemo(() => {
     if (!atividadeId) return [];
 
@@ -175,35 +182,23 @@ export function InscricaoPublicaWizard({
         // Encontrar turmas deste núcleo para esta atividade
         const turmasDoNucleo = turmasDaAtividadeNaCidade.filter((t) => t.nucleoId === nucleo.id);
 
-        // Filtrar por horário se não for "todos"
-        const turmasFiltradasPorHorario =
-          horarioFiltro === "todos"
-            ? turmasDoNucleo
-            : turmasDoNucleo.filter((t) => {
-                const search = horarioFiltro.toLowerCase();
-                const nomeMatch = (t.nome || "").toLowerCase().includes(search);
-                const slotsMatch =
-                  Array.isArray(t.slots) &&
-                  t.slots.some((s: any) =>
-                    `${s.dia || ""} ${s.inicio || ""}h ${s.fim || ""}`.toLowerCase().includes(search)
-                  );
-                return nomeMatch || slotsMatch;
-              });
+        // Filtrar exclusivamente pelo período selecionado (Manhã, Tarde, Noite, ou Todos)
+        const turmasFiltradas = turmasDoNucleo.filter((t) => turmaPertenceAoTurno(t, turnoFiltro));
 
-        const vagasTotais = turmasFiltradasPorHorario.reduce(
+        const vagasTotais = turmasFiltradas.reduce(
           (acc, t) => acc + Math.max(0, Number(t.vagasTotais || 0) - Number((t as any).qtdBeneficiarios || 0)),
           0
         );
 
         return {
           nucleo,
-          turmas: turmasFiltradasPorHorario,
+          turmas: turmasFiltradas,
           vagasDisponiveis: vagasTotais,
-          primeiraTurmaId: turmasFiltradasPorHorario[0]?.id || null,
+          primeiraTurmaId: turmasFiltradas[0]?.id || null,
         };
       })
       .filter((item) => item.turmas.length > 0);
-  }, [nucleosDaCidade, turmasDaAtividadeNaCidade, atividadeId, horarioFiltro]);
+  }, [nucleosDaCidade, turmasDaAtividadeNaCidade, atividadeId, turnoFiltro]);
 
   // Handlers de navegação
   const handleSelecionarEstado = (uf: string) => {
@@ -442,26 +437,39 @@ export function InscricaoPublicaWizard({
                     </div>
                   </div>
 
-                  {/* Se selecionada, exibir seletor de horários */}
+                  {/* Se selecionada, exibir seletor simplificado de período (Manhã / Tarde / Noite) */}
                   {isSelected && (
                     <div className="mt-2 space-y-3 border-t border-sky-200/80 pt-3">
-                      <div className="space-y-1">
+                      <div className="space-y-1.5">
                         <label className="text-xs font-bold text-zinc-800 flex items-center gap-1.5">
                           <Clock className="h-3.5 w-3.5 text-sky-600" />
-                          <span>Preferência de Horário / Turno:</span>
+                          <span>Selecione o Período Desejado:</span>
                         </label>
-                        <select
-                          value={horarioFiltro}
-                          onChange={(e) => setHorarioFiltro(e.target.value)}
-                          className="w-full rounded-xl border border-sky-300 bg-white px-3 py-2 text-xs font-semibold text-zinc-800 shadow-2xs focus:border-sky-500 focus:outline-hidden cursor-pointer"
-                        >
-                          <option value="todos">Todos os turnos e horários disponíveis</option>
-                          {horariosDisponiveis.map((h) => (
-                            <option key={h} value={h}>
-                              {h}
-                            </option>
-                          ))}
-                        </select>
+                        <div className="grid grid-cols-2 gap-2">
+                          {OPCOES_TURNOS.map((opt) => {
+                            const ativo = turnoFiltro === opt.id;
+                            return (
+                              <button
+                                key={opt.id}
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setTurnoFiltro(opt.id);
+                                }}
+                                className={`flex items-center gap-2 p-2 rounded-xl border text-left transition-all cursor-pointer ${
+                                  ativo
+                                    ? "border-sky-500 bg-sky-100/70 text-sky-900 font-bold shadow-2xs ring-1 ring-sky-500/20"
+                                    : "border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-700 font-medium"
+                                }`}
+                              >
+                                <span className="text-sm shrink-0">{opt.icone}</span>
+                                <div className="leading-tight">
+                                  <span className="text-xs block">{opt.label}</span>
+                                </div>
+                              </button>
+                            );
+                          })}
+                        </div>
                       </div>
 
                       <button
@@ -513,16 +521,16 @@ export function InscricaoPublicaWizard({
               className="flex items-center gap-1.5 text-xs font-bold text-zinc-600 hover:text-zinc-900 bg-zinc-100 hover:bg-zinc-200 px-3 py-1.5 rounded-lg transition cursor-pointer"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
-              <span>Alterar Atividade e Horário</span>
+              <span>Alterar Atividade e Período</span>
             </button>
 
             <div className="flex flex-wrap items-center gap-2 text-xs">
               <span className="rounded-md bg-emerald-100 px-2 py-0.5 font-bold text-emerald-800">
                 {atividadeSelecionada?.nome}
               </span>
-              {horarioFiltro !== "todos" && (
+              {turnoFiltro !== "todos" && (
                 <span className="rounded-md bg-sky-100 px-2 py-0.5 font-bold text-sky-800">
-                  {horarioFiltro}
+                  Período: {turnoFiltro === "manha" ? "Manhã" : turnoFiltro === "tarde" ? "Tarde" : "Noite"}
                 </span>
               )}
               <span className="text-zinc-500 font-medium">em {cidadeSelecionada} - {estadoSelecionado}</span>
