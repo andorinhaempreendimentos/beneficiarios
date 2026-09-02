@@ -6,12 +6,14 @@ import { AbaPermissoes } from "@/components/configuracoes/AbaPermissoes";
 import { AbaDicionario } from "@/components/configuracoes/AbaDicionario";
 import { AbaStorage } from "@/components/configuracoes/AbaStorage";
 import { AbaAparencia } from "@/components/configuracoes/AbaAparencia";
+import { AbaInscricaoGeolocalizacao } from "@/components/configuracoes/AbaInscricaoGeolocalizacao";
 import { cn } from "@/lib/utils";
 
-type Aba = "permissoes" | "aparencia" | "dicionario" | "storage";
+type Aba = "permissoes" | "aparencia" | "dicionario" | "storage" | "inscricoes";
 
 const ABAS: { id: Aba; label: string }[] = [
   { id: "permissoes", label: "Permissões / RBAC" },
+  { id: "inscricoes", label: "Inscrições & GPS" },
   { id: "aparencia",  label: "Aparência" },
   { id: "dicionario", label: "Dicionário de Termos" },
   { id: "storage",    label: "Armazenamento" },
@@ -24,7 +26,7 @@ export default function ConfiguracoesPage() {
     <div className="flex flex-col gap-6">
       <PageHeader
         title="Configurações do Sistema"
-        description="Gestão de permissões RBAC de acesso, aparência, dicionário e armazenamento"
+        description="Gestão de permissões RBAC de acesso, geolocalização de inscrições, aparência e armazenamento"
       />
 
       <div className="border-b border-zinc-200">
@@ -48,6 +50,7 @@ export default function ConfiguracoesPage() {
       </div>
 
       {aba === "permissoes" && <AbaPermissoes />}
+      {aba === "inscricoes" && <AbaInscricaoGeolocalizacao />}
       {aba === "aparencia"  && <AbaAparencia />}
       {aba === "dicionario" && <AbaDicionario />}
       {aba === "storage"    && <AbaStorage />}

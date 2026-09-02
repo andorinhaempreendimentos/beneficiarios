@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tasklist: Caminho Crítico (Golden Path)</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    .status-badge {
+      transition: all 0.2s ease;
+    }
+    .status-pendente { background-color: rgba(161, 161, 170, 0.15); color: #71717a; border-color: #a1a1aa; }
+    .status-executando { background-color: rgba(59, 130, 246, 0.15); color: #2563eb; border-color: #3b82f6; }
+    .status-passou { background-color: rgba(34, 197, 94, 0.15); color: #16a34a; border-color: #22c55e; }
+    .status-falhou { background-color: rgba(239, 68, 68, 0.15); color: #dc2626; border-color: #ef4444; }
+  </style>
+</head>
+<body class="bg-[var(--background)] text-[var(--foreground)] antialiased p-4 md:p-8 min-h-screen">
+  <div class="max-w-4xl mx-auto space-y-6">
+    
+    <!-- Header -->
+    <header class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-3">
+          <div class="h-3 w-3 rounded-full bg-emerald-500 animate-pulse"></div>
+          <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">QA Environment</span>
+        </div>
+        <h1 class="text-2xl font-bold text-[var(--foreground)] mt-2">Caminho Crítico: Tasklist de Testes</h1>
+        <p class="text-sm text-[var(--muted-foreground)] mt-0.5">Validação E2E das rotinas vitais do Andorinha Beneficiários</p>
+      </div>
+
+      <!-- Controls -->
+      <div class="flex items-center gap-2">
+        <button onclick="resetAll()" class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-[var(--border)] hover:bg-[var(--content)] transition text-[var(--muted-foreground)]">
+          Resetar Status
+        </button>
+      </div>
+    </header>
+
+    <!-- Progress Card -->
+    <section class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6 shadow-sm space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <span class="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)]">Progresso Geral</span>
+          <div class="flex items-baseline gap-2 mt-0.5">
+            <span id="percent-text" class="text-3xl font-extrabold text-[var(--foreground)]">0%</span>
+            <span id="counts-text" class="text-sm text-[var(--muted-foreground)]">0 de 10 concluídas</span>
+          </div>
+        </div>
+        <div class="flex gap-2">
+          <span id="badge-passou" class="px-3 py-1 rounded-full text-xs font-bold bg-green-50 text-green-700 border border-green-200">0 Passou</span>
+          <span id="badge-executando" class="px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200">0 Em Execução</span>
+          <span id="badge-falhou" class="px-3 py-1 rounded-full text-xs font-bold bg-red-50 text-red-700 border border-red-200">0 Falhou</span>
+        </div>
+      </div>
+
+      <!-- Progress bar -->
+      <div class="w-full h-3 bg-zinc-100 rounded-full overflow-hidden flex">
+        <div id="bar-passou" class="h-full bg-emerald-500 transition-all duration-300" style="width: 0%"></div>
+        <div id="bar-executando" class="h-full bg-blue-500 transition-all duration-300" style="width: 0%"></div>
+        <div id="bar-falhou" class="h-full bg-red-500 transition-all duration-300" style="width: 0%"></div>
+      </div>
+    </section>
+
+    <!-- Task Groups Container -->
+    <main id="task-groups" class="space-y-6"></main>
+
+  </div>
+
+  <script>
+    const STORAGE_KEY = "andorinha_qa_golden_path_v1";
+
+    const INITIAL_FLOWS = [
+      {
+        id: "fluxo_1",
+        title: "1. Fluxo de Beneficiário: Autocadastro e Matrícula",
+        badge: "Público & Admin",
+        tasks: [
+          {
+            id: "t1_1",
+            title: "1.1 Autocadastro Público: Seleção de Polo e Turma",
+            route: "/inscricao",
+            desc: "Acessar portal público sem login, selecionar Estado ➔ Cidade ➔ Núcleo e escolher turma ativa com vaga.",
+            status: "pendente",
+            notes: ""
+          },
+          {
+            id: "t1_2",
+            title: "1.2 Ficha Cadastral e Questionário PAR-Q",
+            route: "/inscricao",
+            desc: "Preencher dados do aluno, responsável legal (se menor), PAR-Q de saúde, contato e submeter formulário.",
+            status: "pendente",
+            notes: ""
+          },
+          {
+            id: "t1_3",
+            title: "1.3 Confirmação e Emissão de Protocolo",
+            route: "/inscricao",
+            desc: "Validar tela de sucesso com número de protocolo gerado e dados da pré-inscrição.",
+            status: "pendente",
+            notes: ""
+          },
+          {
+            id: "t1_4",
+            title: "1.4 Validação e Ativação da Matrícula no Painel",
+            route: "/beneficiarios e /turmas",
+            desc: "Logar como Admin, localizar pré-inscrição em /beneficiarios, confirmar matrícula e checar contador de vagas em /turmas.",
+            status: "pendente",
+            notes: ""
+          }
+        ]
+      },
+      {
+        id: "fluxo_2",
+        title: "2. Fluxo Operacional do Professor: Aula e Chamada",
+        badge: "Área do Professor",
+        tasks: [
+          {
+            id: "t2_1",
+            title: "2.1 Autenticação e Abertura de Aula",
+            route: "/aulas",
+            desc: "Logar com perfil Professor, abrir a turma correspondente e iniciar a execução de aula do dia.",
+            status: "pendente",
+            notes: ""
+          },
+          {
+            id: "t2_2",
+            title: "2.2 Registro de Chamada do Aluno",
+            route: "/aulas",
+            desc: "Localizar o novo aluno matriculado na lista e registrar status de presença (Presente / Falta).",
+            status: "pendente",
+            notes: ""
+          },
+          {
+            id: "t2_3",
+            title: "2.3 Finalização e Registro no Diário de Classe",
+            route: "/aulas",
+            desc: "Inserir conteúdo ministrado no diário, finalizar aula e verificar persistência com status 'Concluída'.",
+            status: "pendente",
+            notes: ""
+          }
+        ]
+      },
+      {
+        id: "fluxo_3",
+        title: "3. Fluxo de Frequência, Auditoria e Relatório",
+        badge: "Gestão & Prestação de Contas",
+        tasks: [
+          {
+            id: "t3_1",
+            title: "3.1 Auditoria no Painel de Presenças",
+            route: "/relatorios",
+            desc: "Acessar aba 'Presença' em /relatorios, filtrar pela turma e período e verificar se presença computou corretamente.",
+            status: "pendente",
+            notes: ""
+          },
+          {
+            id: "t3_2",
+            title: "3.2 Exportação de Relatório Oficial de Frequência",
+            route: "/relatorios",
+            desc: "Emitir exportação oficial (PDF/Excel) e validar consistência de dados dos alunos e do Concedente.",
+            status: "pendente",
+            notes: ""
+          }
+        ]
+      },
+      {
+        id: "fluxo_4",
+        title: "4. Política de Limpeza Segura (Preservação de Dados)",
+        badge: "Segurança de Dados",
+        tasks: [
+          {
+            id: "t4_1",
+            title: "4.1 Limpeza Exclusiva de Registros Temporários QA",
+            route: "Supabase / Painel",
+            desc: "Excluir apenas o beneficiário e a aula de teste criados, garantindo 100% dos dados reais intactos.",
+            status: "pendente",
+            notes: ""
+          }
+        ]
+      }
+    ];
+
+    let flows = loadState();
+
+    function loadState() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) return JSON.parse(saved);
+      } catch (e) {}
+      return INITIAL_FLOWS;
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(flows));
+      } catch (e) {}
+      updateMetrics();
+    }
+
+    function updateTaskStatus(taskId, newStatus) {
+      for (const flow of flows) {
+        const task = flow.tasks.find(t => t.id === taskId);
+        if (task) {
+          task.status = newStatus;
+          break;
+        }
+      }
+      saveState();
+      render();
+    }
+
+    function updateTaskNotes(taskId, notes) {
+      for (const flow of flows) {
+        const task = flow.tasks.find(t => t.id === taskId);
+        if (task) {
+          task.notes = notes;
+          break;
+        }
+      }
+      saveState();
+    }
+
+    function resetAll() {
+      if (confirm("Deseja resetar todos os status das tasks para Pendente?")) {
+        flows = JSON.parse(JSON.stringify(INITIAL_FLOWS));
+        saveState();
+        render();
+      }
+    }
+
+    function updateMetrics() {
+      let total = 0, passou = 0, executando = 0, falhou = 0;
+      for (const f of flows) {
+        for (const t of f.tasks) {
+          total++;
+          if (t.status === "passou") passou++;
+          else if (t.status === "executando") executando++;
+          else if (t.status === "falhou") falhou++;
+        }
+      }
+
+      const pct = total > 0 ? Math.round((passou / total) * 100) : 0;
+      document.getElementById("percent-text").innerText = `${pct}%`;
+      document.getElementById("counts-text").innerText = `${passou} de ${total} concluídas`;
+
+      document.getElementById("badge-passou").innerText = `${passou} Passou`;
+      document.getElementById("badge-executando").innerText = `${executando} Em Execução`;
+      document.getElementById("badge-falhou").innerText = `${falhou} Falhou`;
+
+      document.getElementById("bar-passou").style.width = `${(passou / total) * 100}%`;
+      document.getElementById("bar-executando").style.width = `${(executando / total) * 100}%`;
+      document.getElementById("bar-falhou").style.width = `${(falhou / total) * 100}%`;
+    }
+
+    function render() {
+      const container = document.getElementById("task-groups");
+      container.innerHTML = "";
+
+      flows.forEach(flow => {
+        const groupEl = document.createElement("section");
+        groupEl.className = "bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6 shadow-sm space-y-4";
+
+        groupEl.innerHTML = `
+          <div class="flex items-center justify-between border-b border-[var(--border)] pb-3">
+            <div>
+              <h2 class="text-lg font-bold text-[var(--foreground)]">${flow.title}</h2>
+            </div>
+            <span class="text-xs font-semibold px-2.5 py-1 rounded-lg bg-[var(--content)] text-[var(--muted-foreground)] border border-[var(--border)]">
+              ${flow.badge}
+            </span>
+          </div>
+          <div class="space-y-3" id="tasks-${flow.id}"></div>
+        `;
+
+        const tasksContainer = groupEl.querySelector(`#tasks-${flow.id}`);
+
+        flow.tasks.forEach(task => {
+          const taskEl = document.createElement("div");
+          taskEl.className = "p-4 rounded-xl border border-[var(--border)] bg-[var(--background)] hover:border-zinc-300 transition space-y-3";
+
+          const badgeClasses = {
+            pendente: "status-pendente",
+            executando: "status-executando",
+            passou: "status-passou",
+            falhou: "status-falhou"
+          }[task.status];
+
+          taskEl.innerHTML = `
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+              <div class="space-y-1">
+                <div class="flex items-center gap-2">
+                  <h3 class="text-sm font-bold text-[var(--foreground)]">${task.title}</h3>
+                  <span class="text-xs font-mono px-2 py-0.5 rounded bg-zinc-100 text-zinc-600 font-semibold">${task.route}</span>
+                </div>
+                <p class="text-xs text-[var(--muted-foreground)] leading-relaxed">${task.desc}</p>
+              </div>
+
+              <!-- Status Switcher -->
+              <div class="flex items-center gap-1.5 shrink-0">
+                <select onchange="updateTaskStatus('${task.id}', this.value)" class="text-xs font-bold rounded-lg border px-2.5 py-1.5 status-badge ${badgeClasses} cursor-pointer outline-none">
+                  <option value="pendente" ${task.status === 'pendente' ? 'selected' : ''}>⏳ Pendente</option>
+                  <option value="executando" ${task.status === 'executando' ? 'selected' : ''}>🔄 Em Execução</option>
+                  <option value="passou" ${task.status === 'passou' ? 'selected' : ''}>✅ Passou</option>
+                  <option value="falhou" ${task.status === 'falhou' ? 'selected' : ''}>❌ Falhou</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Notes field -->
+            <div>
+              <input 
+                type="text" 
+                placeholder="Observações / Log do teste..." 
+                value="${task.notes || ''}" 
+                oninput="updateTaskNotes('${task.id}', this.value)"
+                class="w-full text-xs px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)] placeholder-[var(--muted-foreground)] focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+            </div>
+          `;
+          tasksContainer.appendChild(taskEl);
+        });
+
+        container.appendChild(groupEl);
+      });
+
+      updateMetrics();
+    }
+
+    render();
+  </script>
+</body>
+</html>

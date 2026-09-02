@@ -1,12 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronDown, CheckCircle } from "lucide-react";
+import { ChevronDown, CheckCircle, ArrowLeft, MapPin, ShieldCheck, AlertTriangle } from "lucide-react";
 import { z } from "zod";
 import type { PerguntaParQ } from "@/lib/types";
 import { validarCpf, validarEmail } from "@/lib/mascaras";
-import { beneficiariosApi, inscricoesApi, turmasApi } from "@/lib/api/services";
+import { beneficiariosApi, inscricoesApi, turmasApi, configuracoesApi } from "@/lib/api/services";
+import {
+  obterGeolocalizacaoNavegador,
+  validarConformidadeLocalizacao,
+  type GeolocalizacaoConfig,
+  type CoordenadasUsuario,
+  type ResultadoValidacaoGeo,
+} from "@/lib/geolocation";
 
 const inscricaoSchema = z.object({
   nomeCompleto: z.string().min(3, "Nome deve ter no mínimo 3 caracteres"),
@@ -71,6 +78,39 @@ export function InscricaoPublicaForm({ turmaId, onSubmit }: InscricaoPublicaForm
   const [erro, setErro] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+
+  // Estado de Geolocalização
+  const [geoConfig, setGeoConfig] = useState<GeolocalizacaoConfig | null>(null);
+  const [coordsUser, setCoordsUser] = useState<CoordenadasUsuario | null>(null);
+  const [geoValidacao, setGeoValidacao] = useState<ResultadoValidacaoGeo | null>(null);
+  const [checandoGeo, setChecandoGeo] = useState(false);
+
+  useEffect(() => {
+    configuracoesApi
+      .get("geolocalizacao_inscricao")
+      .then((res) => {
+        if (res?.valor && typeof res.valor === "object") {
+          const cfg = res.valor as GeolocalizacaoConfig;
+          setGeoConfig(cfg);
+          if (cfg.ativo) {
+            setChecandoGeo(true);
+            obterGeolocalizacaoNavegador()
+              .then((coords) => {
+                setCoordsUser(coords);
+                const val = validarConformidadeLocalizacao({
+                  coords,
+                  config: cfg,
+                  cidadeNome: cidade,
+                  estadoUf: estado,
+                });
+                setGeoValidacao(val);
+              })
+              .finally(() => setChecandoGeo(false));
+          }
+        }
+      })
+      .catch(() => {});
+  }, [cidade, estado]);
 
   // Cálculo de Idade
   function handleDataNascimentoChange(dataStr: string) {
@@ -201,6 +241,21 @@ export function InscricaoPublicaForm({ turmaId, onSubmit }: InscricaoPublicaForm
         }
       } catch (e) {
         // Prossegue se falhar consulta de limite de turma
+      }
+    }
+
+    // Validação de Geolocalização (se ativa nas configurações globais)
+    if (geoConfig?.ativo && geoConfig.nivel !== "desativado") {
+      const val = validarConformidadeLocalizacao({
+        coords: coordsUser,
+        config: geoConfig,
+        cidadeNome: cidade,
+        estadoUf: estado,
+      });
+      setGeoValidacao(val);
+      if (!val.valido && geoConfig.modo === "bloqueio") {
+        setErro(val.mensagem);
+        return;
       }
     }
 
@@ -935,8 +990,55 @@ export function InscricaoPublicaForm({ turmaId, onSubmit }: InscricaoPublicaForm
         )}
       </section>
 
-      {/* Botão de Envio */}
-      <div className="flex justify-end pt-2">
+      {/* Indicador de Geolocalização (se ativa) */}
+      {geoConfig?.ativo && (
+        <div
+          className={`flex items-start gap-3 rounded-2xl border p-4 text-xs shadow-2xs transition-all ${
+            geoValidacao?.valido === false
+              ? "border-red-300 bg-red-50 text-red-900"
+              : geoValidacao?.motivo === "sucesso"
+              ? "border-emerald-300 bg-emerald-50 text-emerald-900"
+              : "border-sky-200 bg-sky-50/70 text-sky-900"
+          }`}
+        >
+          <div className="mt-0.5">
+            {geoValidacao?.valido === false ? (
+              <AlertTriangle className="h-4 w-4 text-red-600 shrink-0" />
+            ) : geoValidacao?.motivo === "sucesso" ? (
+              <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
+            ) : (
+              <MapPin className="h-4 w-4 text-sky-600 shrink-0" />
+            )}
+          </div>
+          <div className="flex-1 space-y-0.5">
+            <span className="font-extrabold uppercase tracking-wider text-[10px]">
+              {geoValidacao?.valido === false
+                ? "Restrição Territorial"
+                : geoValidacao?.motivo === "sucesso"
+                ? "Localização Validada"
+                : "Validação Geográfica Ativa"}
+            </span>
+            <p className="leading-relaxed">
+              {checandoGeo
+                ? "Verificando proximidade do candidato com o polo..."
+                : geoValidacao?.mensagem ||
+                  `Inscrições restritas para candidatos do polo de ${cidade}.`}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Botões de Ação */}
+      <div className="flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-3 pt-2">
+        <button
+          type="button"
+          onClick={() => router.back()}
+          className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-zinc-300 bg-white px-5 py-3 text-sm font-semibold text-zinc-700 shadow-2xs hover:bg-zinc-50 cursor-pointer transition-all"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span>Voltar para Escolha de Polo</span>
+        </button>
+
         <button
           type="submit"
           disabled={loading || !aceiteLGPD || !autParticipacao}

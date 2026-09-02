@@ -18,17 +18,17 @@ export function InstrucoesInscricaoBanner({
     ? [nucleo.endereco, nucleo.bairro, nucleo.cidade, nucleo.regiao].filter(Boolean).join(", ")
     : null;
 
-  const ETAPA_NUCLEO = {
-    titulo: "Escolha o Núcleo",
-    sub: "Selecione o local mais próximo de você.",
+  const ETAPA_LOCALIZACAO = {
+    titulo: "Localização",
+    sub: "Selecione seu Estado e Cidade.",
   };
   const ETAPA_ATIVIDADE = {
-    titulo: "Escolha a Atividade",
-    sub: "Selecione a modalidade esportiva desejada.",
+    titulo: "Atividade e Horário",
+    sub: "Escolha a modalidade e turno ideal.",
   };
-  const ETAPA_TURMA = {
-    titulo: "Escolha a Turma",
-    sub: "Selecione o horário e turno ideal.",
+  const ETAPA_NUCLEO = {
+    titulo: "Escolha o Núcleo",
+    sub: "Selecione o polo de atendimento.",
   };
   const ETAPA_DADOS = {
     titulo: "Preencha os Dados",
@@ -36,9 +36,9 @@ export function InstrucoesInscricaoBanner({
   };
 
   const etapasMap = {
-    geral: [ETAPA_NUCLEO, ETAPA_ATIVIDADE, ETAPA_TURMA, ETAPA_DADOS],
-    nucleo: [ETAPA_ATIVIDADE, ETAPA_TURMA, ETAPA_DADOS],
-    atividade: [ETAPA_TURMA, ETAPA_DADOS],
+    geral: [ETAPA_LOCALIZACAO, ETAPA_ATIVIDADE, ETAPA_NUCLEO, ETAPA_DADOS],
+    nucleo: [ETAPA_ATIVIDADE, ETAPA_DADOS],
+    atividade: [ETAPA_NUCLEO, ETAPA_DADOS],
     turma: [ETAPA_DADOS],
   };
 

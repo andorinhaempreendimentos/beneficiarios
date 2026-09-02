@@ -130,13 +130,13 @@ ON CONFLICT DO NOTHING;
 -- 8. Policies RLS
 -- concedentes
 DROP POLICY IF EXISTS select_concedentes ON public.concedentes;
-CREATE POLICY select_concedentes ON public.concedentes FOR SELECT USING (deleted_at IS NULL AND (has_permissao('concedentes', 'listar') OR has_permissao('objetos', 'listar')));
+CREATE POLICY select_concedentes ON public.concedentes FOR SELECT USING (has_permissao('concedentes', 'listar') OR has_permissao('concedentes', 'visualizar') OR has_permissao('concedentes', 'editar') OR has_permissao('concedentes', 'excluir') OR has_permissao('objetos', 'listar') OR has_permissao('objetos', 'visualizar') OR has_permissao('objetos', 'editar') OR has_permissao('objetos', 'excluir'));
 
 DROP POLICY IF EXISTS insert_concedentes ON public.concedentes;
 CREATE POLICY insert_concedentes ON public.concedentes FOR INSERT WITH CHECK (has_permissao('concedentes', 'criar') OR has_permissao('objetos', 'criar'));
 
 DROP POLICY IF EXISTS update_concedentes ON public.concedentes;
-CREATE POLICY update_concedentes ON public.concedentes FOR UPDATE USING (has_permissao('concedentes', 'editar') OR has_permissao('objetos', 'editar'));
+CREATE POLICY update_concedentes ON public.concedentes FOR UPDATE USING (has_permissao('concedentes', 'editar') OR has_permissao('concedentes', 'excluir') OR has_permissao('objetos', 'editar') OR has_permissao('objetos', 'excluir')) WITH CHECK (has_permissao('concedentes', 'editar') OR has_permissao('concedentes', 'excluir') OR has_permissao('objetos', 'editar') OR has_permissao('objetos', 'excluir'));
 
 DROP POLICY IF EXISTS delete_concedentes ON public.concedentes;
 CREATE POLICY delete_concedentes ON public.concedentes FOR DELETE USING (has_permissao('concedentes', 'excluir') OR has_permissao('objetos', 'excluir'));
