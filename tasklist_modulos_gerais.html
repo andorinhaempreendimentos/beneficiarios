@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tasklist: Módulos & Entidades — Andorinha</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    .status-badge { transition: all 0.2s ease; }
+    .status-pendente { background-color: rgba(161, 161, 170, 0.15); color: #71717a; border-color: #a1a1aa; }
+    .status-executando { background-color: rgba(59, 130, 246, 0.15); color: #2563eb; border-color: #3b82f6; }
+    .status-passou { background-color: rgba(34, 197, 94, 0.15); color: #16a34a; border-color: #22c55e; }
+    .status-falhou { background-color: rgba(239, 68, 68, 0.15); color: #dc2626; border-color: #ef4444; }
+  </style>
+</head>
+<body class="bg-zinc-50 text-zinc-900 antialiased p-4 md:p-8 min-h-screen">
+  <div class="max-w-5xl mx-auto space-y-6">
+    
+    <!-- Cabeçalho -->
+    <header class="bg-white border border-zinc-200 rounded-2xl p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-3">
+          <div class="h-3 w-3 rounded-full bg-sky-500 animate-pulse"></div>
+          <span class="text-xs font-bold uppercase tracking-wider text-sky-700 bg-sky-50 px-2.5 py-0.5 rounded-full border border-sky-200">
+            QA Suite • Módulos & Entidades
+          </span>
+        </div>
+        <h1 class="text-2xl font-bold text-zinc-900 mt-2">Plano de Testes: Módulos do Sistema</h1>
+        <p class="text-xs text-zinc-500 mt-0.5">Validação de formulários, CRUDs e regras de negócio de todas as entidades</p>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button onclick="resetAll()" class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-zinc-300 hover:bg-zinc-100 transition text-zinc-700 cursor-pointer">
+          Resetar Status
+        </button>
+      </div>
+    </header>
+
+    <!-- Métricas de Progresso -->
+    <section class="bg-white border border-zinc-200 rounded-2xl p-5 shadow-xs space-y-3">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <span class="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Progresso Geral</span>
+          <div class="flex items-baseline gap-2 mt-0.5">
+            <span id="percent-text" class="text-3xl font-extrabold text-zinc-900">0%</span>
+            <span id="counts-text" class="text-xs text-zinc-500 font-medium">0 de 0 concluídas</span>
+          </div>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <span id="badge-passou" class="px-2.5 py-1 rounded-full text-xs font-bold bg-green-50 text-green-700 border border-green-200">0 Passou</span>
+          <span id="badge-executando" class="px-2.5 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200">0 Em Execução</span>
+          <span id="badge-pendente" class="px-2.5 py-1 rounded-full text-xs font-bold bg-zinc-100 text-zinc-700 border border-zinc-200">0 Pendente</span>
+          <span id="badge-falhou" class="px-2.5 py-1 rounded-full text-xs font-bold bg-red-50 text-red-700 border border-red-200">0 Falhou</span>
+        </div>
+      </div>
+
+      <!-- Barra de progresso -->
+      <div class="w-full h-2.5 bg-zinc-100 rounded-full overflow-hidden flex">
+        <div id="bar-passou" class="h-full bg-emerald-500 transition-all duration-300" style="width: 0%"></div>
+        <div id="bar-executando" class="h-full bg-blue-500 transition-all duration-300" style="width: 0%"></div>
+        <div id="bar-falhou" class="h-full bg-red-500 transition-all duration-300" style="width: 0%"></div>
+      </div>
+    </section>
+
+    <!-- Grupos de Tarefas -->
+    <main id="task-groups" class="space-y-5"></main>
+
+  </div>
+
+  <script>
+    const STORAGE_KEY = "andorinha_qa_modulos_gerais_v1";
+
+    const INITIAL_MODULES = [
+      {
+        id: "mod_1",
+        title: "1. Parcerias e Contratos (MROSC)",
+        badge: "Contratos & OSC",
+        tasks: [
+          { id: "t1_org", title: "1.1 CRUD de Organizações (OSCs)", route: "/organizacoes", entity: "organizacoes", desc: "Criar, editar dados cadastrais (CNPJ, endereço, presidente) e listar OSCs executoras.", status: "pendente", notes: "" },
+          { id: "t1_conc", title: "1.2 CRUD de Concedentes", route: "/concedentes", entity: "concedentes", desc: "Cadastrar órgãos públicos parceiros (Secretarias, Prefeituras) e responsáveis pelo termo.", status: "pendente", notes: "" },
+          { id: "t1_obj", title: "1.3 Gestão de Objetos & Metas Contratuais", route: "/objetos", entity: "objetos", desc: "Cadastrar termo de fomento, vigência, metas pactuadas de beneficiários e valor total.", status: "pendente", notes: "" },
+          { id: "t1_cargos", title: "1.4 Vagas e Cargos Previstos no Plano", route: "/objetos/[id]", entity: "objeto_cargos_previstos", desc: "Verificar quadro de cargos previstos no plano de trabalho vs profissionais alocados.", status: "pendente", notes: "" }
+        ]
+      },
+      {
+        id: "mod_2",
+        title: "2. Território e Locais (Polos)",
+        badge: "Polos & Núcleos",
+        tasks: [
+          { id: "t2_nuc", title: "2.1 CRUD & Configurações de Núcleo", route: "/nucleos", entity: "nucleos", desc: "Criar novo polo, configurar endereço, coordenadas GPS, tipo de restrição de chamada e tolerâncias.", status: "pendente", notes: "" },
+          { id: "t2_coord", title: "2.2 Alocação de Coordenadores aos Núcleos", route: "/coordenadores", entity: "coordenador_nucleos", desc: "Vincular e desvincular coordenador de núcleo aos polos territoriais.", status: "pendente", notes: "" },
+          { id: "t2_ativ", title: "2.3 Ativação de Modalidades por Polo", route: "/nucleos/[id]", entity: "nucleo_atividades", desc: "Configurar quais modalidades esportivas estão ativas em cada polo.", status: "pendente", notes: "" }
+        ]
+      },
+      {
+        id: "mod_3",
+        title: "3. Beneficiários & Documentação",
+        badge: "Alunos & Saúde",
+        tasks: [
+          { id: "t3_anexos", title: "3.1 Upload de Anexos & Atestados Médicos", route: "/beneficiarios/[id]", entity: "beneficiario_anexos", desc: "Anexar atestado médico, documento de identificação e autorização no perfil do aluno.", status: "pendente", notes: "" },
+          { id: "t3_transf", title: "3.2 Transferência de Turma & Histórico", route: "/beneficiarios/[id]", entity: "beneficiario_turmas", desc: "Transferir aluno de turma/polo e verificar liberação de vaga na turma de origem.", status: "pendente", notes: "" },
+          { id: "t3_ficha", title: "3.3 Emissão de Ficha Cadastral / Termo", route: "/beneficiarios/[id]", entity: "beneficiarios", desc: "Visualizar e imprimir ficha cadastral completa com dados do responsável e PAR-Q.", status: "pendente", notes: "" }
+        ]
+      },
+      {
+        id: "mod_4",
+        title: "4. Turmas, Horários & Eventos Extras",
+        badge: "Grade & Eventos",
+        tasks: [
+          { id: "t4_ativ", title: "4.1 Cadastro de Modalidades Esportivas", route: "/atividades", entity: "atividades", desc: "Criar nova modalidade esportiva (Futebol, Futsal, etc.) e definir parâmetros gerais.", status: "pendente", notes: "" },
+          { id: "t4_turma", title: "4.2 Wizard de Criação de Turmas", route: "/turmas/novo", entity: "turmas", desc: "Criar turma definindo faixa etária, capacidade máxima, polo e modalidade.", status: "pendente", notes: "" },
+          { id: "t4_horarios", title: "4.3 Gestão de Horários & Slots Semanais", route: "/turmas/[id]", entity: "turma_horarios", desc: "Cadastrar e alterar slots de aula da semana (dias, horário início e fim).", status: "pendente", notes: "" },
+          { id: "t4_resp", title: "4.4 Vinculação de Professores à Turma", route: "/turmas/[id]", entity: "turma_responsaveis", desc: "Alocar professor responsável e instrutor assistente na turma.", status: "pendente", notes: "" },
+          { id: "t4_compl", title: "4.5 Atividades Complementares (Eventos/Torneios)", route: "/atividades-complementares", entity: "atividades_complementares", desc: "Cadastrar torneio, palestra ou evento especial com data e polo.", status: "pendente", notes: "" },
+          { id: "t4_conf", title: "4.6 Confirmação de Presença em Evento Extra", route: "/atividades-complementares/[id]", entity: "confirmacoes_atividade", desc: "Registrar presença e relatório de beneficiários no evento complementar.", status: "pendente", notes: "" }
+        ]
+      },
+      {
+        id: "mod_5",
+        title: "5. Recursos Humanos & Ponto Eletrônico",
+        badge: "RH & Folha de Ponto",
+        tasks: [
+          { id: "t5_func", title: "5.1 Cadastro Completo de Profissionais", route: "/funcionarios", entity: "funcionarios", desc: "Cadastrar professor/coordenador com CPF, dados contratuais e polo alocado.", status: "pendente", notes: "" },
+          { id: "t5_func_reg", title: "5.2 Gestão de Funções & Registro de Classe", route: "/funcionarios/funcoes", entity: "funcoes", desc: "Criar cargos e configurar exigência de conselho profissional (CREF/CRESS).", status: "pendente", notes: "" },
+          { id: "t5_jornada", title: "5.3 Escala Semanal e Carga Horária", route: "/funcionarios/[id]", entity: "funcionario_jornada", desc: "Definir horários de trabalho semanais e carga horária contratada.", status: "pendente", notes: "" },
+          { id: "t5_ponto_avulso", title: "5.4 Registro de Ponto Avulso (/ponto)", route: "/ponto", entity: "registros_ponto", desc: "Bater ponto de entrada/saída via portal rápido com foto/geolocalização.", status: "pendente", notes: "" },
+          { id: "t5_espelho", title: "5.5 Espelho de Ponto & Banco de Horas", route: "/funcionarios/[id]/ponto", entity: "registros_ponto", desc: "Auditar folha de ponto mensal do colaborador e verificar cálculo de horas.", status: "pendente", notes: "" }
+        ]
+      },
+      {
+        id: "mod_6",
+        title: "6. Supervisão Pedagógica de Campo",
+        badge: "Supervisão & Qualidade",
+        tasks: [
+          { id: "t6_visita", title: "6.1 Relatório de Visita In Loco", route: "/supervisoes/nova", entity: "supervisoes", desc: "Preencher checklist de visita técnica no polo (estrutura, presença, uniforme).", status: "pendente", notes: "" },
+          { id: "t6_fotos", title: "6.2 Registro Fotográfico da Visita", route: "/supervisoes/[id]", entity: "supervisoes_fotos", desc: "Upload de fotos comprobatórias com geolocalização e evidência das atividades.", status: "pendente", notes: "" },
+          { id: "t6_mensal", title: "6.3 Relatório Mensal Consolidado", route: "/supervisoes/relatorio-mensal", entity: "supervisoes", desc: "Gerar relatório mensal de supervisões para prestação de contas.", status: "pendente", notes: "" }
+        ]
+      },
+      {
+        id: "mod_7",
+        title: "7. Materiais, Equipamentos & Estoque",
+        badge: "Estoque & Patrimônio",
+        tasks: [
+          { id: "t7_mat", title: "7.1 Cadastro de Materiais de Consumo / Kits", route: "/estoque/materiais", entity: "materiais", desc: "Cadastrar bolas, coletes, cones e uniformes com unidade de medida.", status: "pendente", notes: "" },
+          { id: "t7_equip", title: "7.2 Gestão de Equipamentos Patrimoniais", route: "/equipamentos", entity: "equipamentos", desc: "Cadastrar bens duráveis com número de tombamento e estado de conservação.", status: "pendente", notes: "" },
+          { id: "t7_mov", title: "7.3 Movimentações & Transferências", route: "/estoque/movimentacoes", entity: "movimentacoes_estoque", desc: "Registrar entrada de compras e transferência de materiais para polos.", status: "pendente", notes: "" },
+          { id: "t7_termo", title: "7.4 Emissão de Termo de Entrega de Uniforme", route: "/estoque/termos", entity: "termos_entrega", desc: "Emitir termo de entrega de kit esportivo vinculado ao aluno com recibo.", status: "pendente", notes: "" }
+        ]
+      },
+      {
+        id: "mod_8",
+        title: "8. Governança, Prestação de Contas & Logs",
+        badge: "Governança MROSC",
+        tasks: [
+          { id: "t8_salvar", title: "8.1 Salvar Versão Oficial da Prestação de Contas", route: "/relatorios", entity: "relatorios_prestacao_contas", desc: "Executar 'Salvar Versão Oficial' das 16 seções e verificar histórico.", status: "pendente", notes: "" },
+          { id: "t8_pend", title: "8.2 Central de Pendências do Gestor", route: "/pendencias-gerais", entity: "pendencias_gerais", desc: "Auditar lista de alertas (PAR-Q pendente, aulas não concluídas, termos).", status: "pendente", notes: "" },
+          { id: "t8_config", title: "8.3 Configurações Globais & Glossário", route: "/configuracoes", entity: "configuracoes", desc: "Alterar parâmetros do sistema, metas globais e glossário de termos.", status: "pendente", notes: "" },
+          { id: "t8_audit", title: "8.4 Trilha de Auditoria (Logs)", route: "/configuracoes", entity: "audit_log", desc: "Verificar registro de logs de auditoria para ações críticas de usuários.", status: "pendente", notes: "" }
+        ]
+      },
+      {
+        id: "mod_9",
+        title: "9. Autenticação & Permissões (RBAC)",
+        badge: "Segurança & Usuários",
+        tasks: [
+          { id: "t9_user", title: "9.1 Criação & Gestão de Usuários", route: "/usuarios", entity: "usuarios", desc: "Criar novo usuário, vincular a funcionário/perfil e redefinir senha.", status: "pendente", notes: "" },
+          { id: "t9_perfis", title: "9.2 CRUD de Perfis de Acesso", route: "/usuarios/perfis", entity: "perfis", desc: "Criar e editar níveis de perfil (Admin, Coordenador, Instrutor, etc.).", status: "pendente", notes: "" },
+          { id: "t9_perm", title: "9.3 Matriz Granular de Permissões (CRUD)", route: "/usuarios/perfis/[id]", entity: "perfil_permissoes", desc: "Alterar permissões de tela/ação por módulo e testar bloqueio RLS.", status: "pendente", notes: "" }
+        ]
+      }
+    ];
+
+    let modules = loadState();
+
+    function loadState() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) return JSON.parse(saved);
+      } catch (e) {}
+      return INITIAL_MODULES;
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(modules));
+      } catch (e) {}
+      updateMetrics();
+    }
+
+    function updateTaskStatus(taskId, newStatus) {
+      for (const m of modules) {
+        const task = m.tasks.find(t => t.id === taskId);
+        if (task) {
+          task.status = newStatus;
+          break;
+        }
+      }
+      saveState();
+      render();
+    }
+
+    function updateTaskNotes(taskId, notes) {
+      for (const m of modules) {
+        const task = m.tasks.find(t => t.id === taskId);
+        if (task) {
+          task.notes = notes;
+          break;
+        }
+      }
+      saveState();
+    }
+
+    function resetAll() {
+      if (confirm("Deseja resetar todos os status para Pendente?")) {
+        modules = JSON.parse(JSON.stringify(INITIAL_MODULES));
+        saveState();
+        render();
+      }
+    }
+
+    function updateMetrics() {
+      let total = 0, passou = 0, executando = 0, pendente = 0, falhou = 0;
+      for (const m of modules) {
+        for (const t of m.tasks) {
+          total++;
+          if (t.status === "passou") passou++;
+          else if (t.status === "executando") executando++;
+          else if (t.status === "falhou") falhou++;
+          else pendente++;
+        }
+      }
+
+      const pct = total > 0 ? Math.round((passou / total) * 100) : 0;
+      document.getElementById("percent-text").innerText = `${pct}%`;
+      document.getElementById("counts-text").innerText = `${passou} de ${total} concluídas`;
+
+      document.getElementById("badge-passou").innerText = `${passou} Passou`;
+      document.getElementById("badge-executando").innerText = `${executando} Em Execução`;
+      document.getElementById("badge-pendente").innerText = `${pendente} Pendente`;
+      document.getElementById("badge-falhou").innerText = `${falhou} Falhou`;
+
+      document.getElementById("bar-passou").style.width = `${(passou / total) * 100}%`;
+      document.getElementById("bar-executando").style.width = `${(executando / total) * 100}%`;
+      document.getElementById("bar-falhou").style.width = `${(falhou / total) * 100}%`;
+    }
+
+    function render() {
+      const container = document.getElementById("task-groups");
+      container.innerHTML = "";
+
+      modules.forEach(mod => {
+        const groupEl = document.createElement("section");
+        groupEl.className = "bg-white border border-zinc-200 rounded-2xl p-5 shadow-xs space-y-3";
+
+        groupEl.innerHTML = `
+          <div class="flex items-center justify-between border-b border-zinc-100 pb-2.5">
+            <h2 class="text-base font-bold text-zinc-900">${mod.title}</h2>
+            <span class="text-[11px] font-bold px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-600 border border-zinc-200">
+              ${mod.badge}
+            </span>
+          </div>
+          <div class="space-y-2.5" id="tasks-${mod.id}"></div>
+        `;
+
+        const tasksContainer = groupEl.querySelector(`#tasks-${mod.id}`);
+
+        mod.tasks.forEach(task => {
+          const taskEl = document.createElement("div");
+          taskEl.className = "p-3.5 rounded-xl border border-zinc-200 bg-zinc-50/50 hover:bg-zinc-50 transition space-y-2.5";
+
+          const badgeClasses = {
+            pendente: "status-pendente",
+            executando: "status-executando",
+            passou: "status-passou",
+            falhou: "status-falhou"
+          }[task.status];
+
+          taskEl.innerHTML = `
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-2.5">
+              <div class="space-y-0.5">
+                <div class="flex flex-wrap items-center gap-2">
+                  <h3 class="text-xs font-bold text-zinc-900">${task.title}</h3>
+                  <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-zinc-200/70 text-zinc-700 font-semibold">${task.route}</span>
+                  <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-sky-50 text-sky-700 border border-sky-200 font-medium">${task.entity}</span>
+                </div>
+                <p class="text-[11px] text-zinc-500 leading-relaxed">${task.desc}</p>
+              </div>
+
+              <!-- Status Switcher -->
+              <div class="flex items-center gap-1.5 shrink-0">
+                <select onchange="updateTaskStatus('${task.id}', this.value)" class="text-xs font-bold rounded-lg border px-2 py-1 status-badge ${badgeClasses} cursor-pointer outline-none">
+                  <option value="pendente" ${task.status === 'pendente' ? 'selected' : ''}>⏳ Pendente</option>
+                  <option value="executando" ${task.status === 'executando' ? 'selected' : ''}>🔄 Em Execução</option>
+                  <option value="passou" ${task.status === 'passou' ? 'selected' : ''}>✅ Passou</option>
+                  <option value="falhou" ${task.status === 'falhou' ? 'selected' : ''}>❌ Falhou</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Notes field -->
+            <div>
+              <input 
+                type="text" 
+                placeholder="Observações do teste..." 
+                value="${task.notes || ''}" 
+                oninput="updateTaskNotes('${task.id}', this.value)"
+                class="w-full text-xs px-2.5 py-1 rounded-lg border border-zinc-200 bg-white text-zinc-800 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-sky-500"
+              />
+            </div>
+          `;
+          tasksContainer.appendChild(taskEl);
+        });
+
+        container.appendChild(groupEl);
+      });
+
+      updateMetrics();
+    }
+
+    render();
+  </script>
+</body>
+</html>
