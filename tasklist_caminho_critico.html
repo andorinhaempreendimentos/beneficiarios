@@ -68,7 +68,7 @@
   </div>
 
   <script>
-    const STORAGE_KEY = "andorinha_qa_golden_path_v5";
+    const STORAGE_KEY = "andorinha_qa_golden_path_v6";
 
     const INITIAL_FLOWS = [
       {
@@ -151,16 +151,16 @@
             title: "3.1 Auditoria no Painel de Presenças",
             route: "/relatorios",
             desc: "Acessar aba 'Presença' em /relatorios, filtrar pela turma e período e verificar se presença computou corretamente.",
-            status: "pendente",
-            notes: ""
+            status: "passou",
+            notes: "Validado em produção: presença do aluno computada com 1 presença (14% no período) e exibida na grade analítica e diário de classe."
           },
           {
             id: "t3_2",
             title: "3.2 Exportação de Relatório Oficial de Frequência",
             route: "/relatorios",
             desc: "Emitir exportação oficial (PDF/Excel) e validar consistência de dados dos alunos e do Concedente.",
-            status: "pendente",
-            notes: ""
+            status: "passou",
+            notes: "Validado em produção: exportação CSV gerada e Relatório Oficial de Prestação de Contas (16 Seções) compilado com dados reais."
           }
         ]
       },
@@ -174,8 +174,8 @@
             title: "4.1 Limpeza Exclusiva de Registros Temporários QA",
             route: "Supabase / Painel",
             desc: "Excluir apenas o beneficiário e a aula de teste criados, garantindo 100% dos dados reais intactos.",
-            status: "pendente",
-            notes: ""
+            status: "passou",
+            notes: "Concluído com sucesso: registros de teste (beneficiário, inscrições, matrículas, presenças e aula) excluídos no Supabase com zero impacto em dados reais."
           }
         ]
       }
