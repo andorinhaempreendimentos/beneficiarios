@@ -6,19 +6,22 @@ Guia prático para testes ponta a ponta (*End-to-End*) das rotinas vitais do sis
 
 ## 1. Fluxo de Beneficiário: Autocadastro e Matrícula
 
-### 1.1. Autocadastro Público (Sem Login)
+### 1.1. Funil de Inscrição Pública e Seleção por Proximidade (Sem Login)
 * **Rota**: `/inscricao`
 * **Passos**:
   1. Acessar o portal público de inscrição.
-  2. Selecionar **Estado** (ex: TO) ➔ **Cidade** (ex: Palmas) ➔ **Núcleo** com vagas disponíveis.
-  3. Escolher a modalidade esportiva e turma desejada.
-  4. Preencher dados cadastrais:
-     * Nome completo do aluno e data de nascimento.
-     * CPF do aluno ou do responsável legal.
-     * Questionário de saúde e aptidão física (PAR-Q).
-     * Endereço e telefone para contato institucional.
-  5. Enviar o formulário de inscrição.
+  2. **Passo 1 (Localização)**: Selecionar **Estado** (ex: TO) e **Cidade** (ex: Palmas).
+  3. **Passo 2 (Atividade e Período)**: Escolher a modalidade esportiva e o período preferido (**Manhã**, **Tarde**, **Noite** ou **Qualquer Período**).
+  4. **Passo 3 (Proximidade e Núcleo)**:
+     * Clicar no botão `"📍 Núcleos perto de mim"` (captura GPS com Reverse Geocoding) ou digitar nome de rua com autocomplete em tempo real.
+     * Conferir reordenação por polos mais próximos e tags de distância (ex: `📍 A 800m de você`).
+     * Escolher o polo desejado com vagas abertas.
+  5. **Passo 4 (Ficha Cadastral e PAR-Q)**:
+     * Preencher dados do aluno e responsável legal.
+     * Responder questionário PAR-Q de saúde.
+     * Enviar formulário com validação territorial por geolocalização.
 * **Resultado Esperado**: Exibição da tela de sucesso com número de protocolo / confirmação de pré-inscrição.
+
 
 ### 1.2. Validação e Matrícula no Painel Interno
 * **Rotas**: `/beneficiarios` e `/turmas` (Perfil: Administrador / Coordenador)

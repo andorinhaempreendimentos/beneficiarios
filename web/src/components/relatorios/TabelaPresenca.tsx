@@ -43,7 +43,7 @@ interface ExecucaoAulaItem {
   id: string;
   turmaId: string;
   data: string;
-  conteudoMinistrado?: string;
+  observacoes?: string;
   professorId?: string;
 }
 
@@ -109,7 +109,7 @@ export function TabelaPresenca({ filtros }: Props) {
         // 1. Buscar execuções de aula dentro do período
         let qAulas = sb
           .from("execucoes_aula")
-          .select("id, turma_id, data, conteudo_ministrado, professor_id")
+          .select("id, turma_id, data, observacoes, professor_id")
           .order("data", { ascending: true });
 
         if (filtros.dataInicio) {
@@ -129,7 +129,7 @@ export function TabelaPresenca({ filtros }: Props) {
           id: a.id,
           turmaId: a.turma_id,
           data: a.data,
-          conteudoMinistrado: a.conteudo_ministrado,
+          observacoes: a.observacoes,
           professorId: a.professor_id,
         }));
 
