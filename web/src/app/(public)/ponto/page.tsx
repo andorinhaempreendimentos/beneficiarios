@@ -115,10 +115,13 @@ export default function PontoPublicoPage() {
 
   async function buscarFuncionario() {
     setErro("");
-    const mat = matricula.trim().toUpperCase();
+    const mat = matricula.trim();
+    if (!mat) {
+      setErro("Informe a matrícula.");
+      return;
+    }
     try {
-      const res = await funcionariosApi.list({ busca: mat, limit: 10 });
-      const f = res.data.find((fn) => fn.matricula?.toUpperCase() === mat) ?? res.data[0];
+      const f = await funcionariosApi.getByMatricula(mat);
       if (!f) {
         setErro("Matrícula não encontrada.");
         return;

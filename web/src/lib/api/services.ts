@@ -1349,6 +1349,18 @@ export const funcionariosApi = {
     if (error) throw error;
     return mapFuncionario(data);
   },
+  async getByMatricula(matricula: string): Promise<FuncionarioApi | null> {
+    const sb = await getSupabase();
+    const mat = matricula.trim();
+    const { data, error } = await sb
+      .from('funcionarios')
+      .select('*, funcoes:funcao_id(id, nome, perfil_id, permite_login, exige_conselho)')
+      .ilike('matricula', mat)
+      .is('deleted_at', null)
+      .maybeSingle();
+    if (error || !data) return null;
+    return mapFuncionario(data);
+  },
   async verificarEmailUnico(email: string, ignoreId?: string): Promise<{ unico: boolean; mensagem?: string }> {
     const sb = await getSupabase();
     const emailLower = email.trim().toLowerCase();
