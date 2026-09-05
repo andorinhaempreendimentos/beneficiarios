@@ -1600,6 +1600,24 @@ export const inscricoesApi = {
     if (error) throw error;
     return data as any;
   },
+  async consultarPublico(id: string): Promise<{
+    id: string;
+    status: StatusInscricao;
+    protocolo: string;
+    data_inscricao: string;
+    expira_em?: string | null;
+    beneficiario_nome: string;
+    turma_nome: string;
+    atividade_nome?: string;
+    nucleo_nome?: string;
+    nucleo_cidade?: string;
+    nucleo_endereco?: string;
+  } | null> {
+    const sb = createClient();
+    const { data, error } = await sb.rpc('consultar_inscricao_publica' as any, { p_id: id });
+    if (error) return null;
+    return data as any;
+  },
   async aprovar(id: string): Promise<InscricaoApi> {
     const sb = createClient();
     const { data, error } = await sb.rpc('aprovar_inscricao', { p_id: id });
