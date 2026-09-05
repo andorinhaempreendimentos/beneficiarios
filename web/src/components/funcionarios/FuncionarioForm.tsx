@@ -174,7 +174,86 @@ export function FuncionarioForm({ funcionario: f, nucleos = [], funcoes = [], ba
         </div>
       )}
 
-      {/* Dados Pessoais */}
+      {/* 1. Vínculo e Função (Primeira Seção) */}
+      <FormSection title="Vínculo Institucional & Cargo">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <Field label="Cargo / Função (RH)" required error={fieldErrors.funcaoId}>
+            <Select
+              name="funcaoId"
+              value={funcaoId}
+              onChange={(e) => setFuncaoId(e.target.value)}
+            >
+              {funcoes.map((fn) => (
+                <option key={fn.id} value={fn.id}>{fn.nome}</option>
+              ))}
+            </Select>
+          </Field>
+
+          {ehEmNucleo ? (
+            <Field label="Núcleo de Atuação (Obrigatório para esta Função)" required>
+              <Select
+                value={selectedNucleoId}
+                onChange={(e) => setSelectedNucleoId(e.target.value)}
+              >
+                {nucleos.map((n) => (
+                  <option key={n.id} value={n.id}>{n.identificacao}</option>
+                ))}
+              </Select>
+            </Field>
+          ) : (
+            <Field label="Lotação / Alocação">
+              <div className="rounded-xl border border-zinc-200 bg-zinc-50 px-3.5 py-2.5 text-sm font-medium text-zinc-700 flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-sky-500 shrink-0"></span>
+                <span>Administração Geral (Sede / Sem polo fixo)</span>
+              </div>
+            </Field>
+          )}
+
+          <Field label="Status do Vínculo" required>
+            <Select name="status" defaultValue={f?.status ?? "ativo"}>
+              {Object.entries(statusFuncionarioLabel).map(([value, label]) => (
+                <option key={value} value={value}>{label}</option>
+              ))}
+            </Select>
+          </Field>
+
+          <Field label="Data de admissão" required>
+            <Input type="date" name="dataAdmissao" defaultValue={f?.dataAdmissao ?? new Date().toISOString().split('T')[0]} />
+          </Field>
+
+          <Field label="Data de demissão">
+            <Input type="date" name="dataDemissao" defaultValue={f?.dataDemissao} />
+          </Field>
+        </div>
+
+        {exigeConselho && (
+          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <Field label="Conselho" required>
+              <Select name="conselho" defaultValue={f?.conselho ?? ""}>
+                <option value="">Selecione...</option>
+                <option value="CREFITO">CREFITO (Fisioterapia/T.O.)</option>
+                <option value="COREN">COREN (Enfermagem)</option>
+                <option value="CREF">CREF (Educação Física)</option>
+              </Select>
+            </Field>
+            <Field label="Número do Registro no Conselho" required>
+              <Input name="registroConselho" defaultValue={f?.registroConselho} placeholder="Ex: 123456-G/TO" />
+            </Field>
+          </div>
+        )}
+
+        {(funcaoNome.toLowerCase().includes("profess") || funcaoNome.toLowerCase().includes("instrut") || funcaoNome.toLowerCase().includes("turma")) && (
+          <div className="mt-4 pt-4 border-t border-zinc-100">
+            <Switch
+              checked={professorResponsavel}
+              onChange={setProfessorResponsavel}
+              label="Professor responsável por ministrar turmas esportivas"
+            />
+          </div>
+        )}
+      </FormSection>
+
+      {/* 2. Dados Pessoais do Colaborador */}
       <FormSection title="Dados Pessoais do Colaborador">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <Field label="Foto" className="lg:col-span-3 sm:max-w-xs">
@@ -230,84 +309,6 @@ export function FuncionarioForm({ funcionario: f, nucleos = [], funcoes = [], ba
             )}
           </Field>
         </div>
-
-        <div className="mt-4">
-          <Switch
-            checked={professorResponsavel}
-            onChange={setProfessorResponsavel}
-            label="Professor responsável por turmas esportivas"
-          />
-        </div>
-      </FormSection>
-
-      {/* Vínculo e Função */}
-      <FormSection title="Vínculo Institucional & Cargo">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <Field label="Cargo / Função (RH)" required error={fieldErrors.funcaoId}>
-            <Select
-              name="funcaoId"
-              value={funcaoId}
-              onChange={(e) => setFuncaoId(e.target.value)}
-            >
-
-              {funcoes.map((fn) => (
-                <option key={fn.id} value={fn.id}>{fn.nome}</option>
-              ))}
-            </Select>
-          </Field>
-
-
-          <Field label="Status do Vínculo" required>
-            <Select name="status" defaultValue={f?.status ?? "ativo"}>
-              {Object.entries(statusFuncionarioLabel).map(([value, label]) => (
-                <option key={value} value={value}>{label}</option>
-              ))}
-            </Select>
-          </Field>
-
-          {ehEmNucleo ? (
-            <Field label="Núcleo de Atuação (Obrigatório para esta Função)" required>
-              <Select
-                value={selectedNucleoId}
-                onChange={(e) => setSelectedNucleoId(e.target.value)}
-              >
-                {nucleos.map((n) => (
-                  <option key={n.id} value={n.id}>{n.identificacao}</option>
-                ))}
-              </Select>
-            </Field>
-          ) : (
-            <Field label="Lotação / Alocação">
-              <div className="rounded-xl border border-zinc-200 bg-zinc-50 px-3.5 py-2.5 text-sm font-medium text-zinc-700 flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-sky-500 shrink-0"></span>
-                <span>Administração Geral (Sede / Sem polo fixo)</span>
-              </div>
-            </Field>
-          )}
-
-          <Field label="Data de admissão" required>
-            <Input type="date" name="dataAdmissao" defaultValue={f?.dataAdmissao ?? new Date().toISOString().split('T')[0]} />
-          </Field>
-
-          <Field label="Data de demissão">
-            <Input type="date" name="dataDemissao" defaultValue={f?.dataDemissao} />
-          </Field>
-        </div>
-
-        {exigeConselho && (
-          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <Field label="Conselho">
-              <Select name="conselho" defaultValue={f?.conselho ?? ""}>
-                <option value="">Selecione</option>
-                <option value="CREFITO">CREFITO</option>
-                <option value="COREN">COREN</option>
-              </Select>
-            </Field>
-            <Field label="Registro">
-              <Input name="registroConselho" defaultValue={f?.registroConselho} />
-            </Field>
-          </div>
-        )}
       </FormSection>
 
       {/* REGRA DA CATEGORIA DO PERFIL: CREDENCIAIS E ACESSO AO SISTEMA */}
