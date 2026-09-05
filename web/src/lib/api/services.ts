@@ -1353,7 +1353,17 @@ export const funcionariosApi = {
     const sb = await getSupabase();
     const { data, error } = await sb.from('funcionarios').select('*, funcoes:funcao_id(id, nome, perfil_id, permite_login, exige_conselho)').eq('id', id).single();
     if (error) throw error;
-    return mapFuncionario(data);
+    const { data: jornadasDb } = await sb.from('funcionario_jornada').select('*').eq('funcionario_id', id).eq('ativo', true);
+    const diaNumToNome: Record<number, string> = {
+      1: "Segunda", 2: "Terça", 3: "Quarta", 4: "Quinta", 5: "Sexta", 6: "Sábado", 0: "Domingo"
+    };
+    const mappedJornada = (jornadasDb ?? []).map((j: any) => ({
+      dia: diaNumToNome[j.dia_semana] || "Segunda",
+      trabalha: true,
+      entrada: j.hora_entrada ? j.hora_entrada.slice(0, 5) : "08:00",
+      saida: j.hora_saida ? j.hora_saida.slice(0, 5) : "17:00",
+    }));
+    return { ...mapFuncionario(data), jornada: mappedJornada };
   },
   async getByMatricula(matricula: string): Promise<FuncionarioApi | null> {
     const sb = await getSupabase();
@@ -1390,6 +1400,23 @@ export const funcionariosApi = {
     const sb = createClient();
     const { data, error } = await sb.from('funcionarios').insert(toFuncionarioRow(body)).select('*').single();
     if (error) throw error;
+    if (body.jornada && Array.isArray(body.jornada)) {
+      const diaNomeToNum: Record<string, number> = {
+        "Segunda": 1, "Terça": 2, "Quarta": 3, "Quinta": 4, "Sexta": 5, "Sábado": 6, "Domingo": 0
+      };
+      const rows = body.jornada
+        .filter((d: any) => d.trabalha)
+        .map((d: any) => ({
+          funcionario_id: data.id,
+          dia_semana: diaNomeToNum[d.dia] ?? 1,
+          hora_entrada: (d.entrada || "08:00") + ":00",
+          hora_saida: (d.saida || "17:00") + ":00",
+          ativo: true,
+        }));
+      if (rows.length > 0) {
+        await sb.from('funcionario_jornada').insert(rows);
+      }
+    }
     await resolverESincronizar(sb, data);
     return mapFuncionario(data);
   },
@@ -1397,6 +1424,24 @@ export const funcionariosApi = {
     const sb = createClient();
     const { data, error } = await sb.from('funcionarios').update(toFuncionarioRow(body)).eq('id', id).select('*').single();
     if (error) throw error;
+    if (body.jornada && Array.isArray(body.jornada)) {
+      const diaNomeToNum: Record<string, number> = {
+        "Segunda": 1, "Terça": 2, "Quarta": 3, "Quinta": 4, "Sexta": 5, "Sábado": 6, "Domingo": 0
+      };
+      await sb.from('funcionario_jornada').delete().eq('funcionario_id', id);
+      const rows = body.jornada
+        .filter((d: any) => d.trabalha)
+        .map((d: any) => ({
+          funcionario_id: id,
+          dia_semana: diaNomeToNum[d.dia] ?? 1,
+          hora_entrada: (d.entrada || "08:00") + ":00",
+          hora_saida: (d.saida || "17:00") + ":00",
+          ativo: true,
+        }));
+      if (rows.length > 0) {
+        await sb.from('funcionario_jornada').insert(rows);
+      }
+    }
     await resolverESincronizar(sb, data);
     return mapFuncionario(data);
   },
