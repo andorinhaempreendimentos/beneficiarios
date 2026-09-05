@@ -50,6 +50,9 @@ export function FuncionarioForm({ funcionario: f, nucleos = [], funcoes = [], ba
   const funcaoObj = funcoes.find((fn) => fn.id === funcaoId) || funcoes.find((fn) => fn.nome === f?.funcao);
   const funcaoNome = funcaoObj?.nome || f?.funcao || "";
 
+  const [selectedNucleoId, setSelectedNucleoId] = useState<string>(f?.nucleoId || (nucleos[0]?.id ?? ""));
+  const ehEmNucleo = funcaoObj ? (funcaoObj.tipoAlocacao === "admin_nucleo" || funcaoObj.tipoAlocacao === "operacional_nucleo") : true;
+
   const [emailVal, setEmailVal] = useState<string>(f?.email || "");
   const [erroEmail, setErroEmail] = useState<string | null>(null);
   const [checandoEmail, setChecandoEmail] = useState(false);
@@ -99,6 +102,10 @@ export function FuncionarioForm({ funcionario: f, nucleos = [], funcoes = [], ba
     setErro(null);
 
     const formData = new FormData(event.currentTarget);
+    const nucleoObj = ehEmNucleo ? nucleos.find((n) => n.id === selectedNucleoId) : null;
+    const nucleoIdFinal = ehEmNucleo ? (selectedNucleoId || null) : null;
+    const alocadoEmFinal = nucleoObj ? nucleoObj.identificacao : "Administração";
+
     const data = {
       matricula: f?.matricula || `PROF-${Math.floor(100 + Math.random() * 900)}`,
       nomeCompleto: formData.get("nomeCompleto") as string,
@@ -109,8 +116,8 @@ export function FuncionarioForm({ funcionario: f, nucleos = [], funcoes = [], ba
       email: emailVal.trim(),
       funcaoId: funcaoObj?.id || f?.funcaoId || "",
       status: (formData.get("status") as string) || "ativo",
-      nucleoId: (formData.get("nucleoId") as string) || null,
-      alocadoEm: (formData.get("alocadoEm") as string) || "Administração",
+      nucleoId: nucleoIdFinal,
+      alocadoEm: alocadoEmFinal,
       professorResponsavel,
       permitirLogin: categoriaPermiteLogin,
       senhaLogin: senhaNova.trim() || undefined,
@@ -258,14 +265,25 @@ export function FuncionarioForm({ funcionario: f, nucleos = [], funcoes = [], ba
             </Select>
           </Field>
 
-          <Field label="Núcleo de Atuação">
-            <Select name="nucleoId" defaultValue={f?.nucleoId ?? ""}>
-              <option value="">Sem núcleo definido</option>
-              {nucleos.map((n) => (
-                <option key={n.id} value={n.id}>{n.identificacao}</option>
-              ))}
-            </Select>
-          </Field>
+          {ehEmNucleo ? (
+            <Field label="Núcleo de Atuação (Obrigatório para esta Função)" required>
+              <Select
+                value={selectedNucleoId}
+                onChange={(e) => setSelectedNucleoId(e.target.value)}
+              >
+                {nucleos.map((n) => (
+                  <option key={n.id} value={n.id}>{n.identificacao}</option>
+                ))}
+              </Select>
+            </Field>
+          ) : (
+            <Field label="Lotação / Alocação">
+              <div className="rounded-xl border border-zinc-200 bg-zinc-50 px-3.5 py-2.5 text-sm font-medium text-zinc-700 flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-sky-500 shrink-0"></span>
+                <span>Administração Geral (Sede / Sem polo fixo)</span>
+              </div>
+            </Field>
+          )}
 
           <Field label="Data de admissão" required>
             <Input type="date" name="dataAdmissao" defaultValue={f?.dataAdmissao ?? new Date().toISOString().split('T')[0]} />
@@ -273,17 +291,6 @@ export function FuncionarioForm({ funcionario: f, nucleos = [], funcoes = [], ba
 
           <Field label="Data de demissão">
             <Input type="date" name="dataDemissao" defaultValue={f?.dataDemissao} />
-          </Field>
-
-          <Field label="Alocado em" required>
-            <Select name="alocadoEm" defaultValue={f?.alocadoEm ?? "Administração"}>
-              <option value="Administração">Administração</option>
-              <option value="Múlti. núcleos">Múltiplos Núcleos</option>
-              <option value="Serviços gerais">Serviços Gerais</option>
-              {nucleos.map((n) => (
-                <option key={n.id} value={n.identificacao}>{n.identificacao}</option>
-              ))}
-            </Select>
           </Field>
         </div>
 

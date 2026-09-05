@@ -3,13 +3,20 @@
 import { useState } from "react";
 import { Plus, Trash2, Edit2, CheckCircle2, Shield, Key, Lock, ShieldCheck } from "lucide-react";
 import { Badge, Button, Card, Field, Input, Select, Switch, Textarea } from "@/components/ui";
-import { funcoesApi, perfisApi, type FuncaoApi, type PerfilApi } from "@/lib/api/services";
+import { funcoesApi, perfisApi, type FuncaoApi, type PerfilApi, type TipoAlocacaoFuncao } from "@/lib/api/services";
 import { useToast } from "@/components/providers/ToastProvider";
 import { useQuery } from "@/lib/hooks/useQuery";
 
 interface FuncoesManagerProps {
   inicialFuncoes: FuncaoApi[];
 }
+
+export const TIPO_ALOCACAO_CONFIG: Record<TipoAlocacaoFuncao, { label: string; tone: "sky" | "green" | "amber" | "violet"; desc: string }> = {
+  admin_geral: { label: "Admin Geral (Sede)", tone: "sky", desc: "Gestão central sem vínculo a núcleo esportivo" },
+  admin_nucleo: { label: "Admin no Núcleo", tone: "green", desc: "Gestão administrativa local no polo esportivo" },
+  operacional_geral: { label: "Operacional Geral", tone: "violet", desc: "Equipe técnica/saúde volante que atende múltiplos locais" },
+  operacional_nucleo: { label: "Operacional no Núcleo", tone: "amber", desc: "Professores, instrutores e staff de campo vinculados ao núcleo" },
+};
 
 export function FuncoesManager({ inicialFuncoes }: FuncoesManagerProps) {
   const { toast } = useToast();
@@ -20,6 +27,7 @@ export function FuncoesManager({ inicialFuncoes }: FuncoesManagerProps) {
   const [nome, setNome] = useState("");
   const [descricao, setDescricao] = useState("");
   const [perfilId, setPerfilId] = useState("");
+  const [tipoAlocacao, setTipoAlocacao] = useState<TipoAlocacaoFuncao>("operacional_nucleo");
   const [permiteLogin, setPermiteLogin] = useState(true);
   const [exigeConselho, setExigeConselho] = useState(false);
   const [editandoId, setEditandoId] = useState<string | null>(null);
@@ -45,8 +53,9 @@ export function FuncoesManager({ inicialFuncoes }: FuncoesManagerProps) {
           permiteLogin,
           exigeConselho,
           perfilId,
+          tipoAlocacao,
         });
-        setFuncoes((prev) => prev.map((f) => (f.id === editandoId ? { ...f, ...atualizada, permiteLogin, exigeConselho, perfilId } : f)));
+        setFuncoes((prev) => prev.map((f) => (f.id === editandoId ? { ...f, ...atualizada, permiteLogin, exigeConselho, perfilId, tipoAlocacao } : f)));
         toast.success("Função atualizada com sucesso!");
       } else {
         const nova = await funcoesApi.create({
@@ -55,8 +64,9 @@ export function FuncoesManager({ inicialFuncoes }: FuncoesManagerProps) {
           permiteLogin,
           exigeConselho,
           perfilId,
+          tipoAlocacao,
         });
-        setFuncoes((prev) => [...prev, { ...nova, permiteLogin, exigeConselho, perfilId }]);
+        setFuncoes((prev) => [...prev, { ...nova, permiteLogin, exigeConselho, perfilId, tipoAlocacao }]);
         toast.success("Nova função cadastrada!");
       }
       limparForm();
@@ -72,6 +82,7 @@ export function FuncoesManager({ inicialFuncoes }: FuncoesManagerProps) {
     setNome(f.nome);
     setDescricao(f.descricao || "");
     setPerfilId(f.perfilId || "");
+    setTipoAlocacao(f.tipoAlocacao || "operacional_nucleo");
     setPermiteLogin(f.permiteLogin ?? true);
     setExigeConselho(f.exigeConselho ?? false);
   }
@@ -92,6 +103,7 @@ export function FuncoesManager({ inicialFuncoes }: FuncoesManagerProps) {
     setNome("");
     setDescricao("");
     setPerfilId("");
+    setTipoAlocacao("operacional_nucleo");
     setPermiteLogin(true);
     setExigeConselho(false);
   }
@@ -131,6 +143,21 @@ export function FuncoesManager({ inicialFuncoes }: FuncoesManagerProps) {
                 <option key={p.id} value={p.id}>{p.nome}</option>
               ))}
             </Select>
+          </Field>
+
+          <Field label="Tipo de Alocação / Lotação" required>
+            <Select
+              value={tipoAlocacao}
+              onChange={(e) => setTipoAlocacao(e.target.value as TipoAlocacaoFuncao)}
+            >
+              <option value="admin_geral">Administração Geral (Sede / Sem polo fixo)</option>
+              <option value="admin_nucleo">Administração no Núcleo (Gestão de Polo)</option>
+              <option value="operacional_geral">Não-Administrativa Geral (Volante / Itinerante)</option>
+              <option value="operacional_nucleo">Não-Administrativa no Núcleo (Professores / Staff de Polo)</option>
+            </Select>
+            <p className="text-[11px] text-zinc-500 mt-1">
+              {TIPO_ALOCACAO_CONFIG[tipoAlocacao]?.desc}
+            </p>
           </Field>
 
           {/* Toggle de Direito a Login */}
@@ -195,6 +222,7 @@ export function FuncoesManager({ inicialFuncoes }: FuncoesManagerProps) {
             {funcoes.map((f) => {
               const temLogin = f.permiteLogin ?? (f.nome !== "Staff");
               const perfilVinculado = perfis.find((p) => p.id === f.perfilId);
+              const alocCfg = TIPO_ALOCACAO_CONFIG[f.tipoAlocacao || "operacional_nucleo"];
               return (
                 <div key={f.id} className="py-3.5 flex items-center justify-between gap-4 hover:bg-zinc-50/60 p-2 rounded-xl transition-colors">
                   <div className="flex items-start gap-3">
@@ -204,6 +232,11 @@ export function FuncoesManager({ inicialFuncoes }: FuncoesManagerProps) {
                     <div>
                       <div className="flex flex-wrap items-center gap-1.5">
                         <h4 className="font-semibold text-zinc-900 text-sm">{f.nome}</h4>
+                        {alocCfg && (
+                          <Badge tone={alocCfg.tone}>
+                            {alocCfg.label}
+                          </Badge>
+                        )}
                         {perfilVinculado && (
                           <Badge tone="sky">
                             <ShieldCheck className="h-3 w-3 mr-1 inline" /> {perfilVinculado.nome}
@@ -223,7 +256,6 @@ export function FuncoesManager({ inicialFuncoes }: FuncoesManagerProps) {
                             <Shield className="h-3 w-3 mr-1 inline" /> Conselho Obrigatório
                           </Badge>
                         )}
-
                       </div>
                       {f.descricao ? (
                         <p className="text-xs text-zinc-500 mt-0.5">{f.descricao}</p>

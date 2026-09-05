@@ -1257,6 +1257,8 @@ function toBeneficiarioRow(b: Record<string, unknown>): Database['public']['Tabl
   };
 }
 
+export type TipoAlocacaoFuncao = 'admin_geral' | 'admin_nucleo' | 'operacional_geral' | 'operacional_nucleo';
+
 export interface FuncaoApi {
   id: string;
   nome: string;
@@ -1264,6 +1266,7 @@ export interface FuncaoApi {
   permiteLogin: boolean;
   exigeConselho: boolean;
   perfilId: string;
+  tipoAlocacao?: TipoAlocacaoFuncao;
   criadoEm: string;
 }
 
@@ -1275,6 +1278,7 @@ function mapFuncao(r: any): FuncaoApi {
     permiteLogin: Boolean(r.permite_login ?? r.permiteLogin ?? false),
     exigeConselho: Boolean(r.exige_conselho ?? r.exigeConselho ?? false),
     perfilId: r.perfil_id ?? '',
+    tipoAlocacao: (r.tipo_alocacao || r.tipoAlocacao || 'operacional_nucleo') as TipoAlocacaoFuncao,
     criadoEm: r.created_at,
   };
 }
@@ -1291,7 +1295,7 @@ export const funcoesApi = {
       .order('nome', { ascending: true });
     return (data ?? []).map(mapFuncao);
   },
-  async create(body: { nome: string; descricao?: string; permiteLogin?: boolean; exigeConselho?: boolean; perfilId: string }): Promise<FuncaoApi> {
+  async create(body: { nome: string; descricao?: string; permiteLogin?: boolean; exigeConselho?: boolean; perfilId: string; tipoAlocacao?: TipoAlocacaoFuncao }): Promise<FuncaoApi> {
     const sb = createClient();
     const payload = {
       nome: body.nome,
@@ -1299,12 +1303,13 @@ export const funcoesApi = {
       permite_login: body.permiteLogin ?? false,
       exige_conselho: body.exigeConselho ?? false,
       perfil_id: body.perfilId,
+      tipo_alocacao: body.tipoAlocacao ?? 'operacional_nucleo',
     };
     const { data, error } = await (sb.from('funcoes' as any) as any).insert(payload).select('*').single();
     if (error) throw error;
     return mapFuncao(data);
   },
-  async update(id: string, body: { nome?: string; descricao?: string; permiteLogin?: boolean; exigeConselho?: boolean; perfilId?: string }): Promise<FuncaoApi> {
+  async update(id: string, body: { nome?: string; descricao?: string; permiteLogin?: boolean; exigeConselho?: boolean; perfilId?: string; tipoAlocacao?: TipoAlocacaoFuncao }): Promise<FuncaoApi> {
     const sb = createClient();
     const payload: any = {};
     if (body.nome !== undefined) payload.nome = body.nome;
@@ -1312,6 +1317,7 @@ export const funcoesApi = {
     if (body.permiteLogin !== undefined) payload.permite_login = body.permiteLogin;
     if (body.exigeConselho !== undefined) payload.exige_conselho = body.exigeConselho;
     if (body.perfilId !== undefined) payload.perfil_id = body.perfilId;
+    if (body.tipoAlocacao !== undefined) payload.tipo_alocacao = body.tipoAlocacao;
     const { data, error } = await (sb.from('funcoes' as any) as any).update(payload).eq('id', id).select('*').single();
     if (error) throw error;
     await sincronizarTodosFuncionariosUsuarios().catch(() => {});
