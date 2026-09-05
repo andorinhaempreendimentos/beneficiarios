@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { z } from "zod";
 import {
   User,
@@ -14,6 +14,9 @@ import {
   CalendarCheck,
   UserCheck,
   CheckCircle2,
+  GraduationCap,
+  Layers,
+  Sparkles,
 } from "lucide-react";
 import {
   Button,
@@ -28,9 +31,11 @@ import type { DiaJornada } from "@/lib/types";
 import { statusFuncionarioLabel } from "@/lib/status";
 import {
   funcionariosApi,
+  turmasApi,
   type FuncionarioApi,
   type NucleoApi,
   type FuncaoApi,
+  type TurmaApi,
 } from "@/lib/api/services";
 
 const DIAS_SEMANA: DiaJornada["dia"][] = [
@@ -125,6 +130,38 @@ export function FuncionarioForm({
     return false;
   });
 
+  const isProfessor = Boolean(
+    professorResponsavel ||
+      funcaoNome.toLowerCase().includes("profess") ||
+      funcaoNome.toLowerCase().includes("instrut") ||
+      funcaoNome.toLowerCase().includes("turma")
+  );
+
+  // Lista de Turmas vinculadas (para Professor)
+  const [todasTurmas, setTodasTurmas] = useState<TurmaApi[]>([]);
+  useEffect(() => {
+    turmasApi
+      .list({ limit: 500 })
+      .then((res) => setTodasTurmas(res.data))
+      .catch(() => {});
+  }, []);
+
+  const turmasDoProfessor = useMemo(() => {
+    if (!f?.id) return [];
+    return todasTurmas.filter((t) => (t.responsaveis ?? []).includes(f.id));
+  }, [todasTurmas, f?.id]);
+
+  const totalHorasAulasSemanais = useMemo(() => {
+    let total = 0;
+    for (const t of turmasDoProfessor) {
+      for (const s of t.slots || []) {
+        const duracao = (s.fim ?? 0) - (s.inicio ?? 0);
+        if (duracao > 0) total += duracao;
+      }
+    }
+    return total;
+  }, [turmasDoProfessor]);
+
   // Handler para troca de cargo com auto-toggle de professor
   function handleFuncaoChange(newId: string) {
     setFuncaoId(newId);
@@ -146,7 +183,7 @@ export function FuncionarioForm({
   const [senhaNova, setSenhaNova] = useState<string>("");
   const [mostrarSenha, setMostrarSenha] = useState<boolean>(false);
 
-  // 4. Jornada de Trabalho (Padrão: Seg a Sex ativos de 08:00 às 17:00, Sab e Dom inativos)
+  // 4. Jornada de Trabalho Contratual (Para Administrativos / Staff / Coordenação)
   const [jornada, setJornada] = useState<DiaJornada[]>(() => {
     if (f?.jornada && f.jornada.length > 0) {
       return DIAS_SEMANA.map((dia) => {
@@ -162,7 +199,7 @@ export function FuncionarioForm({
         return { dia, trabalha: false, entrada: "08:00", saida: "17:00" };
       });
     }
-    // Padrão automático inicial: Seg a Sex marcados
+    // Padrão automático inicial: Seg a Sex marcados (40h)
     return DIAS_SEMANA.map((dia) => ({
       dia,
       trabalha: dia !== "Sábado" && dia !== "Domingo",
@@ -173,6 +210,43 @@ export function FuncionarioForm({
 
   const [entradaPadrao, setEntradaPadrao] = useState("08:00");
   const [saidaPadrao, setSaidaPadrao] = useState("17:00");
+
+  function aplicarPreset(horas: 40 | 30 | 20) {
+    if (horas === 40) {
+      setEntradaPadrao("08:00");
+      setSaidaPadrao("17:00");
+      setJornada(
+        DIAS_SEMANA.map((dia) => ({
+          dia,
+          trabalha: dia !== "Sábado" && dia !== "Domingo",
+          entrada: "08:00",
+          saida: "17:00",
+        }))
+      );
+    } else if (horas === 30) {
+      setEntradaPadrao("08:00");
+      setSaidaPadrao("14:00");
+      setJornada(
+        DIAS_SEMANA.map((dia) => ({
+          dia,
+          trabalha: dia !== "Sábado" && dia !== "Domingo",
+          entrada: "08:00",
+          saida: "14:00",
+        }))
+      );
+    } else if (horas === 20) {
+      setEntradaPadrao("08:00");
+      setSaidaPadrao("12:00");
+      setJornada(
+        DIAS_SEMANA.map((dia) => ({
+          dia,
+          trabalha: dia !== "Sábado" && dia !== "Domingo",
+          entrada: "08:00",
+          saida: "12:00",
+        }))
+      );
+    }
+  }
 
   function aplicarAosDiasAtivos() {
     setJornada((prev) =>
@@ -274,7 +348,7 @@ export function FuncionarioForm({
       professorResponsavel,
       permitirLogin: categoriaPermiteLogin,
       senhaLogin: senhaNova.trim() || undefined,
-      jornada,
+      jornada: isProfessor ? [] : jornada,
     };
 
     const validation = funcionarioSchema.safeParse(data);
@@ -497,132 +571,273 @@ export function FuncionarioForm({
               </div>
             )}
 
-            {/* 4. JORNADA DE TRABALHO */}
+            {/* 4. JORNADA DE TRABALHO OU GRADE DE AULAS */}
             <div className="pt-2 border-t border-zinc-100">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-2 border-b border-zinc-100">
-                <div className="flex items-center gap-2">
-                  <Clock className="h-5 w-5 text-sky-600 shrink-0" />
-                  <div>
-                    <h3 className="text-base font-bold text-zinc-900">
-                      Jornada de Trabalho & Horários de Ponto
-                    </h3>
-                    <p className="text-xs text-zinc-500">
-                      Regime CLT com 4 batidas diárias (Entrada, Saída Almoço, Retorno Almoço, Saída Final).
-                    </p>
+              {isProfessor ? (
+                /* CARGA HORÁRIA E GRADE AUTOMÁTICA DE AULAS DO PROFESSOR */
+                <div className="rounded-2xl border border-sky-200 bg-sky-50/40 p-5 flex flex-col gap-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-sky-200/60">
+                    <div className="flex items-center gap-2.5">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-600 text-white shadow-sm shrink-0">
+                        <GraduationCap className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <h3 className="text-base font-bold text-zinc-900">
+                          Grade de Aulas & Carga Horária Semanal
+                        </h3>
+                        <p className="text-xs text-zinc-600">
+                          Carga horária e horários gerados automaticamente a partir dos slots de turmas atribuídos a este professor.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-sky-600 px-3 py-1 text-xs font-bold text-white shadow-sm">
+                        <Clock className="h-3.5 w-3.5" />
+                        <span>{totalHorasAulasSemanais}h semanais de aula</span>
+                      </span>
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-sky-800 border border-sky-200">
+                        <Layers className="h-3 w-3" />
+                        <span>{turmasDoProfessor.length} turmas vinculadas</span>
+                      </span>
+                    </div>
                   </div>
+
+                  {turmasDoProfessor.length > 0 ? (
+                    <div className="overflow-x-auto rounded-xl border border-sky-200/80 bg-white">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="border-b border-zinc-200 bg-zinc-50/80 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                            <th className="py-2.5 px-3">Turma</th>
+                            <th className="py-2.5 px-3">Núcleo</th>
+                            <th className="py-2.5 px-3">Atividade / Modalidade</th>
+                            <th className="py-2.5 px-3">Slots / Horários da Grade</th>
+                            <th className="py-2.5 px-3">Carga Semanal</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {turmasDoProfessor.map((t) => {
+                            const horasTurma = (t.slots || []).reduce(
+                              (acc, s) => acc + Math.max(0, (s.fim ?? 0) - (s.inicio ?? 0)),
+                              0
+                            );
+                            return (
+                              <tr
+                                key={t.id}
+                                className="border-b border-zinc-100 last:border-0 hover:bg-sky-50/30 transition-colors"
+                              >
+                                <td className="py-2.5 px-3 font-semibold text-zinc-900">
+                                  {t.nome}
+                                </td>
+                                <td className="py-2.5 px-3 text-zinc-600 text-xs">
+                                  {nucleos.find((n) => n.id === t.nucleoId)?.identificacao ||
+                                    t.nucleo?.identificacao ||
+                                    "Não informado"}
+                                </td>
+                                <td className="py-2.5 px-3">
+                                  <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-700 text-xs font-medium">
+                                    {t.atividade?.nome || "Geral"}
+                                  </span>
+                                </td>
+                                <td className="py-2.5 px-3 text-xs text-zinc-700 font-mono">
+                                  {(t.slots || []).length > 0 ? (
+                                    <div className="flex flex-wrap gap-1.5">
+                                      {t.slots?.map((s, idx) => (
+                                        <span
+                                          key={idx}
+                                          className="inline-flex items-center px-2 py-0.5 rounded bg-sky-50 text-sky-700 border border-sky-200 font-bold"
+                                        >
+                                          {s.dia} {String(s.inicio).padStart(2, "0")}:00–{String(s.fim).padStart(2, "0")}:00
+                                        </span>
+                                      ))}
+                                    </div>
+                                  ) : (
+                                    <span className="text-zinc-400 italic">Sem slots cadastrados</span>
+                                  )}
+                                </td>
+                                <td className="py-2.5 px-3 font-bold text-sky-800 text-xs font-mono">
+                                  {horasTurma}h / sem
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <div className="rounded-xl border border-dashed border-sky-300 bg-white/80 p-4 text-center">
+                      <p className="text-xs font-medium text-zinc-600">
+                        📌 Nenhuma turma vinculada a este professor no momento.
+                        Ao cadastrar ou editar turmas no módulo <strong>Turmas &gt; Grade Semanal</strong>, selecione este professor como responsável para que os horários e a carga horária sejam calculados aqui automaticamente.
+                      </p>
+                    </div>
+                  )}
                 </div>
+              ) : (
+                /* JORNADA CLT CONTRATUAL FIXA PARA CARGOS ADMINISTRATIVOS E STAFF */
+                <>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-2 border-b border-zinc-100">
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-5 w-5 text-sky-600 shrink-0" />
+                      <div>
+                        <h3 className="text-base font-bold text-zinc-900">
+                          Jornada de Trabalho & Horários de Ponto
+                        </h3>
+                        <p className="text-xs text-zinc-500">
+                          Regime CLT com 4 batidas diárias (Entrada, Saída Almoço, Retorno Almoço, Saída Final).
+                        </p>
+                      </div>
+                    </div>
 
-                <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-sky-50 px-3 py-1 text-xs font-bold text-sky-700 border border-sky-200">
-                    <CalendarCheck className="h-3.5 w-3.5" />
-                    <span>{totalHorasSemanais}h semanais</span>
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-semibold text-zinc-600">
-                    Média {mediaDiaria}h / dia
-                  </span>
-                </div>
-              </div>
+                    <div className="flex items-center gap-2">
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-sky-50 px-3 py-1 text-xs font-bold text-sky-700 border border-sky-200">
+                        <CalendarCheck className="h-3.5 w-3.5" />
+                        <span>{totalHorasSemanais}h semanais</span>
+                      </span>
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-semibold text-zinc-600">
+                        Média {mediaDiaria}h / dia
+                      </span>
+                    </div>
+                  </div>
 
-              {/* Ferramenta de Aplicação em Lote */}
-              <div className="mb-4 flex flex-wrap items-end gap-3 rounded-xl bg-zinc-50 p-3.5 border border-zinc-200">
-                <Field label="Entrada Padrão" className="w-32">
-                  <Input
-                    type="time"
-                    value={entradaPadrao}
-                    onChange={(e) => setEntradaPadrao(e.target.value)}
-                  />
-                </Field>
-                <Field label="Saída Padrão" className="w-32">
-                  <Input
-                    type="time"
-                    value={saidaPadrao}
-                    onChange={(e) => setSaidaPadrao(e.target.value)}
-                  />
-                </Field>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={aplicarAosDiasAtivos}
-                  className="cursor-pointer text-xs"
-                >
-                  Aplicar aos dias ativos
-                </Button>
-              </div>
-
-              {/* Tabela de Dias da Semana */}
-              <div className="overflow-x-auto rounded-xl border border-zinc-200">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-zinc-200 bg-zinc-50 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                      <th className="py-2.5 px-3">Dia da Semana</th>
-                      <th className="py-2.5 px-3">Trabalha</th>
-                      <th className="py-2.5 px-3">Entrada</th>
-                      <th className="py-2.5 px-3">Saída</th>
-                      <th className="py-2.5 px-3">Carga Líquida</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {jornada.map((d) => {
-                      const horasDia = d.trabalha
-                        ? calcularHorasDia(d.entrada, d.saida)
-                        : 0;
-                      return (
-                        <tr
-                          key={d.dia}
-                          className={`border-b border-zinc-100 last:border-0 hover:bg-zinc-50/50 ${
-                            d.trabalha ? "bg-white" : "bg-zinc-50/40 text-zinc-400"
-                          }`}
+                  {/* Seleção de Presets de Carga Horária e Ferramenta em Lote */}
+                  <div className="mb-4 flex flex-col gap-3 rounded-xl bg-zinc-50 p-4 border border-zinc-200">
+                    <div>
+                      <span className="text-xs font-bold text-zinc-700 uppercase tracking-wider block mb-2">
+                        Predefinições de Carga Semanal:
+                      </span>
+                      <div className="flex flex-wrap gap-2">
+                        <button
+                          type="button"
+                          onClick={() => aplicarPreset(40)}
+                          className="px-3 py-1.5 rounded-lg border text-xs font-semibold bg-white hover:bg-sky-50 hover:border-sky-300 text-zinc-800 transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm"
                         >
-                          <td className="py-2.5 px-3 font-semibold text-zinc-800">
-                            {d.dia}
-                          </td>
-                          <td className="py-2.5 px-3">
-                            <Switch
-                              checked={d.trabalha}
-                              onChange={(v) => toggleDia(d.dia, v)}
-                            />
-                          </td>
-                          <td className="py-2.5 px-3">
-                            <Input
-                              type="time"
-                              disabled={!d.trabalha}
-                              value={d.entrada ?? ""}
-                              onChange={(e) =>
-                                atualizarHorario(d.dia, "entrada", e.target.value)
-                              }
-                              className="w-32"
-                            />
-                          </td>
-                          <td className="py-2.5 px-3">
-                            <Input
-                              type="time"
-                              disabled={!d.trabalha}
-                              value={d.saida ?? ""}
-                              onChange={(e) =>
-                                atualizarHorario(d.dia, "saida", e.target.value)
-                              }
-                              className="w-32"
-                            />
-                          </td>
-                          <td className="py-2.5 px-3 font-mono text-xs">
-                            {d.trabalha ? (
-                              <span className="font-bold text-zinc-700">
-                                {horasDia}h{" "}
-                                <span className="text-[11px] font-normal text-zinc-400">
-                                  (1h almoço)
-                                </span>
-                              </span>
-                            ) : (
-                              <span className="text-zinc-400">Folga</span>
-                            )}
-                          </td>
+                          <Sparkles className="h-3.5 w-3.5 text-sky-600" />
+                          <span>40h Semanais (08:00 às 17:00 • 8h/dia)</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => aplicarPreset(30)}
+                          className="px-3 py-1.5 rounded-lg border text-xs font-semibold bg-white hover:bg-sky-50 hover:border-sky-300 text-zinc-800 transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm"
+                        >
+                          <Sparkles className="h-3.5 w-3.5 text-sky-600" />
+                          <span>30h Semanais (08:00 às 14:00 • 6h/dia)</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => aplicarPreset(20)}
+                          className="px-3 py-1.5 rounded-lg border text-xs font-semibold bg-white hover:bg-sky-50 hover:border-sky-300 text-zinc-800 transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm"
+                        >
+                          <Sparkles className="h-3.5 w-3.5 text-sky-600" />
+                          <span>20h Semanais (08:00 às 12:00 • 4h/dia)</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap items-end gap-3 pt-3 border-t border-zinc-200/80">
+                      <Field label="Entrada Padrão" className="w-32">
+                        <Input
+                          type="time"
+                          value={entradaPadrao}
+                          onChange={(e) => setEntradaPadrao(e.target.value)}
+                        />
+                      </Field>
+                      <Field label="Saída Padrão" className="w-32">
+                        <Input
+                          type="time"
+                          value={saidaPadrao}
+                          onChange={(e) => setSaidaPadrao(e.target.value)}
+                        />
+                      </Field>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={aplicarAosDiasAtivos}
+                        className="cursor-pointer text-xs"
+                      >
+                        Aplicar aos dias ativos
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Tabela de Dias da Semana */}
+                  <div className="overflow-x-auto rounded-xl border border-zinc-200">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-zinc-200 bg-zinc-50 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                          <th className="py-2.5 px-3">Dia da Semana</th>
+                          <th className="py-2.5 px-3">Trabalha</th>
+                          <th className="py-2.5 px-3">Entrada</th>
+                          <th className="py-2.5 px-3">Saída</th>
+                          <th className="py-2.5 px-3">Carga Líquida</th>
                         </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
+                      </thead>
+                      <tbody>
+                        {jornada.map((d) => {
+                          const horasDia = d.trabalha
+                            ? calcularHorasDia(d.entrada, d.saida)
+                            : 0;
+                          return (
+                            <tr
+                              key={d.dia}
+                              className={`border-b border-zinc-100 last:border-0 hover:bg-zinc-50/50 ${
+                                d.trabalha ? "bg-white" : "bg-zinc-50/40 text-zinc-400"
+                              }`}
+                            >
+                              <td className="py-2.5 px-3 font-semibold text-zinc-800">
+                                {d.dia}
+                              </td>
+                              <td className="py-2.5 px-3">
+                                <Switch
+                                  checked={d.trabalha}
+                                  onChange={(v) => toggleDia(d.dia, v)}
+                                />
+                              </td>
+                              <td className="py-2.5 px-3">
+                                <Input
+                                  type="time"
+                                  disabled={!d.trabalha}
+                                  value={d.entrada ?? ""}
+                                  onChange={(e) =>
+                                    atualizarHorario(d.dia, "entrada", e.target.value)
+                                  }
+                                  className="w-32"
+                                />
+                              </td>
+                              <td className="py-2.5 px-3">
+                                <Input
+                                  type="time"
+                                  disabled={!d.trabalha}
+                                  value={d.saida ?? ""}
+                                  onChange={(e) =>
+                                    atualizarHorario(d.dia, "saida", e.target.value)
+                                  }
+                                  className="w-32"
+                                />
+                              </td>
+                              <td className="py-2.5 px-3 font-mono text-xs">
+                                {d.trabalha ? (
+                                  <span className="font-bold text-zinc-700">
+                                    {horasDia}h{" "}
+                                    {horasDia >= 6 && (
+                                      <span className="text-[11px] font-normal text-zinc-400">
+                                        (1h almoço)
+                                      </span>
+                                    )}
+                                  </span>
+                                ) : (
+                                  <span className="text-zinc-400">Folga</span>
+                                )}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
+              )}
             </div>
 
             {/* 5. DADOS PESSOAIS DO COLABORADOR */}
