@@ -367,7 +367,7 @@ export function FuncionarioForm({
                 </h3>
               </div>
 
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="max-w-xl">
                 {ehEmNucleo ? (
                   <Field
                     label="Núcleo de Atuação (Obrigatório para esta Função)"
@@ -392,37 +392,6 @@ export function FuncionarioForm({
                     </div>
                   </Field>
                 )}
-
-                <Field label="Status do Vínculo" required>
-                  <Select name="status" defaultValue={f?.status ?? "ativo"}>
-                    {Object.entries(statusFuncionarioLabel).map(
-                      ([value, label]) => (
-                        <option key={value} value={value}>
-                          {label}
-                        </option>
-                      )
-                    )}
-                  </Select>
-                </Field>
-
-                <Field label="Data de admissão" required>
-                  <Input
-                    type="date"
-                    name="dataAdmissao"
-                    defaultValue={
-                      f?.dataAdmissao ??
-                      new Date().toISOString().split("T")[0]
-                    }
-                  />
-                </Field>
-
-                <Field label="Data de demissão">
-                  <Input
-                    type="date"
-                    name="dataDemissao"
-                    defaultValue={f?.dataDemissao}
-                  />
-                </Field>
               </div>
 
               {exigeConselho && (
@@ -745,6 +714,37 @@ export function FuncionarioForm({
                       <span>{erroEmail}</span>
                     </p>
                   )}
+                </Field>
+
+                <Field label="Status do Vínculo" required>
+                  <Select name="status" defaultValue={f?.status ?? "ativo"}>
+                    {Object.entries(statusFuncionarioLabel).map(
+                      ([value, label]) => (
+                        <option key={value} value={value}>
+                          {label}
+                        </option>
+                      )
+                    )}
+                  </Select>
+                </Field>
+
+                <Field label="Data de admissão" required>
+                  <Input
+                    type="date"
+                    name="dataAdmissao"
+                    defaultValue={
+                      f?.dataAdmissao ??
+                      new Date().toISOString().split("T")[0]
+                    }
+                  />
+                </Field>
+
+                <Field label="Data de demissão">
+                  <Input
+                    type="date"
+                    name="dataDemissao"
+                    defaultValue={f?.dataDemissao}
+                  />
                 </Field>
               </div>
             </div>
