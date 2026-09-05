@@ -328,8 +328,7 @@ export function InscricaoPublicaForm({ turmaId, onSubmit }: InscricaoPublicaForm
         tipoMatricula: "online",
       };
 
-      const createdBeneficiario = await beneficiariosApi.create(payloadBeneficiario);
-      const novaInscricao = await inscricoesApi.criar(createdBeneficiario.id, turmaId, "Inscrição pública online", { parQ });
+      const novaInscricao = await inscricoesApi.inscreverPublico(payloadBeneficiario, turmaId, "Inscrição pública online", { parQ });
 
       const tipoStatus = novaInscricao.status === "reservada" ? "fila" : novaInscricao.status;
       router.push(`/inscricao/confirmacao?turmaId=${turmaId}&tipo=${tipoStatus}`);

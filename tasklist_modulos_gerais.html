@@ -29,7 +29,16 @@
         <p class="text-xs text-zinc-500 mt-0.5">Validação de formulários, CRUDs e regras de negócio de todas as entidades</p>
       </div>
 
-      <div class="flex items-center gap-2">
+      <div class="flex flex-wrap items-center gap-2">
+        <div class="inline-flex rounded-xl border border-zinc-200 bg-zinc-100 p-1 text-xs font-medium">
+          <button id="btn-tab-todos" onclick="setFilter('todos')" class="px-3 py-1.5 rounded-lg bg-white shadow-xs text-zinc-900 font-semibold cursor-pointer transition">
+            Todos (30)
+          </button>
+          <button id="btn-tab-criticos" onclick="setFilter('criticos')" class="px-3 py-1.5 rounded-lg text-zinc-600 hover:text-zinc-900 font-semibold cursor-pointer transition flex items-center gap-1.5">
+            <span>🔥</span> Críticos Dia a Dia (12)
+          </button>
+        </div>
+
         <button onclick="resetAll()" class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-zinc-300 hover:bg-zinc-100 transition text-zinc-700 cursor-pointer">
           Resetar Status
         </button>
@@ -48,6 +57,7 @@
         </div>
         <div class="flex flex-wrap gap-2">
           <span id="badge-passou" class="px-2.5 py-1 rounded-full text-xs font-bold bg-green-50 text-green-700 border border-green-200">0 Passou</span>
+          <span id="badge-criticos-count" class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">12 Críticos Dia a Dia</span>
           <span id="badge-executando" class="px-2.5 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200">0 Em Execução</span>
           <span id="badge-pendente" class="px-2.5 py-1 rounded-full text-xs font-bold bg-zinc-100 text-zinc-700 border border-zinc-200">0 Pendente</span>
           <span id="badge-falhou" class="px-2.5 py-1 rounded-full text-xs font-bold bg-red-50 text-red-700 border border-red-200">0 Falhou</span>
@@ -68,7 +78,7 @@
   </div>
 
   <script>
-    const STORAGE_KEY = "andorinha_qa_modulos_gerais_v1";
+    const STORAGE_KEY = "andorinha_qa_modulos_gerais_v13";
 
     const INITIAL_MODULES = [
       {
@@ -76,10 +86,10 @@
         title: "1. Parcerias e Contratos (MROSC)",
         badge: "Contratos & OSC",
         tasks: [
-          { id: "t1_org", title: "1.1 CRUD de Organizações (OSCs)", route: "/organizacoes", entity: "organizacoes", desc: "Criar, editar dados cadastrais (CNPJ, endereço, presidente) e listar OSCs executoras.", status: "pendente", notes: "" },
-          { id: "t1_conc", title: "1.2 CRUD de Concedentes", route: "/concedentes", entity: "concedentes", desc: "Cadastrar órgãos públicos parceiros (Secretarias, Prefeituras) e responsáveis pelo termo.", status: "pendente", notes: "" },
-          { id: "t1_obj", title: "1.3 Gestão de Objetos & Metas Contratuais", route: "/objetos", entity: "objetos", desc: "Cadastrar termo de fomento, vigência, metas pactuadas de beneficiários e valor total.", status: "pendente", notes: "" },
-          { id: "t1_cargos", title: "1.4 Vagas e Cargos Previstos no Plano", route: "/objetos/[id]", entity: "objeto_cargos_previstos", desc: "Verificar quadro de cargos previstos no plano de trabalho vs profissionais alocados.", status: "pendente", notes: "" }
+          { id: "t1_org", title: "1.1 CRUD de Organizações (OSCs)", route: "/organizacoes", entity: "organizacoes", desc: "Criar, editar dados cadastrais (CNPJ, endereço, presidente) e listar OSCs executoras.", status: "passou", notes: "Aprovado: Criação, Edição, Busca e Soft-Delete validados com sucesso.", critico: false },
+          { id: "t1_conc", title: "1.2 CRUD de Concedentes", route: "/concedentes", entity: "concedentes", desc: "Cadastrar órgãos públicos parceiros (Secretarias, Prefeituras) e responsáveis pelo termo.", status: "passou", notes: "Aprovado: Criação via Modal, Edição, Busca e Soft-Delete validados com sucesso.", critico: false },
+          { id: "t1_obj", title: "1.3 Gestão de Objetos & Metas Contratuais", route: "/objetos", entity: "objetos", desc: "Cadastrar termo de fomento, vigência, metas pactuadas de beneficiários e valor total.", status: "passou", notes: "Aprovado: Criação, Metas contratuais, Edição, Filtros e Soft-Delete validados.", critico: false },
+          { id: "t1_cargos", title: "1.4 Vagas e Cargos Previstos no Plano", route: "/objetos/[id]", entity: "objeto_cargos_previstos", desc: "Verificar quadro de cargos previstos no plano de trabalho vs profissionais alocados.", status: "passou", notes: "Aprovado: Sincronização automática de cargos, remunerações e carga horária no Postgres.", critico: false }
         ]
       },
       {
@@ -87,9 +97,9 @@
         title: "2. Território e Locais (Polos)",
         badge: "Polos & Núcleos",
         tasks: [
-          { id: "t2_nuc", title: "2.1 CRUD & Configurações de Núcleo", route: "/nucleos", entity: "nucleos", desc: "Criar novo polo, configurar endereço, coordenadas GPS, tipo de restrição de chamada e tolerâncias.", status: "pendente", notes: "" },
-          { id: "t2_coord", title: "2.2 Alocação de Coordenadores aos Núcleos", route: "/coordenadores", entity: "coordenador_nucleos", desc: "Vincular e desvincular coordenador de núcleo aos polos territoriais.", status: "pendente", notes: "" },
-          { id: "t2_ativ", title: "2.3 Ativação de Modalidades por Polo", route: "/nucleos/[id]", entity: "nucleo_atividades", desc: "Configurar quais modalidades esportivas estão ativas em cada polo.", status: "pendente", notes: "" }
+          { id: "t2_nuc", title: "2.1 CRUD & Configurações de Núcleo", route: "/nucleos", entity: "nucleos", desc: "Criar novo polo, configurar endereço, coordenadas GPS, tipo de restrição de chamada e tolerâncias.", status: "passou", notes: "Aprovado: Criação de polo, regras de chamada, tolerâncias e coordenadas validadas.", critico: false },
+          { id: "t2_coord", title: "2.2 Alocação de Coordenadores aos Núcleos", route: "/coordenadores", entity: "coordenador_nucleos", desc: "Vincular e desvincular coordenador de núcleo aos polos territoriais.", status: "passou", notes: "Aprovado: Atribuição e desvinculação com exclusão em tempo real no Postgres.", critico: false },
+          { id: "t2_ativ", title: "2.3 Ativação de Modalidades por Polo", route: "/nucleos/[id]", entity: "nucleo_atividades", desc: "Configurar quais modalidades esportivas estão ativas em cada polo.", status: "passou", notes: "Aprovado: Vínculo automático de modalidades ativas em nucleo_atividades.", critico: false }
         ]
       },
       {
@@ -97,9 +107,9 @@
         title: "3. Beneficiários & Documentação",
         badge: "Alunos & Saúde",
         tasks: [
-          { id: "t3_anexos", title: "3.1 Upload de Anexos & Atestados Médicos", route: "/beneficiarios/[id]", entity: "beneficiario_anexos", desc: "Anexar atestado médico, documento de identificação e autorização no perfil do aluno.", status: "pendente", notes: "" },
-          { id: "t3_transf", title: "3.2 Transferência de Turma & Histórico", route: "/beneficiarios/[id]", entity: "beneficiario_turmas", desc: "Transferir aluno de turma/polo e verificar liberação de vaga na turma de origem.", status: "pendente", notes: "" },
-          { id: "t3_ficha", title: "3.3 Emissão de Ficha Cadastral / Termo", route: "/beneficiarios/[id]", entity: "beneficiarios", desc: "Visualizar e imprimir ficha cadastral completa com dados do responsável e PAR-Q.", status: "pendente", notes: "" }
+          { id: "t3_anexos", title: "3.1 Upload de Anexos & Atestados Médicos", route: "/beneficiarios/[id]", entity: "beneficiario_anexos", desc: "Anexar atestado médico, documento de identificação e autorização no perfil do aluno.", status: "passou", notes: "Aprovado: Persistência de atestados, RG e comprovantes com enums válidos no Postgres.", critico: true },
+          { id: "t3_transf", title: "3.2 Transferência de Turma & Histórico", route: "/beneficiarios/[id]", entity: "beneficiario_turmas", desc: "Transferir aluno de turma/polo e verificar liberação de vaga na turma de origem.", status: "passou", notes: "Aprovado: Migração de turma com gravação do histórico de status 'transferido' e 'ativo'.", critico: true },
+          { id: "t3_ficha", title: "3.3 Emissão de Ficha Cadastral / Termo", route: "/beneficiarios/[id]", entity: "beneficiarios", desc: "Visualizar e imprimir ficha cadastral completa com dados do responsável e PAR-Q.", status: "passou", notes: "Aprovado: Visualização completa do perfil do aluno, idade calculada e vínculos esportivos.", critico: true }
         ]
       },
       {
@@ -107,12 +117,12 @@
         title: "4. Turmas, Horários & Eventos Extras",
         badge: "Grade & Eventos",
         tasks: [
-          { id: "t4_ativ", title: "4.1 Cadastro de Modalidades Esportivas", route: "/atividades", entity: "atividades", desc: "Criar nova modalidade esportiva (Futebol, Futsal, etc.) e definir parâmetros gerais.", status: "pendente", notes: "" },
-          { id: "t4_turma", title: "4.2 Wizard de Criação de Turmas", route: "/turmas/novo", entity: "turmas", desc: "Criar turma definindo faixa etária, capacidade máxima, polo e modalidade.", status: "pendente", notes: "" },
-          { id: "t4_horarios", title: "4.3 Gestão de Horários & Slots Semanais", route: "/turmas/[id]", entity: "turma_horarios", desc: "Cadastrar e alterar slots de aula da semana (dias, horário início e fim).", status: "pendente", notes: "" },
-          { id: "t4_resp", title: "4.4 Vinculação de Professores à Turma", route: "/turmas/[id]", entity: "turma_responsaveis", desc: "Alocar professor responsável e instrutor assistente na turma.", status: "pendente", notes: "" },
-          { id: "t4_compl", title: "4.5 Atividades Complementares (Eventos/Torneios)", route: "/atividades-complementares", entity: "atividades_complementares", desc: "Cadastrar torneio, palestra ou evento especial com data e polo.", status: "pendente", notes: "" },
-          { id: "t4_conf", title: "4.6 Confirmação de Presença em Evento Extra", route: "/atividades-complementares/[id]", entity: "confirmacoes_atividade", desc: "Registrar presença e relatório de beneficiários no evento complementar.", status: "pendente", notes: "" }
+          { id: "t4_ativ", title: "4.1 Cadastro de Modalidades Esportivas", route: "/atividades", entity: "atividades", desc: "Criar nova modalidade esportiva (Futebol, Futsal, etc.) e definir parâmetros gerais.", status: "passou", notes: "Aprovado: Criação de modalidade com turnos e regras de pré-inscrição.", critico: false },
+          { id: "t4_turma", title: "4.2 Wizard de Criação de Turmas", route: "/turmas/novo", entity: "turmas", desc: "Criar turma definindo faixa etária, capacidade máxima, polo e modalidade.", status: "passou", notes: "Aprovado: Wizard de criação de turma com capacidade, idades e filtros de polo.", critico: false },
+          { id: "t4_horarios", title: "4.3 Gestão de Horários & Slots Semanais", route: "/turmas/[id]", entity: "turma_horarios", desc: "Cadastrar e alterar slots de aula da semana (dias, horário início e fim).", status: "passou", notes: "Aprovado: Configuração e persistência de slots de aula no Postgres.", critico: true },
+          { id: "t4_resp", title: "4.4 Vinculação de Professores à Turma", route: "/turmas/[id]", entity: "turma_responsaveis", desc: "Alocar professor responsável e instrutor assistente na turma.", status: "passou", notes: "Aprovado: Vinculação de professores/instrutores em turma_responsaveis.", critico: true },
+          { id: "t4_compl", title: "4.5 Atividades Complementares (Eventos/Torneios)", route: "/atividades-complementares", entity: "atividades_complementares", desc: "Cadastrar torneio, palestra ou evento especial com data e polo.", status: "passou", notes: "Aprovado: Criação de evento especial com número de participantes e data.", critico: false },
+          { id: "t4_conf", title: "4.6 Confirmação de Presença em Evento Extra", route: "/atividades-complementares/[id]", entity: "confirmacoes_atividade", desc: "Registrar presença e relatório de beneficiários no evento complementar.", status: "passou", notes: "Aprovado: Registro e validação de relatório de participantes no evento.", critico: true }
         ]
       },
       {
@@ -120,11 +130,11 @@
         title: "5. Recursos Humanos & Ponto Eletrônico",
         badge: "RH & Folha de Ponto",
         tasks: [
-          { id: "t5_func", title: "5.1 Cadastro Completo de Profissionais", route: "/funcionarios", entity: "funcionarios", desc: "Cadastrar professor/coordenador com CPF, dados contratuais e polo alocado.", status: "pendente", notes: "" },
-          { id: "t5_func_reg", title: "5.2 Gestão de Funções & Registro de Classe", route: "/funcionarios/funcoes", entity: "funcoes", desc: "Criar cargos e configurar exigência de conselho profissional (CREF/CRESS).", status: "pendente", notes: "" },
-          { id: "t5_jornada", title: "5.3 Escala Semanal e Carga Horária", route: "/funcionarios/[id]", entity: "funcionario_jornada", desc: "Definir horários de trabalho semanais e carga horária contratada.", status: "pendente", notes: "" },
-          { id: "t5_ponto_avulso", title: "5.4 Registro de Ponto Avulso (/ponto)", route: "/ponto", entity: "registros_ponto", desc: "Bater ponto de entrada/saída via portal rápido com foto/geolocalização.", status: "pendente", notes: "" },
-          { id: "t5_espelho", title: "5.5 Espelho de Ponto & Banco de Horas", route: "/funcionarios/[id]/ponto", entity: "registros_ponto", desc: "Auditar folha de ponto mensal do colaborador e verificar cálculo de horas.", status: "pendente", notes: "" }
+          { id: "t5_func", title: "5.1 Cadastro Completo de Profissionais", route: "/funcionarios", entity: "funcionarios", desc: "Cadastrar professor/coordenador com CPF, dados contratuais e polo alocado.", status: "passou", notes: "Aprovado: Criação via wizard com matrícula, CPF, dados contratuais e alocação territorial.", critico: false },
+          { id: "t5_func_reg", title: "5.2 Gestão de Funções & Registro de Classe", route: "/funcionarios/funcoes", entity: "funcoes", desc: "Criar cargos e configurar exigência de conselho profissional (CREF/CRESS).", status: "passou", notes: "Aprovado: Criação de funções com vínculo RBAC de perfil, regras de login e conselho de classe.", critico: false },
+          { id: "t5_jornada", title: "5.3 Escala Semanal e Carga Horária", route: "/funcionarios/[id]", entity: "funcionario_jornada", desc: "Definir horários de trabalho semanais e carga horária contratada.", status: "passou", notes: "Aprovado: Definição de escala semanal, horários contratados de entrada/saída e vínculo.", critico: false },
+          { id: "t5_ponto_avulso", title: "5.4 Registro de Ponto Avulso (/ponto)", route: "/ponto", entity: "registros_ponto", desc: "Bater ponto de entrada/saída via portal rápido com foto/geolocalização.", status: "passou", notes: "Aprovado: Registro de batida de ponto com hora, tipo de batida e gravação no banco.", critico: true },
+          { id: "t5_espelho", title: "5.5 Espelho de Ponto & Banco de Horas", route: "/funcionarios/[id]/ponto", entity: "registros_ponto", desc: "Auditar folha de ponto mensal do colaborador e verificar cálculo de horas.", status: "passou", notes: "Aprovado: Cálculo consolidado de horas trabalhadas, espelho mensal e anotações homologadas.", critico: true }
         ]
       },
       {
@@ -132,9 +142,9 @@
         title: "6. Supervisão Pedagógica de Campo",
         badge: "Supervisão & Qualidade",
         tasks: [
-          { id: "t6_visita", title: "6.1 Relatório de Visita In Loco", route: "/supervisoes/nova", entity: "supervisoes", desc: "Preencher checklist de visita técnica no polo (estrutura, presença, uniforme).", status: "pendente", notes: "" },
-          { id: "t6_fotos", title: "6.2 Registro Fotográfico da Visita", route: "/supervisoes/[id]", entity: "supervisoes_fotos", desc: "Upload de fotos comprobatórias com geolocalização e evidência das atividades.", status: "pendente", notes: "" },
-          { id: "t6_mensal", title: "6.3 Relatório Mensal Consolidado", route: "/supervisoes/relatorio-mensal", entity: "supervisoes", desc: "Gerar relatório mensal de supervisões para prestação de contas.", status: "pendente", notes: "" }
+          { id: "t6_visita", title: "6.1 Relatório de Visita In Loco", route: "/supervisoes/nova", entity: "supervisoes", desc: "Preencher checklist de visita técnica no polo (estrutura, presença, uniforme).", status: "passou", notes: "Aprovado: Preenchimento de checklist de visita in loco, presenças, avaliações e observações.", critico: true },
+          { id: "t6_fotos", title: "6.2 Registro Fotográfico da Visita", route: "/supervisoes/[id]", entity: "supervisoes_fotos", desc: "Upload de fotos comprobatórias com geolocalização e evidência das atividades.", status: "passou", notes: "Aprovado: Registro e vinculação de fotos comprobatórias com categoria, legenda e ordenação.", critico: true },
+          { id: "t6_mensal", title: "6.3 Relatório Mensal Consolidado", route: "/supervisoes/relatorio-mensal", entity: "supervisoes", desc: "Gerar relatório mensal de supervisões para prestação de contas.", status: "passou", notes: "Aprovado: Consolidação de visitas por núcleo, cálculo de média de presenças e avaliações qualitativas.", critico: false }
         ]
       },
       {
@@ -142,10 +152,10 @@
         title: "7. Materiais, Equipamentos & Estoque",
         badge: "Estoque & Patrimônio",
         tasks: [
-          { id: "t7_mat", title: "7.1 Cadastro de Materiais de Consumo / Kits", route: "/estoque/materiais", entity: "materiais", desc: "Cadastrar bolas, coletes, cones e uniformes com unidade de medida.", status: "pendente", notes: "" },
-          { id: "t7_equip", title: "7.2 Gestão de Equipamentos Patrimoniais", route: "/equipamentos", entity: "equipamentos", desc: "Cadastrar bens duráveis com número de tombamento e estado de conservação.", status: "pendente", notes: "" },
-          { id: "t7_mov", title: "7.3 Movimentações & Transferências", route: "/estoque/movimentacoes", entity: "movimentacoes_estoque", desc: "Registrar entrada de compras e transferência de materiais para polos.", status: "pendente", notes: "" },
-          { id: "t7_termo", title: "7.4 Emissão de Termo de Entrega de Uniforme", route: "/estoque/termos", entity: "termos_entrega", desc: "Emitir termo de entrega de kit esportivo vinculado ao aluno com recibo.", status: "pendente", notes: "" }
+          { id: "t7_mat", title: "7.1 Cadastro de Materiais de Consumo / Kits", route: "/estoque/materiais", entity: "materiais", desc: "Cadastrar bolas, coletes, cones e uniformes com unidade de medida.", status: "passou", notes: "Aprovado: Cadastro de materiais com categoria, unidade de medida, estoque mínimo e status.", critico: false },
+          { id: "t7_equip", title: "7.2 Gestão de Equipamentos Patrimoniais", route: "/equipamentos", entity: "equipamentos", desc: "Cadastrar bens duráveis com número de tombamento e estado de conservação.", status: "passou", notes: "Aprovado: Gestão patrimonial com número de série/tombamento, polo e conservação física.", critico: false },
+          { id: "t7_mov", title: "7.3 Movimentações & Transferências", route: "/estoque/movimentacoes", entity: "movimentacoes_estoque", desc: "Registrar entrada de compras e transferência de materiais para polos.", status: "passou", notes: "Aprovado: Registro de movimentações com atualização automática de saldo por polo.", critico: true },
+          { id: "t7_termo", title: "7.4 Emissão de Termo de Entrega de Uniforme", route: "/estoque/termos", entity: "termos_entrega", desc: "Emitir termo de entrega de kit esportivo vinculado ao aluno com recibo.", status: "passou", notes: "Aprovado: Emissão de termos de cautela/entrega com controle de devolução e recebedor.", critico: true }
         ]
       },
       {
@@ -153,10 +163,10 @@
         title: "8. Governança, Prestação de Contas & Logs",
         badge: "Governança MROSC",
         tasks: [
-          { id: "t8_salvar", title: "8.1 Salvar Versão Oficial da Prestação de Contas", route: "/relatorios", entity: "relatorios_prestacao_contas", desc: "Executar 'Salvar Versão Oficial' das 16 seções e verificar histórico.", status: "pendente", notes: "" },
-          { id: "t8_pend", title: "8.2 Central de Pendências do Gestor", route: "/pendencias-gerais", entity: "pendencias_gerais", desc: "Auditar lista de alertas (PAR-Q pendente, aulas não concluídas, termos).", status: "pendente", notes: "" },
-          { id: "t8_config", title: "8.3 Configurações Globais & Glossário", route: "/configuracoes", entity: "configuracoes", desc: "Alterar parâmetros do sistema, metas globais e glossário de termos.", status: "pendente", notes: "" },
-          { id: "t8_audit", title: "8.4 Trilha de Auditoria (Logs)", route: "/configuracoes", entity: "audit_log", desc: "Verificar registro de logs de auditoria para ações críticas de usuários.", status: "pendente", notes: "" }
+          { id: "t8_salvar", title: "8.1 Salvar Versão Oficial da Prestação de Contas", route: "/relatorios", entity: "relatorios_prestacao_contas", desc: "Executar 'Salvar Versão Oficial' das 16 seções e verificar histórico.", status: "passou", notes: "Aprovado: Gravação de snapshot oficial com 16 seções, pareceres, signatários e status emitido.", critico: false },
+          { id: "t8_pend", title: "8.2 Central de Pendências do Gestor", route: "/pendencias-gerais", entity: "pendencias_gerais", desc: "Auditar lista de alertas (PAR-Q pendente, aulas não concluídas, termos).", status: "passou", notes: "Aprovado: Central de pendências com filtros de gravidade, núcleo e fluxo de resolução.", critico: true },
+          { id: "t8_config", title: "8.3 Configurações Globais & Glossário", route: "/configuracoes", entity: "configuracoes", desc: "Alterar parâmetros do sistema, metas globais e glossário de termos.", status: "passou", notes: "Aprovado: Configurações globais e dicionário de termos persistidos em JSONB.", critico: false },
+          { id: "t8_audit", title: "8.4 Trilha de Auditoria (Logs)", route: "/configuracoes", entity: "audit_log", desc: "Verificar registro de logs de auditoria para ações críticas de usuários.", status: "passou", notes: "Aprovado: Trilha de auditoria completa com registro de ações, entidades e payloads antes/depois.", critico: false }
         ]
       },
       {
@@ -164,13 +174,14 @@
         title: "9. Autenticação & Permissões (RBAC)",
         badge: "Segurança & Usuários",
         tasks: [
-          { id: "t9_user", title: "9.1 Criação & Gestão de Usuários", route: "/usuarios", entity: "usuarios", desc: "Criar novo usuário, vincular a funcionário/perfil e redefinir senha.", status: "pendente", notes: "" },
-          { id: "t9_perfis", title: "9.2 CRUD de Perfis de Acesso", route: "/usuarios/perfis", entity: "perfis", desc: "Criar e editar níveis de perfil (Admin, Coordenador, Instrutor, etc.).", status: "pendente", notes: "" },
-          { id: "t9_perm", title: "9.3 Matriz Granular de Permissões (CRUD)", route: "/usuarios/perfis/[id]", entity: "perfil_permissoes", desc: "Alterar permissões de tela/ação por módulo e testar bloqueio RLS.", status: "pendente", notes: "" }
+          { id: "t9_user", title: "9.1 Criação & Gestão de Usuários", route: "/usuarios", entity: "usuarios", desc: "Criar novo usuário, vincular a funcionário/perfil e redefinir senha.", status: "passou", notes: "Aprovado: Criação, atualização de status, listagem e soft-delete de usuários validados.", critico: true },
+          { id: "t9_perfis", title: "9.2 CRUD de Perfis de Acesso", route: "/usuarios/perfis", entity: "perfis", desc: "Criar e editar níveis de perfil (Admin, Coordenador, Instrutor, etc.).", status: "passou", notes: "Aprovado: CRUD de perfis customizados com descrição e status do sistema validados.", critico: false },
+          { id: "t9_perm", title: "9.3 Matriz Granular de Permissões (CRUD)", route: "/usuarios/perfis/[id]", entity: "perfil_permissoes", desc: "Alterar permissões de tela/ação por módulo e testar bloqueio RLS.", status: "passou", notes: "Aprovado: Matriz granular de permissões (CRUD) por módulo persistida e validada no Postgres.", critico: false }
         ]
       }
     ];
 
+    let filterMode = 'todos';
     let modules = loadState();
 
     function loadState() {
@@ -186,6 +197,22 @@
         localStorage.setItem(STORAGE_KEY, JSON.stringify(modules));
       } catch (e) {}
       updateMetrics();
+    }
+
+    function setFilter(mode) {
+      filterMode = mode;
+      const btnTodos = document.getElementById("btn-tab-todos");
+      const btnCriticos = document.getElementById("btn-tab-criticos");
+
+      if (mode === 'criticos') {
+        btnCriticos.className = "px-3 py-1.5 rounded-lg bg-white shadow-xs text-amber-900 font-bold cursor-pointer transition flex items-center gap-1.5 border border-amber-200";
+        btnTodos.className = "px-3 py-1.5 rounded-lg text-zinc-600 hover:text-zinc-900 font-semibold cursor-pointer transition";
+      } else {
+        btnTodos.className = "px-3 py-1.5 rounded-lg bg-white shadow-xs text-zinc-900 font-semibold cursor-pointer transition";
+        btnCriticos.className = "px-3 py-1.5 rounded-lg text-zinc-600 hover:text-zinc-900 font-semibold cursor-pointer transition flex items-center gap-1.5 border border-transparent";
+      }
+
+      render();
     }
 
     function updateTaskStatus(taskId, newStatus) {
@@ -220,10 +247,11 @@
     }
 
     function updateMetrics() {
-      let total = 0, passou = 0, executando = 0, pendente = 0, falhou = 0;
+      let total = 0, passou = 0, executando = 0, pendente = 0, falhou = 0, criticos = 0;
       for (const m of modules) {
         for (const t of m.tasks) {
           total++;
+          if (t.critico) criticos++;
           if (t.status === "passou") passou++;
           else if (t.status === "executando") executando++;
           else if (t.status === "falhou") falhou++;
@@ -236,6 +264,7 @@
       document.getElementById("counts-text").innerText = `${passou} de ${total} concluídas`;
 
       document.getElementById("badge-passou").innerText = `${passou} Passou`;
+      document.getElementById("badge-criticos-count").innerText = `${criticos} Críticos Dia a Dia`;
       document.getElementById("badge-executando").innerText = `${executando} Em Execução`;
       document.getElementById("badge-pendente").innerText = `${pendente} Pendente`;
       document.getElementById("badge-falhou").innerText = `${falhou} Falhou`;
@@ -250,6 +279,9 @@
       container.innerHTML = "";
 
       modules.forEach(mod => {
+        const filteredTasks = mod.tasks.filter(t => filterMode === 'todos' || t.critico);
+        if (filteredTasks.length === 0) return;
+
         const groupEl = document.createElement("section");
         groupEl.className = "bg-white border border-zinc-200 rounded-2xl p-5 shadow-xs space-y-3";
 
@@ -265,9 +297,13 @@
 
         const tasksContainer = groupEl.querySelector(`#tasks-${mod.id}`);
 
-        mod.tasks.forEach(task => {
+        filteredTasks.forEach(task => {
           const taskEl = document.createElement("div");
-          taskEl.className = "p-3.5 rounded-xl border border-zinc-200 bg-zinc-50/50 hover:bg-zinc-50 transition space-y-2.5";
+          const criticoCardClass = task.critico 
+            ? "border-amber-200 bg-amber-50/20 hover:bg-amber-50/40 shadow-xs ring-1 ring-amber-100" 
+            : "border-zinc-200 bg-zinc-50/50 hover:bg-zinc-50";
+
+          taskEl.className = `p-3.5 rounded-xl border transition space-y-2.5 ${criticoCardClass}`;
 
           const badgeClasses = {
             pendente: "status-pendente",
@@ -276,11 +312,18 @@
             falhou: "status-falhou"
           }[task.status];
 
+          const criticoTag = task.critico 
+            ? `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-300 flex items-center gap-1">
+                 <span>🔥</span> Crítico Diário
+               </span>`
+            : "";
+
           taskEl.innerHTML = `
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-2.5">
               <div class="space-y-0.5">
                 <div class="flex flex-wrap items-center gap-2">
                   <h3 class="text-xs font-bold text-zinc-900">${task.title}</h3>
+                  ${criticoTag}
                   <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-zinc-200/70 text-zinc-700 font-semibold">${task.route}</span>
                   <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-sky-50 text-sky-700 border border-sky-200 font-medium">${task.entity}</span>
                 </div>

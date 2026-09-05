@@ -1589,6 +1589,17 @@ export const inscricoesApi = {
     if (error) throw error;
     return mapInscricao(data);
   },
+  async inscreverPublico(dadosBeneficiario: Record<string, unknown>, turmaId: string, observacoes?: string, respostas?: unknown): Promise<{ id: string; status: StatusInscricao; matricula: string; beneficiarioId: string; turmaId: string }> {
+    const sb = createClient();
+    const { data, error } = await sb.rpc('inscrever_beneficiario_publico' as any, {
+      p_dados_beneficiario: dadosBeneficiario as never,
+      p_turma_id: turmaId,
+      p_observacoes: observacoes,
+      p_respostas: respostas as never,
+    });
+    if (error) throw error;
+    return data as any;
+  },
   async aprovar(id: string): Promise<InscricaoApi> {
     const sb = createClient();
     const { data, error } = await sb.rpc('aprovar_inscricao', { p_id: id });
