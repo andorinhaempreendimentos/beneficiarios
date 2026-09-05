@@ -109,6 +109,7 @@ export default function PontoPublicoPage() {
   const [erro, setErro] = useState("");
   const [funcionario, setFuncionario] = useState<FuncionarioApi | null>(null);
   const [tipoBatida, setTipoBatida] = useState<"entrada" | "saida">("entrada");
+  const [horaEntradaAnterior, setHoraEntradaAnterior] = useState<string | null>(null);
   const [horaBatida, setHoraBatida] = useState("");
   const [atividadeConfirmada, setAtividadeConfirmada] = useState(false);
   const [salvando, setSalvando] = useState(false);
@@ -127,7 +128,16 @@ export default function PontoPublicoPage() {
         return;
       }
       setFuncionario(f);
-      setTipoBatida("entrada");
+
+      // Consultar status de hoje
+      const statusHoje = await professoresApi.obterStatusPontoHoje(f.id);
+      if (statusHoje.proximaAcao === "concluido") {
+        setErro(`Jornada de hoje já finalizada (Entrada: ${statusHoje.horaEntrada || "—"} | Saída: ${statusHoje.horaSaida || "—"}).`);
+        return;
+      }
+
+      setHoraEntradaAnterior(statusHoje.horaEntrada);
+      setTipoBatida(statusHoje.proximaAcao === "saida" ? "saida" : "entrada");
       setHoraBatida(horaAgora());
       setEtapa("confirmar");
     } catch {
@@ -151,7 +161,7 @@ export default function PontoPublicoPage() {
         setEtapa("sucesso");
       }
     } catch (err: any) {
-      alert("Erro ao registrar ponto: " + (err?.message || "Tente novamente"));
+      alert(err?.message || "Erro ao registrar ponto.");
     } finally {
       setSalvando(false);
     }
@@ -249,6 +259,11 @@ export default function PontoPublicoPage() {
             <p className={`font-semibold text-lg ${tipoBatida === "entrada" ? "text-green-700" : "text-amber-700"}`}>
               {tipoBatida === "entrada" ? "Entrada" : "Saída"}
             </p>
+            {tipoBatida === "saida" && horaEntradaAnterior && (
+              <span className="rounded-md bg-amber-100/80 px-2 py-0.5 text-xs font-medium text-amber-800">
+                Entrada registrada às {horaEntradaAnterior}
+              </span>
+            )}
             <p className="font-mono text-3xl font-bold text-zinc-800 tabular-nums">{horaBatida}</p>
             <p className="text-xs text-zinc-500">{new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "long" })}</p>
           </div>

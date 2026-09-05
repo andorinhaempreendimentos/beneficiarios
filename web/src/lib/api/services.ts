@@ -2258,6 +2258,40 @@ export const areaProfessorApi = {
     return data ?? [];
   },
 
+  async obterStatusPontoHoje(funcionarioId: string, data?: string): Promise<{
+    horaEntrada: string | null;
+    horaSaida: string | null;
+    proximaAcao: 'entrada' | 'saida' | 'concluido';
+  }> {
+    const sb = createClient();
+    const dataHoje = data || getDataHojeBrasil();
+    const { data: res, error } = await (sb.rpc as any)('obter_status_ponto_hoje', {
+      p_funcionario_id: funcionarioId,
+      p_data: dataHoje,
+    });
+
+    if (error || !res) {
+      // Fallback em caso de erro no RPC
+      const { data: pontos } = await (sb.from('registros_ponto') as any)
+        .select('hora, tipo')
+        .eq('funcionario_id', funcionarioId)
+        .eq('data', dataHoje);
+      const entrada = (pontos || []).find((p: any) => p.tipo === 'entrada');
+      const saida = (pontos || []).find((p: any) => p.tipo === 'saida');
+      return {
+        horaEntrada: entrada?.hora ? String(entrada.hora).slice(0, 5) : null,
+        horaSaida: saida?.hora ? String(saida.hora).slice(0, 5) : null,
+        proximaAcao: !entrada ? 'entrada' : !saida ? 'saida' : 'concluido',
+      };
+    }
+
+    return {
+      horaEntrada: res.hora_entrada || null,
+      horaSaida: res.hora_saida || null,
+      proximaAcao: res.proxima_acao || 'entrada',
+    };
+  },
+
   async salvarBatidaPonto(payload: { funcionarioId: string; tipo: 'entrada' | 'saida'; data?: string; hora?: string; observacao?: string }) {
     const sb = createClient();
     const dataHoje = payload.data || getDataHojeBrasil();
@@ -2276,6 +2310,10 @@ export const areaProfessorApi = {
       return rpcData || true;
     }
 
+    if (rpcError?.message && !rpcError.message.includes('function') && !rpcError.message.includes('schema')) {
+      throw new Error(rpcError.message);
+    }
+
     // Fallback para insercao direta se RPC nao existir
     const { data, error } = await (sb.from('registros_ponto') as any).insert({
       funcionario_id: payload.funcionarioId,
@@ -2286,7 +2324,7 @@ export const areaProfessorApi = {
       observacao: payload.observacao || null,
     }).select().single();
 
-    if (error && !error.message?.includes('duplicate key')) throw error;
+    if (error) throw error;
     return data || true;
   },
 
