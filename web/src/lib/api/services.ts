@@ -2263,6 +2263,20 @@ export const areaProfessorApi = {
     const dataHoje = payload.data || getDataHojeBrasil();
     const horaAtual = payload.hora || `${getHoraAgoraBrasil()}:00`;
     
+    // Tentar via RPC seguro (compativel com Kiosk publico deslogado)
+    const { data: rpcData, error: rpcError } = await (sb.rpc as any)('registrar_ponto_publico', {
+      p_funcionario_id: payload.funcionarioId,
+      p_tipo: payload.tipo,
+      p_data: dataHoje,
+      p_hora: horaAtual,
+      p_observacao: payload.observacao || null,
+    });
+
+    if (!rpcError) {
+      return rpcData || true;
+    }
+
+    // Fallback para insercao direta se RPC nao existir
     const { data, error } = await (sb.from('registros_ponto') as any).insert({
       funcionario_id: payload.funcionarioId,
       data: dataHoje,
