@@ -1283,8 +1283,10 @@ function mapFuncao(r: any): FuncaoApi {
   };
 }
 
-// UUID do perfil Professor / Instrutor para sinalizador is_professor
-const PERFIL_PROFESSOR = 'b9def33a-a2a0-477d-8580-ec213d642808';
+// UUIDs do perfil e função de Professor / Instrutor para sinalizadores e regras de sistema
+export const PERFIL_PROFESSOR_ID = 'b9def33a-a2a0-477d-8580-ec213d642808';
+export const FUNCAO_PROFESSOR_ID = '08532962-35c8-470b-aa7b-9ed41b8dcc38';
+const PERFIL_PROFESSOR = PERFIL_PROFESSOR_ID;
 
 export const funcoesApi = {
   async list(): Promise<FuncaoApi[]> {

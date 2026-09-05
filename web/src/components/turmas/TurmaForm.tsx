@@ -7,6 +7,7 @@ import { GradeSemanal } from "./GradeSemanal";
 import {
   turmasApi,
   funcionariosApi,
+  FUNCAO_PROFESSOR_ID,
   type TurmaApi,
   type NucleoApi,
   type AtividadeApi,
@@ -71,10 +72,7 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
   const professoresDisponiveis = listaFuncionarios.filter((f) => {
     const isProf =
       f.professorResponsavel ||
-      f.funcao?.toLowerCase().includes("profess") ||
-      f.funcao?.toLowerCase().includes("instrut") ||
-      f.funcao?.toLowerCase().includes("treinad") ||
-      !f.funcao;
+      f.funcaoId === FUNCAO_PROFESSOR_ID;
 
     if (!isProf) return false;
     return !idsResponsaveisEmOutrasTurmas.has(f.id);

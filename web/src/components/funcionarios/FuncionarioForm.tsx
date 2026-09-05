@@ -32,6 +32,8 @@ import { statusFuncionarioLabel } from "@/lib/status";
 import {
   funcionariosApi,
   turmasApi,
+  PERFIL_PROFESSOR_ID,
+  FUNCAO_PROFESSOR_ID,
   type FuncionarioApi,
   type NucleoApi,
   type FuncaoApi,
@@ -117,25 +119,18 @@ export function FuncionarioForm({
 
   const exigeConselho = funcaoObj ? Boolean(funcaoObj.exigeConselho) : false;
 
+  // Validação estrita por ID do perfil e da função
+  const isProfessorCargo = Boolean(
+    funcaoObj?.perfilId === PERFIL_PROFESSOR_ID ||
+      funcaoObj?.id === FUNCAO_PROFESSOR_ID
+  );
+
   const [professorResponsavel, setProfessorResponsavel] = useState<boolean>(() => {
     if (f?.professorResponsavel !== undefined) return f.professorResponsavel;
-    if (funcaoObj) {
-      const nomeLower = (funcaoObj.nome || "").toLowerCase();
-      return (
-        nomeLower.includes("profess") ||
-        nomeLower.includes("instrut") ||
-        nomeLower.includes("turma")
-      );
-    }
-    return false;
+    return isProfessorCargo;
   });
 
-  const isProfessor = Boolean(
-    professorResponsavel ||
-      funcaoNome.toLowerCase().includes("profess") ||
-      funcaoNome.toLowerCase().includes("instrut") ||
-      funcaoNome.toLowerCase().includes("turma")
-  );
+  const isProfessor = Boolean(professorResponsavel || isProfessorCargo);
 
   // Lista de Turmas vinculadas (para Professor)
   const [todasTurmas, setTodasTurmas] = useState<TurmaApi[]>([]);
@@ -162,20 +157,14 @@ export function FuncionarioForm({
     return total;
   }, [turmasDoProfessor]);
 
-  // Handler para troca de cargo com auto-toggle de professor
+  // Handler para troca de cargo com auto-toggle de professor estrito por ID
   function handleFuncaoChange(newId: string) {
     setFuncaoId(newId);
     const obj = funcoes.find((fn) => fn.id === newId);
-    if (obj) {
-      const nomeLower = (obj.nome || "").toLowerCase();
-      if (
-        nomeLower.includes("profess") ||
-        nomeLower.includes("instrut") ||
-        nomeLower.includes("turma")
-      ) {
-        setProfessorResponsavel(true);
-      }
-    }
+    const ehProf =
+      obj?.perfilId === PERFIL_PROFESSOR_ID ||
+      obj?.id === FUNCAO_PROFESSOR_ID;
+    setProfessorResponsavel(Boolean(ehProf));
   }
 
   // 3. Credenciais de Acesso ao Painel
@@ -488,9 +477,7 @@ export function FuncionarioForm({
                 </div>
               )}
 
-              {(funcaoNome.toLowerCase().includes("profess") ||
-                funcaoNome.toLowerCase().includes("instrut") ||
-                funcaoNome.toLowerCase().includes("turma")) && (
+              {isProfessorCargo && (
                 <div className="mt-4 pt-4 border-t border-zinc-100">
                   <Switch
                     checked={professorResponsavel}
