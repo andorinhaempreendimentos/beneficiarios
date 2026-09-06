@@ -72,7 +72,7 @@ export default function DetalheCoordenadorPage() {
     <div className="flex flex-col gap-6 pb-12">
       <PageHeader
         title={coord.nomeCompleto}
-        description="Coordenador de Núcleo"
+        description={coord.funcao || "Coordenador de Núcleo"}
         actions={<LinkButton href="/coordenadores" variant="secondary">Voltar</LinkButton>}
       />
 

@@ -27,7 +27,19 @@ function paginar(page?: number, limit?: number) {
   return { page: p, limit: l, from, to };
 }
 
-const PERFIL_COORDENADOR = '1bea5f77-95ef-4969-bf87-4cd4647f6c0a';
+export const PERFIL_COORDENADOR_NUCLEO_ID = '1bea5f77-95ef-4969-bf87-4cd4647f6c0a';
+export const PERFIL_COORDENADOR_INSTRUTORES_ID = '7f9706e8-d9f9-4953-9e1f-e0f7e87b25e3';
+export const PERFIL_COORDENADOR_TURMA_ID = '698c2c08-3606-4276-b554-17b576d5d12b';
+
+export const FUNCAO_COORDENADOR_NUCLEO_ID = '6c532ade-7428-4496-bb5a-efe3fc2d1f13';
+export const FUNCAO_COORDENADOR_INSTRUTORES_ID = '184562ab-d36f-45f3-9e0d-34265166c8fe';
+export const FUNCAO_COORDENADOR_TURMA_ID = '4f8310f4-6884-4df0-8ebf-c09aaaab49d7';
+
+const COORDENADORES_FUNCOES_IDS = [
+  FUNCAO_COORDENADOR_NUCLEO_ID,
+  FUNCAO_COORDENADOR_INSTRUTORES_ID,
+  FUNCAO_COORDENADOR_TURMA_ID,
+];
 
 export interface CoordenadorApi {
   id: string;
@@ -36,6 +48,7 @@ export interface CoordenadorApi {
   status: string;
   celular?: string;
   fotoUrl?: string;
+  funcao?: string;
   nucleos: NucleoApi[];
 }
 
@@ -77,6 +90,7 @@ function mapCoordenador(r: any): CoordenadorApi {
     status: r.status,
     celular: r.celular,
     fotoUrl: r.foto_url,
+    funcao: r.funcoes?.nome || r.funcao || 'Coordenador',
     nucleos: (r.coordenador_nucleos ?? [])
       .filter((cn: any) => cn.ativo && cn.nucleo)
       .map((cn: any) => mapNucleo(cn.nucleo)),
@@ -99,30 +113,22 @@ export const coordenadoresApi = {
   async list(p?: { page?: number; limit?: number }): Promise<Paginated<CoordenadorApi>> {
     const supabase = await getSupabase();
     const { page, limit, from, to } = paginar(p?.page, p?.limit);
-    const { data: usuarios, error: uErr, count } = await db(supabase)
-      .from('usuarios')
-      .select('entidade_id', { count: 'exact' })
-      .eq('perfil_id', PERFIL_COORDENADOR)
-      .is('deleted_at', null)
-      .not('entidade_id', 'is', null)
-      .range(from, to);
-    if (uErr) throw uErr;
-    if (!usuarios || usuarios.length === 0) {
-      return { data: [], total: count ?? 0, page, limit };
-    }
-    const ids = usuarios.map((u: any) => u.entidade_id);
-    const { data: funcs, error: fErr } = await db(supabase)
+    const { data: funcs, count, error } = await db(supabase)
       .from('funcionarios')
       .select(`
-        id, nome_completo, email, status, celular, foto_url,
+        id, nome_completo, email, status, celular, foto_url, funcao, funcao_id,
+        funcoes:funcao_id(id, nome, perfil_id, tipo_alocacao),
         coordenador_nucleos(
           nucleo_id, ativo,
           nucleo:nucleos(id, identificacao, nome_local, cidade, estado)
         )
-      `)
-      .in('id', ids)
-      .is('deleted_at', null);
-    if (fErr) throw fErr;
+      `, { count: 'exact' })
+      .in('funcao_id', COORDENADORES_FUNCOES_IDS)
+      .is('deleted_at', null)
+      .order('nome_completo', { ascending: true })
+      .range(from, to);
+
+    if (error) throw error;
     return { data: (funcs ?? []).map(mapCoordenador), total: count ?? 0, page, limit };
   },
 
@@ -131,7 +137,8 @@ export const coordenadoresApi = {
     const { data, error } = await db(supabase)
       .from('funcionarios')
       .select(`
-        id, nome_completo, email, status, celular, foto_url,
+        id, nome_completo, email, status, celular, foto_url, funcao, funcao_id,
+        funcoes:funcao_id(id, nome, perfil_id, tipo_alocacao),
         coordenador_nucleos(
           nucleo_id, ativo, created_at,
           nucleo:nucleos(id, identificacao, nome_local, endereco, numero, bairro, cidade, estado, cep, em_funcionamento, organizacao_id)

@@ -50,6 +50,7 @@ export default function CoordenadoresPage() {
                     )}
                     <div className="min-w-0">
                       <p className="font-semibold text-zinc-800 truncate">{coord.nomeCompleto}</p>
+                      <p className="text-xs text-sky-700 font-medium truncate">{coord.funcao || "Coordenador"}</p>
                       {coord.email && (
                         <p className="text-xs text-zinc-400 truncate">{coord.email}</p>
                       )}
