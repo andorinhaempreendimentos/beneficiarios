@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import Link from "next/link";
 import { Camera, CheckCircle2, Clock, LogIn, LogOut, RotateCcw, User, X } from "lucide-react";
 import { funcionariosApi, professoresApi, type FuncionarioApi } from "@/lib/api/services";
 import type { RegistroPonto } from "@/lib/types";
@@ -232,6 +233,16 @@ export default function PontoPublicoPage() {
             >
               Continuar
             </button>
+
+            <div className="pt-2 text-center border-t border-zinc-100 mt-2">
+              <Link
+                href="/login"
+                className="inline-flex items-center justify-center gap-2 w-full rounded-xl border border-zinc-200 bg-white py-2.5 text-xs font-medium text-zinc-600 hover:bg-zinc-50 hover:text-blue-600 transition-colors"
+              >
+                <LogIn className="h-3.5 w-3.5 text-zinc-400" />
+                Sou Professor / Fazer Login
+              </Link>
+            </div>
           </div>
         </div>
       )}
