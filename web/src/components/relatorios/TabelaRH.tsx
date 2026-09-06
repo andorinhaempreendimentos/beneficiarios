@@ -6,9 +6,11 @@ import {
   funcionariosApi,
   nucleosApi,
   funcoesApi,
+  turmasApi,
   type FuncionarioApi,
   type NucleoApi,
   type FuncaoApi,
+  type TurmaApi,
 } from "@/lib/api/services";
 import { createClient } from "@/lib/supabase/client";
 import { useQuery } from "@/lib/hooks/useQuery";
@@ -21,18 +23,41 @@ import {
   Briefcase,
   Search,
   FileSpreadsheet,
-  CheckCircle2,
+  Building2,
   Calendar,
-  AlertCircle,
 } from "lucide-react";
 
 interface Props {
   filtros: FiltrosState;
 }
 
-const STATUS_TONE: Record<string, "green" | "zinc" | "red" | "amber"> = {
+// UUIDs estritos de cargos e perfis
+export const PERFIL_PROFESSOR_ID = "b9def33a-a2a0-477d-8580-ec213d642808";
+export const FUNCAO_PROFESSOR_ID = "08532962-35c8-470b-aa7b-9ed41b8dcc38";
+
+export const PERFIL_COORDENADOR_NUCLEO_ID = "1bea5f77-95ef-4969-bf87-4cd4647f6c0a";
+export const PERFIL_COORDENADOR_INSTRUTORES_ID = "7f9706e8-d9f9-4953-9e1f-e0f7e87b25e3";
+export const PERFIL_COORDENADOR_TURMA_ID = "698c2c08-3606-4276-b554-17b576d5d12b";
+
+export const FUNCAO_COORDENADOR_NUCLEO_ID = "6c532ade-7428-4496-bb5a-efe3fc2d1f13";
+export const FUNCAO_COORDENADOR_INSTRUTORES_ID = "184562ab-d36f-45f3-9e0d-34265166c8fe";
+export const FUNCAO_COORDENADOR_TURMA_ID = "4f8310f4-6884-4df0-8ebf-c09aaaab49d7";
+
+const COORDENADORES_FUNCOES_IDS = [
+  FUNCAO_COORDENADOR_NUCLEO_ID,
+  FUNCAO_COORDENADOR_INSTRUTORES_ID,
+  FUNCAO_COORDENADOR_TURMA_ID,
+];
+
+const COORDENADORES_PERFIS_IDS = [
+  PERFIL_COORDENADOR_NUCLEO_ID,
+  PERFIL_COORDENADOR_INSTRUTORES_ID,
+  PERFIL_COORDENADOR_TURMA_ID,
+];
+
+const STATUS_TONE: Record<string, "green" | "sky" | "red" | "amber" | "zinc"> = {
   contratado: "green",
-  voluntario: "sky" as "green",
+  voluntario: "sky",
   demitido: "red",
   pendente: "amber",
   licenca_medica: "zinc",
@@ -53,15 +78,18 @@ const STATUS_LABEL: Record<string, string> = {
 type CategoriaFuncao = "professor" | "coordenador" | "social_tecnico" | "operacional";
 
 function classificarCategoria(f: FuncionarioApi, funcaoObj?: FuncaoApi): CategoriaFuncao {
-  const nomeFuncao = (funcaoObj?.nome || f.funcao || "").toLowerCase();
+  const isProf =
+    f.funcaoId === FUNCAO_PROFESSOR_ID ||
+    funcaoObj?.perfilId === PERFIL_PROFESSOR_ID ||
+    f.professorResponsavel;
+  if (isProf) return "professor";
 
-  if (f.professorResponsavel || nomeFuncao.includes("professor") || nomeFuncao.includes("instrutor") || nomeFuncao.includes("educador") || nomeFuncao.includes("técnico esportivo") || nomeFuncao.includes("treinador")) {
-    return "professor";
-  }
-  if (nomeFuncao.includes("coordenad") || nomeFuncao.includes("diretor") || nomeFuncao.includes("gestor")) {
-    return "coordenador";
-  }
-  if (nomeFuncao.includes("social") || nomeFuncao.includes("psicól") || nomeFuncao.includes("nutri") || nomeFuncao.includes("fisioter") || nomeFuncao.includes("pedagog")) {
+  const isCoord =
+    COORDENADORES_FUNCOES_IDS.includes(f.funcaoId || "") ||
+    COORDENADORES_PERFIS_IDS.includes(funcaoObj?.perfilId || "");
+  if (isCoord) return "coordenador";
+
+  if (funcaoObj?.exigeConselho) {
     return "social_tecnico";
   }
   return "operacional";
@@ -70,8 +98,8 @@ function classificarCategoria(f: FuncionarioApi, funcaoObj?: FuncaoApi): Categor
 const CATEGORIA_LABEL: Record<CategoriaFuncao, string> = {
   professor: "Professor / Instrutor",
   coordenador: "Coordenação",
-  social_tecnico: "Apoio Técnico / Social",
-  operacional: "Apoio Operacional",
+  social_tecnico: "Apoio Técnico / Saúde",
+  operacional: "Apoio Geral / Staff",
 };
 
 const CATEGORIA_TONE: Record<CategoriaFuncao, "sky" | "green" | "amber" | "zinc"> = {
@@ -82,38 +110,63 @@ const CATEGORIA_TONE: Record<CategoriaFuncao, "sky" | "green" | "amber" | "zinc"
 };
 
 export function TabelaRH({ filtros }: Props) {
-  // ── 1. CARREGAR FUNCIONÁRIOS, NÚCLEOS E FUNÇÕES ──────────────────────────
+  // ── 1. CARREGAR FUNCIONÁRIOS, NÚCLEOS, FUNÇÕES E TURMAS ───────────────────
   const { data: funcRes, loading: loadingFunc } = useQuery(
-    () => funcionariosApi.list({ limit: 300 }),
+    () => funcionariosApi.list({ limit: 500 }),
     []
   );
   const { data: nucRes } = useQuery(() => nucleosApi.list({ limit: 100 }), []);
   const { data: funcObjRes } = useQuery(() => funcoesApi.list(), []);
+  const { data: turmasRes } = useQuery(() => turmasApi.list({ limit: 500 }), []);
 
   const funcionarios = funcRes?.data ?? [];
   const nucleos = nucRes?.data ?? [];
   const funcoes = funcObjRes ?? [];
+  const turmas = turmasRes?.data ?? [];
 
-  // Estados locais para dados dinâmicos do período
+  // Estados para jornadas CLT e métricas dinâmicas do período
+  const [jornadasCltMap, setJornadasCltMap] = useState<Record<string, { minutosSemanais: number; diasCount: number }>>({});
   const [aulasPorProfessor, setAulasPorProfessor] = useState<Record<string, number>>({});
   const [supervisoesPorCoordenador, setSupervisoesPorCoordenador] = useState<Record<string, number>>({});
   const [pontoResumo, setPontoResumo] = useState<Record<string, { diasTrabalhados: number; minutosTotais: number }>>({});
   const [loadingPeriodo, setLoadingPeriodo] = useState<boolean>(true);
 
-  // Filtros locais e visão
+  // Filtros locais e modo de visão
   const [modoVisao, setModoVisao] = useState<"quadro" | "produtividade">("quadro");
   const [categoriaFiltro, setCategoriaFiltro] = useState<string>("");
   const [busca, setBusca] = useState<string>("");
 
-  // ── 2. CARREGAR PONTO, AULAS E SUPERVISÕES DO PERÍODO DO BANCO ──────────
+  // ── 2. CARREGAR JORNADAS CLT E DADOS OPERACIONAIS ──────────────────────────
   useEffect(() => {
     let cancelado = false;
     setLoadingPeriodo(true);
     const sb = createClient();
 
-    async function carregarMetricasPeriodo() {
+    async function carregarDadosCompletos() {
       try {
-        // 1. Buscar Aulas ministradas por professor no período
+        // 1. Buscar todas as jornadas CLT ativas
+        const { data: jornadasDb } = await sb
+          .from("funcionario_jornada")
+          .select("funcionario_id, dia_semana, hora_entrada, hora_saida")
+          .eq("ativo", true);
+
+        const mapaJornadas: Record<string, { minutosSemanais: number; diasCount: number }> = {};
+        for (const j of (jornadasDb || []) as any[]) {
+          if (!j.funcionario_id || !j.hora_entrada || !j.hora_saida) continue;
+          if (!mapaJornadas[j.funcionario_id]) {
+            mapaJornadas[j.funcionario_id] = { minutosSemanais: 0, diasCount: 0 };
+          }
+          const [hE, mE] = j.hora_entrada.slice(0, 5).split(":").map(Number);
+          const [hS, mS] = j.hora_saida.slice(0, 5).split(":").map(Number);
+          let spanMin = (hS * 60 + mS) - (hE * 60 + mE);
+          if (spanMin > 360) spanMin -= 60; // Desconto de 1h de almoço para jornadas CLT > 6h
+          if (spanMin > 0) {
+            mapaJornadas[j.funcionario_id].minutosSemanais += spanMin;
+            mapaJornadas[j.funcionario_id].diasCount += 1;
+          }
+        }
+
+        // 2. Buscar Aulas ministradas por professor no período
         let qAulas = sb.from("execucoes_aula").select("id, professor_id, data");
         if (filtros.dataInicio) qAulas = qAulas.gte("data", filtros.dataInicio);
         if (filtros.dataFim) qAulas = qAulas.lte("data", filtros.dataFim);
@@ -126,7 +179,7 @@ export function TabelaRH({ filtros }: Props) {
           }
         }
 
-        // 2. Buscar Supervisões realizadas por coordenador no período
+        // 3. Buscar Supervisões realizadas por coordenador no período
         let qSup = sb.from("supervisoes").select("id, coordenador_id, data");
         if (filtros.dataInicio) qSup = qSup.gte("data", filtros.dataInicio);
         if (filtros.dataFim) qSup = qSup.lte("data", filtros.dataFim);
@@ -139,7 +192,7 @@ export function TabelaRH({ filtros }: Props) {
           }
         }
 
-        // 3. Buscar Registros de Ponto no período
+        // 4. Buscar Registros de Ponto no período
         let qPonto = sb.from("registros_ponto").select("funcionario_id, data, hora, tipo");
         if (filtros.dataInicio) qPonto = qPonto.gte("data", filtros.dataInicio);
         if (filtros.dataFim) qPonto = qPonto.lte("data", filtros.dataFim);
@@ -165,7 +218,8 @@ export function TabelaRH({ filtros }: Props) {
             if (entrada && p.hora) {
               const [hE, mE] = entrada.split(":").map(Number);
               const [hS, mS] = p.hora.split(":").map(Number);
-              const diffMinutos = (hS * 60 + mS) - (hE * 60 + mE);
+              let diffMinutos = (hS * 60 + mS) - (hE * 60 + mE);
+              if (diffMinutos > 360) diffMinutos -= 60; // Desconto de almoço se > 6h
               if (diffMinutos > 0) {
                 mapaPonto[p.funcionario_id].minutosTotais += diffMinutos;
               }
@@ -182,18 +236,19 @@ export function TabelaRH({ filtros }: Props) {
         }
 
         if (!cancelado) {
+          setJornadasCltMap(mapaJornadas);
           setAulasPorProfessor(mapaAulas);
           setSupervisoesPorCoordenador(mapaSup);
           setPontoResumo(mapaPontoFinal);
         }
       } catch (err) {
-        console.error("Erro ao carregar métricas de RH do período:", err);
+        console.error("Erro ao carregar dados operacionais de RH:", err);
       } finally {
         if (!cancelado) setLoadingPeriodo(false);
       }
     }
 
-    carregarMetricasPeriodo();
+    carregarDadosCompletos();
 
     return () => {
       cancelado = true;
@@ -207,40 +262,62 @@ export function TabelaRH({ filtros }: Props) {
         // Filtro por núcleo
         if (filtros.nucleoId && f.nucleoId !== filtros.nucleoId) return false;
 
+        // Filtro por status
+        if (filtros.status && f.status !== filtros.status) return false;
+
         // Filtro por categoria
-        const funcaoObj = funcoes.find((fn) => fn.id === f.funcaoId || fn.nome === f.funcao);
+        const funcaoObj = funcoes.find((fn) => fn.id === f.funcaoId);
         const categoria = classificarCategoria(f, funcaoObj);
         if (categoriaFiltro && categoria !== categoriaFiltro) return false;
 
-        // Busca textual por Nome, CPF ou Conselho
+        // Busca textual por Nome, Matrícula, CPF ou Conselho
         if (busca.trim()) {
           const termo = busca.toLowerCase();
           const nomeOk = f.nomeCompleto.toLowerCase().includes(termo);
+          const matOk = f.matricula?.toLowerCase().includes(termo) || false;
           const cpfOk = f.cpf ? f.cpf.replace(/\D/g, "").includes(termo.replace(/\D/g, "")) : false;
           const conselhoOk = f.registroConselho?.toLowerCase().includes(termo) || false;
-          if (!nomeOk && !cpfOk && !conselhoOk) return false;
+          if (!nomeOk && !matOk && !cpfOk && !conselhoOk) return false;
         }
 
         return true;
       })
       .map((f) => {
         const nucleo = nucleos.find((n) => n.id === f.nucleoId);
-        const funcaoObj = funcoes.find((fn) => fn.id === f.funcaoId || fn.nome === f.funcao);
+        const funcaoObj = funcoes.find((fn) => fn.id === f.funcaoId);
         const categoria = classificarCategoria(f, funcaoObj);
+        const isProfessor = categoria === "professor";
 
-        // Cálculo da carga horária contratual semanal
-        const jornada = f.jornada ?? [];
-        const diasTrabalhadosSemana = jornada.filter((d: any) => d.trabalha).length;
-        const minutosSemanais = jornada
-          .filter((d: any) => d.trabalha && d.entrada && d.saida)
-          .reduce((acc: number, d: any) => {
-            const [hE, mE] = (d.entrada ?? "0:0").split(":").map(Number);
-            const [hS, mS] = (d.saida ?? "0:0").split(":").map(Number);
-            return acc + (hS * 60 + mS - (hE * 60 + mE));
-          }, 0);
+        // Cálculo da carga horária semanal:
+        let horasSemanaisNum = 0;
+        let tipoCarga = "CLT";
+        let cargaHorariaFormatada = "—";
 
-        const horasSemanaisNum = Math.floor(minutosSemanais / 60);
-        const cargaHorariaFormatada = horasSemanaisNum > 0 ? `${horasSemanaisNum}h/sem` : "—";
+        if (isProfessor) {
+          tipoCarga = "Grade";
+          const turmasDoProf = turmas.filter((t) =>
+            (t.responsaveis ?? []).includes(f.id)
+          );
+          let totalHoras = 0;
+          for (const t of turmasDoProf) {
+            for (const s of t.slots || []) {
+              const duracao = (s.fim ?? 0) - (s.inicio ?? 0);
+              if (duracao > 0) totalHoras += duracao;
+            }
+          }
+          horasSemanaisNum = totalHoras;
+          cargaHorariaFormatada =
+            horasSemanaisNum > 0 ? `${horasSemanaisNum}h/sem (Grade)` : "Sem turmas";
+        } else {
+          tipoCarga = "CLT";
+          const cltData = jornadasCltMap[f.id];
+          if (cltData && cltData.minutosSemanais > 0) {
+            horasSemanaisNum = Math.round(cltData.minutosSemanais / 60);
+            cargaHorariaFormatada = `${horasSemanaisNum}h/sem (CLT)`;
+          } else {
+            cargaHorariaFormatada = "Sem escala";
+          }
+        }
 
         // Métricas do período
         const aulasMinistradas = aulasPorProfessor[f.id] ?? 0;
@@ -249,16 +326,21 @@ export function TabelaRH({ filtros }: Props) {
         const diasPonto = ponto?.diasTrabalhados ?? 0;
         const horasCumpridasNum = ponto ? Math.floor(ponto.minutosTotais / 60) : 0;
         const minutosRestantes = ponto ? ponto.minutosTotais % 60 : 0;
-        const horasCumpridasFormatada = ponto && ponto.minutosTotais > 0 ? `${horasCumpridasNum}h ${minutosRestantes}m` : `${diasPonto} dia(s)`;
+        const horasCumpridasFormatada =
+          ponto && ponto.minutosTotais > 0
+            ? `${horasCumpridasNum}h ${minutosRestantes}m`
+            : `${diasPonto} dia(s)`;
 
-        const temAtividadePeriodo = aulasMinistradas > 0 || supervisoesRealizadas > 0 || diasPonto > 0;
+        const temAtividadePeriodo =
+          aulasMinistradas > 0 || supervisoesRealizadas > 0 || diasPonto > 0;
 
         return {
           f,
           nucleo,
           funcaoObj,
           categoria,
-          diasTrabalhadosSemana,
+          isProfessor,
+          tipoCarga,
           horasSemanaisNum,
           cargaHorariaFormatada,
           aulasMinistradas,
@@ -272,10 +354,13 @@ export function TabelaRH({ filtros }: Props) {
     funcionarios,
     nucleos,
     funcoes,
+    turmas,
+    jornadasCltMap,
     aulasPorProfessor,
     supervisoesPorCoordenador,
     pontoResumo,
     filtros.nucleoId,
+    filtros.status,
     categoriaFiltro,
     busca,
   ]);
@@ -284,13 +369,15 @@ export function TabelaRH({ filtros }: Props) {
   const kpis = useMemo(() => {
     const total = linhas.length;
     const professores = linhas.filter((l) => l.categoria === "professor").length;
-    const coordenacao = linhas.filter((l) => l.categoria === "coordenador" || l.categoria === "social_tecnico").length;
+    const coordenacao = linhas.filter((l) => l.categoria === "coordenador").length;
+    const apoioTecnico = linhas.filter((l) => l.categoria === "social_tecnico" || l.categoria === "operacional").length;
     const totalHorasSemanais = linhas.reduce((acc, l) => acc + l.horasSemanaisNum, 0);
 
     return {
       total,
       professores,
       coordenacao,
+      apoioTecnico,
       totalHorasSemanais,
     };
   }, [linhas]);
@@ -298,30 +385,46 @@ export function TabelaRH({ filtros }: Props) {
   // Exportar CSV
   function handleExportarCsv() {
     const headers = [
+      "Matrícula",
       "Profissional",
       "CPF",
+      "E-mail",
+      "Celular",
       "Categoria",
       "Função",
-      "Núcleo",
+      "Conselho",
+      "Registro Conselho",
+      "Lotação / Núcleo",
+      "Data de Admissão",
       "Carga Horária Semanal",
+      "Tipo de Escala",
       "Remuneração",
       "Aulas no Período",
       "Supervisões no Período",
-      "Dias de Ponto",
+      "Dias com Ponto",
+      "Horas de Ponto no Período",
       "Status",
     ];
 
     const rows = linhas.map((l) => [
+      `"${l.f.matricula || ""}"`,
       `"${l.f.nomeCompleto}"`,
       `"${l.f.cpf || ""}"`,
+      `"${l.f.email || ""}"`,
+      `"${l.f.celular || ""}"`,
       `"${CATEGORIA_LABEL[l.categoria]}"`,
-      `"${l.f.funcao || l.funcaoObj?.nome || "—"}"`,
-      `"${l.nucleo?.identificacao || l.f.alocadoEm || "—"}"`,
+      `"${l.funcaoObj?.nome || l.f.funcao || "—"}"`,
+      `"${l.f.conselho || "—"}"`,
+      `"${l.f.registroConselho || "—"}"`,
+      `"${l.nucleo?.identificacao || l.f.alocadoEm || "Administração Geral"}"`,
+      `"${l.f.dataAdmissao ? formatarData(l.f.dataAdmissao) : "—"}"`,
       `"${l.cargaHorariaFormatada}"`,
+      `"${l.tipoCarga}"`,
       `"${l.f.remuneracao || "—"}"`,
       l.aulasMinistradas,
       l.supervisoesRealizadas,
       l.diasPonto,
+      `"${l.horasCumpridasFormatada}"`,
       `"${STATUS_LABEL[l.f.status] || l.f.status}"`,
     ]);
 
@@ -365,22 +468,22 @@ export function TabelaRH({ filtros }: Props) {
               <span className="text-2xl font-bold text-emerald-950">{kpis.professores}</span>
               <span className="text-[11px] text-emerald-700 font-medium">educadores</span>
             </div>
-            <p className="text-[11px] text-emerald-600 mt-1">Com turmas vinculadas</p>
+            <p className="text-[11px] text-emerald-600 mt-1">Grade semanal de turmas</p>
           </CardBody>
         </Card>
 
-        {/* Card 3: Coordenação & Técnico */}
+        {/* Card 3: Coordenação */}
         <Card className="border-amber-200 bg-amber-50/40">
           <CardBody className="p-4 flex flex-col justify-between">
             <div className="flex items-center justify-between text-xs font-semibold text-amber-900">
-              <span>Coordenação & Técnico</span>
+              <span>Coordenação</span>
               <Briefcase className="h-4 w-4 text-amber-600" />
             </div>
             <div className="mt-2 flex items-baseline gap-1.5">
               <span className="text-2xl font-bold text-amber-950">{kpis.coordenacao}</span>
-              <span className="text-[11px] text-amber-800 font-medium">gestores/sociais</span>
+              <span className="text-[11px] text-amber-800 font-medium">gestores</span>
             </div>
-            <p className="text-[11px] text-amber-700 mt-1">Supervisão e assistência</p>
+            <p className="text-[11px] text-amber-700 mt-1">Supervisão e núcleos</p>
           </CardBody>
         </Card>
 
@@ -438,8 +541,8 @@ export function TabelaRH({ filtros }: Props) {
             <option value="">Todas as Categorias</option>
             <option value="professor">Professores / Instrutores</option>
             <option value="coordenador">Coordenação</option>
-            <option value="social_tecnico">Apoio Técnico / Social</option>
-            <option value="operacional">Apoio Operacional</option>
+            <option value="social_tecnico">Apoio Técnico / Saúde</option>
+            <option value="operacional">Apoio Geral / Staff</option>
           </select>
         </div>
 
@@ -449,10 +552,10 @@ export function TabelaRH({ filtros }: Props) {
             <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-zinc-400" />
             <input
               type="text"
-              placeholder="Buscar por nome ou CPF..."
+              placeholder="Buscar por nome, matrícula, CPF..."
               value={busca}
               onChange={(e) => setBusca(e.target.value)}
-              className="pl-8 pr-3 py-1.5 text-xs rounded-lg border border-zinc-200 bg-white focus:outline-none focus:ring-1 focus:ring-sky-500 w-48 sm:w-60"
+              className="pl-8 pr-3 py-1.5 text-xs rounded-lg border border-zinc-200 bg-white focus:outline-none focus:ring-1 focus:ring-sky-500 w-48 sm:w-64"
             />
           </div>
 
@@ -501,48 +604,95 @@ export function TabelaRH({ filtros }: Props) {
                 <tr>
                   <th className="px-4 py-3">Profissional</th>
                   <th className="px-4 py-3">Categoria</th>
-                  <th className="px-4 py-3">Função</th>
-                  <th className="px-4 py-3">Núcleo / Alocação</th>
+                  <th className="px-4 py-3">Função / Conselho</th>
+                  <th className="px-4 py-3">Lotação / Núcleo</th>
+                  <th className="px-4 py-3">Admissão</th>
                   <th className="px-4 py-3 text-center">Carga Horária</th>
                   <th className="px-4 py-3">Remuneração</th>
                   <th className="px-4 py-3 text-center">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100">
-                {linhas.map(({ f, nucleo, funcaoObj, categoria, cargaHorariaFormatada }) => (
-                  <tr key={f.id} className="hover:bg-zinc-50/80 transition-colors">
-                    <td className="px-4 py-3">
-                      <div className="font-semibold text-zinc-900">{f.nomeCompleto}</div>
-                      {f.cpf && <div className="text-[11px] text-zinc-400 font-mono">{f.cpf}</div>}
-                    </td>
-                    <td className="px-4 py-3">
-                      <Badge tone={CATEGORIA_TONE[categoria]}>
-                        {CATEGORIA_LABEL[categoria]}
-                      </Badge>
-                    </td>
-                    <td className="px-4 py-3 font-medium text-zinc-700">
-                      {f.funcao || funcaoObj?.nome || "—"}
-                    </td>
-                    <td className="px-4 py-3 text-zinc-600">
-                      {nucleo?.identificacao || f.alocadoEm || "Todos os Núcleos"}
-                    </td>
-                    <td className="px-4 py-3 text-center font-bold text-zinc-800">
-                      {cargaHorariaFormatada}
-                    </td>
-                    <td className="px-4 py-3 text-zinc-600 font-medium">
-                      {f.remuneracao ? (
-                        <span className="font-mono text-zinc-800">{f.remuneracao}</span>
-                      ) : (
-                        <span className="text-zinc-300">—</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <Badge tone={STATUS_TONE[f.status] ?? "zinc"}>
-                        {STATUS_LABEL[f.status] ?? f.status}
-                      </Badge>
-                    </td>
-                  </tr>
-                ))}
+                {linhas.map(
+                  ({
+                    f,
+                    nucleo,
+                    funcaoObj,
+                    categoria,
+                    isProfessor,
+                    cargaHorariaFormatada,
+                  }) => (
+                    <tr key={f.id} className="hover:bg-zinc-50/80 transition-colors">
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold text-zinc-900">{f.nomeCompleto}</span>
+                          {f.matricula && (
+                            <span className="rounded bg-zinc-100 border border-zinc-200 px-1.5 py-0.2 text-[10px] font-mono text-zinc-600">
+                              {f.matricula}
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2 text-[11px] text-zinc-400 mt-0.5">
+                          {f.cpf && <span className="font-mono">{f.cpf}</span>}
+                          {f.email && <span>• {f.email}</span>}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <Badge tone={CATEGORIA_TONE[categoria]}>
+                          {CATEGORIA_LABEL[categoria]}
+                        </Badge>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="font-medium text-zinc-800">
+                          {funcaoObj?.nome || f.funcao || "—"}
+                        </div>
+                        {f.registroConselho && (
+                          <div className="text-[10px] text-zinc-500 font-medium mt-0.5">
+                            {f.conselho ? `${f.conselho}: ` : "Registro: "}
+                            <span className="font-mono text-zinc-700">{f.registroConselho}</span>
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-zinc-600">
+                        {nucleo ? (
+                          <span className="inline-flex items-center gap-1 font-medium text-zinc-800">
+                            {nucleo.identificacao}
+                          </span>
+                        ) : (
+                          <span className="text-zinc-500 font-medium">
+                            {f.alocadoEm || "Administração Geral"}
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-zinc-600">
+                        {f.dataAdmissao ? formatarData(f.dataAdmissao) : "—"}
+                      </td>
+                      <td className="px-4 py-3 text-center font-bold text-zinc-800">
+                        <span
+                          className={`inline-block px-2 py-0.5 rounded-md text-[11px] ${
+                            isProfessor
+                              ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
+                              : "bg-sky-50 text-sky-800 border border-sky-200"
+                          }`}
+                        >
+                          {cargaHorariaFormatada}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-zinc-600 font-medium">
+                        {f.remuneracao ? (
+                          <span className="font-mono text-zinc-800">{f.remuneracao}</span>
+                        ) : (
+                          <span className="text-zinc-300">—</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        <Badge tone={STATUS_TONE[f.status] ?? "zinc"}>
+                          {STATUS_LABEL[f.status] ?? f.status}
+                        </Badge>
+                      </td>
+                    </tr>
+                  )
+                )}
               </tbody>
             </table>
           ) : (
@@ -552,7 +702,7 @@ export function TabelaRH({ filtros }: Props) {
                 <tr>
                   <th className="px-4 py-3">Profissional</th>
                   <th className="px-4 py-3">Categoria</th>
-                  <th className="px-4 py-3">Núcleo</th>
+                  <th className="px-4 py-3">Lotação / Núcleo</th>
                   <th className="px-4 py-3 text-center">Entregas no Período</th>
                   <th className="px-4 py-3 text-center">Dias com Ponto</th>
                   <th className="px-4 py-3 text-center">Horas Registradas</th>
@@ -564,6 +714,7 @@ export function TabelaRH({ filtros }: Props) {
                   ({
                     f,
                     nucleo,
+                    funcaoObj,
                     categoria,
                     aulasMinistradas,
                     supervisoesRealizadas,
@@ -573,8 +724,17 @@ export function TabelaRH({ filtros }: Props) {
                   }) => (
                     <tr key={f.id} className="hover:bg-zinc-50/80 transition-colors">
                       <td className="px-4 py-3">
-                        <div className="font-semibold text-zinc-900">{f.nomeCompleto}</div>
-                        <div className="text-[11px] text-zinc-500">{f.funcao || "—"}</div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold text-zinc-900">{f.nomeCompleto}</span>
+                          {f.matricula && (
+                            <span className="rounded bg-zinc-100 border border-zinc-200 px-1.5 py-0.2 text-[10px] font-mono text-zinc-600">
+                              {f.matricula}
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-[11px] text-zinc-500">
+                          {funcaoObj?.nome || f.funcao || "—"}
+                        </div>
                       </td>
                       <td className="px-4 py-3">
                         <Badge tone={CATEGORIA_TONE[categoria]}>
@@ -582,7 +742,7 @@ export function TabelaRH({ filtros }: Props) {
                         </Badge>
                       </td>
                       <td className="px-4 py-3 text-zinc-600">
-                        {nucleo?.identificacao || f.alocadoEm || "—"}
+                        {nucleo?.identificacao || f.alocadoEm || "Administração Geral"}
                       </td>
                       <td className="px-4 py-3 text-center">
                         {categoria === "professor" && (
@@ -596,7 +756,7 @@ export function TabelaRH({ filtros }: Props) {
                           </div>
                         )}
                         {categoria !== "professor" && categoria !== "coordenador" && (
-                          <span className="text-zinc-500 font-medium">Apoio em atividade</span>
+                          <span className="text-zinc-500 font-medium">Apoio em operação</span>
                         )}
                       </td>
                       <td className="px-4 py-3 text-center font-bold text-zinc-800">
