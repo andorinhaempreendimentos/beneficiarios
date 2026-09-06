@@ -24,6 +24,9 @@ function createClient() {
   return createBrowserClient();
 }
 
+export const PERFIL_PROFESSOR_ID = 'b9def33a-a2a0-477d-8580-ec213d642808';
+export const FUNCAO_PROFESSOR_ID = '08532962-35c8-470b-aa7b-9ed41b8dcc38';
+
 // ── Tipos de Dados da Prestação de Contas ──────────────────────────────────
 
 export interface AlertaProntidao {
@@ -304,7 +307,7 @@ export const prestacaoContasApi = {
     // 4. Turmas
     const { data: turmasRaw } = await sb
       .from('turmas')
-      .select('*, atividades(*), turma_responsaveis(funcionario_id, funcionarios(*))')
+      .select('*, atividades(*), turma_horarios(*), turma_responsaveis(funcionario_id, funcionarios(*))')
       .in('nucleo_id', nucleosIds.length > 0 ? nucleosIds : ['00000000-0000-0000-0000-000000000000'])
       .is('deleted_at', null);
     const turmas = turmasRaw ?? [];
@@ -321,7 +324,7 @@ export const prestacaoContasApi = {
     // 6. Funcionários / RH
     const { data: funcionariosRaw } = await sb
       .from('funcionarios')
-      .select('*, funcionario_jornada(*)')
+      .select('*, funcoes:funcao_id(id, nome, perfil_id, permite_login, exige_conselho), funcionario_jornada(*)')
       .is('deleted_at', null);
     const funcionarios = (funcionariosRaw ?? []).filter((f: any) => {
       if (f.nucleo_id && nucleosIds.includes(f.nucleo_id)) return true;
@@ -546,22 +549,48 @@ export const prestacaoContasApi = {
 
     const profissionais: ProfissionalItem[] = funcionarios.map((f: any) => {
       const nucleo = nucleos.find((n: any) => n.id === f.nucleo_id);
-      const jornada = f.funcionario_jornada ?? [];
-      const horas = jornada
-        .filter((d: any) => d.ativo && d.hora_entrada && d.hora_saida)
-        .reduce((acc: number, d: any) => {
-          const [hE, mE] = d.hora_entrada.split(':').map(Number);
-          const [hS, mS] = d.hora_saida.split(':').map(Number);
-          return acc + (hS * 60 + mS - (hE * 60 + mE));
-        }, 0);
+      const isProfessor =
+        f.funcao_id === FUNCAO_PROFESSOR_ID ||
+        f.funcoes?.perfil_id === PERFIL_PROFESSOR_ID ||
+        f.professor_responsavel;
+
+      let cargaHorariaSemanal = '';
+      if (isProfessor) {
+        const turmasDoProf = turmas.filter((t: any) =>
+          (t.turma_responsaveis ?? []).some((tr: any) => tr.funcionario_id === f.id)
+        );
+        let totalHorasGrade = 0;
+        for (const t of turmasDoProf) {
+          for (const th of t.turma_horarios ?? []) {
+            const hInicio = parseInt(String(th.hora_inicio || '').split(':')[0], 10);
+            const hFim = parseInt(String(th.hora_fim || '').split(':')[0], 10);
+            const duracao = (!isNaN(hFim) && !isNaN(hInicio) && hFim > hInicio) ? (hFim - hInicio) : 2;
+            totalHorasGrade += duracao;
+          }
+        }
+        cargaHorariaSemanal = totalHorasGrade > 0 ? `${totalHorasGrade}h/sem (Grade)` : 'Sem turmas';
+      } else {
+        const jornada = f.funcionario_jornada ?? [];
+        const minutosClt = jornada
+          .filter((d: any) => d.ativo && d.hora_entrada && d.hora_saida)
+          .reduce((acc: number, d: any) => {
+            const [hE, mE] = d.hora_entrada.split(':').map(Number);
+            const [hS, mS] = d.hora_saida.split(':').map(Number);
+            let spanMin = (hS * 60 + mS) - (hE * 60 + mE);
+            if (spanMin > 360) spanMin -= 60; // Desconto de 1h de almoço se > 6h
+            return acc + Math.max(0, spanMin);
+          }, 0);
+        const horasClt = Math.round(minutosClt / 60);
+        cargaHorariaSemanal = horasClt > 0 ? `${horasClt}h/sem (CLT)` : 'Sem escala';
+      }
 
       return {
         id: f.id,
         nomeCompleto: f.nome_completo,
-        funcao: f.funcao ?? '',
-        nucleoOuAlocacao: nucleo?.identificacao ?? f.alocado_em ?? '',
-        cargaHorariaSemanal: horas > 0 ? `${Math.floor(horas / 60)}h/sem` : '',
-        situacao: f.status === 'ativo' ? 'Ativo' : (f.status || ''),
+        funcao: f.funcoes?.nome || f.funcao || '',
+        nucleoOuAlocacao: nucleo?.identificacao ?? f.alocado_em ?? 'Administração Geral',
+        cargaHorariaSemanal,
+        situacao: f.status === 'contratado' ? 'Contratado' : f.status === 'voluntario' ? 'Voluntário' : f.status === 'ativo' ? 'Ativo' : (f.status || 'Ativo'),
       };
     });
 
@@ -697,7 +726,12 @@ export const prestacaoContasApi = {
         turmas: { previsto: (objeto.metaNucleos || 0) * 4, realizado: turmas.length },
         professores: {
           previsto: cargosPrevistos.find((c) => c.cargoNome.toLowerCase().includes('instrutor') || c.cargoNome.toLowerCase().includes('professor'))?.quantidadePrevista || 0,
-          realizado: funcionarios.filter((f: any) => (f.funcao ?? '').toLowerCase().includes('instrutor') || (f.funcao ?? '').toLowerCase().includes('professor')).length,
+          realizado: funcionarios.filter(
+            (f: any) =>
+              f.funcao_id === FUNCAO_PROFESSOR_ID ||
+              f.funcoes?.perfil_id === PERFIL_PROFESSOR_ID ||
+              f.professor_responsavel
+          ).length,
         },
         aulas: { previsto: objeto.metaAulasAno || 0, realizado: aulasRealizadasTotal },
         supervisoes: { previsto: (objeto.metaNucleos || 0) * 2, realizado: supervisoes.filter((s: any) => s.status === 'finalizada').length },
