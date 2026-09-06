@@ -73,14 +73,17 @@ function calcularHorasDia(entrada?: string, saida?: string): number {
   const totalMinutos = hS * 60 + mS - (hE * 60 + mE);
   if (totalMinutos <= 0) return 0;
   const horasBrutas = totalMinutos / 60;
-  // Intervalo CLT: desconta 1h de almoço se jornada bruta for maior que 6h
-  const horasLiquidas =
-    horasBrutas > 6
-      ? horasBrutas - 1
-      : horasBrutas > 4
-      ? horasBrutas - 0.25
-      : horasBrutas;
+  // Intervalo CLT intrajornada: se permanência bruta for superior a 6h (ex: 8h às 17h = 9h), desconta 1h de almoço
+  const horasLiquidas = horasBrutas > 6 ? horasBrutas - 1 : horasBrutas;
   return Math.max(0, horasLiquidas);
+}
+
+function formatarHorasExtenso(horas: number): string {
+  if (!horas || horas <= 0) return "0h";
+  const h = Math.floor(horas);
+  const m = Math.round((horas - h) * 60);
+  if (m === 0) return `${h}h`;
+  return `${h}h ${m}min`;
 }
 
 export function FuncionarioForm({
@@ -679,10 +682,10 @@ export function FuncionarioForm({
                     <div className="flex items-center gap-2">
                       <span className="inline-flex items-center gap-1.5 rounded-full bg-sky-50 px-3 py-1 text-xs font-bold text-sky-700 border border-sky-200">
                         <CalendarCheck className="h-3.5 w-3.5" />
-                        <span>{totalHorasSemanais}h semanais</span>
+                        <span>{formatarHorasExtenso(totalHorasSemanais)} semanais</span>
                       </span>
                       <span className="inline-flex items-center gap-1.5 rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-semibold text-zinc-600">
-                        Média {mediaDiaria}h / dia
+                        Média {formatarHorasExtenso(diasAtivosQtd > 0 ? totalHorasSemanais / diasAtivosQtd : 0)} / dia
                       </span>
                     </div>
                   </div>
@@ -806,7 +809,7 @@ export function FuncionarioForm({
                               <td className="py-2.5 px-3 font-mono text-xs">
                                 {d.trabalha ? (
                                   <span className="font-bold text-zinc-700">
-                                    {horasDia}h{" "}
+                                    {formatarHorasExtenso(horasDia)}{" "}
                                     {horasDia >= 6 && (
                                       <span className="text-[11px] font-normal text-zinc-400">
                                         (1h almoço)
