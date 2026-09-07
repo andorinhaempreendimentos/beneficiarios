@@ -156,7 +156,7 @@ export default function NucleosPage() {
   const allSelected = resultado.length > 0 && selectedIds.length === resultado.length;
 
   return (
-    <div className="flex flex-col gap-6 pb-12">
+    <div className="flex flex-col gap-6 pb-24">
       <PageHeader
         title={t("local", "Núcleo", true)}
         description={`Listagem e gestão de ${t("local", "Núcleo", true).toLowerCase()}`}
@@ -252,7 +252,7 @@ export default function NucleosPage() {
                     return (
                       <div
                         key={nucleo.id}
-                        className={`group relative overflow-hidden rounded-2xl border transition-all flex flex-col justify-between gap-3 p-4 pt-3 ${
+                        className={`group relative rounded-2xl border transition-all flex flex-col justify-between min-h-[175px] gap-3 p-4 pb-3.5 ${
                           isSelected
                             ? "border-sky-500 bg-sky-50/30 ring-2 ring-sky-500/20 shadow-xs"
                             : "border-zinc-200 bg-white hover:border-zinc-300 hover:shadow-xs"
@@ -304,18 +304,18 @@ export default function NucleosPage() {
                         </div>
 
                         {/* Rodapé: Organização e Ações */}
-                        <div className="flex items-center justify-between text-xs text-zinc-500 border-t border-zinc-100/60 pt-2">
-                          <span className="truncate max-w-[70%] font-medium text-zinc-600" title={nucleo.organizacao?.nome || ""}>
+                        <div className="flex items-center justify-between text-xs text-zinc-500 border-t border-zinc-100/60 pt-2.5 mt-auto shrink-0">
+                          <span className="truncate max-w-[65%] font-medium text-zinc-600" title={nucleo.organizacao?.nome || ""}>
                             {nucleo.organizacao?.nome || "—"}
                           </span>
                           <div className="flex items-center gap-2 shrink-0">
-                            <Link href={`/nucleos/${nucleo.id}`} className="text-xs font-semibold text-sky-600 hover:text-sky-700 transition-colors">
+                            <Link href={`/nucleos/${nucleo.id}`} className="text-xs font-semibold text-sky-600 hover:text-sky-700 transition-colors py-0.5">
                               Acessar
                             </Link>
                             {!isCoordenador && (
                               <>
                                 <span className="text-zinc-200">|</span>
-                                <Link href={`/nucleos/${nucleo.id}/editar`} className="text-xs text-zinc-500 hover:text-zinc-700 transition-colors">
+                                <Link href={`/nucleos/${nucleo.id}/editar`} className="text-xs text-zinc-500 hover:text-zinc-700 transition-colors py-0.5">
                                   Editar
                                 </Link>
                               </>
