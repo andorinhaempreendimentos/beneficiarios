@@ -105,7 +105,7 @@ export function Sidebar() {
 
       <aside
         className={cn(
-          "fixed inset-y-0 z-50 flex w-60 flex-col border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 transition-colors duration-200 lg:static lg:left-0",
+          "fixed inset-y-0 z-50 flex w-60 flex-col border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 transition-colors duration-200 lg:sticky lg:top-0 lg:h-screen lg:shrink-0 lg:left-0",
           open ? "left-0" : "-left-60"
         )}
       >
