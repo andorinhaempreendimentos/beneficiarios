@@ -14,7 +14,7 @@ import {
   Pagination,
 } from "@/components/ui";
 import { useQuery } from "@/lib/hooks/useQuery";
-import { concedentesApi, type ConcedenteApi, type Paginated } from "@/lib/api/services";
+import { concedentesApi, objetosApi, type ConcedenteApi, type Paginated, type ObjetoApi } from "@/lib/api/services";
 import { ModalConcedenteForm } from "@/components/concedentes/ModalConcedenteForm";
 
 const PER_PAGE = 12;
@@ -28,6 +28,9 @@ export default function ConcedentesPage() {
   const [concedenteParaEditar, setConcedenteParaEditar] = useState<ConcedenteApi | null>(null);
   const [concedenteParaExcluir, setConcedenteParaExcluir] = useState<ConcedenteApi | null>(null);
   const [excluindo, setExcluindo] = useState(false);
+
+  const { data: objetosRes } = useQuery<Paginated<ObjetoApi>>(() => objetosApi.list({ limit: 500 }), []);
+  const objetos = objetosRes?.data ?? [];
 
   const { data: pageData, loading, refetch } = useQuery<Paginated<ConcedenteApi>>(
     () =>
@@ -140,14 +143,16 @@ export default function ConcedentesPage() {
                     >
                       <Edit2 className="h-4 w-4" />
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => setConcedenteParaExcluir(c)}
-                      className="rounded p-1 text-zinc-400 hover:bg-red-50 hover:text-red-600"
-                      title="Excluir Concedente"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
+                    {!objetos.some((o) => o.concedenteId === c.id) && (
+                      <button
+                        type="button"
+                        onClick={() => setConcedenteParaExcluir(c)}
+                        className="rounded p-1 text-zinc-400 hover:bg-red-50 hover:text-red-600"
+                        title="Excluir Concedente"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    )}
                   </div>
                 </div>
 

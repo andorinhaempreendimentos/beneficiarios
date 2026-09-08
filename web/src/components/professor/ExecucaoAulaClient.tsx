@@ -739,8 +739,21 @@ export function ExecucaoAulaClient({
             </div>
           )}
 
+          {/* ALERTA DE NÚCLEO DESATIVADO — BLOQUEIO RÍGIDO */}
+          {turma.nucleo?.emFuncionamento === false && (
+            <div className="rounded-xl bg-red-50 border border-red-200 p-4 text-xs text-red-900 flex flex-col gap-2 shadow-xs">
+              <div className="flex items-center gap-2 font-bold text-red-900">
+                <AlertTriangle className="h-4 w-4 text-red-600 flex-shrink-0" />
+                <span>Núcleo / Unidade Desativada</span>
+              </div>
+              <p className="text-red-800">
+                O funcionamento deste núcleo encontra-se temporariamente suspenso. Não é possível iniciar ou registrar aulas nesta unidade.
+              </p>
+            </div>
+          )}
+
           {/* ALERTA DE HORÁRIO ANTECIPADO — BLOQUEIO RÍGIDO */}
-          {!isDataFutura && isAntesDaJanela && (
+          {!isDataFutura && isAntesDaJanela && turma.nucleo?.emFuncionamento !== false && (
             <div className="rounded-xl bg-red-50 border border-red-200 p-4 text-xs text-red-900 flex flex-col gap-2">
               <div className="flex items-center gap-2 font-bold text-red-900">
                 <AlertTriangle className="h-4 w-4 text-red-600 flex-shrink-0" />
@@ -753,7 +766,7 @@ export function ExecucaoAulaClient({
           )}
 
           {/* ALERTA DE TOLERÂNCIA / RETROATIVIDADE */}
-          {isForaDoHorarioRegular && !isDataFutura && !isAntesDaJanela && (
+          {isForaDoHorarioRegular && !isDataFutura && !isAntesDaJanela && turma.nucleo?.emFuncionamento !== false && (
             <div className="rounded-xl bg-amber-50 border border-amber-200 p-4 text-xs text-amber-900 flex flex-col gap-2">
               <div className="flex items-center gap-2 font-bold text-amber-900">
                 <AlertTriangle className="h-4 w-4 text-amber-600 flex-shrink-0" />
@@ -782,9 +795,9 @@ export function ExecucaoAulaClient({
           <button
             type="button"
             onClick={handleIniciarAula}
-            disabled={salvando || isDataFutura || isAntesDaJanela}
+            disabled={salvando || isDataFutura || isAntesDaJanela || turma.nucleo?.emFuncionamento === false}
             className={`w-full font-extrabold py-5 rounded-2xl text-lg shadow-xl flex items-center justify-center gap-3 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
-              isDataFutura || isAntesDaJanela
+              isDataFutura || isAntesDaJanela || turma.nucleo?.emFuncionamento === false
                 ? 'bg-zinc-400 text-zinc-200 shadow-none'
                 : 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 active:scale-[0.99] text-white shadow-emerald-600/25'
             }`}

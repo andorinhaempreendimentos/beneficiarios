@@ -250,7 +250,7 @@ export default function OrganizacoesPage() {
                           </div>
                         </div>
 
-                        {/* Botões de Ação: Editar e Excluir */}
+                        {/* Botões de Ação: Editar e Excluir (somente se não tiver dependentes) */}
                         <div className="flex items-center justify-end gap-2 border-t border-zinc-100/60 pt-2.5">
                           <Link
                             href={`/organizacoes/${o.id}/editar`}
@@ -259,14 +259,16 @@ export default function OrganizacoesPage() {
                             Editar
                           </Link>
 
-                          <button
-                            type="button"
-                            onClick={() => setOrganizacaoParaExcluir(o)}
-                            className="inline-flex items-center gap-1 rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100 transition-colors shadow-2xs cursor-pointer"
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                            Excluir
-                          </button>
+                          {nucleosDaOrg.length === 0 && (
+                            <button
+                              type="button"
+                              onClick={() => setOrganizacaoParaExcluir(o)}
+                              className="inline-flex items-center gap-1 rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100 transition-colors shadow-2xs cursor-pointer"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                              Excluir
+                            </button>
+                          )}
                         </div>
                       </div>
                     );
@@ -340,14 +342,18 @@ export default function OrganizacoesPage() {
                               >
                                 Editar
                               </Link>
-                              <span className="text-zinc-300">|</span>
-                              <button
-                                type="button"
-                                onClick={() => setOrganizacaoParaExcluir(o)}
-                                className="text-xs font-medium text-red-600 hover:underline cursor-pointer"
-                              >
-                                Excluir
-                              </button>
+                              {nucleosDaOrg.length === 0 && (
+                                <>
+                                  <span className="text-zinc-300">|</span>
+                                  <button
+                                    type="button"
+                                    onClick={() => setOrganizacaoParaExcluir(o)}
+                                    className="text-xs font-medium text-red-600 hover:underline cursor-pointer"
+                                  >
+                                    Excluir
+                                  </button>
+                                </>
+                              )}
                             </div>
                           </td>
                         </tr>

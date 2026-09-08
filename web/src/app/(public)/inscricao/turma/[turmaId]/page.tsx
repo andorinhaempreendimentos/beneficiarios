@@ -102,7 +102,14 @@ export default async function InscricaoTurmaPage({ params }: InscricaoTurmaPageP
         </div>
       </div>
 
-      {turmaCheia ? (
+      {nucleo?.emFuncionamento === false ? (
+        <div className="rounded-xl border border-amber-200 bg-amber-50 p-6 text-amber-900 flex flex-col gap-2 shadow-xs">
+          <h2 className="text-base font-bold text-amber-900">Inscrições Temporariamente Suspensas</h2>
+          <p className="text-sm text-amber-800">
+            As inscrições para esta turma encontram-se temporariamente suspensas pois a unidade/núcleo está com funcionamento pausado.
+          </p>
+        </div>
+      ) : turmaCheia ? (
         <TurmaCheiaSection vagasTotal={turma.vagasTotais} turmaId={turma.id} />
       ) : (
         <>
