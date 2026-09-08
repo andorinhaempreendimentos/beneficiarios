@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
-import { MapPin, ExternalLink } from "lucide-react";
+import { MapPin, ExternalLink, Search, ChevronDown, Check, X } from "lucide-react";
 import { useDicionario } from "@/components/providers/DictionaryProvider";
 
 export interface NucleoMapaData {
@@ -71,6 +71,36 @@ export function MapaPolos({ nucleos, atividades = [], className = "" }: MapaPolo
   const [filtroNucleoId, setFiltroNucleoId] = useState("");
   const [filtroAtividadeId, setFiltroAtividadeId] = useState("");
   const [nucleoSelecionado, setNucleoSelecionado] = useState<NucleoMapaData | null>(null);
+  const [buscaNucleoTexto, setBuscaNucleoTexto] = useState("");
+  const [selectNucleoAberto, setSelectNucleoAberto] = useState(false);
+  const selectNucleoRef = useRef<HTMLDivElement>(null);
+
+  // Fechar dropdown de núcleo ao clicar fora
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (selectNucleoRef.current && !selectNucleoRef.current.contains(event.target as Node)) {
+        setSelectNucleoAberto(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const nucleoFiltroAtual = useMemo(() => {
+    return nucleos.find((n) => n.id === filtroNucleoId) || null;
+  }, [nucleos, filtroNucleoId]);
+
+  const nucleosFiltradosBusca = useMemo(() => {
+    if (!buscaNucleoTexto.trim()) return nucleos;
+    const termo = buscaNucleoTexto.toLowerCase().trim();
+    return nucleos.filter((n) => {
+      const nome = (n.identificacao || "").toLowerCase();
+      const local = (n.nomeLocal || "").toLowerCase();
+      const cidade = (n.cidade || "").toLowerCase();
+      const bairro = (n.bairro || "").toLowerCase();
+      return nome.includes(termo) || local.includes(termo) || cidade.includes(termo) || bairro.includes(termo);
+    });
+  }, [nucleos, buscaNucleoTexto]);
 
   // Lista de atividades disponíveis apenas nos núcleos fornecidos (respeitando o filtro de sessão)
   const atividadesDisponiveis = useMemo(() => {
@@ -214,27 +244,111 @@ export function MapaPolos({ nucleos, atividades = [], className = "" }: MapaPolo
           </span>
         </div>
 
-        {/* Filtros de Núcleo e Atividade */}
         <div className="flex flex-wrap items-center gap-2">
-          {/* Dropdown de Núcleo */}
-          <select
-            value={filtroNucleoId}
-            onChange={(e) => setFiltroNucleoId(e.target.value)}
-            className="h-8 rounded-lg border border-zinc-300 bg-white px-2.5 text-xs text-zinc-800 shadow-2xs focus:border-sky-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200"
-          >
-            <option value="">Todos os núcleos</option>
-            {nucleos.map((n) => (
-              <option key={n.id} value={n.id}>
-                {n.identificacao}
-              </option>
-            ))}
-          </select>
+          {/* Seletor Pesquisável de Núcleo com Campo de Busca em Texto */}
+          <div ref={selectNucleoRef} className="relative">
+            <button
+              type="button"
+              onClick={() => {
+                setSelectNucleoAberto((prev) => !prev);
+                setBuscaNucleoTexto("");
+              }}
+              className="flex h-8 items-center justify-between gap-1.5 rounded-lg border border-zinc-300 bg-white px-2.5 text-xs font-medium text-zinc-800 shadow-2xs hover:bg-zinc-50 focus:border-sky-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-750 cursor-pointer min-w-[170px]"
+            >
+              <span className="truncate max-w-[140px]">
+                {nucleoFiltroAtual ? nucleoFiltroAtual.identificacao : "Todos os núcleos"}
+              </span>
+              <ChevronDown className={`h-3.5 w-3.5 shrink-0 text-zinc-400 transition-transform ${selectNucleoAberto ? "rotate-180" : ""}`} />
+            </button>
+
+            {selectNucleoAberto && (
+              <div className="absolute left-0 z-50 mt-1 w-72 rounded-xl border border-zinc-200 bg-white p-2 shadow-xl dark:border-zinc-700 dark:bg-zinc-900 animate-in fade-in zoom-in-95 duration-100">
+                {/* Campo de Busca em Texto */}
+                <div className="relative mb-2">
+                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-zinc-400" />
+                  <input
+                    autoFocus
+                    type="text"
+                    value={buscaNucleoTexto}
+                    onChange={(e) => setBuscaNucleoTexto(e.target.value)}
+                    placeholder="Buscar por nome ou cidade..."
+                    className="w-full rounded-lg border border-zinc-200 bg-zinc-50 pl-8 pr-7 py-1.5 text-xs text-zinc-900 placeholder:text-zinc-400 focus:border-sky-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-sky-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500"
+                  />
+                  {buscaNucleoTexto && (
+                    <button
+                      type="button"
+                      onClick={() => setBuscaNucleoTexto("")}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+                </div>
+
+                {/* Lista de Opções Filtradas */}
+                <div className="max-h-56 overflow-y-auto space-y-0.5 divide-y divide-zinc-100 dark:divide-zinc-800/60">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFiltroNucleoId("");
+                      setSelectNucleoAberto(false);
+                      setBuscaNucleoTexto("");
+                    }}
+                    className={`w-full flex items-center justify-between rounded-lg px-2.5 py-1.5 text-left text-xs transition-colors cursor-pointer ${
+                      !filtroNucleoId
+                        ? "bg-sky-50 text-sky-700 font-bold dark:bg-sky-950/50 dark:text-sky-300"
+                        : "text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                    }`}
+                  >
+                    <span>Todos os núcleos</span>
+                    {!filtroNucleoId && <Check className="h-3.5 w-3.5 text-sky-600 dark:text-sky-400 shrink-0" />}
+                  </button>
+
+                  {nucleosFiltradosBusca.length === 0 ? (
+                    <div className="px-2.5 py-4 text-center text-xs text-zinc-400 dark:text-zinc-500">
+                      Nenhum núcleo encontrado.
+                    </div>
+                  ) : (
+                    nucleosFiltradosBusca.map((n) => {
+                      const isSelected = n.id === filtroNucleoId;
+                      return (
+                        <button
+                          key={n.id}
+                          type="button"
+                          onClick={() => {
+                            setFiltroNucleoId(n.id);
+                            setSelectNucleoAberto(false);
+                            setBuscaNucleoTexto("");
+                          }}
+                          className={`w-full flex items-center justify-between rounded-lg px-2.5 py-1.5 text-left text-xs transition-colors cursor-pointer ${
+                            isSelected
+                              ? "bg-sky-50 text-sky-700 font-bold dark:bg-sky-950/50 dark:text-sky-300"
+                              : "text-zinc-800 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
+                          }`}
+                        >
+                          <div className="flex flex-col min-w-0 pr-2">
+                            <span className="truncate">{n.identificacao}</span>
+                            {(n.cidade || n.bairro) && (
+                              <span className="text-[10px] text-zinc-400 truncate">
+                                {[n.bairro, n.cidade].filter(Boolean).join(" · ")}
+                              </span>
+                            )}
+                          </div>
+                          {isSelected && <Check className="h-3.5 w-3.5 text-sky-600 dark:text-sky-400 shrink-0" />}
+                        </button>
+                      );
+                    })
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
 
           {/* Dropdown de Atividade */}
           <select
             value={filtroAtividadeId}
             onChange={(e) => setFiltroAtividadeId(e.target.value)}
-            className="h-8 rounded-lg border border-zinc-300 bg-white px-2.5 text-xs text-zinc-800 shadow-2xs focus:border-sky-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200"
+            className="h-8 rounded-lg border border-zinc-300 bg-white px-2.5 text-xs text-zinc-800 shadow-2xs focus:border-sky-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 cursor-pointer"
           >
             <option value="">Todas as atividades</option>
             {atividadesDisponiveis.map((a) => (
@@ -250,8 +364,9 @@ export function MapaPolos({ nucleos, atividades = [], className = "" }: MapaPolo
               onClick={() => {
                 setFiltroNucleoId("");
                 setFiltroAtividadeId("");
+                setBuscaNucleoTexto("");
               }}
-              className="h-8 rounded-lg border border-zinc-200 bg-white px-2 text-xs font-medium text-zinc-600 hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700 transition-colors"
+              className="h-8 rounded-lg border border-zinc-200 bg-white px-2 text-xs font-medium text-zinc-600 hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700 transition-colors cursor-pointer"
             >
               Limpar
             </button>
