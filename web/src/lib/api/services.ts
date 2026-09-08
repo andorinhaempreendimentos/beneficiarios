@@ -1734,31 +1734,33 @@ export const usuariosApi = {
   },
   async create(body: Record<string, unknown>): Promise<UsuarioApi> {
     const sb = createClient();
-    const row: any = {
-      id: crypto.randomUUID(),
-      email: String(body.email ?? ''),
-      nome_completo: String(body.nomeCompleto ?? ''),
-      tipo: (body.tipo as Database['public']['Enums']['tipo_usuario']) ?? 'gestor',
-      is_professor: Boolean(body.isProfessor),
-      ativo: body.ativo !== false,
-      perfil_id: (body.perfilId as string) ?? '',
-      entidade_id: (body.entidadeId as string | null) ?? null,
+    const payload: any = {
+      p_email: String(body.email ?? ''),
+      p_nome_completo: String(body.nomeCompleto ?? ''),
+      p_senha: String(body.senha ?? ''),
+      p_perfil_id: (body.perfilId as string) ?? '',
+      p_tipo: (body.tipo as Database['public']['Enums']['tipo_usuario']) ?? 'gestor',
+      p_is_professor: Boolean(body.isProfessor),
+      p_ativo: body.ativo !== false,
+      p_entidade_id: (body.entidadeId as string | null) ?? null,
     };
-    const { data, error } = await sb.from('usuarios').insert(row).select('*').single();
+    const { data, error } = await (sb.rpc as any)('admin_criar_usuario', payload);
     if (error) throw error;
     return mapUsuario(data);
   },
   async update(id: string, body: Record<string, unknown>): Promise<UsuarioApi> {
     const sb = createClient();
-    const row: any = {
-      nome_completo: body.nomeCompleto as string | undefined,
-      tipo: body.tipo as Database['public']['Enums']['tipo_usuario'] | undefined,
-      is_professor: body.isProfessor !== undefined ? Boolean(body.isProfessor) : undefined,
-      ativo: body.ativo as boolean | undefined,
-      perfil_id: body.perfilId as string | undefined,
-      entidade_id: body.entidadeId as string | null | undefined,
+    const payload: any = {
+      p_id: id,
+      p_nome_completo: body.nomeCompleto as string | undefined,
+      p_perfil_id: body.perfilId as string | undefined,
+      p_tipo: body.tipo as Database['public']['Enums']['tipo_usuario'] | undefined,
+      p_is_professor: body.isProfessor !== undefined ? Boolean(body.isProfessor) : undefined,
+      p_ativo: body.ativo as boolean | undefined,
+      p_entidade_id: body.entidadeId as string | null | undefined,
+      p_nova_senha: body.novaSenha as string | undefined,
     };
-    const { data, error } = await sb.from('usuarios').update(row).eq('id', id).select('*').single();
+    const { data, error } = await (sb.rpc as any)('admin_atualizar_usuario', payload);
     if (error) throw error;
     return mapUsuario(data);
   },

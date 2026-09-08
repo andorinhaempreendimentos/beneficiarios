@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Download, Check } from "lucide-react";
 import {
@@ -31,8 +31,13 @@ export default function UsuariosPage() {
   const [pagina, setPagina] = useState(1);
   const [viewMode, setViewMode] = useState<ViewMode>("cards");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const isFirstMount = useRef(true);
 
   useEffect(() => {
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      return;
+    }
     const timer = setTimeout(() => {
       setPagina(1);
       setAtivos(filtros);

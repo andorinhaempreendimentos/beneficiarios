@@ -40,12 +40,43 @@ export function UsuarioForm({ usuario: u, perfis = [], backHref }: UsuarioFormPr
       return;
     }
 
-    const data = {
+    const senha = (formData.get("senha") as string) || "";
+    const confirmarSenha = (formData.get("confirmarSenha") as string) || "";
+    const novaSenha = (formData.get("novaSenha") as string) || "";
+    const confirmarNovaSenha = (formData.get("confirmarNovaSenha") as string) || "";
+
+    if (!u) {
+      if (!senha || senha.length < 6) {
+        setErro("A senha é obrigatória e deve ter no mínimo 6 caracteres.");
+        setLoading(false);
+        return;
+      }
+      if (senha !== confirmarSenha) {
+        setErro("As senhas não coincidem.");
+        setLoading(false);
+        return;
+      }
+    } else if (novaSenha) {
+      if (novaSenha.length < 6) {
+        setErro("A nova senha deve ter no mínimo 6 caracteres.");
+        setLoading(false);
+        return;
+      }
+      if (novaSenha !== confirmarNovaSenha) {
+        setErro("A confirmação da nova senha não confere.");
+        setLoading(false);
+        return;
+      }
+    }
+
+    const data: Record<string, unknown> = {
       nomeCompleto: formData.get("nome") as string,
       email,
       perfilId: formData.get("perfilId") as string,
       isProfessor: formData.get("isProfessor") === "on",
       ativo: formData.get("status") !== "inativo",
+      ...(senha ? { senha } : {}),
+      ...(novaSenha ? { novaSenha } : {}),
     };
 
     const parsed = usuarioSchema.safeParse({
