@@ -1716,7 +1716,6 @@ export const inscricoesApi = {
 
 export const usuariosApi = {
   async list(p?: QP): Promise<Paginated<UsuarioApi>> {
-    await sincronizarTodosFuncionariosUsuarios().catch(() => {});
     const sb = await getSupabase();
     const { page, limit, from, to } = paginar(num(p?.page), num(p?.limit));
     let q = sb.from('usuarios').select('*', { count: 'exact' }).is('deleted_at', null);
