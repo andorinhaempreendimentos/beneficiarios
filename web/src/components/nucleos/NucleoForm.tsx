@@ -66,10 +66,10 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], back
   const [permitirChamadaRetroativa, setPermitirChamadaRetroativa] = useState(n?.permitirChamadaRetroativa ?? false);
   const [organizacaoId, setOrganizacaoId] = useState(n?.organizacaoId ?? (organizacoes[0]?.id || ""));
   const [atividadeIds, setAtividadeIds] = useState<string[]>(
-    n?.atividadeIds ?? atividades.filter(a => !a.usoInterno).map((a) => a.id)
+    n?.atividadeIds ?? atividades.filter(a => a.disponivelPreInscricao).map((a) => a.id)
   );
 
-  const atividadesVisiveis = atividades.filter(a => !a.usoInterno);
+  const atividadesVisiveis = atividades.filter(a => a.disponivelPreInscricao);
 
   const [cep, setCep] = useState(n?.cep ?? "");
   const [endereco, setEndereco] = useState(n?.endereco ?? "");

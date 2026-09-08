@@ -474,7 +474,7 @@ function mapAtividade(r: any): AtividadeApi {
     id: r.id,    nome: r.nome,
     descricao: r.descricao ?? undefined,
     disponivelPreInscricao: r.disponivel_pre_inscricao,
-    usoInterno: r.uso_interno ?? false,
+    usoInterno: r.uso_interno ?? !r.disponivel_pre_inscricao,
     tipoAprovacao: r.tipo_aprovacao,
     turnos: (r.atividade_turnos ?? []).map((t: any) => t.nome),
     idadeMinima: r.idade_minima ?? undefined, idadeMaxima: r.idade_maxima ?? undefined,
