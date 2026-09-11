@@ -185,8 +185,7 @@ export function ExecucaoAulaClient({
         (f) =>
           f.id === user.entidadeId ||
           (f.email && user.email && f.email.toLowerCase() === user.email.toLowerCase()) ||
-          (user.refId && f.id === user.refId) ||
-          (user.nome && f.nomeCompleto.toLowerCase() === user.nome.toLowerCase())
+          (user.refId && f.id === user.refId)
       );
       if (match) return match;
     }
@@ -195,7 +194,7 @@ export function ExecucaoAulaClient({
       const matchResp = funcionarios.find((f) => f.id === respId);
       if (matchResp) return matchResp;
     }
-    return funcionarios[0] || null;
+    return null;
   }, [user, funcionarios, turma]);
 
   // Horários Previstos da Turma para a data da aula
@@ -206,7 +205,7 @@ export function ExecucaoAulaClient({
     const diaSemana = dataObj.getDay(); // 0 = Domingo, 1 = Segunda...
     return (
       turma.slots.find((s: any) => s.dia_semana === diaSemana || s.dia === DIAS_SEMANA_MAP[diaSemana]?.slice(0, 3)) ||
-      turma.slots[0]
+      null
     );
   }, [turma.slots, dataAula]);
 
@@ -244,7 +243,7 @@ export function ExecucaoAulaClient({
     const horaAtualMinutos = now.getHours() * 60 + now.getMinutes();
     const limiteMinutosTotal = limiteHoras * 60 + limiteMinutos;
     return horaAtualMinutos > limiteMinutosTotal;
-  }, [dataAula, isDataRetroativa, isDataFutura, horaFimPrevista, turma.nucleo]);
+  }, [dataAula, isDataRetroativa, isDataFutura, horaFimPrevista, turma.nucleo, segundosDecorridos]);
 
   // Verificar se é cedo demais para iniciar
   const isAntesDaJanela = useMemo(() => {
@@ -257,7 +256,7 @@ export function ExecucaoAulaClient({
     const inicioPermitidoMinutos = (iniH * 60 + iniM) - toleranciaMinutos;
     const horaAtualMinutos = now.getHours() * 60 + now.getMinutes();
     return horaAtualMinutos < inicioPermitidoMinutos;
-  }, [dataAula, isDataRetroativa, isDataFutura, horaInicioPrevista, turma.nucleo]);
+  }, [dataAula, isDataRetroativa, isDataFutura, horaInicioPrevista, turma.nucleo, segundosDecorridos]);
 
   const isForaDoHorarioRegular = mounted ? (isDataRetroativa || isForaDaJanelaHorario) : false;
 
@@ -1032,8 +1031,8 @@ export function ExecucaoAulaClient({
 
               <button
                 type="button"
-                onClick={() => {
-                  handleSalvarRascunhoPresencas();
+                onClick={async () => {
+                  await handleSalvarRascunhoPresencas();
                   setEtapa("finalizacao");
                 }}
                 className="w-full sm:w-auto bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-extrabold px-6 py-3 rounded-xl text-xs shadow-lg shadow-sky-600/20 flex items-center justify-center gap-2 cursor-pointer"

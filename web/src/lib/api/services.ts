@@ -2412,7 +2412,7 @@ export const execucoesAulaApi = {
     const isPendente = Boolean(params.justificativaRetroativa && params.justificativaRetroativa.trim().length > 0);
 
     // Bloqueio absoluto: data futura
-    const hojeISO = now.toISOString().slice(0, 10);
+    const hojeISO = getDataHojeBrasil();
     if (params.data > hojeISO) {
       throw new Error('Não é permitido iniciar uma aula em data futura.');
     }
@@ -2422,18 +2422,18 @@ export const execucoesAulaApi = {
       .select('id')
       .eq('professor_id', params.professorId)
       .eq('status', 'encerrada_automaticamente')
-      .limit(1)
-      .maybeSingle();
+      .limit(1);
 
-    if (autoEncerradas) {
+    if (autoEncerradas && autoEncerradas.length > 0) {
       throw new Error('Você possui uma aula encerrada automaticamente que precisa ser confirmada antes de iniciar uma nova.');
     }
 
-    // Evita duplicatas: se já existir aula em andamento para a turma na data, retorna ela
+    // Evita duplicatas: se já existir aula ativa para a turma na data, retorna ela
     const { data: existente } = await (sb as any).from('execucoes_aula')
       .select('*')
       .eq('turma_id', params.turmaId)
       .eq('data', params.data)
+      .in('status', ['em_andamento', 'pendente_aprovacao', 'concluida'])
       .order('criado_em', { ascending: false })
       .limit(1)
       .maybeSingle();
@@ -2502,15 +2502,24 @@ export const execucoesAulaApi = {
       .select('*');
 
     if (upsertErr) {
-      await (sb as any).from('beneficiario_presencas')
-        .delete()
-        .eq('execucao_aula_id', execucaoAulaId);
-
+      // Tenta insert individual sem deletar dados existentes
       const { data: insData, error: insErr } = await (sb as any).from('beneficiario_presencas')
         .insert(rows)
         .select('*');
 
-      if (insErr) throw insErr;
+      if (insErr) {
+        // Último recurso: deleta e re-insere
+        await (sb as any).from('beneficiario_presencas')
+          .delete()
+          .eq('execucao_aula_id', execucaoAulaId);
+
+        const { data: finalData, error: finalErr } = await (sb as any).from('beneficiario_presencas')
+          .insert(rows)
+          .select('*');
+
+        if (finalErr) throw finalErr;
+        return (finalData ?? []).map(mapBeneficiarioPresenca);
+      }
       return (insData ?? []).map(mapBeneficiarioPresenca);
     }
 
@@ -2531,10 +2540,16 @@ export const execucoesAulaApi = {
     const sb = await getSupabase();
 
     // 1. Prioridade: se houver aula em andamento para esta turma, recupera ela
-    const { data: emAndamento, error: errAndamento } = await (sb as any).from('execucoes_aula')
+    let queryAndamento = (sb as any).from('execucoes_aula')
       .select('*')
       .eq('turma_id', turmaId)
-      .eq('status', 'em_andamento')
+      .eq('status', 'em_andamento');
+
+    if (data) {
+      queryAndamento = queryAndamento.eq('data', data);
+    }
+
+    const { data: emAndamento, error: errAndamento } = await queryAndamento
       .order('criado_em', { ascending: false })
       .limit(1)
       .maybeSingle();
@@ -2588,10 +2603,12 @@ export const execucoesAulaApi = {
         atualizado_em: now.toISOString(),
       })
       .eq('id', id)
+      .in('status', ['em_andamento', 'pendente_aprovacao'])
       .select('*')
-      .single();
+      .maybeSingle();
 
     if (error) throw error;
+    if (!execData) throw new Error('Aula não encontrada ou já finalizada/rejeitada.');
     const mapped = mapExecucaoAula(execData);
 
     if (mapped.professorId) {
@@ -2763,7 +2780,38 @@ export const execucoesAulaApi = {
       .single();
 
     if (error) throw error;
-    return mapExecucaoAula(data);
+    const mapped = mapExecucaoAula(data);
+
+    // Registrar ponto do professor (mesmo padrão de avaliarPendencia)
+    if (mapped.professorId && !params.divergencia) {
+      try {
+        const horaEntrada = mapped.horaInicioReal || mapped.horaInicioPrevista || '08:00';
+        const horaSaida = mapped.horaFimReal || mapped.horaFimPrevista || '10:00';
+
+        await (sb as any).from('registros_ponto').insert([
+          {
+            funcionario_id: mapped.professorId,
+            data: mapped.data,
+            tipo: 'entrada',
+            hora: horaEntrada.length === 5 ? `${horaEntrada}:00` : horaEntrada,
+            status: 'ok',
+            observacao: `Confirmação de aula auto-encerrada - Turma ${mapped.turmaId}`,
+          },
+          {
+            funcionario_id: mapped.professorId,
+            data: mapped.data,
+            tipo: 'saida',
+            hora: horaSaida.length === 5 ? `${horaSaida}:00` : horaSaida,
+            status: 'ok',
+            observacao: `Confirmação de aula auto-encerrada - Turma ${mapped.turmaId}`,
+          },
+        ]);
+      } catch (e) {
+        console.warn('Aviso ao registrar ponto na confirmação:', e);
+      }
+    }
+
+    return mapped;
   },
 };
 
