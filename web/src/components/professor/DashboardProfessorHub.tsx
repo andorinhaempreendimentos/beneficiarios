@@ -130,11 +130,16 @@ export function DashboardProfessorHub({
 
   // Auto-encerradas pendentes de confirmação
   const [autoEncerradas, setAutoEncerradas] = useState<ExecucaoAulaApi[]>([]);
-  const [confirmandoAuto, setConfirmandoAuto] = useState(false);
-  const [fotoAutoFile, setFotoAutoFile] = useState<File | null>(null);
-  const [fotoAutoPreview, setFotoAutoPreview] = useState<string | null>(null);
-  const [mostrarDivergencia, setMostrarDivergencia] = useState(false);
-  const [justificativaDivergencia, setJustificativaDivergencia] = useState("");
+  const [confirmandoAutoId, setConfirmandoAutoId] = useState<string | null>(null);
+  const [autoEncerradaState, setAutoEncerradaState] = useState<
+    Record<string, { fotoFile: File | null; fotoPreview: string | null; divergencia: boolean; justificativa: string }>
+  >({});
+
+  const getAeState = (id: string) =>
+    autoEncerradaState[id] || { fotoFile: null, fotoPreview: null, divergencia: false, justificativa: '' };
+
+  const updateAeState = (id: string, partial: Partial<{ fotoFile: File | null; fotoPreview: string | null; divergencia: boolean; justificativa: string }>) =>
+    setAutoEncerradaState((prev) => ({ ...prev, [id]: { ...getAeState(id), ...partial } }));
 
   useEffect(() => {
     if (!professor?.id) return;
@@ -820,6 +825,7 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
 
             {autoEncerradas.map((ae) => {
               const turmaInfo = turmas.find((t) => t.id === ae.turmaId);
+              const aeS = getAeState(ae.id);
               return (
                 <div key={ae.id} className="rounded-xl border border-zinc-200 bg-zinc-50 p-4 flex flex-col gap-3">
                   <div className="flex items-center justify-between">
@@ -849,33 +855,32 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
                       onChange={(e) => {
                         const f = e.target.files?.[0];
                         if (f) {
-                          setFotoAutoFile(f);
-                          setFotoAutoPreview(URL.createObjectURL(f));
+                          updateAeState(ae.id, { fotoFile: f, fotoPreview: URL.createObjectURL(f) });
                         }
                       }}
                       className="text-xs file:mr-2 file:rounded-lg file:border-0 file:bg-zinc-200 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-zinc-700 hover:file:bg-zinc-300 cursor-pointer"
                     />
-                    {fotoAutoPreview && (
-                      <img src={fotoAutoPreview} alt="Preview" className="h-24 w-auto rounded-lg object-cover border" />
+                    {aeS.fotoPreview && (
+                      <img src={aeS.fotoPreview} alt="Preview" className="h-24 w-auto rounded-lg object-cover border" />
                     )}
                   </div>
 
                   {/* Divergência escondida */}
                   <button
                     type="button"
-                    onClick={() => setMostrarDivergencia(!mostrarDivergencia)}
+                    onClick={() => updateAeState(ae.id, { divergencia: !aeS.divergencia })}
                     className="text-[10px] text-zinc-400 hover:text-zinc-600 underline self-start cursor-pointer"
                   >
-                    {mostrarDivergencia ? 'Ocultar opções' : 'Houve divergência no horário?'}
+                    {aeS.divergencia ? 'Ocultar opções' : 'Houve divergência no horário?'}
                   </button>
 
-                  {mostrarDivergencia && (
+                  {aeS.divergencia && (
                     <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-xs text-red-800 flex flex-col gap-2">
                       <p className="font-bold">⚠ Solicitar revisão de horário</p>
                       <p>Descreva o que aconteceu. A informação será enviada ao coordenador para análise.</p>
                       <textarea
-                        value={justificativaDivergencia}
-                        onChange={(e) => setJustificativaDivergencia(e.target.value)}
+                        value={aeS.justificativa}
+                        onChange={(e) => updateAeState(ae.id, { justificativa: e.target.value })}
                         rows={3}
                         placeholder="Ex: A aula terminou 20 minutos antes porque..."
                         className="w-full rounded-lg border border-red-300 bg-white px-3 py-2 text-xs text-zinc-900 focus:border-red-500 focus:outline-none"
@@ -887,42 +892,43 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
                   {/* Botão confirmar */}
                   <button
                     type="button"
-                    disabled={confirmandoAuto}
+                    disabled={confirmandoAutoId === ae.id}
                     onClick={async () => {
-                      if (mostrarDivergencia && !justificativaDivergencia.trim()) {
+                      if (aeS.divergencia && !aeS.justificativa.trim()) {
                         toast.error('Descreva a divergência antes de confirmar.');
                         return;
                       }
-                      setConfirmandoAuto(true);
+                      setConfirmandoAutoId(ae.id);
                       try {
                         let fotoUrl: string | undefined;
-                        if (fotoAutoFile) {
-                          fotoUrl = await professoresApi.uploadComprovacao(fotoAutoFile, fotoAutoFile.name);
+                        if (aeS.fotoFile) {
+                          fotoUrl = await professoresApi.uploadComprovacao(aeS.fotoFile, aeS.fotoFile.name);
                         }
                         await execucoesAulaApi.confirmarEncerramento(ae.id, {
                           fotoComprovanteUrl: fotoUrl,
-                          divergencia: mostrarDivergencia,
-                          justificativaDivergencia: mostrarDivergencia ? justificativaDivergencia.trim() : undefined,
+                          divergencia: aeS.divergencia,
+                          justificativaDivergencia: aeS.divergencia ? aeS.justificativa.trim() : undefined,
                         });
                         setAutoEncerradas((prev) => prev.filter((x) => x.id !== ae.id));
-                        setFotoAutoFile(null);
-                        setFotoAutoPreview(null);
-                        setMostrarDivergencia(false);
-                        setJustificativaDivergencia("");
+                        setAutoEncerradaState((prev) => {
+                          const next = { ...prev };
+                          delete next[ae.id];
+                          return next;
+                        });
                         toast.success(
-                          mostrarDivergencia
+                          aeS.divergencia
                             ? 'Divergência registrada. Aguardando aprovação do coordenador.'
                             : 'Encerramento confirmado com sucesso.'
                         );
                       } catch (err: any) {
                         toast.error(err.message || 'Erro ao confirmar.');
                       } finally {
-                        setConfirmandoAuto(false);
+                        setConfirmandoAutoId(null);
                       }
                     }}
                     className="w-full rounded-xl bg-amber-600 px-4 py-3 text-sm font-bold text-white hover:bg-amber-700 disabled:opacity-50 cursor-pointer transition-colors"
                   >
-                    {confirmandoAuto ? 'Confirmando...' : '✓ Confirmar Encerramento'}
+                    {confirmandoAutoId === ae.id ? 'Confirmando...' : '✓ Confirmar Encerramento'}
                   </button>
                 </div>
               );
@@ -958,7 +964,11 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
             })
             .map((s: any) => {
               const data = dataPorSigla[s.dia] || "";
-              return `• ${NOMES_CURTOS[s.dia] ?? s.dia} (${data}) — ${String(s.inicio).padStart(2, "0")}h às ${String(s.fim).padStart(2, "0")}h`;
+              const fmtHora = (v: string | number) => {
+                const str = String(v);
+                return str.includes(':') ? str.slice(0, 5) : `${str.padStart(2, '0')}:00`;
+              };
+              return `• ${NOMES_CURTOS[s.dia] ?? s.dia} (${data}) — ${fmtHora(s.inicio)} às ${fmtHora(s.fim)}`;
             });
 
           if (diasDaTurma.length === 0) return null;

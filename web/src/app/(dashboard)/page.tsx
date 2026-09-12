@@ -69,33 +69,90 @@ export default function DashboardPage() {
     });
 
     const idsFiltrados = new Set(nucleosFiltrados.map((n) => n.id));
-    const nomesFiltrados = new Set(nucleosFiltrados.map((n) => n.identificacao.toLowerCase()));
 
+    // Top núcleos filtrados
     const topNucleosFiltrados = rRaw.topNucleos.filter((tn) => idsFiltrados.has(tn.id));
+    const benefAtivosFiltrado = topNucleosFiltrados.reduce((acc, n) => acc + (n.beneficiariosAtivos || 0), 0);
+
+    // Recentes por nucleoId (ID, não texto)
     const recentesFiltrados = rRaw.recentes.filter(
-      (rec) => rec.nucleo && nomesFiltrados.has(rec.nucleo.toLowerCase())
+      (rec) => rec.nucleoId && idsFiltrados.has(rec.nucleoId)
     );
 
-    const totalBeneficiariosAtivosFiltrados = topNucleosFiltrados.reduce(
-      (acc, n) => acc + (n.beneficiariosAtivos || 0),
-      0
-    );
+    // Mapa de núcleos filtrados
+    const mapaNucleosFiltrados = (rRaw.mapaNucleos || []).filter((n) => idsFiltrados.has(n.id));
+
+    // Turmas e vagas filtradas (dados já existem em mapaNucleos)
+    const totalVagasFiltrado = mapaNucleosFiltrados.reduce((acc, n) => acc + n.totalVagas, 0);
+    const totalOcupadasFiltrado = mapaNucleosFiltrados.reduce((acc, n) => acc + n.totalMatriculados, 0);
+    const vagasLivresFiltrado = Math.max(0, totalVagasFiltrado - totalOcupadasFiltrado);
+    const ocupacaoFiltrada = totalVagasFiltrado > 0
+      ? Math.round((totalOcupadasFiltrado / totalVagasFiltrado) * 100) : 0;
+
+    // Total de turmas filtradas
+    const turmasPorNucleo = rRaw.turmasPorNucleo || {};
+    let totalTurmasFiltrado = 0;
+    for (const nid of idsFiltrados) {
+      const tn = turmasPorNucleo[nid];
+      if (tn) totalTurmasFiltrado += tn.total;
+    }
+
+    // Funcionários filtrados por núcleo
+    const funcPorNucleo = rRaw.funcionariosPorNucleo || {};
+    let funcAtivosFiltrado = 0;
+    let funcLicencaFiltrado = 0;
+    for (const nid of idsFiltrados) {
+      const f = funcPorNucleo[nid];
+      if (f) {
+        funcAtivosFiltrado += f.ativos;
+        funcLicencaFiltrado += f.licenca;
+      }
+    }
+
+    // Organizações únicas dos núcleos filtrados
+    const orgIdsFiltrados = new Set(nucleosFiltrados.map((n) => n.organizacaoId).filter(Boolean));
+
+    // Distribuição por modalidade filtrada por turmas dos núcleos selecionados
+    const matriculasPorTurma = rRaw.matriculasPorTurma || {};
+    const turmasFiltradas = turmas.filter((t: any) => idsFiltrados.has(t.nucleoId || t.nucleo_id));
+    const modalidadeMap = new Map<string, { id: string; nome: string; total: number }>();
+    for (const dist of rRaw.distribuicaoPorModalidade) {
+      modalidadeMap.set(dist.id, { ...dist, total: 0 });
+    }
+    for (const t of turmasFiltradas) {
+      const atId = (t as any).atividadeId || (t as any).atividade_id;
+      if (atId && modalidadeMap.has(atId)) {
+        const entry = modalidadeMap.get(atId)!;
+        entry.total += matriculasPorTurma[(t as any).id] ?? 0;
+      }
+    }
+    const distribuicaoFiltrada = Array.from(modalidadeMap.values())
+      .filter((m) => m.total > 0)
+      .sort((a, b) => b.total - a.total);
 
     const nucleosAtivosCount = nucleosFiltrados.filter((n) => n.emFuncionamento !== false).length;
-    const mapaNucleosFiltrados = (rRaw.mapaNucleos || []).filter((n) => idsFiltrados.has(n.id));
 
     const rFiltrado: DashboardResumo = {
       ...rRaw,
       nucleosAtivos: nucleosAtivosCount,
       totalNucleos: nucleosFiltrados.length,
-      beneficiariosAtivos: totalBeneficiariosAtivosFiltrados,
+      beneficiariosAtivos: benefAtivosFiltrado,
+      totalTurmas: totalTurmasFiltrado,
+      totalVagas: totalVagasFiltrado,
+      totalOcupadas: totalOcupadasFiltrado,
+      vagasLivres: vagasLivresFiltrado,
+      ocupacaoGlobal: ocupacaoFiltrada,
+      funcionariosAtivos: funcAtivosFiltrado,
+      funcionariosLicenca: funcLicencaFiltrado,
+      totalOrganizacoes: orgIdsFiltrados.size,
+      distribuicaoPorModalidade: distribuicaoFiltrada,
       topNucleos: topNucleosFiltrados,
       recentes: recentesFiltrados,
       mapaNucleos: mapaNucleosFiltrados,
     };
 
     return { resumoFiltrado: rFiltrado, nucleosMapeados: nucleosComUf };
-  }, [rawNucleos, rRaw, estado, cidade, organizacaoId, nucleoId]);
+  }, [rawNucleos, rRaw, turmas, estado, cidade, organizacaoId, nucleoId]);
 
   const r = resumoFiltrado;
 

@@ -56,8 +56,12 @@ export interface DashboardResumo {
   ocupacaoGlobal: number;
   totalModalidades: number;
   topNucleos: { id: string; identificacao: string; beneficiariosAtivos: number }[];
-  distribuicaoPorModalidade: { nome: string; total: number }[];
-  recentes: { id: string; nomeCompleto: string; nucleo?: string; status: string; dataCadastro: string }[];
+  distribuicaoPorModalidade: { id: string; nome: string; total: number }[];
+  recentes: { id: string; nomeCompleto: string; nucleo?: string; nucleoId?: string; status: string; dataCadastro: string }[];
+  // Dados granulares para filtragem por núcleo
+  turmasPorNucleo?: Record<string, { total: number; vagas: number; ocupadas: number }>;
+  funcionariosPorNucleo?: Record<string, { ativos: number; licenca: number }>;
+  matriculasPorTurma?: Record<string, number>;
   mapaNucleos?: Array<{
     id: string;
     identificacao: string;
@@ -1915,11 +1919,23 @@ function montarResumo(
     .sort((a, b) => b.beneficiariosAtivos - a.beneficiariosAtivos)
     .slice(0, 5);
 
-  const nucleosAtivos = nucleos.filter((n) => n.em_funcionamento).length;
+  const nucleosAtivos = nucleos.filter((n) => n.em_funcionamento !== false).length;
   const funcionariosAtivos = funcionarios.filter((f) => f.status === "ativo" || f.status === "contratado").length;
   const funcionariosLicenca = funcionarios.filter((f) =>
     f.status === "licenca_medica" || f.status === "licenca_maternidade" || f.status === "afastado_inss",
   ).length;
+
+  // Funcionários por núcleo (para filtragem)
+  const funcionariosPorNucleo: Record<string, { ativos: number; licenca: number }> = {};
+  for (const f of funcionarios) {
+    const nid = (f as any).nucleo_id;
+    if (!nid) continue;
+    if (!funcionariosPorNucleo[nid]) funcionariosPorNucleo[nid] = { ativos: 0, licenca: 0 };
+    const isAtivo = f.status === 'ativo' || f.status === 'contratado';
+    const isLicenca = f.status === 'licenca_medica' || f.status === 'licenca_maternidade' || f.status === 'afastado_inss';
+    if (isAtivo) funcionariosPorNucleo[nid].ativos++;
+    if (isLicenca) funcionariosPorNucleo[nid].licenca++;
+  }
 
   const ocupacaoPorTurma = new Map<string, number>();
   for (const m of matriculas) ocupacaoPorTurma.set(m.turma_id, (ocupacaoPorTurma.get(m.turma_id) ?? 0) + 1);
@@ -1928,7 +1944,7 @@ function montarResumo(
   const totalOcupadas = turmas.reduce((acc, t) => acc + (ocupacaoPorTurma.get(t.id) ?? 0), 0);
   const vagasLivres = Math.max(0, totalVagas - totalOcupadas);
   const calcOcupacao = totalVagas > 0 ? (totalOcupadas / totalVagas) * 100 : 0;
-  const ocupacaoGlobal = totalOcupadas > 0 && calcOcupacao < 1
+  const ocupacaoGlobal = calcOcupacao < 10
     ? Number(calcOcupacao.toFixed(1))
     : Math.round(calcOcupacao);
 
@@ -1938,6 +1954,7 @@ function montarResumo(
 
   const distribuicaoPorModalidade = atividadesEsportivas
     .map((a) => ({
+      id: a.id,
       nome: a.nome,
       total: turmas.filter((t) => t.atividade_id === a.id).reduce((acc, t) => acc + (ocupacaoPorTurma.get(t.id) ?? 0), 0),
     }))
@@ -2013,6 +2030,26 @@ function montarResumo(
 
   const organizacoes = extrairOrganizacoes(nucleos);
 
+  // Construir turmasPorNucleo para o retorno
+  const turmasPorNucleoMap: Record<string, { total: number; vagas: number; ocupadas: number }> = {};
+  for (const [nid, info] of turmasPorNucleo.entries()) {
+    let ocupadasDoNucleo = 0;
+    for (const tid of info.ids) {
+      ocupadasDoNucleo += ocupacaoPorTurma.get(tid) ?? 0;
+    }
+    turmasPorNucleoMap[nid] = {
+      total: info.ids.length,
+      vagas: info.vagas,
+      ocupadas: ocupadasDoNucleo,
+    };
+  }
+
+  // Matriculas por turma para o retorno
+  const matriculasPorTurmaMap: Record<string, number> = {};
+  for (const [tid, count] of ocupacaoPorTurma.entries()) {
+    matriculasPorTurmaMap[tid] = count;
+  }
+
   return {
     beneficiariosAtivos,
     totalBeneficiarios,
@@ -2033,6 +2070,9 @@ function montarResumo(
     mapaNucleos,
     nucleosDetalhados,
     organizacoes,
+    turmasPorNucleo: turmasPorNucleoMap,
+    funcionariosPorNucleo,
+    matriculasPorTurma: matriculasPorTurmaMap,
     recentes: recentes.map((b) => {
       let nomeDoNucleo = b.nucleo_id ? nucleoNome.get(b.nucleo_id) : undefined;
       if (!nomeDoNucleo && b.nucleos?.identificacao) {
@@ -2047,6 +2087,7 @@ function montarResumo(
         status: b.status,
         dataCadastro: b.data_cadastro || b.created_at,
         nucleo: nomeDoNucleo || "—",
+        nucleoId: b.nucleo_id || undefined,
       };
     }),
   };
@@ -2070,7 +2111,7 @@ export const dashboardApi = {
       sb.from('beneficiarios').select('id', { count: 'exact', head: true }).is('deleted_at', null),
       sb.from('beneficiarios').select('id, nucleo_id, beneficiario_turmas(turmas(nucleo_id))').is('deleted_at', null).eq('status', 'ativo'),
       sb.from('nucleos').select('id, identificacao, nome_local, cep, endereco, numero, bairro, cidade, estado, complemento, latitude, longitude, em_funcionamento, organizacao_id, organizacoes(id, nome, estado, cidade), nucleo_atividades(atividade_id)').is('deleted_at', null),
-      sb.from('funcionarios').select('status').is('deleted_at', null),
+      sb.from('funcionarios').select('status, nucleo_id').is('deleted_at', null),
       sb.from('turmas').select('id, nucleo_id, atividade_id, vagas_totais').is('deleted_at', null),
       sb.from('atividades').select('id, nome, disponivel_pre_inscricao').is('deleted_at', null),
       sb.from('beneficiario_turmas').select('turma_id').is('deleted_at', null),
