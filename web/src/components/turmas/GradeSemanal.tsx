@@ -37,6 +37,7 @@ interface GradeSemanalProps {
   atividadeNome?: string;
   atividadesLocais?: AtividadeApi[];
   slots?: SlotAula[];
+  backgroundSlots?: SlotAula[];
   onChange?: (slots: SlotAula[]) => void;
 }
 
@@ -368,7 +369,7 @@ function ModalOpcoesSlot({
   );
 }
 
-export function GradeSemanal({ atividade, atividadeNome = "Aula", atividadesLocais = [], slots = [], onChange }: GradeSemanalProps) {
+export function GradeSemanal({ atividade, atividadeNome = "Aula", atividadesLocais = [], slots = [], backgroundSlots = [], onChange }: GradeSemanalProps) {
   const [items, setItems] = useState<SlotAula[]>(slots);
   const [diasVisiveis, setDiasVisiveis] = useState<Set<string>>(
     new Set(["Seg", "Ter", "Qua", "Qui", "Sex"])
@@ -420,6 +421,14 @@ export function GradeSemanal({ atividade, atividadeNome = "Aula", atividadesLoca
 
   function isSlotStart(dia: string, hora: number) {
     return items.find((s) => s.dia === dia && s.inicio === hora);
+  }
+
+  function getBackgroundSlotStart(dia: string, hora: number) {
+    return backgroundSlots.find((s) => s.dia === dia && s.inicio === hora);
+  }
+
+  function isBackgroundSlotCovered(dia: string, hora: number) {
+    return backgroundSlots.some((s) => s.dia === dia && hora >= s.inicio && hora < s.fim);
   }
 
   function handleMouseDown(dia: string, hora: number) {
@@ -558,18 +567,31 @@ export function GradeSemanal({ atividade, atividadeNome = "Aula", atividadesLoca
                     const slot = getSlot(key, hora);
                     const isStart = isSlotStart(key, hora);
                     const highlight = isDragHighlight(key, hora);
+                    const bgSlotStart = getBackgroundSlotStart(key, hora);
+                    const bgCovered = isBackgroundSlotCovered(key, hora);
 
                     return (
                       <div
                         key={hora}
                         className={[
                           "relative h-12 cursor-pointer border-b border-zinc-100 transition-colors",
-                          slot ? "" : highlight ? "bg-sky-100" : "hover:bg-sky-50",
+                          slot ? "" : highlight ? "bg-sky-100" : bgCovered ? "" : "hover:bg-sky-50",
                         ].join(" ")}
                         onMouseDown={() => handleMouseDown(key, hora)}
                         onMouseUp={() => handleMouseUp(key, hora)}
                         onMouseEnter={() => handleMouseEnter(key, hora)}
                       >
+                        {/* Slot de referência (outra turma) */}
+                        {bgSlotStart && !slot && (
+                          <div
+                            className="absolute inset-x-0.5 z-0 rounded-md border border-zinc-300 bg-zinc-100 px-1.5 py-0.5 text-[11px] font-medium leading-tight text-zinc-500 opacity-70"
+                            style={{ top: 2, height: `calc(${(bgSlotStart.fim - bgSlotStart.inicio) * 48}px - 4px)` }}
+                          >
+                            <div className="truncate">{bgSlotStart.atividadeNome}</div>
+                            <div className="text-[10px] font-normal opacity-80">{formatHora(bgSlotStart.inicio)}–{formatHora(bgSlotStart.fim)}</div>
+                          </div>
+                        )}
+
                         {isStart && slot && (
                           <div
                             className={`absolute inset-x-0.5 z-10 rounded-md border px-1.5 py-0.5 text-[11px] font-semibold leading-tight shadow-sm cursor-pointer hover:opacity-90 ${

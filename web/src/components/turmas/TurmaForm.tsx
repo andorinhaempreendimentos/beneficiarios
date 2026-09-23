@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { z } from "zod";
 import { Button, Field, FormSection, Input, LinkButton, Select, Switch } from "@/components/ui";
 import { GradeSemanal } from "./GradeSemanal";
@@ -50,6 +50,18 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
   const [responsaveisIds, setResponsaveisIds] = useState<string[]>(t?.responsaveis ?? []);
   const [listaFuncionarios, setListaFuncionarios] = useState<FuncionarioApi[]>(initialFuncionarios);
   const [todasTurmas, setTodasTurmas] = useState<TurmaApi[]>([]);
+
+  // Slots de outras turmas do mesmo núcleo — exibidos como referência na grade
+  const backgroundSlots = useMemo(() => {
+    return todasTurmas
+      .filter((tr) => tr.nucleoId === nucleoId && tr.id !== t?.id)
+      .flatMap((tr) =>
+        (tr.slots ?? []).map((s: any) => ({
+          ...s,
+          atividadeNome: `${tr.nome}`,
+        }))
+      );
+  }, [todasTurmas, nucleoId, t?.id]);
 
   useEffect(() => {
     if (initialFuncionarios.length === 0) {
@@ -304,6 +316,7 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
               atividadeNome={atividadeNome}
               atividadesLocais={atividades}
               slots={slots}
+              backgroundSlots={backgroundSlots}
               onChange={setSlots}
             />
           ) : (
