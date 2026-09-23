@@ -202,7 +202,7 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
               ))}
             </Select>
           </Field>
-          <Field label="Categoria" hint="Faixa etária da turma (Sub-6, Sub-8...)">
+          <Field label="Categoria">
             <Select value={categoriaId} onChange={(e) => setCategoriaId(e.target.value)}>
               <option value="">Sem categoria</option>
               {categorias.map((c) => (
