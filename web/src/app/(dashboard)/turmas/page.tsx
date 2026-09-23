@@ -334,7 +334,13 @@ export default function TurmasPage() {
                             <div className="h-full rounded-full bg-sky-500" style={{ width: `${vagasOcupadasPct}%` }} />
                           </div>
                           <div className="mt-0.5 flex items-center justify-between text-[11px] text-zinc-500">
-                            <span>Faixa etária: <strong>{t.idadeMinima ?? 6} a {t.idadeMaxima ?? 17} anos</strong></span>
+                            <span>
+                              {t.categoria ? (
+                                <><strong>{t.categoria.nome}</strong> ({t.categoria.idadeMinima}–{t.categoria.idadeMaxima} anos)</>
+                              ) : (
+                                <>Faixa etária: <strong>{t.idadeMinima ?? 6} a {t.idadeMaxima ?? 17} anos</strong></>
+                              )}
+                            </span>
                             <span>{vagasTotais - matriculadosCount} vagas livres</span>
                           </div>
                         </div>
@@ -380,6 +386,7 @@ export default function TurmasPage() {
                       <th className="px-5 py-3">Turma</th>
                       <th className="px-5 py-3">Núcleo</th>
                       <th className="px-5 py-3">Atividade</th>
+                      <th className="px-5 py-3">Categoria</th>
                       <th className="px-5 py-3 text-center">Matriculados / Vagas</th>
                       <th className="px-5 py-3">Exclusiva</th>
                       <th className="px-5 py-3 text-right">Ações</th>
@@ -387,7 +394,7 @@ export default function TurmasPage() {
                   </thead>
                   <tbody>
                     {resultado.length === 0 ? (
-                      <tr><td colSpan={7} className="px-5 py-8 text-center text-sm text-zinc-400">Nenhuma turma encontrada.</td></tr>
+                      <tr><td colSpan={8} className="px-5 py-8 text-center text-sm text-zinc-400">Nenhuma turma encontrada.</td></tr>
                     ) : resultado.map((t) => {
                       const nucleo = nucleos.find((n) => n.id === t.nucleoId);
                       const atividade = atividades.find((a) => a.id === t.atividadeId);
@@ -412,6 +419,13 @@ export default function TurmasPage() {
                           </td>
                           <td className="px-5 py-3 text-zinc-600">{nucleo?.identificacao ?? "—"}</td>
                           <td className="px-5 py-3 text-zinc-600">{atividade?.nome ?? "—"}</td>
+                          <td className="px-5 py-3">
+                            {t.categoria ? (
+                              <Badge tone="sky">{t.categoria.sigla}</Badge>
+                            ) : (
+                              <span className="text-zinc-400">—</span>
+                            )}
+                          </td>
                           <td className="px-5 py-3 text-center font-semibold text-sky-700">
                             {matriculadosCount} / {t.vagasTotais || 0}
                           </td>
