@@ -17,6 +17,7 @@ export default async function DetalhesTurmaPage({ params }: { params: Promise<{ 
     beneficiariosApi.list({ limit: 500 }).catch(() => ({ data: [], total: 0, page: 1, limit: 500 })),
   ]);
 
+  const usoInterno = atividade?.usoInterno ?? false;
   const matriculados = matriculadosRes.data;
   const qtdOcupadas = matriculadosRes.total;
   const vagasLivres = Math.max(0, t.vagasTotais - qtdOcupadas);
@@ -29,8 +30,12 @@ export default async function DetalhesTurmaPage({ params }: { params: Promise<{ 
         description={t.dataInicio ? `Início: ${formatarData(t.dataInicio)}` : "Sem data de início"}
         actions={
           <div className="flex items-center gap-2">
-            <LinkButton href={`/turmas/${t.id}/inscricoes`} variant="outline">Inscrições</LinkButton>
-            <LinkButton href={`/turmas/${t.id}/presenca`} variant="outline">Lista de presença</LinkButton>
+            {!usoInterno && (
+              <>
+                <LinkButton href={`/turmas/${t.id}/inscricoes`} variant="outline">Inscrições</LinkButton>
+                <LinkButton href={`/turmas/${t.id}/presenca`} variant="outline">Lista de presença</LinkButton>
+              </>
+            )}
             <LinkButton href={`/turmas/${t.id}/editar`} variant="outline">Editar</LinkButton>
           </div>
         }
@@ -47,7 +52,10 @@ export default async function DetalhesTurmaPage({ params }: { params: Promise<{ 
           </div>
           <div>
             <p className="text-zinc-500">Atividade</p>
-            <p className="text-zinc-800">{atividade?.nome ?? "—"}</p>
+            <p className="text-zinc-800">
+              {atividade?.nome ?? "—"}
+              {usoInterno && <span className="ml-2 text-xs text-zinc-400">(uso interno)</span>}
+            </p>
           </div>
           <div>
             <p className="text-zinc-500">Exclusiva</p>
@@ -56,41 +64,59 @@ export default async function DetalhesTurmaPage({ params }: { params: Promise<{ 
         </CardBody>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <h3 className="text-sm font-medium text-zinc-700">Vagas e responsáveis</h3>
-        </CardHeader>
-        <CardBody className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2 lg:grid-cols-3">
-          <div>
-            <p className="text-zinc-500">Vagas totais</p>
-            <p className="text-zinc-800">{t.vagasTotais}</p>
-          </div>
-          <div>
-            <p className="text-zinc-500">Beneficiários matriculados</p>
-            <p className="text-zinc-800">{qtdOcupadas}</p>
-          </div>
-          <div>
-            <p className="text-zinc-500">Vagas disponíveis</p>
-            <Badge tone={vagasLivres > 0 ? "green" : "red"}>{vagasLivres}</Badge>
-          </div>
-          <div>
-            <p className="text-zinc-500">Responsável(is)</p>
+      {!usoInterno && (
+        <>
+          <Card>
+            <CardHeader>
+              <h3 className="text-sm font-medium text-zinc-700">Vagas e responsáveis</h3>
+            </CardHeader>
+            <CardBody className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2 lg:grid-cols-3">
+              <div>
+                <p className="text-zinc-500">Vagas totais</p>
+                <p className="text-zinc-800">{t.vagasTotais}</p>
+              </div>
+              <div>
+                <p className="text-zinc-500">Beneficiários matriculados</p>
+                <p className="text-zinc-800">{qtdOcupadas}</p>
+              </div>
+              <div>
+                <p className="text-zinc-500">Vagas disponíveis</p>
+                <Badge tone={vagasLivres > 0 ? "green" : "red"}>{vagasLivres}</Badge>
+              </div>
+              <div>
+                <p className="text-zinc-500">Responsável(is)</p>
+                <p className="text-zinc-800">
+                  {(t.responsaveisNomes && t.responsaveisNomes.length > 0)
+                    ? t.responsaveisNomes.join(", ")
+                    : (t.responsaveis ?? []).join(", ") || "-"}
+                </p>
+              </div>
+            </CardBody>
+          </Card>
+
+          <GestaoMatriculasRoster
+            turmaAtual={t}
+            matriculadosIniciais={matriculados}
+            outrasTurmas={outrasTurmas}
+            todosBeneficiarios={todosBeneficiariosRes.data}
+          />
+        </>
+      )}
+
+      {usoInterno && (
+        <Card>
+          <CardHeader>
+            <h3 className="text-sm font-medium text-zinc-700">Responsável(is)</h3>
+          </CardHeader>
+          <CardBody className="text-sm">
             <p className="text-zinc-800">
               {(t.responsaveisNomes && t.responsaveisNomes.length > 0)
                 ? t.responsaveisNomes.join(", ")
                 : (t.responsaveis ?? []).join(", ") || "-"}
             </p>
-          </div>
-        </CardBody>
-      </Card>
-
-      {/* Roster de Gestão Ativa de Matrícula (Adicionar, Remover, Migrar) */}
-      <GestaoMatriculasRoster
-        turmaAtual={t}
-        matriculadosIniciais={matriculados}
-        outrasTurmas={outrasTurmas}
-        todosBeneficiarios={todosBeneficiariosRes.data}
-      />
+          </CardBody>
+        </Card>
+      )}
     </div>
   );
 }
