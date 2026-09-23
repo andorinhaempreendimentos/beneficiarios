@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      categoria_turmas: {
+        Row: {
+          id: string
+          nome: string
+          sigla: string
+          idade_minima: number
+          idade_maxima: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          nome: string
+          sigla: string
+          idade_minima: number
+          idade_maxima: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          nome?: string
+          sigla?: string
+          idade_minima?: number
+          idade_maxima?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       atividade_perguntas: {
         Row: {
           atividade_id: string
