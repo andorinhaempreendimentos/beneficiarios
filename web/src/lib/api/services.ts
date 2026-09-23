@@ -2964,7 +2964,7 @@ export const categoriaTurmasApi = {
     const sb = await getSupabase();
     const { page, limit, from, to } = paginar(num(p?.page), num(p?.limit));
     let q = sb.from('categoria_turmas').select('*', { count: 'exact' });
-    if (p?.nome) q = q.ilike('nome', % + String(p.nome) + %);
+    if (p?.nome) q = q.ilike('nome', '%' + String(p.nome) + '%');
     const { data, count, error } = await q.order('idade_minima', { ascending: true }).range(from, to);
     if (error) throw error;
     return { data: (data ?? []).map(mapCategoriaTurma), total: count ?? 0, page, limit };
