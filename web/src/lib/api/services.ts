@@ -2988,7 +2988,7 @@ export const categoriaTurmasApi = {
   },
   async update(id: string, body: Partial<{ nome: string; sigla: string; idadeMinima: number; idadeMaxima: number }>): Promise<CategoriaTurmaApi> {
     const sb = createClient();
-    const row: Record<string, unknown> = {};
+    const row: Database['public']['Tables']['categoria_turmas']['Update'] = {};
     if (body.nome !== undefined) row.nome = body.nome;
     if (body.sigla !== undefined) row.sigla = body.sigla;
     if (body.idadeMinima !== undefined) row.idade_minima = body.idadeMinima;
