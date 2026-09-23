@@ -254,7 +254,9 @@ export default function TurmasPage() {
                     return (
                       <div
                         key={t.id}
-                        className={`group relative overflow-hidden rounded-2xl border transition-all flex flex-col justify-between gap-3.5 p-4 ${
+                        className={`group relative overflow-hidden rounded-2xl border transition-all flex flex-col gap-3.5 p-4 ${
+                          t.atividade?.usoInterno ? "justify-start" : "justify-between"
+                        } ${
                           isSelected
                             ? "border-sky-500 bg-sky-50/30 ring-2 ring-sky-500/20 shadow-xs"
                             : "border-zinc-200 bg-white hover:border-zinc-300 hover:shadow-xs"
