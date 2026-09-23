@@ -2935,3 +2935,71 @@ export type {
   DadosRelatorioPrestacaoContas,
 } from './prestacaoContas';
 export { prestacaoContasApi } from './prestacaoContas';
+// ── Categoria de Turmas ──────────────────────────────────────────────────
+
+export interface CategoriaTurmaApi {
+  id: string;
+  nome: string;
+  sigla: string;
+  idadeMinima: number;
+  idadeMaxima: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+function mapCategoriaTurma(row: any): CategoriaTurmaApi {
+  return {
+    id: row.id,
+    nome: row.nome,
+    sigla: row.sigla,
+    idadeMinima: row.idade_minima,
+    idadeMaxima: row.idade_maxima,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
+export const categoriaTurmasApi = {
+  async list(p?: QP): Promise<Paginated<CategoriaTurmaApi>> {
+    const sb = await getSupabase();
+    const { page, limit, from, to } = paginar(num(p?.page), num(p?.limit));
+    let q = sb.from('categoria_turmas').select('*', { count: 'exact' });
+    if (p?.nome) q = q.ilike('nome', % + String(p.nome) + %);
+    const { data, count, error } = await q.order('idade_minima', { ascending: true }).range(from, to);
+    if (error) throw error;
+    return { data: (data ?? []).map(mapCategoriaTurma), total: count ?? 0, page, limit };
+  },
+  async get(id: string): Promise<CategoriaTurmaApi> {
+    const sb = await getSupabase();
+    const { data, error } = await sb.from('categoria_turmas').select('*').eq('id', id).single();
+    if (error) throw error;
+    return mapCategoriaTurma(data);
+  },
+  async create(body: { nome: string; sigla: string; idadeMinima: number; idadeMaxima: number }): Promise<CategoriaTurmaApi> {
+    const sb = createClient();
+    const { data, error } = await sb.from('categoria_turmas').insert({
+      nome: body.nome,
+      sigla: body.sigla,
+      idade_minima: body.idadeMinima,
+      idade_maxima: body.idadeMaxima,
+    }).select('*').single();
+    if (error) throw error;
+    return mapCategoriaTurma(data);
+  },
+  async update(id: string, body: Partial<{ nome: string; sigla: string; idadeMinima: number; idadeMaxima: number }>): Promise<CategoriaTurmaApi> {
+    const sb = createClient();
+    const row: Record<string, unknown> = {};
+    if (body.nome !== undefined) row.nome = body.nome;
+    if (body.sigla !== undefined) row.sigla = body.sigla;
+    if (body.idadeMinima !== undefined) row.idade_minima = body.idadeMinima;
+    if (body.idadeMaxima !== undefined) row.idade_maxima = body.idadeMaxima;
+    const { data, error } = await sb.from('categoria_turmas').update(row).eq('id', id).select('*').single();
+    if (error) throw error;
+    return mapCategoriaTurma(data);
+  },
+  async remove(id: string): Promise<void> {
+    const sb = createClient();
+    const { error } = await sb.from('categoria_turmas').delete().eq('id', id);
+    if (error) throw error;
+  },
+};

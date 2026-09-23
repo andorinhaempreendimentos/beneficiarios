@@ -192,6 +192,16 @@ export function Sidebar() {
                     >
                       {`Nova ${t("turma", "Turma").toLowerCase()}`}
                     </Link>
+                    <Link
+                      href="/categoria-turmas"
+                      onClick={() => setOpen(false)}
+                      className={cn(
+                        "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors",
+                        pathname === "/categoria-turmas" ? "text-sky-700 font-medium" : "text-zinc-500 hover:text-zinc-900"
+                      )}
+                    >
+                      Categorias
+                    </Link>
                   </div>
                 )}
               </div>

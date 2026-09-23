@@ -23,6 +23,7 @@ import { StorageModule } from './storage/storage.module';
 import { RelatoriosModule } from './modules/relatorios/relatorios.module';
 import { ConfiguracoesModule } from './modules/configuracoes/configuracoes.module';
 import { IbgeModule } from './modules/ibge/ibge.module';
+import { CategoriaTurmasModule } from './modules/categoria-turmas/categoria-turmas.module';
 import { PermissaoGuard } from './common/guards/permissao.guard';
 import { configuration } from './config/configuration';
 import { envValidationSchema } from './config/env.validation';
@@ -58,6 +59,7 @@ import { RefreshToken } from './modules/usuarios/refresh-token.entity';
 import { Configuracao } from './modules/configuracoes/configuracao.entity';
 import { AuditLog } from './modules/audit/audit-log.entity';
 import { SeedService } from './database/seed/seed.service';
+import { CategoriaTurma } from './modules/categoria-turmas/categoria-turma.entity';
 
 const ENTITIES = [
   Objeto, Organizacao, Nucleo,
@@ -73,6 +75,7 @@ const ENTITIES = [
   Usuario, Perfil, PerfilPermissao, RefreshToken,
   Configuracao,
   AuditLog,
+  CategoriaTurma,
 ];
 
 @Module({
@@ -119,6 +122,7 @@ const ENTITIES = [
     RelatoriosModule,
     ConfiguracoesModule,
     IbgeModule,
+    CategoriaTurmasModule,
   ],
   controllers: [AppController],
   providers: [
