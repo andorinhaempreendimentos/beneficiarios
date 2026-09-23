@@ -26,6 +26,10 @@ export class Turma extends SoftDeleteEntity {
   @ManyToOne(() => Atividade, (a) => a.turmas, { onDelete: 'RESTRICT' })
   atividade: Atividade;
 
+  @Index()
+  @Column({ name: 'categoria_id', type: 'varchar', length: 36, nullable: true })
+  categoriaId: string | null;
+
   @Column({ name: 'vagas_totais', type: 'smallint', unsigned: true, default: 30 })
   vagasTotais: number;
 

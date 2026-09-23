@@ -23,6 +23,10 @@ export class CreateTurmaDto {
   atividadeId: string;
 
   @IsOptional()
+  @IsUUID()
+  categoriaId?: string;
+
+  @IsOptional()
   @IsInt()
   @Min(1)
   vagasTotais?: number;

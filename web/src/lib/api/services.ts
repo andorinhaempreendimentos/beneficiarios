@@ -252,6 +252,8 @@ export interface TurmaApi {
   nome: string;
   nucleoId: string;
   atividadeId: string;
+  categoriaId?: string | null;
+  categoria?: { id: string; nome: string; sigla: string; idadeMinima: number; idadeMaxima: number };
   responsaveis: string[];
   responsaveisNomes?: string[];
   vagasTotais: number;
@@ -509,6 +511,14 @@ function mapTurma(r: any): TurmaApi {
 
   return {
     id: r.id, nome: r.nome, nucleoId: r.nucleo_id, atividadeId: r.atividade_id,
+    categoriaId: r.categoria_id ?? null,
+    categoria: r.categoria_turmas ? {
+      id: r.categoria_turmas.id,
+      nome: r.categoria_turmas.nome,
+      sigla: r.categoria_turmas.sigla,
+      idadeMinima: r.categoria_turmas.idade_minima,
+      idadeMaxima: r.categoria_turmas.idade_maxima,
+    } : undefined,
     responsaveis: (r.turma_responsaveis ?? []).map((tr: any) => tr.funcionario_id),
     responsaveisNomes: (r.turma_responsaveis ?? []).map((tr: any) => tr.funcionarios?.nome_completo).filter(Boolean),
     vagasTotais: r.vagas_totais,
@@ -960,8 +970,8 @@ function toAtividadeRow(b: Record<string, unknown>): Database['public']['Tables'
 
 // ── Turmas ───────────────────────────────────────────────────────────────
 
-const TURMA_SELECT = '*, nucleos(*), atividades(*), turma_responsaveis(*, funcionarios(nome_completo)), turma_horarios(*)';
-const TURMA_FALLBACK_SELECT = '*, nucleos(*), atividades(*), turma_responsaveis(*), turma_horarios(*)';
+const TURMA_SELECT = '*, nucleos(*), atividades(*), turma_responsaveis(*, funcionarios(nome_completo)), turma_horarios(*), categoria_turmas(*)';
+const TURMA_FALLBACK_SELECT = '*, nucleos(*), atividades(*), turma_responsaveis(*), turma_horarios(*), categoria_turmas(*)';
 
 export const turmasApi = {
   async list(p?: QP): Promise<Paginated<TurmaApi>> {

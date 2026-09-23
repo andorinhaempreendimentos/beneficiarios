@@ -7,11 +7,13 @@ import { GradeSemanal } from "./GradeSemanal";
 import {
   turmasApi,
   funcionariosApi,
+  categoriaTurmasApi,
   FUNCAO_PROFESSOR_ID,
   type TurmaApi,
   type NucleoApi,
   type AtividadeApi,
   type FuncionarioApi,
+  type CategoriaTurmaApi,
 } from "@/lib/api/services";
 
 const turmaSchema = z.object({
@@ -41,6 +43,8 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
   const [exclusiva, setExclusiva] = useState(t?.exclusiva ?? false);
   const [nucleoId, setNucleoId] = useState(t?.nucleoId ?? "");
   const [atividadeId, setAtividadeId] = useState(t?.atividadeId ?? "");
+  const [categoriaId, setCategoriaId] = useState(t?.categoriaId ?? "");
+  const [categorias, setCategorias] = useState<CategoriaTurmaApi[]>([]);
   const [slots, setSlots] = useState<any[]>(t?.slots ?? []);
   const [permitirFilaEspera, setPermitirFilaEspera] = useState(t?.permitirFilaEspera ?? true);
   const [responsaveisIds, setResponsaveisIds] = useState<string[]>(t?.responsaveis ?? []);
@@ -57,6 +61,9 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
     }
     turmasApi.list({ limit: 500 }).then((res) => {
       setTodasTurmas(res.data);
+    }).catch(() => {});
+    categoriaTurmasApi.list({ limit: 50 }).then((res) => {
+      setCategorias(res.data);
     }).catch(() => {});
   }, [initialFuncionarios]);
 
@@ -116,6 +123,7 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
       nome: formData.get("nome") as string,
       nucleoId: nId,
       atividadeId: aId,
+      categoriaId: categoriaId || undefined,
       vagasTotais: Number(formData.get("vagasTotais") || 30),
       idadeMinima: Number(formData.get("idadeMinima") || 6),
       idadeMaxima: Number(formData.get("idadeMaxima") || 17),
@@ -190,6 +198,16 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
               {atividadesParaTurma.map((a) => (
                 <option key={a.id} value={a.id}>
                   {a.nome} {!a.disponivelPreInscricao ? "(🔒 Controle Interno)" : ""}
+                </option>
+              ))}
+            </Select>
+          </Field>
+          <Field label="Categoria" hint="Faixa etária da turma (Sub-6, Sub-8...)">
+            <Select value={categoriaId} onChange={(e) => setCategoriaId(e.target.value)}>
+              <option value="">Sem categoria</option>
+              {categorias.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.nome} ({c.idadeMinima}–{c.idadeMaxima} anos)
                 </option>
               ))}
             </Select>

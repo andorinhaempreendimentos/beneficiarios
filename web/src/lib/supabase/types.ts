@@ -2363,6 +2363,7 @@ export type Database = {
       turmas: {
         Row: {
           atividade_id: string
+          categoria_id: string | null
           created_at: string
           data_fim: string | null
           data_inicio: string | null
@@ -2380,6 +2381,7 @@ export type Database = {
         }
         Insert: {
           atividade_id: string
+          categoria_id?: string | null
           created_at?: string
           data_fim?: string | null
           data_inicio?: string | null
@@ -2397,6 +2399,7 @@ export type Database = {
         }
         Update: {
           atividade_id?: string
+          categoria_id?: string | null
           created_at?: string
           data_fim?: string | null
           data_inicio?: string | null
@@ -2425,6 +2428,13 @@ export type Database = {
             columns: ["nucleo_id"]
             isOneToOne: false
             referencedRelation: "nucleos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "turmas_categoria_id_fkey"
+            columns: ["categoria_id"]
+            isOneToOne: false
+            referencedRelation: "categoria_turmas"
             referencedColumns: ["id"]
           },
         ]
