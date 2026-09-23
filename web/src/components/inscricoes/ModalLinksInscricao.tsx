@@ -28,6 +28,7 @@ export function ModalLinksInscricao({
   const { toast } = useToast();
   const [busca, setBusca] = useState("");
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [buscaExecutada, setBuscaExecutada] = useState(false);
 
   // Filtros dinâmicos por entidade
   const [selectedObjetoId, setSelectedObjetoId] = useState("");
@@ -69,6 +70,7 @@ export function ModalLinksInscricao({
     setSelectedAtividadeId("");
     setSelectedTurmaId("");
     setBusca("");
+    setBuscaExecutada(false);
   }
 
   const temFiltroAtivo = selectedObjetoId || selectedOrganizacaoId || selectedNucleoId || selectedAtividadeId || selectedTurmaId || busca;
@@ -311,6 +313,7 @@ export function ModalLinksInscricao({
                     setSelectedNucleoId("");
                     setSelectedAtividadeId("");
                     setSelectedTurmaId("");
+                    setBuscaExecutada(false);
                   }}
                   className="w-full rounded-lg border border-zinc-300 bg-white px-2.5 py-1.5 text-xs text-zinc-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 cursor-pointer"
                 >
@@ -333,6 +336,7 @@ export function ModalLinksInscricao({
                     setSelectedNucleoId("");
                     setSelectedAtividadeId("");
                     setSelectedTurmaId("");
+                    setBuscaExecutada(false);
                   }}
                   className="w-full rounded-lg border border-zinc-300 bg-white px-2.5 py-1.5 text-xs text-zinc-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 cursor-pointer"
                 >
@@ -353,6 +357,7 @@ export function ModalLinksInscricao({
                   setSelectedNucleoId(e.target.value);
                   setSelectedAtividadeId("");
                   setSelectedTurmaId("");
+                  setBuscaExecutada(false);
                 }}
                 className="w-full rounded-lg border border-zinc-300 bg-white px-2.5 py-1.5 text-xs text-zinc-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 cursor-pointer"
               >
@@ -371,6 +376,7 @@ export function ModalLinksInscricao({
                 onChange={(e) => {
                   setSelectedAtividadeId(e.target.value);
                   setSelectedTurmaId("");
+                  setBuscaExecutada(false);
                 }}
                 className="w-full rounded-lg border border-zinc-300 bg-white px-2.5 py-1.5 text-xs text-zinc-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 cursor-pointer"
               >
@@ -386,7 +392,7 @@ export function ModalLinksInscricao({
               <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Turma</label>
               <select
                 value={selectedTurmaId}
-                onChange={(e) => setSelectedTurmaId(e.target.value)}
+                onChange={(e) => { setSelectedTurmaId(e.target.value); setBuscaExecutada(false); }}
                 className="w-full rounded-lg border border-zinc-300 bg-white px-2.5 py-1.5 text-xs text-zinc-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 cursor-pointer"
               >
                 <option value="">Todas as Turmas ({turmasFiltradasDropdown.length})</option>
@@ -406,19 +412,29 @@ export function ModalLinksInscricao({
                 type="text"
                 placeholder="Busca por nome, professor, bairro, horários..."
                 value={busca}
-                onChange={(e) => setBusca(e.target.value)}
+                onChange={(e) => { setBusca(e.target.value); setBuscaExecutada(false); }}
+                onKeyDown={(e) => { if (e.key === "Enter") setBuscaExecutada(true); }}
                 className="w-full pl-8 pr-3 py-1.5 text-xs rounded-xl border border-zinc-300 bg-white focus:outline-hidden focus:ring-2 focus:ring-sky-500/20 font-medium"
               />
             </div>
 
-            {temFiltroAtivo && (
+            <button
+              type="button"
+              onClick={() => setBuscaExecutada(true)}
+              className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-sky-600 text-white text-xs font-bold hover:bg-sky-700 transition-colors shrink-0 cursor-pointer"
+            >
+              <Search className="h-3.5 w-3.5" />
+              <span>Buscar</span>
+            </button>
+
+            {(temFiltroAtivo || buscaExecutada) && (
               <button
                 type="button"
                 onClick={limparFiltros}
                 className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-zinc-300 bg-white text-xs font-medium text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 transition-colors shrink-0 cursor-pointer"
               >
                 <FilterX className="h-3.5 w-3.5 text-zinc-500" />
-                <span>Limpar Filtros</span>
+                <span>Limpar</span>
               </button>
             )}
           </div>
@@ -426,7 +442,11 @@ export function ModalLinksInscricao({
 
         {/* Modal List */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-zinc-50/30">
-          {totalEncontrados === 0 ? (
+          {!buscaExecutada ? (
+            <div className="py-12 text-center text-xs text-zinc-400">
+              Configure os filtros acima e clique em <strong className="text-zinc-500">Buscar</strong> para ver os links.
+            </div>
+          ) : totalEncontrados === 0 ? (
             <div className="py-12 text-center text-xs text-zinc-400">
               Nenhum link de inscrição encontrado para os filtros aplicados.
             </div>
