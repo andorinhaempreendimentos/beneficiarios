@@ -28,16 +28,10 @@ CREATE POLICY "categoria_turmas_select" ON categoria_turmas
   FOR SELECT TO authenticated USING (true);
 
 CREATE POLICY "categoria_turmas_insert" ON categoria_turmas
-  FOR INSERT TO authenticated WITH CHECK (
-    (auth.jwt() ->> 'user_tipo') IN ('admin', 'superadmin')
-  );
+  FOR INSERT TO authenticated WITH CHECK (has_permissao('categoria-turmas', 'criar'));
 
 CREATE POLICY "categoria_turmas_update" ON categoria_turmas
-  FOR UPDATE TO authenticated USING (
-    (auth.jwt() ->> 'user_tipo') IN ('admin', 'superadmin')
-  );
+  FOR UPDATE TO authenticated USING (has_permissao('categoria-turmas', 'editar'));
 
 CREATE POLICY "categoria_turmas_delete" ON categoria_turmas
-  FOR DELETE TO authenticated USING (
-    (auth.jwt() ->> 'user_tipo') IN ('admin', 'superadmin')
-  );
+  FOR DELETE TO authenticated USING (has_permissao('categoria-turmas', 'excluir'));
