@@ -35,3 +35,16 @@ CREATE POLICY "categoria_turmas_update" ON categoria_turmas
 
 CREATE POLICY "categoria_turmas_delete" ON categoria_turmas
   FOR DELETE TO authenticated USING (has_permissao('categoria-turmas', 'excluir'));
+
+-- Permissões para Administrador e Coordenador de Instrutores
+INSERT INTO perfil_permissoes (perfil_id, modulo, acao, permitido)
+SELECT p.id, m.modulo, m.acao, true
+FROM perfis p
+CROSS JOIN (VALUES
+  ('categoria-turmas', 'listar'),
+  ('categoria-turmas', 'criar'),
+  ('categoria-turmas', 'editar'),
+  ('categoria-turmas', 'excluir')
+) AS m(modulo, acao)
+WHERE p.nome IN ('Administrador', 'Coordenador de Instrutores')
+ON CONFLICT DO NOTHING;
