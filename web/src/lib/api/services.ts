@@ -2975,27 +2975,25 @@ export const categoriaTurmasApi = {
     if (error) throw error;
     return mapCategoriaTurma(data);
   },
-  async create(body: { nome: string; sigla: string; idadeMinima: number; idadeMaxima: number }): Promise<CategoriaTurmaApi> {
+  async create(body: { nome: string; sigla: string; idadeMinima: number; idadeMaxima: number }): Promise<void> {
     const sb = createClient();
-    const { data, error } = await sb.from('categoria_turmas').insert({
+    const { error } = await sb.from('categoria_turmas').insert({
       nome: body.nome,
       sigla: body.sigla,
       idade_minima: body.idadeMinima,
       idade_maxima: body.idadeMaxima,
-    }).select('*').single();
+    });
     if (error) throw error;
-    return mapCategoriaTurma(data);
   },
-  async update(id: string, body: Partial<{ nome: string; sigla: string; idadeMinima: number; idadeMaxima: number }>): Promise<CategoriaTurmaApi> {
+  async update(id: string, body: Partial<{ nome: string; sigla: string; idadeMinima: number; idadeMaxima: number }>): Promise<void> {
     const sb = createClient();
     const row: Database['public']['Tables']['categoria_turmas']['Update'] = {};
     if (body.nome !== undefined) row.nome = body.nome;
     if (body.sigla !== undefined) row.sigla = body.sigla;
     if (body.idadeMinima !== undefined) row.idade_minima = body.idadeMinima;
     if (body.idadeMaxima !== undefined) row.idade_maxima = body.idadeMaxima;
-    const { data, error } = await sb.from('categoria_turmas').update(row).eq('id', id).select('*').single();
+    const { error } = await sb.from('categoria_turmas').update(row).eq('id', id);
     if (error) throw error;
-    return mapCategoriaTurma(data);
   },
   async remove(id: string): Promise<void> {
     const sb = createClient();
