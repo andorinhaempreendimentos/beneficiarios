@@ -277,7 +277,7 @@ export default function TurmasPage() {
                           <Check className={`h-4 w-4 stroke-[3] transition-transform ${isSelected ? "scale-100 text-white" : "scale-85 text-zinc-400 opacity-60 group-hover:opacity-100"}`} />
                         </label>
 
-                        {/* Header: Tag Turma, Nome & Status Exclusivo */}
+                        {/* Header: Tag Turma, Nome & Status */}
                         <div className="flex items-start justify-between gap-2 pl-7">
                           <div>
                             <div className="flex items-center gap-1.5 mb-0.5">
@@ -289,14 +289,21 @@ export default function TurmasPage() {
                                   Exclusiva
                                 </span>
                               )}
+                              {t.atividade?.usoInterno && (
+                                <span className="rounded-md bg-zinc-100 px-1.5 py-0.5 text-[9px] font-bold uppercase text-zinc-500">
+                                  Uso Interno
+                                </span>
+                              )}
                             </div>
                             <Link href={`/turmas/${t.id}`} className="font-bold text-zinc-900 text-sm hover:text-sky-600">
                               {t.nome}
                             </Link>
                           </div>
-                          <span className="shrink-0 whitespace-nowrap rounded-xl bg-sky-50 border border-sky-200 px-2.5 py-1 text-xs font-extrabold text-sky-700 shadow-2xs">
-                            {vagasTotais} vagas
-                          </span>
+                          {!t.atividade?.usoInterno && (
+                            <span className="shrink-0 whitespace-nowrap rounded-xl bg-sky-50 border border-sky-200 px-2.5 py-1 text-xs font-extrabold text-sky-700 shadow-2xs">
+                              {vagasTotais} vagas
+                            </span>
+                          )}
                         </div>
 
                         {/* Vínculos de Núcleo & Atividade */}
@@ -321,29 +328,31 @@ export default function TurmasPage() {
                           </div>
                         </div>
 
-                        {/* Indicadores de Ocupação & Faixa Etária */}
-                        <div className="flex flex-col gap-1.5 border-t border-zinc-100 pt-2 text-xs">
-                          <div className="flex items-center justify-between text-zinc-600">
-                            <span className="flex items-center gap-1 font-semibold text-zinc-800">
-                              <Users className="h-3.5 w-3.5 text-sky-600" />
-                              <span>{matriculadosCount} de {vagasTotais} alunos</span>
-                            </span>
-                            <span className="font-bold text-sky-700">{vagasOcupadasPct}% ocupado</span>
+                        {/* Indicadores de Ocupação — apenas para turmas de alunos */}
+                        {!t.atividade?.usoInterno && (
+                          <div className="flex flex-col gap-1.5 border-t border-zinc-100 pt-2 text-xs">
+                            <div className="flex items-center justify-between text-zinc-600">
+                              <span className="flex items-center gap-1 font-semibold text-zinc-800">
+                                <Users className="h-3.5 w-3.5 text-sky-600" />
+                                <span>{matriculadosCount} de {vagasTotais} alunos</span>
+                              </span>
+                              <span className="font-bold text-sky-700">{vagasOcupadasPct}% ocupado</span>
+                            </div>
+                            <div className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-100">
+                              <div className="h-full rounded-full bg-sky-500" style={{ width: `${vagasOcupadasPct}%` }} />
+                            </div>
+                            <div className="mt-0.5 flex items-center justify-between text-[11px] text-zinc-500">
+                              <span>
+                                {t.categoria ? (
+                                  <><strong>{t.categoria.nome}</strong> ({t.categoria.idadeMinima}–{t.categoria.idadeMaxima} anos)</>
+                                ) : (
+                                  <>Faixa etária: <strong>{t.idadeMinima ?? 6} a {t.idadeMaxima ?? 17} anos</strong></>
+                                )}
+                              </span>
+                              <span>{vagasTotais - matriculadosCount} vagas livres</span>
+                            </div>
                           </div>
-                          <div className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-100">
-                            <div className="h-full rounded-full bg-sky-500" style={{ width: `${vagasOcupadasPct}%` }} />
-                          </div>
-                          <div className="mt-0.5 flex items-center justify-between text-[11px] text-zinc-500">
-                            <span>
-                              {t.categoria ? (
-                                <><strong>{t.categoria.nome}</strong> ({t.categoria.idadeMinima}–{t.categoria.idadeMaxima} anos)</>
-                              ) : (
-                                <>Faixa etária: <strong>{t.idadeMinima ?? 6} a {t.idadeMaxima ?? 17} anos</strong></>
-                              )}
-                            </span>
-                            <span>{vagasTotais - matriculadosCount} vagas livres</span>
-                          </div>
-                        </div>
+                        )}
 
                         {/* Botões de Ação: Editar e Excluir (somente se não tiver dependentes) */}
                         <div className="flex items-center justify-end gap-2 border-t border-zinc-100/60 pt-2.5">
@@ -427,7 +436,11 @@ export default function TurmasPage() {
                             )}
                           </td>
                           <td className="px-5 py-3 text-center font-semibold text-sky-700">
-                            {matriculadosCount} / {t.vagasTotais || 0}
+                            {t.atividade?.usoInterno ? (
+                              <span className="text-zinc-400">—</span>
+                            ) : (
+                              <>{matriculadosCount} / {t.vagasTotais || 0}</>
+                            )}
                           </td>
                           <td className="px-5 py-3">
                             <Badge tone={t.exclusiva ? "amber" : "zinc"}>{t.exclusiva ? "Sim" : "Não"}</Badge>
