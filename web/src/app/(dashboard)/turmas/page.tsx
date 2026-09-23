@@ -48,6 +48,7 @@ export default function TurmasPage() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [turmaParaExcluir, setTurmaParaExcluir] = useState<TurmaApi | null>(null);
   const [excluindo, setExcluindo] = useState(false);
+  const [mostrarUsoInterno, setMostrarUsoInterno] = useState(false);
 
   const [processando, setProcessando] = useState(false);
   const [modalVagas, setModalVagas] = useState(false);
@@ -134,6 +135,9 @@ export default function TurmasPage() {
 
   const resultado = useMemo(() => {
     return rawResultado.filter((t: TurmaApi) => {
+      // Ocultar uso interno por padrão
+      if (!mostrarUsoInterno && t.atividade?.usoInterno) return false;
+
       const nucleoEncontrado = nucleos.find((n) => n.id === t.nucleoId);
       let estadoUf = (nucleoEncontrado as any)?.estado as string | undefined;
       const cidadeNome = nucleoEncontrado?.cidade || "Não informada";
@@ -150,7 +154,7 @@ export default function TurmasPage() {
       const bateNucleo = nucleoId === "Todos" || (t.nucleoId ?? nucleoEncontrado?.id) === nucleoId;
       return bateEstado && bateCidade && bateOrg && bateNucleo;
     });
-  }, [rawResultado, estado, cidade, organizacaoId, nucleoId, nucleos]);
+  }, [rawResultado, estado, cidade, organizacaoId, nucleoId, nucleos, mostrarUsoInterno]);
 
   const total = pageData?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
@@ -225,6 +229,17 @@ export default function TurmasPage() {
             <option value="true">Sim</option>
             <option value="false">Não</option>
           </Select>
+        </Field>
+        <Field label="Atividades internas">
+          <label className="flex items-center gap-2 cursor-pointer pt-1.5">
+            <input
+              type="checkbox"
+              checked={mostrarUsoInterno}
+              onChange={(e) => setMostrarUsoInterno(e.target.checked)}
+              className="h-4 w-4 rounded border-zinc-300 accent-sky-600"
+            />
+            <span className="text-sm text-zinc-600">Exibir</span>
+          </label>
         </Field>
       </FilterBar>
 
