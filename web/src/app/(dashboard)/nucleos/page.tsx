@@ -163,6 +163,7 @@ export default function NucleosPage() {
         actions={
           <div className="flex items-center gap-3">
             <ViewToggle mode={viewMode} onChange={setViewMode} />
+            <LinkButton href="/grade-semanal" variant="outline">Ver Grade Semanal</LinkButton>
             {!isCoordenador && (
               <LinkButton href="/nucleos/novo">{`Novo ${t("local", "Núcleo").toLowerCase()}`}</LinkButton>
             )}
