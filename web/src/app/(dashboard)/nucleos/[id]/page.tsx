@@ -87,6 +87,8 @@ export default async function DetalhesNucleoPage({ params }: { params: Promise<{
         </div>
       </div>
 
+      <GradeNucleoWidget turmas={turmasDoNucleo} categorias={categoriasRes.data} />
+
       <Card>
         <CardHeader className="flex items-center justify-between">
           <h3 className="text-sm font-medium text-zinc-700">Turmas</h3>
@@ -137,7 +139,6 @@ export default async function DetalhesNucleoPage({ params }: { params: Promise<{
             </tbody>
           </table>
         </div>
-        <GradeNucleoWidget turmas={turmasDoNucleo} categorias={categoriasRes.data} />
       </Card>
 
       <Card>

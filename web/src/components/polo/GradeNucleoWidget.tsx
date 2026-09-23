@@ -117,22 +117,31 @@ export function GradeNucleoWidget({ turmas, categorias }: GradeNucleoWidgetProps
   }
 
   return (
-    <div className="border-t border-zinc-100">
-      {/* Botão de toggle */}
+    <div className="flex flex-col gap-4">
+      {/* Botão de destaque */}
       <button
         type="button"
         onClick={() => setAberto((v) => !v)}
-        className="flex w-full items-center justify-between px-5 py-3 text-sm font-medium text-zinc-600 hover:bg-zinc-50 transition-colors"
+        className={`flex w-full items-center justify-between rounded-xl border px-5 py-4 text-sm font-semibold transition-all shadow-xs ${
+          aberto
+            ? "border-sky-300 bg-sky-50 text-sky-700"
+            : "border-zinc-200 bg-white text-zinc-700 hover:border-sky-200 hover:bg-sky-50 hover:text-sky-700"
+        }`}
       >
-        <span className="flex items-center gap-2">
-          <CalendarDays className="h-4 w-4 text-zinc-400" />
-          Grade Semanal
+        <span className="flex items-center gap-2.5">
+          <span className={`flex h-9 w-9 items-center justify-center rounded-lg ${aberto ? "bg-sky-100 text-sky-600" : "bg-zinc-100 text-zinc-500"}`}>
+            <CalendarDays className="h-5 w-5" />
+          </span>
+          <span className="flex flex-col items-start">
+            <span className="text-sm font-semibold">Grade Semanal</span>
+            <span className="text-xs font-normal text-zinc-400">Visualizar horários das turmas deste núcleo</span>
+          </span>
         </span>
-        {aberto ? <ChevronUp className="h-4 w-4 text-zinc-400" /> : <ChevronDown className="h-4 w-4 text-zinc-400" />}
+        {aberto ? <ChevronUp className="h-5 w-5 text-sky-500" /> : <ChevronDown className="h-5 w-5 text-zinc-400" />}
       </button>
 
       {aberto && (
-        <div className="px-5 pb-5 flex flex-col gap-4">
+        <div className="rounded-xl border border-sky-100 bg-sky-50/40 p-5 flex flex-col gap-4">
           {/* Filtros */}
           <div className="flex flex-wrap gap-3">
             <div className="w-48">
