@@ -24,6 +24,80 @@ type FormData = {
 
 const EMPTY_FORM: FormData = { nome: "", sigla: "", idadeMinima: "", idadeMaxima: "" };
 
+function FormRow({
+  form,
+  salvando,
+  onChange,
+  onSalvar,
+  onCancelar,
+}: {
+  form: FormData;
+  salvando: boolean;
+  onChange: (f: FormData) => void;
+  onSalvar: () => void;
+  onCancelar: () => void;
+}) {
+  return (
+    <>
+      <td className="px-5 py-2">
+        <Input
+          placeholder="Ex: Sub-6"
+          value={form.nome}
+          onChange={(e) => onChange({ ...form, nome: e.target.value })}
+          className="text-sm"
+        />
+      </td>
+      <td className="px-5 py-2">
+        <Input
+          placeholder="Ex: S6"
+          value={form.sigla}
+          onChange={(e) => onChange({ ...form, sigla: e.target.value })}
+          className="text-sm"
+        />
+      </td>
+      <td className="px-5 py-2">
+        <Input
+          type="number"
+          placeholder="5"
+          value={form.idadeMinima}
+          onChange={(e) => onChange({ ...form, idadeMinima: e.target.value })}
+          className="text-sm w-20"
+        />
+      </td>
+      <td className="px-5 py-2">
+        <Input
+          type="number"
+          placeholder="6"
+          value={form.idadeMaxima}
+          onChange={(e) => onChange({ ...form, idadeMaxima: e.target.value })}
+          className="text-sm w-20"
+        />
+      </td>
+      <td className="px-5 py-2 text-right">
+        <div className="flex items-center justify-end gap-2">
+          <button
+            type="button"
+            onClick={onSalvar}
+            disabled={salvando}
+            className="inline-flex items-center gap-1 rounded-lg bg-sky-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-sky-700 disabled:opacity-50 cursor-pointer"
+          >
+            <Check className="h-3.5 w-3.5" />
+            {salvando ? "Salvando..." : "Salvar"}
+          </button>
+          <button
+            type="button"
+            onClick={onCancelar}
+            className="inline-flex items-center gap-1 rounded-lg border border-zinc-300 px-3 py-1.5 text-xs font-semibold text-zinc-700 hover:bg-zinc-100 cursor-pointer"
+          >
+            <X className="h-3.5 w-3.5" />
+            Cancelar
+          </button>
+        </div>
+      </td>
+    </>
+  );
+}
+
 export default function CategoriaTurmasPage() {
   const [editandoId, setEditandoId] = useState<string | null>(null);
   const [criando, setCriando] = useState(false);
@@ -105,66 +179,6 @@ export default function CategoriaTurmasPage() {
     }
   };
 
-  const formRow = (
-    <tr className="border-b border-zinc-100 bg-sky-50/30">
-      <td className="px-5 py-2">
-        <Input
-          placeholder="Ex: Sub-6"
-          value={form.nome}
-          onChange={(e) => setForm((f) => ({ ...f, nome: e.target.value }))}
-          className="text-sm"
-        />
-      </td>
-      <td className="px-5 py-2">
-        <Input
-          placeholder="Ex: S6"
-          value={form.sigla}
-          onChange={(e) => setForm((f) => ({ ...f, sigla: e.target.value }))}
-          className="text-sm"
-        />
-      </td>
-      <td className="px-5 py-2">
-        <Input
-          type="number"
-          placeholder="5"
-          value={form.idadeMinima}
-          onChange={(e) => setForm((f) => ({ ...f, idadeMinima: e.target.value }))}
-          className="text-sm w-20"
-        />
-      </td>
-      <td className="px-5 py-2">
-        <Input
-          type="number"
-          placeholder="6"
-          value={form.idadeMaxima}
-          onChange={(e) => setForm((f) => ({ ...f, idadeMaxima: e.target.value }))}
-          className="text-sm w-20"
-        />
-      </td>
-      <td className="px-5 py-2 text-right">
-        <div className="flex items-center justify-end gap-2">
-          <button
-            type="button"
-            onClick={salvar}
-            disabled={salvando}
-            className="inline-flex items-center gap-1 rounded-lg bg-sky-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-sky-700 disabled:opacity-50 cursor-pointer"
-          >
-            <Check className="h-3.5 w-3.5" />
-            {salvando ? "Salvando..." : "Salvar"}
-          </button>
-          <button
-            type="button"
-            onClick={cancelar}
-            className="inline-flex items-center gap-1 rounded-lg border border-zinc-300 px-3 py-1.5 text-xs font-semibold text-zinc-700 hover:bg-zinc-100 cursor-pointer"
-          >
-            <X className="h-3.5 w-3.5" />
-            Cancelar
-          </button>
-        </div>
-      </td>
-    </tr>
-  );
-
   return (
     <div className="flex flex-col gap-6 pb-12">
       <PageHeader
@@ -200,7 +214,17 @@ export default function CategoriaTurmasPage() {
                 </tr>
               </thead>
               <tbody>
-                {criando && formRow}
+                {criando && (
+                  <tr className="border-b border-zinc-100 bg-sky-50/30">
+                    <FormRow
+                      form={form}
+                      salvando={salvando}
+                      onChange={setForm}
+                      onSalvar={salvar}
+                      onCancelar={cancelar}
+                    />
+                  </tr>
+                )}
                 {categorias.length === 0 && !criando ? (
                   <tr>
                     <td colSpan={5} className="px-5 py-8 text-center text-sm text-zinc-400">
@@ -210,7 +234,15 @@ export default function CategoriaTurmasPage() {
                 ) : (
                   categorias.map((cat) =>
                     editandoId === cat.id ? (
-                      <tr key={cat.id}>{formRow.props.children}</tr>
+                      <tr key={cat.id} className="border-b border-zinc-100 bg-sky-50/30">
+                        <FormRow
+                          form={form}
+                          salvando={salvando}
+                          onChange={setForm}
+                          onSalvar={salvar}
+                          onCancelar={cancelar}
+                        />
+                      </tr>
                     ) : (
                       <tr
                         key={cat.id}
