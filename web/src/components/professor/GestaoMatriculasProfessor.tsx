@@ -18,8 +18,10 @@ import { useQuery } from "@/lib/hooks/useQuery";
 import {
   turmasApi,
   beneficiariosApi,
+  inscricoesApi,
   type TurmaApi,
   type BeneficiarioApi,
+  type InscricaoApi,
 } from "@/lib/api/services";
 
 interface GestaoMatriculasProfessorProps {
@@ -47,6 +49,27 @@ export function GestaoMatriculasProfessor({
   const [turmaDestinoId, setTurmaDestinoId] = useState("");
 
   const [loading, setLoading] = useState(false);
+
+  // Núcleos que este professor tem turmas
+  const nucleoIds = [...new Set(turmas.map((t) => t.nucleoId).filter(Boolean))] as string[];
+
+  // Estado do modal de atribuição de turma
+  const [modalAtribuir, setModalAtribuir] = useState<InscricaoApi | null>(null);
+  const [turmaAtribuirId, setTurmaAtribuirId] = useState("");
+
+  // Inscrições sem turma dos núcleos do professor
+  const { data: semTurmaRes, refetch: refetchSemTurma } = useQuery(
+    () =>
+      nucleoIds.length > 0
+        ? Promise.all(
+            nucleoIds.map((nId) =>
+              inscricoesApi.list({ nucleoId: nId, semTurma: true as any, limit: 100 }).catch(() => ({ data: [] }))
+            )
+          ).then((results) => ({ data: results.flatMap((r) => r.data) }))
+        : Promise.resolve({ data: [] }),
+    [turmas]
+  );
+  const alunosSemTurma = semTurmaRes?.data ?? [];
 
   // Busca beneficiários da turma selecionada
   const { data: beneficiariosRes, refetch } = useQuery(
@@ -136,6 +159,23 @@ export function GestaoMatriculasProfessor({
     }
   }
 
+  async function handleAtribuirTurma() {
+    if (!modalAtribuir || !turmaAtribuirId) return;
+    setLoading(true);
+    try {
+      await inscricoesApi.atribuirTurma(modalAtribuir.id, turmaAtribuirId, modalAtribuir.beneficiarioId);
+      toast.success("Turma atribuída com sucesso!");
+      setModalAtribuir(null);
+      setTurmaAtribuirId("");
+      refetchSemTurma();
+      refetch();
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao atribuir turma.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   if (!isOpen) return null;
 
   return (
@@ -164,6 +204,59 @@ export function GestaoMatriculasProfessor({
 
         {/* Conteúdo com scroll */}
         <div className="p-6 overflow-y-auto flex flex-col gap-5 flex-1">
+
+          {/* Seção: Alunos sem turma */}
+          {alunosSemTurma.length > 0 && (
+            <div className="flex flex-col gap-3 rounded-2xl border border-amber-200 bg-amber-50/50 p-4">
+              <div className="flex items-center gap-2">
+                <UserPlus className="h-4 w-4 text-amber-700" />
+                <span className="text-sm font-extrabold text-amber-800">Alunos sem turma</span>
+                <span className="ml-auto inline-flex items-center rounded-full bg-amber-200 px-2 py-0.5 text-xs font-bold text-amber-800">
+                  {alunosSemTurma.length}
+                </span>
+              </div>
+              <p className="text-xs text-amber-700 -mt-1">
+                Estes alunos se cadastraram no núcleo e aguardam atribuição de turma.
+              </p>
+              <div className="overflow-x-auto rounded-xl border border-amber-200 bg-white">
+                <table className="w-full text-left text-sm">
+                  <thead className="bg-amber-50 text-xs font-semibold uppercase text-amber-700 border-b border-amber-200">
+                    <tr>
+                      <th className="px-4 py-2">Aluno</th>
+                      <th className="px-4 py-2">Cadastrado em</th>
+                      <th className="px-4 py-2 text-right">Ação</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-amber-100">
+                    {alunosSemTurma.map((insc) => (
+                      <tr key={insc.id} className="hover:bg-amber-50/60">
+                        <td className="px-4 py-2.5 font-semibold text-zinc-900">
+                          {insc.beneficiario?.nomeCompleto ?? "—"}
+                          {insc.beneficiario?.matricula && (
+                            <span className="ml-2 text-[11px] font-mono text-zinc-400">{insc.beneficiario.matricula}</span>
+                          )}
+                        </td>
+                        <td className="px-4 py-2.5 text-xs text-zinc-500">
+                          {new Date(insc.criadoEm).toLocaleDateString("pt-BR")}
+                        </td>
+                        <td className="px-4 py-2.5 text-right">
+                          <Button
+                            size="sm"
+                            onClick={() => { setModalAtribuir(insc); setTurmaAtribuirId(""); }}
+                            className="bg-amber-600 hover:bg-amber-700 text-white text-xs"
+                          >
+                            <ArrowRightLeft className="h-3.5 w-3.5" />
+                            <span>Atribuir turma</span>
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-sky-50/60 p-4 rounded-2xl border border-sky-100">
             {/* Seletor de Turma */}
             <div className="w-full sm:w-72">
@@ -329,6 +422,45 @@ export function GestaoMatriculasProfessor({
                   </Button>
                   <Button onClick={handleMigrar} disabled={loading || !turmaDestinoId}>
                     Confirmar Transferência
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Modal Atribuir Turma — Alunos sem turma */}
+        {modalAtribuir && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+            <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl border border-amber-200">
+              <h3 className="text-base font-bold text-zinc-900 mb-1">Atribuir Turma</h3>
+              <p className="text-xs text-zinc-500 mb-4">
+                Selecione a turma para <strong className="text-zinc-800">{modalAtribuir.beneficiario?.nomeCompleto}</strong>.
+              </p>
+
+              <div className="flex flex-col gap-4">
+                <Select
+                  value={turmaAtribuirId}
+                  onChange={(e) => setTurmaAtribuirId(e.target.value)}
+                >
+                  <option value="">Selecione a turma...</option>
+                  {turmas.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.nome} ({t.vagasTotais} vagas)
+                    </option>
+                  ))}
+                </Select>
+
+                <div className="flex justify-end gap-2 pt-2">
+                  <Button variant="outline" onClick={() => setModalAtribuir(null)}>
+                    Cancelar
+                  </Button>
+                  <Button
+                    onClick={handleAtribuirTurma}
+                    disabled={loading || !turmaAtribuirId}
+                    className="bg-amber-600 hover:bg-amber-700 text-white"
+                  >
+                    Confirmar Atribuição
                   </Button>
                 </div>
               </div>

@@ -1649,6 +1649,8 @@ export const inscricoesApi = {
     if (p?.status) q = q.eq('status', String(p.status) as Database['public']['Enums']['status_inscricao']);
     if (p?.turmaId) q = q.eq('turma_id', String(p.turmaId));
     if (p?.beneficiarioId) q = q.eq('beneficiario_id', String(p.beneficiarioId));
+    if (p?.nucleoId) q = q.eq('nucleo_id', String(p.nucleoId));
+    if (p?.semTurma) q = q.is('turma_id', null);
     const { data, count, error } = await q.order('created_at', { ascending: false }).range(from, to);
     if (error) throw error;
     return { data: (data ?? []).map(mapInscricao), total: count ?? 0, page, limit };
@@ -1733,6 +1735,19 @@ export const inscricoesApi = {
     const { data, error } = await sb.from('inscricoes').update({ status }).eq('id', id).select(INSCRICAO_SELECT).single();
     if (error) throw error;
     return mapInscricao(data);
+  },
+  async atribuirTurma(inscricaoId: string, turmaId: string, beneficiarioId: string): Promise<void> {
+    const sb = createClient();
+    const hoje = new Date().toISOString().split('T')[0];
+    const { error: errInscricao } = await sb
+      .from('inscricoes')
+      .update({ turma_id: turmaId, status: 'aprovada' } as any)
+      .eq('id', inscricaoId);
+    if (errInscricao) throw errInscricao;
+    const { error: errMatricula } = await sb
+      .from('beneficiario_turmas')
+      .upsert({ beneficiario_id: beneficiarioId, turma_id: turmaId, data_matricula: hoje, status: 'ativo' } as any, { onConflict: 'beneficiario_id,turma_id' });
+    if (errMatricula) throw errMatricula;
   },
 };
 
