@@ -453,7 +453,7 @@ export function ModalLinksInscricao({
                 type="text"
                 placeholder="Busca por nome, professor, bairro, horários..."
                 value={busca}
-                onChange={(e) => { setBusca(e.target.value); setBuscaExecutada(false); }}
+                onChange={(e) => { setBusca(e.target.value); if (e.target.value) setBuscaExecutada(true); }}
                 onKeyDown={(e) => { if (e.key === "Enter") setBuscaExecutada(true); }}
                 className="w-full pl-8 pr-3 py-1.5 text-xs rounded-xl border border-zinc-300 bg-white focus:outline-hidden focus:ring-2 focus:ring-sky-500/20 font-medium"
               />
