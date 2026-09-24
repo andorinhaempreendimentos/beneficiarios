@@ -131,13 +131,15 @@ export default async function ConfirmacaoPage({ searchParams }: ConfirmacaoPageP
             </div>
           </div>
 
-          <div className="flex items-start gap-2.5">
-            <Award className="h-4 w-4 text-zinc-400 mt-0.5 shrink-0" />
-            <div>
-              <span className="block text-[11px] font-medium text-zinc-400 uppercase">Atividade</span>
-              <span className="font-semibold text-zinc-800">{inscricao.atividade_nome || "Projeto Geral"}</span>
+          {inscricao.atividade_nome && (
+            <div className="flex items-start gap-2.5">
+              <Award className="h-4 w-4 text-zinc-400 mt-0.5 shrink-0" />
+              <div>
+                <span className="block text-[11px] font-medium text-zinc-400 uppercase">Atividade</span>
+                <span className="font-semibold text-zinc-800">{inscricao.atividade_nome}</span>
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="flex items-start gap-2.5 sm:col-span-2">
             <Calendar className="h-4 w-4 text-zinc-400 mt-0.5 shrink-0" />
