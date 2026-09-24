@@ -143,7 +143,9 @@ export default async function ConfirmacaoPage({ searchParams }: ConfirmacaoPageP
             <Calendar className="h-4 w-4 text-zinc-400 mt-0.5 shrink-0" />
             <div>
               <span className="block text-[11px] font-medium text-zinc-400 uppercase">Turma</span>
-              <span className="font-semibold text-zinc-800">{inscricao.turma_nome}</span>
+              <span className="font-semibold text-zinc-800">
+                {inscricao.turma_nome ?? "A ser definida pelo professor"}
+              </span>
             </div>
           </div>
 
