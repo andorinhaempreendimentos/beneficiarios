@@ -1738,16 +1738,16 @@ export const inscricoesApi = {
   },
   async atribuirTurma(inscricaoId: string, turmaId: string, beneficiarioId: string): Promise<void> {
     const sb = createClient();
-    const hoje = new Date().toISOString().split('T')[0];
     const { error: errInscricao } = await sb
       .from('inscricoes')
       .update({ turma_id: turmaId, status: 'aprovada' } as any)
       .eq('id', inscricaoId);
     if (errInscricao) throw errInscricao;
-    const { error: errMatricula } = await sb
-      .from('beneficiario_turmas')
-      .upsert({ beneficiario_id: beneficiarioId, turma_id: turmaId, data_matricula: hoje, status: 'ativo' } as any, { onConflict: 'beneficiario_id,turma_id' });
-    if (errMatricula) throw errMatricula;
+    const { error: errRpc } = await sb.rpc('matricular_beneficiario' as any, {
+      p_turma_id: turmaId,
+      p_beneficiario_id: beneficiarioId,
+    });
+    if (errRpc && !errRpc.message?.includes('duplicate key')) throw errRpc;
   },
 };
 
