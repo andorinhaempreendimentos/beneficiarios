@@ -389,16 +389,26 @@ export function ModalLinksInscricao({
 
             {/* Turma */}
             <div className="flex flex-col gap-1">
-              <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Turma</label>
+              <label className={`text-[10px] font-bold uppercase tracking-wider ${!selectedNucleoId && !selectedAtividadeId ? "text-zinc-300" : "text-zinc-500"}`}>Turma</label>
               <select
                 value={selectedTurmaId}
+                disabled={!selectedNucleoId && !selectedAtividadeId}
                 onChange={(e) => { setSelectedTurmaId(e.target.value); setBuscaExecutada(false); }}
-                className="w-full rounded-lg border border-zinc-300 bg-white px-2.5 py-1.5 text-xs text-zinc-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 cursor-pointer"
+                className={`w-full rounded-lg border px-2.5 py-1.5 text-xs outline-none transition-colors ${
+                  !selectedNucleoId && !selectedAtividadeId
+                    ? "border-zinc-200 bg-zinc-50 text-zinc-400 cursor-not-allowed"
+                    : "border-zinc-300 bg-white text-zinc-800 focus:border-sky-500 focus:ring-1 focus:ring-sky-500 cursor-pointer"
+                }`}
               >
-                <option value="">Todas as Turmas ({turmasFiltradasDropdown.length})</option>
-                {turmasFiltradasDropdown.map((t) => (
-                  <option key={t.id} value={t.id}>{t.nome}</option>
-                ))}
+                {!selectedNucleoId && !selectedAtividadeId
+                  ? <option value="">Selecione um Núcleo ou Atividade</option>
+                  : <>
+                      <option value="">Todas as Turmas ({turmasFiltradasDropdown.length})</option>
+                      {turmasFiltradasDropdown.map((t) => (
+                        <option key={t.id} value={t.id}>{t.nome}</option>
+                      ))}
+                    </>
+                }
               </select>
             </div>
 
