@@ -257,6 +257,8 @@ export interface TurmaApi {
   responsaveis: string[];
   responsaveisNomes?: string[];
   vagasTotais: number;
+  vagasOcupadas: number;
+  vagasLivres: number;
   idadeMinima?: number;
   idadeMaxima?: number;
   permitirFilaEspera?: boolean;
@@ -495,7 +497,7 @@ const DIA_KEY_MAP: Record<number, string> = {
   0: 'Dom', 1: 'Seg', 2: 'Ter', 3: 'Qua', 4: 'Qui', 5: 'Sex', 6: 'Sáb'
 };
 
-function mapTurma(r: any): TurmaApi {
+function mapTurma(r: any, vagasOcupadas = 0): TurmaApi {
   const horarios = r.turma_horarios ?? [];
   const slots = horarios.map((th: any) => {
     const inicioHour = parseInt(String(th.hora_inicio || '').split(':')[0], 10);
@@ -509,6 +511,8 @@ function mapTurma(r: any): TurmaApi {
     };
   });
 
+  const vagasTotais = r.vagas_totais ?? 0;
+
   return {
     id: r.id, nome: r.nome, nucleoId: r.nucleo_id, atividadeId: r.atividade_id,
     categoriaId: r.categoria_id ?? null,
@@ -521,7 +525,9 @@ function mapTurma(r: any): TurmaApi {
     } : undefined,
     responsaveis: (r.turma_responsaveis ?? []).map((tr: any) => tr.funcionario_id),
     responsaveisNomes: (r.turma_responsaveis ?? []).map((tr: any) => tr.funcionarios?.nome_completo).filter(Boolean),
-    vagasTotais: r.vagas_totais,
+    vagasTotais,
+    vagasOcupadas,
+    vagasLivres: Math.max(0, vagasTotais - vagasOcupadas),
     idadeMinima: r.idade_minima ?? 6,
     idadeMaxima: r.idade_maxima ?? 17,
     permitirFilaEspera: r.permitir_fila_espera ?? true,
@@ -996,7 +1002,25 @@ export const turmasApi = {
       data = resFallback.data as any;
       count = resFallback.count;
     }
-    return { data: (data ?? []).map(mapTurma), total: count ?? 0, page, limit };
+
+    // Contagem real de vagas ocupadas por turma
+    const turmaIds = (data ?? []).map((t: any) => t.id);
+    const ocupadosPorTurma = new Map<string, number>();
+    if (turmaIds.length > 0) {
+      const { data: bts } = await sb
+        .from('beneficiario_turmas')
+        .select('turma_id')
+        .in('turma_id', turmaIds)
+        .eq('status', 'ativo')
+        .is('deleted_at', null);
+      for (const bt of bts ?? []) {
+        ocupadosPorTurma.set(bt.turma_id, (ocupadosPorTurma.get(bt.turma_id) ?? 0) + 1);
+      }
+    }
+    return {
+      data: (data ?? []).map((r: any) => mapTurma(r, ocupadosPorTurma.get(r.id) ?? 0)),
+      total: count ?? 0, page, limit,
+    };
   },
   async get(id: string): Promise<TurmaApi> {
     const sb = await getSupabase();

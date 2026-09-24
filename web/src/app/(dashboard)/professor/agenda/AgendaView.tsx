@@ -21,7 +21,7 @@ export function AgendaView({ turmas }: { turmas: TurmaApi[] }) {
               <div>
                 <div className="flex items-center gap-2">
                   <h3 className="font-bold text-zinc-900 text-base">{turma.nome}</h3>
-                  <Badge tone="sky">{turma.vagasTotais} vagas</Badge>
+                  <Badge tone="sky">{turma.vagasLivres} vagas livres</Badge>
                 </div>
                 <p className="text-xs text-zinc-500 flex items-center gap-1.5 mt-1">
                   <MapPin className="h-3.5 w-3.5 text-zinc-400" />

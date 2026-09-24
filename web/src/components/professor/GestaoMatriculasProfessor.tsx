@@ -280,7 +280,7 @@ export function GestaoMatriculasProfessor({
                     <option value="">Selecione a turma...</option>
                     {turmas.map((t) => (
                       <option key={t.id} value={t.id}>
-                        {t.nome} ({t.vagasTotais} vagas)
+                        {t.nome} ({t.vagasLivres} vagas livres)
                       </option>
                     ))}
                   </Select>
@@ -395,7 +395,7 @@ export function GestaoMatriculasProfessor({
                 <option value="">Todos</option>
                 {turmas.map((t) => (
                   <option key={t.id} value={t.id}>
-                    {t.nome} ({t.vagasTotais} vagas)
+                    {t.nome} ({t.vagasLivres} vagas livres)
                   </option>
                 ))}
               </Select>
@@ -545,7 +545,7 @@ export function GestaoMatriculasProfessor({
                   <option value="">Selecione a turma de destino...</option>
                   {outrasTurmas.map((t) => (
                     <option key={t.id} value={t.id}>
-                      {t.nome} ({t.vagasTotais} vagas)
+                      {t.nome} ({t.vagasLivres} vagas livres)
                     </option>
                   ))}
                 </Select>
@@ -580,7 +580,7 @@ export function GestaoMatriculasProfessor({
                   <option value="">Selecione a turma...</option>
                   {turmas.map((t) => (
                     <option key={t.id} value={t.id}>
-                      {t.nome} ({t.vagasTotais} vagas)
+                      {t.nome} ({t.vagasLivres} vagas livres)
                     </option>
                   ))}
                 </Select>
