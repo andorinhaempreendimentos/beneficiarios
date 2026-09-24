@@ -655,6 +655,80 @@ export function ModalLinksInscricao({
                 </div>
               )}
 
+              {/* CADASTRO NO NÚCLEO SECTION */}
+              {listNucleos.length > 0 && (
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center gap-2 pb-1 border-b border-amber-200 text-xs font-extrabold uppercase tracking-wider text-amber-700">
+                    <Building2 className="h-4 w-4" />
+                    <span>Cadastro no Núcleo — sem turma ({listNucleos.length})</span>
+                  </div>
+                  <p className="text-[11px] text-zinc-400 -mt-1">
+                    O aluno entra na lista do núcleo. O professor atribui a turma depois.
+                  </p>
+                  <div className="flex flex-col gap-3">
+                    {listNucleos.map((n) => {
+                      const url = `${baseUrl}/inscricao/nucleo/${n.id}/cadastro`;
+                      const copyId = `cadastro-${n.id}`;
+                      const isCopied = copiedId === copyId;
+                      const org = n.organizacaoId ? orgMap.get(n.organizacaoId) : undefined;
+                      const obj = org?.objetoId ? objMap.get(org.objetoId) : undefined;
+
+                      return (
+                        <div key={copyId} className="p-4 rounded-xl border border-amber-200/80 bg-amber-50/40 hover:border-amber-400 hover:shadow-xs transition-all flex flex-col gap-3">
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="flex flex-col gap-1">
+                              <h4 className="font-extrabold text-sm text-zinc-900 leading-snug">{n.identificacao}</h4>
+                              <span className="text-xs text-zinc-500">{[n.bairro, n.cidade].filter(Boolean).join(" · ")}</span>
+                            </div>
+
+                            <div className="flex items-center gap-2 shrink-0">
+                              <button
+                                type="button"
+                                onClick={() => copiarParaTransferencia(url, copyId)}
+                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                                  isCopied
+                                    ? "bg-emerald-600 text-white shadow-xs"
+                                    : "bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-300"
+                                }`}
+                              >
+                                {isCopied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                                <span>{isCopied ? "Copiado!" : "Copiar Link"}</span>
+                              </button>
+                              <a
+                                href={url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="p-1.5 text-zinc-400 hover:text-amber-600 hover:bg-zinc-100 rounded-lg transition-colors"
+                                title="Abrir página em nova guia"
+                              >
+                                <ExternalLink className="h-4 w-4" />
+                              </a>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2 flex-wrap text-[11px]">
+                            {org?.nome && (
+                              <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-800 px-2.5 py-1 rounded-md font-medium border border-emerald-200">
+                                🏛️ {org.nome}
+                              </span>
+                            )}
+                            {obj?.nome && (
+                              <span className="inline-flex items-center gap-1 bg-purple-50 text-purple-800 px-2.5 py-1 rounded-md font-medium border border-purple-200">
+                                📄 {obj.nome}
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="flex items-center rounded-lg bg-amber-50 border border-amber-200 px-3 py-1.5">
+                            <span className="text-xs font-mono text-amber-700 truncate">{url}</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
               {/* ATIVIDADES SECTION */}
               {listAtividades.length > 0 && (
                 <div className="flex flex-col gap-3">
