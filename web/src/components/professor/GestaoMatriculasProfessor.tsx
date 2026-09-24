@@ -53,9 +53,13 @@ export function GestaoMatriculasProfessor({
   // Núcleos que este professor tem turmas
   const nucleoIds = [...new Set(turmas.map((t) => t.nucleoId).filter(Boolean))] as string[];
 
-  // Estado do modal de atribuição de turma
+  // Estado do modal de atribuição individual
   const [modalAtribuir, setModalAtribuir] = useState<InscricaoApi | null>(null);
   const [turmaAtribuirId, setTurmaAtribuirId] = useState("");
+
+  // Estado de seleção batch
+  const [selecionados, setSelecionados] = useState<Set<string>>(new Set());
+  const [turmaBatchId, setTurmaBatchId] = useState("");
 
   // Inscrições sem turma dos núcleos do professor
   const { data: semTurmaRes, refetch: refetchSemTurma } = useQuery(
@@ -176,6 +180,36 @@ export function GestaoMatriculasProfessor({
     }
   }
 
+  async function handleAtribuirBatch() {
+    if (!turmaBatchId || selecionados.size === 0) return;
+    setLoading(true);
+    let ok = 0;
+    let erros = 0;
+    try {
+      await Promise.all(
+        [...selecionados].map(async (inscricaoId) => {
+          try {
+            await inscricoesApi.atribuirTurma(inscricaoId, turmaBatchId, "");
+            ok++;
+          } catch {
+            erros++;
+          }
+        })
+      );
+      if (erros === 0) {
+        toast.success(`${ok} aluno${ok !== 1 ? "s" : ""} atribuído${ok !== 1 ? "s" : ""} com sucesso!`);
+      } else {
+        toast.info(`${ok} atribuído${ok !== 1 ? "s" : ""}, ${erros} com erro.`);
+      }
+      setSelecionados(new Set());
+      setTurmaBatchId("");
+      refetchSemTurma();
+      refetch();
+    } finally {
+      setLoading(false);
+    }
+  }
+
   if (!isOpen) return null;
 
   return (
@@ -218,10 +252,64 @@ export function GestaoMatriculasProfessor({
               <p className="text-xs text-amber-700 -mt-1">
                 Estes alunos se cadastraram no núcleo e aguardam atribuição de turma.
               </p>
+
+              {/* Barra de ação batch — aparece quando há selecionados */}
+              {selecionados.size > 0 && (
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 rounded-xl bg-amber-100 border border-amber-300 px-4 py-3">
+                  <span className="text-xs font-bold text-amber-800 shrink-0">
+                    {selecionados.size} selecionado{selecionados.size !== 1 ? "s" : ""}
+                  </span>
+                  <Select
+                    value={turmaBatchId}
+                    onChange={(e) => setTurmaBatchId(e.target.value)}
+                    className="flex-1 text-xs"
+                  >
+                    <option value="">Selecione a turma...</option>
+                    {turmas.map((t) => (
+                      <option key={t.id} value={t.id}>
+                        {t.nome} ({t.vagasTotais} vagas)
+                      </option>
+                    ))}
+                  </Select>
+                  <div className="flex gap-2 shrink-0">
+                    <Button
+                      size="sm"
+                      onClick={handleAtribuirBatch}
+                      disabled={loading || !turmaBatchId}
+                      className="bg-amber-600 hover:bg-amber-700 text-white text-xs"
+                    >
+                      {loading ? "Atribuindo…" : `Atribuir ${selecionados.size}`}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setSelecionados(new Set())}
+                      className="text-amber-700 border-amber-300 text-xs"
+                    >
+                      Limpar
+                    </Button>
+                  </div>
+                </div>
+              )}
+
               <div className="overflow-x-auto rounded-xl border border-amber-200 bg-white">
                 <table className="w-full text-left text-sm">
                   <thead className="bg-amber-50 text-xs font-semibold uppercase text-amber-700 border-b border-amber-200">
                     <tr>
+                      <th className="px-3 py-2 w-8">
+                        <input
+                          type="checkbox"
+                          className="rounded border-amber-300 accent-amber-600"
+                          checked={selecionados.size === alunosSemTurma.length && alunosSemTurma.length > 0}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelecionados(new Set(alunosSemTurma.map((i) => i.id)));
+                            } else {
+                              setSelecionados(new Set());
+                            }
+                          }}
+                        />
+                      </th>
                       <th className="px-4 py-2">Aluno</th>
                       <th className="px-4 py-2">Cadastrado em</th>
                       <th className="px-4 py-2 text-right">Ação</th>
@@ -229,7 +317,33 @@ export function GestaoMatriculasProfessor({
                   </thead>
                   <tbody className="divide-y divide-amber-100">
                     {alunosSemTurma.map((insc) => (
-                      <tr key={insc.id} className="hover:bg-amber-50/60">
+                      <tr
+                        key={insc.id}
+                        className={`hover:bg-amber-50/60 cursor-pointer ${selecionados.has(insc.id) ? "bg-amber-50" : ""}`}
+                        onClick={() => {
+                          setSelecionados((prev) => {
+                            const next = new Set(prev);
+                            if (next.has(insc.id)) next.delete(insc.id);
+                            else next.add(insc.id);
+                            return next;
+                          });
+                        }}
+                      >
+                        <td className="px-3 py-2.5" onClick={(e) => e.stopPropagation()}>
+                          <input
+                            type="checkbox"
+                            className="rounded border-amber-300 accent-amber-600"
+                            checked={selecionados.has(insc.id)}
+                            onChange={() => {
+                              setSelecionados((prev) => {
+                                const next = new Set(prev);
+                                if (next.has(insc.id)) next.delete(insc.id);
+                                else next.add(insc.id);
+                                return next;
+                              });
+                            }}
+                          />
+                        </td>
                         <td className="px-4 py-2.5 font-semibold text-zinc-900">
                           {insc.beneficiario?.nomeCompleto ?? "—"}
                           {insc.beneficiario?.matricula && (
@@ -239,14 +353,14 @@ export function GestaoMatriculasProfessor({
                         <td className="px-4 py-2.5 text-xs text-zinc-500">
                           {new Date(insc.criadoEm).toLocaleDateString("pt-BR")}
                         </td>
-                        <td className="px-4 py-2.5 text-right">
+                        <td className="px-4 py-2.5 text-right" onClick={(e) => e.stopPropagation()}>
                           <Button
                             size="sm"
                             onClick={() => { setModalAtribuir(insc); setTurmaAtribuirId(""); }}
                             className="bg-amber-600 hover:bg-amber-700 text-white text-xs"
                           >
                             <ArrowRightLeft className="h-3.5 w-3.5" />
-                            <span>Atribuir turma</span>
+                            <span>Atribuir</span>
                           </Button>
                         </td>
                       </tr>
