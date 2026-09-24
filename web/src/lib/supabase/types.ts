@@ -1,4 +1,4 @@
-export type Json =
+﻿export type Json =
   | string
   | number
   | boolean
@@ -10,40 +10,10 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.15"
+    PostgrestVersion: "14.5"
   }
   public: {
     Tables: {
-      categoria_turmas: {
-        Row: {
-          id: string
-          nome: string
-          sigla: string
-          idade_minima: number
-          idade_maxima: number
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          nome: string
-          sigla: string
-          idade_minima: number
-          idade_maxima: number
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          nome?: string
-          sigla?: string
-          idade_minima?: number
-          idade_maxima?: number
-          created_at?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
       atividade_perguntas: {
         Row: {
           atividade_id: string
@@ -657,6 +627,36 @@ export type Database = {
           },
         ]
       }
+      categoria_turmas: {
+        Row: {
+          created_at: string
+          id: string
+          idade_maxima: number
+          idade_minima: number
+          nome: string
+          sigla: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          idade_maxima: number
+          idade_minima: number
+          nome: string
+          sigla: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          idade_maxima?: number
+          idade_minima?: number
+          nome?: string
+          sigla?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       concedentes: {
         Row: {
           cidade: string | null
@@ -1156,6 +1156,7 @@ export type Database = {
           nome: string
           perfil_id: string
           permite_login: boolean
+          tipo_alocacao: string | null
           updated_at: string
         }
         Insert: {
@@ -1167,6 +1168,7 @@ export type Database = {
           nome: string
           perfil_id: string
           permite_login?: boolean
+          tipo_alocacao?: string | null
           updated_at?: string
         }
         Update: {
@@ -1178,6 +1180,7 @@ export type Database = {
           nome?: string
           perfil_id?: string
           permite_login?: boolean
+          tipo_alocacao?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -1196,11 +1199,12 @@ export type Database = {
           created_at: string
           expira_em: string | null
           id: string
+          nucleo_id: string | null
           observacoes: string | null
           origem: string
           respostas_formulario: Json | null
           status: Database["public"]["Enums"]["status_inscricao"]
-          turma_id: string
+          turma_id: string | null
           updated_at: string
         }
         Insert: {
@@ -1208,11 +1212,12 @@ export type Database = {
           created_at?: string
           expira_em?: string | null
           id?: string
+          nucleo_id?: string | null
           observacoes?: string | null
           origem?: string
           respostas_formulario?: Json | null
           status?: Database["public"]["Enums"]["status_inscricao"]
-          turma_id: string
+          turma_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -1220,11 +1225,12 @@ export type Database = {
           created_at?: string
           expira_em?: string | null
           id?: string
+          nucleo_id?: string | null
           observacoes?: string | null
           origem?: string
           respostas_formulario?: Json | null
           status?: Database["public"]["Enums"]["status_inscricao"]
-          turma_id?: string
+          turma_id?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -1233,6 +1239,13 @@ export type Database = {
             columns: ["beneficiario_id"]
             isOneToOne: false
             referencedRelation: "beneficiarios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inscricoes_nucleo_id_fkey"
+            columns: ["nucleo_id"]
+            isOneToOne: false
+            referencedRelation: "nucleos"
             referencedColumns: ["id"]
           },
           {
@@ -2424,17 +2437,17 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "turmas_nucleo_id_fkey"
-            columns: ["nucleo_id"]
-            isOneToOne: false
-            referencedRelation: "nucleos"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "turmas_categoria_id_fkey"
             columns: ["categoria_id"]
             isOneToOne: false
             referencedRelation: "categoria_turmas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "turmas_nucleo_id_fkey"
+            columns: ["nucleo_id"]
+            isOneToOne: false
+            referencedRelation: "nucleos"
             referencedColumns: ["id"]
           },
         ]
@@ -2494,6 +2507,32 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_atualizar_usuario: {
+        Args: {
+          p_ativo?: boolean
+          p_entidade_id?: string
+          p_id: string
+          p_is_professor?: boolean
+          p_nome_completo?: string
+          p_nova_senha?: string
+          p_perfil_id?: string
+          p_tipo?: Database["public"]["Enums"]["tipo_usuario"]
+        }
+        Returns: Json
+      }
+      admin_criar_usuario: {
+        Args: {
+          p_ativo?: boolean
+          p_email: string
+          p_entidade_id?: string
+          p_is_professor?: boolean
+          p_nome_completo: string
+          p_perfil_id: string
+          p_senha: string
+          p_tipo?: Database["public"]["Enums"]["tipo_usuario"]
+        }
+        Returns: Json
+      }
       aprovar_inscricao: {
         Args: { p_id: string }
         Returns: {
@@ -2501,11 +2540,12 @@ export type Database = {
           created_at: string
           expira_em: string | null
           id: string
+          nucleo_id: string | null
           observacoes: string | null
           origem: string
           respostas_formulario: Json | null
           status: Database["public"]["Enums"]["status_inscricao"]
-          turma_id: string
+          turma_id: string | null
           updated_at: string
         }
         SetofOptions: {
@@ -2523,11 +2563,12 @@ export type Database = {
           created_at: string
           expira_em: string | null
           id: string
+          nucleo_id: string | null
           observacoes: string | null
           origem: string
           respostas_formulario: Json | null
           status: Database["public"]["Enums"]["status_inscricao"]
-          turma_id: string
+          turma_id: string | null
           updated_at: string
         }
         SetofOptions: {
@@ -2537,6 +2578,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      consultar_inscricao_publica: { Args: { p_id: string }; Returns: Json }
       criar_inscricao: {
         Args: {
           p_beneficiario_id: string
@@ -2549,11 +2591,12 @@ export type Database = {
           created_at: string
           expira_em: string | null
           id: string
+          nucleo_id: string | null
           observacoes: string | null
           origem: string
           respostas_formulario: Json | null
           status: Database["public"]["Enums"]["status_inscricao"]
-          turma_id: string
+          turma_id: string | null
           updated_at: string
         }
         SetofOptions: {
@@ -2574,6 +2617,27 @@ export type Database = {
         Args: { p_acao: string; p_modulo: string }
         Returns: boolean
       }
+      inscrever_beneficiario_publico: {
+        Args: {
+          p_dados_beneficiario: Json
+          p_observacoes?: string
+          p_respostas?: Json
+          p_turma_id: string
+        }
+        Returns: Json
+      }
+      inscrever_em_nucleo_publico: {
+        Args: {
+          p_dados_beneficiario: Json
+          p_nucleo_id: string
+          p_observacoes?: string
+        }
+        Returns: Json
+      }
+      is_hierarquia_operacional: {
+        Args: { p_id: string; p_tipo: string }
+        Returns: Json
+      }
       lembrete_supervisoes_rascunho: { Args: never; Returns: undefined }
       matricular_beneficiario: {
         Args: { p_beneficiario_id: string; p_turma_id: string }
@@ -2587,6 +2651,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      obter_status_ponto_hoje: {
+        Args: { p_data?: string; p_funcionario_id: string }
+        Returns: Json
+      }
       recusar_inscricao: {
         Args: { p_id: string; p_observacoes?: string }
         Returns: {
@@ -2594,11 +2662,12 @@ export type Database = {
           created_at: string
           expira_em: string | null
           id: string
+          nucleo_id: string | null
           observacoes: string | null
           origem: string
           respostas_formulario: Json | null
           status: Database["public"]["Enums"]["status_inscricao"]
-          turma_id: string
+          turma_id: string | null
           updated_at: string
         }
         SetofOptions: {
@@ -2608,7 +2677,21 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      registrar_ponto_publico: {
+        Args: {
+          p_data?: string
+          p_funcionario_id: string
+          p_hora?: string
+          p_observacao?: string
+          p_tipo: Database["public"]["Enums"]["tipo_registro_ponto"]
+        }
+        Returns: Json
+      }
       unaccent: { Args: { "": string }; Returns: string }
+      verificar_entidade_possui_dependentes: {
+        Args: { p_id: string; p_tipo: string }
+        Returns: Json
+      }
       verificar_estoques_baixos: { Args: never; Returns: undefined }
       verificar_termos_atrasados: { Args: never; Returns: undefined }
     }
@@ -2662,12 +2745,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -2691,11 +2774,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -2716,11 +2799,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -2741,11 +2824,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -2758,11 +2841,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -2815,3 +2898,4 @@ export const Constants = {
     },
   },
 } as const
+
