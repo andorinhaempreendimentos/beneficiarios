@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronDown, CheckCircle, ArrowLeft, MapPin, ShieldCheck, AlertTriangle } from "lucide-react";
 import { z } from "zod";
@@ -45,6 +45,7 @@ interface InscricaoPublicaFormProps {
 
 export function InscricaoPublicaForm({ turmaId, nucleoId, onSubmit }: InscricaoPublicaFormProps) {
   const router = useRouter();
+  const submittingRef = useRef(false);
 
   // Estados do Beneficiário
   const [dataNascimento, setDataNascimento] = useState("");
@@ -163,6 +164,8 @@ export function InscricaoPublicaForm({ turmaId, nucleoId, onSubmit }: InscricaoP
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (submittingRef.current) return;
+    submittingRef.current = true;
     setErro(null);
     setFieldErrors({});
 
@@ -346,6 +349,7 @@ export function InscricaoPublicaForm({ turmaId, nucleoId, onSubmit }: InscricaoP
       console.error("Erro na inscrição pública:", err);
       setErro(err?.message || "Ocorreu um erro ao processar sua inscrição. Tente novamente.");
     } finally {
+      submittingRef.current = false;
       setLoading(false);
     }
   }
