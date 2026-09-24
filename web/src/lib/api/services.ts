@@ -1736,18 +1736,13 @@ export const inscricoesApi = {
     if (error) throw error;
     return mapInscricao(data);
   },
-  async atribuirTurma(inscricaoId: string, turmaId: string, beneficiarioId: string): Promise<void> {
+  async atribuirTurma(inscricaoId: string, turmaId: string, _beneficiarioId: string): Promise<void> {
     const sb = createClient();
-    const { error: errInscricao } = await sb
-      .from('inscricoes')
-      .update({ turma_id: turmaId, status: 'aprovada' } as any)
-      .eq('id', inscricaoId);
-    if (errInscricao) throw errInscricao;
-    const { error: errRpc } = await sb.rpc('matricular_beneficiario' as any, {
+    const { error } = await sb.rpc('atribuir_turma_inscricao' as any, {
+      p_inscricao_id: inscricaoId,
       p_turma_id: turmaId,
-      p_beneficiario_id: beneficiarioId,
     });
-    if (errRpc && !errRpc.message?.includes('duplicate key')) throw errRpc;
+    if (error) throw error;
   },
 };
 
