@@ -1679,6 +1679,16 @@ export const inscricoesApi = {
     if (error) throw error;
     return data as any;
   },
+  async inscreverPublicoNucleo(dadosBeneficiario: Record<string, unknown>, nucleoId: string, observacoes?: string): Promise<{ id: string; status: string; matricula: string; beneficiarioId: string; nucleoId: string }> {
+    const sb = createClient();
+    const { data, error } = await sb.rpc('inscrever_em_nucleo_publico' as any, {
+      p_dados_beneficiario: dadosBeneficiario as never,
+      p_nucleo_id: nucleoId,
+      p_observacoes: observacoes,
+    });
+    if (error) throw error;
+    return data as any;
+  },
   async consultarPublico(id: string): Promise<{
     id: string;
     status: StatusInscricao;

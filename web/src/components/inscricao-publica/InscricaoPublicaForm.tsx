@@ -38,11 +38,12 @@ const PERGUNTAS_PARQ = [
 ];
 
 interface InscricaoPublicaFormProps {
-  turmaId: string;
+  turmaId?: string;
+  nucleoId?: string;
   onSubmit?: (data: FormData) => void;
 }
 
-export function InscricaoPublicaForm({ turmaId, onSubmit }: InscricaoPublicaFormProps) {
+export function InscricaoPublicaForm({ turmaId, nucleoId, onSubmit }: InscricaoPublicaFormProps) {
   const router = useRouter();
 
   // Estados do Beneficiário
@@ -229,8 +230,8 @@ export function InscricaoPublicaForm({ turmaId, onSubmit }: InscricaoPublicaForm
        }
     }
 
-    // Validação de Faixa etária da turma
-    if (dataNascimento) {
+    // Validação de Faixa etária da turma (apenas no fluxo de inscrição em turma)
+    if (turmaId && dataNascimento) {
       try {
         const turmaInfo = await turmasApi.get(turmaId);
         const min = turmaInfo.idadeMinima ?? 6;
@@ -328,7 +329,17 @@ export function InscricaoPublicaForm({ turmaId, onSubmit }: InscricaoPublicaForm
         tipoMatricula: "online",
       };
 
-      const novaInscricao = await inscricoesApi.inscreverPublico(payloadBeneficiario, turmaId, "Inscrição pública online", { parQ });
+      let novaInscricao: { id: string };
+
+      if (nucleoId) {
+        // Fluxo de inscrição no núcleo sem turma
+        novaInscricao = await inscricoesApi.inscreverPublicoNucleo(payloadBeneficiario, nucleoId, "Inscrição pública no núcleo");
+      } else if (turmaId) {
+        // Fluxo padrão de inscrição em turma
+        novaInscricao = await inscricoesApi.inscreverPublico(payloadBeneficiario, turmaId, "Inscrição pública online", { parQ });
+      } else {
+        throw new Error("Nenhum destino de inscrição definido.");
+      }
 
       router.push(`/inscricao/confirmacao?id=${novaInscricao.id}`);
     } catch (err: any) {
