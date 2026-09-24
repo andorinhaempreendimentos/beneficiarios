@@ -269,6 +269,21 @@ export function ModalLinksInscricao({
 
   const totalEncontrados = listTurmas.length + listNucleos.length + listAtividades.length;
 
+  // Cascata: flags de disabled para cada select
+  const orgDisabled = objetos.length > 0 && !selectedObjetoId;
+  const nucleoDisabled = organizacoes.length > 0
+    ? !selectedOrganizacaoId || orgDisabled
+    : objetos.length > 0 && !selectedObjetoId;
+  const atividadeDisabled = !selectedNucleoId || nucleoDisabled;
+  const turmaDisabled = !selectedAtividadeId || atividadeDisabled;
+
+  const selectDisabledCls = "border-zinc-200 bg-zinc-50 text-zinc-400 cursor-not-allowed";
+  const selectEnabledCls = "border-zinc-300 bg-white text-zinc-800 focus:border-sky-500 focus:ring-1 focus:ring-sky-500 cursor-pointer";
+  const labelDisabledCls = "text-zinc-300";
+  const labelEnabledCls = "text-zinc-500";
+  const selectBase = "w-full rounded-lg border px-2.5 py-1.5 text-xs outline-none transition-colors";
+  const labelBase = "text-[10px] font-bold uppercase tracking-wider";
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in-50">
       <div className="relative flex flex-col w-full max-w-4xl max-h-[90vh] bg-white rounded-2xl shadow-2xl border border-zinc-200 overflow-hidden animate-in zoom-in-95">
@@ -304,7 +319,7 @@ export function ModalLinksInscricao({
             {/* Objeto */}
             {objetos.length > 0 && (
               <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Objeto</label>
+                <label className={`${labelBase} ${labelEnabledCls}`}>Objeto</label>
                 <select
                   value={selectedObjetoId}
                   onChange={(e) => {
@@ -315,7 +330,7 @@ export function ModalLinksInscricao({
                     setSelectedTurmaId("");
                     setBuscaExecutada(false);
                   }}
-                  className="w-full rounded-lg border border-zinc-300 bg-white px-2.5 py-1.5 text-xs text-zinc-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 cursor-pointer"
+                  className={`${selectBase} ${selectEnabledCls}`}
                 >
                   <option value="">Todos os Objetos</option>
                   {objetos.map((ob) => (
@@ -328,9 +343,10 @@ export function ModalLinksInscricao({
             {/* Organização */}
             {organizacoes.length > 0 && (
               <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Organização</label>
+                <label className={`${labelBase} ${orgDisabled ? labelDisabledCls : labelEnabledCls}`}>Organização</label>
                 <select
                   value={selectedOrganizacaoId}
+                  disabled={orgDisabled}
                   onChange={(e) => {
                     setSelectedOrganizacaoId(e.target.value);
                     setSelectedNucleoId("");
@@ -338,70 +354,85 @@ export function ModalLinksInscricao({
                     setSelectedTurmaId("");
                     setBuscaExecutada(false);
                   }}
-                  className="w-full rounded-lg border border-zinc-300 bg-white px-2.5 py-1.5 text-xs text-zinc-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 cursor-pointer"
+                  className={`${selectBase} ${orgDisabled ? selectDisabledCls : selectEnabledCls}`}
                 >
-                  <option value="">Todas as Organizações</option>
-                  {organizacoesFiltradasDropdown.map((org) => (
-                    <option key={org.id} value={org.id}>{org.nome}</option>
-                  ))}
+                  {orgDisabled
+                    ? <option value="">Selecione um Objeto primeiro</option>
+                    : <>
+                        <option value="">Todas as Organizações</option>
+                        {organizacoesFiltradasDropdown.map((org) => (
+                          <option key={org.id} value={org.id}>{org.nome}</option>
+                        ))}
+                      </>
+                  }
                 </select>
               </div>
             )}
 
             {/* Núcleo */}
             <div className="flex flex-col gap-1">
-              <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Núcleo</label>
+              <label className={`${labelBase} ${nucleoDisabled ? labelDisabledCls : labelEnabledCls}`}>Núcleo</label>
               <select
                 value={selectedNucleoId}
+                disabled={nucleoDisabled}
                 onChange={(e) => {
                   setSelectedNucleoId(e.target.value);
                   setSelectedAtividadeId("");
                   setSelectedTurmaId("");
                   setBuscaExecutada(false);
                 }}
-                className="w-full rounded-lg border border-zinc-300 bg-white px-2.5 py-1.5 text-xs text-zinc-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 cursor-pointer"
+                className={`${selectBase} ${nucleoDisabled ? selectDisabledCls : selectEnabledCls}`}
               >
-                <option value="">Todos os Núcleos ({nucleosFiltradosDropdown.length})</option>
-                {nucleosFiltradosDropdown.map((n) => (
-                  <option key={n.id} value={n.id}>{n.identificacao}</option>
-                ))}
+                {nucleoDisabled
+                  ? <option value="">
+                      {organizacoes.length > 0 ? "Selecione uma Organização primeiro" : "Selecione um Objeto primeiro"}
+                    </option>
+                  : <>
+                      <option value="">Todos os Núcleos ({nucleosFiltradosDropdown.length})</option>
+                      {nucleosFiltradosDropdown.map((n) => (
+                        <option key={n.id} value={n.id}>{n.identificacao}</option>
+                      ))}
+                    </>
+                }
               </select>
             </div>
 
             {/* Atividade */}
             <div className="flex flex-col gap-1">
-              <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Atividade</label>
+              <label className={`${labelBase} ${atividadeDisabled ? labelDisabledCls : labelEnabledCls}`}>Atividade</label>
               <select
                 value={selectedAtividadeId}
+                disabled={atividadeDisabled}
                 onChange={(e) => {
                   setSelectedAtividadeId(e.target.value);
                   setSelectedTurmaId("");
                   setBuscaExecutada(false);
                 }}
-                className="w-full rounded-lg border border-zinc-300 bg-white px-2.5 py-1.5 text-xs text-zinc-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 cursor-pointer"
+                className={`${selectBase} ${atividadeDisabled ? selectDisabledCls : selectEnabledCls}`}
               >
-                <option value="">Todas as Atividades ({atividadesFiltradasDropdown.length})</option>
-                {atividadesFiltradasDropdown.map((a) => (
-                  <option key={a.id} value={a.id}>{a.nome}</option>
-                ))}
+                {atividadeDisabled
+                  ? <option value="">Selecione um Núcleo primeiro</option>
+                  : <>
+                      <option value="">Todas as Atividades ({atividadesFiltradasDropdown.length})</option>
+                      {atividadesFiltradasDropdown.map((a) => (
+                        <option key={a.id} value={a.id}>{a.nome}</option>
+                      ))}
+                    </>
+                }
               </select>
             </div>
 
             {/* Turma */}
             <div className="flex flex-col gap-1">
-              <label className={`text-[10px] font-bold uppercase tracking-wider ${!selectedNucleoId && !selectedAtividadeId ? "text-zinc-300" : "text-zinc-500"}`}>Turma</label>
+              <label className={`${labelBase} ${turmaDisabled ? labelDisabledCls : labelEnabledCls}`}>Turma</label>
               <select
                 value={selectedTurmaId}
-                disabled={!selectedNucleoId && !selectedAtividadeId}
+                disabled={turmaDisabled}
                 onChange={(e) => { setSelectedTurmaId(e.target.value); setBuscaExecutada(false); }}
-                className={`w-full rounded-lg border px-2.5 py-1.5 text-xs outline-none transition-colors ${
-                  !selectedNucleoId && !selectedAtividadeId
-                    ? "border-zinc-200 bg-zinc-50 text-zinc-400 cursor-not-allowed"
-                    : "border-zinc-300 bg-white text-zinc-800 focus:border-sky-500 focus:ring-1 focus:ring-sky-500 cursor-pointer"
-                }`}
+                className={`${selectBase} ${turmaDisabled ? selectDisabledCls : selectEnabledCls}`}
               >
-                {!selectedNucleoId && !selectedAtividadeId
-                  ? <option value="">Selecione um Núcleo ou Atividade</option>
+                {turmaDisabled
+                  ? <option value="">Selecione uma Atividade primeiro</option>
                   : <>
                       <option value="">Todas as Turmas ({turmasFiltradasDropdown.length})</option>
                       {turmasFiltradasDropdown.map((t) => (
