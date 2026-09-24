@@ -438,6 +438,7 @@ export function GestaoMatriculasProfessor({
                 <tr>
                   <th className="px-4 py-3">Matrícula</th>
                   <th className="px-4 py-3">Aluno</th>
+                  {!turmaSelecionadaId && <th className="px-4 py-3">Turma</th>}
                   <th className="px-4 py-3">Contato / Celular</th>
                   <th className="px-4 py-3 text-right">Ações Rápidas</th>
                 </tr>
@@ -445,7 +446,7 @@ export function GestaoMatriculasProfessor({
               <tbody className="divide-y divide-zinc-100">
                 {matriculadosFiltrados.length === 0 ? (
                   <tr>
-                    <td colSpan={4} className="py-8 text-center text-zinc-400 text-xs">
+                    <td colSpan={!turmaSelecionadaId ? 5 : 4} className="py-8 text-center text-zinc-400 text-xs">
                       Nenhum aluno encontrado para esta turma.
                     </td>
                   </tr>
@@ -454,6 +455,11 @@ export function GestaoMatriculasProfessor({
                     <tr key={aluno.id} className="hover:bg-zinc-50">
                       <td className="px-4 py-3 font-mono text-xs font-semibold text-zinc-600">{aluno.matricula}</td>
                       <td className="px-4 py-3 font-semibold text-zinc-900">{aluno.nomeCompleto}</td>
+                      {!turmaSelecionadaId && (
+                        <td className="px-4 py-3 text-xs text-zinc-500">
+                          {aluno.turmasInfo?.map((t) => t.turmaNome).filter(Boolean).join(", ") || "—"}
+                        </td>
+                      )}
                       <td className="px-4 py-3 text-zinc-600 text-xs">{aluno.celular || "—"}</td>
                       <td className="px-4 py-3 text-right">
                         <div className="flex items-center justify-end gap-2">
