@@ -38,7 +38,7 @@ export function GestaoMatriculasProfessor({
   onClose,
 }: GestaoMatriculasProfessorProps) {
   const { toast } = useToast();
-  const [turmaSelecionadaId, setTurmaSelecionadaId] = useState(turmas[0]?.id || "");
+  const [turmaSelecionadaId, setTurmaSelecionadaId] = useState("");
   const [busca, setBusca] = useState("");
 
   // Modais internos
@@ -75,13 +75,26 @@ export function GestaoMatriculasProfessor({
   );
   const alunosSemTurma = semTurmaRes?.data ?? [];
 
-  // Busca beneficiários da turma selecionada
+  // Busca beneficiários da turma selecionada (ou de todas quando "Todos")
   const { data: beneficiariosRes, refetch } = useQuery(
-    () =>
-      turmaSelecionadaId
-        ? beneficiariosApi.list({ turmaId: turmaSelecionadaId, limit: 200 })
-        : Promise.resolve({ data: [], total: 0, page: 1, limit: 200 }),
-    [turmaSelecionadaId]
+    () => {
+      if (turmaSelecionadaId) {
+        return beneficiariosApi.list({ turmaId: turmaSelecionadaId, limit: 200 });
+      }
+      if (turmas.length === 0) return Promise.resolve({ data: [], total: 0, page: 1, limit: 200 });
+      return Promise.all(
+        turmas.map((t) => beneficiariosApi.list({ turmaId: t.id, limit: 200 }).catch(() => ({ data: [] })))
+      ).then((results) => {
+        const seen = new Set<string>();
+        const data = results.flatMap((r) => r.data).filter((b) => {
+          if (seen.has(b.id)) return false;
+          seen.add(b.id);
+          return true;
+        });
+        return { data, total: data.length, page: 1, limit: 200 };
+      });
+    },
+    [turmaSelecionadaId, turmas]
   );
 
   const matriculados = beneficiariosRes?.data ?? [];
@@ -379,6 +392,7 @@ export function GestaoMatriculasProfessor({
                 value={turmaSelecionadaId}
                 onChange={(e) => setTurmaSelecionadaId(e.target.value)}
               >
+                <option value="">Todos</option>
                 {turmas.map((t) => (
                   <option key={t.id} value={t.id}>
                     {t.nome} ({t.vagasTotais} vagas)
