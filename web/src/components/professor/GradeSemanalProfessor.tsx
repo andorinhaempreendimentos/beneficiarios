@@ -200,7 +200,9 @@ export function GradeSemanalProfessor({
                               const tEncontrada = turmas.find((t) => t.id === slot.turmaId) || {
                                 id: slot.turmaId,
                                 nome: slot.turmaNome,
-                                vagasTotais: 30,
+                                vagasTotais: 0,
+                                vagasOcupadas: 0,
+                                vagasLivres: 0,
                                 exclusiva: false,
                                 criadoEm: new Date().toISOString(),
                                 nucleoId: slot.nucleoId || "",
