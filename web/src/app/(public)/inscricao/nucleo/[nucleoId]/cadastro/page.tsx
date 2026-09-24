@@ -50,7 +50,7 @@ export default async function InscricaoNucleoCadastroPage({ params }: InscricaoN
         </div>
 
         <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-          Ao se cadastrar, você entrará na lista do núcleo. Um professor entrará em contato para definir sua turma.
+          Após sua inscrição, o seu professor definirá sua turma.
         </div>
       </div>
 
