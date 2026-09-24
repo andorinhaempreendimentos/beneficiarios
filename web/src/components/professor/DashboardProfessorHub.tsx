@@ -36,7 +36,8 @@ import { GestaoMatriculasProfessor } from "./GestaoMatriculasProfessor";
 import { getDataHojeBrasil } from "@/lib/dateUtils";
 import { GradeSemanalProfessor } from "./GradeSemanalProfessor";
 import type { FuncionarioApi, TurmaApi, NucleoApi, BeneficiarioApi, SlotAulaGrid, ExecucaoAulaApi } from "@/lib/api/services";
-import { areaProfessorApi, execucoesAulaApi, professoresApi } from "@/lib/api/services";
+import { areaProfessorApi, execucoesAulaApi, professoresApi, inscricoesApi } from "@/lib/api/services";
+import { useQuery } from "@/lib/hooks/useQuery";
 
 interface DashboardProfessorHubProps {
   professor: FuncionarioApi;
@@ -169,6 +170,21 @@ export function DashboardProfessorHub({
   // Cálculos Dinâmicos
   const totalTurmas = turmas.length;
   const totalAlunos = (todosBeneficiarios ?? []).length;
+
+  // Contagem de alunos sem turma (cadastrados no núcleo, aguardando atribuição)
+  const nucleoIds = [...new Set(turmas.map((t) => t.nucleoId).filter(Boolean))] as string[];
+  const { data: semTurmaRes } = useQuery(
+    () =>
+      nucleoIds.length > 0
+        ? Promise.all(
+            nucleoIds.map((nId) =>
+              inscricoesApi.list({ nucleoId: nId, semTurma: true as any, limit: 1 }).catch(() => ({ total: 0 }))
+            )
+          ).then((results) => ({ total: results.reduce((acc, r) => acc + (r.total ?? 0), 0) }))
+        : Promise.resolve({ total: 0 }),
+    [turmas]
+  );
+  const totalSemTurma = semTurmaRes?.total ?? 0;
   
   // Cálculo Dinâmico da Carga Horária Semanal Real baseada nos Slots de Aula (turma_horarios)
   const cargaHorariaSemanal = useMemo(() => {
@@ -442,6 +458,35 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
               <ChevronRight className="h-3 w-3 text-sky-500 shrink-0 transition-transform group-hover:translate-x-0.5" />
             </p>
           </button>
+
+          {/* Card: Alunos sem turma — só aparece quando há pendentes */}
+          {totalSemTurma > 0 && (
+            <button
+              type="button"
+              onClick={() => setModalGestaoMatriculas(true)}
+              className="text-left p-3.5 sm:p-4 border-l-4 border-l-amber-500 bg-amber-50 hover:bg-amber-100/70 rounded-2xl border border-amber-200 shadow-sm hover:shadow-md hover:border-amber-400 transition-all active:scale-[0.98] group flex flex-col justify-between overflow-hidden"
+            >
+              <div className="flex items-center justify-between gap-1">
+                <span className="text-[11px] font-extrabold uppercase tracking-wider text-amber-700 group-hover:text-amber-800 transition-colors truncate">
+                  Sem turma
+                </span>
+                <span className="inline-flex items-center gap-1 rounded-lg bg-amber-500 p-1 sm:px-2 sm:py-0.5 text-[10px] font-extrabold text-white shadow-xs group-hover:bg-amber-600 transition-all shrink-0">
+                  <UserPlus className="h-3 w-3" />
+                  <span className="hidden sm:inline">Atribuir</span>
+                </span>
+              </div>
+
+              <div className="mt-1.5 sm:mt-2 flex items-baseline gap-1.5">
+                <span className="text-xl sm:text-2xl font-extrabold text-amber-700 group-hover:text-amber-800 transition-colors">{totalSemTurma}</span>
+                <span className="text-xs text-amber-600 font-bold">Aluno{totalSemTurma !== 1 ? "s" : ""}</span>
+              </div>
+
+              <p className="text-[10px] sm:text-[11px] text-amber-600 font-medium mt-1 flex items-center gap-1 group-hover:text-amber-800 transition-colors truncate">
+                <span className="truncate">Aguardando atribuição</span>
+                <ChevronRight className="h-3 w-3 text-amber-500 shrink-0 transition-transform group-hover:translate-x-0.5" />
+              </p>
+            </button>
+          )}
 
           <Card className="p-3.5 sm:p-4 border-l-4 border-l-indigo-500 bg-white shadow-sm flex flex-col justify-between overflow-hidden">
             <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 truncate">Turmas Ativas</span>
