@@ -1016,11 +1016,11 @@ export const turmasApi = {
       for (const bt of bts ?? []) {
         ocupadosMap.set(bt.turma_id, (ocupadosMap.get(bt.turma_id) ?? 0) + 1);
       }
-      for (const r of rows) {
+      for (const r of rows as any[]) {
         r._vagasOcupadas = ocupadosMap.get(r.id) ?? 0;
       }
     }
-    return { data: rows.map(mapTurma), total: count ?? 0, page, limit };
+    return { data: (rows as any[]).map(mapTurma), total: count ?? 0, page, limit };
   },
   async get(id: string): Promise<TurmaApi> {
     const sb = await getSupabase();
