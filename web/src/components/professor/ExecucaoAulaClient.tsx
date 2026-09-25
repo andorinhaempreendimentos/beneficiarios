@@ -374,6 +374,10 @@ export function ExecucaoAulaClient({
 
   // STEP 1: Iniciar Aula (Play)
   const handleIniciarAula = async () => {
+    if (beneficiarios.length === 0) {
+      toast.error("Não é possível iniciar a aula: nenhum beneficiário matriculado nesta turma.");
+      return;
+    }
     if (isDataFutura) {
       toast.error("Não é possível iniciar uma aula em data futura.");
       return;
