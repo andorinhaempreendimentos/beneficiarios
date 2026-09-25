@@ -5,14 +5,14 @@ import Link from "next/link";
 import { Camera, CheckCircle2, Clock, LogIn, LogOut, RotateCcw, User, X } from "lucide-react";
 import { funcionariosApi, professoresApi, type FuncionarioApi } from "@/lib/api/services";
 import type { RegistroPonto } from "@/lib/types";
+import { getDataHojeBrasil, getHoraAgoraBrasil } from "@/lib/dateUtils";
 
 function isoHoje(): string {
-  return new Date().toISOString().slice(0, 10);
+  return getDataHojeBrasil();
 }
 
 function horaAgora(): string {
-  const now = new Date();
-  return `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+  return getHoraAgoraBrasil();
 }
 
 type Etapa = "matricula" | "confirmar" | "atividade" | "sucesso";

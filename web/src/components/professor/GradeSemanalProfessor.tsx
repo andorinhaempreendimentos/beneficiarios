@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { TurmaApi, SlotAulaGrid, NucleoApi } from "@/lib/api/services";
+import { getDataHojeBrasil, formatDateBrasil } from "@/lib/dateUtils";
 
 interface GradeSemanalProfessorProps {
   turmas: TurmaApi[];
@@ -55,7 +56,7 @@ export function GradeSemanalProfessor({
   const dataLimiteRetro = useMemo(() => {
     const d = new Date();
     d.setDate(d.getDate() - diasLimite);
-    return d.toISOString().slice(0, 10);
+    return formatDateBrasil(d);
   }, [diasLimite]);
 
   // Calcular limites de navegação
@@ -66,14 +67,14 @@ export function GradeSemanalProfessor({
   // Datas da semana exibida
   const domBase = useMemo(() => getDomingoDaSemana(semanaOffset), [semanaOffset]);
 
-  const hojeStr = new Date().toISOString().slice(0, 10);
+  const hojeStr = getDataHojeBrasil();
   const isSemanAtual = semanaOffset === 0;
 
   const datasColuna = useMemo(() => {
     return DIAS_COLUNA.map((col) => {
       const d = new Date(domBase);
       d.setDate(domBase.getDate() + col.num);
-      const dStr = d.toISOString().slice(0, 10);
+      const dStr = formatDateBrasil(d);
       return {
         ...col,
         data: d,

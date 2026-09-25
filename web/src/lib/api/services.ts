@@ -911,7 +911,7 @@ function toNucleoRow(b: Record<string, unknown>): Database['public']['Tables']['
     nome_responsavel: b.nomeResponsavel as string | null | undefined,
     telefone_contato: b.telefoneContato as string | null | undefined,
     organizacao_id: uuidOrNull(b.organizacaoId) as any,
-    data_inicio: (b.dataInicio as string) || new Date().toISOString().slice(0, 10),
+    data_inicio: (b.dataInicio as string) || getDataHojeBrasil(),
     data_fechamento: b.dataFechamento as string | null | undefined,
     em_funcionamento: b.emFuncionamento as boolean | undefined,
     disponivel_pre_inscricao: b.disponivelPreInscricao as boolean | undefined,

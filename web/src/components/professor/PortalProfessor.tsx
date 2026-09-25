@@ -20,6 +20,7 @@ import { Badge, Button, Card, Field, Input, PageHeader, Select, Textarea } from 
 import { useToast } from "@/components/providers/ToastProvider";
 import { turmasApi, professoresApi, type FuncionarioApi, type TurmaApi, type NucleoApi, type BeneficiarioApi } from "@/lib/api/services";
 import { useEffect } from "react";
+import { getDataHojeBrasil } from "@/lib/dateUtils";
 
 interface PortalProfessorProps {
   professor: FuncionarioApi;
@@ -95,7 +96,7 @@ export function PortalProfessor({ professor, turmas, nucleos }: PortalProfessorP
   async function handleSalvarChamada() {
     if (!turmaSelecionadaId) return;
     setSalvando(true);
-    const dataHoje = new Date().toISOString().slice(0, 10);
+    const dataHoje = getDataHojeBrasil();
     const payloadPresencas = Object.entries(presencas).map(([beneficiarioId, status]) => ({
       beneficiarioId,
       presente: status === "presente",
@@ -127,7 +128,7 @@ export function PortalProfessor({ professor, turmas, nucleos }: PortalProfessorP
       if (fotoFile) {
         fotoUrl = await professoresApi.uploadComprovacao(fotoFile, fotoFile.name);
       }
-      const dataHoje = new Date().toISOString().slice(0, 10);
+      const dataHoje = getDataHojeBrasil();
       const horaAgora = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
 
       await professoresApi.salvarAplicacaoAtividade({

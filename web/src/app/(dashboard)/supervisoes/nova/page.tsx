@@ -17,6 +17,7 @@ import {
 import { coordenadoresApi } from "@/lib/api/coordenadores";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { AlertCircle } from "lucide-react";
+import { getDataHojeBrasil } from "@/lib/dateUtils";
 
 type Step = "identificacao" | "presenca" | "avaliacao" | "observacoes";
 
@@ -55,7 +56,7 @@ export default function NovaSupervisaoPage() {
   const [form, setForm] = useState({
     nucleoId: "",
     coordenadorId: "",
-    dataSupervisao: new Date().toISOString().slice(0, 10),
+    dataSupervisao: getDataHojeBrasil(),
     horaEntrada: new Date().toTimeString().slice(0, 5),
     horaSaida: "",
     beneficiariosPresentes: "",

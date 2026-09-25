@@ -650,7 +650,7 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
           slotsGrid={slotsGrid ?? []}
           nucleo={nucleo}
           onSelectSlot={(slot, turma, dataStr) => {
-            const hojeStr = new Date().toISOString().slice(0, 10);
+            const hojeStr = getDataHojeBrasil();
 
             if (dataStr > hojeStr) {
               const parts = dataStr.split('-');
