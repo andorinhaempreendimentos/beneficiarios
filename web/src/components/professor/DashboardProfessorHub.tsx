@@ -625,6 +625,123 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
         </div>
       </div>
 
+      {/* 5. FLUXO UNIFICADO DE AULA */}
+      <div className="flex flex-col gap-4">
+        <div>
+          <h2 className="text-lg font-bold text-zinc-900 flex items-center gap-2">
+            <PlayCircle className="h-5 w-5 text-emerald-600" />
+            <span>Iniciar Aula (Fluxo Unificado)</span>
+          </h2>
+          <p className="text-xs text-zinc-500 mt-0.5">
+            Selecione a sua turma abaixo para iniciar o fluxo contínuo (Ponto, Relatório e Chamada)
+          </p>
+        </div>
+
+        {turmasHoje.length > 0 && (
+          <div className="flex flex-col gap-3">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-emerald-600 px-1">
+              Turmas de Hoje ({diaSemanaAtual} — {hojeFormatado})
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {turmasHoje.map((turma) => {
+                const isPlanejamento = turma.nome?.toLowerCase().includes("planejamento");
+                return (
+                  <div
+                    key={turma.id}
+                    className={`flex flex-col gap-4 rounded-2xl border-2 p-5 shadow-sm transition-all ${
+                      isPlanejamento
+                        ? "border-amber-400/40 bg-amber-50/30 hover:border-amber-400 hover:shadow-md"
+                        : "border-emerald-500/30 bg-emerald-50/20 hover:border-emerald-500 hover:shadow-md"
+                    }`}
+                  >
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h3 className="font-bold text-zinc-900 truncate text-base">{turma.nome}</h3>
+                        {isPlanejamento && (
+                          <span className="text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full border border-amber-300 shrink-0">
+                            Planejamento
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-zinc-500 mt-1 line-clamp-2">
+                        {turma.nucleo?.identificacao || nucleo?.identificacao || "Polo não especificado"}
+                      </p>
+                      <div className="mt-2 text-[11px] font-medium text-zinc-500 flex flex-wrap gap-1">
+                        {turma.slots?.filter((s: any) => s.dia === SIGLAS_DIA[hojeIndice]).map((s: any, idx: number) => (
+                          <span
+                            key={idx}
+                            className={`px-2 py-0.5 rounded-md font-bold ${
+                              isPlanejamento
+                                ? "bg-amber-100 text-amber-800"
+                                : "bg-emerald-100 text-emerald-800"
+                            }`}
+                          >
+                            Hoje {hojeFormatado} {s.inicio}h às {s.fim}h
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <Link
+                      href={`/professor/aula/${turma.id}`}
+                      className={`flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold text-white shadow-sm transition-colors active:scale-95 w-full ${
+                        isPlanejamento
+                          ? "bg-amber-500 hover:bg-amber-600"
+                          : "bg-emerald-600 hover:bg-emerald-700"
+                      }`}
+                    >
+                      <PlayCircle className="h-5 w-5" />
+                      <span>{isPlanejamento ? "▶ INICIAR PLANEJAMENTO" : "▶ INICIAR AULA"}</span>
+                    </Link>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {outrasTurmas.length > 0 && (
+          <div className="flex flex-col gap-3 mt-2">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-zinc-400 px-1">
+              Outras Turmas (sem aula hoje)
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {outrasTurmas.map((turma) => (
+                <div key={turma.id} className="flex flex-col gap-3 rounded-2xl border border-zinc-200 bg-zinc-50/50 p-5 opacity-70">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-bold text-zinc-700 truncate text-base">{turma.nome}</h3>
+                    <p className="text-xs text-zinc-400 mt-1 line-clamp-2">
+                      {turma.nucleo?.identificacao || nucleo?.identificacao || "Polo não especificado"}
+                    </p>
+                    <div className="mt-2 text-[11px] font-medium text-zinc-400 flex flex-wrap gap-1">
+                      {turma.slots?.map((s: any, idx: number) => (
+                        <span key={idx} className="bg-zinc-100 px-1.5 py-0.5 rounded">
+                          {s.dia} {datasSemanaDia[s.dia] || ''} {s.inicio}h-{s.fim}h
+                        </span>
+                      )) || <span>Sem horários definidos</span>}
+                    </div>
+                  </div>
+                  <div className="text-[11px] text-zinc-400 italic text-center">
+                    Disponível apenas nos dias da grade
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {turmasHoje.length === 0 && outrasTurmas.length > 0 && (
+          <div className="py-6 text-center text-sm text-zinc-500 bg-zinc-50 rounded-2xl border border-dashed border-zinc-200">
+            Você não tem aulas programadas para hoje ({diaSemanaAtual}).
+          </div>
+        )}
+
+        {turmas.length === 0 && (
+          <div className="py-8 text-center text-sm text-zinc-500 bg-zinc-50 rounded-2xl border border-dashed border-zinc-200">
+            Nenhuma turma vinculada ao seu perfil.
+          </div>
+        )}
+      </div>
+
       {/* 2. QUADRO DE GRADE SEMANAL DE TREINOS (MATRIZ IDENTICA AO EDITAR TURMAS) */}
       <div className="flex flex-col gap-3">
         <div>
@@ -689,94 +806,6 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
         onClose={() => setModalGestaoMatriculas(false)}
       />
 
-      {/* 5. FLUXO UNIFICADO DE AULA */}
-      <div className="flex flex-col gap-4">
-        <div>
-          <h2 className="text-lg font-bold text-zinc-900 flex items-center gap-2">
-            <PlayCircle className="h-5 w-5 text-emerald-600" />
-            <span>Iniciar Aula (Fluxo Unificado)</span>
-          </h2>
-          <p className="text-xs text-zinc-500 mt-0.5">
-            Selecione a sua turma abaixo para iniciar o fluxo contínuo (Ponto, Relatório e Chamada)
-          </p>
-        </div>
-
-        {turmasHoje.length > 0 && (
-          <div className="flex flex-col gap-3">
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-emerald-600 px-1">
-              Turmas de Hoje ({diaSemanaAtual} — {hojeFormatado})
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {turmasHoje.map((turma) => (
-                <div key={turma.id} className="flex flex-col gap-4 rounded-2xl border-2 border-emerald-500/30 bg-emerald-50/20 p-5 shadow-sm transition-all hover:border-emerald-500 hover:shadow-md">
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-zinc-900 truncate text-base">{turma.nome}</h3>
-                    <p className="text-xs text-zinc-500 mt-1 line-clamp-2">
-                      {turma.nucleo?.identificacao || nucleo?.identificacao || "Polo não especificado"}
-                    </p>
-                    <div className="mt-2 text-[11px] font-medium text-zinc-500 flex flex-wrap gap-1">
-                      {turma.slots?.filter((s: any) => s.dia === SIGLAS_DIA[hojeIndice]).map((s: any, idx: number) => (
-                        <span key={idx} className="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-md font-bold">
-                          Hoje {hojeFormatado} {s.inicio}h às {s.fim}h
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  <Link
-                    href={`/professor/aula/${turma.id}`}
-                    className="flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-bold text-white shadow-sm hover:bg-emerald-700 transition-colors active:scale-95 w-full"
-                  >
-                    <PlayCircle className="h-5 w-5" />
-                    <span>▶ INICIAR AULA</span>
-                  </Link>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {outrasTurmas.length > 0 && (
-          <div className="flex flex-col gap-3 mt-2">
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-zinc-400 px-1">
-              Outras Turmas (sem aula hoje)
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {outrasTurmas.map((turma) => (
-                <div key={turma.id} className="flex flex-col gap-3 rounded-2xl border border-zinc-200 bg-zinc-50/50 p-5 opacity-70">
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-zinc-700 truncate text-base">{turma.nome}</h3>
-                    <p className="text-xs text-zinc-400 mt-1 line-clamp-2">
-                      {turma.nucleo?.identificacao || nucleo?.identificacao || "Polo não especificado"}
-                    </p>
-                    <div className="mt-2 text-[11px] font-medium text-zinc-400 flex flex-wrap gap-1">
-                      {turma.slots?.map((s: any, idx: number) => (
-                        <span key={idx} className="bg-zinc-100 px-1.5 py-0.5 rounded">
-                          {s.dia} {datasSemanaDia[s.dia] || ''} {s.inicio}h-{s.fim}h
-                        </span>
-                      )) || <span>Sem horários definidos</span>}
-                    </div>
-                  </div>
-                  <div className="text-[11px] text-zinc-400 italic text-center">
-                    Disponível apenas nos dias da grade
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {turmasHoje.length === 0 && outrasTurmas.length > 0 && (
-          <div className="py-6 text-center text-sm text-zinc-500 bg-zinc-50 rounded-2xl border border-dashed border-zinc-200">
-            Você não tem aulas programadas para hoje ({diaSemanaAtual}).
-          </div>
-        )}
-
-        {turmas.length === 0 && (
-          <div className="py-8 text-center text-sm text-zinc-500 bg-zinc-50 rounded-2xl border border-dashed border-zinc-200">
-            Nenhuma turma vinculada ao seu perfil.
-          </div>
-        )}
-      </div>
 
       {/* MODAL INTELIGENTE DE AÇÕES DA ATIVIDADE / TURMA */}
       {turmaModal && (
