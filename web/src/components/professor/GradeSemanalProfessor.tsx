@@ -118,6 +118,11 @@ export function GradeSemanalProfessor({
     return items.find((s) => s.dia === dia && s.inicio === hora);
   }
 
+  // Se algum slot tiver menos de 2h, usar célula maior para melhor visualização
+  const temSlotCurto = items.some((s) => (s.fim - s.inicio) < 2);
+  const horaAlturaPx = temSlotCurto ? 64 : 48;
+  const horaAlturaClass = temSlotCurto ? "h-16" : "h-12";
+
   // Label da semana
   const labelSemana = useMemo(() => {
     const seg = datasColuna[0];
@@ -158,11 +163,11 @@ export function GradeSemanalProfessor({
       <div className="overflow-x-auto rounded-2xl border border-zinc-200 bg-white select-none shadow-sm">
         <div className="flex min-w-[700px]">
           <div className="flex flex-col border-r border-zinc-100 bg-zinc-50/50">
-            <div className="h-12 w-16 border-b border-zinc-100 flex items-center justify-center text-[10px] font-bold text-zinc-400 uppercase">
+            <div className={`${horaAlturaClass} w-16 border-b border-zinc-100 flex items-center justify-center text-[10px] font-bold text-zinc-400 uppercase`}>
               Hora
             </div>
             {HORAS_GRADE.map((h) => (
-              <div key={h} className="flex h-12 w-16 items-start justify-end pr-2 pt-1">
+              <div key={h} className={`flex ${horaAlturaClass} w-16 items-start justify-end pr-2 pt-1`}>
                 <span className="text-[11px] font-mono text-zinc-400 font-medium">{formatHora(h)}</span>
               </div>
             ))}
@@ -173,7 +178,7 @@ export function GradeSemanalProfessor({
 
             return (
               <div key={key + dataStr} className="flex flex-1 flex-col border-r border-zinc-100 last:border-r-0">
-                <div className={`flex h-12 items-center justify-center border-b border-zinc-100 font-extrabold text-xs uppercase tracking-wider flex-col leading-tight ${
+                <div className={`flex ${horaAlturaClass} items-center justify-center border-b border-zinc-100 font-extrabold text-xs uppercase tracking-wider flex-col leading-tight ${
                   isHoje ? 'bg-emerald-50 text-emerald-700' : foraDoLimite ? 'bg-red-50/30 text-zinc-400' : isPassado ? 'bg-amber-50/50 text-zinc-500' : 'bg-zinc-50 text-zinc-400'
                 }`}>
                   <span className="hidden sm:inline">{label}</span>
@@ -191,7 +196,7 @@ export function GradeSemanalProfessor({
                     return (
                       <div
                         key={hora}
-                        className={`relative h-12 border-b border-zinc-100 transition-colors ${
+                        className={`relative ${horaAlturaClass} border-b border-zinc-100 transition-colors ${
                           bloqueado ? 'bg-zinc-50/30' : 'hover:bg-sky-50/50'
                         }`}
                       >
@@ -227,7 +232,7 @@ export function GradeSemanalProfessor({
                                         ? 'bg-gradient-to-b from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 border-amber-400/40 cursor-pointer'
                                         : 'bg-gradient-to-b from-sky-600 to-sky-700 hover:from-sky-500 hover:to-sky-600 border-sky-400/40 cursor-pointer'
                                 }`}
-                                style={{ top: 2, height: `calc(${(slot.fim - slot.inicio) * 48}px - 4px)` }}
+                                style={{ top: 2, height: `calc(${(slot.fim - slot.inicio) * horaAlturaPx}px - 4px)` }}
                               >
                                 <div className="truncate font-bold text-white">
                                   <span className="truncate block">{slot.turmaNome}</span>
