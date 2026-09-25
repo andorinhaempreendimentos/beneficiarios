@@ -120,8 +120,8 @@ export function GradeSemanalProfessor({
 
   // Se algum slot tiver menos de 2h, usar célula maior para melhor visualização
   const temSlotCurto = items.some((s) => (s.fim - s.inicio) < 2);
-  const horaAlturaPx = temSlotCurto ? 64 : 48;
-  const horaAlturaClass = temSlotCurto ? "h-16" : "h-12";
+  const horaAlturaPx = temSlotCurto ? 96 : 48;
+  const horaAlturaClass = temSlotCurto ? "h-24" : "h-12";
 
   // Label da semana
   const labelSemana = useMemo(() => {
