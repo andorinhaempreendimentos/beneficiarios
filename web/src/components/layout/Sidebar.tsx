@@ -16,6 +16,7 @@ import {
   FolderKanban,
   GraduationCap,
   Landmark,
+  Layers,
   LayoutDashboard,
   Link as LinkIcon,
   LogOut,
@@ -124,31 +125,34 @@ export function Sidebar() {
     aberto,
     setAberto,
     ativo,
+    Icon,
     children,
   }: {
     label: string;
     aberto: boolean;
     setAberto: (v: boolean) => void;
     ativo: boolean;
+    Icon: React.ElementType;
     children: React.ReactNode;
   }) {
     return (
-      <div className="mt-1">
+      <div className="mt-2">
         <button
           type="button"
           onClick={() => setAberto(!aberto)}
           className={cn(
-            "flex w-full items-center justify-between rounded-lg px-3 py-1.5 text-[10px] font-semibold uppercase tracking-widest transition-colors",
+            "flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-semibold uppercase tracking-wider transition-colors",
             ativo
               ? "text-sky-600 dark:text-sky-400"
-              : "text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300"
+              : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200"
           )}
         >
-          {label}
-          <ChevronDown className={cn("h-3 w-3 transition-transform", aberto && "rotate-180")} />
+          <Icon className="h-4 w-4 shrink-0" />
+          <span className="flex-1 text-left">{label}</span>
+          <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", aberto && "rotate-180")} />
         </button>
         {aberto && (
-          <div className="mt-0.5 space-y-0.5">
+          <div className="mt-0.5 space-y-0.5 pl-1">
             {children}
           </div>
         )}
@@ -223,14 +227,14 @@ export function Sidebar() {
               {navLink("/", "Painel", LayoutDashboard)}
 
               {/* Projeto */}
-              <SectionGroup label="Projeto" aberto={projetoAberto} setAberto={setProjetoAberto} ativo={projetoAtivo}>
+              <SectionGroup label="Projeto" aberto={projetoAberto} setAberto={setProjetoAberto} ativo={projetoAtivo} Icon={FolderKanban}>
                 {navLink("/objetos", t("objeto", "Objeto", true), FolderKanban)}
                 {navLink("/concedentes", "Concedentes", Landmark)}
                 {navLink("/organizacoes", t("organizacao", "Organização", true), Building2)}
               </SectionGroup>
 
               {/* Operacional */}
-              <SectionGroup label="Operacional" aberto={operacionalAberto} setAberto={setOperacionalAberto} ativo={operacionalAtivo}>
+              <SectionGroup label="Operacional" aberto={operacionalAberto} setAberto={setOperacionalAberto} ativo={operacionalAtivo} Icon={Layers}>
                 {navLink("/nucleos", t("local", "Núcleo", true), Building2)}
 
                 {/* Turmas sub-dropdown */}
@@ -262,7 +266,7 @@ export function Sidebar() {
               </SectionGroup>
 
               {/* Beneficiários */}
-              <SectionGroup label="Beneficiários" aberto={beneficiariosGrupoAberto} setAberto={setBeneficiariosGrupoAberto} ativo={beneficiariosGrupoAtivo}>
+              <SectionGroup label="Beneficiários" aberto={beneficiariosGrupoAberto} setAberto={setBeneficiariosGrupoAberto} ativo={beneficiariosGrupoAtivo} Icon={Users}>
                 <Link
                   href="/beneficiarios"
                   onClick={() => setOpen(false)}
@@ -305,7 +309,7 @@ export function Sidebar() {
               </SectionGroup>
 
               {/* Recursos Humanos */}
-              <SectionGroup label="Recursos Humanos" aberto={rhAberto} setAberto={setRhAberto} ativo={rhAtivo}>
+              <SectionGroup label="Recursos Humanos" aberto={rhAberto} setAberto={setRhAberto} ativo={rhAtivo} Icon={UsersRound}>
                 {navLink("/funcionarios", "Funcionários", UsersRound)}
                 {navLink("/funcionarios/funcoes", "Funções", ShieldCheck)}
                 {navLink("/coordenadores", "Coordenadores", UserCog)}
@@ -313,13 +317,13 @@ export function Sidebar() {
               </SectionGroup>
 
               {/* Patrimônio */}
-              <SectionGroup label="Patrimônio" aberto={patrimonioAberto} setAberto={setPatrimonioAberto} ativo={patrimonioAtivo}>
+              <SectionGroup label="Patrimônio" aberto={patrimonioAberto} setAberto={setPatrimonioAberto} ativo={patrimonioAtivo} Icon={Package}>
                 {navLink("/equipamentos", "Equipamentos", Box)}
                 {navLink("/estoque", "Estoque", Package)}
               </SectionGroup>
 
               {/* Gestão */}
-              <SectionGroup label="Gestão" aberto={gestaoAberto} setAberto={setGestaoAberto} ativo={gestaoAtivo}>
+              <SectionGroup label="Gestão" aberto={gestaoAberto} setAberto={setGestaoAberto} ativo={gestaoAtivo} Icon={ClipboardCheck}>
                 {navLink("/supervisoes", "Supervisões", ClipboardCheck)}
                 {navLink("/pendencias-gerais", "Pendências", AlertCircle)}
                 {navLink("/relatorios", "Relatórios", FileBarChart)}
@@ -327,7 +331,7 @@ export function Sidebar() {
 
               {/* Sistema */}
               <div className="my-2 border-t border-zinc-100 dark:border-zinc-800" />
-              <SectionGroup label="Sistema" aberto={sistemaAberto} setAberto={setSistemaAberto} ativo={sistemaAtivo}>
+              <SectionGroup label="Sistema" aberto={sistemaAberto} setAberto={setSistemaAberto} ativo={sistemaAtivo} Icon={Settings}>
                 {navLink("/usuarios", "Usuários", ShieldCheck)}
                 {navLink("/configuracoes", "Configurações", Settings)}
               </SectionGroup>
