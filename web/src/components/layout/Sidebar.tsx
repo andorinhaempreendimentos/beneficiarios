@@ -150,11 +150,16 @@ export function Sidebar() {
           ) : (
             <>
               {navLink("/", "Painel", LayoutDashboard)}
+
+              {/* Projeto */}
+              <p className="mt-4 mb-1 px-3 text-[10px] font-semibold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">Projeto</p>
               {navLink("/objetos", t("objeto", "Objeto", true), FolderKanban)}
               {navLink("/concedentes", "Concedentes", Landmark)}
               {navLink("/organizacoes", t("organizacao", "Organização", true), Building2)}
-              {navLink("/nucleos", t("local", "Núcleo", true), Building2)}
 
+              {/* Operacional */}
+              <p className="mt-4 mb-1 px-3 text-[10px] font-semibold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">Operacional</p>
+              {navLink("/nucleos", t("local", "Núcleo", true), Building2)}
 
               {/* Turmas com subitem */}
               <div>
@@ -210,6 +215,9 @@ export function Sidebar() {
               {navLink("/atividades-complementares", "Atividades Especiais", CalendarCheck)}
               {navLink("/aulas", "Aulas", BookOpen)}
 
+              {/* Beneficiários */}
+              <p className="mt-4 mb-1 px-3 text-[10px] font-semibold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">Beneficiários</p>
+
               {/* Beneficiários com subitem */}
               <div>
                 <button
@@ -262,6 +270,9 @@ export function Sidebar() {
                   </div>
                 )}
               </div>
+
+              {/* Recursos Humanos */}
+              <p className="mt-4 mb-1 px-3 text-[10px] font-semibold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">Recursos Humanos</p>
 
               {/* Pessoal / Funcionários com subitem */}
               <div>
@@ -316,16 +327,22 @@ export function Sidebar() {
                 )}
               </div>
 
-              {navLink("/equipamentos", "Equipamentos", Box)}
               {navLink("/coordenadores", "Coordenadores", UserCog)}
+
+              {/* Patrimônio */}
+              <p className="mt-4 mb-1 px-3 text-[10px] font-semibold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">Patrimônio</p>
+              {navLink("/equipamentos", "Equipamentos", Box)}
               {navLink("/estoque", "Estoque", Package)}
+
+              {/* Gestão */}
+              <p className="mt-4 mb-1 px-3 text-[10px] font-semibold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">Gestão</p>
               {navLink("/supervisoes", "Supervisões", ClipboardCheck)}
               {navLink("/pendencias-gerais", "Pendências", AlertCircle)}
-
-
-              <div className="my-2 border-t border-zinc-100" />
-
               {navLink("/relatorios", "Relatórios", FileBarChart)}
+
+              {/* Sistema */}
+              <div className="my-2 border-t border-zinc-100 dark:border-zinc-800" />
+              <p className="mb-1 px-3 text-[10px] font-semibold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">Sistema</p>
               {navLink("/usuarios", "Usuários", ShieldCheck)}
               {navLink("/configuracoes", "Configurações", Settings)}
 
