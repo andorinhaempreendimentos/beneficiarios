@@ -386,6 +386,16 @@ export function ExecucaoAulaClient({
       toast.error(`Ainda não está no horário. Você poderá iniciar a partir das ${hStr}.`);
       return;
     }
+    if (isDataRetroativa) {
+      const diasLimite = turma.nucleo?.diasLimiteRetroativo ?? 7;
+      const limite = new Date();
+      limite.setDate(limite.getDate() - diasLimite);
+      const limiteStr = limite.toISOString().slice(0, 10);
+      if (dataAula < limiteStr) {
+        toast.error(`Prazo de retroatividade expirado. Limite configurado: ${diasLimite} dia(s).`);
+        return;
+      }
+    }
     if (isForaDoHorarioRegular) {
       if (!turma.nucleo?.permitirChamadaRetroativa) {
         toast.error("Lançamento bloqueado. Este polo não permite iniciar aulas fora da janela de horário ou em dias passados.");
