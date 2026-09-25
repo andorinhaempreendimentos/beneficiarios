@@ -681,7 +681,7 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
                         ))}
                       </div>
                     </div>
-                    {(turma.totalBeneficiarios ?? 0) === 0 && !isPlanejamento ? (
+                    {(turma.vagasOcupadas ?? 0) === 0 && !isPlanejamento ? (
                       <div className="flex flex-col items-center gap-1.5 rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-center w-full">
                         <span className="text-xs font-semibold text-zinc-400">Sem beneficiários matriculados</span>
                         <span className="text-[11px] text-zinc-400">Não é possível iniciar a aula.</span>
