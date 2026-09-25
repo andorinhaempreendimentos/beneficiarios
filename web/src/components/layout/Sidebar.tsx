@@ -143,8 +143,8 @@ export function Sidebar() {
           className={cn(
             "flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-semibold uppercase tracking-wider transition-colors",
             ativo
-              ? "text-sky-600 dark:text-sky-400"
-              : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200"
+              ? "bg-sky-50 dark:bg-sky-950/40 text-sky-600 dark:text-sky-400"
+              : "text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/60 hover:text-zinc-700 dark:hover:text-zinc-200"
           )}
         >
           <Icon className="h-4 w-4 shrink-0" />
