@@ -50,15 +50,32 @@ export function Sidebar() {
     return null;
   }
   const [open, setOpen] = useState(false);
-  const turmasAtivo = pathname.startsWith("/turmas");
+  const { config } = useTheme();
+
+  // grupos de seção
+  const projetoAtivo = ["/objetos", "/concedentes", "/organizacoes"].some((p) => pathname.startsWith(p));
+  const [projetoAberto, setProjetoAberto] = useState(projetoAtivo);
+
+  const operacionalAtivo = ["/nucleos", "/turmas", "/categoria-turmas", "/atividades", "/atividades-complementares", "/aulas"].some((p) => pathname.startsWith(p));
+  const [operacionalAberto, setOperacionalAberto] = useState(operacionalAtivo);
+
+  const turmasAtivo = pathname.startsWith("/turmas") || pathname.startsWith("/categoria-turmas");
   const [turmasAberto, setTurmasAberto] = useState(turmasAtivo);
 
-  const beneficiariosAtivo = pathname.startsWith("/beneficiarios") || pathname.startsWith("/inscricoes");
-  const [beneficiariosAberto, setBeneficiariosAberto] = useState(beneficiariosAtivo);
+  const beneficiariosGrupoAtivo = pathname.startsWith("/beneficiarios") || pathname.startsWith("/inscricoes");
+  const [beneficiariosGrupoAberto, setBeneficiariosGrupoAberto] = useState(beneficiariosGrupoAtivo);
 
-  const pessoalAtivo = pathname.startsWith("/funcionarios");
-  const [pessoalAberto, setPessoalAberto] = useState(pessoalAtivo);
-  const { config } = useTheme();
+  const rhAtivo = ["/funcionarios", "/coordenadores", "/professor"].some((p) => pathname.startsWith(p));
+  const [rhAberto, setRhAberto] = useState(rhAtivo);
+
+  const patrimonioAtivo = ["/equipamentos", "/estoque"].some((p) => pathname.startsWith(p));
+  const [patrimonioAberto, setPatrimonioAberto] = useState(patrimonioAtivo);
+
+  const gestaoAtivo = ["/supervisoes", "/pendencias-gerais", "/relatorios"].some((p) => pathname.startsWith(p));
+  const [gestaoAberto, setGestaoAberto] = useState(gestaoAtivo);
+
+  const sistemaAtivo = ["/usuarios", "/configuracoes"].some((p) => pathname.startsWith(p));
+  const [sistemaAberto, setSistemaAberto] = useState(sistemaAtivo);
 
   function handleLogout() {
     logout();
@@ -82,6 +99,60 @@ export function Sidebar() {
         <Icon className="h-4 w-4 shrink-0" />
         {label}
       </Link>
+    );
+  }
+
+  function subLink(href: string, label: string, Icon?: React.ElementType) {
+    const active = pathname === href || pathname.startsWith(href + "/");
+    return (
+      <Link
+        href={href}
+        onClick={() => setOpen(false)}
+        className={cn(
+          "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors",
+          active ? "text-sky-700 dark:text-sky-300 font-medium" : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
+        )}
+      >
+        {Icon && <Icon className="h-3.5 w-3.5 shrink-0" />}
+        {label}
+      </Link>
+    );
+  }
+
+  function SectionGroup({
+    label,
+    aberto,
+    setAberto,
+    ativo,
+    children,
+  }: {
+    label: string;
+    aberto: boolean;
+    setAberto: (v: boolean) => void;
+    ativo: boolean;
+    children: React.ReactNode;
+  }) {
+    return (
+      <div className="mt-1">
+        <button
+          type="button"
+          onClick={() => setAberto(!aberto)}
+          className={cn(
+            "flex w-full items-center justify-between rounded-lg px-3 py-1.5 text-[10px] font-semibold uppercase tracking-widest transition-colors",
+            ativo
+              ? "text-sky-600 dark:text-sky-400"
+              : "text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300"
+          )}
+        >
+          {label}
+          <ChevronDown className={cn("h-3 w-3 transition-transform", aberto && "rotate-180")} />
+        </button>
+        {aberto && (
+          <div className="mt-0.5 space-y-0.5">
+            {children}
+          </div>
+        )}
+      </div>
     );
   }
 
@@ -131,7 +202,7 @@ export function Sidebar() {
           )}
         </div>
 
-        <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
+        <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-4">
           {isFuncionario ? (
             <>
               {navLink("/professor", "Área do Professor", CalendarCheck)}
@@ -152,200 +223,114 @@ export function Sidebar() {
               {navLink("/", "Painel", LayoutDashboard)}
 
               {/* Projeto */}
-              <p className="mt-4 mb-1 px-3 text-[10px] font-semibold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">Projeto</p>
-              {navLink("/objetos", t("objeto", "Objeto", true), FolderKanban)}
-              {navLink("/concedentes", "Concedentes", Landmark)}
-              {navLink("/organizacoes", t("organizacao", "Organização", true), Building2)}
+              <SectionGroup label="Projeto" aberto={projetoAberto} setAberto={setProjetoAberto} ativo={projetoAtivo}>
+                {navLink("/objetos", t("objeto", "Objeto", true), FolderKanban)}
+                {navLink("/concedentes", "Concedentes", Landmark)}
+                {navLink("/organizacoes", t("organizacao", "Organização", true), Building2)}
+              </SectionGroup>
 
               {/* Operacional */}
-              <p className="mt-4 mb-1 px-3 text-[10px] font-semibold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">Operacional</p>
-              {navLink("/nucleos", t("local", "Núcleo", true), Building2)}
+              <SectionGroup label="Operacional" aberto={operacionalAberto} setAberto={setOperacionalAberto} ativo={operacionalAtivo}>
+                {navLink("/nucleos", t("local", "Núcleo", true), Building2)}
 
-              {/* Turmas com subitem */}
-              <div>
-                <button
-                  type="button"
-                  onClick={() => setTurmasAberto((v) => !v)}
-                  className={cn(
-                    "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                    turmasAtivo ? "bg-sky-50 text-sky-700" : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
+                {/* Turmas sub-dropdown */}
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => setTurmasAberto((v) => !v)}
+                    className={cn(
+                      "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                      turmasAtivo ? "bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300" : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/80 hover:text-zinc-900 dark:hover:text-zinc-100"
+                    )}
+                  >
+                    <GraduationCap className="h-4 w-4 shrink-0" />
+                    <span className="flex-1 text-left">{t("turma", "Turma", true)}</span>
+                    <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", turmasAberto && "rotate-180")} />
+                  </button>
+                  {turmasAberto && (
+                    <div className="ml-7 mt-1 space-y-1 border-l border-zinc-200 dark:border-zinc-700 pl-3">
+                      {subLink("/turmas", `Todas as ${t("turma", "Turma", true).toLowerCase()}`)}
+                      {subLink("/turmas/novo", `Nova ${t("turma", "Turma").toLowerCase()}`)}
+                      {subLink("/categoria-turmas", "Categorias")}
+                    </div>
                   )}
-                >
-                  <GraduationCap className="h-4 w-4 shrink-0" />
-                  <span className="flex-1 text-left">{t("turma", "Turma", true)}</span>
-                  <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", turmasAberto && "rotate-180")} />
-                </button>
-                {turmasAberto && (
-                  <div className="ml-7 mt-1 space-y-1 border-l border-zinc-200 pl-3">
-                    <Link
-                      href="/turmas"
-                      onClick={() => setOpen(false)}
-                      className={cn(
-                        "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors",
-                        pathname === "/turmas" ? "text-sky-700 font-medium" : "text-zinc-500 hover:text-zinc-900"
-                      )}
-                    >
-                      {`Todas as ${t("turma", "Turma", true).toLowerCase()}`}
-                    </Link>
-                    <Link
-                      href="/turmas/novo"
-                      onClick={() => setOpen(false)}
-                      className={cn(
-                        "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors",
-                        pathname === "/turmas/novo" ? "text-sky-700 font-medium" : "text-zinc-500 hover:text-zinc-900"
-                      )}
-                    >
-                      {`Nova ${t("turma", "Turma").toLowerCase()}`}
-                    </Link>
-                    <Link
-                      href="/categoria-turmas"
-                      onClick={() => setOpen(false)}
-                      className={cn(
-                        "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors",
-                        pathname === "/categoria-turmas" ? "text-sky-700 font-medium" : "text-zinc-500 hover:text-zinc-900"
-                      )}
-                    >
-                      Categorias
-                    </Link>
-                  </div>
-                )}
-              </div>
+                </div>
 
-              {navLink("/atividades", t("atividade", "Atividade", true), Dumbbell)}
-              {navLink("/atividades-complementares", "Atividades Especiais", CalendarCheck)}
-              {navLink("/aulas", "Aulas", BookOpen)}
+                {navLink("/atividades", t("atividade", "Atividade", true), Dumbbell)}
+                {navLink("/atividades-complementares", "Atividades Especiais", CalendarCheck)}
+                {navLink("/aulas", "Aulas", BookOpen)}
+              </SectionGroup>
 
               {/* Beneficiários */}
-              <p className="mt-4 mb-1 px-3 text-[10px] font-semibold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">Beneficiários</p>
-
-              {/* Beneficiários com subitem */}
-              <div>
-                <button
-                  type="button"
-                  onClick={() => setBeneficiariosAberto((v) => !v)}
+              <SectionGroup label="Beneficiários" aberto={beneficiariosGrupoAberto} setAberto={setBeneficiariosGrupoAberto} ativo={beneficiariosGrupoAtivo}>
+                <Link
+                  href="/beneficiarios"
+                  onClick={() => setOpen(false)}
                   className={cn(
-                    "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                    beneficiariosAtivo ? "bg-sky-50 text-sky-700" : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
+                    "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                    pathname === "/beneficiarios" || (pathname.startsWith("/beneficiarios") && !pathname.startsWith("/beneficiarios/novo"))
+                      ? "bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 font-bold"
+                      : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/80 hover:text-zinc-900 dark:hover:text-zinc-100"
                   )}
                 >
                   <Users className="h-4 w-4 shrink-0" />
-                  <span className="flex-1 text-left">{t("beneficiario", "Beneficiário", true)}</span>
-                  <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", beneficiariosAberto && "rotate-180")} />
-                </button>
-                {beneficiariosAberto && (
-                  <div className="ml-7 mt-1 space-y-1 border-l border-zinc-200 pl-3">
-                    <Link
-                      href="/beneficiarios"
-                      onClick={() => setOpen(false)}
-                      className={cn(
-                        "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors",
-                        pathname === "/beneficiarios" ? "text-sky-700 font-medium" : "text-zinc-500 hover:text-zinc-900"
-                      )}
-                    >
-                      <Users className="h-3.5 w-3.5 shrink-0" />
-                      {`Todos os ${t("beneficiario", "Beneficiário", true).toLowerCase()}`}
-                    </Link>
-                    <Link
-                      href="/inscricoes"
-                      onClick={() => setOpen(false)}
-                      className={cn(
-                        "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors",
-                        pathname === "/inscricoes" || pathname.includes("/inscricoes") ? "text-sky-700 font-medium" : "text-zinc-500 hover:text-zinc-900"
-                      )}
-                    >
-                      <ClipboardList className="h-3.5 w-3.5 shrink-0" />
-                      Inscrições
-                    </Link>
-                    <Link
-                      href="/beneficiarios/novo"
-                      onClick={() => setOpen(false)}
-                      className={cn(
-                        "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors",
-                        pathname === "/beneficiarios/novo" ? "text-sky-700 font-medium" : "text-zinc-500 hover:text-zinc-900"
-                      )}
-                    >
-                      <UserPlus className="h-3.5 w-3.5 shrink-0" />
-                      {`Novo ${t("beneficiario", "Beneficiário").toLowerCase()}`}
-                    </Link>
-                  </div>
-                )}
-              </div>
-
-              {/* Recursos Humanos */}
-              <p className="mt-4 mb-1 px-3 text-[10px] font-semibold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">Recursos Humanos</p>
-
-              {/* Pessoal / Funcionários com subitem */}
-              <div>
-                <button
-                  type="button"
-                  onClick={() => setPessoalAberto((v) => !v)}
+                  {t("beneficiario", "Beneficiário", true)}
+                </Link>
+                <Link
+                  href="/inscricoes"
+                  onClick={() => setOpen(false)}
                   className={cn(
-                    "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                    pessoalAtivo ? "bg-sky-50 text-sky-700" : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
+                    "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                    pathname.startsWith("/inscricoes")
+                      ? "bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 font-bold"
+                      : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/80 hover:text-zinc-900 dark:hover:text-zinc-100"
                   )}
                 >
-                  <UsersRound className="h-4 w-4 shrink-0" />
-                  <span className="flex-1 text-left">Pessoal</span>
-                  <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", pessoalAberto && "rotate-180")} />
-                </button>
-                {pessoalAberto && (
-                  <div className="ml-7 mt-1 space-y-1 border-l border-zinc-200 pl-3">
-                    <Link
-                      href="/funcionarios"
-                      onClick={() => setOpen(false)}
-                      className={cn(
-                        "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors",
-                        pathname === "/funcionarios" ? "text-sky-700 font-medium" : "text-zinc-500 hover:text-zinc-900"
-                      )}
-                    >
-                      <UsersRound className="h-3.5 w-3.5 shrink-0" />
-                      Todos os funcionários
-                    </Link>
-                    <Link
-                      href="/funcionarios/funcoes"
-                      onClick={() => setOpen(false)}
-                      className={cn(
-                        "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors",
-                        pathname === "/funcionarios/funcoes" ? "text-sky-700 font-medium" : "text-zinc-500 hover:text-zinc-900"
-                      )}
-                    >
-                      <ShieldCheck className="h-3.5 w-3.5 shrink-0" />
-                      Gerenciar funções
-                    </Link>
-                    <Link
-                      href="/professor"
-                      onClick={() => setOpen(false)}
-                      className={cn(
-                        "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors",
-                        pathname === "/professor" ? "text-sky-700 font-medium" : "text-zinc-500 hover:text-zinc-900"
-                      )}
-                    >
-                      <CalendarCheck className="h-3.5 w-3.5 shrink-0" />
-                      Área do Professor
-                    </Link>
-                  </div>
-                )}
-              </div>
+                  <ClipboardList className="h-4 w-4 shrink-0" />
+                  Inscrições
+                </Link>
+                <Link
+                  href="/beneficiarios/novo"
+                  onClick={() => setOpen(false)}
+                  className={cn(
+                    "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                    pathname === "/beneficiarios/novo"
+                      ? "bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 font-bold"
+                      : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/80 hover:text-zinc-900 dark:hover:text-zinc-100"
+                  )}
+                >
+                  <UserPlus className="h-4 w-4 shrink-0" />
+                  {`Novo ${t("beneficiario", "Beneficiário").toLowerCase()}`}
+                </Link>
+              </SectionGroup>
 
-              {navLink("/coordenadores", "Coordenadores", UserCog)}
+              {/* Recursos Humanos */}
+              <SectionGroup label="Recursos Humanos" aberto={rhAberto} setAberto={setRhAberto} ativo={rhAtivo}>
+                {navLink("/funcionarios", "Funcionários", UsersRound)}
+                {navLink("/funcionarios/funcoes", "Funções", ShieldCheck)}
+                {navLink("/coordenadores", "Coordenadores", UserCog)}
+                {navLink("/professor", "Área do Professor", CalendarCheck)}
+              </SectionGroup>
 
               {/* Patrimônio */}
-              <p className="mt-4 mb-1 px-3 text-[10px] font-semibold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">Patrimônio</p>
-              {navLink("/equipamentos", "Equipamentos", Box)}
-              {navLink("/estoque", "Estoque", Package)}
+              <SectionGroup label="Patrimônio" aberto={patrimonioAberto} setAberto={setPatrimonioAberto} ativo={patrimonioAtivo}>
+                {navLink("/equipamentos", "Equipamentos", Box)}
+                {navLink("/estoque", "Estoque", Package)}
+              </SectionGroup>
 
               {/* Gestão */}
-              <p className="mt-4 mb-1 px-3 text-[10px] font-semibold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">Gestão</p>
-              {navLink("/supervisoes", "Supervisões", ClipboardCheck)}
-              {navLink("/pendencias-gerais", "Pendências", AlertCircle)}
-              {navLink("/relatorios", "Relatórios", FileBarChart)}
+              <SectionGroup label="Gestão" aberto={gestaoAberto} setAberto={setGestaoAberto} ativo={gestaoAtivo}>
+                {navLink("/supervisoes", "Supervisões", ClipboardCheck)}
+                {navLink("/pendencias-gerais", "Pendências", AlertCircle)}
+                {navLink("/relatorios", "Relatórios", FileBarChart)}
+              </SectionGroup>
 
               {/* Sistema */}
               <div className="my-2 border-t border-zinc-100 dark:border-zinc-800" />
-              <p className="mb-1 px-3 text-[10px] font-semibold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">Sistema</p>
-              {navLink("/usuarios", "Usuários", ShieldCheck)}
-              {navLink("/configuracoes", "Configurações", Settings)}
-
+              <SectionGroup label="Sistema" aberto={sistemaAberto} setAberto={setSistemaAberto} ativo={sistemaAtivo}>
+                {navLink("/usuarios", "Usuários", ShieldCheck)}
+                {navLink("/configuracoes", "Configurações", Settings)}
+              </SectionGroup>
             </>
           )}
         </nav>
