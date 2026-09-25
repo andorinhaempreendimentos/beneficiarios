@@ -196,50 +196,66 @@ export function GradeSemanalProfessor({
                         }`}
                       >
                         {isStart && slot && (
-                          <div
-                            onClick={() => {
-                              const tEncontrada = turmas.find((t) => t.id === slot.turmaId) || {
-                                id: slot.turmaId,
-                                nome: slot.turmaNome,
-                                vagasTotais: 0,
-                                vagasOcupadas: 0,
-                                vagasLivres: 0,
-                                exclusiva: false,
-                                criadoEm: new Date().toISOString(),
-                                nucleoId: slot.nucleoId || "",
-                                atividadeId: slot.atividadeId || "",
-                                responsaveis: [],
-                              };
-                              onSelectSlot(slot, tEncontrada, dataStr);
-                            }}
-                            className={`absolute inset-x-1 z-10 rounded-xl text-white p-2 text-xs font-semibold leading-tight shadow-md transition-all border active:scale-95 flex flex-col justify-between ${
-                              bloqueado
-                                ? 'bg-gradient-to-b from-zinc-400 to-zinc-500 border-zinc-300/40 cursor-not-allowed opacity-60'
-                                : isPassado
-                                  ? 'bg-gradient-to-b from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 border-amber-400/40 cursor-pointer'
-                                  : 'bg-gradient-to-b from-sky-600 to-sky-700 hover:from-sky-500 hover:to-sky-600 border-sky-400/40 cursor-pointer'
-                            }`}
-                            style={{ top: 2, height: `calc(${(slot.fim - slot.inicio) * 48}px - 4px)` }}
-                          >
-                            <div className="truncate font-bold text-white">
-                              <span className="truncate block">{slot.turmaNome}</span>
-                            </div>
+                          (() => {
+                            const tEncontrada = turmas.find((t) => t.id === slot.turmaId) || {
+                              id: slot.turmaId,
+                              nome: slot.turmaNome,
+                              vagasTotais: 0,
+                              vagasOcupadas: 0,
+                              vagasLivres: 0,
+                              exclusiva: false,
+                              criadoEm: new Date().toISOString(),
+                              nucleoId: slot.nucleoId || "",
+                              atividadeId: slot.atividadeId || "",
+                              responsaveis: [],
+                            };
+                            const isPlanejamento = slot.turmaNome?.toLowerCase().includes("planejamento");
+                            const semBeneficiarios = !isPlanejamento && (tEncontrada.vagasOcupadas ?? 0) === 0;
 
-                            <div className="flex flex-col gap-0.5 mt-0.5">
-                              {slot.atividadeNome && (
-                                <div className="text-[9px] text-white/90 truncate font-semibold uppercase tracking-wide">
-                                  {slot.atividadeNome}
+                            return (
+                              <div
+                                onClick={() => {
+                                  if (semBeneficiarios) return;
+                                  onSelectSlot(slot, tEncontrada, dataStr);
+                                }}
+                                className={`absolute inset-x-1 z-10 rounded-xl text-white p-2 text-xs font-semibold leading-tight shadow-md transition-all border active:scale-95 flex flex-col justify-between ${
+                                  semBeneficiarios
+                                    ? 'bg-gradient-to-b from-zinc-300 to-zinc-400 border-zinc-200/40 cursor-not-allowed opacity-70'
+                                    : bloqueado
+                                      ? 'bg-gradient-to-b from-zinc-400 to-zinc-500 border-zinc-300/40 cursor-not-allowed opacity-60'
+                                      : isPassado
+                                        ? 'bg-gradient-to-b from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 border-amber-400/40 cursor-pointer'
+                                        : 'bg-gradient-to-b from-sky-600 to-sky-700 hover:from-sky-500 hover:to-sky-600 border-sky-400/40 cursor-pointer'
+                                }`}
+                                style={{ top: 2, height: `calc(${(slot.fim - slot.inicio) * 48}px - 4px)` }}
+                              >
+                                <div className="truncate font-bold text-white">
+                                  <span className="truncate block">{slot.turmaNome}</span>
                                 </div>
-                              )}
-                              <div className="text-[9px] bg-white/20 px-1.5 py-0.5 rounded font-mono font-normal w-fit">
-                                {formatHora(slot.inicio)} – {formatHora(slot.fim)}
-                              </div>
-                            </div>
 
-                            <div className="text-[10px] text-white/80 truncate flex items-center gap-1 font-medium">
-                              <span>📍 {slot.nucleoNome || "Polo Esportivo"}</span>
-                            </div>
-                          </div>
+                                {semBeneficiarios ? (
+                                  <div className="text-[9px] text-white/90 font-semibold mt-0.5">
+                                    Sem beneficiários
+                                  </div>
+                                ) : (
+                                  <div className="flex flex-col gap-0.5 mt-0.5">
+                                    {slot.atividadeNome && (
+                                      <div className="text-[9px] text-white/90 truncate font-semibold uppercase tracking-wide">
+                                        {slot.atividadeNome}
+                                      </div>
+                                    )}
+                                    <div className="text-[9px] bg-white/20 px-1.5 py-0.5 rounded font-mono font-normal w-fit">
+                                      {formatHora(slot.inicio)} – {formatHora(slot.fim)}
+                                    </div>
+                                  </div>
+                                )}
+
+                                <div className="text-[10px] text-white/80 truncate flex items-center gap-1 font-medium">
+                                  <span>📍 {slot.nucleoNome || "Polo Esportivo"}</span>
+                                </div>
+                              </div>
+                            );
+                          })()
                         )}
                       </div>
                     );
