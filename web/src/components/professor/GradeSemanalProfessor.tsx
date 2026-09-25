@@ -220,14 +220,22 @@ export function GradeSemanalProfessor({
                             }`}
                             style={{ top: 2, height: `calc(${(slot.fim - slot.inicio) * 48}px - 4px)` }}
                           >
-                            <div className="truncate font-bold text-white flex items-center justify-between gap-1">
-                              <span className="truncate">{slot.turmaNome}</span>
-                              <span className="text-[9px] bg-white/20 px-1.5 py-0.5 rounded font-mono font-normal">
-                                {formatHora(slot.inicio)}
-                              </span>
+                            <div className="truncate font-bold text-white">
+                              <span className="truncate block">{slot.turmaNome}</span>
                             </div>
 
-                            <div className="text-[10px] text-white/80 truncate mt-0.5 flex items-center gap-1 font-medium">
+                            <div className="flex flex-col gap-0.5 mt-0.5">
+                              {slot.atividadeNome && (
+                                <div className="text-[9px] text-white/90 truncate font-semibold uppercase tracking-wide">
+                                  {slot.atividadeNome}
+                                </div>
+                              )}
+                              <div className="text-[9px] bg-white/20 px-1.5 py-0.5 rounded font-mono font-normal w-fit">
+                                {formatHora(slot.inicio)} – {formatHora(slot.fim)}
+                              </div>
+                            </div>
+
+                            <div className="text-[10px] text-white/80 truncate flex items-center gap-1 font-medium">
                               <span>📍 {slot.nucleoNome || "Polo Esportivo"}</span>
                             </div>
                           </div>
