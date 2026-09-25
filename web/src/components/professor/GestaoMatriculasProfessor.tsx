@@ -23,6 +23,7 @@ import {
   type BeneficiarioApi,
   type InscricaoApi,
 } from "@/lib/api/services";
+import { createClient } from "@/lib/supabase/client";
 
 interface GestaoMatriculasProfessorProps {
   turmas: TurmaApi[];
@@ -61,6 +62,36 @@ export function GestaoMatriculasProfessor({
   const [selecionados, setSelecionados] = useState<Set<string>>(new Set());
   const [turmaBatchId, setTurmaBatchId] = useState("");
 
+  // Contagem ao vivo de vagas ocupadas por turma no cliente
+  const { data: ocupadosPorTurmaRes, refetch: refetchVagas } = useQuery(
+    async () => {
+      if (turmas.length === 0) return {} as Record<string, number>;
+      const sb = createClient();
+      const ids = turmas.map((t) => t.id);
+      const { data: bts } = await sb
+        .from("beneficiario_turmas")
+        .select("turma_id")
+        .in("turma_id", ids)
+        .eq("status", "ativo")
+        .is("deleted_at", null);
+      const map: Record<string, number> = {};
+      for (const bt of bts ?? []) {
+        map[bt.turma_id] = (map[bt.turma_id] ?? 0) + 1;
+      }
+      return map;
+    },
+    [turmas]
+  );
+
+  const turmasComVagas = turmas.map((t) => {
+    const ocupadas = ocupadosPorTurmaRes ? (ocupadosPorTurmaRes[t.id] ?? 0) : (t.vagasOcupadas ?? 0);
+    return {
+      ...t,
+      vagasOcupadas: ocupadas,
+      vagasLivres: Math.max(0, (t.vagasTotais ?? 0) - ocupadas),
+    };
+  });
+
   // Inscrições sem turma dos núcleos do professor
   const { data: semTurmaRes, refetch: refetchSemTurma } = useQuery(
     () =>
@@ -98,7 +129,7 @@ export function GestaoMatriculasProfessor({
   );
 
   const matriculados = beneficiariosRes?.data ?? [];
-  const turmaAtual = turmas.find((t) => t.id === turmaSelecionadaId);
+  const turmaAtual = turmasComVagas.find((t) => t.id === turmaSelecionadaId);
 
   const matriculadosFiltrados = matriculados.filter(
     (b) =>
@@ -112,7 +143,15 @@ export function GestaoMatriculasProfessor({
     return !temAlgumaTurma;
   });
 
-  const outrasTurmas = turmas.filter((t) => t.id !== turmaSelecionadaId);
+  function resolverTurmaDoAluno(aluno: BeneficiarioApi | null): string {
+    if (turmaSelecionadaId) return turmaSelecionadaId;
+    if (!aluno?.turmasInfo?.length) return "";
+    const match = aluno.turmasInfo.find((ti) => turmas.some((t) => t.id === ti.turmaId));
+    return match?.turmaId || aluno.turmasInfo[0]?.turmaId || "";
+  }
+
+  const turmaOrigemMigrarId = resolverTurmaDoAluno(modalMigrar);
+  const outrasTurmas = turmasComVagas.filter((t) => t.id !== turmaOrigemMigrarId);
 
   async function handleAdicionar() {
     if (!beneficiarioParaAdicionar || !turmaSelecionadaId) return;
@@ -123,6 +162,7 @@ export function GestaoMatriculasProfessor({
       setModalAdicionar(false);
       setBeneficiarioParaAdicionar("");
       refetch();
+      refetchVagas();
     } catch (err: any) {
       toast.error(err.message || "Erro ao matricular aluno.");
     } finally {
@@ -131,12 +171,19 @@ export function GestaoMatriculasProfessor({
   }
 
   async function handleRemover(beneficiarioId: string) {
+    const aluno = matriculados.find((b) => b.id === beneficiarioId) || null;
+    const turmaAlvoId = resolverTurmaDoAluno(aluno);
+    if (!turmaAlvoId) {
+      toast.error("Turma do aluno não identificada.");
+      return;
+    }
     if (!confirm("Deseja realmente desmatricular (evadir) este aluno da turma?")) return;
     setLoading(true);
     try {
-      await turmasApi.desmatricular(turmaSelecionadaId, beneficiarioId);
+      await turmasApi.desmatricular(turmaAlvoId, beneficiarioId);
       toast.success("Aluno removido da turma com sucesso.");
       refetch();
+      refetchVagas();
     } catch (err: any) {
       toast.error(err.message || "Erro ao remover aluno.");
     } finally {
@@ -145,14 +192,15 @@ export function GestaoMatriculasProfessor({
   }
 
   async function handleMigrar() {
-    if (!modalMigrar || !turmaDestinoId || !turmaSelecionadaId) return;
+    if (!modalMigrar || !turmaDestinoId || !turmaOrigemMigrarId) return;
     setLoading(true);
     try {
-      await turmasApi.migrar(modalMigrar.id, turmaSelecionadaId, turmaDestinoId);
+      await turmasApi.migrar(modalMigrar.id, turmaOrigemMigrarId, turmaDestinoId);
       toast.success("Aluno transferido para a nova turma!");
       setModalMigrar(null);
       setTurmaDestinoId("");
       refetch();
+      refetchVagas();
     } catch (err: any) {
       toast.error(err.message || "Erro ao transferir aluno.");
     } finally {
@@ -186,6 +234,7 @@ export function GestaoMatriculasProfessor({
       setTurmaAtribuirId("");
       refetchSemTurma();
       refetch();
+      refetchVagas();
     } catch (err: any) {
       toast.error(err.message || "Erro ao atribuir turma.");
     } finally {
@@ -218,6 +267,7 @@ export function GestaoMatriculasProfessor({
       setTurmaBatchId("");
       refetchSemTurma();
       refetch();
+      refetchVagas();
     } finally {
       setLoading(false);
     }
@@ -278,7 +328,7 @@ export function GestaoMatriculasProfessor({
                     className="flex-1 text-xs"
                   >
                     <option value="">Selecione a turma...</option>
-                    {turmas.map((t) => (
+                    {turmasComVagas.map((t) => (
                       <option key={t.id} value={t.id}>
                         {t.nome} ({t.vagasLivres} vagas livres)
                       </option>
@@ -393,7 +443,7 @@ export function GestaoMatriculasProfessor({
                 onChange={(e) => setTurmaSelecionadaId(e.target.value)}
               >
                 <option value="">Todos</option>
-                {turmas.map((t) => (
+                {turmasComVagas.map((t) => (
                   <option key={t.id} value={t.id}>
                     {t.nome} ({t.vagasLivres} vagas livres)
                   </option>
@@ -578,7 +628,7 @@ export function GestaoMatriculasProfessor({
                   onChange={(e) => setTurmaAtribuirId(e.target.value)}
                 >
                   <option value="">Selecione a turma...</option>
-                  {turmas.map((t) => (
+                  {turmasComVagas.map((t) => (
                     <option key={t.id} value={t.id}>
                       {t.nome} ({t.vagasLivres} vagas livres)
                     </option>

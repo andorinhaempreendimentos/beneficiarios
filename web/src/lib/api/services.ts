@@ -497,7 +497,7 @@ const DIA_KEY_MAP: Record<number, string> = {
   0: 'Dom', 1: 'Seg', 2: 'Ter', 3: 'Qua', 4: 'Qui', 5: 'Sex', 6: 'Sáb'
 };
 
-function mapTurma(r: any, vagasOcupadas = 0): TurmaApi {
+function mapTurma(r: any): TurmaApi {
   const horarios = r.turma_horarios ?? [];
   const slots = horarios.map((th: any) => {
     const inicioHour = parseInt(String(th.hora_inicio || '').split(':')[0], 10);
@@ -512,6 +512,7 @@ function mapTurma(r: any, vagasOcupadas = 0): TurmaApi {
   });
 
   const vagasTotais = r.vagas_totais ?? 0;
+  const vagasOcupadas = typeof r._vagasOcupadas === 'number' ? r._vagasOcupadas : 0;
 
   return {
     id: r.id, nome: r.nome, nucleoId: r.nucleo_id, atividadeId: r.atividade_id,
@@ -1002,25 +1003,24 @@ export const turmasApi = {
       data = resFallback.data as any;
       count = resFallback.count;
     }
-
-    // Contagem real de vagas ocupadas por turma
-    const turmaIds = (data ?? []).map((t: any) => t.id);
-    const ocupadosPorTurma = new Map<string, number>();
-    if (turmaIds.length > 0) {
+    const rows = data ?? [];
+    if (rows.length > 0) {
+      const ids = rows.map((r: any) => r.id);
       const { data: bts } = await sb
         .from('beneficiario_turmas')
         .select('turma_id')
-        .in('turma_id', turmaIds)
+        .in('turma_id', ids)
         .eq('status', 'ativo')
         .is('deleted_at', null);
+      const ocupadosMap = new Map<string, number>();
       for (const bt of bts ?? []) {
-        ocupadosPorTurma.set(bt.turma_id, (ocupadosPorTurma.get(bt.turma_id) ?? 0) + 1);
+        ocupadosMap.set(bt.turma_id, (ocupadosMap.get(bt.turma_id) ?? 0) + 1);
+      }
+      for (const r of rows) {
+        r._vagasOcupadas = ocupadosMap.get(r.id) ?? 0;
       }
     }
-    return {
-      data: (data ?? []).map((r: any) => mapTurma(r, ocupadosPorTurma.get(r.id) ?? 0)),
-      total: count ?? 0, page, limit,
-    };
+    return { data: rows.map(mapTurma), total: count ?? 0, page, limit };
   },
   async get(id: string): Promise<TurmaApi> {
     const sb = await getSupabase();
@@ -1029,6 +1029,15 @@ export const turmasApi = {
       const resFallback = await sb.from('turmas').select(TURMA_FALLBACK_SELECT).eq('id', id).single();
       if (resFallback.error) throw resFallback.error;
       data = resFallback.data as any;
+    }
+    if (data) {
+      const { count: ocupadasCount } = await sb
+        .from('beneficiario_turmas')
+        .select('id', { count: 'exact', head: true })
+        .eq('turma_id', id)
+        .eq('status', 'ativo')
+        .is('deleted_at', null);
+      (data as any)._vagasOcupadas = ocupadasCount ?? 0;
     }
     return mapTurma(data);
   },
@@ -2310,12 +2319,19 @@ export const areaProfessorApi = {
         .is('deleted_at', null)
         .eq('status', 'ativo');
 
+      const ocupadosMap = new Map<string, number>();
       const bMap = new Map<string, any>();
       (bTurmas ?? []).forEach((bt: any) => {
+        ocupadosMap.set(bt.turma_id, (ocupadosMap.get(bt.turma_id) ?? 0) + 1);
         if (bt.beneficiarios) {
           bMap.set(bt.beneficiarios.id, mapBeneficiario(bt.beneficiarios));
         }
       });
+      for (const tm of turmasMapped) {
+        const ocupadas = ocupadosMap.get(tm.id) ?? 0;
+        tm.vagasOcupadas = ocupadas;
+        tm.vagasLivres = Math.max(0, tm.vagasTotais - ocupadas);
+      }
       beneficiariosMapped = Array.from(bMap.values());
     }
 
