@@ -53,30 +53,33 @@ export function Sidebar() {
   const [open, setOpen] = useState(false);
   const { config } = useTheme();
 
-  // grupos de seção
+  // grupos de seção — accordion: apenas um aberto por vez
   const projetoAtivo = ["/objetos", "/concedentes", "/organizacoes"].some((p) => pathname.startsWith(p));
-  const [projetoAberto, setProjetoAberto] = useState(projetoAtivo);
-
   const operacionalAtivo = ["/nucleos", "/turmas", "/categoria-turmas", "/atividades", "/atividades-complementares", "/aulas"].some((p) => pathname.startsWith(p));
-  const [operacionalAberto, setOperacionalAberto] = useState(operacionalAtivo);
-
   const turmasAtivo = pathname.startsWith("/turmas") || pathname.startsWith("/categoria-turmas");
+  const beneficiariosGrupoAtivo = pathname.startsWith("/beneficiarios") || pathname.startsWith("/inscricoes");
+  const rhAtivo = ["/funcionarios", "/coordenadores", "/professor"].some((p) => pathname.startsWith(p));
+  const patrimonioAtivo = ["/equipamentos", "/estoque"].some((p) => pathname.startsWith(p));
+  const gestaoAtivo = ["/supervisoes", "/pendencias-gerais", "/relatorios"].some((p) => pathname.startsWith(p));
+  const sistemaAtivo = ["/usuarios", "/configuracoes"].some((p) => pathname.startsWith(p));
+
   const [turmasAberto, setTurmasAberto] = useState(turmasAtivo);
 
-  const beneficiariosGrupoAtivo = pathname.startsWith("/beneficiarios") || pathname.startsWith("/inscricoes");
-  const [beneficiariosGrupoAberto, setBeneficiariosGrupoAberto] = useState(beneficiariosGrupoAtivo);
+  function initialGroup() {
+    if (projetoAtivo) return "projeto";
+    if (operacionalAtivo) return "operacional";
+    if (beneficiariosGrupoAtivo) return "beneficiarios";
+    if (rhAtivo) return "pessoal";
+    if (patrimonioAtivo) return "patrimonio";
+    if (gestaoAtivo) return "gestao";
+    if (sistemaAtivo) return "sistema";
+    return null;
+  }
+  const [activeGroup, setActiveGroup] = useState<string | null>(initialGroup);
 
-  const rhAtivo = ["/funcionarios", "/coordenadores", "/professor"].some((p) => pathname.startsWith(p));
-  const [rhAberto, setRhAberto] = useState(rhAtivo);
-
-  const patrimonioAtivo = ["/equipamentos", "/estoque"].some((p) => pathname.startsWith(p));
-  const [patrimonioAberto, setPatrimonioAberto] = useState(patrimonioAtivo);
-
-  const gestaoAtivo = ["/supervisoes", "/pendencias-gerais", "/relatorios"].some((p) => pathname.startsWith(p));
-  const [gestaoAberto, setGestaoAberto] = useState(gestaoAtivo);
-
-  const sistemaAtivo = ["/usuarios", "/configuracoes"].some((p) => pathname.startsWith(p));
-  const [sistemaAberto, setSistemaAberto] = useState(sistemaAtivo);
+  function toggleGroup(key: string) {
+    setActiveGroup((prev) => (prev === key ? null : key));
+  }
 
   function handleLogout() {
     logout();
@@ -180,8 +183,8 @@ export function Sidebar() {
 
       <aside
         className={cn(
-          "fixed inset-y-0 z-50 flex w-60 flex-col border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 transition-colors duration-200 lg:sticky lg:top-0 lg:h-screen lg:shrink-0 lg:left-0",
-          open ? "left-0" : "-left-60"
+          "fixed inset-y-0 z-50 flex w-64 flex-col border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 transition-colors duration-200 lg:sticky lg:top-0 lg:h-screen lg:shrink-0 lg:left-0",
+          open ? "left-0" : "-left-64"
         )}
       >
         <div className="relative flex flex-col items-center justify-center border-b border-zinc-200 dark:border-zinc-800 px-4 py-3">
@@ -227,14 +230,14 @@ export function Sidebar() {
               {navLink("/", "Painel", LayoutDashboard)}
 
               {/* Projeto */}
-              <SectionGroup label="Projeto" aberto={projetoAberto} setAberto={setProjetoAberto} ativo={projetoAtivo} Icon={FolderKanban}>
+              <SectionGroup label="Projeto" aberto={activeGroup === "projeto"} setAberto={() => toggleGroup("projeto")} ativo={projetoAtivo} Icon={FolderKanban}>
                 {navLink("/objetos", t("objeto", "Objeto", true), FolderKanban)}
                 {navLink("/concedentes", "Concedentes", Landmark)}
                 {navLink("/organizacoes", t("organizacao", "Organização", true), Building2)}
               </SectionGroup>
 
               {/* Operacional */}
-              <SectionGroup label="Operacional" aberto={operacionalAberto} setAberto={setOperacionalAberto} ativo={operacionalAtivo} Icon={Layers}>
+              <SectionGroup label="Operacional" aberto={activeGroup === "operacional"} setAberto={() => toggleGroup("operacional")} ativo={operacionalAtivo} Icon={Layers}>
                 {navLink("/nucleos", t("local", "Núcleo", true), Building2)}
 
                 {/* Turmas sub-dropdown */}
@@ -261,12 +264,12 @@ export function Sidebar() {
                 </div>
 
                 {navLink("/atividades", t("atividade", "Atividade", true), Dumbbell)}
-                {navLink("/atividades-complementares", "Atividades Especiais", CalendarCheck)}
+                {navLink("/atividades-complementares", "Especiais", CalendarCheck)}
                 {navLink("/aulas", "Aulas", BookOpen)}
               </SectionGroup>
 
               {/* Beneficiários */}
-              <SectionGroup label="Beneficiários" aberto={beneficiariosGrupoAberto} setAberto={setBeneficiariosGrupoAberto} ativo={beneficiariosGrupoAtivo} Icon={Users}>
+              <SectionGroup label="Beneficiários" aberto={activeGroup === "beneficiarios"} setAberto={() => toggleGroup("beneficiarios")} ativo={beneficiariosGrupoAtivo} Icon={Users}>
                 <Link
                   href="/beneficiarios"
                   onClick={() => setOpen(false)}
@@ -308,22 +311,21 @@ export function Sidebar() {
                 </Link>
               </SectionGroup>
 
-              {/* Recursos Humanos */}
-              <SectionGroup label="Recursos Humanos" aberto={rhAberto} setAberto={setRhAberto} ativo={rhAtivo} Icon={UsersRound}>
+              {/* Pessoal */}
+              <SectionGroup label="Pessoal" aberto={activeGroup === "pessoal"} setAberto={() => toggleGroup("pessoal")} ativo={rhAtivo} Icon={UsersRound}>
                 {navLink("/funcionarios", "Funcionários", UsersRound)}
                 {navLink("/funcionarios/funcoes", "Funções", ShieldCheck)}
                 {navLink("/coordenadores", "Coordenadores", UserCog)}
-                {navLink("/professor", "Área do Professor", CalendarCheck)}
               </SectionGroup>
 
               {/* Patrimônio */}
-              <SectionGroup label="Patrimônio" aberto={patrimonioAberto} setAberto={setPatrimonioAberto} ativo={patrimonioAtivo} Icon={Package}>
+              <SectionGroup label="Patrimônio" aberto={activeGroup === "patrimonio"} setAberto={() => toggleGroup("patrimonio")} ativo={patrimonioAtivo} Icon={Package}>
                 {navLink("/equipamentos", "Equipamentos", Box)}
                 {navLink("/estoque", "Estoque", Package)}
               </SectionGroup>
 
               {/* Gestão */}
-              <SectionGroup label="Gestão" aberto={gestaoAberto} setAberto={setGestaoAberto} ativo={gestaoAtivo} Icon={ClipboardCheck}>
+              <SectionGroup label="Gestão" aberto={activeGroup === "gestao"} setAberto={() => toggleGroup("gestao")} ativo={gestaoAtivo} Icon={ClipboardCheck}>
                 {navLink("/supervisoes", "Supervisões", ClipboardCheck)}
                 {navLink("/pendencias-gerais", "Pendências", AlertCircle)}
                 {navLink("/relatorios", "Relatórios", FileBarChart)}
@@ -331,7 +333,7 @@ export function Sidebar() {
 
               {/* Sistema */}
               <div className="my-2 border-t border-zinc-100 dark:border-zinc-800" />
-              <SectionGroup label="Sistema" aberto={sistemaAberto} setAberto={setSistemaAberto} ativo={sistemaAtivo} Icon={Settings}>
+              <SectionGroup label="Sistema" aberto={activeGroup === "sistema"} setAberto={() => toggleGroup("sistema")} ativo={sistemaAtivo} Icon={Settings}>
                 {navLink("/usuarios", "Usuários", ShieldCheck)}
                 {navLink("/configuracoes", "Configurações", Settings)}
               </SectionGroup>
