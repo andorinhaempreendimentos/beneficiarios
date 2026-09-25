@@ -155,7 +155,7 @@ export function Sidebar() {
           <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", aberto && "rotate-180")} />
         </button>
         {aberto && (
-          <div className="mt-0.5 space-y-0.5 pl-1">
+          <div className="ml-3 mt-0.5 space-y-0.5 border-l border-zinc-200 dark:border-zinc-700 pl-2">
             {children}
           </div>
         )}
