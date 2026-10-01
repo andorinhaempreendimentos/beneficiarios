@@ -17,7 +17,7 @@ export default async function DetalhesTurmaPage({ params }: { params: Promise<{ 
     beneficiariosApi.list({ limit: 500 }).catch(() => ({ data: [], total: 0, page: 1, limit: 500 })),
   ]);
 
-  const usoInterno = atividade?.usoInterno ?? false;
+  const usoInterno = t.tipo === "operacional" || (atividade?.usoInterno ?? false);
   const matriculados = matriculadosRes.data;
   const qtdOcupadas = matriculadosRes.total;
   const vagasLivres = Math.max(0, t.vagasTotais - qtdOcupadas);
@@ -57,6 +57,20 @@ export default async function DetalhesTurmaPage({ params }: { params: Promise<{ 
               {usoInterno && <span className="ml-2 text-xs text-zinc-400">(uso interno)</span>}
             </p>
           </div>
+          <div>
+            <p className="text-zinc-500">Tipo</p>
+            <Badge tone={t.tipo === "operacional" ? "zinc" : "sky"}>
+              {t.tipo === "operacional" ? "Operacional" : "Regular"}
+            </Badge>
+          </div>
+          {t.tipo !== "operacional" && (t.faixaEtaria || t.categoria) && (
+            <div>
+              <p className="text-zinc-500">Faixa Etária</p>
+              <p className="text-zinc-800">
+                {(t.faixaEtaria || t.categoria)?.nome} ({(t.faixaEtaria || t.categoria)?.idadeMinima} a {(t.faixaEtaria || t.categoria)?.idadeMaxima} anos)
+              </p>
+            </div>
+          )}
           <div>
             <p className="text-zinc-500">Exclusiva</p>
             <Badge tone={t.exclusiva ? "amber" : "zinc"}>{t.exclusiva ? "Sim" : "Não"}</Badge>

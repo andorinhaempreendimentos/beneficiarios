@@ -237,8 +237,9 @@ export function InscricaoPublicaForm({ turmaId, nucleoId, onSubmit }: InscricaoP
     if (turmaId && dataNascimento) {
       try {
         const turmaInfo = await turmasApi.get(turmaId);
-        const min = turmaInfo.idadeMinima ?? 6;
-        const max = turmaInfo.idadeMaxima ?? 17;
+        const faixa = turmaInfo.faixaEtaria || turmaInfo.categoria;
+        const min = faixa?.idadeMinima ?? 6;
+        const max = faixa?.idadeMaxima ?? 17;
         if (idade !== null && (idade < min || idade > max)) {
           setErro(`A idade do beneficiário (${idade} anos) está fora do limite permitido para esta turma (Permitido: ${min} a ${max} anos).`);
           return;

@@ -69,6 +69,19 @@ function parseHoraMinutos(timeStr: string | null | undefined): [number, number] 
   return [isNaN(h) ? 0 : h, isNaN(m) ? 0 : m];
 }
 
+function calcularIdade(dataNascStr?: string | null): number | null {
+  if (!dataNascStr) return null;
+  const nasc = new Date(dataNascStr);
+  if (isNaN(nasc.getTime())) return null;
+  const hoje = new Date();
+  let idade = hoje.getFullYear() - nasc.getFullYear();
+  const m = hoje.getMonth() - nasc.getMonth();
+  if (m < 0 || (m === 0 && hoje.getDate() < nasc.getDate())) {
+    idade--;
+  }
+  return idade;
+}
+
 const DIAS_SEMANA_MAP: Record<number, string> = {
   0: "Domingo",
   1: "Segunda-feira",
@@ -374,7 +387,8 @@ export function ExecucaoAulaClient({
 
   // STEP 1: Iniciar Aula (Play)
   const handleIniciarAula = async () => {
-    if (beneficiarios.length === 0) {
+    const isPlanejamento = turma.tipo === "operacional" || turma.nome?.toLowerCase().includes("planejamento");
+    if (beneficiarios.length === 0 && !isPlanejamento) {
       toast.error("Não é possível iniciar a aula: nenhum beneficiário matriculado nesta turma.");
       return;
     }
@@ -952,11 +966,26 @@ export function ExecucaoAulaClient({
                   const presencaItem = presencas[b.id];
                   const status = presencaItem?.status || "presente";
 
+                  const faixa = turma.faixaEtaria || turma.categoria;
+                  const idade = calcularIdade(b.dataNascimento);
+                  const isAdaptado = Boolean(
+                    idade !== null &&
+                    faixa &&
+                    (idade < faixa.idadeMinima || idade > faixa.idadeMaxima)
+                  );
+
                   return (
                     <div key={b.id} className="py-3 flex flex-col gap-2">
                       <div className="flex items-center justify-between gap-2">
                         <div className="min-w-0 flex-1">
-                          <h4 className="text-xs sm:text-sm font-bold text-zinc-900 truncate">{b.nomeCompleto}</h4>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h4 className="text-xs sm:text-sm font-bold text-zinc-900 truncate">{b.nomeCompleto}</h4>
+                            {isAdaptado && (
+                              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300">
+                                Adaptado - {idade} anos
+                              </span>
+                            )}
+                          </div>
                           <span className="text-[11px] font-mono text-zinc-400 block">{b.matricula}</span>
                         </div>
 

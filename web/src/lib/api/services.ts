@@ -250,8 +250,11 @@ export interface AtividadeApi {
 export interface TurmaApi {
   id: string;
   nome: string;
+  tipo: "regular" | "operacional";
   nucleoId: string;
   atividadeId: string;
+  faixaEtariaId?: string | null;
+  faixaEtaria?: { id: string; nome: string; sigla: string; idadeMinima: number; idadeMaxima: number };
   categoriaId?: string | null;
   categoria?: { id: string; nome: string; sigla: string; idadeMinima: number; idadeMaxima: number };
   responsaveis: string[];
@@ -259,8 +262,6 @@ export interface TurmaApi {
   vagasTotais: number;
   vagasOcupadas: number;
   vagasLivres: number;
-  idadeMinima?: number;
-  idadeMaxima?: number;
   permitirFilaEspera?: boolean;
   exclusiva: boolean;
   statusInicial?: "aprovada" | "pendente" | "reservada";
@@ -514,27 +515,37 @@ function mapTurma(r: any): TurmaApi {
   const vagasTotais = r.vagas_totais ?? 0;
   const vagasOcupadas = typeof r._vagasOcupadas === 'number' ? r._vagasOcupadas : 0;
 
+  const faixaRaw = r.faixas_etarias || r.categoria_turmas;
+  const faixaEtariaObj = faixaRaw ? {
+    id: faixaRaw.id,
+    nome: faixaRaw.nome,
+    sigla: faixaRaw.sigla,
+    idadeMinima: faixaRaw.idade_minima,
+    idadeMaxima: faixaRaw.idade_maxima,
+  } : undefined;
+
+  const faixaEtariaId = r.faixa_etaria_id ?? r.categoria_id ?? null;
+
   return {
-    id: r.id, nome: r.nome, nucleoId: r.nucleo_id, atividadeId: r.atividade_id,
-    categoriaId: r.categoria_id ?? null,
-    categoria: r.categoria_turmas ? {
-      id: r.categoria_turmas.id,
-      nome: r.categoria_turmas.nome,
-      sigla: r.categoria_turmas.sigla,
-      idadeMinima: r.categoria_turmas.idade_minima,
-      idadeMaxima: r.categoria_turmas.idade_maxima,
-    } : undefined,
+    id: r.id,
+    nome: r.nome,
+    tipo: (r.tipo as 'regular' | 'operacional') ?? 'regular',
+    nucleoId: r.nucleo_id,
+    atividadeId: r.atividade_id,
+    faixaEtariaId,
+    faixaEtaria: faixaEtariaObj,
+    categoriaId: faixaEtariaId,
+    categoria: faixaEtariaObj,
     responsaveis: (r.turma_responsaveis ?? []).map((tr: any) => tr.funcionario_id),
     responsaveisNomes: (r.turma_responsaveis ?? []).map((tr: any) => tr.funcionarios?.nome_completo).filter(Boolean),
     vagasTotais,
     vagasOcupadas,
     vagasLivres: Math.max(0, vagasTotais - vagasOcupadas),
-    idadeMinima: r.idade_minima ?? 6,
-    idadeMaxima: r.idade_maxima ?? 17,
     permitirFilaEspera: r.permitir_fila_espera ?? true,
     exclusiva: r.exclusiva,
     statusInicial: r.status_inicial ?? 'aprovada',
-    dataInicio: r.data_inicio ?? undefined, dataFim: r.data_fim ?? undefined,
+    dataInicio: r.data_inicio ?? undefined,
+    dataFim: r.data_fim ?? undefined,
     criadoEm: r.created_at,
     nucleo: r.nucleos ? mapNucleo(r.nucleos) : undefined,
     atividade: r.atividades ? mapAtividade(r.atividades) : undefined,
@@ -977,8 +988,8 @@ function toAtividadeRow(b: Record<string, unknown>): Database['public']['Tables'
 
 // ── Turmas ───────────────────────────────────────────────────────────────
 
-const TURMA_SELECT = '*, nucleos(*), atividades(*), turma_responsaveis(*, funcionarios(nome_completo)), turma_horarios(*), categoria_turmas(*)';
-const TURMA_FALLBACK_SELECT = '*, nucleos(*), atividades(*), turma_responsaveis(*), turma_horarios(*), categoria_turmas(*)';
+const TURMA_SELECT = '*, nucleos(*), atividades(*), turma_responsaveis(*, funcionarios(nome_completo)), turma_horarios(*), faixas_etarias(*)';
+const TURMA_FALLBACK_SELECT = '*, nucleos(*), atividades(*), turma_responsaveis(*), turma_horarios(*), faixas_etarias(*)';
 
 export const turmasApi = {
   async list(p?: QP): Promise<Paginated<TurmaApi>> {
@@ -1140,11 +1151,11 @@ export const turmasApi = {
 function toTurmaRow(b: Record<string, unknown>): Database['public']['Tables']['turmas']['Insert'] {
   return {
     nome: b.nome as string,
+    tipo: (b.tipo as Database['public']['Enums']['tipo_turma']) ?? 'regular',
     nucleo_id: b.nucleoId as string,
     atividade_id: b.atividadeId as string,
+    faixa_etaria_id: ((b.faixaEtariaId || b.categoriaId) as string) || null,
     vagas_totais: b.vagasTotais as number | undefined,
-    idade_minima: (b.idadeMinima as number) ?? 6,
-    idade_maxima: (b.idadeMaxima as number) ?? 17,
     permitir_fila_espera: (b.permitirFilaEspera as boolean) ?? true,
     exclusiva: b.exclusiva as boolean | undefined,
     status_inicial: b.statusInicial as Database['public']['Enums']['status_inscricao'] | undefined,
@@ -3005,9 +3016,9 @@ export type {
   DadosRelatorioPrestacaoContas,
 } from './prestacaoContas';
 export { prestacaoContasApi } from './prestacaoContas';
-// ── Categoria de Turmas ──────────────────────────────────────────────────
+// ── Faixas Etárias / Categorias de Turmas ────────────────────────────────
 
-export interface CategoriaTurmaApi {
+export interface FaixaEtariaApi {
   id: string;
   nome: string;
   sigla: string;
@@ -3017,7 +3028,9 @@ export interface CategoriaTurmaApi {
   updatedAt: string;
 }
 
-function mapCategoriaTurma(row: any): CategoriaTurmaApi {
+export type CategoriaTurmaApi = FaixaEtariaApi;
+
+function mapFaixaEtaria(row: any): FaixaEtariaApi {
   return {
     id: row.id,
     nome: row.nome,
@@ -3029,25 +3042,34 @@ function mapCategoriaTurma(row: any): CategoriaTurmaApi {
   };
 }
 
-export const categoriaTurmasApi = {
-  async list(p?: QP): Promise<Paginated<CategoriaTurmaApi>> {
+export const faixasEtariasApi = {
+  async list(p?: QP): Promise<Paginated<FaixaEtariaApi>> {
     const sb = await getSupabase();
     const { page, limit, from, to } = paginar(num(p?.page), num(p?.limit));
-    let q = sb.from('categoria_turmas').select('*', { count: 'exact' });
+    let q = (sb.from('faixas_etarias' as any) as any).select('*', { count: 'exact' });
     if (p?.nome) q = q.ilike('nome', '%' + String(p.nome) + '%');
     const { data, count, error } = await q.order('idade_minima', { ascending: true }).range(from, to);
-    if (error) throw error;
-    return { data: (data ?? []).map(mapCategoriaTurma), total: count ?? 0, page, limit };
+    if (error) {
+      // Fallback para categoria_turmas se necessário
+      const resFallback = await sb.from('categoria_turmas' as any).select('*', { count: 'exact' }).order('idade_minima', { ascending: true }).range(from, to);
+      if (resFallback.error) throw error;
+      return { data: (resFallback.data ?? []).map(mapFaixaEtaria), total: resFallback.count ?? 0, page, limit };
+    }
+    return { data: (data ?? []).map(mapFaixaEtaria), total: count ?? 0, page, limit };
   },
-  async get(id: string): Promise<CategoriaTurmaApi> {
+  async get(id: string): Promise<FaixaEtariaApi> {
     const sb = await getSupabase();
-    const { data, error } = await sb.from('categoria_turmas').select('*').eq('id', id).single();
-    if (error) throw error;
-    return mapCategoriaTurma(data);
+    let { data, error } = await (sb.from('faixas_etarias' as any) as any).select('*').eq('id', id).single();
+    if (error) {
+      const res = await (sb.from('categoria_turmas' as any) as any).select('*').eq('id', id).single();
+      if (res.error) throw error;
+      data = res.data;
+    }
+    return mapFaixaEtaria(data);
   },
   async create(body: { nome: string; sigla: string; idadeMinima: number; idadeMaxima: number }): Promise<void> {
     const sb = createClient();
-    const { error } = await sb.from('categoria_turmas').insert({
+    const { error } = await sb.from('faixas_etarias').insert({
       nome: body.nome,
       sigla: body.sigla,
       idade_minima: body.idadeMinima,
@@ -3057,17 +3079,19 @@ export const categoriaTurmasApi = {
   },
   async update(id: string, body: Partial<{ nome: string; sigla: string; idadeMinima: number; idadeMaxima: number }>): Promise<void> {
     const sb = createClient();
-    const row: Database['public']['Tables']['categoria_turmas']['Update'] = {};
+    const row: any = {};
     if (body.nome !== undefined) row.nome = body.nome;
     if (body.sigla !== undefined) row.sigla = body.sigla;
     if (body.idadeMinima !== undefined) row.idade_minima = body.idadeMinima;
     if (body.idadeMaxima !== undefined) row.idade_maxima = body.idadeMaxima;
-    const { error } = await sb.from('categoria_turmas').update(row).eq('id', id);
+    const { error } = await sb.from('faixas_etarias').update(row).eq('id', id);
     if (error) throw error;
   },
   async remove(id: string): Promise<void> {
     const sb = createClient();
-    const { error } = await sb.from('categoria_turmas').delete().eq('id', id);
+    const { error } = await sb.from('faixas_etarias').delete().eq('id', id);
     if (error) throw error;
   },
 };
+
+export const categoriaTurmasApi = faixasEtariasApi;

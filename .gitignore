@@ -9,3 +9,5 @@ dist
 .serena/
 .claude/
 web/.claude/
+supabase/.temp/
+backup/

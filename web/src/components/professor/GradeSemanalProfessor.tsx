@@ -202,9 +202,10 @@ export function GradeSemanalProfessor({
                       >
                         {isStart && slot && (
                           (() => {
-                            const tEncontrada = turmas.find((t) => t.id === slot.turmaId) || {
+                            const tEncontrada: TurmaApi = turmas.find((t) => t.id === slot.turmaId) || {
                               id: slot.turmaId,
                               nome: slot.turmaNome,
+                              tipo: "regular",
                               vagasTotais: 0,
                               vagasOcupadas: 0,
                               vagasLivres: 0,
@@ -214,7 +215,7 @@ export function GradeSemanalProfessor({
                               atividadeId: slot.atividadeId || "",
                               responsaveis: [],
                             };
-                            const isPlanejamento = slot.turmaNome?.toLowerCase().includes("planejamento");
+                            const isPlanejamento = tEncontrada.tipo === "operacional" || slot.turmaNome?.toLowerCase().includes("planejamento");
                             const semBeneficiarios = !isPlanejamento && (tEncontrada.vagasOcupadas ?? 0) === 0;
 
                             return (

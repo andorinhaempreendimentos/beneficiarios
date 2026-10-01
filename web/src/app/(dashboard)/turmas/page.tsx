@@ -135,8 +135,8 @@ export default function TurmasPage() {
 
   const resultado = useMemo(() => {
     return rawResultado.filter((t: TurmaApi) => {
-      // Ocultar uso interno por padrão
-      if (!mostrarUsoInterno && t.atividade?.usoInterno) return false;
+      // Ocultar uso interno e operacional por padrão
+      if (!mostrarUsoInterno && (t.tipo === "operacional" || t.atividade?.usoInterno)) return false;
 
       const nucleoEncontrado = nucleos.find((n) => n.id === t.nucleoId);
       let estadoUf = (nucleoEncontrado as any)?.estado as string | undefined;
@@ -270,7 +270,7 @@ export default function TurmasPage() {
                       <div
                         key={t.id}
                         className={`group relative overflow-hidden rounded-2xl border transition-all flex flex-col gap-3.5 p-4 ${
-                          t.atividade?.usoInterno ? "justify-start" : "justify-between"
+                          (t.tipo === "operacional" || t.atividade?.usoInterno) ? "justify-start" : "justify-between"
                         } ${
                           isSelected
                             ? "border-sky-500 bg-sky-50/30 ring-2 ring-sky-500/20 shadow-xs"
@@ -306,9 +306,9 @@ export default function TurmasPage() {
                                   Exclusiva
                                 </span>
                               )}
-                              {t.atividade?.usoInterno && (
+                              {(t.tipo === "operacional" || t.atividade?.usoInterno) && (
                                 <span className="rounded-md bg-zinc-100 px-1.5 py-0.5 text-[9px] font-bold uppercase text-zinc-500">
-                                  Uso Interno
+                                  {t.tipo === "operacional" ? "Operacional" : "Uso Interno"}
                                 </span>
                               )}
                             </div>
@@ -316,7 +316,7 @@ export default function TurmasPage() {
                               {t.nome}
                             </Link>
                           </div>
-                          {!t.atividade?.usoInterno && (
+                          {t.tipo !== "operacional" && !t.atividade?.usoInterno && (
                             <span className="shrink-0 whitespace-nowrap rounded-xl bg-sky-50 border border-sky-200 px-2.5 py-1 text-xs font-extrabold text-sky-700 shadow-2xs">
                               {vagasTotais} vagas
                             </span>
@@ -346,7 +346,7 @@ export default function TurmasPage() {
                         </div>
 
                         {/* Indicadores de Ocupação — apenas para turmas de alunos */}
-                        {!t.atividade?.usoInterno && (
+                        {t.tipo !== "operacional" && !t.atividade?.usoInterno && (
                           <div className="flex flex-col gap-1.5 border-t border-zinc-100 pt-2 text-xs">
                             <div className="flex items-center justify-between text-zinc-600">
                               <span className="flex items-center gap-1 font-semibold text-zinc-800">
@@ -360,10 +360,10 @@ export default function TurmasPage() {
                             </div>
                             <div className="mt-0.5 flex items-center justify-between text-[11px] text-zinc-500">
                               <span>
-                                {t.categoria ? (
-                                  <><strong>{t.categoria.nome}</strong> ({t.categoria.idadeMinima}–{t.categoria.idadeMaxima} anos)</>
+                                {(t.faixaEtaria || t.categoria) ? (
+                                  <><strong>{(t.faixaEtaria || t.categoria)?.nome}</strong> ({(t.faixaEtaria || t.categoria)?.idadeMinima}–{(t.faixaEtaria || t.categoria)?.idadeMaxima} anos)</>
                                 ) : (
-                                  <>Faixa etária: <strong>{t.idadeMinima ?? 6} a {t.idadeMaxima ?? 17} anos</strong></>
+                                  <span>Faixa livre</span>
                                 )}
                               </span>
                               <span>{vagasTotais - matriculadosCount} vagas livres</span>
@@ -446,14 +446,14 @@ export default function TurmasPage() {
                           <td className="px-5 py-3 text-zinc-600">{nucleo?.identificacao ?? "—"}</td>
                           <td className="px-5 py-3 text-zinc-600">{atividade?.nome ?? "—"}</td>
                           <td className="px-5 py-3">
-                            {t.categoria ? (
-                              <Badge tone="sky">{t.categoria.sigla}</Badge>
+                            {(t.faixaEtaria || t.categoria) ? (
+                              <Badge tone="sky">{(t.faixaEtaria || t.categoria)?.sigla || (t.faixaEtaria || t.categoria)?.nome}</Badge>
                             ) : (
                               <span className="text-zinc-400">—</span>
                             )}
                           </td>
                           <td className="px-5 py-3 text-center font-semibold text-sky-700">
-                            {t.atividade?.usoInterno ? (
+                            {(t.tipo === "operacional" || t.atividade?.usoInterno) ? (
                               <span className="text-zinc-400">—</span>
                             ) : (
                               <>{matriculadosCount} / {t.vagasTotais || 0}</>

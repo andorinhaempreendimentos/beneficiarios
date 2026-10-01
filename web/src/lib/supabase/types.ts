@@ -1,4 +1,4 @@
-﻿export type Json =
+export type Json =
   | string
   | number
   | boolean
@@ -628,6 +628,36 @@ export type Database = {
         ]
       }
       categoria_turmas: {
+        Row: {
+          created_at: string
+          id: string
+          idade_maxima: number
+          idade_minima: number
+          nome: string
+          sigla: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          idade_maxima: number
+          idade_minima: number
+          nome: string
+          sigla: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          idade_maxima?: number
+          idade_minima?: number
+          nome?: string
+          sigla?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      faixas_etarias: {
         Row: {
           created_at: string
           id: string
@@ -2376,15 +2406,15 @@ export type Database = {
       turmas: {
         Row: {
           atividade_id: string
-          categoria_id: string | null
+          categoria_id?: string | null
+          faixa_etaria_id: string | null
+          tipo: Database["public"]["Enums"]["tipo_turma"]
           created_at: string
           data_fim: string | null
           data_inicio: string | null
           deleted_at: string | null
           exclusiva: boolean
           id: string
-          idade_maxima: number | null
-          idade_minima: number | null
           nome: string
           nucleo_id: string
           permitir_fila_espera: boolean
@@ -2395,14 +2425,14 @@ export type Database = {
         Insert: {
           atividade_id: string
           categoria_id?: string | null
+          faixa_etaria_id?: string | null
+          tipo?: Database["public"]["Enums"]["tipo_turma"]
           created_at?: string
           data_fim?: string | null
           data_inicio?: string | null
           deleted_at?: string | null
           exclusiva?: boolean
           id?: string
-          idade_maxima?: number | null
-          idade_minima?: number | null
           nome: string
           nucleo_id: string
           permitir_fila_espera?: boolean
@@ -2413,14 +2443,14 @@ export type Database = {
         Update: {
           atividade_id?: string
           categoria_id?: string | null
+          faixa_etaria_id?: string | null
+          tipo?: Database["public"]["Enums"]["tipo_turma"]
           created_at?: string
           data_fim?: string | null
           data_inicio?: string | null
           deleted_at?: string | null
           exclusiva?: boolean
           id?: string
-          idade_maxima?: number | null
-          idade_minima?: number | null
           nome?: string
           nucleo_id?: string
           permitir_fila_espera?: boolean
@@ -2438,9 +2468,9 @@ export type Database = {
           },
           {
             foreignKeyName: "turmas_categoria_id_fkey"
-            columns: ["categoria_id"]
+            columns: ["faixa_etaria_id"]
             isOneToOne: false
-            referencedRelation: "categoria_turmas"
+            referencedRelation: "faixas_etarias"
             referencedColumns: ["id"]
           },
           {
@@ -2729,6 +2759,7 @@ export type Database = {
         | "saida"
         | "entrada_intervalo"
         | "saida_intervalo"
+      tipo_turma: "regular" | "operacional"
       tipo_usuario: "admin" | "gestor" | "funcionario" | "beneficiario"
     }
     CompositeTypes: {

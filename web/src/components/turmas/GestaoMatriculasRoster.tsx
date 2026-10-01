@@ -6,6 +6,7 @@ import { UserMinus, ArrowRightLeft, UserPlus, AlertCircle, CheckCircle2 } from "
 import { Badge, Button, Card, CardBody, CardHeader, Select } from "@/components/ui";
 import { useToast } from "@/components/providers/ToastProvider";
 import { turmasApi, beneficiariosApi, type TurmaApi, type BeneficiarioApi } from "@/lib/api/services";
+import { calcularIdade } from "@/lib/utils";
 
 interface GestaoMatriculasRosterProps {
   turmaAtual: TurmaApi;
@@ -118,14 +119,30 @@ export function GestaoMatriculasRoster({
                   </td>
                 </tr>
               ) : (
-                matriculados.map((aluno) => (
-                  <tr key={aluno.id} className="hover:bg-zinc-50">
-                    <td className="px-4 py-3 font-mono text-xs font-semibold text-zinc-600">{aluno.matricula}</td>
-                    <td className="px-4 py-3 font-semibold text-zinc-900">
-                      <Link href={`/beneficiarios/${aluno.id}`} className="hover:text-sky-600 hover:underline">
-                        {aluno.nomeCompleto}
-                      </Link>
-                    </td>
+                matriculados.map((aluno) => {
+                  const faixa = turmaAtual.faixaEtaria || turmaAtual.categoria;
+                  const idade = aluno.dataNascimento ? calcularIdade(aluno.dataNascimento) : null;
+                  const isAdaptado = Boolean(
+                    idade !== null &&
+                    faixa &&
+                    (idade < faixa.idadeMinima || idade > faixa.idadeMaxima)
+                  );
+
+                  return (
+                    <tr key={aluno.id} className="hover:bg-zinc-50">
+                      <td className="px-4 py-3 font-mono text-xs font-semibold text-zinc-600">{aluno.matricula}</td>
+                      <td className="px-4 py-3 font-semibold text-zinc-900">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <Link href={`/beneficiarios/${aluno.id}`} className="hover:text-sky-600 hover:underline">
+                            {aluno.nomeCompleto}
+                          </Link>
+                          {isAdaptado && (
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300">
+                              Adaptado - {idade} anos
+                            </span>
+                          )}
+                        </div>
+                      </td>
                     <td className="px-4 py-3 text-zinc-600">{aluno.celular || "—"}</td>
                     <td className="px-4 py-3">
                       <Badge tone="green">Matriculado</Badge>
@@ -155,8 +172,8 @@ export function GestaoMatriculasRoster({
                       </div>
                     </td>
                   </tr>
-                ))
-              )}
+                );
+              }))}
             </tbody>
           </table>
         </div>

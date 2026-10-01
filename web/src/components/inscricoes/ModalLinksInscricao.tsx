@@ -89,6 +89,7 @@ export function ModalLinksInscricao({
   }
 
   function isTurmaPublica(t: TurmaApi): boolean {
+    if (t.tipo === "operacional") return false;
     const nomeTurmaNorm = normalizar(t.nome);
     const nomeAtvNorm = normalizar(t.atividade?.nome);
     if (nomeTurmaNorm.includes("planejamento") || nomeAtvNorm.includes("planejamento")) return false;

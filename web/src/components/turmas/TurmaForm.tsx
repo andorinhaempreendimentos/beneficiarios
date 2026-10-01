@@ -7,20 +7,20 @@ import { GradeSemanal } from "./GradeSemanal";
 import {
   turmasApi,
   funcionariosApi,
-  categoriaTurmasApi,
+  faixasEtariasApi,
   FUNCAO_PROFESSOR_ID,
   type TurmaApi,
   type NucleoApi,
   type AtividadeApi,
   type FuncionarioApi,
-  type CategoriaTurmaApi,
+  type FaixaEtariaApi,
 } from "@/lib/api/services";
 
 const turmaSchema = z.object({
   nome: z.string().min(2, "Nome deve ter pelo menos 2 caracteres."),
   nucleoId: z.string().min(1, "Selecione um núcleo."),
   atividadeId: z.string().min(1, "Selecione uma atividade."),
-  vagasTotais: z.number().min(1, "Mínimo 1 vaga."),
+  vagasTotais: z.number().min(0, "Vagas inválidas."),
 });
 
 type FieldErrors = Partial<Record<string, string>>;
@@ -40,11 +40,16 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const [tipo, setTipo] = useState<"regular" | "operacional">(t?.tipo ?? "regular");
+  const [nome, setNome] = useState(t?.nome ?? "");
+  const [nomeEditadoManualmente, setNomeEditadoManualmente] = useState(Boolean(t?.nome));
+  const [turno, setTurno] = useState<string>("");
+  const [identificador, setIdentificador] = useState<string>("A");
   const [exclusiva, setExclusiva] = useState(t?.exclusiva ?? false);
   const [nucleoId, setNucleoId] = useState(t?.nucleoId ?? "");
   const [atividadeId, setAtividadeId] = useState(t?.atividadeId ?? "");
-  const [categoriaId, setCategoriaId] = useState(t?.categoriaId ?? "");
-  const [categorias, setCategorias] = useState<CategoriaTurmaApi[]>([]);
+  const [faixaEtariaId, setFaixaEtariaId] = useState(t?.faixaEtariaId ?? t?.categoriaId ?? "");
+  const [faixasEtarias, setFaixasEtarias] = useState<FaixaEtariaApi[]>([]);
   const [slots, setSlots] = useState<any[]>(t?.slots ?? []);
   const [permitirFilaEspera, setPermitirFilaEspera] = useState(t?.permitirFilaEspera ?? true);
   const [responsaveisIds, setResponsaveisIds] = useState<string[]>(t?.responsaveis ?? []);
@@ -62,8 +67,8 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
     turmasApi.list({ limit: 500 }).then((res) => {
       setTodasTurmas(res.data);
     }).catch(() => {});
-    categoriaTurmasApi.list({ limit: 50 }).then((res) => {
-      setCategorias(res.data);
+    faixasEtariasApi.list({ limit: 50 }).then((res) => {
+      setFaixasEtarias(res.data);
     }).catch(() => {});
   }, [initialFuncionarios]);
 
@@ -110,6 +115,36 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
   const atividadeSelecionada = atividades.find((a) => a.id === atividadeId);
   const atividadeNome = atividadeSelecionada?.nome;
 
+  // Auto-geração do nome da turma
+  useEffect(() => {
+    if (nomeEditadoManualmente && t?.id) return;
+
+    if (tipo === "operacional") {
+      const nNome = nucleoSelecionado?.identificacao || "Núcleo";
+      setNome(`${nNome} - Planejamento`);
+      return;
+    }
+
+    const partes: string[] = [];
+    if (nucleoSelecionado?.identificacao) {
+      partes.push(nucleoSelecionado.identificacao);
+    }
+    if (atividadeSelecionada?.nome) {
+      partes.push(atividadeSelecionada.nome);
+    }
+    const faixa = faixasEtarias.find((f) => f.id === faixaEtariaId);
+    if (faixa?.nome) {
+      partes.push(faixa.nome);
+    }
+    if (turno) {
+      partes.push(identificador ? `${turno} ${identificador}` : turno);
+    }
+
+    if (partes.length > 0) {
+      setNome(partes.join(" - "));
+    }
+  }, [tipo, nucleoId, atividadeId, faixaEtariaId, turno, identificador, nucleoSelecionado, atividadeSelecionada, faixasEtarias]);
+
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setLoading(true);
@@ -120,14 +155,14 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
     const aId = (formData.get("atividadeId") as string) || atividadeId;
 
     const data = {
-      nome: formData.get("nome") as string,
+      nome: ((formData.get("nome") as string) || nome || "").trim(),
+      tipo,
       nucleoId: nId,
       atividadeId: aId,
-      categoriaId: categoriaId || undefined,
-      vagasTotais: Number(formData.get("vagasTotais") || 30),
-      idadeMinima: Number(formData.get("idadeMinima") || 6),
-      idadeMaxima: Number(formData.get("idadeMaxima") || 17),
-      permitirFilaEspera,
+      faixaEtariaId: tipo === "regular" ? (faixaEtariaId || null) : null,
+      categoriaId: tipo === "regular" ? (faixaEtariaId || null) : null,
+      vagasTotais: tipo === "operacional" ? 0 : Number(formData.get("vagasTotais") || 30),
+      permitirFilaEspera: tipo === "operacional" ? false : permitirFilaEspera,
       exclusiva,
       statusInicial: (formData.get("statusInicial") as any) || "aprovada",
       dataInicio: (formData.get("dataInicio") as string) || null,
@@ -181,9 +216,13 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
       )}
       <FormSection title="Dados da Turma">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Field label="Nome" required error={fieldErrors.nome}>
-            <Input name="nome" defaultValue={t?.nome} placeholder="Ex: Futebol Manhã A" />
+          <Field label="Tipo da Turma" required>
+            <Select value={tipo} onChange={(e) => setTipo(e.target.value as "regular" | "operacional")}>
+              <option value="regular">Regular (Aula com alunos)</option>
+              <option value="operacional">Operacional (Planejamento / Reunião interna)</option>
+            </Select>
           </Field>
+
           <Field label="Núcleo" required error={fieldErrors.nucleoId}>
             <Select name="nucleoId" value={nucleoId} onChange={(e) => handleNucleoChange(e.target.value)}>
               <option value="" disabled>Selecione</option>
@@ -192,6 +231,7 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
               ))}
             </Select>
           </Field>
+
           <Field label="Atividade" required hint={t?.id ? "A atividade principal não pode ser alterada após a criação" : undefined} error={fieldErrors.atividadeId}>
             <Select name="atividadeId" value={atividadeId} onChange={(e) => setAtividadeId(e.target.value)} disabled={Boolean(t?.id) || !nucleoId}>
               <option value="" disabled>{!nucleoId ? "Selecione primeiro o núcleo" : "Selecione a atividade"}</option>
@@ -202,83 +242,128 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
               ))}
             </Select>
           </Field>
-          <Field label="Categoria">
-            <Select value={categoriaId} onChange={(e) => setCategoriaId(e.target.value)}>
-              <option value="">Sem categoria</option>
-              {categorias.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.nome} ({c.idadeMinima}–{c.idadeMaxima} anos)
-                </option>
-              ))}
-            </Select>
-          </Field>
-          <Field label="Responsável(is)">
-            <div className="flex flex-col gap-2">
-              <div className="flex flex-wrap gap-2 min-h-[38px] p-2 border border-zinc-200 rounded-xl bg-white">
-                {responsaveisIds.length === 0 ? (
-                  <span className="text-xs text-zinc-400 py-1 px-1">Nenhum responsável selecionado</span>
-                ) : (
-                  responsaveisIds.map((fId) => {
-                    const func = listaFuncionarios.find((f) => f.id === fId);
-                    const nomeExibicao = func ? func.nomeCompleto : fId;
-                    return (
-                      <span key={fId} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-sky-100 text-sky-800 text-xs font-semibold">
-                        {nomeExibicao}
-                        <button
-                          type="button"
-                          onClick={() => setResponsaveisIds(responsaveisIds.filter((id) => id !== fId))}
-                          className="hover:text-red-600 focus:outline-none ml-1 cursor-pointer"
-                        >
-                          &times;
-                        </button>
-                      </span>
-                    );
-                  })
-                )}
-              </div>
-              <select
-                value=""
+
+          {tipo === "regular" && (
+            <Field label="Faixa Etária" required hint="Regra etária que define se o aluno é Regular ou Adaptado">
+              <Select value={faixaEtariaId} onChange={(e) => setFaixaEtariaId(e.target.value)}>
+                <option value="">Selecione a faixa etária</option>
+                {faixasEtarias.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.nome} ({c.idadeMinima}–{c.idadeMaxima} anos)
+                  </option>
+                ))}
+              </Select>
+            </Field>
+          )}
+
+          {tipo === "regular" && (
+            <>
+              <Field label="Turno (opcional para o nome)">
+                <Select value={turno} onChange={(e) => setTurno(e.target.value)}>
+                  <option value="">Sem turno no nome</option>
+                  <option value="Manhã">Manhã</option>
+                  <option value="Tarde">Tarde</option>
+                  <option value="Noite">Noite</option>
+                  <option value="Sábado">Sábado</option>
+                </Select>
+              </Field>
+
+              <Field label="Identificador / Turma">
+                <Select value={identificador} onChange={(e) => setIdentificador(e.target.value)}>
+                  <option value="A">Turma A</option>
+                  <option value="B">Turma B</option>
+                  <option value="C">Turma C</option>
+                  <option value="D">Turma D</option>
+                  <option value="1">Turma 1</option>
+                  <option value="2">Turma 2</option>
+                </Select>
+              </Field>
+            </>
+          )}
+
+          <div className="sm:col-span-2">
+            <Field label="Nome da Turma" required error={fieldErrors.nome} hint="Gerado automaticamente, mas pode ser ajustado manualmente">
+              <Input
+                name="nome"
+                value={nome}
                 onChange={(e) => {
-                  const val = e.target.value;
-                  if (val && !responsaveisIds.includes(val)) {
-                    setResponsaveisIds([...responsaveisIds, val]);
-                  }
+                  setNome(e.target.value);
+                  setNomeEditadoManualmente(true);
                 }}
-                className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-medium text-zinc-800 focus:border-sky-500 focus:outline-none"
-              >
-                <option value="">+ Selecionar professor responsável</option>
-                {professoresDisponiveis
-                  .filter((f) => !responsaveisIds.includes(f.id))
-                  .map((f) => (
-                    <option key={f.id} value={f.id}>
-                      {f.nomeCompleto} {f.funcao ? `(${f.funcao})` : ""}
-                    </option>
-                  ))}
-              </select>
-            </div>
-          </Field>
+                placeholder="Ex: Taquari - Futebol - Sub-12 - Manhã A"
+              />
+            </Field>
+          </div>
+
+          <div className="sm:col-span-2">
+            <Field label="Responsável(is)">
+              <div className="flex flex-col gap-2">
+                <div className="flex flex-wrap gap-2 min-h-[38px] p-2 border border-zinc-200 rounded-xl bg-white">
+                  {responsaveisIds.length === 0 ? (
+                    <span className="text-xs text-zinc-400 py-1 px-1">Nenhum responsável selecionado</span>
+                  ) : (
+                    responsaveisIds.map((fId) => {
+                      const func = listaFuncionarios.find((f) => f.id === fId);
+                      const nomeExibicao = func ? func.nomeCompleto : fId;
+                      return (
+                        <span key={fId} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-sky-100 text-sky-800 text-xs font-semibold">
+                          {nomeExibicao}
+                          <button
+                            type="button"
+                            onClick={() => setResponsaveisIds(responsaveisIds.filter((id) => id !== fId))}
+                            className="hover:text-red-600 focus:outline-none ml-1 cursor-pointer"
+                          >
+                            &times;
+                          </button>
+                        </span>
+                      );
+                    })
+                  )}
+                </div>
+                <select
+                  value=""
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val && !responsaveisIds.includes(val)) {
+                      setResponsaveisIds([...responsaveisIds, val]);
+                    }
+                  }}
+                  className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-medium text-zinc-800 focus:border-sky-500 focus:outline-none"
+                >
+                  <option value="">+ Selecionar professor responsável</option>
+                  {professoresDisponiveis
+                    .filter((f) => !responsaveisIds.includes(f.id))
+                    .map((f) => (
+                      <option key={f.id} value={f.id}>
+                        {f.nomeCompleto} {f.funcao ? `(${f.funcao})` : ""}
+                      </option>
+                    ))}
+                </select>
+              </div>
+            </Field>
+          </div>
         </div>
       </FormSection>
 
       <FormSection title="Horários e Vagas">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Field label="Vagas totais" required error={fieldErrors.vagasTotais}>
-            <Input name="vagasTotais" type="number" defaultValue={t?.vagasTotais?.toString() || "30"} placeholder="30" />
-          </Field>
-          <Field label="Idade Mínima (anos)" required hint="Ex: 6 anos">
-            <Input name="idadeMinima" type="number" defaultValue={t?.idadeMinima?.toString() || "6"} placeholder="6" />
-          </Field>
-          <Field label="Idade Máxima (anos)" required hint="Ex: 17 anos">
-            <Input name="idadeMaxima" type="number" defaultValue={t?.idadeMaxima?.toString() || "17"} placeholder="17" />
-          </Field>
-          <Field label="Status inicial da inscrição" required hint="Status que o beneficiário recebe ao se inscrever">
-            <Select name="statusInicial" defaultValue={t?.statusInicial || "aprovada"}>
-              <option value="aprovada">Aprovado automaticamente</option>
-              <option value="pendente">Pendente de aprovação</option>
-              <option value="reservada">Fila de espera</option>
-            </Select>
-          </Field>
-        </div>
+        {tipo === "regular" ? (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <Field label="Vagas totais" required error={fieldErrors.vagasTotais}>
+              <Input name="vagasTotais" type="number" defaultValue={t?.vagasTotais?.toString() || "30"} placeholder="30" />
+            </Field>
+            <Field label="Status inicial da inscrição" required hint="Status que o beneficiário recebe ao se inscrever">
+              <Select name="statusInicial" defaultValue={t?.statusInicial || "aprovada"}>
+                <option value="aprovada">Aprovado automaticamente</option>
+                <option value="pendente">Pendente de aprovação</option>
+                <option value="reservada">Fila de espera</option>
+              </Select>
+            </Field>
+          </div>
+        ) : (
+          <div className="rounded-xl border border-zinc-200 bg-zinc-50/50 p-3 text-xs text-zinc-500 mb-2">
+            Turma de tipo <strong>Operacional</strong> não possui alunos nem controle de vagas.
+          </div>
+        )}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 mt-4">
           <Field label="Data de início">
             <Input name="dataInicio" type="date" defaultValue={t?.dataInicio} />
@@ -288,13 +373,15 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
           </Field>
         </div>
 
-        <div className="mt-4 flex items-center justify-between rounded-xl border border-zinc-200 bg-zinc-50/70 p-4">
-          <div>
-            <span className="text-sm font-semibold text-zinc-900 block">Permitir Fila de Espera ao esgotar vagas</span>
-            <span className="text-xs text-zinc-500 block mt-0.5">Se ativado, quando as 30 vagas forem preenchidas, novos inscritos entram automaticamente na fila (`reservada`). Se desativado, bloqueia novas inscrições.</span>
+        {tipo === "regular" && (
+          <div className="mt-4 flex items-center justify-between rounded-xl border border-zinc-200 bg-zinc-50/70 p-4">
+            <div>
+              <span className="text-sm font-semibold text-zinc-900 block">Permitir Fila de Espera ao esgotar vagas</span>
+              <span className="text-xs text-zinc-500 block mt-0.5">Se ativado, quando as vagas forem preenchidas, novos inscritos entram automaticamente na fila (`reservada`).</span>
+            </div>
+            <Switch checked={permitirFilaEspera} onChange={setPermitirFilaEspera} />
           </div>
-          <Switch checked={permitirFilaEspera} onChange={setPermitirFilaEspera} />
-        </div>
+        )}
 
         <div className="mt-6">
           <p className="mb-3 text-sm font-medium text-zinc-700">Grade semanal</p>

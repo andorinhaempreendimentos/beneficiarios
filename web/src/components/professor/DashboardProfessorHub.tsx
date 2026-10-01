@@ -644,7 +644,7 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {turmasHoje.map((turma) => {
-                const isPlanejamento = turma.nome?.toLowerCase().includes("planejamento");
+                const isPlanejamento = turma.tipo === "operacional" || turma.nome?.toLowerCase().includes("planejamento");
                 return (
                   <div
                     key={turma.id}
