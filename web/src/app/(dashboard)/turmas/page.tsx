@@ -412,7 +412,7 @@ export default function TurmasPage() {
                       <th className="px-5 py-3">Turma</th>
                       <th className="px-5 py-3">Núcleo</th>
                       <th className="px-5 py-3">Atividade</th>
-                      <th className="px-5 py-3">Categoria</th>
+                      <th className="px-5 py-3">Faixa Etária</th>
                       <th className="px-5 py-3 text-center">Matriculados / Vagas</th>
                       <th className="px-5 py-3">Exclusiva</th>
                       <th className="px-5 py-3 text-right">Ações</th>

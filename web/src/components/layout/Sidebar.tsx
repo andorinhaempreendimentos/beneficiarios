@@ -55,8 +55,8 @@ export function Sidebar() {
 
   // grupos de seção — accordion: apenas um aberto por vez
   const projetoAtivo = ["/objetos", "/concedentes", "/organizacoes"].some((p) => pathname.startsWith(p));
-  const operacionalAtivo = ["/nucleos", "/turmas", "/categoria-turmas", "/atividades", "/atividades-complementares", "/aulas"].some((p) => pathname.startsWith(p));
-  const turmasAtivo = pathname.startsWith("/turmas") || pathname.startsWith("/categoria-turmas");
+  const operacionalAtivo = ["/nucleos", "/turmas", "/faixas-etarias", "/categoria-turmas", "/atividades", "/atividades-complementares", "/aulas"].some((p) => pathname.startsWith(p));
+  const turmasAtivo = pathname.startsWith("/turmas") || pathname.startsWith("/faixas-etarias") || pathname.startsWith("/categoria-turmas");
   const beneficiariosGrupoAtivo = pathname.startsWith("/beneficiarios") || pathname.startsWith("/inscricoes");
   const rhAtivo = ["/funcionarios", "/coordenadores", "/professor"].some((p) => pathname.startsWith(p));
   const patrimonioAtivo = ["/equipamentos", "/estoque"].some((p) => pathname.startsWith(p));
@@ -258,7 +258,7 @@ export function Sidebar() {
                     <div className="ml-7 mt-1 space-y-1 border-l border-zinc-200 dark:border-zinc-700 pl-3">
                       {subLink("/turmas", `Todas as ${t("turma", "Turma", true).toLowerCase()}`)}
                       {subLink("/turmas/novo", `Nova ${t("turma", "Turma").toLowerCase()}`)}
-                      {subLink("/categoria-turmas", "Categorias")}
+                      {subLink("/faixas-etarias", "Faixas Etárias")}
                     </div>
                   )}
                 </div>

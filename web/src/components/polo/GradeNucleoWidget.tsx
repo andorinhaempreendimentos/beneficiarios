@@ -155,7 +155,7 @@ export function GradeNucleoWidget({ turmas, categorias }: GradeNucleoWidgetProps
               </Field>
             </div>
             <div className="w-48">
-              <Field label="Categoria">
+              <Field label="Faixa Etária">
                 <Select value={categoriaId} onChange={(e) => setCategoriaId(e.target.value)}>
                   <option value="">Todas</option>
                   {categorias.map((c) => (

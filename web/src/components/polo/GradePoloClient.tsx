@@ -163,9 +163,9 @@ export function GradePoloClient({ nucleos, atividades, categorias }: GradePoloCl
             </Select>
           </Field>
 
-          <Field label="Categoria">
+          <Field label="Faixa Etária">
             <Select value={categoriaId} onChange={(e) => setCategoriaId(e.target.value)} disabled={!nucleoId}>
-              <option value="">Todas as categorias</option>
+              <option value="">Todas as faixas etárias</option>
               {categorias.map((c) => (
                 <option key={c.id} value={c.id}>{c.nome}</option>
               ))}
