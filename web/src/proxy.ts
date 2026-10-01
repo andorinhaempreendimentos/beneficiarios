@@ -5,7 +5,7 @@ import type { Database } from "@/lib/supabase/types";
 
 type CookieToSet = { name: string; value: string; options?: CookieOptions };
 
-const PUBLIC_PATHS = ["/login", "/inscricao", "/ponto"];
+const PUBLIC_PATHS = ["/login", "/inscricao", "/ponto", "/r"];
 
 function isPublic(pathname: string): boolean {
   return PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith(p + "/"));
