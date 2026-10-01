@@ -14,12 +14,14 @@ import {
   Dumbbell,
   FileBarChart,
   FolderKanban,
+  GitFork,
   GraduationCap,
   Landmark,
   Layers,
   LayoutDashboard,
   Link as LinkIcon,
   LogOut,
+  MapPin,
   Menu,
   MessageSquare,
   Package,
@@ -62,6 +64,7 @@ export function Sidebar() {
   const rhAtivo = ["/funcionarios", "/coordenadores", "/professor"].some((p) => pathname.startsWith(p));
   const patrimonioAtivo = ["/equipamentos", "/estoque"].some((p) => pathname.startsWith(p));
   const gestaoAtivo = ["/supervisoes", "/pendencias-gerais", "/relatorios"].some((p) => pathname.startsWith(p));
+  const pesquisasAtivo = pathname.startsWith("/pesquisas");
   const sistemaAtivo = ["/usuarios", "/configuracoes"].some((p) => pathname.startsWith(p));
 
   const [turmasAberto, setTurmasAberto] = useState(turmasAtivo);
@@ -73,6 +76,7 @@ export function Sidebar() {
     if (rhAtivo) return "pessoal";
     if (patrimonioAtivo) return "patrimonio";
     if (gestaoAtivo) return "gestao";
+    if (pesquisasAtivo) return "pesquisas";
     if (sistemaAtivo) return "sistema";
     return null;
   }
@@ -330,6 +334,16 @@ export function Sidebar() {
                 {navLink("/supervisoes", "Supervisões", ClipboardCheck)}
                 {navLink("/pendencias-gerais", "Pendências", AlertCircle)}
                 {navLink("/relatorios", "Relatórios", FileBarChart)}
+              </SectionGroup>
+
+              {/* Pesquisas */}
+              <SectionGroup label="Pesquisas" aberto={activeGroup === "pesquisas"} setAberto={() => toggleGroup("pesquisas")} ativo={pesquisasAtivo} Icon={ClipboardList}>
+                {navLink("/pesquisas", "Pesquisas", ClipboardList)}
+                {navLink("/pesquisas/fluxos", "Fluxos", GitFork)}
+                {navLink("/pesquisas/relatorios", "Relatórios", FileBarChart)}
+                {navLink("/pesquisas/territorial", "Territorial", MapPin)}
+                {navLink("/pesquisas/lideres", "Líderes", Users)}
+                {navLink("/pesquisas/objetos", "Objetos", FolderKanban)}
               </SectionGroup>
 
               {/* Sistema */}

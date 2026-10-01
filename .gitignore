@@ -11,3 +11,4 @@ dist
 web/.claude/
 supabase/.temp/
 backup/
+scratch/
