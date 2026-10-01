@@ -21,6 +21,7 @@ import {
   Link as LinkIcon,
   LogOut,
   Menu,
+  MessageSquare,
   Package,
   Settings,
   ShieldCheck,
@@ -335,6 +336,7 @@ export function Sidebar() {
               <div className="my-2 border-t border-zinc-100 dark:border-zinc-800" />
               <SectionGroup label="Sistema" aberto={activeGroup === "sistema"} setAberto={() => toggleGroup("sistema")} ativo={sistemaAtivo} Icon={Settings}>
                 {navLink("/usuarios", "Usuários", ShieldCheck)}
+                {navLink("/configuracoes/whatsapp", "WhatsApp", MessageSquare)}
                 {navLink("/configuracoes", "Configurações", Settings)}
               </SectionGroup>
             </>

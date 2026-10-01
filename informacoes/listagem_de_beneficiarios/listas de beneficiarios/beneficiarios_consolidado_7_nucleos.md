@@ -1,0 +1,18676 @@
+# Listagem Consolidada de Beneficiários — Atletas para Sempre
+
+Documento consolidado a partir das fichas cadastrais completas dos 7 núcleos de atendimento.
+
+**Total de Fichas Analisadas:** 570
+**Total de Beneficiários Únicos:** 564
+
+## Resumo por Núcleo
+
+| Núcleo | Professor Responsável | Total de Alunos |
+|---|---|---|
+| Núcleo Quadra 1206 Sul | Kaio Felipe Moreira dos Santos | 80 |
+| Núcleo Santo Amaro | Renato Ferreira Fidelis | 78 |
+| Campo T31 - Taquari | Aleksandro Soares | 101 |
+| Núcleo Vila Agrotins | Rivaldo | 100 |
+| Núcleo Quadra 906 Sul | Geraldo Vaz da Silva Filho | 73 |
+| Haras RR | Romário Ribeiro Brito | 53 |
+| Complexo ARNO 51 | Raphael Santos Oliveira de Sousa | 79 |
+| **Total Geral** | | **564** |
+
+---
+
+# Núcleo Quadra 1206 Sul — Professor Kaio Felipe Moreira dos Santos
+
+Total de alunos: **80**
+
+### 1. Ângelo Henrique Dias de Sousa
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** Ângelo Henrique Dias de Sousa
+- **Data de nascimento:** 06/11/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 10317811100
+- **RG / Certidão:** 1589088
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 94155-640
+- **E-mail:** estelmadias@gmail.com
+- **Endereço:** T 32 conjunto 18 lote 18
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-466
+- **Nome do responsável:** Gilmar da costa
+- **CPF do responsável:** 92848630310
+- **Nome da mãe:** Estelma Dias de Andrade
+- **Nome do pai:** —
+- **Contato de emergência:** Estelma dias andrde — 63 98415-5640
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 13/11/2025 - 22:04h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 2. antonio moises carvalho martins
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** antonio moises carvalho martins
+- **Data de nascimento:** 07/01/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 08973095102
+- **RG / Certidão:** 1880461
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99211-1137
+- **E-mail:** regianancmartins@gmail.com
+- **Endereço:** 1206 al 23 lote 16
+- **Bairro:** plano diretor sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** regina neres carvalho martins
+- **CPF do responsável:** 05104775186
+- **Nome da mãe:** regina neres carvalho martins
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 2
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 24/11/2025 - 21:40h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 3. antonio paulo lopes duarte
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** antonio paulo lopes duarte
+- **Data de nascimento:** 14/04/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 08389827514
+- **RG / Certidão:** 2290344389
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 74 99922-8692
+- **E-mail:** iza_doria@hotmail.com
+- **Endereço:** 1203 sul al 5 lote 03
+- **Bairro:** plano diretor sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77019-433
+- **Nome do responsável:** isadoria lopes rego
+- **CPF do responsável:** 00985976128
+- **Nome da mãe:** isadoria lopes rego
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Particular
+- **Turno escolar:** Manhã
+- **Série:** 5
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 18/11/2025 - 14:35h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 4. Antônio ysmael sousa
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** Antônio ysmael sousa
+- **Data de nascimento:** 21/09/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 12176276183
+- **RG / Certidão:** 6999361
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99948-4129
+- **E-mail:** polianam896@gmail.com
+- **Endereço:** 1007 sul al 3 Qi 7 lt 05
+- **Bairro:** Centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77018-558
+- **Nome do responsável:** Poliana Sousa morais
+- **CPF do responsável:** 60332652386
+- **Nome da mãe:** Poliana sousa
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 13/11/2025 - 15:43h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 5. arthur henrique gonçalves
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** arthur henrique gonçalves
+- **Data de nascimento:** 23/10/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 09917043128
+- **RG / Certidão:** 917622
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99251-8670
+- **E-mail:** adaoantonio456@gmail.com
+- **Endereço:** 1206 sul 23 lt 03
+- **Bairro:** plano diretor sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-479
+- **Nome do responsável:** adao antonio gonçalves
+- **CPF do responsável:** 00638244188
+- **Nome da mãe:** maria zelia barros
+- **Nome do pai:** —
+- **Contato de emergência:** maria zelia — 63 99251-8670
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Manhã
+- **Série:** 2
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 10/12/2025 - 10:43h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 6. Arthur Henrique Gonçalves do Nascimento
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** Arthur Henrique Gonçalves do Nascimento
+- **Data de nascimento:** 23/10/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 09917043128
+- **RG / Certidão:** 09917043128
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99251-8670
+- **E-mail:** adaoantonio45@gmail.com
+- **Endereço:** 1206 sul al 23 lt 3
+- **Bairro:** Centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-494
+- **Nome do responsável:** Maria Zélia Barros
+- **CPF do responsável:** 09917043128
+- **Nome da mãe:** Maria Zélia
+- **Nome do pai:** —
+- **Contato de emergência:** Maria Zélia — 63 99251-8670
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 13/12/2025 - 09:42h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 7. arthur miguel silva nascimento
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** arthur miguel silva nascimento
+- **Data de nascimento:** 08/03/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 01563006138
+- **RG / Certidão:** 767674
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98513-3620
+- **E-mail:** keyllamaria@gmail.com
+- **Endereço:** 1303al 21 lt 33
+- **Bairro:** plano diretor sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77019-710
+- **Nome do responsável:** keylla maria da silva
+- **CPF do responsável:** 01563006138
+- **Nome da mãe:** keylla maria da silva
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 2
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 26/11/2025 - 23:26h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 8. Benicio venceslau gloria
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** Benicio venceslau gloria
+- **Data de nascimento:** 17/10/2019
+- **Sexo:** Masculino
+- **CPF do aluno:** 10387380167
+- **RG / Certidão:** 806429
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99760-239
+- **E-mail:** kaka17andrade@gmail.com
+- **Endereço:** 1004 sul al 12 lote 25
+- **Bairro:** plano diretor sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** Ada nayaralira gloria venceslau
+- **CPF do responsável:** 04156212165
+- **Nome da mãe:** ada nayara lira
+- **Nome do pai:** —
+- **Contato de emergência:** ada nayara lira — 63 99760-239
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** —
+- **Série:** 1
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 24/11/2025 - 22:24h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 9. Bernardo silva cerqueira
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** Bernardo silva cerqueira
+- **Data de nascimento:** 24/10/2019
+- **Sexo:** —
+- **CPF do aluno:** —
+- **RG / Certidão:** 30807309780 CPF:10395650186
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99205-9053 / E-mail:mayonepinto@gmail.com
+- **E-mail:** —
+- **Endereço:** 1venida 02 chacara 12 Bairro:irma dulce
+- **Bairro:** —
+- **Cidade:** Palmas
+- **Estado (UF):** TO CEP:77060-046
+- **CEP:** —
+- **Nome do responsável:** carlos mayones costa pinto CPF / RG do Resp.:02015105107 / -
+- **CPF do responsável:** —
+- **Nome da mãe:** lays rejine costa silva CPF / RG da Mãe:02015105107 / -
+- **Nome do pai:** CPF / RG do Pai:/ -
+- **Contato de emergência:** carlos mayones pinto — 63 99205-9053
+- **Escolaridade:** Ensino Infantil Tipo de Escola:Municipal
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Série:1
+- **Série:** —
+- **Nome da escola:** Matrícula:
+- **Tamanho da camisa:** P Camisa Entregue: SIM- Em 14/11/2025 - 23:34h
+- **Camisa entregue (Sim/Não):** —
+- **Data do cadastro:** 14/11/2025 - 23:34h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 10. Bruna Karla Rocha
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** Bruna Karla Rocha
+- **Data de nascimento:** 25/11/2011
+- **Sexo:** Feminino
+- **CPF do aluno:** 11948813190
+- **RG / Certidão:** 1836256
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98117-1872
+- **E-mail:** karlinha2511@gmail.com
+- **Endereço:** 1305 sul al 5 lt 2
+- **Bairro:** Centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77025-276
+- **Nome do responsável:** Suele Rocha da silva
+- **CPF do responsável:** 11948813190
+- **Nome da mãe:** Suele Rocha da Silva
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 12/12/2025 - 07:31h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 11. Calebe Araújo Farias
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** Calebe Araújo Farias
+- **Data de nascimento:** 01/11/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 09958085119
+- **RG / Certidão:** 09958085119
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98408-5092
+- **E-mail:** lucydays32@gmail.com
+- **Endereço:** 1406 sul Qi 16lt 20 al 8
+- **Bairro:** Centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77025-120
+- **Nome do responsável:** Lucilene Dias Araújo Farias
+- **CPF do responsável:** 09958085119
+- **Nome da mãe:** Lucilene Dias
+- **Nome do pai:** —
+- **Contato de emergência:** Lucilene Dias — 63 98408-5092
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 27/12/2025 - 10:17h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 12. calebe da silva sousa
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** calebe da silva sousa
+- **Data de nascimento:** 02/11/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 08761090166
+- **RG / Certidão:** 30771203731
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99203-7609
+- **E-mail:** ella006das@gmail.com
+- **Endereço:** 1206 sul al 9 lote 5
+- **Bairro:** plano diretor sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-462
+- **Nome do responsável:** elane da silva sousa
+- **CPF do responsável:** 05695310393
+- **Nome da mãe:** elane da silva sousa
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 2
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 14/11/2025 - 23:43h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 13. carlos andre araujo lima
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** carlos andre araujo lima
+- **Data de nascimento:** 19/11/2015
+- **Sexo:** —
+- **CPF do aluno:** —
+- **RG / Certidão:** 1620488 CPF:00495666106
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98492-8657 / E-mail:luiscarlos.s1033@gmail.com
+- **E-mail:** —
+- **Endereço:** 1406 sul al 08 lt 05 Bairro:plano diretor sul
+- **Bairro:** —
+- **Cidade:** Palmas
+- **Estado (UF):** TO CEP:77025-120
+- **CEP:** —
+- **Nome do responsável:** adriane de araujo CPF / RG do Resp.:85024511115 / -
+- **CPF do responsável:** —
+- **Nome da mãe:** adriane araujo CPF / RG da Mãe:85024511115 / -
+- **Nome do pai:** CPF / RG do Pai:/ -
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental Tipo de Escola:Municipal
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Manhã Série:4 ano
+- **Série:** —
+- **Nome da escola:** Matrícula:
+- **Tamanho da camisa:** M Camisa Entregue: NÃO
+- **Camisa entregue (Sim/Não):** —
+- **Data do cadastro:** 18/11/2025 - 12:58h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 14. carlos isaac lopes duarte
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** carlos isaac lopes duarte
+- **Data de nascimento:** 31/03/2019
+- **Sexo:** Masculino
+- **CPF do aluno:** 11197851542
+- **RG / Certidão:** 0985157640
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 74 99922-8692
+- **E-mail:** iza_doria@hotmail.com
+- **Endereço:** 1203 sul al 5 lote 03
+- **Bairro:** plano diretor sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77019-433
+- **Nome do responsável:** isadoria lopes rego
+- **CPF do responsável:** 00986976128
+- **Nome da mãe:** isadoria lopes rego
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Particular
+- **Turno escolar:** Manhã
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 14/11/2025 - 10:42h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 15. Daniel Mota
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** Daniel Mota
+- **Data de nascimento:** 03/04/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 08101149171
+- **RG / Certidão:** 08101149171
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98458-7507
+- **E-mail:** dulcenone12@gmail.com
+- **Endereço:** Arse 121 al 8 lt 32
+- **Bairro:** Centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77019-514
+- **Nome do responsável:** Dulce nalne
+- **CPF do responsável:** 97711691149
+- **Nome da mãe:** Dulce nolne
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 13/11/2025 - 10:19h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 16. Davi Brandão
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** Davi Brandão
+- **Data de nascimento:** 11/01/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 05047059111
+- **RG / Certidão:** 05047059111
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 85 98723-4008
+- **E-mail:** Regianbran@gmail.com
+- **Endereço:** 1204 sul al 10qi 10lr 12
+- **Bairro:** Centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77019-512
+- **Nome do responsável:** Regiane
+- **CPF do responsável:** 05047059111
+- **Nome da mãe:** Regiane carneiro
+- **Nome do pai:** —
+- **Contato de emergência:** Regiane Carneiro — 85 98723-4008
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** 6
+- **Nome da escola:** Antônio Carlos
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 13/11/2025 - 14:15h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 17. Davi Roberto Bastos Chaves Costa
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** Davi Roberto Bastos Chaves Costa
+- **Data de nascimento:** 31/05/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 10012925101
+- **RG / Certidão:** 306989140716
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99226-9220 / 63 98449-8418
+- **E-mail:** manana066rotmail.com
+- **Endereço:** 1206 sul alameda 30 lote 47
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** Maria Antônia Bastos
+- **CPF do responsável:** 58675876220
+- **Nome da mãe:** Maria Antônia Bastos
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Tarde
+- **Série:** 4 ano
+- **Nome da escola:** Colégio Uperim
+- **Tamanho da camisa:** G
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 13/11/2025 - 21:13h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 18. david cunha gomes
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** david cunha gomes
+- **Data de nascimento:** 25/03/2019
+- **Sexo:** Masculino
+- **CPF do aluno:** 04548090185
+- **RG / Certidão:** 1033606
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98418-7770
+- **E-mail:** maysagomescunha@gmail.com
+- **Endereço:** 1503 sul al 32 lt 16
+- **Bairro:** plano diretor sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77025-418
+- **Nome do responsável:** maysa pereira cunha gomes
+- **CPF do responsável:** 04548090185
+- **Nome da mãe:** maysa pereira cunha gomes
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 08/12/2025 - 21:53h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 19. David Luiz Silva de Souza
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** David Luiz Silva de Souza
+- **Data de nascimento:** 15/09/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 09348704117
+- **RG / Certidão:** 09348704117
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98417-8818
+- **E-mail:** Vilcilenesds36@gmil.com
+- **Endereço:** 1206 sul, Alameda 17, lote 03 casa 03
+- **Bairro:** Centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-484
+- **Nome do responsável:** Vilcilene Silva
+- **CPF do responsável:** 02922729109
+- **Nome da mãe:** Vilcilene Silva
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** —
+- **Série:** 5
+- **Nome da escola:** Almirante Tamandaré
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 16/11/2025 - 11:34h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 20. Eduardo Adrian
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** Eduardo Adrian
+- **Data de nascimento:** 17/06/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 59724137287
+- **RG / Certidão:** 59724137287
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98502-1164
+- **E-mail:** antonialuzia2532@gmai.com
+- **Endereço:** Arse 132 al2 lt30
+- **Bairro:** Centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-584
+- **Nome do responsável:** Antônia Luzia
+- **CPF do responsável:** 59724137287
+- **Nome da mãe:** Antônia Luzia
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 18/11/2025 - 15:20h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 21. emanuel rodrigues medeiros
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** emanuel rodrigues medeiros
+- **Data de nascimento:** 29/05/2017
+- **Sexo:** —
+- **CPF do aluno:** —
+- **RG / Certidão:** 880159 CPF:01935281186
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99133-2355 / E-mail:danielamedeiros602@gmail.com
+- **E-mail:** —
+- **Endereço:** 1206 sul al 29 lt 06 Bairro:plano diretor sul
+- **Bairro:** —
+- **Cidade:** Palmas
+- **Estado (UF):** TO CEP:77024-532
+- **CEP:** —
+- **Nome do responsável:** daniela medeiros CPF / RG do Resp.:01935281186 / -
+- **CPF do responsável:** —
+- **Nome da mãe:** daniela medeiros CPF / RG da Mãe:01935281186 / -
+- **Nome do pai:** CPF / RG do Pai:/ -
+- **Contato de emergência:** daniela medeiros — 63 99133-2355
+- **Escolaridade:** Ensino Fundamental Tipo de Escola:Municipal
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Manhã Série:2
+- **Série:** —
+- **Nome da escola:** Matrícula:
+- **Tamanho da camisa:** P Camisa Entregue: SIM- Em 26/11/2025 - 23:35h
+- **Camisa entregue (Sim/Não):** —
+- **Data do cadastro:** 26/11/2025 - 23:35h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 22. enzo damacena
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** enzo damacena
+- **Data de nascimento:** 28/04/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 09855873181
+- **RG / Certidão:** 30698893184
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99208-8151
+- **E-mail:** neresdamascenamarcelia@gmail.com
+- **Endereço:** 1306 al 15 lote o8
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-576
+- **Nome do responsável:** marcelia neres damascena
+- **CPF do responsável:** 04814874170
+- **Nome da mãe:** marcelia neres damascena
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 3
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 13/11/2025 - 23:51h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 23. enzo gabriel araujo costa
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** enzo gabriel araujo costa
+- **Data de nascimento:** 22/01/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 00649419146
+- **RG / Certidão:** 162502
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99918-2545
+- **E-mail:** cp9414906@gmail.com
+- **Endereço:** 1206 sul al 01 casa 09
+- **Bairro:** plano diretor sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** cristiane pereira
+- **CPF do responsável:** 09869265154
+- **Nome da mãe:** cristiane pereira
+- **Nome do pai:** —
+- **Contato de emergência:** cristiane pereira — 63 99918-2545
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 20/11/2025 - 23:47h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 24. enzo gabriel da silva assunçao
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** enzo gabriel da silva assunçao
+- **Data de nascimento:** 19/07/2019
+- **Sexo:** Masculino
+- **CPF do aluno:** 10243845197
+- **RG / Certidão:** 1210699
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99133-1733
+- **E-mail:** silvacelio1119@gmail.com
+- **Endereço:** 1503 sul al 34lt 31
+- **Bairro:** plano diretor sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77027-134
+- **Nome do responsável:** adrielly vieira
+- **CPF do responsável:** 10243845197
+- **Nome da mãe:** adrielly vieira
+- **Nome do pai:** —
+- **Contato de emergência:** adrielly vieira — 63 99133-1733
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 2
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 09/12/2025 - 22:31h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 25. enzo henrique batista ribeiro
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** enzo henrique batista ribeiro
+- **Data de nascimento:** 05/04/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 11477963197
+- **RG / Certidão:** 1808007
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98501-1246
+- **E-mail:** rosaniaribeiro@gmail.com
+- **Endereço:** 1206 sul al 19 lote 01
+- **Bairro:** plano diretor sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** rosivania ribeiro
+- **CPF do responsável:** 04538409146
+- **Nome da mãe:** rosivania ribeiro
+- **Nome do pai:** —
+- **Contato de emergência:** rosivania ribeiro — 63 98501-1246
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 18/11/2025 - 10:23h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 26. felipe gabriel dos reis assunçao
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** felipe gabriel dos reis assunçao
+- **Data de nascimento:** 30/09/2019
+- **Sexo:** Masculino
+- **CPF do aluno:** 10355288192
+- **RG / Certidão:** 1326597
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98158-1634
+- **E-mail:** assunçao159753@gmail.com
+- **Endereço:** 1306 sul al 9 lote 14
+- **Bairro:** plano diretor sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-506
+- **Nome do responsável:** viviane dos reis
+- **CPF do responsável:** 05160884116
+- **Nome da mãe:** viviane dos reis
+- **Nome do pai:** —
+- **Contato de emergência:** viviane dos reis — 63 98158-1634
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** —
+- **Série:** 1
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 24/11/2025 - 21:00h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 27. Geovana Lustosa Silva
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** Geovana Lustosa Silva
+- **Data de nascimento:** 09/12/2013
+- **Sexo:** Feminino
+- **CPF do aluno:** 08641431179
+- **RG / Certidão:** 30606797140
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98406-1381 / 63 98440-9771
+- **E-mail:** angelicaplmsilva@gmail.com
+- **Endereço:** 1206 sul alameda 24 lote 45 casa 02
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-488
+- **Nome do responsável:** Angélica Maria da Silva
+- **CPF do responsável:** 01780910142
+- **Nome da mãe:** Angélica Maria da Silva
+- **Nome do pai:** Luis Alberto Lustosa Soares
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 6 ano
+- **Nome da escola:** ETI.Almirante Tamadaré
+- **Tamanho da camisa:** G
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 11/11/2025 - 21:57h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 28. Guilherme Borges
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** Guilherme Borges
+- **Data de nascimento:** 02/09/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 10879892137
+- **RG / Certidão:** 10879892137
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98487-8369
+- **E-mail:** Luzivaniapereiradosantos@gmal.com
+- **Endereço:** 1206 sul, Al15, lote 5
+- **Bairro:** Centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-482
+- **Nome do responsável:** Luzivania Pereira dos Santos
+- **CPF do responsável:** 02885119136
+- **Nome da mãe:** Luzivania Pereira dos Santos
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** 5
+- **Nome da escola:** Almirante Tamandaré
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 14/11/2025 - 12:11h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 29. gustavo batista rezende
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** gustavo batista rezende
+- **Data de nascimento:** 15/10/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 09636639175
+- **RG / Certidão:** 330440
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99953-8049
+- **E-mail:** jacsonrezende870@gmail.com
+- **Endereço:** 1106 al 24lt 08
+- **Bairro:** plano diretor sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** alcione pereira
+- **CPF do responsável:** 71099336104
+- **Nome da mãe:** alcione pereira
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 18/11/2025 - 10:35h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 30. gustavo medeiros dos santos
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** gustavo medeiros dos santos
+- **Data de nascimento:** 22/11/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 09831839102
+- **RG / Certidão:** 1772447
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98430-1701
+- **E-mail:** luannamdeirosmendes@gmail.com
+- **Endereço:** 1504 sul al 18 qd 24 lt 10
+- **Bairro:** plano diretor sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77027-048
+- **Nome do responsável:** luana medeiros mendes pereira
+- **CPF do responsável:** 00313845107
+- **Nome da mãe:** luanna medeiros mendes
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Estadual
+- **Turno escolar:** Manhã
+- **Série:** 3
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 28/12/2025 - 21:06h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 31. heitor batista alves marinho
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** heitor batista alves marinho
+- **Data de nascimento:** 23/03/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 08229533156
+- **RG / Certidão:** 1489459
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98432-6006
+- **E-mail:** mylla156@hotmail.com
+- **Endereço:** 1104 sul al 04 lt 75
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-032
+- **Nome do responsável:** samyla batista alves
+- **CPF do responsável:** 08229533156
+- **Nome da mãe:** samyla batista alves
+- **Nome do pai:** —
+- **Contato de emergência:** samyla batista alves — 63 98432-6006
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 5
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 10/12/2025 - 10:09h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 32. heitor felipe de sousa
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** heitor felipe de sousa
+- **Data de nascimento:** 08/09/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 08667689122
+- **RG / Certidão:** 1054503
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98490-7247
+- **E-mail:** nikelly1705@outlook.com.br
+- **Endereço:** 1404 sul al 14lt 11
+- **Bairro:** plano diretor sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-772
+- **Nome do responsável:** nikely lorrayne
+- **CPF do responsável:** 03396420179
+- **Nome da mãe:** nikely lorrayne
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 08/12/2025 - 22:48h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 33. Heitor freire de paulo
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** Heitor freire de paulo
+- **Data de nascimento:** 31/10/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 09925215137
+- **RG / Certidão:** 828444
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98481-7663
+- **E-mail:** evainyfreire@hotmail.com
+- **Endereço:** 1206 sul al 02 lote 28
+- **Bairro:** plano diretor sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-468
+- **Nome do responsável:** evainy freire santos de paulo
+- **CPF do responsável:** 04072187186
+- **Nome da mãe:** evainy freire santos de paulo
+- **Nome do pai:** —
+- **Contato de emergência:** evainy freire santos — 63 98481-7663
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 2
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 24/11/2025 - 21:59h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 34. heitor silva bonfim araujo
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** heitor silva bonfim araujo
+- **Data de nascimento:** 29/12/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 09787080169
+- **RG / Certidão:** 30754725237
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98456-3097 / 63 98456-3096
+- **E-mail:** jansilne@hotmail.com
+- **Endereço:** 1206 sul al o4 lote 58
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-464
+- **Nome do responsável:** jansilne silva bonfim araujo
+- **CPF do responsável:** 09787080169
+- **Nome da mãe:** jansilene silva bonfim
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 1
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 14/11/2025 - 00:05h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 35. Henrique Gabriel da Silva
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** Henrique Gabriel da Silva
+- **Data de nascimento:** 18/05/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** —
+- **RG / Certidão:** 108863231939
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98143-6061
+- **E-mail:** francialison@hotmail.com
+- **Endereço:** 1506 al36 lt 22
+- **Bairro:** Centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77027-136
+- **Nome do responsável:** Maria Carolyne
+- **CPF do responsável:** 05056874108
+- **Nome da mãe:** Maria Carolyne
+- **Nome do pai:** —
+- **Contato de emergência:** Maria Carolyne — 63 98143-6061
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 25/11/2025 - 08:29h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 36. Icaro Eduardo Moreira
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** Icaro Eduardo Moreira
+- **Data de nascimento:** 06/05/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 903247
+- **RG / Certidão:** 903247
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99267-9781
+- **E-mail:** Skarllethmichelly@gmail.com
+- **Endereço:** 1306 sul al 9b qi 19 lt 36
+- **Bairro:** Centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-566
+- **Nome do responsável:** Skarlleth
+- **CPF do responsável:** 05169850190
+- **Nome da mãe:** —
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** —
+- **Série:** 4
+- **Nome da escola:** Francisca Brandao
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 12/11/2025 - 09:42h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 37. isabelly batista ribeiro
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** isabelly batista ribeiro
+- **Data de nascimento:** 30/08/2013
+- **Sexo:** Feminino
+- **CPF do aluno:** 11477947159
+- **RG / Certidão:** 1808998
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98501-1246
+- **E-mail:** rrosivaniaribeiro26@gmail.com
+- **Endereço:** 1206 sul al 19 lote 01
+- **Bairro:** plano diretor sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** rosivania ribeiro
+- **CPF do responsável:** 04538409146
+- **Nome da mãe:** rosivania ribeiro
+- **Nome do pai:** —
+- **Contato de emergência:** rosivania ribeiro — 63 98501-1246
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** —
+- **Série:** 6 ano
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 14/11/2025 - 09:49h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 38. isacc correa rodrigues
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** isacc correa rodrigues
+- **Data de nascimento:** 25/11/2016
+- **Sexo:** —
+- **CPF do aluno:** —
+- **RG / Certidão:** 436190758 CPF:52068776898
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 13 99194-9714 / E-mail:brunamongolini60@gmail.com
+- **E-mail:** —
+- **Endereço:** 1204 sul al 6 lote 23 Bairro:plano diretor sul
+- **Bairro:** —
+- **Cidade:** Palmas
+- **Estado (UF):** TO CEP:77019-516
+- **CEP:** —
+- **Nome do responsável:** bruna correa mongoli CPF / RG do Resp.:45813942874 / -
+- **CPF do responsável:** —
+- **Nome da mãe:** bruna correa mongoli CPF / RG da Mãe:45813942874 / -
+- **Nome do pai:** CPF / RG do Pai:/ -
+- **Contato de emergência:** bruna correa mongoli — 13 99194-9714
+- **Escolaridade:** Ensino Fundamental Tipo de Escola:Particular
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Série:3
+- **Série:** —
+- **Nome da escola:** Matrícula:
+- **Tamanho da camisa:** M Camisa Entregue: NÃO
+- **Camisa entregue (Sim/Não):** —
+- **Data do cadastro:** 14/11/2025 - 23:20h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 39. Italo Gabriel Rodrigues
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** Italo Gabriel Rodrigues
+- **Data de nascimento:** 14/05/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 11275045170
+- **RG / Certidão:** 1742713
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98513-5768
+- **E-mail:** jarlanerodrigues6@gmail.com
+- **Endereço:** 1206 al21 lt 12
+- **Bairro:** Centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-502
+- **Nome do responsável:** Francisca Jarlene
+- **CPF do responsável:** 11275045170
+- **Nome da mãe:** Francisca Jarlene Rodrigues
+- **Nome do pai:** —
+- **Contato de emergência:** Francisca Jarlene — 63 98513-5768
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/12/2025 - 07:24h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 40. Jamys monteiro de oliveira
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** Jamys monteiro de oliveira
+- **Data de nascimento:** 13/02/2019
+- **Sexo:** Masculino
+- **CPF do aluno:** 09910776103
+- **RG / Certidão:** 09910776103
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99116-5103
+- **E-mail:** jamesamigo@gmail.com
+- **Endereço:** 1503 sul Qi 30 lt 21
+- **Bairro:** Centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77025-450
+- **Nome do responsável:** Andréia Carneiro
+- **CPF do responsável:** 8874715815
+- **Nome da mãe:** Andreia Carneiro
+- **Nome do pai:** —
+- **Contato de emergência:** Andreia Carneiro — 63 99116-5103
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 13/11/2025 - 10:12h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 41. Jhonatan Bezerra Oliveira
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** Jhonatan Bezerra Oliveira
+- **Data de nascimento:** 13/06/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 71309455163
+- **RG / Certidão:** 71309455163
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98453-9478
+- **E-mail:** evanecabezerra@gmail.com
+- **Endereço:** 1206 sul al 8 lt 1
+- **Bairro:** Centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** Evaneça Bezerra Oliveira
+- **CPF do responsável:** 88651223153
+- **Nome da mãe:** Evaneça Bezerra
+- **Nome do pai:** —
+- **Contato de emergência:** Evaneça Bezerra — 63 98453-9478
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 23/01/2026 - 15:20h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 42. João fellype Franco Martins
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** João fellype Franco Martins
+- **Data de nascimento:** 07/06/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 09915794100
+- **RG / Certidão:** 09915794100
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99210-1376
+- **E-mail:** danielly.franco@gmail.com
+- **Endereço:** 1004 sul al 4 lt 54
+- **Bairro:** Centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77023-54
+- **Nome do responsável:** 77023514
+- **CPF do responsável:** 02520836105
+- **Nome da mãe:** Danielly Virgínia
+- **Nome do pai:** —
+- **Contato de emergência:** Danielly Virgínia — 63 98513-6412
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 13/11/2025 - 10:05h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 43. joao guilherme lopes
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** joao guilherme lopes
+- **Data de nascimento:** 01/12/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 09255238523
+- **RG / Certidão:** 1126471119
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 74 99922-8692
+- **E-mail:** iza_doria@hotmail.com
+- **Endereço:** 1203 sul al 5 lote 03
+- **Bairro:** plano diretor sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77019-433
+- **Nome do responsável:** isadoria lopes rego
+- **CPF do responsável:** 00985976128
+- **Nome da mãe:** isadoria lopes rego
+- **Nome do pai:** —
+- **Contato de emergência:** isadoria lopes — 74 99922-8692
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Particular
+- **Turno escolar:** Manhã
+- **Série:** 3
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 18/11/2025 - 11:47h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 44. João Lucas Sousa de Oliveira
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** João Lucas Sousa de Oliveira
+- **Data de nascimento:** 20/05/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 07461831194
+- **RG / Certidão:** 1286110155
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99941-2405
+- **E-mail:** carol91998882@gmail.com
+- **Endereço:** 1206 sul al 22
+- **Bairro:** Centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-500
+- **Nome do responsável:** Caroline Sousa de Oliveira
+- **CPF do responsável:** 06831421199
+- **Nome da mãe:** Caroline Sousa de Oliveira
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 27/12/2025 - 10:03h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 45. Joao paulo barreira
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** Joao paulo barreira
+- **Data de nascimento:** 09/03/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 10119189194
+- **RG / Certidão:** 10119189194
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98473-7591
+- **E-mail:** dbarreira12@gmail.com
+- **Endereço:** 1306 sul al 8 lt 3
+- **Bairro:** Centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-592
+- **Nome do responsável:** Dulce Americo
+- **CPF do responsável:** 01932346104
+- **Nome da mãe:** Dulce Americo
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 25/11/2025 - 08:21h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 46. Joao Pedro Teixeira costa
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** Joao Pedro Teixeira costa
+- **Data de nascimento:** 01/03/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 09120388101
+- **RG / Certidão:** 1829316
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98461-9993
+- **E-mail:** costaivanilde347@gmail.com
+- **Endereço:** 1406 sul al 16 lote 05
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77025-140
+- **Nome do responsável:** evanilde texeira chaves costa
+- **CPF do responsável:** 89248392172
+- **Nome da mãe:** evanilde texeira chaves costa
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 2
+- **Nome da escola:** —
+- **Tamanho da camisa:** G
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 13/11/2025 - 23:26h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 47. João Pedro Oliveira do Nascimento
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** João Pedro Oliveira do Nascimento
+- **Data de nascimento:** 17/03/2019
+- **Sexo:** Masculino
+- **CPF do aluno:** 10416224300
+- **RG / Certidão:** 10416224300
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 86 99848-2255
+- **E-mail:** mirellebjjkids2@gmail.com
+- **Endereço:** 1406 sul al 9
+- **Bairro:** Centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77025-200
+- **Nome do responsável:** Mirelle oliveira
+- **CPF do responsável:** 02604652323
+- **Nome da mãe:** Mirelle Oliveira
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 18/11/2025 - 15:26h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 48. João Pedro Rocha Lima
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** João Pedro Rocha Lima
+- **Data de nascimento:** 29/12/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 74107941191
+- **RG / Certidão:** 74107941191
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98117-1872
+- **E-mail:** suelejoaobruna@hotmail.com
+- **Endereço:** 1305 sul al 5 lt 2
+- **Bairro:** Centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77025-276
+- **Nome do responsável:** Suele Rocha
+- **CPF do responsável:** 74107941191
+- **Nome da mãe:** Suele Rocha
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/12/2025 - 07:38h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 49. João Vicenzo dos Santos Ponce
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** João Vicenzo dos Santos Ponce
+- **Data de nascimento:** 07/02/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 07283712194
+- **RG / Certidão:** 1481104
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98515-0255
+- **E-mail:** vilbolosedoces@gmail.com
+- **Endereço:** 1206 sul al 21 lote 10
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-502
+- **Nome do responsável:** vilmara sousa santos
+- **CPF do responsável:** 0326657916
+- **Nome da mãe:** vilmara sousa santos
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 5
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 13/11/2025 - 22:58h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 50. Joaquim Carvalho Castro
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** Joaquim Carvalho Castro
+- **Data de nascimento:** 23/05/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 01661275150
+- **RG / Certidão:** 01661275150
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98517-7336
+- **E-mail:** Charlivamcastroaraujo@gmail.com
+- **Endereço:** 1306 sul al13a lt 8
+- **Bairro:** Centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-574
+- **Nome do responsável:** Neuzilene Carvalho
+- **CPF do responsável:** 01661275150
+- **Nome da mãe:** Neuzilene Carvalho
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 03/01/2026 - 17:52h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 51. jose felipe martins cursino guimaraes
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** jose felipe martins cursino guimaraes
+- **Data de nascimento:** 06/02/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 09106526195
+- **RG / Certidão:** 307240051-5
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99230-6673
+- **E-mail:** santanasousados@gmail.com
+- **Endereço:** 806 sul av.ns.04 lote 02
+- **Bairro:** plano diretor sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77023-060
+- **Nome do responsável:** patricia martins de sousa
+- **CPF do responsável:** 05257726181
+- **Nome da mãe:** patricia martins de sousa
+- **Nome do pai:** —
+- **Contato de emergência:** patricia martins — 63 99230-6673
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 2
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 24/11/2025 - 22:39h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 52. levi silva dos santos
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** levi silva dos santos
+- **Data de nascimento:** 04/02/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 05603399333
+- **RG / Certidão:** 1387358
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98129-4904
+- **E-mail:** anny19363@gmail.com
+- **Endereço:** 1306 sul al 02 lt 28
+- **Bairro:** plano diretor sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** eliane s.silva
+- **CPF do responsável:** 05603399333
+- **Nome da mãe:** eliane s. silva
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 5
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 10/12/2025 - 11:12h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 53. lucas gabriel braga
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** lucas gabriel braga
+- **Data de nascimento:** 29/07/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 10013160109
+- **RG / Certidão:** 1796021
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98771-037
+- **E-mail:** maragabrielbraga@gamil.com
+- **Endereço:** 904 sul al 03 lote08
+- **Bairro:** plano diretor sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** claudimara rossi gabriel braga
+- **CPF do responsável:** 00400077906
+- **Nome da mãe:** claudimara rossi
+- **Nome do pai:** —
+- **Contato de emergência:** claudimara rossi — 63 98477-1037
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Particular
+- **Turno escolar:** Tarde
+- **Série:** 3
+- **Nome da escola:** —
+- **Tamanho da camisa:** G
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 24/11/2025 - 21:23h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 54. lucas rodrigues de morais
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** lucas rodrigues de morais
+- **Data de nascimento:** 15/03/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 09253846151
+- **RG / Certidão:** 1824031
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98489-5623
+- **E-mail:** maikonjunior483@gmail.com
+- **Endereço:** 1506 sul al 14 lt 08
+- **Bairro:** plano diretor sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** maria aparecida rodrigues
+- **CPF do responsável:** 96621117191
+- **Nome da mãe:** maria aparecida
+- **Nome do pai:** —
+- **Contato de emergência:** maria aparecida — 63 98489-5623
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 6 ano
+- **Nome da escola:** —
+- **Tamanho da camisa:** G
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 26/11/2025 - 23:49h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 55. luis miguel da silva lima
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** luis miguel da silva lima
+- **Data de nascimento:** 01/04/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 10894784102
+- **RG / Certidão:** 10894784102
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98425-7197
+- **E-mail:** marciaismael239@gmail.com
+- **Endereço:** 1406 sul al 01
+- **Bairro:** plano diretor sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-00
+- **Nome do responsável:** renata lima da silva
+- **CPF do responsável:** 08225039130
+- **Nome da mãe:** renata da silva lima
+- **Nome do pai:** —
+- **Contato de emergência:** marcia — 63 98425-7179
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 10/12/2025 - 10:30h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 56. Luis Felipe Alves
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** Luis Felipe Alves
+- **Data de nascimento:** 01/05/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 09133779104
+- **RG / Certidão:** 09133779104
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98439-4036
+- **E-mail:** natialves848@gmail.com
+- **Endereço:** 1026 sul al2 lt 3
+- **Bairro:** Centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-482
+- **Nome do responsável:** Natalia Alves
+- **CPF do responsável:** 06312741117
+- **Nome da mãe:** Natalia Alves
+- **Nome do pai:** —
+- **Contato de emergência:** Natalia alves — 63 98439-4036
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 05/01/2026 - 08:15h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 57. Luisa de Paula Santos
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** Luisa de Paula Santos
+- **Data de nascimento:** 05/01/2018
+- **Sexo:** Feminino
+- **CPF do aluno:** 08949371111
+- **RG / Certidão:** 08949371111
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98446-0788
+- **E-mail:** kaio.vivoinfo@gmail.com
+- **Endereço:** 1025 sul al 2 lt 35
+- **Bairro:** Centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** Kaio felipe moreira
+- **CPF do responsável:** 01647640113
+- **Nome da mãe:** Dayanne de Paula
+- **Nome do pai:** —
+- **Contato de emergência:** Kaio felipe moreira — 63 98446-0788
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 05/01/2026 - 10:22h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 58. Marcelo Rodrigues de Abreu
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** Marcelo Rodrigues de Abreu
+- **Data de nascimento:** 06/11/2015
+- **Sexo:** —
+- **CPF do aluno:** —
+- **RG / Certidão:** 1742714 CPF:11275070108
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98513-5768 / E-mail:Jarlanerodrigues6@gmail.com
+- **E-mail:** —
+- **Endereço:** 1206 sul al 21 lt 12 Bairro:Centro
+- **Bairro:** —
+- **Cidade:** Palmas
+- **Estado (UF):** TO CEP:77000-000
+- **CEP:** —
+- **Nome do responsável:** Francisca Jarlene Rodrigues de abreu CPF / RG do Resp.:11275070108 / -
+- **CPF do responsável:** —
+- **Nome da mãe:** Francisca Jarlene Rodrigues CPF / RG da Mãe:11275070108 / -
+- **Nome do pai:** CPF / RG do Pai:/ -
+- **Contato de emergência:** Francisca Jarlene Rodrigues — 63 98513-5768
+- **Escolaridade:** Tipo de Escola:
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Série:
+- **Série:** —
+- **Nome da escola:** Matrícula:
+- **Tamanho da camisa:** M Camisa Entregue: SIM- Em 27/12/2025 - 09:55h
+- **Camisa entregue (Sim/Não):** —
+- **Data do cadastro:** 27/12/2025 - 09:55h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 59. Marco Túlio Silva de Souza
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** Marco Túlio Silva de Souza
+- **Data de nascimento:** 15/09/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 09348683101
+- **RG / Certidão:** 09348683101
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98417-8818
+- **E-mail:** Vilcilenesds36@gmail.com
+- **Endereço:** 1206 sul, Alameda 17, lote 3 casa 03
+- **Bairro:** Centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-484
+- **Nome do responsável:** Vilcilene Silva
+- **CPF do responsável:** 02922729109
+- **Nome da mãe:** Vilcilene Silva
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** —
+- **Série:** 5
+- **Nome da escola:** Almirante Tamandaré
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 16/11/2025 - 11:43h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 60. Marcos Vinícius lopes
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** Marcos Vinícius lopes
+- **Data de nascimento:** 24/04/2010
+- **Sexo:** Masculino
+- **CPF do aluno:** 74523511187
+- **RG / Certidão:** 959698
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98411-0963
+- **E-mail:** vandaobreira2020@gmail.com
+- **Endereço:** 1304 sul res. leblon
+- **Bairro:** Centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-690
+- **Nome do responsável:** Vanda Lopes
+- **CPF do responsável:** 74523511187
+- **Nome da mãe:** Vanda Lopes
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 14/11/2025 - 11:17h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 61. mateus damascena monteiro
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** mateus damascena monteiro
+- **Data de nascimento:** 28/07/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 07892056106
+- **RG / Certidão:** 30542845689
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99244-5540
+- **E-mail:** neresdamascenamarcelia@gmail.com
+- **Endereço:** 1306 sul al 15 lote 08 qi 21
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-576
+- **Nome do responsável:** marcelia nres damascena
+- **CPF do responsável:** 04814874170
+- **Nome da mãe:** marcelia neres damascena
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Estadual
+- **Turno escolar:** —
+- **Série:** 6 ano
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 13/11/2025 - 23:36h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 62. mateus medeiros dos santos
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** mateus medeiros dos santos
+- **Data de nascimento:** 05/10/2011
+- **Sexo:** Masculino
+- **CPF do aluno:** 05773184117
+- **RG / Certidão:** 1039169
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98430-1701
+- **E-mail:** luannamdeirosmendes@gmail.com
+- **Endereço:** 1504 sul al 18 qd 24 lt 10
+- **Bairro:** plano diretor sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77027-048
+- **Nome do responsável:** luana medeiros mendes pereira
+- **CPF do responsável:** 00313845107
+- **Nome da mãe:** luanna medeiros mendes
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 8
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 28/12/2025 - 20:59h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 63. Miguel Ribeiro Gomes
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** Miguel Ribeiro Gomes
+- **Data de nascimento:** 19/09/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 09571747130
+- **RG / Certidão:** 09571747130
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98412-2698
+- **E-mail:** vaniagomessantos031@gmail.com
+- **Endereço:** 1005 sul al7 lt10
+- **Bairro:** Centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77018-510
+- **Nome do responsável:** Maria Vânia ribeiro
+- **CPF do responsável:** 03005039110
+- **Nome da mãe:** Vânia Ribeiro
+- **Nome do pai:** —
+- **Contato de emergência:** Vânia Ribeiro — 63 98412-2698
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 13/12/2025 - 09:32h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 64. nicolas martins rosa
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** nicolas martins rosa
+- **Data de nascimento:** 27/02/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 09129607108
+- **RG / Certidão:** 1132212
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98420-0295
+- **E-mail:** levisilva025@gmail.com
+- **Endereço:** 1206 al 26 lt 06
+- **Bairro:** plano diretor sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-506
+- **Nome do responsável:** levi da silva rosa
+- **CPF do responsável:** 04575798118
+- **Nome da mãe:** lorena lorane martins dos santos
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 2
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 18/11/2025 - 13:28h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 65. paulo gabriel santos oliveira
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** paulo gabriel santos oliveira
+- **Data de nascimento:** 18/05/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 11453537112
+- **RG / Certidão:** 18811642
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98402-2285
+- **E-mail:** ivodossantosquitino@gmail.com
+- **Endereço:** 1206 sul al 41 lote 10
+- **Bairro:** plano diretor sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** ivone dos santos
+- **CPF do responsável:** 02035326516
+- **Nome da mãe:** ivone dos santos
+- **Nome do pai:** —
+- **Contato de emergência:** ivone dos santos — 63 98402-2285
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 24/11/2025 - 23:09h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 66. Pedro Amaral Viana Costa
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** Pedro Amaral Viana Costa
+- **Data de nascimento:** 19/05/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 12071523318
+- **RG / Certidão:** 12071523316
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99223-6045
+- **E-mail:** nuniswilli76@gmail.com
+- **Endereço:** 1206 sul al 5 lt 8
+- **Bairro:** Centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** Williany Maria
+- **CPF do responsável:** 08536986352
+- **Nome da mãe:** Williany Maria
+- **Nome do pai:** —
+- **Contato de emergência:** Williany Maria — 63 99223-6045
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 23/01/2026 - 15:14h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 67. Pedro Felipe Pereira dias
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** Pedro Felipe Pereira dias
+- **Data de nascimento:** 17/03/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 10014034107
+- **RG / Certidão:** 10014034107
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99999-1635
+- **E-mail:** neidepink@hotmail.com
+- **Endereço:** 1506 sul al 34 lt 16
+- **Bairro:** Centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77027-134
+- **Nome do responsável:** Neide
+- **CPF do responsável:** 10014034107
+- **Nome da mãe:** Neide
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** —
+- **Série:** 5
+- **Nome da escola:** Antônio carlos
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/11/2025 - 14:02h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 68. pedro lucas dos reis assunçao
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** pedro lucas dos reis assunçao
+- **Data de nascimento:** 12/12/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 10428210112
+- **RG / Certidão:** 864798
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98158-1634
+- **E-mail:** assunçao159753@gmail.com
+- **Endereço:** 1306 sul alameda 07 lote 14
+- **Bairro:** plano diretor sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-564
+- **Nome do responsável:** viviane dos reis
+- **CPF do responsável:** 07097923105
+- **Nome da mãe:** viviane dos reis
+- **Nome do pai:** —
+- **Contato de emergência:** viviane dos reis — 63 98101-0475
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 3
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 24/11/2025 - 20:50h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 69. Ramon Mamedio de Sousa
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** Ramon Mamedio de Sousa
+- **Data de nascimento:** 22/12/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 10249314126
+- **RG / Certidão:** 904683
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99244-7293
+- **E-mail:** klesiaribeirodsousa@gmail.com
+- **Endereço:** rua ms 16sn quadra 2a lote 26
+- **Bairro:** morada do sol
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77066-160
+- **Nome do responsável:** Klesia Ribeiro de sousa
+- **CPF do responsável:** 02043630121
+- **Nome da mãe:** Klesia Ribeiro de sousa
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** 4 ano
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 13/11/2025 - 21:26h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 70. renam augusto dos santos
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** renam augusto dos santos
+- **Data de nascimento:** 08/11/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 02502614139
+- **RG / Certidão:** 935200
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98412-4084
+- **E-mail:** rafaeladeleon12@gmail.com
+- **Endereço:** 1306 sul al ns04 lt 03
+- **Bairro:** plano diretor sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** rafaela dos santos vieira
+- **CPF do responsável:** 02502614139
+- **Nome da mãe:** rafaela dos santos vieira
+- **Nome do pai:** —
+- **Contato de emergência:** 02502614139 — 63 98412-4084
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 6 ano
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 10/12/2025 - 09:52h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 71. renata pereira dos santos
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** renata pereira dos santos
+- **Data de nascimento:** 15/03/2017
+- **Sexo:** Feminino
+- **CPF do aluno:** 12758016176
+- **RG / Certidão:** 1823014
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99979-3704
+- **E-mail:** franciscapaula19@gmail.com
+- **Endereço:** 1306 sul al 9 lote 14
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** francisca pereira dos santos
+- **CPF do responsável:** 42411670125
+- **Nome da mãe:** francisca pereira
+- **Nome do pai:** —
+- **Contato de emergência:** francisca pereira — 63 99979-3704
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 14/11/2025 - 09:13h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 72. ryan viana silva
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** ryan viana silva
+- **Data de nascimento:** 20/02/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 10347279155
+- **RG / Certidão:** 1667448
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98516-0919
+- **E-mail:** lidianeviana@gmail.com
+- **Endereço:** 1306 sul al 11 lt 13
+- **Bairro:** plano diretor sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** lidiane viana carneiro
+- **CPF do responsável:** 00991608119
+- **Nome da mãe:** lidiane viana carneiro
+- **Nome do pai:** —
+- **Contato de emergência:** lidiane viana — 63 98509-19
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Particular
+- **Turno escolar:** —
+- **Série:** 7
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 10/12/2025 - 10:54h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 73. Théo Apino Wazasê
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** Théo Apino Wazasê
+- **Data de nascimento:** 20/05/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 09342568106
+- **RG / Certidão:** 2403399
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98108-9317
+- **E-mail:** deboraxerente@outlook.com
+- **Endereço:** 1306 sul al 06 lote 13
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** Debora Antunes
+- **CPF do responsável:** 00503374164
+- **Nome da mãe:** Debora Antunes
+- **Nome do pai:** —
+- **Contato de emergência:** Debora antunes — 63 98108-9317
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** —
+- **Série:** 1
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 13/11/2025 - 22:31h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 74. thiago borges santos
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** thiago borges santos
+- **Data de nascimento:** 13/08/2010
+- **Sexo:** Masculino
+- **CPF do aluno:** 10879873183
+- **RG / Certidão:** 10879873183
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98487-8369
+- **E-mail:** luzivaniapereiradossantos@gamil.com
+- **Endereço:** 1206 sul al 15 lote 05
+- **Bairro:** plano diretor sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-482
+- **Nome do responsável:** luzivania pereira dos santos
+- **CPF do responsável:** 10879873183
+- **Nome da mãe:** luzivania pereira dos santos
+- **Nome do pai:** —
+- **Contato de emergência:** luzivania dos santos — 63 98487-8369
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** —
+- **Nome da escola:** 9
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 27/11/2025 - 00:03h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 75. Victor Gabriel Cardoso
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** Victor Gabriel Cardoso
+- **Data de nascimento:** 10/10/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 09998386101
+- **RG / Certidão:** 09998386101
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99346-9147
+- **E-mail:** Cardosocleidiane1@gmail.com
+- **Endereço:** 1204 sul al 12 Qi 12lt 33 cs 3
+- **Bairro:** Centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77019-510
+- **Nome do responsável:** Cleidiane cardoso
+- **CPF do responsável:** 03470406162
+- **Nome da mãe:** Cleidiane cardoso
+- **Nome do pai:** —
+- **Contato de emergência:** Cleidiane cardoso — 63 99246-9147
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 13/11/2025 - 15:49h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 76. vinicios pereira da silva
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** vinicios pereira da silva
+- **Data de nascimento:** 14/03/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 09692821170
+- **RG / Certidão:** 661201
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99231-7973
+- **E-mail:** marciadasilva@gamil.com
+- **Endereço:** 1306 al 04 qd 12 lt 09
+- **Bairro:** plano diretor sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** marcia da silva moura
+- **CPF do responsável:** 03005655180
+- **Nome da mãe:** marcia da silva moura
+- **Nome do pai:** —
+- **Contato de emergência:** marcia da silva moura — 63 99231-7973
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 28/12/2025 - 21:25h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 77. Vinicius Marques dos Santos
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** Vinicius Marques dos Santos
+- **Data de nascimento:** 09/09/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 10284573167
+- **RG / Certidão:** 1662431
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98500-4991
+- **E-mail:** benice84499783@gmail.com
+- **Endereço:** 1506 sul al 20 qi17 lt 7
+- **Bairro:** Centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** Benice Pereira dos Santos
+- **CPF do responsável:** 53721799291
+- **Nome da mãe:** Benice Pereira
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 27/12/2025 - 10:23h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 78. Vitor Gabriel Martins
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** Vitor Gabriel Martins
+- **Data de nascimento:** 02/08/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 71414227140
+- **RG / Certidão:** 1606621
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98112-3500
+- **E-mail:** ecliviomartins3@gmail.com
+- **Endereço:** 1306 sul alameda 01 ap 112
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-553
+- **Nome do responsável:** Eclévia Aparecida Santana
+- **CPF do responsável:** 02729347127
+- **Nome da mãe:** Eclévia Aparecida Santana
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** —
+- **Série:** 6 ano
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 13/11/2025 - 21:49h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 79. wendel gaspar franco
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** wendel gaspar franco
+- **Data de nascimento:** 12/10/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 71345027168
+- **RG / Certidão:** 1618906
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98443-2216
+- **E-mail:** vandafranco992@gmail.com
+- **Endereço:** 1306 sul al 02 lote 34
+- **Bairro:** plano diretor sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** rosineide franco soares
+- **CPF do responsável:** 71345027168
+- **Nome da mãe:** roseneide franco
+- **Nome do pai:** —
+- **Contato de emergência:** rosineide franco — 63 98443-2216
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** —
+- **Série:** 4 ano
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 14/11/2025 - 10:29h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+### 80. yuri gomes da silva
+
+- **Professor:** Kaio Felipe Moreira dos Santos
+- **Nome do aluno:** yuri gomes da silva
+- **Data de nascimento:** 24/12/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 09775485118
+- **RG / Certidão:** 374764
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98467-9297
+- **E-mail:** valdirenesoaresdasilva@gmail.com
+- **Endereço:** chacara 25 lote 18
+- **Bairro:** plano diretor sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77270-000
+- **Nome do responsável:** valdirene soares gomes
+- **CPF do responsável:** 99181098168
+- **Nome da mãe:** valdirene soares
+- **Nome do pai:** —
+- **Contato de emergência:** valdirene soares — 63 98479-9297
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 1
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 14/11/2025 - 09:57h
+- **Núcleo:** Núcleo Quadra 1206 Sul
+- **Observação:** —
+
+---
+
+# Núcleo Santo Amaro — Professor Renato Ferreira Fidelis
+
+Total de alunos: **78**
+
+### 1. Airton Pereira de Souza
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** Airton Pereira de Souza
+- **Data de nascimento:** 21/10/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 05595724170
+- **RG / Certidão:** 1553217
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98119-9661
+- **E-mail:** souzafilho@gmail.com
+- **Endereço:** 506 norte alameda 5 lote 10
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-343
+- **Nome do responsável:** Joana Pereira de menezes
+- **CPF do responsável:** 02179977328
+- **Nome da mãe:** Joana Pereira
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 03/01/2026 - 19:54h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 2. Ana Clara Cardoso de Melo
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** Ana Clara Cardoso de Melo
+- **Data de nascimento:** 30/12/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 12242859137
+- **RG / Certidão:** 12242859137
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98101-2286
+- **E-mail:** caiogabrielcarla@gmail.com
+- **Endereço:** Quadra ARSE 132 Alameda 4
+- **Bairro:** 77024-586
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-586
+- **Nome do responsável:** Carla Débora Cardoso Teixeira
+- **CPF do responsável:** 71013559193
+- **Nome da mãe:** Carla Débora Cardoso Teixeira
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 07/01/2026 - 22:12h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 3. ANDRE SOUZA ARAUJO
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** ANDRE SOUZA ARAUJO
+- **Data de nascimento:** 09/12/2010
+- **Sexo:** Masculino
+- **CPF do aluno:** 42592380272
+- **RG / Certidão:** 42592380272
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99110-2098
+- **E-mail:** celidalvasouza@gmail.com
+- **Endereço:** 309 Norte, alameda 10- AP 102-C
+- **Bairro:** PLANO DIRETOR NORTE
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-659
+- **Nome do responsável:** CELIDALVA SOUZA DA SILVA
+- **CPF do responsável:** 42592380272
+- **Nome da mãe:** CELIDALVA SOUZA DA SILVA
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 9 ANO
+- **Nome da escola:** ESCOLA MUNICIPAL PADRE JOSIMO- (TEMPO INTEGRAL)
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 20/11/2025 - 11:13h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 4. ANTONY GABRIEL SANTOS SILVA
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** ANTONY GABRIEL SANTOS SILVA
+- **Data de nascimento:** 23/04/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 60694910333
+- **RG / Certidão:** 1470019
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98406-9875
+- **E-mail:** AGUARDANDOEMAIL@GMAIL.COM
+- **Endereço:** AL 08 LT 15 CASA 01
+- **Bairro:** SANTO AMARO
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77007-114
+- **Nome do responsável:** LOETICIA O DOS SANTOS SILVA
+- **CPF do responsável:** 60694910333
+- **Nome da mãe:** LOETICIA O DOS SANTOS SILVA
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** —
+- **Série:** 2 ANO
+- **Nome da escola:** Escola Municipal de Tempo Integral Monsenhor Pedro Pereira Piagem
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 15/11/2025 - 19:55h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 5. ARTHUR JUNIOR MATOS LIMA DA SILVA
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** ARTHUR JUNIOR MATOS LIMA DA SILVA
+- **Data de nascimento:** 21/04/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 05625789355
+- **RG / Certidão:** 1775735
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 68 98111-2441
+- **E-mail:** TATYANNYLIMA131293@GMAIL.COM
+- **Endereço:** AL 10 QI 08 LT 12
+- **Bairro:** SANTO AMARO
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77007-120
+- **Nome do responsável:** TATIANE LIMA DA SILVA
+- **CPF do responsável:** 05625789355
+- **Nome da mãe:** TATIANE LIMA DA SILVA
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 3 ANO
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 15/11/2025 - 21:08h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 6. ArthurHemrique Gomes
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** ArthurHemrique Gomes
+- **Data de nascimento:** 13/09/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 08789978145
+- **RG / Certidão:** 2566219
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98118-9663
+- **E-mail:** arthurraio2017@gmail.com
+- **Endereço:** 307 norte alameda 5 lote 9
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-345
+- **Nome do responsável:** Monica Gomes
+- **CPF do responsável:** 59724137287
+- **Nome da mãe:** Monica
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 07/01/2026 - 13:07h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 7. ATHAO BENJAMIN COREA DOS SANTOS
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** ATHAO BENJAMIN COREA DOS SANTOS
+- **Data de nascimento:** 21/03/2019
+- **Sexo:** Masculino
+- **CPF do aluno:** 10002469146
+- **RG / Certidão:** 10002469146
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98100-4923
+- **E-mail:** CLEINHAMISS88@GMAIL.COM
+- **Endereço:** LAGO NORTE AL 25 LT 27 A
+- **Bairro:** PLANO DIRETOR NORTE
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77003-310
+- **Nome do responsável:** LEOCIDEIA COSTA COREIA DOS SANTOS
+- **CPF do responsável:** 00656544201
+- **Nome da mãe:** LEOCIDEIA COSTA COREIA DOS SANTOS
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Particular
+- **Turno escolar:** Manhã
+- **Série:** 1 ANO
+- **Nome da escola:** Colégio Madre Clelia Merloni
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 14/11/2025 - 19:25h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 8. BENJAMIM TAVARES SOUZA
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** BENJAMIM TAVARES SOUZA
+- **Data de nascimento:** 05/06/2019
+- **Sexo:** Masculino
+- **CPF do aluno:** 00587968192
+- **RG / Certidão:** 754060
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 62 98558-5304
+- **E-mail:** elisreginatavares80@gmail.com
+- **Endereço:** 306 sul al. 3 lote
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77021-014
+- **Nome do responsável:** Geraldo Souza
+- **CPF do responsável:** 00587968192
+- **Nome da mãe:** Geraldo Souza
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 07/12/2025 - 19:04h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 9. BERNARDO OLIVEIRA CANTUARA
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** BERNARDO OLIVEIRA CANTUARA
+- **Data de nascimento:** 04/12/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 09196128143
+- **RG / Certidão:** 1666144
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99969-4416
+- **E-mail:** AGUARDANDOEMAIL@GMAIL.COM
+- **Endereço:** ARNE 81 AL 10 QI 09
+- **Bairro:** PLANO DIRETOR NORTE
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77007-120
+- **Nome do responsável:** DIOLANDIA ALVES DE OLIVEIRA
+- **CPF do responsável:** 01366131100
+- **Nome da mãe:** DIOLANDIA ALVES DE OLIVEIRA
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 5 ANO
+- **Nome da escola:** Escola Municipal de Tempo Integral Monsenhor Pedro Pereira Piagem
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 15/11/2025 - 20:03h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 10. BERNARDO VIEIRA DIAS
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** BERNARDO VIEIRA DIAS
+- **Data de nascimento:** 02/08/2018
+- **Sexo:** —
+- **CPF do aluno:** —
+- **RG / Certidão:** 91978149115 CPF:91978149115
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99966-8932 / E-mail:AGUARDANDOEMAIL.COM.BR
+- **E-mail:** —
+- **Endereço:** AL 08 LOTE 27 Bairro:LAGO NORTE
+- **Bairro:** —
+- **Cidade:** Palmas
+- **Estado (UF):** TO CEP:77000-000
+- **CEP:** —
+- **Nome do responsável:** VALDETE DIAS PEREIRA CPF / RG do Resp.:91978149115 / -
+- **CPF do responsável:** —
+- **Nome da mãe:** VALDETE DIAS PEREIRA CPF / RG da Mãe:91978149115 / -
+- **Nome do pai:** CPF / RG do Pai:/ -
+- **Contato de emergência:** —
+- **Escolaridade:** Tipo de Escola:
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Série:
+- **Série:** —
+- **Nome da escola:** Matrícula:
+- **Tamanho da camisa:** P Camisa Entregue: NÃO
+- **Camisa entregue (Sim/Não):** —
+- **Data do cadastro:** 07/01/2026 - 21:57h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 11. Caio Gabriel Cardoso de Melo
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** Caio Gabriel Cardoso de Melo
+- **Data de nascimento:** 07/07/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 08397363122
+- **RG / Certidão:** 08397363122
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98101-2286
+- **E-mail:** caiogabrielcarla@gmail.com
+- **Endereço:** Quadra ALC NO 33 Área HM 13
+- **Bairro:** Plano Diretor Norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-659
+- **Nome do responsável:** Carla Débora Cardoso Teixeira
+- **CPF do responsável:** 08397363122
+- **Nome da mãe:** Carla Débora Cardoso Teixeira
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 07/01/2026 - 22:26h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 12. CALEBE ALMEIDA DE ARAUJO
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** CALEBE ALMEIDA DE ARAUJO
+- **Data de nascimento:** 14/05/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 71327655152
+- **RG / Certidão:** 71327655152
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98449-4758
+- **E-mail:** AGUARDANDOEMAIL.COM.BR
+- **Endereço:** ARNE 81 ALAMEDA 07 LOTE 09
+- **Bairro:** SANTO AMARO
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77007-108
+- **Nome do responsável:** MARA JANE ALMEIDA DE SANTANA
+- **CPF do responsável:** 71327655152
+- **Nome da mãe:** MARA JANE ALMEIDA DE SANTANA
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 07/01/2026 - 21:43h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 13. Carlos Augusto Morais
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** Carlos Augusto Morais
+- **Data de nascimento:** 15/11/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 04681373192
+- **RG / Certidão:** 1912451
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99255-7109
+- **E-mail:** morais2012@gmail.com
+- **Endereço:** 604 norte alameda 3 lote 1
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-541
+- **Nome do responsável:** Maria Augustina Morais
+- **CPF do responsável:** 01843189127
+- **Nome da mãe:** Naria Augustina
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 03/01/2026 - 19:58h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 14. CARLOS EDUARDO TEIXEIRA RAMALHO
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** CARLOS EDUARDO TEIXEIRA RAMALHO
+- **Data de nascimento:** 12/12/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 10042015162
+- **RG / Certidão:** 10042015162
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99276-8352
+- **E-mail:** David.c.s.ramalho@gmail.com
+- **Endereço:** AV NS 10 LT 09 QD 06
+- **Bairro:** LAGO NORTE
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77003-310
+- **Nome do responsável:** CIBELE TEIXEIRA DE CARVALHO RAMALHO
+- **CPF do responsável:** 10042015162
+- **Nome da mãe:** CIBELE TEIXEIRA DE CARVALHO RAMALHO
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 6 ano
+- **Nome da escola:** ESCOLA MUNICIPAL ANNE FRANK
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** —
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 15. CRYSTIAN RHUAN ALMEIDA DA SILVA
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** CRYSTIAN RHUAN ALMEIDA DA SILVA
+- **Data de nascimento:** 20/08/2019
+- **Sexo:** Masculino
+- **CPF do aluno:** 10292843186
+- **RG / Certidão:** 10292843186
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99205-4210
+- **E-mail:** SANDYALMEIDAMENDES20@GMAIL.BR
+- **Endereço:** AL 10 LT 05
+- **Bairro:** SANTO AMARO
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77003-214
+- **Nome do responsável:** SANDY ALMEIDA MENDES
+- **CPF do responsável:** 06514039103
+- **Nome da mãe:** SANDY ALMEIDA MENDES
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** —
+- **Série:** PRE 2
+- **Nome da escola:** CMEI Profª Jucéia Garbelini
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 14/11/2025 - 18:31h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 16. Daniel Nunes de Sousa
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** Daniel Nunes de Sousa
+- **Data de nascimento:** 24/06/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 09170343179
+- **RG / Certidão:** 09170343179
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 84213-574
+- **E-mail:** aurienesouzacoelho@gmail.com
+- **Endereço:** Quadra 38 - Recanto das Araras II
+- **Bairro:** Recanto das Araras II
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77066-588
+- **Nome do responsável:** Aureny Sousa coelho
+- **CPF do responsável:** 01106297105
+- **Nome da mãe:** Aureny Sousa coelho
+- **Nome do pai:** —
+- **Contato de emergência:** Aureny Sousa coelho — 63 84213-574
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 07/01/2026 - 21:14h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 17. DAVI LUCA TEIXEIRA RAMALHO
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** DAVI LUCA TEIXEIRA RAMALHO
+- **Data de nascimento:** 20/01/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 10042044189
+- **RG / Certidão:** 100.420.441-89
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 97400-8248 / 63 99276-8352
+- **E-mail:** David.c.s.ramalho@gmail.com
+- **Endereço:** AV NS 10 LT 09 QD 06
+- **Bairro:** LAGO NORTE
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77003-310
+- **Nome do responsável:** CIBELE TEIXEIRA DE CARVALHO RAMALHO
+- **CPF do responsável:** 10042044189
+- **Nome da mãe:** CIBELE TEIXEIRA DE CARVALHO RAMALHO
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 5 ANO
+- **Nome da escola:** ESCOLA MUNICIPAL ANNE FRANK
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** —
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 18. Davi Luiz Costa Santos
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** Davi Luiz Costa Santos
+- **Data de nascimento:** 18/08/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 08789978145
+- **RG / Certidão:** 1162315
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98119-9663
+- **E-mail:** costasantos.12@gmail.com
+- **Endereço:** 606 norte alameda 5 lote 22
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-131
+- **Nome do responsável:** Sonia Santos Costa
+- **CPF do responsável:** 12221442717
+- **Nome da mãe:** Sonia
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 03/01/2026 - 20:03h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 19. DAVI MANOEL VASCONCELOS SOUSA
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** DAVI MANOEL VASCONCELOS SOUSA
+- **Data de nascimento:** 10/02/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 07971305354
+- **RG / Certidão:** 07071305354
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99998-3595
+- **E-mail:** ANACAROLINAVASCONCELOS84@GMAIL.COM
+- **Endereço:** AL 08 QI 07 LOTE27
+- **Bairro:** SANTO AMARO
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77007-114
+- **Nome do responsável:** ANA CAROLINA VASCONCELOS
+- **CPF do responsável:** 07971305394
+- **Nome da mãe:** ANA CAROLINA VASCONCELOS
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 5 ANO
+- **Nome da escola:** CORA CAROLINA
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 14/11/2025 - 18:53h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 20. DAVI SERAFIM DE SOUZA
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** DAVI SERAFIM DE SOUZA
+- **Data de nascimento:** 15/02/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 84503645153
+- **RG / Certidão:** 349-002
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99202-4512
+- **E-mail:** dekatia1980@gmail.com
+- **Endereço:** Arne 71 Alameda 14 QI 07 Lote 05
+- **Bairro:** Plano Dir. Norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-733
+- **Nome do responsável:** Katia dos Santos Serafim
+- **CPF do responsável:** 84503645153
+- **Nome da mãe:** Katia dos Santos Serafim
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** —
+- **Nome da escola:** ESCOLA MUNICIPAL PRINCIPES E PRINCESAS
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 20/11/2025 - 20:29h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 21. ENZO GABRIEL DA SILVA SANTOS
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** ENZO GABRIEL DA SILVA SANTOS
+- **Data de nascimento:** 26/03/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 71305733177
+- **RG / Certidão:** 167393
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99222-7542
+- **E-mail:** elisangelag895@gmail.com
+- **Endereço:** AL 12
+- **Bairro:** LAGO NORTE
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77007-148
+- **Nome do responsável:** ELISANGELA GOMES DA SILVA
+- **CPF do responsável:** 80869246291
+- **Nome da mãe:** ELISANGELA GOMES DA SILVA
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 3 ANO
+- **Nome da escola:** COLEGIO DANIEL BATISTA
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** —
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 22. ENZO GABRIEL LIMA DE CARVALHO
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** ENZO GABRIEL LIMA DE CARVALHO
+- **Data de nascimento:** 04/09/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 10316067180
+- **RG / Certidão:** 1663597
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99296-1409
+- **E-mail:** FernandaJusto.1999@gmail.com
+- **Endereço:** Lago norte alamenda 20A lote05
+- **Bairro:** Lago norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77003-310
+- **Nome do responsável:** ERNILSOM CARVALHO BRAGA
+- **CPF do responsável:** 05921984132
+- **Nome da mãe:** ERNILSOM CARVALHO BRAGA
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 6 ANO
+- **Nome da escola:** MONSENHOR PEDRO PEREIRA PIAGEM
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 20/11/2025 - 20:37h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 23. ENZO GABRIEL PINHEIRO DA SILVA
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** ENZO GABRIEL PINHEIRO DA SILVA
+- **Data de nascimento:** 30/12/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 10953669122
+- **RG / Certidão:** 10953669122
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99237-8509
+- **E-mail:** brunaleticia_pinheiro@hotmail.com
+- **Endereço:** Quadra ALC NO 33 Área HM 13
+- **Bairro:** Plano Diretor Norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-659
+- **Nome do responsável:** Bruna Leticia Moura Pinheiro
+- **CPF do responsável:** 10953669122
+- **Nome da mãe:** Bruna Leticia Moura Pinheiro
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 07/01/2026 - 22:16h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 24. FELIPE MELO DIAS
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** FELIPE MELO DIAS
+- **Data de nascimento:** 18/09/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 06075486143
+- **RG / Certidão:** 06075486143
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99118-4821
+- **E-mail:** JORDANAMELO492@HOTMAIL.COM
+- **Endereço:** ARNO 21 QID LOTE 17 AL 06
+- **Bairro:** PLANO DIRETOR NORTE
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-882
+- **Nome do responsável:** JORDANA TEIXEIRA DE MELO
+- **CPF do responsável:** 94656592153
+- **Nome da mãe:** JORDANA TEIXEIRA DE MELO
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 20/12/2025 - 14:47h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 25. FELIPE SOUSA ALENCAR
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** FELIPE SOUSA ALENCAR
+- **Data de nascimento:** 25/03/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 08898183127
+- **RG / Certidão:** 1.790.898
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99249-0264
+- **E-mail:** AGUARDANDOEMAIL@GMAIL.COM
+- **Endereço:** ALAMEDA 08, AV NS 15, LOTE 35
+- **Bairro:** ARNE 81 ANTIGO SANTO AMARO
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77007-100
+- **Nome do responsável:** FRANCEILDE SOUSA DE DOUSA ALENCAR
+- **CPF do responsável:** 02729478140
+- **Nome da mãe:** FRANCEILDE SOUSA DE DOUSA ALENCAR
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 4 ano
+- **Nome da escola:** Escola Municipal Monsenhor Pedro Pereira Piagem
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** —
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 26. GABRIEL MELO ZAWASKI
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** GABRIEL MELO ZAWASKI
+- **Data de nascimento:** 18/03/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 06881852150
+- **RG / Certidão:** 1485622
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99203-2767
+- **E-mail:** deborazawaski@gmail.com
+- **Endereço:** 108 sul alameda 06 lote 27
+- **Bairro:** Plano diretor sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77020-106
+- **Nome do responsável:** DEBORA ROSANA TEIXEIRA DE MELO ZAWASKI
+- **CPF do responsável:** 06881852150
+- **Nome da mãe:** DEBORA ROSANA TEIXEIRA DE MELO ZAWASKI
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** —
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 27. GUILHERME DANTY DOS SANTOS SOARES
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** GUILHERME DANTY DOS SANTOS SOARES
+- **Data de nascimento:** 23/04/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 09318811101
+- **RG / Certidão:** 09318811101
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99251-8263
+- **E-mail:** GARDENIADEMY123@GMAIL.COM
+- **Endereço:** Q ARNE81ALAMEDA 23
+- **Bairro:** 77007148
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77007-148
+- **Nome do responsável:** GARDENIA FERREIRA DOS SANTOS
+- **CPF do responsável:** 06630619110
+- **Nome da mãe:** GARDENIA FERREIRA DOS SANTOS
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 1 Ano
+- **Nome da escola:** ETI DANIEL BATISTA
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 14/11/2025 - 14:50h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 28. Guilherme Peixoto Alves
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** Guilherme Peixoto Alves
+- **Data de nascimento:** 12/12/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 04681373192
+- **RG / Certidão:** 1351229
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99256-0010
+- **E-mail:** guipeixoto17@gmail.com
+- **Endereço:** 403 norte alameda 7 lote 11
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-344
+- **Nome do responsável:** Elisa Peixoto Alves
+- **CPF do responsável:** 11275045170
+- **Nome da mãe:** Elisa Peixoto
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 07/01/2026 - 13:03h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 29. HEITOR PEREIRA CUNHA
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** HEITOR PEREIRA CUNHA
+- **Data de nascimento:** 04/12/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 10055417108
+- **RG / Certidão:** 1634206
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99248-6060
+- **E-mail:** luciapcunha82@gmail.com
+- **Endereço:** Q Arne 81Alameda 23
+- **Bairro:** PLANO DIRETOR NORTE
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77007-148
+- **Nome do responsável:** Luciana Pereira Cunha
+- **CPF do responsável:** 00642917159
+- **Nome da mãe:** Luciana Pereira Cunha
+- **Nome do pai:** —
+- **Contato de emergência:** Luciana Pereira Cunha — 63 99248-6060
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 3 Ano
+- **Nome da escola:** Anne Frank
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 14/11/2025 - 14:38h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 30. HEITOR RESPLANDES SOARES
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** HEITOR RESPLANDES SOARES
+- **Data de nascimento:** 11/11/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 09949132142
+- **RG / Certidão:** 1708485
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 84719-112
+- **E-mail:** Cruzhildo12@gmail.com
+- **Endereço:** SANTO AMARO BL R AP 201
+- **Bairro:** SANTO AMARO
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77007-148
+- **Nome do responsável:** ILDO SOARES
+- **CPF do responsável:** 71427600104
+- **Nome da mãe:** ILDO SOARES
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** —
+- **Série:** 2 ANO
+- **Nome da escola:** DANIEL BATISTA
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 15/11/2025 - 20:14h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 31. HEVERTON ROGÉRIO MATTOS MILAN
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** HEVERTON ROGÉRIO MATTOS MILAN
+- **Data de nascimento:** 26/04/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 05139354101
+- **RG / Certidão:** 1014.885
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 98 439-1880
+- **E-mail:** ingrydlohanem@gmail.com
+- **Endereço:** AL 12 lote 28 Lago Norte
+- **Bairro:** LAGO NORTE
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77003-310
+- **Nome do responsável:** Ingryd Lohane Mattos Santos
+- **CPF do responsável:** 05139354101
+- **Nome da mãe:** Ingryd Lohane Mattos Santos
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 7 ano
+- **Nome da escola:** ESCOLA MUNICIPAL HENRIQUE TALONE PINHEIRO
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 24/11/
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 32. Hugo mesquita Santos
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** Hugo mesquita Santos
+- **Data de nascimento:** 20/09/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 08794886113
+- **RG / Certidão:** 1378714
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99256-1404
+- **E-mail:** hugomesquita22@gmail.com
+- **Endereço:** 305 norte alameda 1 lote 12
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-346
+- **Nome do responsável:** Antonia Mesquita
+- **CPF do responsável:** 10347279155
+- **Nome da mãe:** Antonia Mesquita
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 07/01/2026 - 12:54h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 33. ISAC COELHO DE OLIVEIRA
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** ISAC COELHO DE OLIVEIRA
+- **Data de nascimento:** 25/06/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 10084283106
+- **RG / Certidão:** 743489
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99298-8289
+- **E-mail:** valeriavilaquixaba@gmail.com
+- **Endereço:** ARNE 81 AL 12 LT 15 QI 12
+- **Bairro:** SANTO AMARO
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77007-122
+- **Nome do responsável:** Valeria Pereira Coelho de Oliveira
+- **CPF do responsável:** 73832162100
+- **Nome da mãe:** Valeria Pacheco Coelho de Oliveira
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 3 ANO
+- **Nome da escola:** Escola Municipal de Tempo Integral Monsenhor Pedro Pereira Piagem
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 14/11/202
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 34. ITALLO Gabriel Carvalho Pereira
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** ITALLO Gabriel Carvalho Pereira
+- **Data de nascimento:** 13/12/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 62288093340
+- **RG / Certidão:** 62288093340
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99295-3510
+- **E-mail:** cristianopareira1@gmail.com
+- **Endereço:** Quadra ARSE 152 QD 41
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77027-142
+- **Nome do responsável:** Cristiano Pereira da luz
+- **CPF do responsável:** 03727115378
+- **Nome da mãe:** Cristiano Pereira da luz
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 07/01/2026 - 22:29h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 35. JESUS SAMUEL CORDEIRO MIRANDA
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** JESUS SAMUEL CORDEIRO MIRANDA
+- **Data de nascimento:** 17/03/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 10580541126
+- **RG / Certidão:** 10580541126
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99218-1883
+- **E-mail:** Pedrohenriquejs189@gmail.com
+- **Endereço:** SANTO AMARO AL 10 LT 05
+- **Bairro:** SANTO AMARO
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77003-310
+- **Nome do responsável:** PEDRO HENRIQUE CORDEIRO SANTOS
+- **CPF do responsável:** 02730726179
+- **Nome da mãe:** PEDRO HENRIQUE CORDEIRO SANTOS
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 5 ANO
+- **Nome da escola:** CORA CAROLINA
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 14/11/2025 - 18:42h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 36. JOAO GABRIEL DINIZ MARCONDES
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** JOAO GABRIEL DINIZ MARCONDES
+- **Data de nascimento:** 24/06/2011
+- **Sexo:** Masculino
+- **CPF do aluno:** 10987311158
+- **RG / Certidão:** 10987311158
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98140-3779
+- **E-mail:** AGUARDANDOEMAIL@GMAIL.COM
+- **Endereço:** RESIDENCIAL SANTO AMARO
+- **Bairro:** SANTO AMARO
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77007-148
+- **Nome do responsável:** LEIDIANE DINIZ DA SILVA
+- **CPF do responsável:** 10987311158
+- **Nome da mãe:** LEIDIANE DINIZ DA SILVA
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 07/12/2025 - 19:10h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 37. JOÃO LUCAS GUEDES DE SÁ SANTOS
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** JOÃO LUCAS GUEDES DE SÁ SANTOS
+- **Data de nascimento:** 07/02/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 01351027158
+- **RG / Certidão:** 897713
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 98 10785-25 / 9 99283-0143
+- **E-mail:** Guedenete2010@hotmaill.com
+- **Endereço:** Lago Norte alameda 23 lote 17
+- **Bairro:** Santo amaro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77003-331
+- **Nome do responsável:** ALCINETE GUEDES LADEIRA
+- **CPF do responsável:** 01351027158
+- **Nome da mãe:** ALCINETE GUEDES LADEIRA
+- **Nome do pai:** João eterno sa santos
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 3 ano
+- **Nome da escola:** Ane Frank
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** —
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** Só tem nome paí
+
+### 38. João Paulo Silva pereira
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** João Paulo Silva pereira
+- **Data de nascimento:** 14/11/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 62288099380
+- **RG / Certidão:** 62288099380
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99295-3510
+- **E-mail:** cristianopareira1@gmail.com
+- **Endereço:** Quadra ARSE 152 QD 41
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77027-142
+- **Nome do responsável:** cristiano pereira da luz
+- **CPF do responsável:** 03727115378
+- **Nome da mãe:** cristiano pereira da luz
+- **Nome do pai:** —
+- **Contato de emergência:** cristiano pereira da luz — 63 99295-3510
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 07/01/2026 - 22:32h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 39. João pedro Bezerra Vieira
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** João pedro Bezerra Vieira
+- **Data de nascimento:** 25/11/2012
+- **Sexo:** —
+- **CPF do aluno:** —
+- **RG / Certidão:** 07071512108 CPF:07071512108
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98482-7922 / E-mail:AGUARDANDOEMAIL.COM.BR
+- **E-mail:** —
+- **Endereço:** 1306 Sul Avenida LO 29 Bairro:Plano Diretor Sul
+- **Bairro:** —
+- **Cidade:** Palmas
+- **Estado (UF):** TO CEP:77024-582
+- **CEP:** —
+- **Nome do responsável:** Vânia CPF / RG do Resp.:07071512108 / -
+- **CPF do responsável:** —
+- **Nome da mãe:** Vânia CPF / RG da Mãe:07071512108 / -
+- **Nome do pai:** CPF / RG do Pai:/ -
+- **Contato de emergência:** —
+- **Escolaridade:** Tipo de Escola:
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Série:
+- **Série:** —
+- **Nome da escola:** Matrícula:
+- **Tamanho da camisa:** P Camisa Entregue: NÃO
+- **Camisa entregue (Sim/Não):** —
+- **Data do cadastro:** 07/01/2026 - 22:08h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 40. JOAQUIM MANOEL SOUSA CALDAS
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** JOAQUIM MANOEL SOUSA CALDAS
+- **Data de nascimento:** 07/12/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 09934389118
+- **RG / Certidão:** 1625334
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99104-2392
+- **E-mail:** MIRIASOUSAMORAISCALDAS@GMAIL.COM
+- **Endereço:** LOTEAMENTO LAGO NORTE
+- **Bairro:** LAGO NORTE
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77003-356
+- **Nome do responsável:** MIRIAM SOUSA MORAIS CALDAS
+- **CPF do responsável:** 02396232150
+- **Nome da mãe:** MIRIAM SOUSA MORAIS CALDAS
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** —
+- **Série:** 2 ANO
+- **Nome da escola:** Escola Municipal Pastor Paulo Leivas Macalão
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 15/11/2025 - 20:10h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 41. JOSÉ RAFAEL BARROS LIMA
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** JOSÉ RAFAEL BARROS LIMA
+- **Data de nascimento:** 04/03/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 00596415176
+- **RG / Certidão:** 723.199
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98128-0960 / 63 98128-0960
+- **E-mail:** netanialima.10@gmail.com
+- **Endereço:** Al. 08 Lt. 17 Santo Amaro
+- **Bairro:** PLANO DIRETOR NORTE
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77007-114
+- **Nome do responsável:** NETANIA LIMA DOS SANTOS
+- **CPF do responsável:** 00596415176
+- **Nome da mãe:** NETANIA LIMA DOS SANTOS
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 4 ANO
+- **Nome da escola:** ESCOLA MUNICIPAL HENRIQUE TALONE PINHEIRO
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 15/11/
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 42. LUIS FELIPE GONÇALVES BORGES
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** LUIS FELIPE GONÇALVES BORGES
+- **Data de nascimento:** 11/04/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 08401878152
+- **RG / Certidão:** 08401878152
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 62 99306-7499
+- **E-mail:** leandrofborges.1982@gamil.com
+- **Endereço:** Alameda12 QI0 LT 22 CASA 5
+- **Bairro:** Plano diretor norte
+- **Cidade:** Abreulândia
+- **Estado (UF):** TO
+- **CEP:** 77020-528
+- **Nome do responsável:** Edilsa G Sousa Borges
+- **CPF do responsável:** 95354930197
+- **Nome da mãe:** Edilsa G Sousa Borges
+- **Nome do pai:** Leandro Ferreira Borges
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 2 Ano
+- **Nome da escola:** Escola Municipal Cora Carolina
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** —
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 43. LUIS MIGUEL BRITO MIRANDA
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** LUIS MIGUEL BRITO MIRANDA
+- **Data de nascimento:** 27/11/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 09975630103
+- **RG / Certidão:** 09975630103
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99957-4789
+- **E-mail:** LUCIMARMIRANDADOSSANTOS@GMAIL.COM
+- **Endereço:** LAGO NORTE ALAMEDA 26A LOTE 2
+- **Bairro:** PLANO DIRETOR NORTE
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** LUCIMAR MIRANDA DOS SANTOS
+- **CPF do responsável:** 02338160118
+- **Nome da mãe:** LUCIMAR MIRANDA DOS SANTOS
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 2 ANO
+- **Nome da escola:** ETI MONSENHOR PEDRO PEREIRA
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 14/11/2025 - 14:58h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 44. LUIS OTAVIO VARGAS MACEDO
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** LUIS OTAVIO VARGAS MACEDO
+- **Data de nascimento:** 26/02/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 00649311108
+- **RG / Certidão:** 723.199
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98500-3357
+- **E-mail:** Mariaparecida19811@gmail.com
+- **Endereço:** AL. 07 LT. 17 LAGO NORTE
+- **Bairro:** PLANO DIRETOR NORTE
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77007-114
+- **Nome do responsável:** MARIA APARECIDA MACEDO DA SILVA
+- **CPF do responsável:** 00596415176
+- **Nome da mãe:** MARIA APARECIDA MACEDO DA SILVA
+- **Nome do pai:** —
+- **Contato de emergência:** MARIA APARECIDA MACEDO DA SILVA — 63 98500-3357
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 4 ANO
+- **Nome da escola:** ESCOLA MUNICIPAL HENRIQUE TALONE PINHEIRO
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 20/11/2025 - 11:06h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 45. Luiz Miguel dos Santos
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** Luiz Miguel dos Santos
+- **Data de nascimento:** 05/12/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 09849824182
+- **RG / Certidão:** 1916651
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98123-4567
+- **E-mail:** luizmiguel22@gmail.com
+- **Endereço:** 506 norte alameda3 lote 8
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-131
+- **Nome do responsável:** Solange dos Santos
+- **CPF do responsável:** 02179977328
+- **Nome da mãe:** Solange dos Santos
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 03/01/2026 - 20:06h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 46. Marcello almeida brandao
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** Marcello almeida brandao
+- **Data de nascimento:** 05/05/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 08368334144
+- **RG / Certidão:** 08368334144
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98469-1813
+- **E-mail:** almeidaeliete325@gmail.com
+- **Endereço:** 1306 Sul Avenida LO 29
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** ELIETE ALMEIDA
+- **CPF do responsável:** 80400620391
+- **Nome da mãe:** ELIETE ALMEIDA
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 07/01/2026 - 22:05h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 47. Marco Antonio Botelho da Conceição
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** Marco Antonio Botelho da Conceição
+- **Data de nascimento:** 30/12/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 08809620119
+- **RG / Certidão:** 08809620119
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99218-2225
+- **E-mail:** marcoff143@gmail.com
+- **Endereço:** Avenida São Francisco
+- **Bairro:** Avenida São Francisco
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77501-532
+- **Nome do responsável:** Lucimar Botelho Guimarães
+- **CPF do responsável:** 08809620119
+- **Nome da mãe:** Lucimar Botelho Guimarães
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 07/01/2026 - 22:20h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 48. Marco Antonio Feitosa
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** Marco Antonio Feitosa
+- **Data de nascimento:** 22/10/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 08789978145
+- **RG / Certidão:** 1667819
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99256-0555
+- **E-mail:** alvespintor@gmail.com
+- **Endereço:** 606 norte alameda 2 lote 22
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-581
+- **Nome do responsável:** Cecilia Gomes Alves
+- **CPF do responsável:** 60967650259
+- **Nome da mãe:** Cecilia
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 03/01/2026 - 19:46h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 49. MARCO ANTONIO MENETES DA SILVA
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** MARCO ANTONIO MENETES DA SILVA
+- **Data de nascimento:** 10/11/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 05181626726
+- **RG / Certidão:** 103138568
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 32250-976
+- **E-mail:** ANTONIO.CSJ@outlook.COM.BR
+- **Endereço:** Q ARNE 13 AL 6 N52
+- **Bairro:** PLANO DIRETOR NORTE
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-102
+- **Nome do responsável:** ANTONIO CARLOS DA SILVA
+- **CPF do responsável:** 05181626726
+- **Nome da mãe:** ANTONIO CARLOS DA SILVA
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Particular
+- **Turno escolar:** Manhã
+- **Série:** 5 ANO
+- **Nome da escola:** CESFA
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 14/11/2025 - 18:06h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 50. Martín Matos de Aquino
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** Martín Matos de Aquino
+- **Data de nascimento:** 24/06/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 10160290120
+- **RG / Certidão:** 10160290120
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99235-3952
+- **E-mail:** ajulianamatos@gmail.com
+- **Endereço:** ARSE 122 Alameda 24
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Maricá
+- **Estado (UF):** RJ
+- **CEP:** 77024-488
+- **Nome do responsável:** Juliana Candido de Matos
+- **CPF do responsável:** 04470571113
+- **Nome da mãe:** Juliana Candido de Matos
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 07/01/2026 - 21:10h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 51. MATHEUS ROCHA DE MACEDO
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** MATHEUS ROCHA DE MACEDO
+- **Data de nascimento:** 30/12/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 07137999271
+- **RG / Certidão:** 07137999271
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99957-6772
+- **E-mail:** matheus.mrocha35@gmail.com
+- **Endereço:** 106 NORTE ALAMEDA 17 LOTE 51
+- **Bairro:** PLANO DIRETOR NORTE
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-070
+- **Nome do responsável:** ELIZANGELA ROCHA DE MACEDO
+- **CPF do responsável:** 07137999271
+- **Nome da mãe:** ELIZANGELA ROCHA DE MACEDO
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 07/01/2026 - 22:46h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 52. Maycon Arruda de Sá
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** Maycon Arruda de Sá
+- **Data de nascimento:** 10/10/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 12221442717
+- **RG / Certidão:** 1446729
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99255-9090
+- **E-mail:** mayconarruda22@gmail.com
+- **Endereço:** 605 norte alameda 15 lote 23
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-345
+- **Nome do responsável:** Elisangela Arruda de Sá
+- **CPF do responsável:** 01350008150
+- **Nome da mãe:** Elisangela
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 07/01/2026 - 13:13h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 53. MAYKON GABRIEL MATOS C L
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** MAYKON GABRIEL MATOS C L
+- **Data de nascimento:** 30/04/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 00608287148
+- **RG / Certidão:** 1648480
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99104-6099
+- **E-mail:** ANYELLYRAYNA007@GMAIL.COM
+- **Endereço:** ARNE 81 AL 06 LT19
+- **Bairro:** PLANO DIRETOR NORTE
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77007-110
+- **Nome do responsável:** ANYELLY RAYNA MATOS DA COSTA
+- **CPF do responsável:** 00608287148
+- **Nome da mãe:** ANYELLY RAYNA MATOS DA COSTA
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** A ano
+- **Nome da escola:** PEDRO PEREIRA PIAGEM
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 14/11/2025 - 15:09h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 54. MIGUEL COELHO DOS SANTOS
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** MIGUEL COELHO DOS SANTOS
+- **Data de nascimento:** 26/12/2012
+- **Sexo:** —
+- **CPF do aluno:** —
+- **RG / Certidão:** 10121876160 CPF:10121876160
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99221-7885 / E-mail:AGUARDANDOEMAIL@GMAIL.COM
+- **E-mail:** —
+- **Endereço:** AV NS 10 LT 68 Bairro:LAGO NORTE
+- **Bairro:** —
+- **Cidade:** Palmas
+- **Estado (UF):** TO CEP:77003-310
+- **CEP:** —
+- **Nome do responsável:** MONICA COELHO DA SILVA SANTOS CPF / RG do Resp.:10121876160 / -
+- **CPF do responsável:** —
+- **Nome da mãe:** MONICA COELHO DA SILVA SANTOS CPF / RG da Mãe:10121876160 / -
+- **Nome do pai:** CPF / RG do Pai:/ -
+- **Contato de emergência:** MONICA COELHO DA SILVA SANTOS — 63 99221-7885
+- **Escolaridade:** Tipo de Escola:
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Série:
+- **Série:** —
+- **Nome da escola:** Matrícula:
+- **Tamanho da camisa:** P Camisa Entregue: SIM- Em 20/12/2025 - 15:02h
+- **Camisa entregue (Sim/Não):** —
+- **Data do cadastro:** 20/12/2025 - 15:02h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 55. MIGUEL DE FRANÇA FERREIRA
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** MIGUEL DE FRANÇA FERREIRA
+- **Data de nascimento:** 28/12/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 95026614191
+- **RG / Certidão:** 412316
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98449-2654
+- **E-mail:** VALERIAFADM@GMAIL.COM
+- **Endereço:** 106 NORTE AL 14 LT 7
+- **Bairro:** PLANO DIRETOR NORTE
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-076
+- **Nome do responsável:** VALERIA SOARES DE FRANÇA
+- **CPF do responsável:** 95026614191
+- **Nome da mãe:** VALERIA SOARES DE FRANÇA
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Particular
+- **Turno escolar:** Manhã
+- **Série:** 6 ANO
+- **Nome da escola:** COLEGIO MARISTA
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 15/11/2025 - 21:31h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 56. MIGUEL FERNANDES DA SILVA
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** MIGUEL FERNANDES DA SILVA
+- **Data de nascimento:** 17/12/2011
+- **Sexo:** Masculino
+- **CPF do aluno:** 86368419172
+- **RG / Certidão:** 86368419172
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99108-0727
+- **E-mail:** AGUARDANDOEMAIL@GMAIL.COM
+- **Endereço:** ARNE 81 AL 12
+- **Bairro:** SANTO AMARO
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77007-122
+- **Nome do responsável:** HELENA FERNANDES DE ALMEIDA SILVA
+- **CPF do responsável:** 86368419172
+- **Nome da mãe:** HELENA FERNANDES DE ALMEIDA SILVA
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 20/12/2025 - 11:46h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 57. MIGUEL GLORIA OLIVEIRA
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** MIGUEL GLORIA OLIVEIRA
+- **Data de nascimento:** 05/06/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 09542622120
+- **RG / Certidão:** 1597533
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99238-4517
+- **E-mail:** NICE62499@GMAIL.COM
+- **Endereço:** CHACARA BOA SORTE SN N 03
+- **Bairro:** ZONA RURAL
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** ELENICE SILVA PEREIRA
+- **CPF do responsável:** 09542622120
+- **Nome da mãe:** ELENICE SILVA PEREIRA
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** —
+- **Série:** 3 ANO
+- **Nome da escola:** CARLOS DRUMMD ANDRADE
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 14/11/2025 - 15:15h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 58. MIGUEL LOPES FARIAS
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** MIGUEL LOPES FARIAS
+- **Data de nascimento:** 04/09/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 11860062180
+- **RG / Certidão:** 118600062180
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99261-8420
+- **E-mail:** AGUARDANDOEMAIL.COM.BR
+- **Endereço:** AVENIDA D HM 05 AP 201
+- **Bairro:** LAGO AZUL
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-070
+- **Nome do responsável:** ELISELMA LOPES DOS REIS
+- **CPF do responsável:** 98595709149
+- **Nome da mãe:** 98595709149
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 07/01/2026 - 21:04h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 59. MIGUEL RESPLANDES SOARES
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** MIGUEL RESPLANDES SOARES
+- **Data de nascimento:** 01/03/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 09949177162
+- **RG / Certidão:** 1708486
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98471-9112
+- **E-mail:** Cruzhildo12@gmail.com
+- **Endereço:** SANTO AMARO BL R AP 201
+- **Bairro:** SANTO AMARO
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77007-148
+- **Nome do responsável:** ILDO SOARES
+- **CPF do responsável:** 71427600104
+- **Nome da mãe:** DANIEL BATISTA
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 4 ANO
+- **Nome da escola:** PADRE JOSIMA
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 15/11/2025 - 20:31h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 60. MIGUEL SOUSA DELLATORRE
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** MIGUEL SOUSA DELLATORRE
+- **Data de nascimento:** 19/04/2019
+- **Sexo:** Masculino
+- **CPF do aluno:** 05741492100
+- **RG / Certidão:** 05741492100
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99112-6106
+- **E-mail:** PDSDANIELE@GMAIL.COM
+- **Endereço:** LOAGO NORTE AL 25 LT 33
+- **Bairro:** LAGO NORTE
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77003-310
+- **Nome do responsável:** DANIELE PEREIRA DE SOUSA
+- **CPF do responsável:** 05741492100
+- **Nome da mãe:** DANIELE PEREIRA DE SOUSA
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** PRE 2
+- **Nome da escola:** CMEI Profª Jucéia Garbelini
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 14/11/2025 - 18:19h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 61. Murilo santos Sousa
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** Murilo santos Sousa
+- **Data de nascimento:** 08/04/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 09849824182
+- **RG / Certidão:** 1664394
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99148-1070
+- **E-mail:** murilo2017@gmail.com
+- **Endereço:** 307 norte alameda 7 lote 16
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-440
+- **Nome do responsável:** Regina Santos Sousa
+- **CPF do responsável:** 71414227140
+- **Nome da mãe:** Regina
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 07/01/2026 - 13:10h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 62. Natheus Henrique de Sousa
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** Natheus Henrique de Sousa
+- **Data de nascimento:** 25/05/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 05595724170
+- **RG / Certidão:** 1557624
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98119-6396
+- **E-mail:** matheus2017@gmail.com
+- **Endereço:** 405 norte alameda 5 lote 11
+- **Bairro:** plano direto norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-344
+- **Nome do responsável:** Severina de Sousa
+- **CPF do responsável:** 07892056106
+- **Nome da mãe:** Severina de Sousa
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 07/01/2026 - 13:00h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 63. NICOLLAS THIERRY GOMES ALVES
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** NICOLLAS THIERRY GOMES ALVES
+- **Data de nascimento:** 20/08/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 53378711884
+- **RG / Certidão:** 53378711884
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99208-1857
+- **E-mail:** PGPATRICIAGOMES123@GMAIL.COM
+- **Endereço:** AL 21 LT 06
+- **Bairro:** PLANO DIRETOR NORTE
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77015-002
+- **Nome do responsável:** PATRICIA GOMES PEREIRA ALVES
+- **CPF do responsável:** 53378711884
+- **Nome da mãe:** PATRICIA GOMES PEREIRA ALVES
+- **Nome do pai:** —
+- **Contato de emergência:** PATRICIA GOMES PEREIRA ALVES — 63 99208-1857
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 2 ANO
+- **Nome da escola:** Escola Municipal de Tempo Integral Monsenhor Pedro Pereira Piagem
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 15/11/2025 - 22:28h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 64. PAULO MIGUEL ALMEIDA RIBEIRO
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** PAULO MIGUEL ALMEIDA RIBEIRO
+- **Data de nascimento:** 10/06/2015
+- **Sexo:** —
+- **CPF do aluno:** —
+- **RG / Certidão:** 91076641334 CPF:91076641334
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99298-1382 / E-mail:AGUARDANDOEMAIL.COM.BR
+- **E-mail:** —
+- **Endereço:** Avenida NS 10 Bairro:Lago Norte
+- **Bairro:** —
+- **Cidade:** Palmas
+- **Estado (UF):** TO CEP:77003-310
+- **CEP:** —
+- **Nome do responsável:** DALICE PEREIRA RIBEIRO CPF / RG do Resp.:91076641334 / -
+- **CPF do responsável:** —
+- **Nome da mãe:** DALICE PEREIRA RIBEIRO CPF / RG da Mãe:91076641334 / -
+- **Nome do pai:** CPF / RG do Pai:/ -
+- **Contato de emergência:** —
+- **Escolaridade:** Tipo de Escola:
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Série:
+- **Série:** —
+- **Nome da escola:** Matrícula:
+- **Tamanho da camisa:** P Camisa Entregue: NÃO
+- **Camisa entregue (Sim/Não):** —
+- **Data do cadastro:** 07/01/2026 - 22:36h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 65. PEDRO AUGUSTO JANE DA SILVA
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** PEDRO AUGUSTO JANE DA SILVA
+- **Data de nascimento:** 31/03/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 03256628192
+- **RG / Certidão:** 1019939
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99227-4118
+- **E-mail:** WESLEYDASILVA77314@GMAIL.COM
+- **Endereço:** LOAGO NORTE RUA 21 B
+- **Bairro:** PLANO DIRETOR NORTE
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** WESLEY DA SILVA
+- **CPF do responsável:** 03256628192
+- **Nome da mãe:** WESLEY DA SILVA
+- **Nome do pai:** WESLEY DA SILVA
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 5 ANO
+- **Nome da escola:** CORA CAROLINA
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 14/11/2025 - 15:24h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 66. PEDRO MANOEL VASCONCELOS SOUSA
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** PEDRO MANOEL VASCONCELOS SOUSA
+- **Data de nascimento:** 06/05/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 10430271301
+- **RG / Certidão:** 10430271301
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99998-3595
+- **E-mail:** ANACAROLINAVASCONCELOS84@GMAIL.COM
+- **Endereço:** AL 08 QI 07 LT 27
+- **Bairro:** SANTO AMARO
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77007-114
+- **Nome do responsável:** ANA CAROLINA VASCONCELOS DE SOUSA
+- **CPF do responsável:** 60239886364
+- **Nome da mãe:** ANA CAROLINA VASCONCELOS DE SOUSA
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 2 ANO
+- **Nome da escola:** CORA CAROLINA
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** —
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 67. PEDRO PAULO COELHO DE OLIVEIRA
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** PEDRO PAULO COELHO DE OLIVEIRA
+- **Data de nascimento:** 24/07/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 07886175166
+- **RG / Certidão:** 07886175166
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 9298-8289
+- **E-mail:** valeriavilaquixaba@gmail.com
+- **Endereço:** ARNE 81 AL 12 LT 15 QI 12
+- **Bairro:** SANTO AMARO
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77007-122
+- **Nome do responsável:** VALERIA PACHECO COELHO DE OLIVEIRA
+- **CPF do responsável:** 73832162100
+- **Nome da mãe:** VALERIA PACHECO COELHO DE OLIVEIRA
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** 3 ANO
+- **Nome da escola:** Escola Municipal de Tempo Integral Monsenhor Pedro Pereira Piagem
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 14/11/2025 - 20:00h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 68. PEDRO PEREIRA BARROS NETO
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** PEDRO PEREIRA BARROS NETO
+- **Data de nascimento:** 27/03/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 10564270199
+- **RG / Certidão:** 1702282
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99276-5718
+- **E-mail:** Pdsdaniele@gmail.com
+- **Endereço:** Q 604 NORTE AL 4 HM03
+- **Bairro:** CENTRO
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-738
+- **Nome do responsável:** TAISA NELY PEIXOTO BARROS
+- **CPF do responsável:** 65761545268
+- **Nome da mãe:** TAISA NELY PEIXOTO BARROS
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 14/11/2025 - 18:12h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 69. RUDSON DEYVID SANTOS LIMA
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** RUDSON DEYVID SANTOS LIMA
+- **Data de nascimento:** 29/09/2012
+- **Sexo:** —
+- **CPF do aluno:** —
+- **RG / Certidão:** 01051499267 CPF:01051499267
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99973-1685 / E-mail:AGUARDANDOEMAIL.COM.BR
+- **E-mail:** —
+- **Endereço:** ALAMEDA 12 QI 10 LT 22 Bairro:SANTO AMARO
+- **Bairro:** —
+- **Cidade:** Palmas
+- **Estado (UF):** TO CEP:77000-000
+- **CEP:** —
+- **Nome do responsável:** RUTE DA CRUZ LIMA CPF / RG do Resp.:01051499267 / -
+- **CPF do responsável:** —
+- **Nome da mãe:** RUTE DA CRUZ LIMA CPF / RG da Mãe:01051499267 / -
+- **Nome do pai:** CPF / RG do Pai:/ -
+- **Contato de emergência:** RUTE DA CRUZ LIMA — 63 99973-1685
+- **Escolaridade:** Tipo de Escola:
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Série:
+- **Série:** —
+- **Nome da escola:** Matrícula:
+- **Tamanho da camisa:** P Camisa Entregue: NÃO
+- **Camisa entregue (Sim/Não):** —
+- **Data do cadastro:** 07/01/2026 - 21:33h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 70. RYAN DE SOUSA BRITO
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** RYAN DE SOUSA BRITO
+- **Data de nascimento:** 30/06/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 03528781181
+- **RG / Certidão:** 03528781181
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 92935-722
+- **E-mail:** AGUARDANDOEMAIL.COM.BR
+- **Endereço:** 404 NORTE
+- **Bairro:** PLANO DIRETOR NORTE
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** EDAIANE MARIA DE SOUSA
+- **CPF do responsável:** 03528781181
+- **Nome da mãe:** EDAIANE MARIA DE SOUSA
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 07/01/2026 - 21:37h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 71. Ryan Lucca de Andrade
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** Ryan Lucca de Andrade
+- **Data de nascimento:** 20/01/2011
+- **Sexo:** Masculino
+- **CPF do aluno:** 04681373192
+- **RG / Certidão:** 151432
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99256-0444
+- **E-mail:** ryanzinho22@gmail.com
+- **Endereço:** 604 norte alameda 7 lote 13
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-541
+- **Nome do responsável:** Maria do Rosario de Andrade
+- **CPF do responsável:** 01350008150
+- **Nome da mãe:** Maria
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 03/01/2026 - 19:40h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 72. RYHAN COSTA GONÇALVES
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** RYHAN COSTA GONÇALVES
+- **Data de nascimento:** 21/05/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 04719176135
+- **RG / Certidão:** 1161758
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98105-0146
+- **E-mail:** GLEICIANYCHAVES74@GMAIL.COM
+- **Endereço:** SETOR LAGO NORTE AL 23
+- **Bairro:** LAGO NORTE
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** GLEICIANY CHAVES COSTA
+- **CPF do responsável:** 04719176135
+- **Nome da mãe:** GLEICIANY CHAVES COSTA
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 1 ANO
+- **Nome da escola:** PRINCIPES E PRINCESAS
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 20/11/2025 - 10:55h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 73. SAMUEL HEYTOR DOS SANTOS RAMOS
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** SAMUEL HEYTOR DOS SANTOS RAMOS
+- **Data de nascimento:** 16/06/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 10294571159
+- **RG / Certidão:** 10294571159
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98435-1508
+- **E-mail:** MAYSACRISTINASANTOS3@GMAIL.COM
+- **Endereço:** ARNE 81 AL 23 BLOCO I AP 203 RESID SANTO AMARO
+- **Bairro:** SANTO AMARO
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77007-148
+- **Nome do responsável:** MAYSA CRISTINA DOS SANTOS
+- **CPF do responsável:** 10294571159
+- **Nome da mãe:** MAYSA CRISTINA DOS SANTOS
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 20/12/2025 - 11:56h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 74. SAMUEL SOARES DOS SANTOS SOUZA
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** SAMUEL SOARES DOS SANTOS SOUZA
+- **Data de nascimento:** 02/07/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 01177131129
+- **RG / Certidão:** 414316
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98417-9818
+- **E-mail:** RUBENS.CIRL@HOTEMAIL.COM
+- **Endereço:** AL 06 LT 09
+- **Bairro:** SANTO AMARO
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77007-110
+- **Nome do responsável:** RUBENS SOARES DE SOUZA
+- **CPF do responsável:** 01177131129
+- **Nome da mãe:** RUBENS SOARES DE SOUZA
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Particular
+- **Turno escolar:** Manhã
+- **Série:** 4 ANO
+- **Nome da escola:** PINGO DE GENTE
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 15/11/2025 - 21:18h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 75. THEO ATHISSON RAMOS
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** THEO ATHISSON RAMOS
+- **Data de nascimento:** 20/11/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 10818798157
+- **RG / Certidão:** 10818798157
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 8511-2275
+- **E-mail:** ramosmariaramosneta@gmail.com
+- **Endereço:** CONDOMIN BLOCO H AP 301
+- **Bairro:** SANTO AMARO
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77007-148
+- **Nome do responsável:** MARIA RAMOS NETA
+- **CPF do responsável:** 00544887107
+- **Nome da mãe:** MARIA RAMOS NETA
+- **Nome do pai:** —
+- **Contato de emergência:** MARIA RAMOS NETA — 63 8511-2275
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 5 ANO
+- **Nome da escola:** Escola Municipal de Tempo Integral Monsenhor Pedro Pereira Piagem
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 14/11/2025 - 20:06h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 76. UZIEL SOUSA CALDAS JUNIOR
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** UZIEL SOUSA CALDAS JUNIOR
+- **Data de nascimento:** 03/02/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 09746425170
+- **RG / Certidão:** 1613381
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98460-8092
+- **E-mail:** MIRIASOUSAMORAISCALDAS@GMAIL.COM
+- **Endereço:** LOTEAMENTE LOAGO NORTE AO LADO DO MINI BOX
+- **Bairro:** LAGO NORTE
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77003-356
+- **Nome do responsável:** MIRIAM SOUSA MORAIS CALDAS
+- **CPF do responsável:** 02396232150
+- **Nome da mãe:** MIRIAM SOUSA MORAIS CALDAS
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 4 ANO
+- **Nome da escola:** escola pastor paulo leivas macalão
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 14/11/2025 - 18:26h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 77. Walisson Silva Cortez
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** Walisson Silva Cortez
+- **Data de nascimento:** 13/08/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 10334958164
+- **RG / Certidão:** 1314569
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98119-9666
+- **E-mail:** cortez.1989@gmail.com
+- **Endereço:** 504 norte alameda 5 lote 11
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-348
+- **Nome do responsável:** Monica Alves Cortez
+- **CPF do responsável:** 80036511153
+- **Nome da mãe:** Monica Alves
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 03/01/2026 - 19:50h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+### 78. Yuri Gabriel de Alencar
+
+- **Professor:** Renato Ferreira Fidelis
+- **Nome do aluno:** Yuri Gabriel de Alencar
+- **Data de nascimento:** 13/11/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 10334958164
+- **RG / Certidão:** 1223416
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98118-7665
+- **E-mail:** yurimotor22@gmail.com
+- **Endereço:** 604 norte alameda 5 lote 2
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-346
+- **Nome do responsável:** Maria Luiza de Alencar
+- **CPF do responsável:** 71414227140
+- **Nome da mãe:** MAria Luiza
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 07/01/2026 - 12:51h
+- **Núcleo:** Núcleo Santo Amaro
+- **Observação:** —
+
+---
+
+# Campo T31 - Taquari — Professor Aleksandro Soares
+
+Total de alunos: **101**
+
+### 1. adryan francisco lustosa da coceição
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** adryan francisco lustosa da coceição
+- **Data de nascimento:** 16/06/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 11256073199
+- **RG / Certidão:** 1785480
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99105-0000
+- **E-mail:** suzana22@gmail.com
+- **Endereço:** t30 c 18 l 02
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-362
+- **Nome do responsável:** suzana de jesus lustosa
+- **CPF do responsável:** 01057361127
+- **Nome da mãe:** suzana de jesus lustosa
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 4
+- **Nome da escola:** escola municipal lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/11/2025 - 15:04h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 2. Àgelo Sousa Costa
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** Àgelo Sousa Costa
+- **Data de nascimento:** 28/10/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 11005000140
+- **RG / Certidão:** 1723043
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98412-0188
+- **E-mail:** gomessousanefftaly@gmail.com
+- **Endereço:** T 31 conj 34 Rua L O 15 Lote 10 casa 01
+- **Bairro:** Taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-402
+- **Nome do responsável:** Nefftaly Gomes Sousa
+- **CPF do responsável:** 03777679330
+- **Nome da mãe:** Nefftaly Gomes Sousa
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 2ºAno
+- **Nome da escola:** Escola municipal lúcia Sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** —
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 3. ana kelly bezerra dos santos
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** ana kelly bezerra dos santos
+- **Data de nascimento:** 26/03/2016
+- **Sexo:** Feminino
+- **CPF do aluno:** 04897671175
+- **RG / Certidão:** 990986
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98131-0721
+- **E-mail:** BEZERRASUYLANA@GMAIL.COM
+- **Endereço:** RUA NS 02 T 31
+- **Bairro:** TAQUARI
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-346
+- **Nome do responsável:** AUYLAN BEZERRA DOS SANTOS
+- **CPF do responsável:** 04897671175
+- **Nome da mãe:** SUYLAN BEZERRA DOS SANTOS
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 4
+- **Nome da escola:** ETI MARGARIDA LEMOS
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** —
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 4. arthur campos lima
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** arthur campos lima
+- **Data de nascimento:** 22/03/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 09194807132
+- **RG / Certidão:** 1822572
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98400-3435
+- **E-mail:** arthurcamposlima02@gmail.com
+- **Endereço:** t21 l 10 c 39
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-176
+- **Nome do responsável:** elaine campos de lucena
+- **CPF do responsável:** 04882537133
+- **Nome da mãe:** elaine campos de lucena
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 2
+- **Nome da escola:** escola municipal lucia sales
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** —
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 5. ARTHUR SANTOS MEDRADO
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** ARTHUR SANTOS MEDRADO
+- **Data de nascimento:** 25/04/2020
+- **Sexo:** Masculino
+- **CPF do aluno:** 03649313103
+- **RG / Certidão:** 03649313103
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99202-3572
+- **E-mail:** SAVIAMARIANE22@GMAIL.COM
+- **Endereço:** T31 CJ 09 LT05
+- **Bairro:** TAQUARI
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-344
+- **Nome do responsável:** SAVIA MARIANE DOS SANTOS
+- **CPF do responsável:** 03649313103
+- **Nome da mãe:** SAVIA MARIANE DOS SANTOS
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 1
+- **Nome da escola:** cmei CASTELO ENCANTADO
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 23/11/2025 - 16:02h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 6. athos castro monteiro
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** athos castro monteiro
+- **Data de nascimento:** 12/10/2019
+- **Sexo:** Masculino
+- **CPF do aluno:** 00399954104
+- **RG / Certidão:** 751027
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98473-0769
+- **E-mail:** gilcastro2015.gc@gmail.com
+- **Endereço:** t21 rua 09
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-168
+- **Nome do responsável:** gilmara monteiro da silva castro
+- **CPF do responsável:** 00399954104
+- **Nome da mãe:** gilmara monteiro da silva castro
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** P2 02
+- **Nome da escola:** cmei fontes do saber
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** —
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 7. carlos eduardo ribeiro de souza
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** carlos eduardo ribeiro de souza
+- **Data de nascimento:** 20/09/2010
+- **Sexo:** Masculino
+- **CPF do aluno:** 06918368176
+- **RG / Certidão:** 137643
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99214-4149
+- **E-mail:** tatianaribeiro@gmail.com
+- **Endereço:** rua 4 chacara 30
+- **Bairro:** vila agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** tatiane da silva ribeiro
+- **CPF do responsável:** 04424870103
+- **Nome da mãe:** tatiane da silva ribeiro
+- **Nome do pai:** —
+- **Contato de emergência:** tatiane da silva ribeiro — 63 99214-4149
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Estadual
+- **Turno escolar:** —
+- **Série:** 9
+- **Nome da escola:** ESCOLA ESTADUAL MARIA DOS REIS
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/11/2025 - 17:35h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 8. cristian da silva ssantos
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** cristian da silva ssantos
+- **Data de nascimento:** 10/02/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 09949936179
+- **RG / Certidão:** 09949936179
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99937-8073
+- **E-mail:** jesesdasilvaanacarela@gmail.com
+- **Endereço:** CHACARA SILVA 44
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-344
+- **Nome do responsável:** ANA CARLA DE JEUS DA SILVA
+- **CPF do responsável:** 09949936179
+- **Nome da mãe:** ANA CARLA DE JEUS DA SILVA
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 3
+- **Nome da escola:** escola municipal lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** —
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 9. DANIEL GUSTAVO SANTOS MEIRELLES
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** DANIEL GUSTAVO SANTOS MEIRELLES
+- **Data de nascimento:** 29/04/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 01424001226
+- **RG / Certidão:** 014 24001226
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99253-6226
+- **E-mail:** jn2023santos@gmail.com
+- **Endereço:** t22 cj 21 lt 03
+- **Bairro:** Jardim Taquari (Taquaralto)
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-580
+- **Nome do responsável:** jeane santos
+- **CPF do responsável:** 01424001226
+- **Nome da mãe:** jeane santos
+- **Nome do pai:** —
+- **Contato de emergência:** jeane santos — 63 99253-6226
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 3
+- **Nome da escola:** escola municipal lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** —
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 10. davi lucas silva rodrigues
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** davi lucas silva rodrigues
+- **Data de nascimento:** 13/02/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 06624469170
+- **RG / Certidão:** 9928356
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99248-3471
+- **E-mail:** dav.este@gmail.com
+- **Endereço:** t31vc 12 l 8
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-345
+- **Nome do responsável:** dayany esterfany silva matos
+- **CPF do responsável:** 06624469170
+- **Nome da mãe:** dayany esterfany silva matos
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 2
+- **Nome da escola:** escola municipal lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 14/11/2025 - 12:55h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 11. Davi Luís Pereira dos Santos
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** Davi Luís Pereira dos Santos
+- **Data de nascimento:** 10/03/2020
+- **Sexo:** Masculino
+- **CPF do aluno:** 10654368155
+- **RG / Certidão:** 0409568020104
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99230-2436
+- **E-mail:** es073452@gmail.com
+- **Endereço:** T 23 CONJ 30 lote 02 A
+- **Bairro:** Jardim Taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-254
+- **Nome do responsável:** Eliane do Santos Silva
+- **CPF do responsável:** 60694642304
+- **Nome da mãe:** Eliane do Santos Silva
+- **Nome do pai:** —
+- **Contato de emergência:** Eliane do Santo Silva — 63 92674-524
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** P2
+- **Nome da escola:** CMEI Fontes do Saber
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/11/2025 - 22:00h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 12. davi luiz lima de araujo
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** davi luiz lima de araujo
+- **Data de nascimento:** 25/04/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 11354915186
+- **RG / Certidão:** 1757328
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99234-1126
+- **E-mail:** ana carolina silva de araujo
+- **Endereço:** t30 cj 19 lt20
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 11063-362
+- **Nome do responsável:** ana carolina silva de araujo
+- **CPF do responsável:** 02993056190
+- **Nome da mãe:** ana carolina silva de araujo
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 4
+- **Nome da escola:** escola municipal lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 14/11/2025 - 09:32h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 13. davi luiz pereira dos santos
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** davi luiz pereira dos santos
+- **Data de nascimento:** 10/03/2020
+- **Sexo:** Masculino
+- **CPF do aluno:** 10654368155
+- **RG / Certidão:** 10654368155
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99230-2436
+- **E-mail:** es073452@gmail.com
+- **Endereço:** t23 cj 30 lt 02a
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-254
+- **Nome do responsável:** eliane dos santos silva
+- **CPF do responsável:** 60694642304
+- **Nome da mãe:** eliane dos santos silva
+- **Nome do pai:** —
+- **Contato de emergência:** eliane dos santos silva — 63 99230-2436
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** p11
+- **Nome da escola:** cmei fontes do saber
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 19/11/2025 - 10:51h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 14. davi silva santos feitosa
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** davi silva santos feitosa
+- **Data de nascimento:** 11/09/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 60204066360
+- **RG / Certidão:** 60204066360
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99271-7267
+- **E-mail:** evasilvasantosfeitosa@gmail.com
+- **Endereço:** t30 c 14 l 05
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-344
+- **Nome do responsável:** eva silvas antos feitosa
+- **CPF do responsável:** 60204066360
+- **Nome da mãe:** eva silvas antos feitosa
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 5
+- **Nome da escola:** escola eti margarida lemos
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 14/11/2025 - 13:18h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 15. davy asafy dos santos
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** davy asafy dos santos
+- **Data de nascimento:** 20/07/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 03193452114
+- **RG / Certidão:** 03193452114
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99217-6707
+- **E-mail:** antoniabombomprado@gmail.com
+- **Endereço:** t 20 cj 20 lt 05
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77021-090
+- **Nome do responsável:** antonia dos santos silvaviana
+- **CPF do responsável:** 03193452114
+- **Nome da mãe:** antonia dos santos silvaviana
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 2
+- **Nome da escola:** escola municipal lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 16/11/2025 - 15:44h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 16. DAVY LUCAMARINHO ARAUJO
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** DAVY LUCAMARINHO ARAUJO
+- **Data de nascimento:** 27/02/2019
+- **Sexo:** Masculino
+- **CPF do aluno:** 07093360122
+- **RG / Certidão:** 1397938
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99257-4188
+- **E-mail:** DEBORAMARINHO@GMAIL.COM
+- **Endereço:** R 04 Q 01 LT 25
+- **Bairro:** TAQUARI
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-660
+- **Nome do responsável:** DEBORAH GLENDA M. DOS SANTOS
+- **CPF do responsável:** 09987897126
+- **Nome da mãe:** DEBORAH GLENDA M. DOS SANTOS
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 1
+- **Nome da escola:** escola municipal lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/11/2025 - 17:57h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 17. diego arthur almeida moraes
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** diego arthur almeida moraes
+- **Data de nascimento:** 09/01/2019
+- **Sexo:** Masculino
+- **CPF do aluno:** 05358907106
+- **RG / Certidão:** 1267792
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98441-5922
+- **E-mail:** luciennyalmeidalu@gmail.com
+- **Endereço:** qd 04 lt 48
+- **Bairro:** flamboyant
+- **Cidade:** Palmeiras do Tocantins
+- **Estado (UF):** TO
+- **CEP:** 77063-666
+- **Nome do responsável:** luciene almeida rocha
+- **CPF do responsável:** 05358907106
+- **Nome da mãe:** luciene almeida rocha
+- **Nome do pai:** —
+- **Contato de emergência:** luciene almeida rocha — 63 98441-5922
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 1
+- **Nome da escola:** escola municipal lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 14/11/2025 - 07:09h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 18. eduardo bento de almeida
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** eduardo bento de almeida
+- **Data de nascimento:** 11/01/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 31849924899
+- **RG / Certidão:** 1841286
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98454-9533
+- **E-mail:** marcelamarcia515@gmail.com
+- **Endereço:** t22 cj 25 lt 19
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-208
+- **Nome do responsável:** marcela bento da silva
+- **CPF do responsável:** 31849924899
+- **Nome da mãe:** marcela bento da silva
+- **Nome do pai:** —
+- **Contato de emergência:** marcela bento da silva — 63 98454-9533
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Estadual
+- **Turno escolar:** Manhã
+- **Série:** 6
+- **Nome da escola:** ESCOLA ESTADUAL MARIA DOS REIS
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 23/11/2025 - 15:39h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 19. estevão alvez santos
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** estevão alvez santos
+- **Data de nascimento:** 16/10/2019
+- **Sexo:** Masculino
+- **CPF do aluno:** 10379917106
+- **RG / Certidão:** 10379917106
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99967-879
+- **E-mail:** nadrezaabebrita@gmail.com
+- **Endereço:** t31 cj 6 lt 10
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-436
+- **Nome do responsável:** andreza silva dos santos
+- **CPF do responsável:** 06297680302
+- **Nome da mãe:** andreza silva dos santos
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** —
+- **Nome da escola:** cmei fontes do saber
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** —
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 20. felipe gabriel santos maciel
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** felipe gabriel santos maciel
+- **Data de nascimento:** 17/07/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 09581950133
+- **RG / Certidão:** 09581950133
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98406-0725
+- **E-mail:** marciene22@gmail.com
+- **Endereço:** t21 cj 30 lt 17
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-344
+- **Nome do responsável:** marciene jose dos santos
+- **CPF do responsável:** 04983522182
+- **Nome da mãe:** marciene jose dos santos
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 3
+- **Nome da escola:** escola municipal lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 26/11/2025 - 14:35h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 21. gabriel sousa cavalcante
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** gabriel sousa cavalcante
+- **Data de nascimento:** 07/07/2019
+- **Sexo:** Masculino
+- **CPF do aluno:** 07032238360
+- **RG / Certidão:** 1837066
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99222-6081
+- **E-mail:** rayanesousa996@gmail.com
+- **Endereço:** t23 cj 28 lt 22
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-344
+- **Nome do responsável:** rayane nascimento de sousa
+- **CPF do responsável:** 07032238360
+- **Nome da mãe:** rayane nascimento de sousa
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** —
+- **Nome da escola:** cmei fontes do saber
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 26/11/2025 - 11:50h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 22. gustavo henrrique de oliveira chagas
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** gustavo henrrique de oliveira chagas
+- **Data de nascimento:** 16/10/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 09696866178
+- **RG / Certidão:** 1791359
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99136-6991
+- **E-mail:** girllaneg.h@gmail.com
+- **Endereço:** t31 cj 5 lt 10
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-442
+- **Nome do responsável:** girllane de oliveira santos
+- **CPF do responsável:** 05414668108
+- **Nome da mãe:** girllane de oliveira santos
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 1
+- **Nome da escola:** cmei fontes do saber
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 14/11/2025 - 07:13h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 23. Hadrian Gabriel Alves Silva
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** Hadrian Gabriel Alves Silva
+- **Data de nascimento:** 15/04/2019
+- **Sexo:** Masculino
+- **CPF do aluno:** 04969578133
+- **RG / Certidão:** 990672
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98133-1046
+- **E-mail:** vanessaalves01001130@gmail.com
+- **Endereço:** Quadra T21 Lote 22
+- **Bairro:** Taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-376
+- **Nome do responsável:** Vanessa Alves de Souza
+- **CPF do responsável:** 04969578133
+- **Nome da mãe:** Vanessa Alves de Souza
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Manhã
+- **Série:** Pre 2
+- **Nome da escola:** CMEI Fontes do Saber
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 13/11/2025 - 10:52h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 24. Heitor Soares Guimarães
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** Heitor Soares Guimarães
+- **Data de nascimento:** 31/12/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 08920841110
+- **RG / Certidão:** 671504
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99912-9701
+- **E-mail:** nubiaheitorsoares31@gmail.com
+- **Endereço:** T 34 Lote L o 07
+- **Bairro:** Taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-120
+- **Nome do responsável:** Tiago Borges Guimaraens
+- **CPF do responsável:** 01270162101
+- **Nome da mãe:** Danubia Soares neves
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 2º Ano
+- **Nome da escola:** Escola municipal lúcia Sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/11/2025 - 16:27h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 25. Heitor Souza dos Santos soares
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** Heitor Souza dos Santos soares
+- **Data de nascimento:** 12/02/2016
+- **Sexo:** —
+- **CPF do aluno:** —
+- **RG / Certidão:** 09046853144 CPF:09046853144
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98143-1806 / E-mail:aleksandrosoaresdesousa@gmail.com
+- **E-mail:** —
+- **Endereço:** Rua na 02 qd T30 CJ 24 LT 04 Bairro:Taquari
+- **Bairro:** —
+- **Cidade:** Palmas
+- **Estado (UF):** TO CEP:77063-344
+- **CEP:** —
+- **Nome do responsável:** Aleksandro Soares CPF / RG do Resp.:02986601138 / -
+- **CPF do responsável:** —
+- **Nome da mãe:** Huguiany Souza dos Santos soares CPF / RG da Mãe:04325236180 / -
+- **Nome do pai:** CPF / RG do Pai:/ -
+- **Contato de emergência:** Aleksandro Soares de sousa — 63 98143-1806
+- **Escolaridade:** Ensino Infantil Tipo de Escola:Municipal
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Manhã Série:4
+- **Série:** —
+- **Nome da escola:** Escola municipal Lúcia Sales Matrícula:
+- **Tamanho da camisa:** P Camisa Entregue: SIM- Em 11/11/2025 - 11:50h
+- **Camisa entregue (Sim/Não):** —
+- **Data do cadastro:** 11/11/2025 - 11:50h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 26. hiago costa silva
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** hiago costa silva
+- **Data de nascimento:** 28/05/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 10670420166
+- **RG / Certidão:** 10670420166
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98428-5321
+- **E-mail:** julianarosa00@gmail.com
+- **Endereço:** t30 cj 19 lt 06
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-344
+- **Nome do responsável:** juliana rosa da costa
+- **CPF do responsável:** 03533837165
+- **Nome da mãe:** juliana rosa da costa
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 3
+- **Nome da escola:** escola municipal lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 1
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 27. HIGOR COSTA SILVA
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** HIGOR COSTA SILVA
+- **Data de nascimento:** 30/11/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 03533837165
+- **RG / Certidão:** 896512
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98428-5321
+- **E-mail:** JULIANAROSA005@GMAIL.COM
+- **Endereço:** T30 C 19 L06
+- **Bairro:** TAQUARI
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-344
+- **Nome do responsável:** JULIANA ROSA DA COSTA
+- **CPF do responsável:** 03533837165
+- **Nome da mãe:** JULIANA ROSA DA COSTA
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Estadual
+- **Turno escolar:** —
+- **Série:** 7
+- **Nome da escola:** ESCOLA ESTADUAL MARIA DOS REIS
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/11/2025 - 18:03h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 28. IAN CESAR NUNES DOS SANTOS
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** IAN CESAR NUNES DOS SANTOS
+- **Data de nascimento:** 01/11/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 09664603163
+- **RG / Certidão:** 09664603163
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99135-2259
+- **E-mail:** LUZIELE22@GMAIL.COM
+- **Endereço:** T31 CJ 27 LT 01
+- **Bairro:** TAQUARI
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-400
+- **Nome do responsável:** LUZIELE NUNES DA SILVA
+- **CPF do responsável:** 09664603163
+- **Nome da mãe:** LUZIELE NUNES DA SILVA
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 1
+- **Nome da escola:** ESCOLA MUNICIPAL EURIDICE DE MELO
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** —
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 29. icaro amadeu pereira da silva
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** icaro amadeu pereira da silva
+- **Data de nascimento:** 18/09/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 09569949112
+- **RG / Certidão:** 09569949112
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99933-3860
+- **E-mail:** robertasilva22@gmai.com
+- **Endereço:** t31 lo 19 lt 15
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-406
+- **Nome do responsável:** roberta de jesus da silva
+- **CPF do responsável:** 09569949112
+- **Nome da mãe:** roberta de jesus da silva
+- **Nome do pai:** —
+- **Contato de emergência:** roberta de jesus da silva — 63 99933-3860
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 1
+- **Nome da escola:** cmei fontes do saber
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 14/11/2025 - 12:47h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 30. icaro barbossa conrado
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** icaro barbossa conrado
+- **Data de nascimento:** 25/02/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 09325618109
+- **RG / Certidão:** 09325618109
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99911-1405
+- **E-mail:** nubiaconrado@gmail.com
+- **Endereço:** t23 cj 22 ltv14a
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-254
+- **Nome do responsável:** maria nubia da silva conrado
+- **CPF do responsável:** 02616446103
+- **Nome da mãe:** maria nubia da silva conrado
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 9
+- **Nome da escola:** escola municipal maria julia
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 26/11/2025 - 14:26h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 31. Ingridy Vitoria S. Souza
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** Ingridy Vitoria S. Souza
+- **Data de nascimento:** 13/09/2011
+- **Sexo:** Feminino
+- **CPF do aluno:** 02848709197
+- **RG / Certidão:** 814365
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98125-2715
+- **E-mail:** silvaivaneth970@gmail.com
+- **Endereço:** T24 lote 22 conj 14
+- **Bairro:** Taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** Ivaneth Silva dos Anjos
+- **CPF do responsável:** 02848709197
+- **Nome da mãe:** Ivaneth Silva dos Anjos
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Estadual
+- **Turno escolar:** —
+- **Série:** 8º Ano
+- **Nome da escola:** Escola Estadual Maria dos Reis Alves Barros
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 13/11/2025 - 16:55h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 32. Isaque da Silva Fontinele SIMSSIM
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** Isaque da Silva Fontinele SIMSSIM
+- **Data de nascimento:** 25/01/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 07871758110
+- **RG / Certidão:** 1590790
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99264-9977
+- **E-mail:** monicaoliveiravangelista@gmail.com
+- **Endereço:** T 22 conj 40 Lote 15
+- **Bairro:** Taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-18
+- **Nome do responsável:** Beatriz Mercês da Silva
+- **CPF do responsável:** 07871758110
+- **Nome da mãe:** Beatriz Mercês da Silva
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 5º Ano
+- **Nome da escola:** Escola Municipal Margarida Lemos
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 17/11/2025 - 22:07h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 33. Isaque Lander Tenório Martins
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** Isaque Lander Tenório Martins
+- **Data de nascimento:** 29/06/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 00014004100
+- **RG / Certidão:** 671578
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99254-5829
+- **E-mail:** fabiolalander123@gmail.com
+- **Endereço:** T 12 conj 07 LT 10
+- **Bairro:** Taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-120
+- **Nome do responsável:** Fábio Martins Santana
+- **CPF do responsável:** 00014004100
+- **Nome da mãe:** Ana Paula Quaresma Tenório
+- **Nome do pai:** —
+- **Contato de emergência:** Fábio Martins Santana — 63 99254-5829
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** 1º Ano
+- **Nome da escola:** Escola municipal lúcia Sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/11/2025 - 16:05h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 34. ITALO DANIEL DE MATOS SILVA
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** ITALO DANIEL DE MATOS SILVA
+- **Data de nascimento:** 22/10/2010
+- **Sexo:** Masculino
+- **CPF do aluno:** 03969431360
+- **RG / Certidão:** 03969431360
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98103-9359
+- **E-mail:** MARIADOSREMEDIOSSILVAMATOS12@GMAIL.COM
+- **Endereço:** T32 CJ 20 LT 11
+- **Bairro:** TAQUARI
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-486
+- **Nome do responsável:** MARIA DOS REMEDIOS SILVA MATOS
+- **CPF do responsável:** 03969431360
+- **Nome da mãe:** MARIA DOS REMEDIOS SILVA MATOS
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Estadual
+- **Turno escolar:** Manhã
+- **Série:** 9
+- **Nome da escola:** ESCOLA ESTADUAL MARIA DOS REIS
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 26/11/2025 - 15:26h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 35. Italo Gabriel Gomes
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** Italo Gabriel Gomes
+- **Data de nascimento:** 25/09/2019
+- **Sexo:** —
+- **CPF do aluno:** —
+- **RG / Certidão:** 10345927184 CPF:10345927184
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99258-8228 / E-mail:allexsantos802@gmail.com
+- **E-mail:** —
+- **Endereço:** T 31 conj 18 lote 18 Bairro:Taquari
+- **Bairro:** —
+- **Cidade:** Palmas
+- **Estado (UF):** TO CEP:77063-120
+- **CEP:** —
+- **Nome do responsável:** Yasmin Gomes Gavião CPF / RG do Resp.:1034592784 / -
+- **CPF do responsável:** —
+- **Nome da mãe:** Yasmin Gomes Gavião CPF / RG da Mãe:10345927184 / -
+- **Nome do pai:** CPF / RG do Pai:/ -
+- **Contato de emergência:** Yasmin Gomes Gavião — 63 99258-8228
+- **Escolaridade:** Ensino Infantil Tipo de Escola:Municipal
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Série:4º Ano
+- **Série:** —
+- **Nome da escola:** Escola municipal Fonte do Saber Matrícula:438011
+- **Tamanho da camisa:** P Camisa Entregue: NÃO
+- **Camisa entregue (Sim/Não):** —
+- **Data do cadastro:** 17/11/2025 - 21:30h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 36. João Gabriel Sousa Piheiro
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** João Gabriel Sousa Piheiro
+- **Data de nascimento:** 21/01/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 10826574173
+- **RG / Certidão:** 1.710142
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99113-8807
+- **E-mail:** desousaedina@gmail.com
+- **Endereço:** T 32 Lote 04 conj 01
+- **Bairro:** Taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-408
+- **Nome do responsável:** Edine de Sousa Silva
+- **CPF do responsável:** 10826574173
+- **Nome da mãe:** Edina de Sousa Silva
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** —
+- **Série:** 4º Ano
+- **Nome da escola:** Escola Municipal Lúcia Sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 17/11/2025 - 21:10h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 37. João Guilherme
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** João Guilherme
+- **Data de nascimento:** 05/01/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 07375129118
+- **RG / Certidão:** 07375129118
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98101-0577
+- **E-mail:** ramonbatistalustosa@gmail.com
+- **Endereço:** T30 Conj 24 Rua NS 2 Lote 02
+- **Bairro:** Taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-120
+- **Nome do responsável:** Deusivania Mota Amaral
+- **CPF do responsável:** 01979231192
+- **Nome da mãe:** Deusivania Mota Amaral
+- **Nome do pai:** —
+- **Contato de emergência:** Deusivania Mota Amaral — 63 98101-0577
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Estadual
+- **Turno escolar:** —
+- **Série:** 6º Ano
+- **Nome da escola:** Escola Estadual Maria dos Reis Alves Barros
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 13/11/2025 - 11:18h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 38. joao lucas gomes dos santos
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** joao lucas gomes dos santos
+- **Data de nascimento:** 06/08/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 89785401120
+- **RG / Certidão:** 89785401120
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 84470-087
+- **E-mail:** rosedente0@gmail.com
+- **Endereço:** av tlo 03 q 22 cj 11 lt8
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-224
+- **Nome do responsável:** roseny gomes dos santos
+- **CPF do responsável:** 89785401120
+- **Nome da mãe:** roseny gomes dos santos
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Manhã
+- **Série:** 5
+- **Nome da escola:** escola de tempo integral margarida lemos
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 11/11/2025 - 12:36h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 39. joão lucas pereira carvalho
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** joão lucas pereira carvalho
+- **Data de nascimento:** 04/01/2020
+- **Sexo:** Masculino
+- **CPF do aluno:** 02821758146
+- **RG / Certidão:** 835593
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99274-9011
+- **E-mail:** ´munizv343@gmail.com
+- **Endereço:** t31 cj 08 lt 18
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-424
+- **Nome do responsável:** viviane muniz carvalho
+- **CPF do responsável:** 02821758146
+- **Nome da mãe:** viviane muniz carvalho
+- **Nome do pai:** —
+- **Contato de emergência:** viviane muniz carvalho — 63 99274-9011
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** pii 02
+- **Nome da escola:** cmei fontes do saber
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 19/11/2025 - 10:57h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 40. JOÃO MIGUEL NOURA GONÇALVES
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** JOÃO MIGUEL NOURA GONÇALVES
+- **Data de nascimento:** 26/04/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 06299825111
+- **RG / Certidão:** 06299825111
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 64 99922-7217
+- **E-mail:** DAYLA123@GMAIL.COM
+- **Endereço:** T31 LT 16
+- **Bairro:** TAQUARI
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-344
+- **Nome do responsável:** DAYLA ALINE PEREIRA GONÇALVES
+- **CPF do responsável:** 06299825111
+- **Nome da mãe:** DAYLA ALINE PEREIRA GONÇALVES
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 2
+- **Nome da escola:** escola municipal lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 26/11/2025 - 15:18h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 41. joão miguel silva dos santos
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** joão miguel silva dos santos
+- **Data de nascimento:** 30/03/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 05525928116
+- **RG / Certidão:** 322805
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98108-9950
+- **E-mail:** loyane88@gmail.com
+- **Endereço:** q 21 lt 14
+- **Bairro:** flamboyant
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-700
+- **Nome do responsável:** loyane silva de carvalho
+- **CPF do responsável:** 05525928116
+- **Nome da mãe:** loyane silva de carvalho
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 3
+- **Nome da escola:** escola municipal lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/11/2025 - 14:51h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 42. joão paulo aguiar lima
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** joão paulo aguiar lima
+- **Data de nascimento:** 23/01/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 09771828193
+- **RG / Certidão:** 09771828193
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98122-3879
+- **E-mail:** taisribeiro123@gmail.com
+- **Endereço:** t30 cj 19 l 14
+- **Bairro:** Jardim Taquari (Taquaralto)
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-362
+- **Nome do responsável:** tais ribeiro lima
+- **CPF do responsável:** 09771828193
+- **Nome da mãe:** tais ribeiro lima
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 4
+- **Nome da escola:** eti anisio espindola
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** —
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 43. joao pedro gomes dos santos
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** joao pedro gomes dos santos
+- **Data de nascimento:** 11/11/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 10084854111
+- **RG / Certidão:** 10084854111
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98447-0087
+- **E-mail:** rosedenete@gmail.com
+- **Endereço:** av tlo 03 t 22 cj11 lt08
+- **Bairro:** taqiari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-224
+- **Nome do responsável:** roseny gomes dos santos
+- **CPF do responsável:** 89785401120
+- **Nome da mãe:** roseny gomes dos santos
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** —
+- **Série:** 3
+- **Nome da escola:** escola municipal lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 13/11/2025 - 17:55h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 44. joão vitor pereira da silva costa
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** joão vitor pereira da silva costa
+- **Data de nascimento:** 28/04/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 05478767182
+- **RG / Certidão:** 05478767182
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99270-4430
+- **E-mail:** regina22@gmail.com
+- **Endereço:** t42 cj 38 lt 12
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-516
+- **Nome do responsável:** regina pereira da silva
+- **CPF do responsável:** 05478767182
+- **Nome da mãe:** regina pereira da silva
+- **Nome do pai:** —
+- **Contato de emergência:** regina pereira da silva — 63 99270-4430
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Estadual
+- **Turno escolar:** Manhã
+- **Série:** 6
+- **Nome da escola:** ESCOLA ESTADUAL MARIA DOS REIS
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 26/11/2025 - 14:12h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 45. jose matheus batista da silva
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** jose matheus batista da silva
+- **Data de nascimento:** 08/12/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 03042992195
+- **RG / Certidão:** 03042992195
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99105-8305
+- **E-mail:** josematheusbatistasilva270@gmail.com
+- **Endereço:** t 32 cj 35 lkt 12
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-466
+- **Nome do responsável:** gilvania batista santana
+- **CPF do responsável:** 03042992195
+- **Nome da mãe:** gilvania batista santana
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Estadual
+- **Turno escolar:** Manhã
+- **Série:** 7
+- **Nome da escola:** ESCOLA ESTADUAL MARIA DOS REIS
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 13/11/2025 - 18:04h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 46. josue silva ferreira
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** josue silva ferreira
+- **Data de nascimento:** 09/12/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 01105409562
+- **RG / Certidão:** 0115409562
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99233-2807
+- **E-mail:** PRLOURIVALFERREIRA2017@GMAIL.COM
+- **Endereço:** T30 CJ 19 LT03
+- **Bairro:** TAQUARI
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-360
+- **Nome do responsável:** JAQUELINE SILVA FERREIRA
+- **CPF do responsável:** 04243534586
+- **Nome da mãe:** JAQUELINE SILVA FERREIRA
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Estadual
+- **Turno escolar:** Manhã
+- **Série:** 6
+- **Nome da escola:** ESCOLA ESTADUAL MARIA DOS REIS
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 20/11/2025 - 08:03h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 47. junielson ronal romao coelho meldo
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** junielson ronal romao coelho meldo
+- **Data de nascimento:** 31/05/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 06338873231
+- **RG / Certidão:** 0633887321
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99280-9133
+- **E-mail:** joanacoelho857@gmail.com
+- **Endereço:** t41 l9 cj 9
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-540
+- **Nome do responsável:** joana batista romão coelho
+- **CPF do responsável:** 06338873231
+- **Nome da mãe:** joana batista romão coelho
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Estadual
+- **Turno escolar:** Manhã
+- **Série:** 6
+- **Nome da escola:** ESCOLA ESTADUAL MARIA DOS REIS
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 14/11/2025 - 13:05h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 48. kaique martins da silva
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** kaique martins da silva
+- **Data de nascimento:** 05/04/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 06848775118
+- **RG / Certidão:** 1373351
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99300-9246
+- **E-mail:** fernandamartins19983@gmail.com
+- **Endereço:** t20 c 13 l 14
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-152
+- **Nome do responsável:** ana paula alves da silva
+- **CPF do responsável:** 06848775118
+- **Nome da mãe:** ana paula alves da silva
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 1
+- **Nome da escola:** escola municipal lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 14/11/2025 - 12:36h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 49. kaleb alves dos santos
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** kaleb alves dos santos
+- **Data de nascimento:** 08/07/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 04255888159
+- **RG / Certidão:** 971158
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99236-8768
+- **E-mail:** denizia22@gmail.com
+- **Endereço:** t34 21
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-344
+- **Nome do responsável:** denizia bezene dos santos
+- **CPF do responsável:** 04255888159
+- **Nome da mãe:** denizia bezene dos santos
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 2
+- **Nome da escola:** eti euridice de melo
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 16/11/2025 - 15:49h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 50. kaleby victor marinho santos
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** kaleby victor marinho santos
+- **Data de nascimento:** 04/12/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 05637222150
+- **RG / Certidão:** 1062151
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98405-2335
+- **E-mail:** nubiaventura94@gmail.com
+- **Endereço:** t30 c30 c 24 l 24
+- **Bairro:** taqiari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-384
+- **Nome do responsável:** nubia marinho ventura salves
+- **CPF do responsável:** 05637222150
+- **Nome da mãe:** nubia marinho ventura salves
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 2
+- **Nome da escola:** escola municipal lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 14/11/2025 - 12:43h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 51. Kallil Bento da Silva
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** Kallil Bento da Silva
+- **Data de nascimento:** 04/07/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 06397416143
+- **RG / Certidão:** 1263582
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99253-7290
+- **E-mail:** nilzaademir123@gmail.com
+- **Endereço:** T 42 lote 19
+- **Bairro:** Taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-516
+- **Nome do responsável:** Nilza da Silva Bento
+- **CPF do responsável:** 06397416143
+- **Nome da mãe:** Nilza da Silva Bento
+- **Nome do pai:** —
+- **Contato de emergência:** Nilza da Silva Bento — 63 99253-7290
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** —
+- **Nome da escola:** Escola Municipal Lúcia Sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** —
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 52. kauã martins da silva
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** kauã martins da silva
+- **Data de nascimento:** 05/04/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 03284403108
+- **RG / Certidão:** 03284403108
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63993-0092
+- **E-mail:** fernandamartins199803@gmail.com
+- **Endereço:** t20 cj 13 lt 14
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-152
+- **Nome do responsável:** ana paula alves da silva
+- **CPF do responsável:** 03284403108
+- **Nome da mãe:** ana paula alves da silva
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 1
+- **Nome da escola:** escola municipal lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 14/11/2025 - 13:28h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 53. KENDERSON JOABY SANTOS DA SILVA
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** KENDERSON JOABY SANTOS DA SILVA
+- **Data de nascimento:** 20/08/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 76522911272
+- **RG / Certidão:** 76522911272
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98131-0721
+- **E-mail:** BEZERRASUYLANA@GMAIL.COM
+- **Endereço:** ns02 lt 62
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-346
+- **Nome do responsável:** SUYLAN BEZERRA DOS SANTOS
+- **CPF do responsável:** 04897671179
+- **Nome da mãe:** SUYLAN BEZERRA DOS SANTOS
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** 2
+- **Nome da escola:** escola municipal lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 1
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 54. Leonardo Foro Cavalcante
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** Leonardo Foro Cavalcante
+- **Data de nascimento:** 07/10/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 10611305178
+- **RG / Certidão:** 1698317
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99279-8545
+- **E-mail:** monteirorivaldo217@gmail.com
+- **Endereço:** rua 03 chacara 53
+- **Bairro:** Vila Agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Fabiene Foro rodrigues
+- **CPF do responsável:** 05128696189
+- **Nome da mãe:** Fabiene Foro Rodrigues
+- **Nome do pai:** —
+- **Contato de emergência:** Fabiene Foro Rodrigues — 63 99289-8545
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Sara Fernandes
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 18/11/2025 - 10:17h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 55. Levy de Oliveira Silva SIMSIM
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** Levy de Oliveira Silva SIMSIM
+- **Data de nascimento:** 16/03/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 77794680115
+- **RG / Certidão:** 194385
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98504-6552
+- **E-mail:** nadiellysilva98@gmail.com
+- **Endereço:** T 31 Rua Lo 03 Lote 08
+- **Bairro:** Taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-390
+- **Nome do responsável:** Rayssa Silva Correia
+- **CPF do responsável:** 77794680115
+- **Nome da mãe:** Rayssa Silva Correia
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 3º Ano
+- **Nome da escola:** Escola Municipal Lúcia Sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 2
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 56. levy dos santos silva filho
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** levy dos santos silva filho
+- **Data de nascimento:** 20/03/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 10276321146
+- **RG / Certidão:** 10276321146
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99217-6707
+- **E-mail:** antoniabombomprado@gmail.com
+- **Endereço:** t 20 cj 20 lt 05
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77021-090
+- **Nome do responsável:** antonia dos santos silvaviana
+- **CPF do responsável:** 03193452114
+- **Nome da mãe:** antonia dos santos silvaviana
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Estadual
+- **Turno escolar:** Manhã
+- **Série:** 6
+- **Nome da escola:** ESCOLA ESTADUAL MARIA DOS REIS
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** —
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 57. Lucas Cerqueira dos Santos
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** Lucas Cerqueira dos Santos
+- **Data de nascimento:** 03/08/2019
+- **Sexo:** Masculino
+- **CPF do aluno:** 10294751130
+- **RG / Certidão:** 53689
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98460-7737
+- **E-mail:** fabiolacirqueira77@gmail.com
+- **Endereço:** Ns 22 Q 21 lote 46 Flamboyant 01
+- **Bairro:** Flamboyant 01
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-474
+- **Nome do responsável:** Fabíola Cerqueira Magalhaes
+- **CPF do responsável:** 01718161107
+- **Nome da mãe:** Fabíola Cerqueira Magalhaes
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** P2 04
+- **Nome da escola:** CMEI Fontes do Saber
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** —
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 58. lucas emanoelda silva gama
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** lucas emanoelda silva gama
+- **Data de nascimento:** 01/06/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 02439064122
+- **RG / Certidão:** 02439064122
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99216-9634
+- **E-mail:** josineide22@gmail.com
+- **Endereço:** t23 cj 28lt15
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-252
+- **Nome do responsável:** josineide da conceição silva
+- **CPF do responsável:** 02439064122
+- **Nome da mãe:** josineide da conceição silva
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 1
+- **Nome da escola:** escola municipal estevao de castro
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 26/11/2025 - 14:07h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 59. Lucas Gabriel Bomfim Rodrigues
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** Lucas Gabriel Bomfim Rodrigues
+- **Data de nascimento:** 25/11/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 10344700194
+- **RG / Certidão:** 1810061
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99951-6777
+- **E-mail:** gomessousanefftaly@gmail.com
+- **Endereço:** T 30 Apm 16 lote 04
+- **Bairro:** Taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-376
+- **Nome do responsável:** Francisca Delma Bispo Bomfim
+- **CPF do responsável:** 02637581174
+- **Nome da mãe:** Francisca Delma Bomfim
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** —
+- **Série:** 3º Ano
+- **Nome da escola:** Escola Municipal Lúcia Sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/11/2025 - 21:35h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 60. lucas lima de araujo
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** lucas lima de araujo
+- **Data de nascimento:** 10/06/2020
+- **Sexo:** Masculino
+- **CPF do aluno:** 10783724110
+- **RG / Certidão:** 10783724110
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99234-1126
+- **E-mail:** anacarolina@gmail.com
+- **Endereço:** t30 cj 19 lt 20
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-362
+- **Nome do responsável:** ana carolina silva de araujo
+- **CPF do responsável:** 06714135548
+- **Nome da mãe:** ana carolina silva de araujo
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** p1.01
+- **Nome da escola:** cmei fontes do saber
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 19/11/2025 - 12:11h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 61. luiz eduardo resende barbosa
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** luiz eduardo resende barbosa
+- **Data de nascimento:** 04/05/2020
+- **Sexo:** Masculino
+- **CPF do aluno:** 10739698192
+- **RG / Certidão:** 10739698192
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98466-3617
+- **E-mail:** cristina22@gmail.com
+- **Endereço:** t 31 cj 14 lt 16
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-430
+- **Nome do responsável:** cristina nevezz barbosa
+- **CPF do responsável:** 00461074109
+- **Nome da mãe:** cristina nevezz barbosa
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** pii 02
+- **Nome da escola:** cmei fontes do saber
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** —
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 62. luiz gustavo marinho silveira
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** luiz gustavo marinho silveira
+- **Data de nascimento:** 11/02/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 08103263109
+- **RG / Certidão:** 08103263109
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99279-8366
+- **E-mail:** rairama32@gmail.com
+- **Endereço:** t33 c 30
+- **Bairro:** Jardim Taquari (Taquaralto)
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-580
+- **Nome do responsável:** rairama souza silveira
+- **CPF do responsável:** 04571918135
+- **Nome da mãe:** rairama souza silveira
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 5
+- **Nome da escola:** ETI MARGARIDA LEMOS
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/11/2025 - 14:57h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 63. Marcos Emanoel de Oliveira Santana N~~Ã~~O
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** Marcos Emanoel de Oliveira Santana N~~Ã~~O
+- **Data de nascimento:** 22/04/2009
+- **Sexo:** Masculino
+- **CPF do aluno:** 66200970220
+- **RG / Certidão:** 10605579535
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99239-5024
+- **E-mail:** emanuelmarcos850@gmail.com
+- **Endereço:** T 22 conj 24 Lote 08 rua ns 14
+- **Bairro:** Taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-120
+- **Nome do responsável:** Kelly crystyni de Oliveira Bezerra Pereira
+- **CPF do responsável:** 66200970220
+- **Nome da mãe:** Kelly Crystyni de Oliveira Bezarra Pereira
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Médio
+- **Tipo de escola (Municipal/Estadual/Particular):** Estadual
+- **Turno escolar:** —
+- **Série:** 1º Ano
+- **Nome da escola:** Escola Estadual centro de Ensino Medio
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 1
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 64. marcos paulo de sousa freitas
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** marcos paulo de sousa freitas
+- **Data de nascimento:** 15/11/2008
+- **Sexo:** Masculino
+- **CPF do aluno:** 09117101166
+- **RG / Certidão:** 1616669
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99296-8480
+- **E-mail:** marcospaulosousa683@gmail.com
+- **Endereço:** t31 c 15 l 15
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-408
+- **Nome do responsável:** miclele angela pereira de sousa viana
+- **CPF do responsável:** 01928734154
+- **Nome da mãe:** miclele angela pereira de sousa viana
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Médio
+- **Tipo de escola (Municipal/Estadual/Particular):** Estadual
+- **Turno escolar:** Manhã
+- **Série:** 2 ano
+- **Nome da escola:** ESCOLA ESTADUAL MARIA DOS REIS
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/11/2025 - 17:45h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 65. MARIA CLARA JESUS DA SILVA PAES ZANDIM
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** MARIA CLARA JESUS DA SILVA PAES ZANDIM
+- **Data de nascimento:** 10/03/2013
+- **Sexo:** Feminino
+- **CPF do aluno:** 11303695103
+- **RG / Certidão:** 11303695103
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99937-8073
+- **E-mail:** ANACARLA01@GMAIL.COM
+- **Endereço:** CHACARA SILVA 44
+- **Bairro:** TAQUARI
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-344
+- **Nome do responsável:** ANA CARLA DE JEUS DA SILVA
+- **CPF do responsável:** 11306395103
+- **Nome da mãe:** ANA CARLA DE JEUS DA SILVA
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Estadual
+- **Turno escolar:** Manhã
+- **Série:** 7
+- **Nome da escola:** ESCOLA ESTADUAL MARIA DOS REIS
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/11/2025 - 18:07h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 66. marvos vinicios ribeiro de souza
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** marvos vinicios ribeiro de souza
+- **Data de nascimento:** 09/05/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 10388688157
+- **RG / Certidão:** 10388688157
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99214-4149
+- **E-mail:** tatiane@gmail.com
+- **Endereço:** rua4 chacara 3
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** tatiane da silva ribeiro
+- **CPF do responsável:** 04424870109
+- **Nome da mãe:** tatiane da silva ribeiro
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 4
+- **Nome da escola:** escola municipal lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 11/
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 67. MICAEL CRUZ SOUZA
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** MICAEL CRUZ SOUZA
+- **Data de nascimento:** 15/10/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 06508727389
+- **RG / Certidão:** 1578050
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 981-0407
+- **E-mail:** irlenecruz@gmail.com
+- **Endereço:** QD16 LT 41
+- **Bairro:** flamboyant
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-690
+- **Nome do responsável:** irlene da cruz barbosa
+- **CPF do responsável:** 06508727389
+- **Nome da mãe:** irlene da cruz barbosa
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 4
+- **Nome da escola:** ETI MARGARIDA LEMOS
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 23/11/2025 - 16:14h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 68. miguel dias neto
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** miguel dias neto
+- **Data de nascimento:** 18/05/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 06616873170
+- **RG / Certidão:** 06616873170
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99985-8019
+- **E-mail:** luana22@gmail.com
+- **Endereço:** QD 24 LT 23
+- **Bairro:** flamboyant
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-344
+- **Nome do responsável:** luana thaina dias de melo
+- **CPF do responsável:** 06616873170
+- **Nome da mãe:** luana thaina dias de melo
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 4
+- **Nome da escola:** escola municipal lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 26/11/2025 - 15:08h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 69. mizael campelo negres
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** mizael campelo negres
+- **Data de nascimento:** 12/11/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 02888502119
+- **RG / Certidão:** 893120
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99264-0442
+- **E-mail:** antoniadaianecampelosilva@gmail.com
+- **Endereço:** t 43 lt 19
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-000
+- **Nome do responsável:** antonia daiane campelo silva
+- **CPF do responsável:** 02888502119
+- **Nome da mãe:** antonia daiane campelo silva
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 4
+- **Nome da escola:** escola municipal lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** —
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 70. nicolas silva vieira
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** nicolas silva vieira
+- **Data de nascimento:** 30/04/2019
+- **Sexo:** Masculino
+- **CPF do aluno:** 10111444179
+- **RG / Certidão:** 10000541963
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99252-3237
+- **E-mail:** RAILANNA@OUTLOOK.COM
+- **Endereço:** T31 CJ 31 LT 22
+- **Bairro:** TAQUARI
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-406
+- **Nome do responsável:** RAILANNA SILVA MORAIS
+- **CPF do responsável:** 06563002816
+- **Nome da mãe:** RAILANNA SILVA MORAIS
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** P2 01
+- **Nome da escola:** cmei fontes do saber
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 13/11/2025 - 18:21h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 71. NICOLY SOPHIA SANTOS FREITAS
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** NICOLY SOPHIA SANTOS FREITAS
+- **Data de nascimento:** 24/02/2018
+- **Sexo:** Feminino
+- **CPF do aluno:** 06119718109
+- **RG / Certidão:** 06119718109
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99243-9761
+- **E-mail:** LETIA23@GMAIL.COM
+- **Endereço:** T23 QD 12 LT 12
+- **Bairro:** TAQUARI
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-655
+- **Nome do responsável:** LETICIA HENRRIQUE DOS SANTOS SILVA
+- **CPF do responsável:** 06119718109
+- **Nome da mãe:** LETICIA HENRRIQUE DOS SANTOS SILVA
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 2
+- **Nome da escola:** escola municipal lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** —
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 72. oscar augusto macario dos santos silva
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** oscar augusto macario dos santos silva
+- **Data de nascimento:** 10/07/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 02665938103
+- **RG / Certidão:** 02665938103
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99131-5529
+- **E-mail:** ryvia33@gmail.com
+- **Endereço:** t24 cj 14 lt 89
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-344
+- **Nome do responsável:** ryvia pereira da silva
+- **CPF do responsável:** 02665938103
+- **Nome da mãe:** ryvia pereira da silva
+- **Nome do pai:** —
+- **Contato de emergência:** ryvia pereira da silva — 63 99131-5529
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 1
+- **Nome da escola:** escola municipal lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 26/11/2025 - 15:00h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 73. pedro emanuel freitas de araujo
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** pedro emanuel freitas de araujo
+- **Data de nascimento:** 19/06/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 82257515315
+- **RG / Certidão:** 1177275993
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98417-6707
+- **E-mail:** freitastelma80@gmail.com
+- **Endereço:** t 31 clt 17j 26
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-408
+- **Nome do responsável:** telma freitas de oliveira
+- **CPF do responsável:** 82257515315
+- **Nome da mãe:** telma freitas de oliveira
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Estadual
+- **Turno escolar:** Manhã
+- **Série:** 6
+- **Nome da escola:** ESCOLA ESTADUAL MARIA DOS REIS
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 16/11/2025 - 15:31h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 74. pedro henrrique aires milhomen
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** pedro henrrique aires milhomen
+- **Data de nascimento:** 01/12/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 05696053181
+- **RG / Certidão:** 1254799
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98124-5051
+- **E-mail:** amandaaires73@gmail.com
+- **Endereço:** t22 cj11 l10
+- **Bairro:** Jardim Taquari (Taquaralto)
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-224
+- **Nome do responsável:** amanda airrs dos a milhomen
+- **CPF do responsável:** 05696053181
+- **Nome da mãe:** amanda airrs dos a milhomen
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 2
+- **Nome da escola:** escola municipal lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/11/2025 - 14:39h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 75. pedro henrrique de oliveira labato
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** pedro henrrique de oliveira labato
+- **Data de nascimento:** 04/07/2020
+- **Sexo:** Masculino
+- **CPF do aluno:** 10825281105
+- **RG / Certidão:** 1816659
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99136-6991
+- **E-mail:** GIRLLANEG.H@GMAIL.COM
+- **Endereço:** T31 LT 10 CJ 05
+- **Bairro:** TAQUARI
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-442
+- **Nome do responsável:** GIRLLANE DE OLIVEIRA SANTOS
+- **CPF do responsável:** 05414668108
+- **Nome da mãe:** GIRLLANE DE OLIVEIRA SANTOS
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** pI 04
+- **Nome da escola:** cmei fontes do saber
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 19/11/2025 - 12:15h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 76. pedro jorge silva dos santos
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** pedro jorge silva dos santos
+- **Data de nascimento:** 07/08/2020
+- **Sexo:** Masculino
+- **CPF do aluno:** 10845080105
+- **RG / Certidão:** 10845080105
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98108-9950 / 63 98108-9950
+- **E-mail:** loyane88@gmail.com
+- **Endereço:** t20 cj 13 lt 14
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-344
+- **Nome do responsável:** loyane silva de carvalho
+- **CPF do responsável:** 05525928116
+- **Nome da mãe:** loyane silva de carvalho
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 1
+- **Nome da escola:** cmei fontes do saber
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 23/11/2025 - 15:43h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 77. PEDRO JUNIOR MENDES AMARAL
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** PEDRO JUNIOR MENDES AMARAL
+- **Data de nascimento:** 04/10/2019
+- **Sexo:** Masculino
+- **CPF do aluno:** 02554673110
+- **RG / Certidão:** 824904
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99221-7455
+- **E-mail:** GILDEANEGMA22@GMAIL.COM
+- **Endereço:** T24 CJ 08 LT 8
+- **Bairro:** TAQUARI
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-344
+- **Nome do responsável:** GILDEANE GLORIA MENDES AMARAL
+- **CPF do responsável:** 05254673110
+- **Nome da mãe:** GILDEANE GLORIA MENDES AMARAL
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 2
+- **Nome da escola:** cmei fontes do saber
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 13/11/2025 - 18:25h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 78. RAFAEL DA CONCEIÇÃO SOUSA
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** RAFAEL DA CONCEIÇÃO SOUSA
+- **Data de nascimento:** 20/03/2020
+- **Sexo:** Masculino
+- **CPF do aluno:** 10678490171
+- **RG / Certidão:** 1866194
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99293-9270
+- **E-mail:** MARIAANGELA@GMAIL.COM
+- **Endereço:** T34 LT 14
+- **Bairro:** TAQUARI
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-344
+- **Nome do responsável:** MARIA DE FATIMA DA CONCEIÇÃO PEREIRA SOUZA
+- **CPF do responsável:** 10678490171
+- **Nome da mãe:** MARIA DE FATIMA DA CONCEIÇÃO PEREIRA SOUZA
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** P2.03
+- **Nome da escola:** cmei fontes do saber
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** —
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 79. Renato Alves de Oliveira NÃONÃO
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** Renato Alves de Oliveira NÃONÃO
+- **Data de nascimento:** 10/12/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 09439458100
+- **RG / Certidão:** 1.589.047
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99227-9897
+- **E-mail:** monicaoliveiravangelista@gmail.com
+- **Endereço:** T 43 Rua Darly Lote 85
+- **Bairro:** Setor Chácara
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-120
+- **Nome do responsável:** Antônia Monica de oliveira Evangelista
+- **CPF do responsável:** 03007126185
+- **Nome da mãe:** Antônia Monica de Oliveira Evangelista
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 4º Ano
+- **Nome da escola:** Escola municipal lúcia Sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 1
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 80. Rick Rodrigues da Silva Franklin
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** Rick Rodrigues da Silva Franklin
+- **Data de nascimento:** 10/01/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 71816915114
+- **RG / Certidão:** 836116
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99269-2597
+- **E-mail:** ramonbatistalustosa@gmail.com
+- **Endereço:** T31 conj 34 Lote 04 casa 01
+- **Bairro:** Taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-402
+- **Nome do responsável:** Daiane Rodrigues do Nacimento
+- **CPF do responsável:** 03241288196
+- **Nome da mãe:** Daiane Rodrigues do Nacimento
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Estadual
+- **Turno escolar:** Manhã
+- **Série:** 6º Ano
+- **Nome da escola:** Escola Estadual Maria dos Reis Alves Barros
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 18/11/2025 - 21:09h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 81. robson lorenzo rodrigues silva
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** robson lorenzo rodrigues silva
+- **Data de nascimento:** 18/01/2019
+- **Sexo:** Masculino
+- **CPF do aluno:** 09861116192
+- **RG / Certidão:** 09861116192
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99257-9429
+- **E-mail:** vanderleia22@gmail.com
+- **Endereço:** qd 27 lt 40
+- **Bairro:** flamboyant
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-355
+- **Nome do responsável:** vanderlea rodrigues dos santos
+- **CPF do responsável:** 01530575303
+- **Nome da mãe:** vanderlea rodrigues dos santos
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 1
+- **Nome da escola:** escola municipal lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 26/11/2025 - 14:46h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 82. ROMILDO FILHO DE SOUZA
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** ROMILDO FILHO DE SOUZA
+- **Data de nascimento:** 27/05/2020
+- **Sexo:** Masculino
+- **CPF do aluno:** 02031753100
+- **RG / Certidão:** 169062
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99221-2720 / 63 99221-2720
+- **E-mail:** beatriiizzo6@gmail.com
+- **Endereço:** T22 CJT 13 LT 03
+- **Bairro:** TAQUARI
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 70000-00
+- **Nome do responsável:** LUBIA LOPES
+- **CPF do responsável:** 02031753100
+- **Nome da mãe:** LUBIA LOPES
+- **Nome do pai:** —
+- **Contato de emergência:** LUBIA LOPES — 63 99221-2720
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** PRE 1
+- **Nome da escola:** LUCIA SALES
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 19/11/2025 - 12:09h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 83. rubens smith rodrigues NÃO ~~NÃSIMO~~
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** rubens smith rodrigues NÃO ~~NÃSIMO~~
+- **Data de nascimento:** 25/06/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 04433097101
+- **RG / Certidão:** 04433097101
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99257-9429
+- **E-mail:** vanderleia22@gmail.com
+- **Endereço:** qd 27 lt 40
+- **Bairro:** flamboyant
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-355
+- **Nome do responsável:** vanderlea rodrigues dos santos
+- **CPF do responsável:** 01530575303
+- **Nome da mãe:** vanderlea rodrigues dos santos
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 3
+- **Nome da escola:** escola municipal lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 26/11/2025 - 14:50h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 84. ryan lucas lustosa dos santos
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** ryan lucas lustosa dos santos
+- **Data de nascimento:** 24/10/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 71403836183
+- **RG / Certidão:** 1603748
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98479-5325
+- **E-mail:** eliecylusrosa@gmail.com
+- **Endereço:** t42 c 29 l 16
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77270-000
+- **Nome do responsável:** elircy barbosa lustosa
+- **CPF do responsável:** 91438020104
+- **Nome da mãe:** elircy barbosa lustosa
+- **Nome do pai:** —
+- **Contato de emergência:** elircy barbosa lustosa — 63 98479-5325
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Estadual
+- **Turno escolar:** Manhã
+- **Série:** 6
+- **Nome da escola:** ESCOLA ESTADUAL MARIA DOS REIS
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 14/11/2025 - 12:51h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 85. Ryan Pedro da Silva Lima
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** Ryan Pedro da Silva Lima
+- **Data de nascimento:** 04/02/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 07862375114
+- **RG / Certidão:** 1553041
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98436-5583
+- **E-mail:** ramonbatistalustosa@gmail.com
+- **Endereço:** T 31 av TL o -07 conj 36 LT 12
+- **Bairro:** Taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-408
+- **Nome do responsável:** Angra Cristina da Silva Lima
+- **CPF do responsável:** 89860942234
+- **Nome da mãe:** Angra Cristina da Silva Lima
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** —
+- **Série:** 4º Ano
+- **Nome da escola:** Escola Municipal Lúcia Sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** —
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 86. samuel batista alves
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** samuel batista alves
+- **Data de nascimento:** 18/11/2010
+- **Sexo:** Masculino
+- **CPF do aluno:** 11414489129
+- **RG / Certidão:** 1693058
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99105-8305
+- **E-mail:** samuelbatistaalves@gmail.com
+- **Endereço:** t32 cj 35 lt 12
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-466
+- **Nome do responsável:** gilvania batista santana
+- **CPF do responsável:** 03042992195
+- **Nome da mãe:** gilvania batista santana
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Médio
+- **Tipo de escola (Municipal/Estadual/Particular):** Estadual
+- **Turno escolar:** Manhã
+- **Série:** 1 ano
+- **Nome da escola:** ESCOLA ESTADUAL MARIA DOS REIS
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 13/11/2025 - 17:59h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 87. samuel bezerra puitencio SIM ~~NÃSINMSIMO~~
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** samuel bezerra puitencio SIM ~~NÃSINMSIMO~~
+- **Data de nascimento:** 06/08/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 60162681356
+- **RG / Certidão:** 13132082
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99295-0626
+- **E-mail:** SONMARIAVIANNA@GMAIUL.COM
+- **Endereço:** T21 CJ 51 LT 16
+- **Bairro:** TAQUARI
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-174
+- **Nome do responsável:** SONARIA VIANA B.BARROS
+- **CPF do responsável:** 00934268100
+- **Nome da mãe:** SONARIA VIANA B.BARROS
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 5
+- **Nome da escola:** ESCOLA ESTADUAL MARIA DOS REIS
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** —
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 88. Samuel Dias de Oliveira
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** Samuel Dias de Oliveira
+- **Data de nascimento:** 06/01/2019
+- **Sexo:** Masculino
+- **CPF do aluno:** 09803027140
+- **RG / Certidão:** 09803027140
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99114-5194
+- **E-mail:** ramonbatistalustosa@gmail.com
+- **Endereço:** Quadra T20 CONJ 11 Lote 06
+- **Bairro:** Taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-376
+- **Nome do responsável:** Rosirene Dias do Carmo
+- **CPF do responsável:** 98044737120
+- **Nome da mãe:** Rosirene Dias do Carmo
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 1º Ano
+- **Nome da escola:** CMEI Fontes do Saber
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 18/11/2025 - 21:45h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 89. SAMUEL FERRAACIOLI RODRIGUES
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** SAMUEL FERRAACIOLI RODRIGUES
+- **Data de nascimento:** 27/07/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 85863629134
+- **RG / Certidão:** 85863629134
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98149-2608
+- **E-mail:** MARIAZILDA@GMAIL.COM
+- **Endereço:** T31 C 09 L 22
+- **Bairro:** TAQUARI
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-408
+- **Nome do responsável:** HORLANDO RODRIGUES FERRACIOLI
+- **CPF do responsável:** 85863629134
+- **Nome da mãe:** MARIA ZILMA FERRACIOLI DE S. RODRIGUES
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** —
+- **Série:** 2
+- **Nome da escola:** escola municipal lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** —
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 90. saniel sousa pedrosa ~~NÃO~~
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** saniel sousa pedrosa ~~NÃO~~
+- **Data de nascimento:** 16/10/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 01378283147
+- **RG / Certidão:** 01378283147
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99303-2567
+- **E-mail:** rayanesousa996@gmail.com
+- **Endereço:** t23 cj 28 lt 22
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-344
+- **Nome do responsável:** rayane nascimento de sousa
+- **CPF do responsável:** 07032238360
+- **Nome da mãe:** rayane nascimento de sousa
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 4
+- **Nome da escola:** escola municipal lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 26/11/2025 - 14:01h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 91. SARA JHENNYFFER DE MATOS SILVA
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** SARA JHENNYFFER DE MATOS SILVA
+- **Data de nascimento:** 13/07/2013
+- **Sexo:** Feminino
+- **CPF do aluno:** 02837378321
+- **RG / Certidão:** 02837378321
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98103-9359
+- **E-mail:** MARIADOSREMEDIOSSILVAMATOS12@GMAIL.COM
+- **Endereço:** T32 CJ 20 LT 11
+- **Bairro:** TAQUARI
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-486
+- **Nome do responsável:** MARIA DOS REMEDIOS SILVA MATOS
+- **CPF do responsável:** 03969431360
+- **Nome da mãe:** MARIA DOS REMEDIOS SILVA MATOS
+- **Nome do pai:** —
+- **Contato de emergência:** MARIA DOS REMEDIOS SILVA MATOS — 63 98103-9359
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Estadual
+- **Turno escolar:** Manhã
+- **Série:** 6
+- **Nome da escola:** ESCOLA ESTADUAL MARIA DOS REIS
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 26/11/2025 - 15:29h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 92. thalyson pereira da silva
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** thalyson pereira da silva
+- **Data de nascimento:** 17/12/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 11701330105
+- **RG / Certidão:** 1822964
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99270-4430
+- **E-mail:** regina22@gmail.com
+- **Endereço:** t42 cj 38 lt 12
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-516
+- **Nome do responsável:** regina pereira da silva
+- **CPF do responsável:** 05478767182
+- **Nome da mãe:** regina pereira da silva
+- **Nome do pai:** —
+- **Contato de emergência:** regina pereira da silva — 63 99270-4430
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Estadual
+- **Turno escolar:** Manhã
+- **Série:** 7
+- **Nome da escola:** ESCOLA ESTADUAL MARIA DOS REIS
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 26/11/2025 - 14:15h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 93. thaylson rodrigues de matos SIM Sss
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** thaylson rodrigues de matos SIM Sss
+- **Data de nascimento:** 09/03/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 02811910182
+- **RG / Certidão:** 02811910182
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98444-0727
+- **E-mail:** andreiarodriguespinto1@gmail.com
+- **Endereço:** t32
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-466
+- **Nome do responsável:** andreia rodrigues pinto
+- **CPF do responsável:** 02500282120
+- **Nome da mãe:** 02811910182
+- **Nome do pai:** —
+- **Contato de emergência:** andreia rodrigues pinto — 63 98444-0727
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Estadual
+- **Turno escolar:** Manhã
+- **Série:** 5
+- **Nome da escola:** maria dos reis alves barros
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 11/11/2025 - 12:07h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 94. THAYLSON RODRIGUES DE MMATOS
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** THAYLSON RODRIGUES DE MMATOS
+- **Data de nascimento:** 09/03/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 02811910182
+- **RG / Certidão:** 1848708
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98444-0727
+- **E-mail:** andreiarodriguespinto1@gmail.com
+- **Endereço:** T32 C 35 L 07
+- **Bairro:** TAQUARI
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-466
+- **Nome do responsável:** andreia rodrigues pinto
+- **CPF do responsável:** 02500282120
+- **Nome da mãe:** andreia rodrigues pinto
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 5
+- **Nome da escola:** ESCOLA ESTADUAL MARIA DOS REIS
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/11/2025 - 15:08h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 95. THIEGI PEREIRA SOARES ROCHA
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** THIEGI PEREIRA SOARES ROCHA
+- **Data de nascimento:** 09/12/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 07359547121
+- **RG / Certidão:** 097359547121
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99933-996
+- **E-mail:** SILVANA35@GMAIL.COM
+- **Endereço:** T21 CJ54 LT18
+- **Bairro:** TAQUARI
+- **Cidade:** Paraíso do Tocantins
+- **Estado (UF):** TO
+- **CEP:** 77063-344
+- **Nome do responsável:** SILVANA RAMALHO PEREIRA
+- **CPF do responsável:** 07359547121
+- **Nome da mãe:** SILVANA RAMALHO PEREIRA
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 3
+- **Nome da escola:** escola municipal lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/11/2025 - 18:13h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 96. victor emanuel santos vieira
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** victor emanuel santos vieira
+- **Data de nascimento:** 22/04/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 10034193138
+- **RG / Certidão:** 10034193138
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99138-3297
+- **E-mail:** jesuslene dos santos
+- **Endereço:** jardim vitoria 2
+- **Bairro:** jardim vitoria 2
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** jesuslene dos santos
+- **CPF do responsável:** 03403434192
+- **Nome da mãe:** jesuslene dos santos
+- **Nome do pai:** —
+- **Contato de emergência:** jesuslene dos santos — 03 40343-4192
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 5
+- **Nome da escola:** escola benedito galvão
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/12/2025 - 13:54h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 97. walber cavalcante ramos
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** walber cavalcante ramos
+- **Data de nascimento:** 05/04/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 66076110368
+- **RG / Certidão:** 99012001502
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98144-6933
+- **E-mail:** lvclimatização@hotmail.com
+- **Endereço:** rua q t31 lt 03
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-400
+- **Nome do responsável:** vania oliveira cavalcante
+- **CPF do responsável:** 66076110368
+- **Nome da mãe:** vania oliveira cavalcante
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Estadual
+- **Turno escolar:** Manhã
+- **Série:** 7
+- **Nome da escola:** ESCOLA ESTADUAL MARIA DOS REIS
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/11/2025 - 17:40h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 98. wesley henrrique de oliveira silva
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** wesley henrrique de oliveira silva
+- **Data de nascimento:** 18/02/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 77794680115
+- **RG / Certidão:** 77794680115
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98504-6552
+- **E-mail:** raysasilva@gmail.com
+- **Endereço:** t31 lt 005
+- **Bairro:** taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** raysas silva correia
+- **CPF do responsável:** 7794680115
+- **Nome da mãe:** raysas silva correia
+- **Nome do pai:** —
+- **Contato de emergência:** raysas silva correia — 63 98504-6552
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 3
+- **Nome da escola:** escola municipal lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 11/11/2025 - 12:53h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 99. Wesley Silva Souza
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** Wesley Silva Souza
+- **Data de nascimento:** 18/10/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 71472334175
+- **RG / Certidão:** 71472334175
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99280-7113
+- **E-mail:** silvaivaneth970@gmail.com
+- **Endereço:** T24 Conj 14 Lote 22
+- **Bairro:** Taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** Ivaneth Silva dos Anjos
+- **CPF do responsável:** 02848709197
+- **Nome da mãe:** Ivaneth Silva dos Anjos
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 5º Ano
+- **Nome da escola:** Escola Estadual Maria dos Reis Alves Barros
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 18/11/2025 - 21:57h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 100. willkes Guilherme Santos Oliveira
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** willkes Guilherme Santos Oliveira
+- **Data de nascimento:** 12/11/2011
+- **Sexo:** Masculino
+- **CPF do aluno:** 76829928168
+- **RG / Certidão:** 275188
+- **PCD (Sim/Não):** Sim
+- **Tipo de PCD:** Deficiência Física
+- **Telefones:** 63 99208-1723
+- **E-mail:** mdsoussadossantos34@gmail.com
+- **Endereço:** T31 conj 26 lote 07
+- **Bairro:** Taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-120
+- **Nome do responsável:** Maria do Socorro dos Santos
+- **CPF do responsável:** 76829928168
+- **Nome da mãe:** Maria do Socorro dos Santos
+- **Nome do pai:** —
+- **Contato de emergência:** Maria Socorro do Santos — 63 98426-6552
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Manhã
+- **Série:** 7º Ano
+- **Nome da escola:** Escola Estadual Maria dos Reis Alves Barros
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 13/11/2025 - 11:43h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+### 101. Yure Sousa Pinheiro
+
+- **Professor:** Aleksandro Soares
+- **Nome do aluno:** Yure Sousa Pinheiro
+- **Data de nascimento:** 02/10/2020
+- **Sexo:** Masculino
+- **CPF do aluno:** 10826559107
+- **RG / Certidão:** 1710141
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99113-8807
+- **E-mail:** desousagelina@gmail.com
+- **Endereço:** T 32 conj 01 Lote 04
+- **Bairro:** Taquari
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77063-508
+- **Nome do responsável:** Edina de Sousa Silva
+- **CPF do responsável:** 01893531120
+- **Nome da mãe:** Edina de Sousa Silva
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 2º Ano
+- **Nome da escola:** Escola Municipal Lúcia Sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 18/11/2025 - 21:30h
+- **Núcleo:** Campo T31 - Taquari
+- **Observação:** —
+
+---
+
+# Núcleo Vila Agrotins — Professor Rivaldo
+
+Total de alunos: **100**
+
+### 1. Alex Matos dos Reis
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Alex Matos dos Reis
+- **Data de nascimento:** 24/04/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 10332644154
+- **RG / Certidão:** 609928
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98415-6712
+- **E-mail:** monteirorivaldo217@gmail.com
+- **Endereço:** rua 01 chacara 07
+- **Bairro:** Vila Agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Agnes Matos das Neves
+- **CPF do responsável:** 1476017
+- **Nome da mãe:** Agnes Matos das Neves
+- **Nome do pai:** —
+- **Contato de emergência:** Agnes Matos das Neves — 63 98415-6712
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Caroine Campelo
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 20/11/2025 - 15:02h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 2. algusto cesar ferreira da silva
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** algusto cesar ferreira da silva
+- **Data de nascimento:** 04/05/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 09042251190
+- **RG / Certidão:** 09042251190
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99300-8731
+- **E-mail:** SAMARS22@GMAIL.COM
+- **Endereço:** JARDIM VITORIA2
+- **Bairro:** JARDIM VITORIA2
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** SAMARA DA SILVA BARBORA
+- **CPF do responsável:** 00968693210
+- **Nome da mãe:** SAMARA DA SILVA BARBORA
+- **Nome do pai:** —
+- **Contato de emergência:** SAMARA DA SILVA BARBORA — 00 96869-3210
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 8
+- **Nome da escola:** escola savia fernandes
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/12/2025 - 13:18h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 3. Álvaro Embrahim F. de M. Gomes
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Álvaro Embrahim F. de M. Gomes
+- **Data de nascimento:** 14/08/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 10561235163
+- **RG / Certidão:** 1830445
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99303-5046
+- **E-mail:** monteirorivaldo217@gmail.com
+- **Endereço:** rua 03 chacara 67
+- **Bairro:** Vila Agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Maria Alcione Freitas de Sousa
+- **CPF do responsável:** 03545788474
+- **Nome da mãe:** Maria Alcione
+- **Nome do pai:** Maria Alcione
+- **Contato de emergência:** Maria Alcione — 63 99303-5046
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Benedita Galvão
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 17/11/2025 - 20:50h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 4. Àlvaro Luiz Oliveira pires
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Àlvaro Luiz Oliveira pires
+- **Data de nascimento:** 26/03/2019
+- **Sexo:** Masculino
+- **CPF do aluno:** 10099137194
+- **RG / Certidão:** 30754451820
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99253-3016
+- **E-mail:** monteirorivaldo217@gmail.com
+- **Endereço:** vila agr
+- **Bairro:** Vila Agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Gerusa F. Soares Pires
+- **CPF do responsável:** 99526220153
+- **Nome da mãe:** Gerusa F. Soares Pires
+- **Nome do pai:** —
+- **Contato de emergência:** Gerusa F. Soares Pires — 63 99253-3016
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Benedita Galvão
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 18/11/2025 - 08:56h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 5. angelica saquisaka goveia
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** angelica saquisaka goveia
+- **Data de nascimento:** 12/04/2015
+- **Sexo:** Feminino
+- **CPF do aluno:** 09535164155
+- **RG / Certidão:** 09535164155
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 92251-5496
+- **E-mail:** adriana@gmail.com
+- **Endereço:** agrotins
+- **Bairro:** agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** adriana saquisaka goveia
+- **CPF do responsável:** 95158499187
+- **Nome da mãe:** adriana saquisaka goveia
+- **Nome do pai:** —
+- **Contato de emergência:** adriana saquisaka goveia — 95 15849-9187
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 5
+- **Nome da escola:** escola municipal lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/12/2025 - 12:27h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 6. angelo guilherme a. fortine
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** angelo guilherme a. fortine
+- **Data de nascimento:** 16/06/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 08664088195
+- **RG / Certidão:** 08664088195
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98114-6292
+- **E-mail:** edilene@gmail.com
+- **Endereço:** jardim vitoria 2
+- **Bairro:** jardim vitoria 2
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** edilene alves dos santos
+- **CPF do responsável:** 01379875102
+- **Nome da mãe:** edilene alves dos santos
+- **Nome do pai:** —
+- **Contato de emergência:** edilene alves dos santos — 01 37987-5102
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 6
+- **Nome da escola:** eti santa barbara
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 12/12/2025 - 14:05h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 7. angelo saquisaka goveia
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** angelo saquisaka goveia
+- **Data de nascimento:** 02/04/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 95158499187
+- **RG / Certidão:** 95158499187
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99104-9554
+- **E-mail:** adriana@gmail.com
+- **Endereço:** agrotins
+- **Bairro:** agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** adriana saquisaka goveia
+- **CPF do responsável:** 95158499187
+- **Nome da mãe:** adriana saquisaka goveia
+- **Nome do pai:** —
+- **Contato de emergência:** adriana saquisaka goveia — 63 98215-4236
+- **Escolaridade:** Ensino Médio
+- **Tipo de escola (Municipal/Estadual/Particular):** Estadual
+- **Turno escolar:** Manhã
+- **Série:** 1
+- **Nome da escola:** escola municipal lucia sales
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/12/2025 - 08:33h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 8. antonio expedito
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** antonio expedito
+- **Data de nascimento:** 11/08/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 06409818360
+- **RG / Certidão:** 06409818360
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98215-4236
+- **E-mail:** lorrane@gmail.com
+- **Endereço:** agrotins
+- **Bairro:** agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** lorrane silva da silva
+- **CPF do responsável:** 06409818360
+- **Nome da mãe:** lorrane silva da silva
+- **Nome do pai:** —
+- **Contato de emergência:** lorrane silva da silva — 63 98215-4236
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** 6
+- **Nome da escola:** ESCOLA ESTADUAL MARIA DOS REIS
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 12/12/2025 - 08:40h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 9. arthur dos santos araujo
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** arthur dos santos araujo
+- **Data de nascimento:** 04/05/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 11057411175
+- **RG / Certidão:** 11057411175
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98457-4279
+- **E-mail:** leidiane@gmail.com
+- **Endereço:** jardim vitoria
+- **Bairro:** jardim vitoria
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77100-000
+- **Nome do responsável:** leidiane dos s. lima de araujo
+- **CPF do responsável:** 01916942318
+- **Nome da mãe:** leidiane dos s. lima de araujo
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 6
+- **Nome da escola:** escola savia fernandes
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** —
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 10. Brayan Fellip Costa dos Santos
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Brayan Fellip Costa dos Santos
+- **Data de nascimento:** 22/05/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 06727292108
+- **RG / Certidão:** 1352996
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99208-2515
+- **E-mail:** monteirorivaldo217@gmail.com
+- **Endereço:** rua 01 chacara
+- **Bairro:** Vila Agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Layana da Silva Costa
+- **CPF do responsável:** 05499952183
+- **Nome da mãe:** Layna da Silva Costa
+- **Nome do pai:** —
+- **Contato de emergência:** Layna da Silva Costa — 63 99208-2515
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Maria dos Reis A. Costa
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 20/11/2025 - 13:54h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 11. BRUNO RODRIGUES PEREIRA DE SOUZA
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** BRUNO RODRIGUES PEREIRA DE SOUZA
+- **Data de nascimento:** 05/04/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 10055038182
+- **RG / Certidão:** 10055038182
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99274-0775
+- **E-mail:** CRISTINA@GMAIL.COM
+- **Endereço:** JARDIM VITORIA 2
+- **Bairro:** JARDIM VITORIA 2
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** CRISTINA P. RODRIGUES
+- **CPF do responsável:** 01354153146
+- **Nome da mãe:** CRISTINA P. RODRIGUES
+- **Nome do pai:** —
+- **Contato de emergência:** CRISTINA P. RODRIGUES — 01 35415-3146
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 5
+- **Nome da escola:** ESCOLA BENEDITA GALVÃO
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/12/2025 - 12:34h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 12. caio douglas da silva soares
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** caio douglas da silva soares
+- **Data de nascimento:** 13/05/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 08965651140
+- **RG / Certidão:** 08965651140
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99953-5910
+- **E-mail:** nelcima@gmail.com
+- **Endereço:** agrotins
+- **Bairro:** agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** nelcima machado da silva
+- **CPF do responsável:** 89774752104
+- **Nome da mãe:** nelcima machado da silva
+- **Nome do pai:** —
+- **Contato de emergência:** nelcima machado da silva — 63 99953-5910
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 6
+- **Nome da escola:** ESCOLA ESTADUAL MARIA DOS REIS
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/12/2025 - 12:07h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 13. Calebe Lustosa Nonato
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Calebe Lustosa Nonato
+- **Data de nascimento:** 12/01/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 71240890184
+- **RG / Certidão:** 30698737603
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99976-4371
+- **E-mail:** monteirorivaldo217@gmail.com
+- **Endereço:** rua 02 chacara 26
+- **Bairro:** Vila Agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Marlene Lustosa dos Reis
+- **CPF do responsável:** 02554169110
+- **Nome da mãe:** Marlene Lustosa dos Reis
+- **Nome do pai:** —
+- **Contato de emergência:** Marlene Lustosa dos Reis — 63 99976-4371
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** ETI Sta. Barbara
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 03/12/2025 - 10:28h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 14. Calebe Rodrigues Silveira
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Calebe Rodrigues Silveira
+- **Data de nascimento:** 02/09/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 71240890184
+- **RG / Certidão:** 71240890184
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99264-0643
+- **E-mail:** monteirorivaldo217@gmail.com
+- **Endereço:** rua 2 ch. 05
+- **Bairro:** Vila Agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Manoel Barbosa Silveira
+- **CPF do responsável:** 86556622249
+- **Nome da mãe:** Ivany Rodrigues dos Santos Silva
+- **Nome do pai:** —
+- **Contato de emergência:** Manoel Barbosa Silveira — 63 99264-0643
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Cantinho da Alegria
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 05/12/2025 - 14:42h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 15. carlos daniel cardoso dos santos
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** carlos daniel cardoso dos santos
+- **Data de nascimento:** 15/06/2008
+- **Sexo:** Masculino
+- **CPF do aluno:** 08204928173
+- **RG / Certidão:** 08204928173
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99245-7637
+- **E-mail:** daniel@gmail.com,
+- **Endereço:** agrotins
+- **Bairro:** agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** daniel pereira dos santos
+- **CPF do responsável:** 01386494135
+- **Nome da mãe:** daniel pereira dos santos
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 9
+- **Nome da escola:** escola cem taquaralto
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** —
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 16. cristian junior de melo freitas
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** cristian junior de melo freitas
+- **Data de nascimento:** 07/04/2011
+- **Sexo:** Masculino
+- **CPF do aluno:** 71168647177
+- **RG / Certidão:** 71168647177
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99100-3618
+- **E-mail:** danilo@gmail.com
+- **Endereço:** JARDIM PAULISTA
+- **Bairro:** JARDIM PAULISTA
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** danilo silva moreira
+- **CPF do responsável:** 05086905109
+- **Nome da mãe:** danilo silva moreira
+- **Nome do pai:** —
+- **Contato de emergência:** danilo silva moreira — 05 08690-5109
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 8
+- **Nome da escola:** escola jorge amado
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/12/2025 - 14:20h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 17. Daniel Barros de Sousa
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Daniel Barros de Sousa
+- **Data de nascimento:** 15/07/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 10884855104
+- **RG / Certidão:** 717266
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98407-9304
+- **E-mail:** monteirorivaldo217@gmail.com
+- **Endereço:** rua 03 chacara 69
+- **Bairro:** Vila Agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Gilvan Lopes
+- **CPF do responsável:** 85439487115
+- **Nome da mãe:** Noemi de Barros
+- **Nome do pai:** —
+- **Contato de emergência:** Gilvan Lopes — 63 98407-9304
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Savia Fernandes
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 19/11/2025 - 17:16h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 18. Daniel Edmundo M. Barbosa
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Daniel Edmundo M. Barbosa
+- **Data de nascimento:** 05/06/2008
+- **Sexo:** Masculino
+- **CPF do aluno:** 07757517150
+- **RG / Certidão:** 1457800
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99983-2934
+- **E-mail:** monteirorivaldo217@gmail.com
+- **Endereço:** rua 09 chacara 03
+- **Bairro:** Vila Agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Francimara M. dos Santos
+- **CPF do responsável:** 01333900120
+- **Nome da mãe:** Francimara M. dos Santos
+- **Nome do pai:** —
+- **Contato de emergência:** Francimara M. dos Santos — 63 99983-2934
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Rachel de Queiroz
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 20/11/2025 - 15:31h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 19. daniel eduardo m. barbosa
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** daniel eduardo m. barbosa
+- **Data de nascimento:** 05/06/2008
+- **Sexo:** Masculino
+- **CPF do aluno:** 07757517150
+- **RG / Certidão:** 07757517150
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99983-2934
+- **E-mail:** francimara@gmail.com
+- **Endereço:** agrotins
+- **Bairro:** agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** francimara m. dos santos
+- **CPF do responsável:** 01333900120
+- **Nome da mãe:** francimara m. dos santos
+- **Nome do pai:** —
+- **Contato de emergência:** francimara m. dos santos — 01 33390-0120
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 5
+- **Nome da escola:** escola raquel de queiroz
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/12/2025 - 14:29h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 20. datalo ahus marques
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** datalo ahus marques
+- **Data de nascimento:** 23/04/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 08958183101
+- **RG / Certidão:** 154900
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99214-7639
+- **E-mail:** geilson@gmail.com
+- **Endereço:** chacara 37 rua 03
+- **Bairro:** agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** lemnyvan atus pereira
+- **CPF do responsável:** 04880572126
+- **Nome da mãe:** lemnyvan atus pereira
+- **Nome do pai:** —
+- **Contato de emergência:** lemnyvan atus pereira — 63 99214-7639
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 4
+- **Nome da escola:** ETI MARGARIDA LEMOS
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/12/2025 - 08:12h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 21. davd luiz dias dos santos pinto
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** davd luiz dias dos santos pinto
+- **Data de nascimento:** 30/10/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 01866668102
+- **RG / Certidão:** 01866668102
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98428-0854
+- **E-mail:** patricia@gmail.com
+- **Endereço:** jardim vitoria 2
+- **Bairro:** jardim vitoria 2
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** patricia dias dos santos
+- **CPF do responsável:** 01866608102
+- **Nome da mãe:** patricia dias dos santos
+- **Nome do pai:** —
+- **Contato de emergência:** patricia dias dos santos — 01 86660-8102
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 1
+- **Nome da escola:** escola jorge amado
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 12/12/2025 - 12:53h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 22. davi barbos campos
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** davi barbos campos
+- **Data de nascimento:** 10/02/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 02126293106
+- **RG / Certidão:** 02126293106
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98462-3712
+- **E-mail:** sebastiao@gmail.com
+- **Endereço:** JARDIM VITORIA 1
+- **Bairro:** JARDIM VITORIA 1
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** sebastião guimaraes campos
+- **CPF do responsável:** 02588281109
+- **Nome da mãe:** sebastião guimaraes campos
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 9
+- **Nome da escola:** escola jorge amado
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** —
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 23. Davi Lucca Alves de Araújo
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Davi Lucca Alves de Araújo
+- **Data de nascimento:** 18/12/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 71424060117
+- **RG / Certidão:** 1640145
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 32148-462
+- **E-mail:** monteirorivaldo217@gmail.com
+- **Endereço:** rua 01 ch.11
+- **Bairro:** Vila Agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Evanice C. de Araújo
+- **CPF do responsável:** 00947869174
+- **Nome da mãe:** Evanice C. de Araújo
+- **Nome do pai:** —
+- **Contato de emergência:** Evanice C. de Araújo — 63 32148-462
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** ETI Margarida Lemos
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 21/11/2025 - 11:24h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 24. Davi Pietro Martins da Silva
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Davi Pietro Martins da Silva
+- **Data de nascimento:** 17/07/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 11724136143
+- **RG / Certidão:** 11724136143
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99264-0643
+- **E-mail:** monteirorivaldo217@gmail.com
+- **Endereço:** rua 03 ch.39
+- **Bairro:** Vila Agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Rivaldo Monteiro Correa
+- **CPF do responsável:** 45407541220
+- **Nome da mãe:** Dienis Thalita Pereira Martins
+- **Nome do pai:** —
+- **Contato de emergência:** Rivaldo Monteiro Correa — 63 99264-0643
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Caroline Campelo
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 24/11/2025 - 15:53h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 25. davny gomes dos santos
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** davny gomes dos santos
+- **Data de nascimento:** 06/01/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 06246183158
+- **RG / Certidão:** 1296407
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99221-0166
+- **E-mail:** maria@gmail.com
+- **Endereço:** agrotins
+- **Bairro:** agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** maria luciana da silva
+- **CPF do responsável:** 06246183158
+- **Nome da mãe:** maria luciana da silva
+- **Nome do pai:** —
+- **Contato de emergência:** maria luciana da silva — 63 99221-0166
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 5
+- **Nome da escola:** escola savia fernandes
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/12/2025 - 08:20h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 26. deivid gomes pereira
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** deivid gomes pereira
+- **Data de nascimento:** 18/02/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 08657176130
+- **RG / Certidão:** 08657176130
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98501-8980
+- **E-mail:** leilane@gmail.com
+- **Endereço:** jardim vitoria
+- **Bairro:** jardim vitoria
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** leilane gomes da silva
+- **CPF do responsável:** 13175015182
+- **Nome da mãe:** leilane gomes da silva
+- **Nome do pai:** —
+- **Contato de emergência:** leilane gomes da silva — 13 17501-5182
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 6
+- **Nome da escola:** escola maria rosa
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 12/12/2025 - 13:03h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 27. Diego
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Diego
+- **Data de nascimento:** 26/11/2009
+- **Sexo:** Masculino
+- **CPF do aluno:** 09638481196
+- **RG / Certidão:** 09638481196
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99222-5762
+- **E-mail:** monteirorivaldo217@gmail.com
+- **Endereço:** rua 03 ch.53
+- **Bairro:** Vila Agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Fabiene Foro Rodrigues
+- **CPF do responsável:** 05128696189
+- **Nome da mãe:** Fabiene Foro Rodrigues
+- **Nome do pai:** —
+- **Contato de emergência:** Fabiene Foro Rodrigues — 63 99222-5762
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Setor Sul
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 24/11/2025 - 16:03h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 28. dominique kaue barbosa pereira
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** dominique kaue barbosa pereira
+- **Data de nascimento:** 29/11/2016
+- **Sexo:** Feminino
+- **CPF do aluno:** 01183803117
+- **RG / Certidão:** 01183803117
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99228-1652
+- **E-mail:** marciona22@gmail.com
+- **Endereço:** jardim vitoria 2
+- **Bairro:** jardim vitoria 2
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** marciona barbosa dos santos
+- **CPF do responsável:** 01183803117
+- **Nome da mãe:** marciona barbosa dos santos
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 5
+- **Nome da escola:** eti santa barbara
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** —
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 29. ENZA HENRRIQUE SILVEIRA DA COSTA
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** ENZA HENRRIQUE SILVEIRA DA COSTA
+- **Data de nascimento:** 12/02/2016
+- **Sexo:** —
+- **CPF do aluno:** —
+- **RG / Certidão:** 07788296180 CPF:07788296180
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98409-3929 / E-mail:ANDREZA SILVEIRA DA COSTA UMA
+- **E-mail:** —
+- **Endereço:** JARDIM VITORIA 1 Bairro:JARDIM VITORIA 1
+- **Bairro:** —
+- **Cidade:** Palmas
+- **Estado (UF):** TO CEP:77000-000
+- **CEP:** —
+- **Nome do responsável:** ANDREZA SILVEIRA DA COSTA UMA CPF / RG do Resp.:03171339269 / -
+- **CPF do responsável:** —
+- **Nome da mãe:** ANDREZA SILVEIRA DA COSTA UMA CPF / RG da Mãe:03171339269 / -
+- **Nome do pai:** CPF / RG do Pai:/ -
+- **Contato de emergência:** ANDREZA SILVEIRA DA COSTA UMA — 03 17133-9269
+- **Escolaridade:** Ensino Fundamental Tipo de Escola:Municipal
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Manhã Série:6
+- **Série:** —
+- **Nome da escola:** escola savia fernandes Matrícula:
+- **Tamanho da camisa:** P Camisa Entregue: NÃO
+- **Camisa entregue (Sim/Não):** —
+- **Data do cadastro:** 12/12/2025 - 13:26h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 30. felipe martins de sousa
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** felipe martins de sousa
+- **Data de nascimento:** 26/11/2009
+- **Sexo:** Masculino
+- **CPF do aluno:** 07562476160
+- **RG / Certidão:** 07562476160
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99108-4594
+- **E-mail:** karllyanne@gmail.com
+- **Endereço:** agrotins
+- **Bairro:** agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** karllyanne martins sousa
+- **CPF do responsável:** 04225056171
+- **Nome da mãe:** karllyanne martins sousa
+- **Nome do pai:** —
+- **Contato de emergência:** karllyanne martins sousa — 63 99108-4594
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 1
+- **Nome da escola:** escola municipal lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 12/12/2025 - 09:06h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 31. felipe pereira de sousa soares
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** felipe pereira de sousa soares
+- **Data de nascimento:** 10/10/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 07615250170
+- **RG / Certidão:** 07615250170
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99120-7178
+- **E-mail:** sheila@gmail.com
+- **Endereço:** jardim vitoria 1
+- **Bairro:** jardim vitoria 1
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** sheila pereira de sousa
+- **CPF do responsável:** 02904731105
+- **Nome da mãe:** sheila pereira de sousa
+- **Nome do pai:** —
+- **Contato de emergência:** sheila pereira de sousa — 02 90473-1105
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 6
+- **Nome da escola:** ESCOLA THIAGO BARBOSA
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 12/12/2025 - 13:50h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 32. gabriel morais da silva
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** gabriel morais da silva
+- **Data de nascimento:** 22/11/2008
+- **Sexo:** Masculino
+- **CPF do aluno:** 04895870111
+- **RG / Certidão:** 04895870111
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99264-0643
+- **E-mail:** althair@gmail.com
+- **Endereço:** agrotins
+- **Bairro:** agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77100-000
+- **Nome do responsável:** ALTHAIR FERREIRA DA SILVA
+- **CPF do responsável:** 43584176171
+- **Nome da mãe:** ALTHAIR FERREIRA DA SILVA
+- **Nome do pai:** —
+- **Contato de emergência:** ALTHAIR FERREIRA DA SILVA — 43 58417-6171
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 5
+- **Nome da escola:** ESCOLA MARIA DOS REIS
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/12/2025 - 14:49h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 33. gael vales fernandes
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** gael vales fernandes
+- **Data de nascimento:** 21/04/2019
+- **Sexo:** Masculino
+- **CPF do aluno:** 06708865130
+- **RG / Certidão:** 06708865130
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99251-7576
+- **E-mail:** ariane@gmail.com
+- **Endereço:** agrotins
+- **Bairro:** agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** ariane vales moreira
+- **CPF do responsável:** 06708865130
+- **Nome da mãe:** ariane vales moreira
+- **Nome do pai:** —
+- **Contato de emergência:** ariane vales moreira — 63 99251-7576
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 1
+- **Nome da escola:** escola municipal lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 12/12/2025 - 08:52h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 34. guilherme cardoso dos santos
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** guilherme cardoso dos santos
+- **Data de nascimento:** 05/12/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 08204852177
+- **RG / Certidão:** 08204852177
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98439-8595
+- **E-mail:** gleidiane@gmail.com
+- **Endereço:** agrotins
+- **Bairro:** agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** gleidiane cardoso do nascimento
+- **CPF do responsável:** 08204852177
+- **Nome da mãe:** gleidiane cardoso do nascimento
+- **Nome do pai:** —
+- **Contato de emergência:** gleidiane cardoso do nascimento — 63 98439-8595
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 1
+- **Nome da escola:** escola municipal lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 12/12/2025 - 08:57h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 35. GUSTAVO SOUZA PEREIRA
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** GUSTAVO SOUZA PEREIRA
+- **Data de nascimento:** 07/01/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 09921544136
+- **RG / Certidão:** 09921544136
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98407-3716
+- **E-mail:** KEILANE@GMAIL.COM
+- **Endereço:** JARDIM VITORIA 1
+- **Bairro:** JARDIM VITORIA 1
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** KEILANE PEREIRA DA SILVA
+- **CPF do responsável:** 02117300170
+- **Nome da mãe:** KEILANE PEREIRA DA SILVA
+- **Nome do pai:** —
+- **Contato de emergência:** KEILANE PEREIRA DA SILVA — 02 11730-0170
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 2
+- **Nome da escola:** ESCOLA THIAGO BARBOSA
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 12/12/2025 - 13:31h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 36. Heitor Rodrigues
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Heitor Rodrigues
+- **Data de nascimento:** 21/03/2019
+- **Sexo:** Masculino
+- **CPF do aluno:** 10023893133
+- **RG / Certidão:** 30754450920
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99116-1853
+- **E-mail:** huganila@gmail.com
+- **Endereço:** rua 03 chácara 63
+- **Bairro:** vila agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Huga Nila Rodrigues Lopes Silva
+- **CPF do responsável:** 02342203179
+- **Nome da mãe:** Huga Nila Rodrigues Lopes Silva
+- **Nome do pai:** —
+- **Contato de emergência:** Huga Nila Rodrigues Lopes Silva — 63 99116-1853
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Escola Genêsis
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 20/11/2025 - 10:11h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 37. HEITOR SILVEIRA DA COSTA LIMA
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** HEITOR SILVEIRA DA COSTA LIMA
+- **Data de nascimento:** 12/09/2017
+- **Sexo:** —
+- **CPF do aluno:** —
+- **RG / Certidão:** 09510244180 CPF:09510244180
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98409-3929 / E-mail:ANDREZA@GMAIL.COM
+- **E-mail:** —
+- **Endereço:** JARDIM VITORIA 1 Bairro:JARDIM VITORIA 1
+- **Bairro:** —
+- **Cidade:** Palmas
+- **Estado (UF):** TO CEP:77000-000
+- **CEP:** —
+- **Nome do responsável:** ANDREZA SILVEIRA DA COSTA LIMA CPF / RG do Resp.:03171339269 / -
+- **CPF do responsável:** —
+- **Nome da mãe:** ANDREZA SILVEIRA DA COSTA LIMA CPF / RG da Mãe:03171339269 / -
+- **Nome do pai:** CPF / RG do Pai:/ -
+- **Contato de emergência:** ANDREZA SILVEIRA DA COSTA LIMA — 03 17133-9269
+- **Escolaridade:** Ensino Fundamental Tipo de Escola:Municipal
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Manhã Série:8
+- **Série:** —
+- **Nome da escola:** escola savia fernandes Matrícula:
+- **Tamanho da camisa:** P Camisa Entregue: NÃO
+- **Camisa entregue (Sim/Não):** —
+- **Data do cadastro:** 12/12/2025 - 13:37h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 38. izaac ferreira da silva
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** izaac ferreira da silva
+- **Data de nascimento:** 10/08/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 10997395192
+- **RG / Certidão:** 10997395192
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99294-2930
+- **E-mail:** itamara22@gmail.com
+- **Endereço:** agrotins
+- **Bairro:** agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** itamara da cruz ferreira
+- **CPF do responsável:** 01380047307
+- **Nome da mãe:** itamara da cruz ferreira
+- **Nome do pai:** —
+- **Contato de emergência:** itamara da cruz ferreira — 63 99294-2930
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 5
+- **Nome da escola:** eti santa barbara
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 12/12/2025 - 12:04h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 39. Izaque Rodrigues Silveira
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Izaque Rodrigues Silveira
+- **Data de nascimento:** 07/02/2011
+- **Sexo:** Masculino
+- **CPF do aluno:** 12042905127
+- **RG / Certidão:** 12042905127
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99264-0643
+- **E-mail:** monteirorivaldo217@gmail.com
+- **Endereço:** rua 01 chacara 11
+- **Bairro:** Vila Agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Manoel Barbosa Silveira
+- **CPF do responsável:** 86556622249
+- **Nome da mãe:** Ivany Rodrigues dos Santos Silva
+- **Nome do pai:** —
+- **Contato de emergência:** Manoel Barbosa Silveira — 63 99264-0643
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Jorge Amado
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 05/12/2025 - 15:09h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 40. joão daniel nadri silva
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** joão daniel nadri silva
+- **Data de nascimento:** 07/10/2010
+- **Sexo:** Masculino
+- **CPF do aluno:** 63531595369
+- **RG / Certidão:** 63531595369
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99204-5813
+- **E-mail:** elizangela@gmail..com
+- **Endereço:** agrotins
+- **Bairro:** agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** elizangela oliveira madre
+- **CPF do responsável:** 8955195372
+- **Nome da mãe:** elizangela oliveira madre
+- **Nome do pai:** —
+- **Contato de emergência:** elizangela oliveira madre — 63 99204-5813
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Estadual
+- **Turno escolar:** Manhã
+- **Série:** 8
+- **Nome da escola:** ESCOLA ESTADUAL MARIA DOS REIS
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 12/12/2025 - 08:45h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 41. joão gabriel madre silva
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** joão gabriel madre silva
+- **Data de nascimento:** 10/11/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 12636450386
+- **RG / Certidão:** 12636450386
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99204-5813
+- **E-mail:** elizangela@gmail..com
+- **Endereço:** agrotins
+- **Bairro:** agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** elizangela oliveira madre
+- **CPF do responsável:** 63531595369
+- **Nome da mãe:** elizangela oliveira madre
+- **Nome do pai:** —
+- **Contato de emergência:** elizangela oliveira madre — 63 99204-5813
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 6
+- **Nome da escola:** escola municipal benedita galvão
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 12/12/2025 - 08:48h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 42. JOÃO PEDRO FRANCISCO DOS SANTOS
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** JOÃO PEDRO FRANCISCO DOS SANTOS
+- **Data de nascimento:** 10/08/2014
+- **Sexo:** —
+- **CPF do aluno:** —
+- **RG / Certidão:** 10108772160 CPF:10108772160
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99108-0903 / E-mail:CARMELITA@GMAIL.COM
+- **E-mail:** —
+- **Endereço:** JARDIM VITORIA 1 Bairro:JARDIM VITORIA 1
+- **Bairro:** —
+- **Cidade:** Palmas
+- **Estado (UF):** TO CEP:77000-000
+- **CEP:** —
+- **Nome do responsável:** CARMELITA SANTOS FERREIRA CPF / RG do Resp.:07108413162 / -
+- **CPF do responsável:** —
+- **Nome da mãe:** CARMELITA SANTOS FERREIRA CPF / RG da Mãe:01708413162 / -
+- **Nome do pai:** CPF / RG do Pai:/ -
+- **Contato de emergência:** CARMELITA SANTOS FERREIRA — 07 10841-3162
+- **Escolaridade:** Ensino Fundamental Tipo de Escola:Municipal
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Manhã Série:8
+- **Série:** —
+- **Nome da escola:** ESCOLA THIAGO BARBOSA Matrícula:
+- **Tamanho da camisa:** P Camisa Entregue: NÃO
+- **Camisa entregue (Sim/Não):** —
+- **Data do cadastro:** 12/12/2025 - 13:34h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 43. João Pedro Martins da Silva
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** João Pedro Martins da Silva
+- **Data de nascimento:** 14/04/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 11724123165
+- **RG / Certidão:** 11724123165
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99264-0643
+- **E-mail:** monteirorivaldo217@gmail.com
+- **Endereço:** rua 03 ch.39
+- **Bairro:** Vila Agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Rivaldo Monteiro Correa
+- **CPF do responsável:** 45407541220
+- **Nome da mãe:** Dienis Thalita Pereira Martins
+- **Nome do pai:** —
+- **Contato de emergência:** Rivaldo Monteiro Correa — 63 99264-0643
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Luiz Rodrigues
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 24/11/2025 - 15:43h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 44. João Pedro Nunes Viana
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** João Pedro Nunes Viana
+- **Data de nascimento:** 14/12/2007
+- **Sexo:** Masculino
+- **CPF do aluno:** 07184975111
+- **RG / Certidão:** 08516133141
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99136-3457
+- **E-mail:** monteirorivaldo217@gmail.com
+- **Endereço:** rua 02 chacara
+- **Bairro:** Vila Agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Luziane Sousa
+- **CPF do responsável:** 01601621140
+- **Nome da mãe:** Luziane Sousa
+- **Nome do pai:** —
+- **Contato de emergência:** Luziane Sousa — 63 99136-3457
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** cmei Maria dos Reis Alves Barros
+- **Tamanho da camisa:** G
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 20/11/2025 - 15:38h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 45. joão vitor rodrigues
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** joão vitor rodrigues
+- **Data de nascimento:** 29/09/2007
+- **Sexo:** Masculino
+- **CPF do aluno:** 01946506184
+- **RG / Certidão:** 06925577170
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98464-8057
+- **E-mail:** luay rodrigues
+- **Endereço:** agrotins
+- **Bairro:** agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** luay rodrigues
+- **CPF do responsável:** 01946506184
+- **Nome da mãe:** luay rodrigues
+- **Nome do pai:** —
+- **Contato de emergência:** luay rodrigues — 63 98464-8057
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 1
+- **Nome da escola:** escola municipal lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 12/12/2025 - 09:02h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 46. Johnatan da Silva Mendanha
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Johnatan da Silva Mendanha
+- **Data de nascimento:** 23/12/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 09373932152
+- **RG / Certidão:** 30636785787
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98152-9785
+- **E-mail:** cf7221519@gmail.com
+- **Endereço:** ch. Lazaro
+- **Bairro:** Vila Agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Carmen Lúcia Ferreira da Silva
+- **CPF do responsável:** 01505758157
+- **Nome da mãe:** Carmen Lúcia Ferreira da Silva
+- **Nome do pai:** —
+- **Contato de emergência:** Carmen Lúcia Ferreira da Silva — 63 98152-9785
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 24/11/2025 - 15:20h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 47. José Pedro Barbosa de Sousa
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** José Pedro Barbosa de Sousa
+- **Data de nascimento:** 09/09/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 09551229100
+- **RG / Certidão:** 30754592490
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99252-2947
+- **E-mail:** monteirorivaldo217@gmail.com
+- **Endereço:** rua 2 ch. 05
+- **Bairro:** Vila Agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Luziane de Sousa Alves Maciel
+- **CPF do responsável:** 04261850133
+- **Nome da mãe:** Luziane de Sousa Alves Maciel
+- **Nome do pai:** —
+- **Contato de emergência:** Luziane de Sousa Alves Maciel — 63 99252-2947
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** cmei cantinho da Alegria
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 02/12/2025 - 20:40h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 48. josiane pereira martins
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** josiane pereira martins
+- **Data de nascimento:** 18/06/2014
+- **Sexo:** Feminino
+- **CPF do aluno:** 09851954101
+- **RG / Certidão:** 09851954101
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99941-9657
+- **E-mail:** rosehi@gmail.com
+- **Endereço:** jardim vitoria 2
+- **Bairro:** jardim vitoria 2
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** rosehi pereira de sena
+- **CPF do responsável:** 01245269186
+- **Nome da mãe:** rosehi pereira de sena
+- **Nome do pai:** —
+- **Contato de emergência:** rosehi pereira de sena — 01 24526-9186
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 1
+- **Nome da escola:** escola maria rosa
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 12/12/2025 - 13:16h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 49. josias ferreira de sousa carvalho
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** josias ferreira de sousa carvalho
+- **Data de nascimento:** 16/09/2011
+- **Sexo:** Masculino
+- **CPF do aluno:** 03761231172
+- **RG / Certidão:** 03761231172
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98484-5200
+- **E-mail:** joao@gmail.com
+- **Endereço:** jardim vitoria2
+- **Bairro:** jardim vitoria2
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** joão luis ferreira de carvalho
+- **CPF do responsável:** 92575870100
+- **Nome da mãe:** joão luis ferreira de carvalho
+- **Nome do pai:** —
+- **Contato de emergência:** joão luis ferreira de carvalho — 92 57587-0100
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 9
+- **Nome da escola:** ETI MARGARIDA LEMOS
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/12/2025 - 14:08h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 50. juan araujo de almeida
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** juan araujo de almeida
+- **Data de nascimento:** 04/05/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 10985998105
+- **RG / Certidão:** 10985998105
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98405-3381
+- **E-mail:** claudeane@@gmail.com
+- **Endereço:** jardim vitoria 2
+- **Bairro:** jardim vitoria 2
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** claudeane de oliveira araujo
+- **CPF do responsável:** 01010873300
+- **Nome da mãe:** claudeane de oliveira araujo
+- **Nome do pai:** —
+- **Contato de emergência:** claudeane de oliveira araujo — 01 01087-3300
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 8
+- **Nome da escola:** escola maria rosa
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 12/12/2025 - 14:02h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 51. Juliano da Silva Clarindo Rocha
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Juliano da Silva Clarindo Rocha
+- **Data de nascimento:** 30/04/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 11397275162
+- **RG / Certidão:** 723848
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99276-0534
+- **E-mail:** monteirorivaldo217@gmail.com
+- **Endereço:** rua 03 chacara 30
+- **Bairro:** Vila Agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Raylla da Silva Lima
+- **CPF do responsável:** 05115195160
+- **Nome da mãe:** Raylla da Silva Lima
+- **Nome do pai:** —
+- **Contato de emergência:** Raylla da Silva Lima — 63 99276-0534
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Anisio Teixeira
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 20/11/2025 - 13:35h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 52. JULIO CESAR RODRIGUES NAPOLIÃO
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** JULIO CESAR RODRIGUES NAPOLIÃO
+- **Data de nascimento:** 05/09/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 07051304100
+- **RG / Certidão:** 07051304100
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98113-5024
+- **E-mail:** FRANCIS@GMAIL.COM
+- **Endereço:** JARDIM VITORIA 2
+- **Bairro:** JARDIM VITORIA 2
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** francis dalva rodrigues
+- **CPF do responsável:** 01436588324
+- **Nome da mãe:** francis dalva rodrigues
+- **Nome do pai:** —
+- **Contato de emergência:** francis dalva rodrigues — 01 43658-8324
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 1
+- **Nome da escola:** ESCOLA SAVIA FERNANDES
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/12/2025 - 12:40h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 53. Kalyel Martins Lima
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Kalyel Martins Lima
+- **Data de nascimento:** 04/12/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 10072759100
+- **RG / Certidão:** 1647051
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99246-8983
+- **E-mail:** monteirorivaldo217@gmail.com
+- **Endereço:** rua 03 chacara 29
+- **Bairro:** Vila Agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Karllyanne Martins Sousa
+- **CPF do responsável:** 04225056171
+- **Nome da mãe:** Karleany Santos da Silva Lima
+- **Nome do pai:** —
+- **Contato de emergência:** Karllyanne Martins Sousa — 63 99246-8983
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Escola Municipal Savia Fernandes
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 20/11/2025 - 11:37h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 54. Kaue Fernandes dos Santos
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Kaue Fernandes dos Santos
+- **Data de nascimento:** 17/12/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 09765739117
+- **RG / Certidão:** 30754723455
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99218-9984
+- **E-mail:** monteirorivaldo217@gmail.com
+- **Endereço:** rua 01 chacara
+- **Bairro:** Vila Agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Leonardo Fernandes
+- **CPF do responsável:** 70095750100
+- **Nome da mãe:** Kaylane Silveira dos Santos
+- **Nome do pai:** —
+- **Contato de emergência:** Leonardo Fernandes — 63 99218-9984
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Cantinho da Alegria
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 20/11/2025 - 11:18h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 55. kevem willian custodio de sousa
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** kevem willian custodio de sousa
+- **Data de nascimento:** 20/10/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 10116103108
+- **RG / Certidão:** 10116103108
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98491-4237
+- **E-mail:** mariadejesus@gmail.com
+- **Endereço:** jardim vitoria2
+- **Bairro:** jardim vitoria2
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** maria de jesus custodio de sousa
+- **CPF do responsável:** 01546440135
+- **Nome da mãe:** maria de jesus custodio de sousa
+- **Nome do pai:** —
+- **Contato de emergência:** maria de jesus custodio de sousa — 01 54644-0135
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 6
+- **Nome da escola:** escola lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 12/12/2025 - 13:43h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 56. KEVEN CARDOSO DA SILVA
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** KEVEN CARDOSO DA SILVA
+- **Data de nascimento:** 10/06/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 09650871152
+- **RG / Certidão:** 09650871152
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98440-3939
+- **E-mail:** MARIA22@GMAIL.COM
+- **Endereço:** JARDIM VITORIA 2
+- **Bairro:** JARDIM VITORIA 2
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** MARIA LEONTINA DA S.SANTOS
+- **CPF do responsável:** 01642861103
+- **Nome da mãe:** MARIA LEONTINA DA S.SANTOS
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 6
+- **Nome da escola:** escola savia fernandes
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** —
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 57. keyfeon vieira costa
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** keyfeon vieira costa
+- **Data de nascimento:** 04/04/2010
+- **Sexo:** Masculino
+- **CPF do aluno:** 09019433121
+- **RG / Certidão:** 09019433121
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99227-1680
+- **E-mail:** luciana@gmail.com
+- **Endereço:** JARDIM PAULISTA
+- **Bairro:** JARDIM PAULISTA
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** LUCIANA REIS COSTA MARTINS
+- **CPF do responsável:** 05213093108
+- **Nome da mãe:** LUCIANA REIS COSTA MARTINS
+- **Nome do pai:** ALEKSANDRO SOARES DE SOUSA
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 2
+- **Nome da escola:** cem taquaralto
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** —
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 58. Leonardo Nunes Viana
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Leonardo Nunes Viana
+- **Data de nascimento:** 23/07/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 07106303100
+- **RG / Certidão:** 1607163
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99204-1944
+- **E-mail:** monteirorivaldo217@gmail.com
+- **Endereço:** rua 04 chacara 04
+- **Bairro:** Vila Agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Odilhia Nunes do Nascimento
+- **CPF do responsável:** 01601621140
+- **Nome da mãe:** Odilhia Nunes do Nascimento
+- **Nome do pai:** —
+- **Contato de emergência:** Odilhia Nunes do Nascimento — 63 99204-1944
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 20/11/2025 - 14:09h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 59. levi nunes costa
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** levi nunes costa
+- **Data de nascimento:** 02/08/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 09535191128
+- **RG / Certidão:** 09535191128
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98449-4445
+- **E-mail:** leide@gmail.com
+- **Endereço:** jardim vitoria2
+- **Bairro:** jardim vitoria2
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** leide nunes dos r. costa
+- **CPF do responsável:** 02618751167
+- **Nome da mãe:** leide nunes dos r. costa
+- **Nome do pai:** —
+- **Contato de emergência:** leide nunes dos r. costa — 02 61875-1167
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 8
+- **Nome da escola:** escola maria rosa
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 12/12/2025 - 14:17h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 60. Lorenzo Aguiar Silva
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Lorenzo Aguiar Silva
+- **Data de nascimento:** 14/11/2019
+- **Sexo:** Masculino
+- **CPF do aluno:** 10433958146
+- **RG / Certidão:** 30807117937
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99221-4815
+- **E-mail:** monteirorivaldo217@gmail.com
+- **Endereço:** rua 3 ch. 57
+- **Bairro:** Vila Agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Adriana Oliveira Aguiar
+- **CPF do responsável:** 06426016152
+- **Nome da mãe:** Adriana Oliveira Aguiar
+- **Nome do pai:** —
+- **Contato de emergência:** Adriana Oliveira Aguiar — 63 99221-4815
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Cmei Paraiso infantil
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 04/12/2025 - 15:28h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 61. Luan Liedson Luariano Rocha
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Luan Liedson Luariano Rocha
+- **Data de nascimento:** 15/05/2011
+- **Sexo:** —
+- **CPF do aluno:** —
+- **RG / Certidão:** 1871803 CPF:07339004106
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99294-4084 / E-mail:monteirorivaldo217@gmail.com
+- **E-mail:** —
+- **Endereço:** rua 02 ch.18 Bairro:Vila Agrotins
+- **Bairro:** —
+- **Cidade:** Palmas
+- **Estado (UF):** TO CEP:77249-899
+- **CEP:** —
+- **Nome do responsável:** Claudiane Silva Lauriano Rocha CPF / RG do Resp.:04005123198 / -
+- **CPF do responsável:** —
+- **Nome da mãe:** Claudiane Silva Lauriano Rocha CPF / RG da Mãe:04005123198 / -
+- **Nome do pai:** CPF / RG do Pai:/ -
+- **Contato de emergência:** Claudiane Silva Lauriano Rocha — 63 99294-4084
+- **Escolaridade:** Tipo de Escola:
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Série:
+- **Série:** —
+- **Nome da escola:** Setor Sul Matrícula:
+- **Tamanho da camisa:** P Camisa Entregue: NÃO
+- **Camisa entregue (Sim/Não):** —
+- **Data do cadastro:** 26/11/2025 - 16:59h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 62. lucas calleri dos santos bernardo
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** lucas calleri dos santos bernardo
+- **Data de nascimento:** 14/07/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 10108135101
+- **RG / Certidão:** 10108135101
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98117-8704
+- **E-mail:** daiane@gmail.com
+- **Endereço:** agrotins
+- **Bairro:** agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** daiane mendes dos santos
+- **CPF do responsável:** 62156722382
+- **Nome da mãe:** daiane mendes dos santos
+- **Nome do pai:** —
+- **Contato de emergência:** daiane mendes dos santos — 63 98117-8704
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 5
+- **Nome da escola:** eti santa barbara
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 12/12/2025 - 11:59h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 63. Lucas Pereira de Sousa
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Lucas Pereira de Sousa
+- **Data de nascimento:** 28/01/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 09034605132
+- **RG / Certidão:** 09034605132
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 97400-2499
+- **E-mail:** gleicehsousa@gmail.com
+- **Endereço:** arno 41
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-504
+- **Nome do responsável:** Queila Sousa Nascimento
+- **CPF do responsável:** 99519801200
+- **Nome da mãe:** Queila Sousa Nascimento
+- **Nome do pai:** —
+- **Contato de emergência:** Queila Sousa Nascimento — 63 97400-2499
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Carlos Drumnod de andrade
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 03/12/2025 - 10:39h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 64. LUCAS S. ALVES
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** LUCAS S. ALVES
+- **Data de nascimento:** 01/02/2009
+- **Sexo:** Masculino
+- **CPF do aluno:** 71771823143
+- **RG / Certidão:** 71771823143
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99237-9169
+- **E-mail:** LUZIANE@GMAIL.COM
+- **Endereço:** SETOR SUL
+- **Bairro:** SETOR SUL
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** LUZIANE PEREIRA
+- **CPF do responsável:** 01761940104
+- **Nome da mãe:** LUZIANE PEREIRA
+- **Nome do pai:** —
+- **Contato de emergência:** LUZIANE PEREIRA — 01 76194-0104
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 4
+- **Nome da escola:** escola lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/12/2025 - 14:56h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 65. luiz fernando rodrigues aguiar
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** luiz fernando rodrigues aguiar
+- **Data de nascimento:** 03/11/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 02363469119
+- **RG / Certidão:** 02363469119
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99265-1847
+- **E-mail:** elizangela@gmail.co,
+- **Endereço:** agrotins
+- **Bairro:** agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** elisangela rodrigues
+- **CPF do responsável:** 02363469119
+- **Nome da mãe:** elisangela rodrigues
+- **Nome do pai:** —
+- **Contato de emergência:** elisangela rodrigues — 63 99265-1847
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 4
+- **Nome da escola:** eti santa barbara
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 12/12/2025 - 12:02h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 66. Luiz Gustavo Costa
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Luiz Gustavo Costa
+- **Data de nascimento:** 19/07/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 08982493174
+- **RG / Certidão:** 30754681760
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99208-2515
+- **E-mail:** monteirorivaldo217@gmail.com
+- **Endereço:** rua 01
+- **Bairro:** Vila Agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Layana da Silva Costa
+- **CPF do responsável:** 05499952183
+- **Nome da mãe:** Layna da Silva Costa
+- **Nome do pai:** —
+- **Contato de emergência:** Layna da Silva Costa — 63 99208-2515
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** ETI Santa Barbara
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 20/11/2025 - 14:00h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 67. LUIZ HENRRIQUE DIOGENES CARVALHO
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** LUIZ HENRRIQUE DIOGENES CARVALHO
+- **Data de nascimento:** 13/05/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 08546913161
+- **RG / Certidão:** 08546913161
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99112-9827
+- **E-mail:** CRISTIANE@GMAIL.COM
+- **Endereço:** Jardim vitoria 1
+- **Bairro:** Jardim vitoria 1
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** cristiane diogenes dos santos
+- **CPF do responsável:** 01970903112
+- **Nome da mãe:** cristiane diogenes dos santos
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 8
+- **Nome da escola:** escola savia fernandes
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** —
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 68. MANUELA FONSECA DE SOUSA
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** MANUELA FONSECA DE SOUSA
+- **Data de nascimento:** 27/09/2011
+- **Sexo:** Masculino
+- **CPF do aluno:** 10148409105
+- **RG / Certidão:** 10148409105
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 95252-2562
+- **E-mail:** FDFHDFGJHDGHJD
+- **Endereço:** SETOR SUL
+- **Bairro:** SETOR SUL
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** MARCOS SOUSA GOMES
+- **CPF do responsável:** 04325236180
+- **Nome da mãe:** MARCOS SOUSA GOMES
+- **Nome do pai:** —
+- **Contato de emergência:** MARCOS SOUSA GOMES — 04 32523-6180
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Estadual
+- **Turno escolar:** Manhã
+- **Série:** 5
+- **Nome da escola:** escola lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/12/2025 - 14:59h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 69. Marco Antônio Lacerda
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Marco Antônio Lacerda
+- **Data de nascimento:** 19/02/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 11138915130
+- **RG / Certidão:** 1849829
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99218-6808
+- **E-mail:** monteirorivaldo217@gmail.com
+- **Endereço:** rua 03 chacara 65
+- **Bairro:** Vila Agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Karleany Santos da Silva Lima
+- **CPF do responsável:** 05128059111
+- **Nome da mãe:** Karleany Santos da Silva Lima
+- **Nome do pai:** —
+- **Contato de emergência:** Karleany Santos da Silva Lima — 63 99218-6808
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** cmei Maria dos Reis Alves Barros
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 20/11/2025 - 10:36h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 70. marcos fonseca de sousa
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** marcos fonseca de sousa
+- **Data de nascimento:** 27/09/2011
+- **Sexo:** Masculino
+- **CPF do aluno:** 10645873136
+- **RG / Certidão:** 10645873136
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98548-2214
+- **E-mail:** paulo@gmail.com
+- **Endereço:** jardim vitoria2
+- **Bairro:** jardim vitoria2
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** paulo gomes sales
+- **CPF do responsável:** 83822343149
+- **Nome da mãe:** marcos sousa gomes
+- **Nome do pai:** —
+- **Contato de emergência:** paulo gomes sales — 83 82234-3149
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 5
+- **Nome da escola:** escola lucia sales
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 12/12/2025 - 14:14h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 71. maria alicy mendes monteiro
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** maria alicy mendes monteiro
+- **Data de nascimento:** 20/04/2015
+- **Sexo:** Feminino
+- **CPF do aluno:** 08862075170
+- **RG / Certidão:** 08862075170
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99213-6051
+- **E-mail:** sifeide@gmail.com
+- **Endereço:** jardim vitoria 2
+- **Bairro:** jardim vitoria 2
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** sifeide mendes de oliveira
+- **CPF do responsável:** 01016010184
+- **Nome da mãe:** sifeide mendes de oliveira
+- **Nome do pai:** —
+- **Contato de emergência:** sifeide mendes de oliveira — 01 01601-0184
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 6
+- **Nome da escola:** eti santa barbara
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 12/12/2025 - 13:46h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 72. Markos Barone Sousa Monteiro
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Markos Barone Sousa Monteiro
+- **Data de nascimento:** 15/02/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 11837400180
+- **RG / Certidão:** 30650642572
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99124-4471
+- **E-mail:** monteirorivaldo217@gmail.com
+- **Endereço:** rua 01 chacara
+- **Bairro:** Vila Agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Mayssa de Sousa Gonçalves
+- **CPF do responsável:** 05365866169
+- **Nome da mãe:** Mayssa de Sousa Gonçalves
+- **Nome do pai:** —
+- **Contato de emergência:** Mayssa de Sousa Gonçalves — 63 99124-4471
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 02/12/2025 - 14:15h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 73. Micael Feitosa Silva
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Micael Feitosa Silva
+- **Data de nascimento:** 11/04/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 11833093178
+- **RG / Certidão:** 544886
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99264-0643
+- **E-mail:** monteirorivaldo217@gmail.com
+- **Endereço:** rua 03 chacara 48
+- **Bairro:** Vila Agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Maria da Conceição M. Silva
+- **CPF do responsável:** 03545788474
+- **Nome da mãe:** Maria Alcione
+- **Nome do pai:** Benedita Galvão
+- **Contato de emergência:** Maria da Conceição M. Silva — 63 99264-0643
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Benedita Galvão
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 18/11/2025 - 08:05h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 74. Michael Machado Rodrigues
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Michael Machado Rodrigues
+- **Data de nascimento:** 21/11/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 10625741170
+- **RG / Certidão:** 10625741170
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99244-4823
+- **E-mail:** monteirorivaldo217@gmail.com
+- **Endereço:** rua 03 chacara 44
+- **Bairro:** Vila Agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Keilismar Machado Rodrigues
+- **CPF do responsável:** 001159103
+- **Nome da mãe:** keilimar Machado Rodrigues
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** —
+- **Nome da escola:** Caroline Campelo
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** —
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 75. Michel Machado Rodrigues
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Michel Machado Rodrigues
+- **Data de nascimento:** 31/05/2011
+- **Sexo:** Masculino
+- **CPF do aluno:** 71234677105
+- **RG / Certidão:** 71234677105
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99237-4079
+- **E-mail:** monteirorivaldo217@gmail.com
+- **Endereço:** rua 03 chacara 44
+- **Bairro:** Vila Agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Keilismar Machado Rodrigues
+- **CPF do responsável:** 00011159103
+- **Nome da mãe:** Keilismar Machado Rodrigues
+- **Nome do pai:** —
+- **Contato de emergência:** Keilimar Machado Rodrigues — 63 99237-4079
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** —
+- **Nome da escola:** Caroline Campelo
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 20/11/2025 - 15:52h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 76. Miquelmy Machado Nascimento
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Miquelmy Machado Nascimento
+- **Data de nascimento:** 26/09/2008
+- **Sexo:** Masculino
+- **CPF do aluno:** 71234686198
+- **RG / Certidão:** 736777
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99128-5536
+- **E-mail:** monteirorivaldo217@gmail.com
+- **Endereço:** rua 03 chácara 44
+- **Bairro:** vila
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Kelismar Machado Rodrigues
+- **CPF do responsável:** 00011159103
+- **Nome da mãe:** Kelismar Machado Rodrigues
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Vale do Sol
+- **Tamanho da camisa:** G
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** —
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 77. Moisés Santos Alves
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Moisés Santos Alves
+- **Data de nascimento:** 08/10/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 11832621162
+- **RG / Certidão:** 11832621162
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99222-3526
+- **E-mail:** luziane88pereira@gmail.com
+- **Endereço:** ch. Benção Pura
+- **Bairro:** Vila Agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Luziane Pereira dos santos Alves
+- **CPF do responsável:** 01761940104
+- **Nome da mãe:** Luziane Pereira dos Santos Pereira
+- **Nome do pai:** —
+- **Contato de emergência:** Luziane Pereira dos Santos Alves — 63 99222-3526
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Escola Savia Fernandes
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 20/11/2025 - 15:23h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 78. Natanael Pereira dos Santos
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Natanael Pereira dos Santos
+- **Data de nascimento:** 02/04/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 10066409160
+- **RG / Certidão:** 1870312
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99244-7946
+- **E-mail:** monteirorivaldo217@gmail.com
+- **Endereço:** rua 03 chacara 30
+- **Bairro:** Vila Agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Josiane Pereira da Silva
+- **CPF do responsável:** 02851519166
+- **Nome da mãe:** Josiane Pereira da Silva
+- **Nome do pai:** —
+- **Contato de emergência:** Josiane Pereira da Silva — 63 99244-7946
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Savia Fernandes
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 19/11/2025 - 08:29h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 79. NATANAEL VIEIRA BATISTA CARNEIRO
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** NATANAEL VIEIRA BATISTA CARNEIRO
+- **Data de nascimento:** 15/06/2008
+- **Sexo:** Masculino
+- **CPF do aluno:** 08990558182
+- **RG / Certidão:** 08990558182
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99273-6877
+- **E-mail:** DANIEL BATISTA
+- **Endereço:** agrotins
+- **Bairro:** agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 70000-000
+- **Nome do responsável:** daniel batista
+- **CPF do responsável:** 99913437172
+- **Nome da mãe:** daniel batista
+- **Nome do pai:** —
+- **Contato de emergência:** daniel batista — 99 91343-7172
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Estadual
+- **Turno escolar:** Manhã
+- **Série:** 6
+- **Nome da escola:** ESCOLA MARIA DOS REIS
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/12/2025 - 14:45h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 80. Nickolas Emamnnuel Putencio Aguiar
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Nickolas Emamnnuel Putencio Aguiar
+- **Data de nascimento:** 06/07/2019
+- **Sexo:** Masculino
+- **CPF do aluno:** 10227217128
+- **RG / Certidão:** 30807303170
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99129-2896
+- **E-mail:** monteirorivaldo217@gmail.com
+- **Endereço:** rua 03
+- **Bairro:** Vila Agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Tawana Putencio Alves
+- **CPF do responsável:** 02585032116
+- **Nome da mãe:** Tawana Putencio Alves
+- **Nome do pai:** —
+- **Contato de emergência:** Tawana Putencio Alves — 63 99129-2896
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Cmei Fontes do Saber
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 26/11/2025 - 17:40h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 81. pedro alexandre oliveira diogenes
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** pedro alexandre oliveira diogenes
+- **Data de nascimento:** 09/06/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 01304639142
+- **RG / Certidão:** 01304639142
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98405-2566
+- **E-mail:** andressa@gmail.com
+- **Endereço:** agrotins
+- **Bairro:** agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** andressa oliveira aguiar
+- **CPF do responsável:** 01881146140
+- **Nome da mãe:** andressa oliveira aguiar
+- **Nome do pai:** —
+- **Contato de emergência:** andressa oliveira aguiar — 01 88114-6140
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 2 ano
+- **Nome da escola:** escola municipal benedita cavalcante
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 12/12/2025 - 12:23h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 82. Pedro Henrique Lauriano Rocha
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Pedro Henrique Lauriano Rocha
+- **Data de nascimento:** 16/02/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 07338985138
+- **RG / Certidão:** 1871804
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99204-4084
+- **E-mail:** monteirorivaldo217@gmail.com
+- **Endereço:** rua 2 ch.18
+- **Bairro:** Vila Agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Claudiane Silva Lauriano Rocha
+- **CPF do responsável:** 04005123198
+- **Nome da mãe:** Claudiane Silva Lauriano Rocha
+- **Nome do pai:** —
+- **Contato de emergência:** Claudiane Silva Lauriano Rocha — 63 99294-4084
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** savia fernandes
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 26/11/2025 - 16:54h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 83. PEDRO JUNIOR DIAS RODRIGUES
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** PEDRO JUNIOR DIAS RODRIGUES
+- **Data de nascimento:** 29/11/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 01289182175
+- **RG / Certidão:** 01289182175
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99218-6764
+- **E-mail:** EDITE@GMAIL.COM
+- **Endereço:** jardim vitoria 2
+- **Bairro:** jardim vitoria 2
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** EDITE DIAS DE JESUS
+- **CPF do responsável:** 01289182175
+- **Nome da mãe:** EDITE DIAS DE JESUS
+- **Nome do pai:** —
+- **Contato de emergência:** EDITE DIAS DE JESUS — 01 28918-2175
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 9
+- **Nome da escola:** cmei vitoria regia
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/12/2025 - 14:35h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 84. pedro lucas souza silva
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** pedro lucas souza silva
+- **Data de nascimento:** 21/12/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 08962914131
+- **RG / Certidão:** 08962914131
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98108-7833
+- **E-mail:** anapaula@gmail.com
+- **Endereço:** jardim vitoria 2
+- **Bairro:** jardim vitoria 2
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** ana paula de spuza silva
+- **CPF do responsável:** 01016228139
+- **Nome da mãe:** ana paula de spuza silva
+- **Nome do pai:** —
+- **Contato de emergência:** ana paula de spuza silva — 01 01622-8139
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 4
+- **Nome da escola:** escola benedita galvão
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 12/12/2025 - 12:48h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 85. Pedro Miguel Pereira de Sousa
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Pedro Miguel Pereira de Sousa
+- **Data de nascimento:** 09/11/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 07842665141
+- **RG / Certidão:** 07842665141
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 97400-2499
+- **E-mail:** gleicehsousa@gmail.com
+- **Endereço:** arno 41
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-504
+- **Nome do responsável:** Queila Sousa Nascimento
+- **CPF do responsável:** 99519801200
+- **Nome da mãe:** Queila Sousa Nascimento
+- **Nome do pai:** —
+- **Contato de emergência:** Queila Sousa Nascimento — 63 97400-2499
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 03/12/2025 - 10:36h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 86. Pietro de Souza
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Pietro de Souza
+- **Data de nascimento:** 21/01/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 10016833155
+- **RG / Certidão:** 10016833155
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98406-4799
+- **E-mail:** monteirorivaldo217@gmail.com
+- **Endereço:** ch. Recanto das Emas
+- **Bairro:** Vila Agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Murileia Ferreira de Souza
+- **CPF do responsável:** 01312639199
+- **Nome da mãe:** Murileia Ferreira de Souza
+- **Nome do pai:** —
+- **Contato de emergência:** Marileia Ferreira de Souza — 63 98064-799
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Savia Fernandes
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 02/12/2025 - 20:23h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 87. pietro gabriel gonçalves guajajara
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** pietro gabriel gonçalves guajajara
+- **Data de nascimento:** 19/02/2019
+- **Sexo:** Masculino
+- **CPF do aluno:** 09987617107
+- **RG / Certidão:** 09987617107
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 36 39928-3012
+- **E-mail:** ruth11@gmail.com
+- **Endereço:** JARDIM VITORIA 2
+- **Bairro:** JARDIM VITORIA 2
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** ruth elen golçalves de matos
+- **CPF do responsável:** 08395368100
+- **Nome da mãe:** ruth elen golçalves de matos
+- **Nome do pai:** —
+- **Contato de emergência:** ruth elen golçalves de matos — 08 39536-8100
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 1
+- **Nome da escola:** cmei vitoria regia
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 12/12/2025 - 12:45h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 88. Ruan da Silva Clarindo Rocha
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Ruan da Silva Clarindo Rocha
+- **Data de nascimento:** 01/05/2012
+- **Sexo:** —
+- **CPF do aluno:** —
+- **RG / Certidão:** 724370 CPF:11397290129
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99276-0534 / E-mail:monteirorivaldo217@gmail.com
+- **E-mail:** —
+- **Endereço:** rua 03 chacara 30 Bairro:Vila Agrotins
+- **Bairro:** —
+- **Cidade:** Palmas
+- **Estado (UF):** TO CEP:77249-899
+- **CEP:** —
+- **Nome do responsável:** Raylla da Silva Lima CPF / RG do Resp.:05115195160 / -
+- **CPF do responsável:** —
+- **Nome da mãe:** Raylla da Silva Lima CPF / RG da Mãe:05115195160 / -
+- **Nome do pai:** CPF / RG do Pai:/ -
+- **Contato de emergência:** Raylla da Silva Lima — 63 99276-0534
+- **Escolaridade:** Tipo de Escola:
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Série:
+- **Série:** —
+- **Nome da escola:** Anisio Teixeira Matrícula:
+- **Tamanho da camisa:** P Camisa Entregue: NÃO
+- **Camisa entregue (Sim/Não):** —
+- **Data do cadastro:** 20/11/2025 - 13:30h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 89. SAMUEL BAIMA SOARES DE FARIA
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** SAMUEL BAIMA SOARES DE FARIA
+- **Data de nascimento:** 18/01/2014
+- **Sexo:** —
+- **CPF do aluno:** —
+- **RG / Certidão:** 10083379193 CPF:10083379193
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98416-6454 / E-mail:VALDIVINO@GMAIL.COM
+- **E-mail:** —
+- **Endereço:** jardim vitoria 2 Bairro:jardim vitoria 2
+- **Bairro:** —
+- **Cidade:** Palmas
+- **Estado (UF):** TO CEP:77000-000
+- **CEP:** —
+- **Nome do responsável:** VALDIVINO ARAUJO DE FARIA CPF / RG do Resp.:84816864172 / -
+- **CPF do responsável:** —
+- **Nome da mãe:** VALDIVINO ARAUJO DE FARIA CPF / RG da Mãe:84816864172 / -
+- **Nome do pai:** CPF / RG do Pai:/ -
+- **Contato de emergência:** VALDIVINO ARAUJO DE FARIA — 84 81686-4172
+- **Escolaridade:** Ensino Fundamental Tipo de Escola:Municipal
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Manhã Série:9
+- **Série:** —
+- **Nome da escola:** ESCOLA THIAGO BARBOSA Matrícula:
+- **Tamanho da camisa:** P Camisa Entregue: SIM- Em 12/12/202
+- **Camisa entregue (Sim/Não):** —
+- **Data do cadastro:** 12/12/2025 - 14:39h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 90. Samuel Pereira da Silva
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Samuel Pereira da Silva
+- **Data de nascimento:** 20/04/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 10066476194
+- **RG / Certidão:** 1870166
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99244-7946
+- **E-mail:** monteirorivaldo217@gmail.com
+- **Endereço:** rua 03 chacara 30
+- **Bairro:** Vila Agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Josiane Pereira da Silva
+- **CPF do responsável:** 02851519166
+- **Nome da mãe:** Josiane Pereira da Silva
+- **Nome do pai:** —
+- **Contato de emergência:** Josiane Pereira da Silva — 63 99244-7946
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Savia Fernandes
+- **Tamanho da camisa:** G
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 19/11/2025 - 08:33h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 91. Samuel Reis dos Santos
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Samuel Reis dos Santos
+- **Data de nascimento:** 05/04/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 71427533156
+- **RG / Certidão:** 1685914
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98122-7128
+- **E-mail:** monteirorivaldo217@gmail.com
+- **Endereço:** ch. DN Glebar
+- **Bairro:** Vila Agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Mariana Reis da Conceição
+- **CPF do responsável:** 02017495131
+- **Nome da mãe:** Mariana Reis da Conceição
+- **Nome do pai:** —
+- **Contato de emergência:** Mariana Reis da Conceição — 63 98122-7128
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** A.C.M Maria dos Reis Alves
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 20/11/2025 - 14:28h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 92. Samuel Rodrigues Gomes
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Samuel Rodrigues Gomes
+- **Data de nascimento:** 13/06/2011
+- **Sexo:** Masculino
+- **CPF do aluno:** 11135465142
+- **RG / Certidão:** 1734819
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99250-0514
+- **E-mail:** meyre2017.gomes@gmail
+- **Endereço:** rua 03
+- **Bairro:** Vila Agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Rosimeire Rodrigues Gomes
+- **CPF do responsável:** 04797188146
+- **Nome da mãe:** Rosimeire Rodrigues Gomes
+- **Nome do pai:** —
+- **Contato de emergência:** Rosimeire Rodrigues Gomes — 63 99250-0514
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Caroline Campelo
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 25/11/2025 - 15:04h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 93. Sharlon Fernandes Alves Pinheiro
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Sharlon Fernandes Alves Pinheiro
+- **Data de nascimento:** 27/11/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** —
+- **RG / Certidão:** 3075628320
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99126-1550
+- **E-mail:** monteirorivaldo217@gmail.com
+- **Endereço:** rua 03 chacara 65
+- **Bairro:** Vila Agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Janaina Keully Fernandes da Silva
+- **CPF do responsável:** 04448930165
+- **Nome da mãe:** Janaina Keully Fernandes da Silva
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** ETI
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** —
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 94. shisvaniely sandes silva
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** shisvaniely sandes silva
+- **Data de nascimento:** 12/04/2012
+- **Sexo:** Feminino
+- **CPF do aluno:** 07063745174
+- **RG / Certidão:** 07063745174
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99968-9797
+- **E-mail:** mack sabdes ferreira
+- **Endereço:** chacara agrtins
+- **Bairro:** agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** mack sandes ferreira
+- **CPF do responsável:** 04211579177
+- **Nome da mãe:** mack sandes ferreira
+- **Nome do pai:** —
+- **Contato de emergência:** mack sandes ferreira — 63 99968-9797
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 7
+- **Nome da escola:** escola savia fernandes
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/12/2025 - 08:16h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 95. thalis muriel r. pacheco
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** thalis muriel r. pacheco
+- **Data de nascimento:** 01/03/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 08243504133
+- **RG / Certidão:** 08243504133
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99115-6434
+- **E-mail:** domingos@gmail.com
+- **Endereço:** agrotins
+- **Bairro:** agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** DOMINGOS DA SILVA
+- **CPF do responsável:** 3359706753
+- **Nome da mãe:** DOMINGOS DA SILVA
+- **Nome do pai:** —
+- **Contato de emergência:** DOMINGOS DA SILVA — 33 59706-753
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 9
+- **Nome da escola:** escola jorge amado
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 12/12/2025 - 14:32h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 96. thiago sousa lopes
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** thiago sousa lopes
+- **Data de nascimento:** 04/10/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 08344081122
+- **RG / Certidão:** 08344081122
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 85180-470
+- **E-mail:** andreia@gmail.com
+- **Endereço:** jardim vitoria1
+- **Bairro:** jardim vitoria1
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** andreia souza alves
+- **CPF do responsável:** 70650865189
+- **Nome da mãe:** andreia souza alves
+- **Nome do pai:** —
+- **Contato de emergência:** andreia souza alves — 70 65086-5189
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 5
+- **Nome da escola:** eti santa barbara
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 12/12/2025 - 12:42h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 97. Thyarllis Muriel Rocha Pacheco
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Thyarllis Muriel Rocha Pacheco
+- **Data de nascimento:** 01/03/2012
+- **Sexo:** —
+- **CPF do aluno:** —
+- **RG / Certidão:** 1490457 CPF:08243504133
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99115-6434 / E-mail:monteirorivaldo217@gmail.com
+- **E-mail:** —
+- **Endereço:** rua 01 chacara 11 Bairro:Vila Agrotins
+- **Bairro:** —
+- **Cidade:** Palmas
+- **Estado (UF):** TO CEP:77249-899
+- **CEP:** —
+- **Nome do responsável:** Maria das Mêrces Rocha de Souza CPF / RG do Resp.:03083688199 / -
+- **CPF do responsável:** —
+- **Nome da mãe:** Maria das Mêrces Rocha de Souza CPF / RG da Mãe:03083688199 / -
+- **Nome do pai:** CPF / RG do Pai:/ -
+- **Contato de emergência:** Maria das Mêrces Rocha de Souza — 63 99115-6434
+- **Escolaridade:** Tipo de Escola:
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Série:
+- **Série:** —
+- **Nome da escola:** Jorge Amado Matrícula:
+- **Tamanho da camisa:** M Camisa Entregue: SIM- Em 19/11/2025 - 08:18h
+- **Camisa entregue (Sim/Não):** —
+- **Data do cadastro:** 19/11/2025 - 08:18h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 98. Ulisses Araújo Sousa
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Ulisses Araújo Sousa
+- **Data de nascimento:** 09/06/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 10120976170
+- **RG / Certidão:** 30606881133
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99278-5979
+- **E-mail:** mon
+- **Endereço:** rua 03 chácara 30
+- **Bairro:** vila agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Railma Araujo Silva
+- **CPF do responsável:** 06216711180
+- **Nome da mãe:** Railma Araujo Silva
+- **Nome do pai:** —
+- **Contato de emergência:** Railma Araujo Silva — 63 99278-5979
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Savio Fernandes
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 20/11/2025 - 10:05h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 99. Vitor Gabriel Pereira da Silva
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Vitor Gabriel Pereira da Silva
+- **Data de nascimento:** 03/09/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 08928557208
+- **RG / Certidão:** 30593042982
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 62 99212-7589
+- **E-mail:** wmme568@gmail.com
+- **Endereço:** chacara 18
+- **Bairro:** vila agrotins
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77270-000
+- **Nome do responsável:** Ciléia Pereira de Souza
+- **CPF do responsável:** 03935560184
+- **Nome da mãe:** Célia Pereira de Souza
+- **Nome do pai:** —
+- **Contato de emergência:** Ciléia Pereira de Souza — 63 99212-7589
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 20/11/2025 - 12:01h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+### 100. Wallace Francisco da Silva Filho
+
+- **Professor:** Rivaldo
+- **Nome do aluno:** Wallace Francisco da Silva Filho
+- **Data de nascimento:** 22/08/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 07443654227
+- **RG / Certidão:** 8904480
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99204-6743
+- **E-mail:** amarques@gmail.com
+- **Endereço:** vila agrotins
+- **Bairro:** Palmas
+- **Cidade:** Oliveira de Fátima
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Aline Pereira da Silva Chefer
+- **CPF do responsável:** 00544553241
+- **Nome da mãe:** Aline Pereira dos Santos
+- **Nome do pai:** —
+- **Contato de emergência:** Aline Pereira da Silva Chefer — 63 99277-7887
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 20/11/2025 - 14:19h
+- **Núcleo:** Núcleo Vila Agrotins
+- **Observação:** —
+
+---
+
+# Núcleo Quadra 906 Sul — Professor Geraldo Vaz da Silva Filho
+
+Total de alunos: **73**
+
+### 1. ADRIANO ARTHUR PEREIRA CARREIRO DE SOUSA
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** ADRIANO ARTHUR PEREIRA CARREIRO DE SOUSA
+- **Data de nascimento:** 25/05/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 07618580162
+- **RG / Certidão:** 1465979
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98425-9892
+- **E-mail:** comandocfu@gmail.com
+- **Endereço:** 1305 SUL AL 18 LOTE D 03
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77025-268
+- **Nome do responsável:** ADRIANO CARREIRO DE SOUSA
+- **CPF do responsável:** 00018824145
+- **Nome da mãe:** ALBA LUCIA PEREIRA PARENTE CARREIRO
+- **Nome do pai:** ADRIANO CARREIRO DE SOUSA
+- **Contato de emergência:** ADRIANO CARREIRO DE SOUSA — 63 98425-9892
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Particular
+- **Turno escolar:** Tarde
+- **Série:** 5
+- **Nome da escola:** CENTRO EDUCACIONAL PEQUENINOS
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 13/11/2025 - 16:53h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 2. Alex de Araujo CarneiroFilho
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** Alex de Araujo CarneiroFilho
+- **Data de nascimento:** 25/06/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 08452956169
+- **RG / Certidão:** 08452956169
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99237-2028 / 63 99237-2028
+- **E-mail:** coachgeraldovaz@gmail,com
+- **Endereço:** 806 sul alameda 06 lote 14
+- **Bairro:** centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77023-078
+- **Nome do responsável:** Ana Virginia Nunes Carneiro
+- **CPF do responsável:** 00785871586
+- **Nome da mãe:** Ana Virginia Nunes Carneiro
+- **Nome do pai:** —
+- **Contato de emergência:** Ana Virginia Nunes Carneiro — 63 99237-2028
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 6
+- **Nome da escola:** escola municipal darcy ribeiro
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 29/12/2025 - 17:31h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 3. ANDRÉ ALVES BRANDÃO
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** ANDRÉ ALVES BRANDÃO
+- **Data de nascimento:** 01/06/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 86503227191
+- **RG / Certidão:** 390599
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98450-9467
+- **E-mail:** crisfar2008@gmail.com
+- **Endereço:** 906 SUL ALAMEDA 21
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77023-406
+- **Nome do responsável:** ANA CRISTINA ALVES SANTOS
+- **CPF do responsável:** 86503227191
+- **Nome da mãe:** ANA CRISTINA ALVES SANTOS
+- **Nome do pai:** AIRTON DE CARVALHO BRANDÃO - EM MEMÓRIA
+- **Contato de emergência:** ANA CRISTINA ALVES SANTOS — 63 98450-9467
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 6
+- **Nome da escola:** ESCOLA MUNICIPAL DARCY RIBEIRO
+- **Tamanho da camisa:** G
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 05/12/2025 - 19:01h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 4. ARTHUR ALMEIDA SANTIAGO
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** ARTHUR ALMEIDA SANTIAGO
+- **Data de nascimento:** 21/03/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 10703957147
+- **RG / Certidão:** 10703957147
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98454-7104 / 63 98454-7105
+- **E-mail:** cleylcealmeida123@gmail.com
+- **Endereço:** 706 SUL ALAMEDA 02 LOTE 03
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77022-372
+- **Nome do responsável:** MARIA CLEYLCE CAVALCANTE ALMEIDA
+- **CPF do responsável:** 84722177104
+- **Nome da mãe:** MARIA CLEYLCE CAVALCANTE ALMEIDA
+- **Nome do pai:** GILDERSON PORTILHO SANTIAGO
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 5
+- **Nome da escola:** ESCOLA MUNICIPAL MONTEIRO LOBATO
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 16/11/2025 - 14:31h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 5. arthur rodrigues pereira
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** arthur rodrigues pereira
+- **Data de nascimento:** 11/05/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 03641556120
+- **RG / Certidão:** 71325218103
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99236-2450
+- **E-mail:** bartolomeuseixas89@gmail.com
+- **Endereço:** QD 81 alameda13 n 66
+- **Bairro:** centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77023-042
+- **Nome do responsável:** bartolomeu rodrigues carvalho
+- **CPF do responsável:** 05641556120
+- **Nome da mãe:** patricia pereira magalhaes rodrigues
+- **Nome do pai:** bartolomeu rodrigues carvalho
+- **Contato de emergência:** bartolomeu rodrigues carvalho — 63 92362-450
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 5
+- **Nome da escola:** escola municipal monteireo lobato
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 16/11/2025 - 11:19h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 6. ARTHUT CARDOSO POSSIDÔNIA
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** ARTHUT CARDOSO POSSIDÔNIA
+- **Data de nascimento:** 21/07/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 10011089148
+- **RG / Certidão:** 781975
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99223-3678
+- **E-mail:** prof.albertoedf@gmail.com
+- **Endereço:** 1104 SUL AL. 14 LT. 25
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-010
+- **Nome do responsável:** LEIDELENE BENTO CARDOSO
+- **CPF do responsável:** 02175027171
+- **Nome da mãe:** LEIDELENE BENTO CARDOSO
+- **Nome do pai:** —
+- **Contato de emergência:** LEIDELENE BENTO CARDOSO — 63 99223-3678
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 4
+- **Nome da escola:** ESCOLA MUNICIPAL MONTEIRO LOBATO
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 29/12/2025 - 12:20h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 7. ASAPH ALVES SILVA
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** ASAPH ALVES SILVA
+- **Data de nascimento:** 26/11/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 09981066150
+- **RG / Certidão:** 855708
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98405-3751
+- **E-mail:** ma.idem@hotmail.com
+- **Endereço:** 806 SUL ALAMEDA 10 LOTE 23
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77023-082
+- **Nome do responsável:** LARA MARIANA ALVES DE MELO SILVA
+- **CPF do responsável:** 02565707100
+- **Nome da mãe:** LARA MARIANA ALVES DE MELO SILVA
+- **Nome do pai:** MARCIO JOSE DA SILVA
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 4
+- **Nome da escola:** ESCOLA MUNICIPAL MONTEIRO LOBATO
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 13/11/2025 - 18:15h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 8. ASLAN SILVA DUTRA COSTA
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** ASLAN SILVA DUTRA COSTA
+- **Data de nascimento:** 30/05/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 73590193115
+- **RG / Certidão:** 2591778
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98468-3556 / 63 98431-0223
+- **E-mail:** mayaradutra21@gmail.com
+- **Endereço:** 10120 SUL ALAMEDA 03 QI D LOTES 01 A 03
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77023-660
+- **Nome do responsável:** RAYANE MAYARA DA SILVA DUTRA
+- **CPF do responsável:** 73590193115
+- **Nome da mãe:** RAYANE MAYARA DA SILVA DUTRA
+- **Nome do pai:** AZZLANO PEREIRA DA COSTA
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 6
+- **Nome da escola:** ESCOLA MUNICIPAL DARCY RIBEIRO
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 13/11/2025 - 15:48h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 9. athena sofie alves de souza marinho
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** athena sofie alves de souza marinho
+- **Data de nascimento:** 23/05/2015
+- **Sexo:** Feminino
+- **CPF do aluno:** 11530193109
+- **RG / Certidão:** 11530193109
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98104-8066
+- **E-mail:** coachgeraldovaz@gmail,com
+- **Endereço:** 904 sul alameda 10 lote 09
+- **Bairro:** centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77023-010
+- **Nome do responsável:** danilo alves marinho
+- **CPF do responsável:** 00780816102
+- **Nome da mãe:** priscila melo de saouza
+- **Nome do pai:** —
+- **Contato de emergência:** danilo alves marinho — 63 98104-806
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 5
+- **Nome da escola:** escola municipal monteireo lobato
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 17/12/2025 - 08:29h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 10. AYRAN MIGUEL FERREIRA DA SILVA
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** AYRAN MIGUEL FERREIRA DA SILVA
+- **Data de nascimento:** 10/03/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 09669142105
+- **RG / Certidão:** 1652293
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99289-4127 / 63 99244-1637
+- **E-mail:** clesiamiguel@hotmail.com
+- **Endereço:** 1003 SUL AL 26 QI 04 LOTE 09
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77018-444
+- **Nome do responsável:** WAGME LUCIANO F. DA SILVA
+- **CPF do responsável:** 80154484172
+- **Nome da mãe:** ELINETE CLESIA MIGUEL
+- **Nome do pai:** WAGME LUCIANO F. DA SILVA
+- **Contato de emergência:** WAGME LUCIANO F. DA SILVA — 63 99289-4127
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 6
+- **Nome da escola:** ESCOLA MUNICIPAL DARCY RIBEIRO
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 05/12/2025 - 17:53h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 11. BRAYAN EDUARDO KIRCHHOF COSTA
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** BRAYAN EDUARDO KIRCHHOF COSTA
+- **Data de nascimento:** 07/09/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 08183315186
+- **RG / Certidão:** 1744874
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99968-7398
+- **E-mail:** alinekirchhof1@gmail.com
+- **Endereço:** 1006 SUL ALAMEDA 02 LOTE 91
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77023-543
+- **Nome do responsável:** ALINE KIRCHHOF
+- **CPF do responsável:** 03756677176
+- **Nome da mãe:** ALINE KIRCHHOF
+- **Nome do pai:** —
+- **Contato de emergência:** ALINE KIRCHHOF — 63 99968-7398
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 6
+- **Nome da escola:** ESCOLA MUNICIPAL DARCY RIBEIRO
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 05/12/2025 - 17:42h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 12. BRUNNO REZENDE PINHEIRO ROCHA
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** BRUNNO REZENDE PINHEIRO ROCHA
+- **Data de nascimento:** 05/07/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 05529162185
+- **RG / Certidão:** 621395
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99110-9102
+- **E-mail:** prof.albertoedf@gmail.com
+- **Endereço:** 1004 SUL AL. 02 LOTE 80
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77023-510
+- **Nome do responsável:** ANA CARLA SILVA ROCHA
+- **CPF do responsável:** 05529162185
+- **Nome da mãe:** ANA CARLA SILVA ROCHA
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 5
+- **Nome da escola:** ESCOLA MUNICIPAL MONTEIRO LOBATO
+- **Tamanho da camisa:** G
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 29/12/2025 - 12:25h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 13. Carlos Eduardo Bertolo Messias
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** Carlos Eduardo Bertolo Messias
+- **Data de nascimento:** 11/03/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 12758858100
+- **RG / Certidão:** 12758858100
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99941-5001
+- **E-mail:** Messias.soares151155@gmail.com
+- **Endereço:** 1006 sul alameda 2 lote 21
+- **Bairro:** centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77023-543
+- **Nome do responsável:** jose messias soares
+- **CPF do responsável:** 14925273191
+- **Nome da mãe:** Daniela Paula Bertolo da Silva
+- **Nome do pai:** Clebson Lopes Messias
+- **Contato de emergência:** Jose Messias Soares — 99 94150-01
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 6
+- **Nome da escola:** escola municipal darcy ribeiro
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 19/11/2025 - 12:47h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 14. carlos henrique guedes almeida
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** carlos henrique guedes almeida
+- **Data de nascimento:** 29/01/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 70842587101
+- **RG / Certidão:** 7396401
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 62 98178-7593
+- **E-mail:** thaisfiel12@hotmail.com
+- **Endereço:** 906 sul açameda 10 lt 03 casa 11
+- **Bairro:** centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77023-430
+- **Nome do responsável:** thais guedes de almeida
+- **CPF do responsável:** 03346229130
+- **Nome da mãe:** this guedes de almeida
+- **Nome do pai:** fred guedes de almeida
+- **Contato de emergência:** thias guedes de almeida — 62 98178-8793
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 8
+- **Nome da escola:** IPES
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 16/11/2025 - 12:52h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 15. Carlos Henrique Santos
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** Carlos Henrique Santos
+- **Data de nascimento:** 15/11/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 09849824182
+- **RG / Certidão:** 1538779
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99255-0914
+- **E-mail:** carlosh23@gmail.com
+- **Endereço:** 603 sul amaleda 11 lote 10
+- **Bairro:** plano diretor sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-737
+- **Nome do responsável:** Rosalia de Jesus
+- **CPF do responsável:** 01350008150
+- **Nome da mãe:** rosalia de Jesus
+- **Nome do pai:** —
+- **Contato de emergência:** Rosalia — 63 98119-9665
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Rosana Paulo
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 29/12/2025 - 23:30h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 16. DANIEL BATISTA LACERDA
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** DANIEL BATISTA LACERDA
+- **Data de nascimento:** 24/12/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 06912179126
+- **RG / Certidão:** 1471.272
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 84470-530
+- **E-mail:** Adicairam@gmail.com
+- **Endereço:** 612 Sul condomínio recanto verde
+- **Bairro:** Centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-0
+- **Nome do responsável:** Maria aparecida batista da silva
+- **CPF do responsável:** 59104112253
+- **Nome da mãe:** MARIA APARECIDA BATISTA DA SILVA
+- **Nome do pai:** EMERSON LACERDA FERREIRA
+- **Contato de emergência:** MARIA APARECIDA BATISTA DA SILVA — 63 98447-0530
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Particular
+- **Turno escolar:** Tarde
+- **Série:** 6
+- **Nome da escola:** Escola Batista de palmas
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 26/11/2025 - 08:29h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 17. DANIEL SOUZA PIRES
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** DANIEL SOUZA PIRES
+- **Data de nascimento:** 08/08/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 11748557114
+- **RG / Certidão:** 1810066
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98483-1852 / 63 98123-3699
+- **E-mail:** weslei.historia@gmail.com
+- **Endereço:** 1003 SUL ALAMEDA 26 QI 04 LOTE 07
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77018-444
+- **Nome do responsável:** RIZIA PEREIRA DE SOUZA
+- **CPF do responsável:** 00577228110
+- **Nome da mãe:** RIZIA PEREIRA DE SOUZA
+- **Nome do pai:** WESLEI PIRES LEITE
+- **Contato de emergência:** RIZIA PEREIRA DE SOUZA — 63 98483-1852
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 6
+- **Nome da escola:** ESCOLA MUNICIPAL DARCY RIBEIRO
+- **Tamanho da camisa:** G
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 05/12/2025 - 17:29h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 18. DAVI LUCAS GUIMARÃES LOPES
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** DAVI LUCAS GUIMARÃES LOPES
+- **Data de nascimento:** 22/12/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 10273480170
+- **RG / Certidão:** 1225414
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99230-6130
+- **E-mail:** lopesdesousasyndwany@hotmail.com
+- **Endereço:** 1004 SUL AL 02 LOTE 08
+- **Bairro:** PLANO DIRETOR SUL
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77023-510
+- **Nome do responsável:** SYNDWANY LOPES DE SOUSA
+- **CPF do responsável:** 05283273130
+- **Nome da mãe:** SYNDWANY LOPES DE SOUSA
+- **Nome do pai:** PATRIK GUIMARÃES DA SILVA
+- **Contato de emergência:** SYNDWANY LOPES DE SOUSA — 63 99230-6130
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 5
+- **Nome da escola:** ESCOLA MUNICIPAL MONTEIRO LOBATO
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 15/12/2025 - 11:51h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 19. DAVI LUCCA MARQUES DE CARVALHO
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** DAVI LUCCA MARQUES DE CARVALHO
+- **Data de nascimento:** 06/06/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 08870499154
+- **RG / Certidão:** 1542892
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99215-3800 / 63 98439-5040
+- **E-mail:** josiariaestetica@gmail.com
+- **Endereço:** 1006 SUL AL 17 LT 03
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77023-594
+- **Nome do responsável:** JOSIARIA COELHO MARQUES
+- **CPF do responsável:** 00666474109
+- **Nome da mãe:** JOSIARIA COELHO MARQUES
+- **Nome do pai:** ERSAMO CORDEIRO DE CARVALHO
+- **Contato de emergência:** JOSIARIA COELHO MARQUES — 63 99215-3800
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 6
+- **Nome da escola:** ESCOLA MUNICIPAL DARCY RIBEIRO
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 13/11/2025 - 17:14h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 20. diego felix da silva brito
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** diego felix da silva brito
+- **Data de nascimento:** 25/06/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 08489652139
+- **RG / Certidão:** 08489652139
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99228-3140
+- **E-mail:** coachgeraldovaz@gmail,com
+- **Endereço:** 906 sul alameda 20 lote 12
+- **Bairro:** centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77023-390
+- **Nome do responsável:** elisangela da silva barvosa
+- **CPF do responsável:** 01007453346
+- **Nome da mãe:** elisangela da silva barbosa
+- **Nome do pai:** elisangela da silva barbosa
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 6
+- **Nome da escola:** escola municipal darcy ribeiro
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 17/12/2025 - 08:44h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 21. Eduardo Batista de Sá
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** Eduardo Batista de Sá
+- **Data de nascimento:** 25/03/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 08789978145
+- **RG / Certidão:** 117812
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99255-4321
+- **E-mail:** edu22.batista10@gmail.com
+- **Endereço:** 303 norte alameda 7 lote 22
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-321
+- **Nome do responsável:** Eliane Batista
+- **CPF do responsável:** 02179977328
+- **Nome da mãe:** Eliane Gomes
+- **Nome do pai:** —
+- **Contato de emergência:** Eliane — 63 98112-3444
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 30/12/2025 - 00:16h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 22. EMANUEL VICTOR PEREIRA DA MOTA
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** EMANUEL VICTOR PEREIRA DA MOTA
+- **Data de nascimento:** 11/02/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 06810602127
+- **RG / Certidão:** 1561421
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99106-5764
+- **E-mail:** pereiraparentel@gmail.com
+- **Endereço:** 1306 SUL ALAMEDA 15 QI 09 LT 06
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-576
+- **Nome do responsável:** LUCIANE PEREIRA PARENTE
+- **CPF do responsável:** 87116820191
+- **Nome da mãe:** LUCIANE PEREIRA PARENTE
+- **Nome do pai:** EMANUEL DA MOTA MILHOMEM
+- **Contato de emergência:** LUCIANE PEREIRA PARENTE — 63 99106-5764
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 7
+- **Nome da escola:** ESCOLA MUNICIPAL DARCY RIBEIRO
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 13/11/2025 - 15:14h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 23. Emilly Guedes Rosa
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** Emilly Guedes Rosa
+- **Data de nascimento:** 24/12/2013
+- **Sexo:** —
+- **CPF do aluno:** —
+- **RG / Certidão:** 10349353129 CPF:
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99290-5120 / 63 99250-5120 E-mail:coachgeraldovaz@gmail,com
+- **E-mail:** —
+- **Endereço:** 1104 Sul alameda 02 lote 06 Bairro:centro
+- **Bairro:** —
+- **Cidade:** Palmas
+- **Estado (UF):** TO CEP:77024-028
+- **CEP:** —
+- **Nome do responsável:** Glayse Guedes Azevedo CPF / RG do Resp.:04736707127 / 04736707127 -
+- **CPF do responsável:** —
+- **Nome da mãe:** Glayse Guedes Azevedo CPF / RG da Mãe:04736707127 / 04736707127 -
+- **Nome do pai:** CPF / RG do Pai:/ -
+- **Contato de emergência:** Glayse Guedes Azevedo — 63 99290-512
+- **Escolaridade:** Ensino Fundamental Tipo de Escola:Municipal
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Série:6
+- **Série:** —
+- **Nome da escola:** escola municipal darcy ribeiro Matrícula:
+- **Tamanho da camisa:** P Camisa Entregue: SIM- Em 29/12/2025 - 16:43h
+- **Camisa entregue (Sim/Não):** —
+- **Data do cadastro:** 29/12/2025 - 16:43h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 24. ENZO BERNARDO LUIZ CERQUEIRA
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** ENZO BERNARDO LUIZ CERQUEIRA
+- **Data de nascimento:** 19/06/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 09974212154
+- **RG / Certidão:** 1802345
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98415-8116 / 63 98423-7025
+- **E-mail:** ludmilapc59@gmail.com
+- **Endereço:** 1006 SUL ALAMEDA 03 LOTE 20
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77023-546
+- **Nome do responsável:** LUDMILA PATRÌCIO CERQUEIRA
+- **CPF do responsável:** 77738128100
+- **Nome da mãe:** LUDMILA PATRÌCIO CERQUEIRA
+- **Nome do pai:** RENATO LUIZ PEREIRA
+- **Contato de emergência:** LUDMILA PATRÌCIO CERQUEIRA — 63 98415-8116
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 6
+- **Nome da escola:** ESCOLA MUNICIPAL DARCY RIBEIRO
+- **Tamanho da camisa:** G
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 13/11/2025 - 15:24h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 25. Ezequiel Soares Araujo
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** Ezequiel Soares Araujo
+- **Data de nascimento:** 27/11/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 07848344150
+- **RG / Certidão:** 1477871
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98425-0790
+- **E-mail:** hedasoares@hotmail.com
+- **Endereço:** 1104 sul alameda 12 lote 72
+- **Bairro:** centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-040
+- **Nome do responsável:** Helda Soares de Assis
+- **CPF do responsável:** 01025549198
+- **Nome da mãe:** helda Soares de Assis
+- **Nome do pai:** Jose Wilmar Alves de Araujo
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 5
+- **Nome da escola:** escola municipal monteiro lobato
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 19/11/2025 - 13:14h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 26. Guatavo Pereira de Oliveira
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** Guatavo Pereira de Oliveira
+- **Data de nascimento:** 24/02/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 09410303184
+- **RG / Certidão:** 09410303184
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98469-1507 / 63 98469-1507
+- **E-mail:** coachgeraldovaz@gmail,com
+- **Endereço:** 1005 sul alameda03 lote 01 Qi02
+- **Bairro:** centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77018-494
+- **Nome do responsável:** Jessica P de S VLima
+- **CPF do responsável:** 02548013154
+- **Nome da mãe:** Jessica P de S V Lima
+- **Nome do pai:** —
+- **Contato de emergência:** Jessica Pde S V Lima — 63 98469-1507
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 6
+- **Nome da escola:** escola municipal darcy ribeiro
+- **Tamanho da camisa:** G
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 29/12/2025 - 15:26h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 27. Guilherme Mateus dos santos
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** Guilherme Mateus dos santos
+- **Data de nascimento:** 13/09/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 05595724170
+- **RG / Certidão:** 190248
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99243-2109
+- **E-mail:** gui.mateus10@gmail.com
+- **Endereço:** 604 norte alameda 10 lote9
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-551
+- **Nome do responsável:** Jose Augusto Santos
+- **CPF do responsável:** 80036511153
+- **Nome da mãe:** Jose Augusto
+- **Nome do pai:** —
+- **Contato de emergência:** Jose — 63 98226-9661
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 29/12/2025 - 23:54h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 28. HEITOR CARVALHO DE MELO
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** HEITOR CARVALHO DE MELO
+- **Data de nascimento:** 21/05/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** —
+- **RG / Certidão:** 09988219180
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98433-4579 / 63 98433-4569
+- **E-mail:** suanycont@gmail.com
+- **Endereço:** Qd 1103 Sul Al 26 lt 12 qi 04
+- **Bairro:** PLANO DIRETOR SUL
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77019-040
+- **Nome do responsável:** SUANY MENEZES CARVALHO DE MELO
+- **CPF do responsável:** 02675830100
+- **Nome da mãe:** SUANY MENEZES CARVALHO DE MELO
+- **Nome do pai:** JOSE FERNANDO DE MELO
+- **Contato de emergência:** SUANY MENEZES CARVALHO DE MELO — 63 98433-4579
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 6
+- **Nome da escola:** ESCOLA MUNICIPAL DARCY RIBEIRO
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 13/11/2025 - 15:03h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 29. heitor ferreira nunes
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** heitor ferreira nunes
+- **Data de nascimento:** 21/03/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 66500168372
+- **RG / Certidão:** 1489556
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 98 42615-35
+- **E-mail:** salluane@hotmail.com
+- **Endereço:** 1104 sul alameda 11 lote 04
+- **Bairro:** centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-086
+- **Nome do responsável:** solluane ferreira da silva
+- **CPF do responsável:** 66500168372
+- **Nome da mãe:** solluane ferreira da silva
+- **Nome do pai:** edison nunes sirqueira
+- **Contato de emergência:** sollune ferreira da silva — 63 98426-1535
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 5
+- **Nome da escola:** escola municipal monteiro lobato
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 16/11/2025 - 10:58h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 30. HEITOR REGO FEITOSA
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** HEITOR REGO FEITOSA
+- **Data de nascimento:** 12/07/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 08274852125
+- **RG / Certidão:** 1493133
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99285-2523 / 63 98517-9166
+- **E-mail:** keyllaribeirorego@gmail.com
+- **Endereço:** 904 SUL AL. 13 LOTE 43 CS 02
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77023-380
+- **Nome do responsável:** KEYLLA MARIA RIBEIRO REGO
+- **CPF do responsável:** 00563743131
+- **Nome da mãe:** KEYLLA MARIA RIBEIRO REGO
+- **Nome do pai:** NICOLAS WALDREY GOMES MORAIS FEITOSA
+- **Contato de emergência:** KEYLLA MARIA RIBEIRO REGO — 63 98517-9166
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 7
+- **Nome da escola:** ESCOLA MUNICIPAL DARCY RIBEIRO
+- **Tamanho da camisa:** G
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 16/11/2025 - 12:52h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 31. HEITOR SANTOS FREITAS
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** HEITOR SANTOS FREITAS
+- **Data de nascimento:** 15/06/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 90960076115
+- **RG / Certidão:** 378152
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 87 99920-7943
+- **E-mail:** clezziagsantos@gmail.com
+- **Endereço:** 1006 SUL AL 22 LOTE 16 CASA 02
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77020-361
+- **Nome do responsável:** CLEZZIA GOMES DOS SANTOS
+- **CPF do responsável:** 90960076115
+- **Nome da mãe:** CLEZZIA GOMES DOS SANTOS
+- **Nome do pai:** CARLOS ANTONIO DE FREITAS
+- **Contato de emergência:** CLEZZIA GOMES DOS SANTOS — 87 99920-7943
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 6
+- **Nome da escola:** ESCOLA MUNICIPAL DARCY RIBEIRO
+- **Tamanho da camisa:** G
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 13/11/2025 - 15:32h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 32. HEITOR SOUSA MATOS
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** HEITOR SOUSA MATOS
+- **Data de nascimento:** 26/02/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 10010229124
+- **RG / Certidão:** 10010229124
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98513-4840
+- **E-mail:** julivalmatos@gmail.com
+- **Endereço:** 1106 SUL AL 16 LT 14
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-140
+- **Nome do responsável:** JULIVAL PEREIRA MATOS JUNIOR
+- **CPF do responsável:** 01503255113
+- **Nome da mãe:** LISMARA SOUSA
+- **Nome do pai:** JULIVAL PEREIRA MATOS JUNIOR
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 6
+- **Nome da escola:** ESCOLA MUNICIPAL DARCY RIBEIRO
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 13/11/2025 - 16:16h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 33. HEMILI SOFIA CARDOSO
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** HEMILI SOFIA CARDOSO
+- **Data de nascimento:** 31/08/2016
+- **Sexo:** Feminino
+- **CPF do aluno:** 12242828177
+- **RG / Certidão:** 992645
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98101-2286
+- **E-mail:** caiogabrielcarla@gmail.com
+- **Endereço:** Quadra 204 norte
+- **Bairro:** PLANO DIRETOR NORTE
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-568
+- **Nome do responsável:** Carla Débora Cardoso Teixeira
+- **CPF do responsável:** 71013559193
+- **Nome da mãe:** Carla Débora Cardoso Teixeira
+- **Nome do pai:** —
+- **Contato de emergência:** Carla Débora Cardoso Teixeira — 63 98101-2286
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 4
+- **Nome da escola:** ESCOLA MUNICIPAL DE TEMPO INTEGRAL DANIEL BATISTA
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 07/01/2026 - 22:31h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 34. HENRIQUE BARROS ARAUJO
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** HENRIQUE BARROS ARAUJO
+- **Data de nascimento:** 17/02/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 10417111150
+- **RG / Certidão:** 955342
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99292-3079
+- **E-mail:** prof.albertoedf@gmail.com
+- **Endereço:** 1106 SUL AL. 24 LOTE 01
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-086
+- **Nome do responsável:** JULLY ANE B. DA SILVA
+- **CPF do responsável:** 03318428159
+- **Nome da mãe:** JULLY ANE B. DA SILVA
+- **Nome do pai:** —
+- **Contato de emergência:** JULLY ANE B. DA SILVA — 63 99292-3079
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 4
+- **Nome da escola:** ESCOLA MUNICIPAL MONTEIRO LOBATO
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 29/12/2025 - 12:39h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 35. HENZO DOUGLAS LOPES BEZERRA
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** HENZO DOUGLAS LOPES BEZERRA
+- **Data de nascimento:** 12/06/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 08994674152
+- **RG / Certidão:** 1572688
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98103-2208 / 63 99268-0309
+- **E-mail:** lecianebezerradesousa@gmail.com
+- **Endereço:** 904 SUL ALAMEDA 02 LOTE 02 CS 01
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77023-366
+- **Nome do responsável:** MARIA LECIANE BEZERRA SOUSA
+- **CPF do responsável:** 04480862129
+- **Nome da mãe:** MARIA LECIANE BEZERRA SOUSA
+- **Nome do pai:** HUMBERTO DOUGLAS LOPES DE SOUSA
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 6
+- **Nome da escola:** ESCOLA MUNICIPAL DARCY RIBEIRO
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 16/11/2025 - 13:07h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 36. joao felipe alves mendes
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** joao felipe alves mendes
+- **Data de nascimento:** 14/05/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 70672475197
+- **RG / Certidão:** 70672475197
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98451-0300 / 63 98451-0300
+- **E-mail:** coachgeraldovaz@gmail,com
+- **Endereço:** 1006 sul alameda 02 lote 6
+- **Bairro:** centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77023-543
+- **Nome do responsável:** patricia alves almeida
+- **CPF do responsável:** 81679246291
+- **Nome da mãe:** patricia alves almeida
+- **Nome do pai:** —
+- **Contato de emergência:** patricia alves almeida — 63 98451-0300
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 6
+- **Nome da escola:** escola municipal darcy ribeiro
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 17/12/2025 - 09:41h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 37. JOAO HENRIQUE ASSUNÇÃO LEITE
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** JOAO HENRIQUE ASSUNÇÃO LEITE
+- **Data de nascimento:** 24/10/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 08851066108
+- **RG / Certidão:** 1541255
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98511-4197
+- **E-mail:** narajh20@gmail.com
+- **Endereço:** 1004 SUL ALAMEDA 14 AP 01
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77023-526
+- **Nome do responsável:** ELISNARIA SILVA ASSUNÇÃO
+- **CPF do responsável:** 00974328146
+- **Nome da mãe:** ELISNARIA SILVA ASSUNÇÃO
+- **Nome do pai:** THIAGO HENRIQUE LEITE DA SILVA
+- **Contato de emergência:** ELISNARIA SILVA ASSUNÇÃO — 63 98511-4197
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 6
+- **Nome da escola:** ESCOLA MUNICIPAL DARCY RIBEIRO
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 16/11/2025 - 12:35h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 38. JOÃO LUCAS BRANDÃO ZUZA RIBEIRO
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** JOÃO LUCAS BRANDÃO ZUZA RIBEIRO
+- **Data de nascimento:** 21/07/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 02586798163
+- **RG / Certidão:** 920877
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99114-4636
+- **E-mail:** prof.albertoedf@gmail.com
+- **Endereço:** 1104 SUL AL. 10 LOTE 15
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-014
+- **Nome do responsável:** AMANDA BRANDÃO ZUZA
+- **CPF do responsável:** 02586798163
+- **Nome da mãe:** AMANDA BRANDÃO ZUZA
+- **Nome do pai:** —
+- **Contato de emergência:** AMANDA BRANDÃO ZUZA — 63 99114-4636
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 5
+- **Nome da escola:** ESCOLA MUNICIPAL MONTEIRO LOBATO
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 29/12/2025 - 12:45h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 39. João Lucas Freire de Cerqueira
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** João Lucas Freire de Cerqueira
+- **Data de nascimento:** 14/03/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 03204348180
+- **RG / Certidão:** 1267232
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99241-4700 / 63 98400-4162
+- **E-mail:** acleziofreires.11@gmail.com
+- **Endereço:** 804 Sul alameda 08, lote 25
+- **Bairro:** PLANO DIRETOR SUL
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77023-038
+- **Nome do responsável:** Aclezio Freires de Oliveira
+- **CPF do responsável:** 03204348180
+- **Nome da mãe:** Katiusse Lopes de Cerqueira Freires
+- **Nome do pai:** Aclezio Freires de Oliveira
+- **Contato de emergência:** Aclezio Freires de Oliveira — 63 99241-4700
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 5
+- **Nome da escola:** ESCOLA MUNICIPAL MONTEIRO LOBATO
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 05/01/2026 - 09:12h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 40. joao mario guimaraesde jesus
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** joao mario guimaraesde jesus
+- **Data de nascimento:** 11/09/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 01861165196
+- **RG / Certidão:** 11468869183
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99266-3500
+- **E-mail:** helineguimaraes@gmail.com
+- **Endereço:** 1003 sul QI 39 alameda 19 lote 04
+- **Bairro:** plano diretor
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77018-414
+- **Nome do responsável:** halaine araujo guimaraes
+- **CPF do responsável:** 01861165196
+- **Nome da mãe:** helaine araujo guimaraes
+- **Nome do pai:** mario freirede jesus
+- **Contato de emergência:** haleine araujo guimaraes — 63 92663-500
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** —
+- **Série:** 5
+- **Nome da escola:** escola municipal monteireo lobato
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 15/11/2025 - 07:56h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 41. JOÃO MIGUEL COELHO CARVALHO
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** JOÃO MIGUEL COELHO CARVALHO
+- **Data de nascimento:** 23/06/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 02387877101
+- **RG / Certidão:** 339799
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99918-7803
+- **E-mail:** leilacoelhocunha@gmail.com
+- **Endereço:** 906 SUL ALAMEDA 04 LOTE 14
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77023-390
+- **Nome do responsável:** LEILA COELHO DA CUNHA
+- **CPF do responsável:** 02387877101
+- **Nome da mãe:** LEILA COELHO DA CUNHA
+- **Nome do pai:** DOUGLAS CARVALHO DOS SANTOS
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 4
+- **Nome da escola:** ESCOLA MUNICIPAL MONTEIRO LOBATO
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 05/12/2025 - 15:34h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 42. JOAO MIGUEL RIBEIRO NOLETO
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** JOAO MIGUEL RIBEIRO NOLETO
+- **Data de nascimento:** 01/11/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 07352814167
+- **RG / Certidão:** 07352814167
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98512-0836
+- **E-mail:** ceilacris17@gmail.com
+- **Endereço:** 604 SUL AL 14 LT 19
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77022-030
+- **Nome do responsável:** CEILA CRISTINA DOS SANTOS
+- **CPF do responsável:** 01452990158
+- **Nome da mãe:** CEILA CRISTINA DOS SANTOS
+- **Nome do pai:** VALMIR DA SILVA NOLETO
+- **Contato de emergência:** CEILA CRISTINA DOS SANTOS — 63 98512-0836
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Particular
+- **Turno escolar:** Tarde
+- **Série:** 6
+- **Nome da escola:** COLEGIO BATISTA
+- **Tamanho da camisa:** G
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 13/11/2025 - 15:59h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 43. JOSE HENRIQUE SREMTWE XERENTE ANTUNES CASTRO
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** JOSE HENRIQUE SREMTWE XERENTE ANTUNES CASTRO
+- **Data de nascimento:** 18/01/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 07893715103
+- **RG / Certidão:** 1801970
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98108-9317 / 63 98419-4888
+- **E-mail:** deboraxerente@outlook.com
+- **Endereço:** 1306 SUL AL 06 B LOTE 13
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-590
+- **Nome do responsável:** DEBORA ANTUNES XERENTE
+- **CPF do responsável:** 00503374164
+- **Nome da mãe:** DEBORA ANTUNES XERENTE
+- **Nome do pai:** JAIR BEZERRA DE CASTRO
+- **Contato de emergência:** DEBORA ANTUNES XERENTE — 63 98108-9317
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 5
+- **Nome da escola:** ESCOLA MUNICIPAL MONTEIRO LOBATO
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 13/11/2025 - 17:22h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 44. Kaike Alves barreto
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** Kaike Alves barreto
+- **Data de nascimento:** 20/12/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 04681373192
+- **RG / Certidão:** 109872
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98119-9663
+- **E-mail:** kaike.22fjf@gmail.com
+- **Endereço:** 407 norte alameda 12 lote 4
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-543
+- **Nome do responsável:** Fernada Alves
+- **CPF do responsável:** 80036511153
+- **Nome da mãe:** Fernanda Alves
+- **Nome do pai:** —
+- **Contato de emergência:** Fernanda — 63 98196-6511
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 30/12/2025 - 00:10h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 45. kaio brito Menezes
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** kaio brito Menezes
+- **Data de nascimento:** 20/05/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 08794886113
+- **RG / Certidão:** 134456
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99151-1213
+- **E-mail:** kaio.vdl@gmail.com
+- **Endereço:** 603 norte alameda 1 lote 22
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-344
+- **Nome do responsável:** Monica de Menezes
+- **CPF do responsável:** 96147571168
+- **Nome da mãe:** Monica
+- **Nome do pai:** Rosana Paulo
+- **Contato de emergência:** Monica — 63 98119-9665
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Rosana Paulo
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 29/12/2025 - 23:46h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 46. Levi Lopes nascimento Macedo
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** Levi Lopes nascimento Macedo
+- **Data de nascimento:** 28/04/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 08678886102
+- **RG / Certidão:** 08678886102
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 84764-046
+- **E-mail:** neurowruelha@gmail.com
+- **Endereço:** 1406 sul alameda 08 lote 21
+- **Bairro:** Centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77025-139
+- **Nome do responsável:** Edimilson Macedo silva
+- **CPF do responsável:** 86754734191
+- **Nome da mãe:** Wruelha Lopes nascimento
+- **Nome do pai:** Edimilson Macedo silva
+- **Contato de emergência:** Edimilson Macedo silva — 63 84764-046
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** —
+- **Série:** 4
+- **Nome da escola:** Escola municipal Monteiro Lobato
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 06/12/2025 - 08:37h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 47. LUCAS HENRIQUE ALVES DA SILVA
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** LUCAS HENRIQUE ALVES DA SILVA
+- **Data de nascimento:** 15/02/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 09931809140
+- **RG / Certidão:** 1687579
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99287-0565 / 63 99240-2239
+- **E-mail:** sureiaalvesdesouza@hotmail.com
+- **Endereço:** 1204 SUL AL. 04 LOTE 27 QI 02
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77019-518
+- **Nome do responsável:** SUREIA ALVES DE SOUSA
+- **CPF do responsável:** 04117386158
+- **Nome da mãe:** SUREIA ALVES DE SOUSA
+- **Nome do pai:** —
+- **Contato de emergência:** SUREIA ALVES DE SOUSA — 63 99287-0565
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 5
+- **Nome da escola:** ESCOLA MUNICIPAL MONTEIRO LOBATO
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 16/11/2025 - 13:21h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 48. LUIGI ROCHA DA SILVA
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** LUIGI ROCHA DA SILVA
+- **Data de nascimento:** 10/12/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 09700036170
+- **RG / Certidão:** 67195592
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98499-8912 / 63 98468-5056
+- **E-mail:** spiderzod@gmail.com
+- **Endereço:** 1204 SUL AL. 13 LT. 04 QI. 15 HM 04
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77019-502
+- **Nome do responsável:** CLEICIMAR VIEIRA DA SILVA
+- **CPF do responsável:** 99878763153
+- **Nome da mãe:** EDILENE ROCHA ARAUJO SILVA
+- **Nome do pai:** CLEICIMAR VIEIRA DA SILVA
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 6
+- **Nome da escola:** ESCOLA MUNICIPAL DARCY RIBEIRO
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 16/11/2025 - 13:14h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 49. LUIZ PAULO TELES DA SILVA
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** LUIZ PAULO TELES DA SILVA
+- **Data de nascimento:** 25/11/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 08219833424
+- **RG / Certidão:** 1795140
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99245-0780 / 63 99136-2097
+- **E-mail:** giltelesdebritoteles@gmail.com
+- **Endereço:** 912 SUL ALAMEDA 07 LOTE 10 B
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77023-482
+- **Nome do responsável:** GILMARA TELES DE BRITO
+- **CPF do responsável:** 08219833424
+- **Nome da mãe:** GILMARA TELES DE BRITO
+- **Nome do pai:** ANDRE ROMARIO TELES DA SILVA
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 5
+- **Nome da escola:** ESCOLA MUNICIPAL MONTEIRO LOBATO
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 13/11/2025 - 16:24h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 50. LUKAS GABRIEL ARAUJO LUZ
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** LUKAS GABRIEL ARAUJO LUZ
+- **Data de nascimento:** 18/12/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 92908624168
+- **RG / Certidão:** 630504
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98105-3961 / 63 98444-6422
+- **E-mail:** jhossy.erasmo@gmail.com
+- **Endereço:** Qd 1504 SUL ALAMEDA 08 Qi 17 LOTE 23
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77027-028
+- **Nome do responsável:** JOSELMA LIMA DE ARAUJO LUZ
+- **CPF do responsável:** 92908624168
+- **Nome da mãe:** JOSELMA LIMA DE ARAUJO LUZ
+- **Nome do pai:** ERASMO RODRIGUES LUZ ARAUJO
+- **Contato de emergência:** JOSELMA LIMA DE ARAUJO LUZ — 63 98444-6422
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 6
+- **Nome da escola:** ESCOLA MUNICIPAL DARCY RIBEIRO
+- **Tamanho da camisa:** G
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 13/11/2025 - 15:40h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 51. Marco Antonio soares
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** Marco Antonio soares
+- **Data de nascimento:** 13/08/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 08789978145
+- **RG / Certidão:** 145672
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98119-5522
+- **E-mail:** marco.ant11@gmail.com
+- **Endereço:** 604 norte alameda 1 lote 16
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-343
+- **Nome do responsável:** Maria de loudes
+- **CPF do responsável:** 01350008150
+- **Nome da mãe:** Maria
+- **Nome do pai:** —
+- **Contato de emergência:** Maria — 63 98119-5522
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 29/12/2025 - 23:59h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 52. maria r gomes rodrigues
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** maria r gomes rodrigues
+- **Data de nascimento:** 22/03/2016
+- **Sexo:** Feminino
+- **CPF do aluno:** 09496635148
+- **RG / Certidão:** 09496635148
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99137-1950 / 63 99137-1950
+- **E-mail:** coachgeraldovaz@gmail,com
+- **Endereço:** 1004 sul alameda 14 lote 7
+- **Bairro:** centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77023-526
+- **Nome do responsável:** lucivania gomes rodrigues
+- **CPF do responsável:** 03943381110
+- **Nome da mãe:** lucivania gomes rodrigues
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 5
+- **Nome da escola:** escola municipal monteiro lobato
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 17/12/2025 - 09:15h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 53. maria clara vilarinho
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** maria clara vilarinho
+- **Data de nascimento:** 27/05/2015
+- **Sexo:** Feminino
+- **CPF do aluno:** 07940268180
+- **RG / Certidão:** 07940268180
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98120-3392 / 63 98120-3392
+- **E-mail:** coachgeraldovaz@gmail,com
+- **Endereço:** 111 sul alameda 02 lote 26
+- **Bairro:** centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-028
+- **Nome do responsável:** leidinalva v de s tavares
+- **CPF do responsável:** 87474565315
+- **Nome da mãe:** leinalva v de s tavares
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 5
+- **Nome da escola:** escola municipal monteireo lobato
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 17/12/2025 - 09:29h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 54. Mario Augusto de Lima
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** Mario Augusto de Lima
+- **Data de nascimento:** 29/09/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 08789978145
+- **RG / Certidão:** 1588913
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98119-9663
+- **E-mail:** mario.vila@gmail.com
+- **Endereço:** 605 sul alameda 2 lote 7
+- **Bairro:** plano diretor sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77016-344
+- **Nome do responsável:** Marcia moraes de Lima
+- **CPF do responsável:** 60967650259
+- **Nome da mãe:** Marcia
+- **Nome do pai:** —
+- **Contato de emergência:** Marcia — 63 98119-9663
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 07/01/2026 - 13:52h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 55. Mateus Gonçalves de Carvalho
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** Mateus Gonçalves de Carvalho
+- **Data de nascimento:** 11/05/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 05595724170
+- **RG / Certidão:** 123987
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98119-7677
+- **E-mail:** Mari1989@gmail.com
+- **Endereço:** 305 norte alameda 19 lote 6
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-551
+- **Nome do responsável:** Mari Gonçalves
+- **CPF do responsável:** 01843189127
+- **Nome da mãe:** Mari
+- **Nome do pai:** —
+- **Contato de emergência:** Mari — 63 98119-9663
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 30/12/2025 - 00:20h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 56. MATEUS SILVA RODRIGUES NOLETO
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** MATEUS SILVA RODRIGUES NOLETO
+- **Data de nascimento:** 24/04/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 11744414106
+- **RG / Certidão:** 1049071
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98511-7176
+- **E-mail:** prof.albertoedf@gmail.com
+- **Endereço:** 706 SUL AL. 12 LOTE 16
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77022-392
+- **Nome do responsável:** NATALIA SILVA RODRIGUES
+- **CPF do responsável:** 03940218197
+- **Nome da mãe:** NATALIA SILVA RODRIGUES
+- **Nome do pai:** —
+- **Contato de emergência:** NATALIA SILVA RODRIGUES — 63 98511-7176
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 5
+- **Nome da escola:** ESCOLA MUNICIPAL MONTEIRO LOBATO
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 29/12/2025 - 12:50h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 57. MIGUEL CARVALHO RODRIGUES
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** MIGUEL CARVALHO RODRIGUES
+- **Data de nascimento:** 05/05/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 09028789138
+- **RG / Certidão:** 421335
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98415-9617
+- **E-mail:** prof.albertoedf@gmail.com
+- **Endereço:** 906 SUL AL. 22 LOTE 02
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77023-404
+- **Nome do responsável:** ANA LUIZA PAULA CARVALHO
+- **CPF do responsável:** 93987188120
+- **Nome da mãe:** ANA LUIZA PAULA CARVALHO
+- **Nome do pai:** —
+- **Contato de emergência:** ANA LUIZA PAULA CARVALHO — 63 98415-9617
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 4
+- **Nome da escola:** ESCOLA MUNICIPAL MONTEIRO LOBATO
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 29/12/2025 - 12:55h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 58. Miguel V Ribeiro
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** Miguel V Ribeiro
+- **Data de nascimento:** 02/12/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 07855584110
+- **RG / Certidão:** 07855584110
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98482-4980 / 63 98482-4980
+- **E-mail:** coachgeraldovaz@gmail,com
+- **Endereço:** 1305 sul
+- **Bairro:** centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77015-002
+- **Nome do responsável:** Erisvania R Ribeiro
+- **CPF do responsável:** 94008906134
+- **Nome da mãe:** Erisvania R Ribeiro
+- **Nome do pai:** —
+- **Contato de emergência:** Erisvania R Ribeiro — 63 98482-4980
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 6
+- **Nome da escola:** escola municipal darcy ribeiro
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 29/12/2025 - 15:46h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 59. NICOLAS GAMA PINTO
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** NICOLAS GAMA PINTO
+- **Data de nascimento:** 29/06/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 77295412115
+- **RG / Certidão:** 153877
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98462-6951 / 63 98481-1103
+- **E-mail:** yvan_pinto@hotmail.com
+- **Endereço:** ARSO 121 ALAMEDA 06 LOTE 05
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77019-437
+- **Nome do responsável:** IVAN PAULO ALVES PINTO
+- **CPF do responsável:** 77295412115
+- **Nome da mãe:** SUELI BATISTA GAMA
+- **Nome do pai:** IVAN PAULO ALVES PINTO
+- **Contato de emergência:** IVAN PAULO ALVES PINTO — 63 98462-6951
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 5
+- **Nome da escola:** ESCOLA MUNICIPAL MONTEIRO LOBATO
+- **Tamanho da camisa:** G
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 13/11/2025 - 17:45h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 60. Noah Lavi B Mendes
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** Noah Lavi B Mendes
+- **Data de nascimento:** 18/10/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 07938821179
+- **RG / Certidão:** 07938821179
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99106-1812 / 63 99106-1812
+- **E-mail:** coachgeraldovaz@gmail,com
+- **Endereço:** 612 sul alameda 06 lote 07
+- **Bairro:** centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77022-078
+- **Nome do responsável:** Meryellen da S Brito
+- **CPF do responsável:** 06383982150
+- **Nome da mãe:** Meryellen da S Brito
+- **Nome do pai:** —
+- **Contato de emergência:** Meryellen da S Brito — 63 99106-1812
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 5
+- **Nome da escola:** escola municipal monteiro lobato
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 29/12/2025 - 16:22h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 61. OTÁVIO ANDRADE DE SOUSA
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** OTÁVIO ANDRADE DE SOUSA
+- **Data de nascimento:** 01/08/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 04142717189
+- **RG / Certidão:** 984807
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98478-0622
+- **E-mail:** prof.albertoedf@gmail.com
+- **Endereço:** 1006 SUL AL.19LT. 74
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77023-633
+- **Nome do responsável:** LUISLENE ALVES
+- **CPF do responsável:** 04142717189
+- **Nome da mãe:** LUISLENE ALVES
+- **Nome do pai:** —
+- **Contato de emergência:** LUISLENE ALVES — 63 98478-0622
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 5
+- **Nome da escola:** ESCOLA MUNICIPAL MONTEIRO LOBATO
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 29/12/2025 - 12:34h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 62. PEDRO CASTRO SANTOS
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** PEDRO CASTRO SANTOS
+- **Data de nascimento:** 31/01/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 09965724148
+- **RG / Certidão:** 1669398
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99206-2711
+- **E-mail:** janaannasocial@hotmail.com
+- **Endereço:** 806 SUL AL. 09 LT. 22
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77023-068
+- **Nome do responsável:** JANAANNA DE SOUSA CASTRO SANTOS
+- **CPF do responsável:** 90685024172
+- **Nome da mãe:** JANAANNA DE SOUSA CASTRO SANTOS
+- **Nome do pai:** DESIO ROSA DOS SANTOS
+- **Contato de emergência:** JANAANNA DE SOUSA CASTRO SANTOS — 63 99206-2711
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Particular
+- **Turno escolar:** Tarde
+- **Série:** 6
+- **Nome da escola:** COLEGIO BATISTA DE PALMAS
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 16/11/2025 - 13:35h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 63. Pedro Henrique Marinho
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** Pedro Henrique Marinho
+- **Data de nascimento:** 19/09/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 04987247194
+- **RG / Certidão:** 1527167
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98449-5504
+- **E-mail:** vanialeite_to@yahoo.com.br
+- **Endereço:** 1006 sul alameda 18 lote 48
+- **Bairro:** centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77023-612
+- **Nome do responsável:** Maria Aparecida Ribeiro de Araujo
+- **CPF do responsável:** 04987247194
+- **Nome da mãe:** Maria Aparecida Ribeiro de Araujo
+- **Nome do pai:** —
+- **Contato de emergência:** Maria Aparecida Ribeiro de Araujo — 63 98449-9550
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 6
+- **Nome da escola:** escola municipal monteireo lobato
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 19/11/2025 - 13:40h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 64. Ronady Levi Preira Cunha
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** Ronady Levi Preira Cunha
+- **Data de nascimento:** 19/11/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 08392962150
+- **RG / Certidão:** 08393420121
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99915-231
+- **E-mail:** denizepereiramota43@gmail.com
+- **Endereço:** 1106 alameda 25 lote 34
+- **Bairro:** centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-086
+- **Nome do responsável:** Denize Pereira Mota
+- **CPF do responsável:** 08392962150
+- **Nome da mãe:** Denize Pereira Mota
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 4
+- **Nome da escola:** escola municipal monteiro lobato
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 19/11/2025 - 13:29h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 65. RYAN BEZERRA DE CARVALHO
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** RYAN BEZERRA DE CARVALHO
+- **Data de nascimento:** 19/02/2014
+- **Sexo:** —
+- **CPF do aluno:** —
+- **RG / Certidão:** 941822 CPF:02364319196
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98428-0158 / 63 98421-4229 E-mail:samiradiasbc@gmail.com
+- **E-mail:** —
+- **Endereço:** 306 SUL ALAMEDA 03 LOTE 15 Bairro:Plano Diretor Sul
+- **Bairro:** —
+- **Cidade:** Palmas
+- **Estado (UF):** TO CEP:77021-034
+- **CEP:** —
+- **Nome do responsável:** SAMIRA DIAS BEZERRA DE CARVALHO CPF / RG do Resp.:02364319196 / 971822 - SSP-TO
+- **CPF do responsável:** —
+- **Nome da mãe:** SAMIRA DIAS BEZERRA DE CARVALHO CPF / RG da Mãe:02364319196 / 971822 - SSP-TO
+- **Nome do pai:** RAFAEL MADUREIRA DE CARVALHO CPF / RG do Pai:/ -
+- **Contato de emergência:** SAMIRA DIAS BEZERRA DE CARVALHO — 63 98428-0158
+- **Escolaridade:** Ensino Fundamental Tipo de Escola:Particular
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Tarde Série:6
+- **Série:** —
+- **Nome da escola:** COLEGIO BATISTA DE PALMAS Matrícula:
+- **Tamanho da camisa:** M Camisa Entregue: NÃO
+- **Camisa entregue (Sim/Não):** —
+- **Data do cadastro:** 13/11/2025 - 17:32h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 66. SAMUEL MOISES DE ARAUJO BATISTA ABREU
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** SAMUEL MOISES DE ARAUJO BATISTA ABREU
+- **Data de nascimento:** 07/10/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 06592136138
+- **RG / Certidão:** 1486276
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98465-7678 / 63 98505-0350
+- **E-mail:** martavirginia@uft.edu.br
+- **Endereço:** 605 SUL ALAMEDA 38 QI 19 LOTE 12
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77016-426
+- **Nome do responsável:** MARTA VIRGINIA DE ABREU
+- **CPF do responsável:** 92808700172
+- **Nome da mãe:** MARTA VIRGINIA DE ABREU
+- **Nome do pai:** LAZARO ROBERTO ABREU PEREIRA
+- **Contato de emergência:** MARTA VIRGINIA DE ABREU — 63 98465-7678
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Particular
+- **Turno escolar:** Tarde
+- **Série:** 6
+- **Nome da escola:** COLEGIO BATISTA DE PALMAS
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 16/11/2025 - 13:29h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 67. SAMUEL TALLES GOMES WALDEMAR
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** SAMUEL TALLES GOMES WALDEMAR
+- **Data de nascimento:** 28/03/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 70073180106
+- **RG / Certidão:** 1655020
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98473-2268
+- **E-mail:** prof.albertoedf@gmail.com
+- **Endereço:** 504 SUL AL. 06 TL. 23
+- **Bairro:** Plano Diretor Sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77021-688
+- **Nome do responsável:** LENISE KELLY FERREIRA GOMES
+- **CPF do responsável:** 70073180106
+- **Nome da mãe:** LENISE KELLY FERREIRA GOMES
+- **Nome do pai:** —
+- **Contato de emergência:** LENISE KELLY FERREIRA GOMES — 63 98473-2268
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 4
+- **Nome da escola:** ESCOLA MUNICIPAL MONTEIRO LOBATO
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 29/12/2025 - 11:55h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 68. Saulo Manoel C Cardoso
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** Saulo Manoel C Cardoso
+- **Data de nascimento:** 23/06/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 10337247188
+- **RG / Certidão:** 10337247188
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99100-3707 / 63 99100-3707
+- **E-mail:** coachgeraldovaz@gmail,com
+- **Endereço:** 1104 sul al 14 lote 25
+- **Bairro:** centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77024-010
+- **Nome do responsável:** Meibilene P Cardoso
+- **CPF do responsável:** 04147415105
+- **Nome da mãe:** Meibilene P Cardoso
+- **Nome do pai:** —
+- **Contato de emergência:** Meibilene P Cardoso — 63 99100-3707
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 4
+- **Nome da escola:** escola municipal monteiro lobato
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 29/12/2025 - 15:07h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 69. Sergio Valadares da Silva
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** Sergio Valadares da Silva
+- **Data de nascimento:** 15/05/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 09849824182
+- **RG / Certidão:** 1445612
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99255-1404
+- **E-mail:** serginhomotocros@gmail.com
+- **Endereço:** 607 sul alameda 5 lote 2
+- **Bairro:** plano diretor sul
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-344
+- **Nome do responsável:** Josefa Valadares
+- **CPF do responsável:** 96147571168
+- **Nome da mãe:** Josefa Valadares
+- **Nome do pai:** —
+- **Contato de emergência:** josefa — 63 99255-1404
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 07/01/2026 - 13:48h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 70. valentina cavalcante vilas boas
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** valentina cavalcante vilas boas
+- **Data de nascimento:** 10/05/2013
+- **Sexo:** Feminino
+- **CPF do aluno:** 10384264131
+- **RG / Certidão:** 103 84264131
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 92445-350 / 63 99244-5350
+- **E-mail:** coachgeraldovaz@gmail,com
+- **Endereço:** 504 sul alameda 06 lote 65
+- **Bairro:** centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77021-090
+- **Nome do responsável:** maria parecida cavalcante de souza
+- **CPF do responsável:** 03822483176
+- **Nome da mãe:** maria parecida cavalcante de souza
+- **Nome do pai:** —
+- **Contato de emergência:** maria parecida cavalcante da silva — 63 92425-350
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 6
+- **Nome da escola:** escola municipal darcy ribeiro
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 17/12/2025 - 09:00h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 71. Vinicius Gomes Silva
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** Vinicius Gomes Silva
+- **Data de nascimento:** 17/01/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 05595724170
+- **RG / Certidão:** 103498
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99256-0451
+- **E-mail:** vini.joga10@gmail.com
+- **Endereço:** 404 norte alameda 3 lote 8
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-331
+- **Nome do responsável:** Marcia Gomes
+- **CPF do responsável:** 60967650259
+- **Nome da mãe:** Marcia
+- **Nome do pai:** —
+- **Contato de emergência:** Marcia — 63 99256-0451
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 30/12/2025 - 00:05h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 72. Wallace campos de Morais
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** Wallace campos de Morais
+- **Data de nascimento:** 05/12/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 08789978145
+- **RG / Certidão:** 1538771
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99254-2075
+- **E-mail:** wllmorais22@gmail.com
+- **Endereço:** 605 norte alameda 5 lote 5
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-357
+- **Nome do responsável:** Maria de Nazare
+- **CPF do responsável:** 01843189127
+- **Nome da mãe:** Maria
+- **Nome do pai:** Francisca Oliveira
+- **Contato de emergência:** Maria — 63 99229-9119
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Francisca Oliveira
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 29/12/2025 - 23:37h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+### 73. Wing Luiz G Filho
+
+- **Professor:** Geraldo Vaz da Silva Filho
+- **Nome do aluno:** Wing Luiz G Filho
+- **Data de nascimento:** 10/10/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 08332253160
+- **RG / Certidão:** 08332253160
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99955-2772 / 63 99955-2772
+- **E-mail:** coachgeraldovaz@gmail,com
+- **Endereço:** 1004 Sul alameda 06
+- **Bairro:** centro
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77023-516
+- **Nome do responsável:** Andreia Delabona
+- **CPF do responsável:** 97382124134
+- **Nome da mãe:** Andreia Delabona
+- **Nome do pai:** —
+- **Contato de emergência:** Andreia Delabona — 63 99955-2772
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 6
+- **Nome da escola:** escola municipal darcy ribeiro
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 29/12/2025 - 16:09h
+- **Núcleo:** Núcleo Quadra 906 Sul
+- **Observação:** —
+
+---
+
+# Haras RR — Professor Romário Ribeiro Brito
+
+Total de alunos: **53**
+
+### 1. Allan Jefferson Alves dos santos
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Allan Jefferson Alves dos santos
+- **Data de nascimento:** 04/02/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 10108968146
+- **RG / Certidão:** 04022015
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98403-2510 / 63 99137-6208
+- **E-mail:** Hosanaabreudasilvadossanto
+- **Endereço:** Chácara bela vista
+- **Bairro:** Rural
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-032
+- **Nome do responsável:** Maria do socorro Barros de azevedo
+- **CPF do responsável:** 45758298115
+- **Nome da mãe:** Maria do socorro Barros de azevedo
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** G
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 19/11/2025 - 17:37h
+- **Núcleo:** Haras RR
+- **Observação:** ATIV
+
+### 2. Anthony Pedro Soares Ramos
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Anthony Pedro Soares Ramos
+- **Data de nascimento:** 24/12/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 08934082127
+- **RG / Certidão:** 12745601552018100159
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99293-7837
+- **E-mail:** leticiasoalnh@gmail.com
+- **Endereço:** Chacara Recanto do Sossego,
+- **Bairro:** Zona Rural
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Letícia Soares De Alvarenga
+- **CPF do responsável:** 04083950102
+- **Nome da mãe:** Letícia Soares De Alvarenga
+- **Nome do pai:** —
+- **Contato de emergência:** Letícia Soares De Alvarenga — 63 99293-7837
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 2º ano
+- **Nome da escola:** ETI João Beltrão
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 18/11/2025 - 18:32h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 3. Antônio Ribeiro de Souza neto
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Antônio Ribeiro de Souza neto
+- **Data de nascimento:** 31/12/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** —
+- **RG / Certidão:** 30723760910
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99256-7546 / 63 99264-2718
+- **E-mail:** Carlenycristinyribeirodejesus@gmail.com
+- **Endereço:** Chácara cantinho da Serra
+- **Bairro:** Coqueirinho
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Carleny Cristiny
+- **CPF do responsável:** 02555810170
+- **Nome da mãe:** Carleny Cristiny
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 26/11/2025 - 12:25h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 4. Arthur Miguel Vasconcelos de Freitas
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Arthur Miguel Vasconcelos de Freitas
+- **Data de nascimento:** 18/03/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 11423906160
+- **RG / Certidão:** 1763505
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99284-6571 / 63 99202-1646
+- **E-mail:** irisvaniazico@gmail.com
+- **Endereço:** TO 020 Km 08
+- **Bairro:** Taquaruçu Grande
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** IRISVANIA VASCONCELOS DE FREITAS
+- **CPF do responsável:** 01331489202
+- **Nome da mãe:** IRISVANIA VASCONCELOS DE FREITAS
+- **Nome do pai:** José Almeida Freitas
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 3°ano
+- **Nome da escola:** Fidêncio Bogo
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 24/11/2025 - 22:12h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 5. Arthur santos Miranda
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Arthur santos Miranda
+- **Data de nascimento:** 04/05/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 09309193190
+- **RG / Certidão:** 1221470
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99259-1507
+- **E-mail:** britoromario40@gmail.com
+- **Endereço:** Palmas
+- **Bairro:** Taquarussu grande
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Juliana santos
+- **CPF do responsável:** 06718765112
+- **Nome da mãe:** Juliana santos Peixoto
+- **Nome do pai:** —
+- **Contato de emergência:** Juliana santos — 63 99259-1507
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 18/11/2025 - 14:15h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 6. Arthur Weberth Moura Cunha
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Arthur Weberth Moura Cunha
+- **Data de nascimento:** 18/01/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 10051043106
+- **RG / Certidão:** 18/01/2013
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 62 98558-4212
+- **E-mail:** mouracunha1@gmail.com
+- **Endereço:** Taquaruçu grande km11 ao lado da igreja católica
+- **Bairro:** Taquaruçu grande
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** ELISANDRA MOURA SILVA CUNHA
+- **CPF do responsável:** 04770596197
+- **Nome da mãe:** ELISANDRA MOURA SILVA CUNHA
+- **Nome do pai:** —
+- **Contato de emergência:** ELISANDRA MOURA SILVA CUNHA — 62 98558-4212
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 19/11/2025 - 08:31h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 7. Bernardo alvez de Souza
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Bernardo alvez de Souza
+- **Data de nascimento:** 15/10/2017
+- **Sexo:** —
+- **CPF do aluno:** —
+- **RG / Certidão:** 903576 CPF:11083184105
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99215-2771 / E-mail:Britoromario40@gmail.com
+- **E-mail:** —
+- **Endereço:** Palmas Bairro:Taquarussu grande
+- **Bairro:** —
+- **Cidade:** Palmas
+- **Estado (UF):** TO CEP:77249-899
+- **CEP:** —
+- **Nome do responsável:** Wrraik alvez de Souza CPF / RG do Resp.:03064777181 / -
+- **CPF do responsável:** —
+- **Nome da mãe:** Wrrak Alves CPF / RG da Mãe:/ -
+- **Nome do pai:** CPF / RG do Pai:/ -
+- **Contato de emergência:** Wrrak — 63 99215-2771
+- **Escolaridade:** Tipo de Escola:
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Série:
+- **Série:** —
+- **Nome da escola:** Eti João Beltrão Matrícula:
+- **Tamanho da camisa:** P Camisa Entregue: SIM- Em 18/11/2025 - 13:05h
+- **Camisa entregue (Sim/Não):** —
+- **Data do cadastro:** 18/11/2025 - 13:05h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 8. Bryan felipe Araújo de Souza
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Bryan felipe Araújo de Souza
+- **Data de nascimento:** 06/09/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 10327025166
+- **RG / Certidão:** 000000
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98111-3046
+- **E-mail:** britoromario40@gmail.com
+- **Endereço:** Palmas
+- **Bairro:** Taquarussu grande
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Caroline Rufino
+- **CPF do responsável:** 04586326190
+- **Nome da mãe:** Caroline Rufino de Araújo
+- **Nome do pai:** —
+- **Contato de emergência:** Caroline — 63 98111-3046
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Eti João Beltrão
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 18/11/2025 - 13:34h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 9. Carlos de Souza nunes neto
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Carlos de Souza nunes neto
+- **Data de nascimento:** 06/11/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 02369722193
+- **RG / Certidão:** 1758055
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99253-0101
+- **E-mail:** britoromario40@gmail.com
+- **Endereço:** Palmas
+- **Bairro:** Taquarussu grande
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Suelma calacio
+- **CPF do responsável:** 02369722193
+- **Nome da mãe:** Suelma calacio de Souza
+- **Nome do pai:** —
+- **Contato de emergência:** Suelma calacio — 63 99253-0101
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Eti João Beltrão
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 18/11/2025 - 12:44h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 10. Daniel Borges Felício
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Daniel Borges Felício
+- **Data de nascimento:** 05/06/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 09824436170
+- **RG / Certidão:** 05919601552014100310
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99291-4271
+- **E-mail:** agapitofs2020@gmail.com
+- **Endereço:** TO 020 Km 09
+- **Bairro:** Taquaruçu Grande
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Agápito Felício da Silva
+- **CPF do responsável:** 72683830610
+- **Nome da mãe:** Ana Borges de Carvalho
+- **Nome do pai:** —
+- **Contato de emergência:** Agápito Felício da Silva — 63 92914-271
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 19/11/2025 - 20:45h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 11. Daniel montizuma Monteiro
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Daniel montizuma Monteiro
+- **Data de nascimento:** 26/06/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 04460639165
+- **RG / Certidão:** 1138664
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99293-4040
+- **E-mail:** britoromario40@gmail.com
+- **Endereço:** Palmas
+- **Bairro:** Taquarussu grande
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Mariza m Galvao
+- **CPF do responsável:** 04460639165
+- **Nome da mãe:** Mariza m Galvão
+- **Nome do pai:** —
+- **Contato de emergência:** Mariza galvao — 63 99238-2880
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Eti João Beltrão
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 18/11/2025 - 12:36h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 12. Daniel Souza Peixoto
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Daniel Souza Peixoto
+- **Data de nascimento:** 19/07/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 11662633122
+- **RG / Certidão:** 1797149
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99201-5765
+- **E-mail:** nildetesouzapxt@gmail.com
+- **Endereço:** 712sulqi07lt27
+- **Bairro:** Setor industrial
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77022-434
+- **Nome do responsável:** 63 99201-5765
+- **CPF do responsável:** 01030245142
+- **Nome da mãe:** Nildete Alves Peixoto
+- **Nome do pai:** —
+- **Contato de emergência:** 63 99201-5765 — 63 99201-5765
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Ipes
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 25/11/2025 - 13:24h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 13. Dareih Lukas Ribeiro dos Santos
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Dareih Lukas Ribeiro dos Santos
+- **Data de nascimento:** 06/11/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 09684882181
+- **RG / Certidão:** 699208
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99989-4189
+- **E-mail:** maurojribeiro25@gmail.com
+- **Endereço:** Tô 020 km 07
+- **Bairro:** Taquarussu Grande
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Lireia Ribeiro Caldeira
+- **CPF do responsável:** 07317541150
+- **Nome da mãe:** Lireia Ribeiro
+- **Nome do pai:** —
+- **Contato de emergência:** Lireia Ribeiro — 63 99989-4189
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 18/11/2025 - 10:07h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 14. Davi A. Bispo dos Santos Carvalho
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Davi A. Bispo dos Santos Carvalho
+- **Data de nascimento:** 26/06/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 09416928178
+- **RG / Certidão:** 587766
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98486-7825
+- **E-mail:** maurojribeiro25@gmail.com
+- **Endereço:** To 020 km 14
+- **Bairro:** Taquarussu Grande
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Adelaidioo. De Carvalho
+- **CPF do responsável:** 09416928178
+- **Nome da mãe:** Afelaide
+- **Nome do pai:** —
+- **Contato de emergência:** Adelaidioo — 63 98486-7825
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 18/11/2025 - 22:52h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 15. David Lauiz gomes de Araújo
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** David Lauiz gomes de Araújo
+- **Data de nascimento:** 12/12/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 10054484189
+- **RG / Certidão:** 103941
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99223-0084
+- **E-mail:** britoromario40@gmail.com
+- **Endereço:** Palmas
+- **Bairro:** Taquarussu grande
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Fabiano Bezerra
+- **CPF do responsável:** 04581449189
+- **Nome da mãe:** Maria m
+- **Nome do pai:** —
+- **Contato de emergência:** Fabiano — 63 99223-0084
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Eti João Beltrão
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 18/11/2025 - 13:22h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 16. Dennyl brito da Cruz
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Dennyl brito da Cruz
+- **Data de nascimento:** 13/08/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 03695076143
+- **RG / Certidão:** 861750
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99247-3456
+- **E-mail:** britoromario40@gmail.com
+- **Endereço:** Palmas
+- **Bairro:** Taquarussu grande
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Danka Oliveira da Cruz
+- **CPF do responsável:** 03695076143
+- **Nome da mãe:** Danka Oliveira
+- **Nome do pai:** —
+- **Contato de emergência:** Danka — 63 99247-3456
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Eti João Beltrão
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 18/11/2025 - 13:45h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 17. Eduardo Oliveira Alves
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Eduardo Oliveira Alves
+- **Data de nascimento:** 12/06/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 43854001134
+- **RG / Certidão:** 028382
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99242-5539 / 63 99242-5539
+- **E-mail:** mariadobomfimjosedeoliveirabom@gmail.com
+- **Endereço:** Chácara BomBom. TO 020 km11
+- **Bairro:** Taquaruçu Grande
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Maria do Bonfim José de Oliveira
+- **CPF do responsável:** 43854001134
+- **Nome da mãe:** Andia Cíntia oliveira Silvério dos Reis
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 5° Ano
+- **Nome da escola:** Escola tempo integral prof. Fidêncio Bogo
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 18/11/2025 - 22:17h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 18. Elias dos Santos Machado Xingu
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Elias dos Santos Machado Xingu
+- **Data de nascimento:** 14/11/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** —
+- **RG / Certidão:** 00
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99203-8042
+- **E-mail:** deuseliamachadoxingu@gmail.com
+- **Endereço:** TO 020 km 06 fazenda bom jesus
+- **Bairro:** Taquaruçu Grande rural
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** DEUSELIA MACHADO GUIMARAES
+- **CPF do responsável:** 86083597153
+- **Nome da mãe:** DEUSELIA MACHADO GUIMARAES
+- **Nome do pai:** —
+- **Contato de emergência:** DEUSELIA MACHADO GUIMARAES — 62 99237-8595
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 21/11/2025 - 11:36h
+- **Núcleo:** Haras RR
+- **Observação:** ATIVI
+
+### 19. Emanuel augusto Cavalcante de Queiroz
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Emanuel augusto Cavalcante de Queiroz
+- **Data de nascimento:** 28/02/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 09164100138
+- **RG / Certidão:** 1048869
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98410-9736
+- **E-mail:** britoromario40@gmail.com
+- **Endereço:** Palmas
+- **Bairro:** Taquarussu grande
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Samara Costa Cavalcante de Queiroz
+- **CPF do responsável:** 04156074188
+- **Nome da mãe:** Samara Costa Cavalcante
+- **Nome do pai:** —
+- **Contato de emergência:** Samara Costa — 63 98410-9736
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 18/11/2025 - 14:58h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 20. Enzo Batista de Oliveira
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Enzo Batista de Oliveira
+- **Data de nascimento:** 10/02/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 09007594109
+- **RG / Certidão:** 10/02/2012
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99107-8869 / 63 99107-8869
+- **E-mail:** enzobatistadeoliveira40@gmail.com
+- **Endereço:** Br 010
+- **Bairro:** Km 08 chacara nordeste Taquaruçu grande
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Edson Mota de Oliveira
+- **CPF do responsável:** 43370527553
+- **Nome da mãe:** Carlene Batista Machado
+- **Nome do pai:** Edson Mota de Oliveira
+- **Contato de emergência:** 63992179715 — 63 99107-8869
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 8 ano
+- **Nome da escola:** E.T.I Professor Fidêncio Bogo
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 19/11/2025 - 20:17h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 21. Enzo Gabriel Pereira
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Enzo Gabriel Pereira
+- **Data de nascimento:** 09/10/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 04028476100
+- **RG / Certidão:** 853583
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99296-7488
+- **E-mail:** maurojribeiro25@gmail.com
+- **Endereço:** Fazenda Valadares
+- **Bairro:** Taquarussu Grande
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Daniela Pereira da Silva
+- **CPF do responsável:** 04028476100
+- **Nome da mãe:** Daniela Pereira da Silva
+- **Nome do pai:** —
+- **Contato de emergência:** Daniela Pereira da Silva — 63 99296-7488
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 18/11/2025 - 11:42h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 22. Enzo.Artur de Sousa Pimentel
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Enzo.Artur de Sousa Pimentel
+- **Data de nascimento:** 11/05/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 98014765168
+- **RG / Certidão:** 858553
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 97400-0109
+- **E-mail:** maurojribeiro25@gmail.com
+- **Endereço:** To 020, km 08
+- **Bairro:** Taquarussu Grande
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Deusanir Braga Pimentel
+- **CPF do responsável:** 98014765168
+- **Nome da mãe:** Deusanir Braga Pimentel
+- **Nome do pai:** —
+- **Contato de emergência:** Deusanir Braga Pimentel — 63 97400-0109
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 18/11/2025 - 22:21h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 23. Erick Rodrigues calaco
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Erick Rodrigues calaco
+- **Data de nascimento:** 18/04/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 09303536258
+- **RG / Certidão:** 09303536258
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99126-2458
+- **E-mail:** souzacalacoedson@gmail.com
+- **Endereço:** Casa
+- **Bairro:** Taquarussu Grande
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77270-000
+- **Nome do responsável:** EDSON SOUSA CALACO
+- **CPF do responsável:** 89151399253
+- **Nome da mãe:** Kelly Cristina Rodrigues Souza
+- **Nome do pai:** EDSON SOUSA CALACO
+- **Contato de emergência:** EDSON SOUSA CALACO — 63 99126-2458
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Escola tempo integral Fidencio Bogo
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 18/11/2025 - 16:53h
+- **Núcleo:** Haras RR
+- **Observação:** ATIVI
+
+### 24. Fabio Júnior Santos Pereira
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Fabio Júnior Santos Pereira
+- **Data de nascimento:** 08/11/2013
+- **Sexo:** —
+- **CPF do aluno:** —
+- **RG / Certidão:** 037148 CPF:11040667180
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99275-5096 / E-mail:maurojribeiro25@gmail.com
+- **E-mail:** —
+- **Endereço:** To 020 Bairro:Taquarussu Grande
+- **Bairro:** —
+- **Cidade:** Palmas
+- **Estado (UF):** TO CEP:77249-899
+- **CEP:** —
+- **Nome do responsável:** Gabriela Santos de Oliveira CPF / RG do Resp.:70224890174 / -
+- **CPF do responsável:** —
+- **Nome da mãe:** Gabriela Santos de Oliveira CPF / RG da Mãe:70224890174 / -
+- **Nome do pai:** CPF / RG do Pai:/ -
+- **Contato de emergência:** Gabriela Santos de Oliveira — 63 99275-5096
+- **Escolaridade:** Tipo de Escola:
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Série:
+- **Série:** —
+- **Nome da escola:** Matrícula:
+- **Tamanho da camisa:** P Camisa Entregue: NÃO
+- **Camisa entregue (Sim/Não):** —
+- **Data do cadastro:** 18/11/2025 - 23:16h
+- **Núcleo:** Haras RR
+- **Observação:** ATIVIDADES ATIVAS
+
+### 25. Francisco Batista de Lima Neto
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Francisco Batista de Lima Neto
+- **Data de nascimento:** 11/08/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 09041172190
+- **RG / Certidão:** 11 anos
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98470-4833 / 62 99251-0631
+- **E-mail:** Neumamilenanmconfeitaria@gmail.com
+- **Endereço:** Km 11, to-020
+- **Bairro:** Taquaruçu Grande
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Neuma Milena Pereira do Nascimento
+- **CPF do responsável:** 07305789178
+- **Nome da mãe:** Neuma Milena Pereira do Nascimento
+- **Nome do pai:** Francisco Batista de Lima Filho
+- **Contato de emergência:** Neuma Milena Pereira do Nascimento — 6
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Tarde
+- **Série:** 5ª ano
+- **Nome da escola:** Eti Professor fidêcio bôgo
+- **Tamanho da camisa:** G
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 18/11/2025 - 21:47h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 26. Gabriel Amorim Fernandes
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Gabriel Amorim Fernandes
+- **Data de nascimento:** 09/06/2013
+- **Sexo:** —
+- **CPF do aluno:** —
+- **RG / Certidão:** 1845433 CPF:06977558199
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99925-0251 / E-mail:gabrielamorimfernandes8@gmail.com
+- **E-mail:** —
+- **Endereço:** Tô 020 km 08 Bairro:Taquarussu grande
+- **Bairro:** —
+- **Cidade:** Maricá
+- **Estado (UF):** RJ CEP:77000-000
+- **CEP:** —
+- **Nome do responsável:** LIDIANE AMORIM DE CASTRO CPF / RG do Resp.:01157588107 / 357882 - SSP to
+- **CPF do responsável:** —
+- **Nome da mãe:** LIDIANE AMORIM DE CASTRO CPF / RG da Mãe:01157588107 / 357882 - SSP to
+- **Nome do pai:** Gilvan Fernandes franca CPF / RG do Pai:00530577160 / -
+- **Contato de emergência:** Lidiane Amorim de castro — 63 98438-7720
+- **Escolaridade:** Ensino Infantil Tipo de Escola:Municipal
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Manhã Série:7 ano
+- **Série:** —
+- **Nome da escola:** ETI professor Fidêncio Bogo Matrícula:
+- **Tamanho da camisa:** G Camisa Entregue: SIM- Em 18/11/2025 - 20:32h
+- **Camisa entregue (Sim/Não):** —
+- **Data do cadastro:** 18/11/2025 - 20:32h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 27. Henrique pereira feitosa
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Henrique pereira feitosa
+- **Data de nascimento:** 15/08/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** —
+- **RG / Certidão:** 1044709
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99279-0823
+- **E-mail:** britoromario40@gmail.com
+- **Endereço:** Palmas
+- **Bairro:** Taquarussu grande
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Renta pereira x
+- **CPF do responsável:** 03266856180
+- **Nome da mãe:** Renata pereira Xavier
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Eti João Beltrão
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 18/11/2025 - 12:05h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 28. Heytor dos Santos nascimento
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Heytor dos Santos nascimento
+- **Data de nascimento:** 04/11/2019
+- **Sexo:** Masculino
+- **CPF do aluno:** 10413009130
+- **RG / Certidão:** 12670601552019100256
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99267-6050 / 63 98427-9668
+- **E-mail:** leka984051142@gmail.com
+- **Endereço:** Setor coqueirinho chácara recanto das aves cs2
+- **Bairro:** Rural
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Alessandra Nunes dos Santos
+- **CPF do responsável:** 04323596138
+- **Nome da mãe:** Alessandra Nunes dos Santos
+- **Nome do pai:** Cleiton do nascimento Sousa
+- **Contato de emergência:** Alessandra Nunes dos Santos — 63 98427-9668
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** 1ano
+- **Nome da escola:** João Beltrão
+- **Tamanho da camisa:** G
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 14/01/2026 - 19:32h
+- **Núcleo:** Haras RR
+- **Observação:** ATIVID
+
+### 29. ISACK ABREU BORGES
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** ISACK ABREU BORGES
+- **Data de nascimento:** 02/09/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 10144371138
+- **RG / Certidão:** ISACK ABREU BORGES
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99232-7878 / 63 99213-0441
+- **E-mail:** soniaabreusb@gmail.com
+- **Endereço:** CHACARA SAO DOMINGOS
+- **Bairro:** ZONA RURAL TO 020 KM 04
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77023-489
+- **Nome do responsável:** VALDESONIA ABREU MAGALHAES
+- **CPF do responsável:** 89934563134
+- **Nome da mãe:** Valdesonia Abreu Magalhães
+- **Nome do pai:** —
+- **Contato de emergência:** JALISON — 63 92130-441
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Valdesonia Abreu Magalhães
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 21/11/2025 - 11:51h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 30. João Felipe da Silva santos
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** João Felipe da Silva santos
+- **Data de nascimento:** 25/09/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** —
+- **RG / Certidão:** 25/09/2014
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99211-4116 / 63 98462-3973
+- **E-mail:** Hosanaabreudasilva1975@gmail.com
+- **Endereço:** Chácara serra encantada
+- **Bairro:** Rural
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-032
+- **Nome do responsável:** Hosana Abreu da Silva dos santos
+- **CPF do responsável:** 04875179111
+- **Nome da mãe:** Hosana Abreu da Silva dos santos
+- **Nome do pai:** Ângelo Alberto Araújo dos santos
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** —
+- **Série:** 5°série
+- **Nome da escola:** ETI fidelidade bogo
+- **Tamanho da camisa:** G
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 18/11/2025 - 17:10h
+- **Núcleo:** Haras RR
+- **Observação:** ATIVIDAD
+
+### 31. João Antônio Silva Dias
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** João Antônio Silva Dias
+- **Data de nascimento:** 28/03/2019
+- **Sexo:** —
+- **CPF do aluno:** —
+- **RG / Certidão:** 821319 CPF:04202874188
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98439-4994 / E-mail:maurojribeiro25@gmail.com
+- **E-mail:** —
+- **Endereço:** Chácara São João Bairro:Taquarussu Grande
+- **Bairro:** —
+- **Cidade:** Palmas
+- **Estado (UF):** TO CEP:77249-899
+- **CEP:** —
+- **Nome do responsável:** Josivan Pereira da Silva CPF / RG do Resp.:04202874188 / -
+- **CPF do responsável:** —
+- **Nome da mãe:** Josivan ia Pereira da Silva CPF / RG da Mãe:04202874188 / -
+- **Nome do pai:** CPF / RG do Pai:/ -
+- **Contato de emergência:** Josivan Pereira da Silva — 63 98439-4994
+- **Escolaridade:** Tipo de Escola:
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Série:
+- **Série:** —
+- **Nome da escola:** Matrícula:
+- **Tamanho da camisa:** P Camisa Entregue: NÃO
+- **Camisa entregue (Sim/Não):** —
+- **Data do cadastro:** 18/11/2025 - 22:02h
+- **Núcleo:** Haras RR
+- **Observação:** ATIVIDADES ATIVAS
+
+### 32. João Henrique Gonçal dos Santos
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** João Henrique Gonçal dos Santos
+- **Data de nascimento:** 19/12/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 02636498141
+- **RG / Certidão:** 682537
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99266-9536
+- **E-mail:** maurojribeiro25@gmail.com
+- **Endereço:** Chácara Jatai
+- **Bairro:** Taquarussu Grande
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Maria Helena p dos Santos
+- **CPF do responsável:** 02636498141
+- **Nome da mãe:** Maria Helena p dos Santos
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 18/11/2025 - 09:41h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 33. João Miguel Cruz Ferreira
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** João Miguel Cruz Ferreira
+- **Data de nascimento:** 06/02/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 71749283158
+- **RG / Certidão:** 12654001552014100005
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99227-3813
+- **E-mail:** deuzivanecruz@gmail.com
+- **Endereço:** Taquaruçu grande
+- **Bairro:** Rural
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Deuzivane Cruz de Abreu
+- **CPF do responsável:** 04593742145
+- **Nome da mãe:** Deuzivane Cruz de Abreu
+- **Nome do pai:** —
+- **Contato de emergência:** Deuzivane Cruz de Abreu — 63 99227-3813
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** —
+- **Série:** 6
+- **Nome da escola:** Escola de tempo integral professor Fidêncio bogo
+- **Tamanho da camisa:** G
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 18/11/2025 - 16:38h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 34. João Miguel pereira Cunha
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** João Miguel pereira Cunha
+- **Data de nascimento:** 23/07/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 09189085159
+- **RG / Certidão:** 1600807
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99131-7043
+- **E-mail:** U
+- **Endereço:** Palmas
+- **Bairro:** Taquarussu grande
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Caroline pereira da Silva
+- **CPF do responsável:** 09087979150
+- **Nome da mãe:** Caroline pereira da silva
+- **Nome do pai:** —
+- **Contato de emergência:** Caroline — 63 99231-7043
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Eti João Beltrão
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 18/11/2025 - 14:04h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 35. João Vitor Pereira da Silva
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** João Vitor Pereira da Silva
+- **Data de nascimento:** 07/09/2012
+- **Sexo:** —
+- **CPF do aluno:** —
+- **RG / Certidão:** 30593054450 CPF:10112985114
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99226-0803 / E-mail:lourdesnoronha1@gmail.com
+- **E-mail:** —
+- **Endereço:** Chácara Mangabinha to-020 Km 25 Bairro:Taquaruçu Grande
+- **Bairro:** —
+- **Cidade:** Palmas
+- **Estado (UF):** TO CEP:77249-899
+- **CEP:** —
+- **Nome do responsável:** Maria de Lourdes Noronha e Silva CPF / RG do Resp.:04268505130 / -
+- **CPF do responsável:** —
+- **Nome da mãe:** Maria de Lourdes Noronha e Silva CPF / RG da Mãe:04268505130 / -
+- **Nome do pai:** CPF / RG do Pai:/ -
+- **Contato de emergência:** Maria de Lourdes Noronha e Silva — 63 99226-0803
+- **Escolaridade:** Tipo de Escola:
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Série:
+- **Série:** —
+- **Nome da escola:** Matrícula:
+- **Tamanho da camisa:** M Camisa Entregue: SIM- Em 25/11/2025 - 07:54h
+- **Camisa entregue (Sim/Não):** —
+- **Data do cadastro:** 25/11/2025 - 07:54h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 36. José Augusto Ribeiro
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** José Augusto Ribeiro
+- **Data de nascimento:** 01/02/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** —
+- **RG / Certidão:** 930421
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 32127-225
+- **E-mail:** Carlenycristinyribeirodejesus@gmsil.com
+- **Endereço:** Zona rural
+- **Bairro:** Palmas to
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Carleny Cristiny Ribeiro de Jesus
+- **CPF do responsável:** 01917644183
+- **Nome da mãe:** Carleny Cristiny Ribeiro de Jesus
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 5
+- **Nome da escola:** Escola municipal Fidêncio Bogo
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 19/11/2025 - 03:58h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 37. José Felipe Luiz da Silva de Souza
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** José Felipe Luiz da Silva de Souza
+- **Data de nascimento:** 16/08/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 09563690141
+- **RG / Certidão:** 215090
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99282-2309
+- **E-mail:** maurojribeiro25@gmail.com
+- **Endereço:** Fazenda Recanto das pedras
+- **Bairro:** Taquarussu Grande
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Doralice Pereira da Silva
+- **CPF do responsável:** 85164917149
+- **Nome da mãe:** Doralice Pereira da Silva
+- **Nome do pai:** —
+- **Contato de emergência:** Doralice Pereira da Silva — 63 99282-2309
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 18/11/2025 - 17:45h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 38. José Renê Santos Vieira
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** José Renê Santos Vieira
+- **Data de nascimento:** 07/02/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 10347238122
+- **RG / Certidão:** 1725214
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99946-1735 / 63 99933-1263
+- **E-mail:** deboraleite95@gmail.com
+- **Endereço:** Chácara tiuba nova querençia 02- casa 03
+- **Bairro:** Zona Rural
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** Débora Davane Santos Leite
+- **CPF do responsável:** 08941490405
+- **Nome da mãe:** Débora Davane Santos Leite
+- **Nome do pai:** —
+- **Contato de emergência:** Débora Davane Santos Leite — 63 99946-1735
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 19/11/2025 - 18:26h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 39. Kawhã Chaves Gonçalves
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Kawhã Chaves Gonçalves
+- **Data de nascimento:** 14/07/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 12260271138
+- **RG / Certidão:** Kawhã Chaves Gonçalv
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99232-0037
+- **E-mail:** kawhachaves@gmail.com
+- **Endereço:** 77249899
+- **Bairro:** Taquaruçu grande
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** LEIDIANY COSTA CHAVES GONCALVES
+- **CPF do responsável:** 01848532148
+- **Nome da mãe:** LEIDIANY COSTA CHAVES GONCALVES
+- **Nome do pai:** Erivaldo Antônio Chaves Gonçalves
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 7°ano/ 72.01
+- **Nome da escola:** E.T.I Professor Fidêncio Bogo
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 24/11/2025 - 20:38h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 40. Kleivisson Pereira da Silva
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Kleivisson Pereira da Silva
+- **Data de nascimento:** 30/03/2015
+- **Sexo:** —
+- **CPF do aluno:** —
+- **RG / Certidão:** 30698938579 CPF:10113079109
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99226-0803 / E-mail:lourdesnoronha1@gmail.com
+- **E-mail:** —
+- **Endereço:** Chácara Mangabinha to 020 Km 25 Bairro:Taquaruçu Grande
+- **Bairro:** —
+- **Cidade:** Palmas
+- **Estado (UF):** TO CEP:77249-899
+- **CEP:** —
+- **Nome do responsável:** Maria de Lourdes Noronha e Silva CPF / RG do Resp.:04268505130 / -
+- **CPF do responsável:** —
+- **Nome da mãe:** Maria de Lourdes Noronha e Silva CPF / RG da Mãe:04268505130 / -
+- **Nome do pai:** CPF / RG do Pai:/ -
+- **Contato de emergência:** —
+- **Escolaridade:** Tipo de Escola:
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Série:
+- **Série:** —
+- **Nome da escola:** Matrícula:
+- **Tamanho da camisa:** M Camisa Entregue: NÃO
+- **Camisa entregue (Sim/Não):** —
+- **Data do cadastro:** 25/11/2025 - 07:31h
+- **Núcleo:** Haras RR
+- **Observação:** ATIVIDADES ATIVAS
+
+### 41. Levy Gustavo Batista dias
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Levy Gustavo Batista dias
+- **Data de nascimento:** 02/06/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 04614287255
+- **RG / Certidão:** 123456
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98117-3560
+- **E-mail:** britoromario40@gmail.com
+- **Endereço:** Palmas
+- **Bairro:** Taquarussu grande
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Valdeiza Vieira Batista
+- **CPF do responsável:** 04614228755
+- **Nome da mãe:** Valdeiza Vieira Batista
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 18/11/2025 - 14:46h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 42. Mariza Montizuma Galvão
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Mariza Montizuma Galvão
+- **Data de nascimento:** 26/06/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 10192320130
+- **RG / Certidão:** 12670601552017002151
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99238-2880
+- **E-mail:** montizumam@gmail.com
+- **Endereço:** Lontiamento coqueirinho 2 etapa Condomínio adonai
+- **Bairro:** Rural
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Mariza Montizuma Galvão
+- **CPF do responsável:** 04460639165
+- **Nome da mãe:** Mariza Montizuma Galvão
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** 2 ano
+- **Nome da escola:** Eti João Beltrão
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 21/11/2025 - 10:37h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 43. Mateus Glória Maura
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Mateus Glória Maura
+- **Data de nascimento:** 24/07/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 11748255100
+- **RG / Certidão:** 633520
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99233-7056
+- **E-mail:** maurojribeiro25@gmail.com
+- **Endereço:** Loteamento Serra do Taquarussu
+- **Bairro:** Taquarussu Grande
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Jânio Moura da Silva
+- **CPF do responsável:** 00723284105
+- **Nome da mãe:** Jânia Moura da silva
+- **Nome do pai:** —
+- **Contato de emergência:** Jânio Moura da Silva — 63 99233-7056
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 18/11/2025 - 23:24h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 44. Micael Sousa da Silva
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Micael Sousa da Silva
+- **Data de nascimento:** 24/10/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 05057571176
+- **RG / Certidão:** 285490
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99103-0949
+- **E-mail:** maurojribeiro25@gmail.com
+- **Endereço:** Tô 020, km 08
+- **Bairro:** Taquarussu Grande
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Sirlene Belém de sousa
+- **CPF do responsável:** 05057571176
+- **Nome da mãe:** Sirlene Belém de Sousa
+- **Nome do pai:** —
+- **Contato de emergência:** Sirlene Belém de Sousa — 63 99103-0949
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 18/11/2025 - 22:11h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 45. Mysael Silva de Barros
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Mysael Silva de Barros
+- **Data de nascimento:** 04/06/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 04452572103
+- **RG / Certidão:** 04062018
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99102-6525
+- **E-mail:** Glesione@gmail.com
+- **Endereço:** Taquarussu grande
+- **Bairro:** Taquarussu grande
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Glesione Barros
+- **CPF do responsável:** 21827752002
+- **Nome da mãe:** Glesione Silva de Barros
+- **Nome do pai:** —
+- **Contato de emergência:** Glesione Barros — 63 99102-6525
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Eti João Beltrão
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 18/11/2025 - 11:38h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 46. Nauãh Antonio Soares Alves
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Nauãh Antonio Soares Alves
+- **Data de nascimento:** 30/12/2011
+- **Sexo:** Masculino
+- **CPF do aluno:** 10267693109
+- **RG / Certidão:** 1830267
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99293-7837
+- **E-mail:** leticiasoalnh@gmail.com
+- **Endereço:** Chacara Recanto do Sossego
+- **Bairro:** Zona Rural
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Letícia Soares De Alvarenga
+- **CPF do responsável:** 04083950102
+- **Nome da mãe:** Letícia Soares De Alvarenga
+- **Nome do pai:** —
+- **Contato de emergência:** Letícia Soares De Alvarenga — 63 99293-7837
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** —
+- **Série:** 8º ano
+- **Nome da escola:** ETI Profº Fidêncio Bogo
+- **Tamanho da camisa:** G
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 18/11/2025 - 18:22h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 47. Paulo Henrique Cerqueira
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Paulo Henrique Cerqueira
+- **Data de nascimento:** 10/10/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 07872857146
+- **RG / Certidão:** 919321
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99120-6905
+- **E-mail:** maurojribeiro25@gmail.com
+- **Endereço:** To 020 km 05
+- **Bairro:** Taquarussu Grande
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Suelismar correia da Silva
+- **CPF do responsável:** 02237578109
+- **Nome da mãe:** Suelismar correia da Silva
+- **Nome do pai:** —
+- **Contato de emergência:** Suelismar correia da Silva — 63 99120-6905
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 18/11/2025 - 23:08h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 48. Paulo Henrique da Silva Cerqueira
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Paulo Henrique da Silva Cerqueira
+- **Data de nascimento:** 10/10/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 07872857146
+- **RG / Certidão:** 12670601552012100157
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99120-6905 / 63 98483-8250
+- **E-mail:** silvasuellem874@gmail.com
+- **Endereço:** Chácara SGP, TAQUARUSSU GRANDE
+- **Bairro:** Zona rural
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Suelismar Correia da Silva
+- **CPF do responsável:** 02237578109
+- **Nome da mãe:** Suelismar Correia da Silva
+- **Nome do pai:** Paulo Alves Cerqueira
+- **Contato de emergência:** Suelismar Correia da Silva — 63 99
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** —
+- **Série:** 7° ANO
+- **Nome da escola:** Eti Professor Fidêncio Bogo
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 25/1
+- **Núcleo:** Haras RR
+- **Observação:** O aluno não convive com o pai, apenas com a mãe.
+
+### 49. Pedro Miguel Mendes Maciel
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Pedro Miguel Mendes Maciel
+- **Data de nascimento:** 01/02/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 10369187180
+- **RG / Certidão:** 10369187180
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98497-4400 / 63 98477-1390
+- **E-mail:** cristina.miguel.lcmdr@gmail.com
+- **Endereço:** Chacará Recanto da Serra
+- **Bairro:** Coqueirinho Zona Rural de Palmas
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Lindaura Cristina Mendes Dos Reis
+- **CPF do responsável:** 02895432155
+- **Nome da mãe:** Lindaura Cristina Mendes Dos Reis
+- **Nome do pai:** Gleberson Pereira Maciel
+- **Contato de emergência:** Gleberson Pereira Maciel — 63 98477-1390
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** —
+- **Série:** 6 ano
+- **Nome da escola:** Escola Municipal Fidêncio Bogo
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 19/11/2025 - 20:33h
+- **Núcleo:** Haras RR
+- **Observação:** O aluno tem TDAH (transtorno de déficit de atenção e hiperatividade), e Dislexia. Não implica na atividade física já que o mesmo tem acompanhamento médico regulamente.
+
+### 50. Rafael Rodrigues Souza
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Rafael Rodrigues Souza
+- **Data de nascimento:** 17/07/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 10372909175
+- **RG / Certidão:** 1669077
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98472-7468 / 63 99311-4051
+- **E-mail:** larissarafaelsouza@gmail.com
+- **Endereço:** Chacara orvalho
+- **Bairro:** Taquarussu Grande
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Larissa Souza Nunes
+- **CPF do responsável:** 05738417135
+- **Nome da mãe:** Larissa Souza Nunes
+- **Nome do pai:** —
+- **Contato de emergência:** Larissa Souza Nunes — 63 98472-7468
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 5
+- **Nome da escola:** Eti professor Fidencio Bogo
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 12/12/2025 - 18:06h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 51. Rykelmy Fialho Paiva Rodrigues
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Rykelmy Fialho Paiva Rodrigues
+- **Data de nascimento:** 19/02/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 08297301176
+- **RG / Certidão:** 1638949
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99123-0936 / 63 99934-9378
+- **E-mail:** gleicianefialho806@gmail.com
+- **Endereço:** Rua 23 Qd 64 Lt 15
+- **Bairro:** Aureny 2
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77060-204
+- **Nome do responsável:** Gleison Paiva Rodrigues
+- **CPF do responsável:** 03969559162
+- **Nome da mãe:** Gleiciane Fialho Barreira Paiva
+- **Nome do pai:** Gleison Paiva Rodrigues
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Fundamental
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** 7⁰
+- **Nome da escola:** Thiago Barbosa
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** —
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 52. Thaeo Amorim Fernandes
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Thaeo Amorim Fernandes
+- **Data de nascimento:** 22/10/2018
+- **Sexo:** Masculino
+- **CPF do aluno:** 09646428169
+- **RG / Certidão:** 357882
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98438-7720
+- **E-mail:** maurojribeiro25@gmail.com
+- **Endereço:** Tô 020 km.08
+- **Bairro:** Taquarussu Grande
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Lidiane Amorim de castro
+- **CPF do responsável:** 01157588107
+- **Nome da mãe:** Lidiane Amorim de castro
+- **Nome do pai:** —
+- **Contato de emergência:** Lidiane Amorim de Castro — 63 98438-7720
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 18/11/2025 - 10:20h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+### 53. Túlio Ramos d santos
+
+- **Professor:** Romário Ribeiro Brito
+- **Nome do aluno:** Túlio Ramos d santos
+- **Data de nascimento:** 25/05/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 09835078130
+- **RG / Certidão:** 646923
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98492-9197
+- **E-mail:** britoromario40@gmail.com
+- **Endereço:** Taquarussu grande
+- **Bairro:** Taquarussu grande
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77249-899
+- **Nome do responsável:** Joelma coelho de Ramos
+- **CPF do responsável:** 04142180193
+- **Nome da mãe:** Joelma coelho de Ramos
+- **Nome do pai:** —
+- **Contato de emergência:** Joelma coelho — 63 98492-9197
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Eti FIDENCIO BOGO
+- **Tamanho da camisa:** M
+- **Camisa entregue (Sim/Não):** Sim
+- **Data do cadastro:** 18/11/2025 - 11:22h
+- **Núcleo:** Haras RR
+- **Observação:** —
+
+---
+
+# Complexo ARNO 51 — Professor Raphael Santos Oliveira de Sousa
+
+Total de alunos: **79**
+
+### 1. Adauto Junior da Cunha
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Adauto Junior da Cunha
+- **Data de nascimento:** 05/11/2008
+- **Sexo:** Masculino
+- **CPF do aluno:** 08794886113
+- **RG / Certidão:** 13527689
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99254-2075
+- **E-mail:** adautopq@gmail.com
+- **Endereço:** rua imburana quadra 9 lote 17
+- **Bairro:** santa fe
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-214
+- **Nome do responsável:** Leide Patricia Alves
+- **CPF do responsável:** 02179977328
+- **Nome da mãe:** Leide Patricia
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** Ensino Infantil
+- **Tipo de escola (Municipal/Estadual/Particular):** Municipal
+- **Turno escolar:** Manhã
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 01/12/2025 - 11:32h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 2. Adrian Batista resende
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Adrian Batista resende
+- **Data de nascimento:** 23/06/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 09282218147
+- **RG / Certidão:** 1600863
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99246-7548
+- **E-mail:** lairybianca.palmas@gmail.com
+- **Endereço:** 603 norte alameda 14 lote 16
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-864
+- **Nome do responsável:** Lairy Bianca Batista
+- **CPF do responsável:** 03004508184
+- **Nome da mãe:** Lairy Bianca
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 17/11/2025 - 23:29h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 3. Alan Diego Alves de Sousa
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Alan Diego Alves de Sousa
+- **Data de nascimento:** 28/03/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 08789978145
+- **RG / Certidão:** 1564328
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98118-7665
+- **E-mail:** alan2015@gmail.com
+- **Endereço:** 403 norte alameda 11 lote 9
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-548
+- **Nome do responsável:** isabelle Alves
+- **CPF do responsável:** 80036511153
+- **Nome da mãe:** Isabelle Alves
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 15/12/2025 - 12:55h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 4. Alex Alves Rodrigues
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Alex Alves Rodrigues
+- **Data de nascimento:** 20/02/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 09849824182
+- **RG / Certidão:** 1559312
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98117-7544
+- **E-mail:** alex2015@gmail.com
+- **Endereço:** 404 norte alameda 12 lote 5
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-344
+- **Nome do responsável:** Lucia Maria Rodrigues
+- **CPF do responsável:** 60967650259
+- **Nome da mãe:** Lucia Maria
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 15/12/2025 - 13:19h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 5. Allan Pires de Carvalho
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Allan Pires de Carvalho
+- **Data de nascimento:** 10/11/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 09248962130
+- **RG / Certidão:** 1805025
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99260-4430
+- **E-mail:** cristianepires341@gmail.com
+- **Endereço:** 604 norte alameda 4 lote 0
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-738
+- **Nome do responsável:** Cristiane Pires
+- **CPF do responsável:** 86821768153
+- **Nome da mãe:** Cristiane Pires
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 11/12/2025 - 09:59h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 6. Andrey Martins Carvalho
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Andrey Martins Carvalho
+- **Data de nascimento:** 23/01/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 08807718103
+- **RG / Certidão:** 1918766
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98468-2119
+- **E-mail:** martins6568@gmail.com
+- **Endereço:** 603 norte alameda 01 lote 01
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-348
+- **Nome do responsável:** Ana Santos Martins
+- **CPF do responsável:** 01553155106
+- **Nome da mãe:** Ana Santos Martins
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 17/11/2025 - 18:31h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 7. Antony Gabriel Ferreira Soares
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Antony Gabriel Ferreira Soares
+- **Data de nascimento:** 25/07/2011
+- **Sexo:** Masculino
+- **CPF do aluno:** 10562199128
+- **RG / Certidão:** 1691868
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99243-3633
+- **E-mail:** gleicivandosilvasoares@gmail.com
+- **Endereço:** 305 norte alameda 22 lote 18
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-348
+- **Nome do responsável:** Gleicivaldo Silva Soares
+- **CPF do responsável:** 00241882125
+- **Nome da mãe:** Gleissi
+- **Nome do pai:** —
+- **Contato de emergência:** Gleicivaldo Soares — 63 99243-3633
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 17/11/2025 - 17:03h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 8. Arthur coimbra nunes
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Arthur coimbra nunes
+- **Data de nascimento:** 07/01/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 04681373192
+- **RG / Certidão:** 1336521
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99266-2027
+- **E-mail:** arthuralves3343@gmail.com
+- **Endereço:** 604 norte alameda 12 lote 4
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-431
+- **Nome do responsável:** Valeria alves Coimbra
+- **CPF do responsável:** 60967650259
+- **Nome da mãe:** Valeria
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 16/12/2025 - 10:45h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 9. Arthur Pereira
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Arthur Pereira
+- **Data de nascimento:** 27/07/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 09809091125
+- **RG / Certidão:** 1686725
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98119-9665
+- **E-mail:** arthurpereira01@gmail.com
+- **Endereço:** 603 norte alameda 21 lote 3
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-876
+- **Nome do responsável:** Simone de Sousa Pereira
+- **CPF do responsável:** 60162264321
+- **Nome da mãe:** Simone de Sousa
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 17/11/2025 - 23:14h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 10. Arthur Roberto gomes
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Arthur Roberto gomes
+- **Data de nascimento:** 11/09/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 09849824182
+- **RG / Certidão:** 1781119
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98485-6049
+- **E-mail:** mouraroberto@gmail.com
+- **Endereço:** 304 norte alameda 10 lote 13
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-332
+- **Nome do responsável:** Monica Gomes
+- **CPF do responsável:** 60967650259
+- **Nome da mãe:** Monica Gomes
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 15/12/2025 - 12:41h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 11. ArthurCarvalho Torres
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** ArthurCarvalho Torres
+- **Data de nascimento:** 07/06/2009
+- **Sexo:** Masculino
+- **CPF do aluno:** 07340643141
+- **RG / Certidão:** 1477903
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99221-0597
+- **E-mail:** jania31carvalho@gmail.com
+- **Endereço:** 605 norte alameda 1 lote 3
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77064-634
+- **Nome do responsável:** Jania de Carvalho Souza
+- **CPF do responsável:** 79755976191
+- **Nome da mãe:** Jania Carvalho de Souza
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 11/12/2025 - 09:54h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 12. Bruno Alberto alves
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Bruno Alberto alves
+- **Data de nascimento:** 11/08/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 10334958164
+- **RG / Certidão:** 1554327
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99119-8766
+- **E-mail:** brunojogador@gmail.com
+- **Endereço:** 604norte alameda 10 lote 5
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-348
+- **Nome do responsável:** Maria Valentina Alves
+- **CPF do responsável:** 01350008150
+- **Nome da mãe:** Maria
+- **Nome do pai:** —
+- **Contato de emergência:** Valeria — 63 99119-8766
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 16/12/2025 - 10:50h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 13. Calebe Pereira Morais
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Calebe Pereira Morais
+- **Data de nascimento:** 22/09/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 09849824182
+- **RG / Certidão:** 1186000
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99975-5223
+- **E-mail:** calebe123@gmail.com
+- **Endereço:** 603 norte alameda 9 lote 3
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-876
+- **Nome do responsável:** Valdilene Lima da Silva
+- **CPF do responsável:** 60967650259
+- **Nome da mãe:** Valdilene Lima da Silva
+- **Nome do pai:** Valdilene Lima da Silva
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Valdilene Lima da Silva
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 18/11/2025 - 15:02h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 14. Carlos Eduardo Barros Soares
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Carlos Eduardo Barros Soares
+- **Data de nascimento:** 16/09/2009
+- **Sexo:** Masculino
+- **CPF do aluno:** 09006512109
+- **RG / Certidão:** 1573392
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99259-5496
+- **E-mail:** carleandrosoares@gmail.com
+- **Endereço:** rua 03 quadra4 lote 13
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** Carleandro Pereira
+- **CPF do responsável:** 01011121140
+- **Nome da mãe:** Carla Silva
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 17/11/2025 - 17:09h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 15. Carlos Henrique Gomes
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Carlos Henrique Gomes
+- **Data de nascimento:** 17/07/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 08789978145
+- **RG / Certidão:** 1132991
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98119-9665
+- **E-mail:** carloshenrique23@gmail.com
+- **Endereço:** 603 norte alameda 11 lote 5
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-541
+- **Nome do responsável:** Antonia Gomes
+- **CPF do responsável:** 02179977328
+- **Nome da mãe:** Antonia
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 16/12/2025 - 10:53h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 16. Davi Rodrigues Franco
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Davi Rodrigues Franco
+- **Data de nascimento:** 01/05/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 09893607175
+- **RG / Certidão:** 1622348
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99231-9176
+- **E-mail:** davisantos03702@gmail.com
+- **Endereço:** 603nnorte alameda 1 lote 11
+- **Bairro:** plano diretornorte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77500-007
+- **Nome do responsável:** Marcelo Franco dos Santos
+- **CPF do responsável:** 96236515115
+- **Nome da mãe:** Marcela
+- **Nome do pai:** —
+- **Contato de emergência:** Marcelo Franco — 63 99231-9176
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 11/12/2025 - 10:07h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 17. Diego Gomes dos Santos
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Diego Gomes dos Santos
+- **Data de nascimento:** 16/09/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 05595724170
+- **RG / Certidão:** 1552341
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99256-0055
+- **E-mail:** diego2026@gmail.com
+- **Endereço:** 403 norte alameda 10 lote 2
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-554
+- **Nome do responsável:** Sonia dos Santos
+- **CPF do responsável:** 02179977328
+- **Nome da mãe:** Sonia dos Santos
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 15/12/2025 - 12:48h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 18. Dionathan Cezar Ribeiro
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Dionathan Cezar Ribeiro
+- **Data de nascimento:** 10/05/2009
+- **Sexo:** Masculino
+- **CPF do aluno:** 11753139120
+- **RG / Certidão:** 1809668
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 91113-483
+- **E-mail:** dionatanribeiro@gmail.com
+- **Endereço:** 603 norte alameda 3 lote 21
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-886
+- **Nome do responsável:** Natalia Ferreira dos Santos
+- **CPF do responsável:** 08237566106
+- **Nome da mãe:** Natalia Ferreia
+- **Nome do pai:** —
+- **Contato de emergência:** Natalia Ferreira — 63 91113-483
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 17/11/2025 - 17:13h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 19. Eduardo Ciriano Alves
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Eduardo Ciriano Alves
+- **Data de nascimento:** 28/05/2009
+- **Sexo:** Masculino
+- **CPF do aluno:** 09849824182
+- **RG / Certidão:** 1619309
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99222-0853
+- **E-mail:** eduardocirianoalves907@gmail.com
+- **Endereço:** 305 norte alameda 22 lote 14
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-348
+- **Nome do responsável:** Meirelly Ciriano
+- **CPF do responsável:** 05716534139
+- **Nome da mãe:** Meirelly
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 17/11/2025 - 16:27h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 20. Eduardo Oliveira Santos
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Eduardo Oliveira Santos
+- **Data de nascimento:** 14/05/2009
+- **Sexo:** Masculino
+- **CPF do aluno:** 04681373192
+- **RG / Certidão:** 1157571
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98401-7924
+- **E-mail:** mande.paraensee@gmail.com
+- **Endereço:** 403 norte alameda 4 lote 5
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-010
+- **Nome do responsável:** Alexandre Silva Santos
+- **CPF do responsável:** 60967650259
+- **Nome da mãe:** Alexandresilva Santos
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 17/11/2025 - 16:57h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 21. Enry Daniel Ribeiro
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Enry Daniel Ribeiro
+- **Data de nascimento:** 06/04/2009
+- **Sexo:** Masculino
+- **CPF do aluno:** 09209041143
+- **RG / Certidão:** 1801952
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 41 99874-9263
+- **E-mail:** welmaribeiroamorin@gmail.com
+- **Endereço:** 605 norte alameda 15 lote 15
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-737
+- **Nome do responsável:** Welma Ribeiro
+- **CPF do responsável:** 01330335112
+- **Nome da mãe:** Welma Ribeiro
+- **Nome do pai:** —
+- **Contato de emergência:** Welma Ribeiro — 41 99874-9263
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 10/12/2025 - 11:42h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 22. Eryck Lucas Silva Lopes
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Eryck Lucas Silva Lopes
+- **Data de nascimento:** 21/09/2009
+- **Sexo:** Masculino
+- **CPF do aluno:** 07843530185
+- **RG / Certidão:** 1545383
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98456-0004
+- **E-mail:** erycklucas93@gmail.com
+- **Endereço:** 402 norte rua 2blote 13
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-366
+- **Nome do responsável:** Francinelma da Silva
+- **CPF do responsável:** 64050220210
+- **Nome da mãe:** Francinelma da Silva
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 01/12/2025 - 11:27h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 23. Gabriel correa Alves
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Gabriel correa Alves
+- **Data de nascimento:** 20/08/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 08794886113
+- **RG / Certidão:** 1622871
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99134-2406
+- **E-mail:** gabialves24@gmail.com
+- **Endereço:** 303 norte alameda 5 lote 20
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-448
+- **Nome do responsável:** Lucia Maria Alves
+- **CPF do responsável:** 01843189127
+- **Nome da mãe:** Lucia Maria
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 15/12/2025 - 12:37h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 24. Gabriel Ferreira da Silva
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Gabriel Ferreira da Silva
+- **Data de nascimento:** 25/10/2010
+- **Sexo:** Masculino
+- **CPF do aluno:** 09157359113
+- **RG / Certidão:** 1564452
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99244-8646
+- **E-mail:** fredson.fag@gmail.com
+- **Endereço:** 605 nortealameda 3 lote 48
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-746
+- **Nome do responsável:** Fredson Ferreira da Silva
+- **CPF do responsável:** 01211305171
+- **Nome da mãe:** Fredson
+- **Nome do pai:** —
+- **Contato de emergência:** Fredson Ferreira — 63 99244-8646
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 04/12/2025 - 09:20h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 25. Guilherme Bastos Araujo
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Guilherme Bastos Araujo
+- **Data de nascimento:** 16/06/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 07593764176
+- **RG / Certidão:** 1627889
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99109-2981
+- **E-mail:** bastosguilherme@gmail.com
+- **Endereço:** 605 norte al. 08 Lote 03
+- **Bairro:** Plano diretor Norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-751
+- **Nome do responsável:** Adriana Diniz Bastos
+- **CPF do responsável:** 60261094394
+- **Nome da mãe:** Adriana Diniz Bastos
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 18/11/2025 - 15:32h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 26. Guilherme Gomes da Silva
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Guilherme Gomes da Silva
+- **Data de nascimento:** 20/09/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 10334958164
+- **RG / Certidão:** 305226
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99944-2292
+- **E-mail:** mariadalvagomes.09@gmail.com
+- **Endereço:** 605 norte alameda 15 lote 24
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-737
+- **Nome do responsável:** Maria Dalva Gomes
+- **CPF do responsável:** 80036511153
+- **Nome da mãe:** MAria Dalva
+- **Nome do pai:** —
+- **Contato de emergência:** aria Dalva — 63 99944-2292
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 06/12/2025 - 07:47h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 27. Guilherme Kauã
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Guilherme Kauã
+- **Data de nascimento:** 25/06/2011
+- **Sexo:** —
+- **CPF do aluno:** —
+- **RG / Certidão:** 886007 CPF:05595724170
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99200-6152 / E-mail:raymarasousa03@gmail.com
+- **E-mail:** —
+- **Endereço:** ARNO 33 Al.02 - Lote02 Res.Parque da Praia Bairro:Plano Diretor Norte
+- **Bairro:** —
+- **Cidade:** Palmas
+- **Estado (UF):** TO CEP:77000-000
+- **CEP:** —
+- **Nome do responsável:** Raymara de Sousa Santos CPF / RG do Resp.:01843189127 / -
+- **CPF do responsável:** —
+- **Nome da mãe:** Raymara de Sousa Santos CPF / RG da Mãe:01843189127 / -
+- **Nome do pai:** CPF / RG do Pai:/ -
+- **Contato de emergência:** Raymara — 63 9920-0615
+- **Escolaridade:** Tipo de Escola:
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Série:
+- **Série:** —
+- **Nome da escola:** Matrícula:
+- **Tamanho da camisa:** P Camisa Entregue: NÃO
+- **Camisa entregue (Sim/Não):** —
+- **Data do cadastro:** 18/11/2025 - 15:44h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 28. Guilherme Kaua Sousa
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Guilherme Kaua Sousa
+- **Data de nascimento:** 25/06/2011
+- **Sexo:** Masculino
+- **CPF do aluno:** 05595724170
+- **RG / Certidão:** 1245151
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99200-6152
+- **E-mail:** raymarasousa03@gmail.com
+- **Endereço:** arno 33 alameda 02 lote 02
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-440
+- **Nome do responsável:** Raymara de Sousa Santos
+- **CPF do responsável:** 01843189127
+- **Nome da mãe:** Raymara Sousa
+- **Nome do pai:** —
+- **Contato de emergência:** Raymara Sousa — 63 99200-6152
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 17/11/2025 - 18:35h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 29. Gustavo Avelino Ferreira
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Gustavo Avelino Ferreira
+- **Data de nascimento:** 18/05/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 09751414148
+- **RG / Certidão:** 1807050
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99937-5028
+- **E-mail:** salesferreiraclesio7@gmail.com
+- **Endereço:** 605 norte alameda 5 lote 11
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-443
+- **Nome do responsável:** Clesio Salles
+- **CPF do responsável:** 98729824187
+- **Nome da mãe:** Salles Ferreira
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 11/12/2025 - 10:16h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 30. Hugos bezerra da Silva
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Hugos bezerra da Silva
+- **Data de nascimento:** 23/01/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 10334958164
+- **RG / Certidão:** 1225467
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98119-9665
+- **E-mail:** hugopt22@mail.com
+- **Endereço:** 303 norte alameda 11 lote 3
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-338
+- **Nome do responsável:** Monique bezerra Alves
+- **CPF do responsável:** 01843189127
+- **Nome da mãe:** Moniquw
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 15/12/2025 - 12:52h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 31. Icaro Silva Carvalho
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Icaro Silva Carvalho
+- **Data de nascimento:** 10/12/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 07436048147
+- **RG / Certidão:** 1610729
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98402-8347
+- **E-mail:** mayzinha2610@gmail.com
+- **Endereço:** 503 norte alameda 11 lote 15
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-840
+- **Nome do responsável:** Mayara de Sousa
+- **CPF do responsável:** 02166254160
+- **Nome da mãe:** Mayara de Sousa
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 17/11/2025 - 18:26h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 32. igor Gabriel Sousa
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** igor Gabriel Sousa
+- **Data de nascimento:** 21/09/2011
+- **Sexo:** Masculino
+- **CPF do aluno:** 73843121320
+- **RG / Certidão:** 930052
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99120-5289
+- **E-mail:** igorgb2109@gmail.com
+- **Endereço:** 605 norte alameda 17 lote 15
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-758
+- **Nome do responsável:** Sarah Leylane da Silva
+- **CPF do responsável:** 73843121320
+- **Nome da mãe:** Sarah Leylane
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 17/11/2025 - 23:23h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 33. Igor Soares Almeida
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Igor Soares Almeida
+- **Data de nascimento:** 20/08/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 04681373192
+- **RG / Certidão:** 1772341
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98119-9887
+- **E-mail:** igorbabu@gmail.com
+- **Endereço:** 603 norte alameda 5 lote 17
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-443
+- **Nome do responsável:** Simone Soares
+- **CPF do responsável:** 02179977328
+- **Nome da mãe:** Somone soares
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 15/12/2025 - 13:13h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 34. isaac santos Souza
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** isaac santos Souza
+- **Data de nascimento:** 03/12/2011
+- **Sexo:** Masculino
+- **CPF do aluno:** 10334958164
+- **RG / Certidão:** 1122256
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99117-4567
+- **E-mail:** isaac.22@gmail.com
+- **Endereço:** 402 norte alameda 1 lote 21
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-441
+- **Nome do responsável:** Maria Luana Santos
+- **CPF do responsável:** 96147571168
+- **Nome da mãe:** Maria Luana
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 16/12/2025 - 11:17h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 35. Jean Diniz de Sousa
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Jean Diniz de Sousa
+- **Data de nascimento:** 17/07/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 08794886113
+- **RG / Certidão:** 1334561
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99255-7810
+- **E-mail:** dinizdesousa@gmail.com
+- **Endereço:** 108 norte alameda 23 lote 2
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-228
+- **Nome do responsável:** Luciane diniz de Sousa
+- **CPF do responsável:** 60967650259
+- **Nome da mãe:** Luciane
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 15/12/2025 - 12:59h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 36. Jesus Samuel Cordeiro Miranda
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Jesus Samuel Cordeiro Miranda
+- **Data de nascimento:** 17/03/2014
+- **Sexo:** —
+- **CPF do aluno:** —
+- **RG / Certidão:** 986650 CPF:10580541126
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99218-1883 / E-mail:pedrohenrique2@gmail.com
+- **E-mail:** —
+- **Endereço:** Santo Amaro Al.10 Lote 05 Bairro:Santo Amaro
+- **Bairro:** —
+- **Cidade:** Palmas
+- **Estado (UF):** TO CEP:77022-348
+- **CEP:** —
+- **Nome do responsável:** Pedro Henrique Cordeiro Santos CPF / RG do Resp.:02730726179 / -
+- **CPF do responsável:** —
+- **Nome da mãe:** Maria Cordeiro Miranda CPF / RG da Mãe:76797694191 / -
+- **Nome do pai:** CPF / RG do Pai:/ -
+- **Contato de emergência:** Pedro Henrique Cordeiro dos Santos — 63 99205-4210
+- **Escolaridade:** Tipo de Escola:
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Série:
+- **Série:** —
+- **Nome da escola:** raphael Matrícula:
+- **Tamanho da camisa:** P Camisa Entregue: NÃO
+- **Camisa entregue (Sim/Não):** —
+- **Data do cadastro:** 18/11/2025 - 11:13h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 37. Joao Pedro Martins
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Joao Pedro Martins
+- **Data de nascimento:** 28/04/2009
+- **Sexo:** Masculino
+- **CPF do aluno:** 05136906111
+- **RG / Certidão:** 1590830
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99128-1947
+- **E-mail:** naiaramn81@gmail.com
+- **Endereço:** 303 norte alameda 25 lote 21
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-252
+- **Nome do responsável:** Naiara Martins Moreira
+- **CPF do responsável:** 04453748108
+- **Nome da mãe:** Naiara Martins
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 10/12/2025 - 17:52h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 38. Joao Pedro Oliveira de Souza
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Joao Pedro Oliveira de Souza
+- **Data de nascimento:** 09/09/2008
+- **Sexo:** Masculino
+- **CPF do aluno:** —
+- **RG / Certidão:** 1524966
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99211-6147
+- **E-mail:** so273809@gmail.com
+- **Endereço:** Rua jequiba , quadra 41 lote 2a
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** Maria do Socorro
+- **CPF do responsável:** 92238009191
+- **Nome da mãe:** Maria de Socorro
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 10/12/2025 - 17:46h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 39. João Victor Ferreira da Silva
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** João Victor Ferreira da Silva
+- **Data de nascimento:** 20/04/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 03126593186
+- **RG / Certidão:** L035989
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 92539-186
+- **E-mail:** mariapereirasilva@gmail.com
+- **Endereço:** 605 norte alameda 14 lote 6 casa 43
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-864
+- **Nome do responsável:** Maria dos Anjos P da Silva
+- **CPF do responsável:** 03126593186
+- **Nome da mãe:** Maria dos Anjos P da Silva
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Rosana Paulo
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 18/11/2025 - 11:34h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 40. Joao victor Oliveira Garcia
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Joao victor Oliveira Garcia
+- **Data de nascimento:** 18/02/2010
+- **Sexo:** Masculino
+- **CPF do aluno:** 08821246175
+- **RG / Certidão:** 1618076
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99305-9984
+- **E-mail:** luceliafdeoliveirasouza@gmail.com
+- **Endereço:** rua ns15 quadra 4a lote 42
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-150
+- **Nome do responsável:** Lucelia Francisca de Oliveira
+- **CPF do responsável:** 01658643119
+- **Nome da mãe:** Lucelia Francisca
+- **Nome do pai:** —
+- **Contato de emergência:** Lucelia Francisca — 63 99305-9984
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 10/12/2025 - 17:32h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 41. Julio Alves Santos
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Julio Alves Santos
+- **Data de nascimento:** 12/08/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 09849824182
+- **RG / Certidão:** 163754
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 97734-0420
+- **E-mail:** alvesjunior10@gmail.com
+- **Endereço:** 604 norte alameda20 lote 5
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-288
+- **Nome do responsável:** Maria luiza Alves
+- **CPF do responsável:** 96147571168
+- **Nome da mãe:** MariaLuiza Alves
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 15/12/2025 - 12:28h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 42. jullyo Cesar Rodrigues
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** jullyo Cesar Rodrigues
+- **Data de nascimento:** 21/12/2009
+- **Sexo:** Masculino
+- **CPF do aluno:** 07869117196
+- **RG / Certidão:** 1758119
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99243-8558
+- **E-mail:** maraisa2112@gmail.com
+- **Endereço:** 407 norte alameda 5 lote 15
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-564
+- **Nome do responsável:** Maraisa Naiola Coelho
+- **CPF do responsável:** 0070517188
+- **Nome da mãe:** Maraisa Coelho
+- **Nome do pai:** —
+- **Contato de emergência:** Maraisa Coelho — 63 99243-8558
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 17/11/2025 - 23:08h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 43. Kaique Barbosa Bonfim
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Kaique Barbosa Bonfim
+- **Data de nascimento:** 19/02/2011
+- **Sexo:** Masculino
+- **CPF do aluno:** 71017547165
+- **RG / Certidão:** 1718366
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 62 99492-8492
+- **E-mail:** jackelinediasbarbosa85@gmail.com
+- **Endereço:** Arno 72 Al.01 QI4 Lote 6 Casa 01
+- **Bairro:** Plano Diretor Norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-749
+- **Nome do responsável:** Jackeline Dias Barbosa
+- **CPF do responsável:** 02851292102
+- **Nome da mãe:** Jackeline Dias Barbosa
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 18/11/2025 - 15:07h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 44. Kairo Sales Matos
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Kairo Sales Matos
+- **Data de nascimento:** 14/09/2011
+- **Sexo:** Masculino
+- **CPF do aluno:** 08789978145
+- **RG / Certidão:** 1536941
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98419-7359
+- **E-mail:** jailson.s.js4@gmail.com
+- **Endereço:** Arno 72 alameda 1 lote 18
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-749
+- **Nome do responsável:** Jailson Sales Souza
+- **CPF do responsável:** 01677915161
+- **Nome da mãe:** Jailson Salles
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 17/11/2025 - 16:45h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 45. Kallen Keve Santos Lopo
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Kallen Keve Santos Lopo
+- **Data de nascimento:** 12/10/2010
+- **Sexo:** Masculino
+- **CPF do aluno:** 05430990167
+- **RG / Certidão:** 1608676
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99212-6228
+- **E-mail:** ffkallenff@gmail.com
+- **Endereço:** 404 norte alameda 21 lote 15
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-428
+- **Nome do responsável:** Ana Francisca Neta dos Santos
+- **CPF do responsável:** 80546692168
+- **Nome da mãe:** Ana Francisca Neta dos Santos
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 17/11/2025 - 16:39h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 46. Kaua Pereira Barros
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Kaua Pereira Barros
+- **Data de nascimento:** 02/06/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 08855121111
+- **RG / Certidão:** 1143391
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99201-4245
+- **E-mail:** kauanpereira59@gmail.com
+- **Endereço:** 603 norte alameda 19 lote 8
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-348
+- **Nome do responsável:** Walter da luz pereira Barros
+- **CPF do responsável:** 02496856393
+- **Nome da mãe:** Dianice franscisca
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 17/11/2025 - 23:35h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 47. Lucas Henrique Gomes
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Lucas Henrique Gomes
+- **Data de nascimento:** 10/03/2011
+- **Sexo:** Masculino
+- **CPF do aluno:** 04681373192
+- **RG / Certidão:** 1551772
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99344-5566
+- **E-mail:** lucashenrique22@gmail.com
+- **Endereço:** 603 norte alameda 7 lote 10
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-776
+- **Nome do responsável:** Suelem Gomes
+- **CPF do responsável:** 02179977328
+- **Nome da mãe:** Suelem Gomes
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 16/12/2025 - 11:24h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 48. Lucas Porto da Silva
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Lucas Porto da Silva
+- **Data de nascimento:** 11/09/2009
+- **Sexo:** Masculino
+- **CPF do aluno:** 07884175177
+- **RG / Certidão:** 1626275
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98467-3361
+- **E-mail:** lucasporto@gmail.com
+- **Endereço:** 303 norte alameda 8 lote 1
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-268
+- **Nome do responsável:** Luciana
+- **CPF do responsável:** 95635106153
+- **Nome da mãe:** Luciana
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 10/12/2025 - 11:55h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 49. Luis Augusto arcanjo Nunes
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Luis Augusto arcanjo Nunes
+- **Data de nascimento:** 05/03/2010
+- **Sexo:** Masculino
+- **CPF do aluno:** 06333075132
+- **RG / Certidão:** 1639852
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99209-8366
+- **E-mail:** jucianenunes1991@gmail.com
+- **Endereço:** 407 norte alameda 4 lote 29
+- **Bairro:** plano diretor Norte
+- **Cidade:** Maricá
+- **Estado (UF):** RJ
+- **CEP:** 77001-566
+- **Nome do responsável:** Antonia Jusiane
+- **CPF do responsável:** 03004530198
+- **Nome da mãe:** Antonia jusiane
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 01/12/2025 - 11:20h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 50. Luis Neto Costa dos Santos
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Luis Neto Costa dos Santos
+- **Data de nascimento:** 26/11/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 08789978145
+- **RG / Certidão:** 1850081
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99287-2726
+- **E-mail:** taciosousasantos@gmail.com
+- **Endereço:** 503 norte alameda 5 lote 7
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-214
+- **Nome do responsável:** Tacio Sousa
+- **CPF do responsável:** 01350008150
+- **Nome da mãe:** Tacianee Sousa
+- **Nome do pai:** —
+- **Contato de emergência:** tacio ousa — 63 99287-2726
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Leide Patricia
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 04/12/2025 - 09:32h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 51. Luiz Daniel Queiroz
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Luiz Daniel Queiroz
+- **Data de nascimento:** 18/03/2009
+- **Sexo:** Masculino
+- **CPF do aluno:** 08789978145
+- **RG / Certidão:** 1380580
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99236-8416
+- **E-mail:** luizdanielqueiroz123@gmail.com
+- **Endereço:** rua t13 quadra 32 lote 05
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-400
+- **Nome do responsável:** Rosilene de Queiroz Santos
+- **CPF do responsável:** 02051985111
+- **Nome da mãe:** Rosilene Queiroz
+- **Nome do pai:** —
+- **Contato de emergência:** Rosilene Queiroz — 63 99236-8416
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 10/12/2025 - 17:40h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 52. Magno Alves de Lima
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Magno Alves de Lima
+- **Data de nascimento:** 10/10/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 05595724170
+- **RG / Certidão:** 1132013
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99244-3211
+- **E-mail:** magnoalves22@gmail.com
+- **Endereço:** 203 norte alameda 11 lote 9
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-448
+- **Nome do responsável:** Isadora alves de Lima
+- **CPF do responsável:** 96147571168
+- **Nome da mãe:** Isadora alves de Lima
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 15/12/2025 - 13:02h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 53. Marlon Santos Sousa
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Marlon Santos Sousa
+- **Data de nascimento:** 10/02/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 10334958164
+- **RG / Certidão:** 1636771
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98119-2499
+- **E-mail:** marlonsantos22@gmail.com
+- **Endereço:** 605 norte alameda 1 lote 33
+- **Bairro:** Plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-338
+- **Nome do responsável:** Anotnia Santos Sousa
+- **CPF do responsável:** 01350008150
+- **Nome da mãe:** Antonia Santos Sousa
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 15/12/2025 - 12:33h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 54. Mateus Santos Lima
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Mateus Santos Lima
+- **Data de nascimento:** 10/02/2008
+- **Sexo:** Masculino
+- **CPF do aluno:** 04681373192
+- **RG / Certidão:** 14634532
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98488-0170
+- **E-mail:** msantoslima@gmail.com
+- **Endereço:** 03 norte alameda 7 lote 22
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-884
+- **Nome do responsável:** Leticia Costa Lima
+- **CPF do responsável:** 04467420150
+- **Nome da mãe:** LeticiaCosta
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 10/12/2025 - 18:00h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 55. Matheus Ribeiro Rocha da Silva Carvalho
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Matheus Ribeiro Rocha da Silva Carvalho
+- **Data de nascimento:** 10/08/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 90762061120
+- **RG / Certidão:** 687850
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98447-2356
+- **E-mail:** lelene2018@gmail.com
+- **Endereço:** 303 norte Al.07 Lote 26
+- **Bairro:** Plano Diretor Borte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-348
+- **Nome do responsável:** Valdilene Lima da Silva
+- **CPF do responsável:** 90762061120
+- **Nome da mãe:** Valdilene Lima da Silva
+- **Nome do pai:** —
+- **Contato de emergência:** Valdilene Lima da Silva — 63 98447-2356
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 18/11/2025 - 12:51h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 56. miguel Marques Gomes
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** miguel Marques Gomes
+- **Data de nascimento:** 13/08/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 04681373192
+- **RG / Certidão:** 1314321
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99256-0411
+- **E-mail:** miguel.marques22@gmail.com
+- **Endereço:** 605 norte alameda 7 lote 11
+- **Bairro:** Plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-441
+- **Nome do responsável:** Lucia Maria Gomes
+- **CPF do responsável:** 80036511153
+- **Nome da mãe:** Lucia
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 16/12/2025 - 10:56h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 57. Pedro Riquelme Fernades
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Pedro Riquelme Fernades
+- **Data de nascimento:** 20/04/2011
+- **Sexo:** Masculino
+- **CPF do aluno:** 08794886113
+- **RG / Certidão:** 1143981
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98119-9663
+- **E-mail:** raphaelzin55@gmail.com
+- **Endereço:** 605 norte alameda 7 lote 13
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-551
+- **Nome do responsável:** Yanka Fernades
+- **CPF do responsável:** 01350008150
+- **Nome da mãe:** Yanka
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 16/12/2025 - 11:28h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 58. Pedro Willian Martins Silva
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Pedro Willian Martins Silva
+- **Data de nascimento:** 13/01/2013
+- **Sexo:** Masculino
+- **CPF do aluno:** 08795807128
+- **RG / Certidão:** 1537244
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99229-9119
+- **E-mail:** pedro21345@gmail.com
+- **Endereço:** 605 norte alameda 15 lote 12
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-737
+- **Nome do responsável:** Rosana Paulo Martins
+- **CPF do responsável:** 02377452167
+- **Nome da mãe:** ROsana Paulo Martins
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 17/11/2025 - 23:39h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 59. Petrus Davy Calvo de Souza
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Petrus Davy Calvo de Souza
+- **Data de nascimento:** 06/11/2012
+- **Sexo:** —
+- **CPF do aluno:** —
+- **RG / Certidão:** 687720 CPF:10627478107
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99278-3776 / E-mail:francinete686@gmail.com
+- **E-mail:** —
+- **Endereço:** 603 norte alameda 4 lote 4 Bairro:plano diretor norte
+- **Bairro:** —
+- **Cidade:** Palmas
+- **Estado (UF):** TO CEP:77001-867
+- **CEP:** —
+- **Nome do responsável:** Esmeraldo Mendes de Souza CPF / RG do Resp.:10627478107 / -
+- **CPF do responsável:** —
+- **Nome da mãe:** Francinete Jardina Calvo CPF / RG da Mãe:10627478107 / -
+- **Nome do pai:** CPF / RG do Pai:/ -
+- **Contato de emergência:** Francinete Jardina Calvo — 63 99278-3776
+- **Escolaridade:** Tipo de Escola:
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Série:
+- **Série:** —
+- **Nome da escola:** Matrícula:
+- **Tamanho da camisa:** P Camisa Entregue: NÃO
+- **Camisa entregue (Sim/Não):** —
+- **Data do cadastro:** 18/11/2025 - 12:46h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 60. philipe Alexandro Alves
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** philipe Alexandro Alves
+- **Data de nascimento:** 26/07/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 10334958164
+- **RG / Certidão:** 1993781
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99245-9417
+- **E-mail:** philipe.alex22@gmail.com
+- **Endereço:** 303 norte alameda 10 lote 11
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-356
+- **Nome do responsável:** Eliane Alves Gomes
+- **CPF do responsável:** 80036511153
+- **Nome da mãe:** Eliane Gomes
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 15/12/2025 - 13:10h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 61. rafael Coimbra de Oliveira
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** rafael Coimbra de Oliveira
+- **Data de nascimento:** 01/09/2009
+- **Sexo:** Masculino
+- **CPF do aluno:** 07532242161
+- **RG / Certidão:** 1438426
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99215-7292
+- **E-mail:** rcoimbra712@gmail.com
+- **Endereço:** 605 norte alameda 7 lote 01
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-744
+- **Nome do responsável:** Rosilene Oliveira da Silva
+- **CPF do responsável:** 96147571168
+- **Nome da mãe:** Rosilene Oliveira
+- **Nome do pai:** —
+- **Contato de emergência:** Rosilene Oliveira — 63 99215-7292
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 17/11/2025 - 16:32h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 62. Rafael Satos Sousa
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Rafael Satos Sousa
+- **Data de nascimento:** 13/08/2016
+- **Sexo:** Masculino
+- **CPF do aluno:** 05595724170
+- **RG / Certidão:** 1197612
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99256-0414
+- **E-mail:** rapha603@gmail.com
+- **Endereço:** 504 norte alameda 7 lote 2
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-554
+- **Nome do responsável:** Sonia Alberto dos Santos
+- **CPF do responsável:** 96147571168
+- **Nome da mãe:** Sonia Alberto
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 15/12/2025 - 13:15h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 63. Raphael Oliveira Sousa
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Raphael Oliveira Sousa
+- **Data de nascimento:** 05/11/2017
+- **Sexo:** Masculino
+- **CPF do aluno:** 04681373192
+- **RG / Certidão:** 1183341
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99269-6511
+- **E-mail:** rapha.o2003@gmail.com
+- **Endereço:** 506 norte alameda 11 lote 3
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-448
+- **Nome do responsável:** Joana Maria Santos
+- **CPF do responsável:** 02179977328
+- **Nome da mãe:** Joana Maria
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 15/12/2025 - 12:45h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 64. Rhuan Gabriel Almeida
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Rhuan Gabriel Almeida
+- **Data de nascimento:** 04/02/2011
+- **Sexo:** Masculino
+- **CPF do aluno:** 07021080140
+- **RG / Certidão:** 1618665
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99282-8560
+- **E-mail:** ruanrionovo@hotmail.com
+- **Endereço:** 503 nortealameda 7 lote 26
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-814
+- **Nome do responsável:** Anoilton Cardoso
+- **CPF do responsável:** 76797694191
+- **Nome da mãe:** Anoilton Cardoso
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 17/11/2025 - 16:51h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 65. robson rodrigues Alves
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** robson rodrigues Alves
+- **Data de nascimento:** 20/09/2011
+- **Sexo:** Masculino
+- **CPF do aluno:** 05595724170
+- **RG / Certidão:** 1332215
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99255-4110
+- **E-mail:** mulekin22@gmail.com
+- **Endereço:** 403 norte alameda 2 lote 33
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-344
+- **Nome do responsável:** Valquiria Rodrigues
+- **CPF do responsável:** 01843189127
+- **Nome da mãe:** Valquiria
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 16/12/2025 - 11:06h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 66. Rodrigo Batista de Carvalho
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Rodrigo Batista de Carvalho
+- **Data de nascimento:** 11/11/2011
+- **Sexo:** Masculino
+- **CPF do aluno:** 09849824182
+- **RG / Certidão:** 1197651
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99256-0444
+- **E-mail:** rdgbpt22@gmail.com
+- **Endereço:** 604 norte alameda 11 lote 19
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-221
+- **Nome do responsável:** Maria Antonia de Carvalho
+- **CPF do responsável:** 01843189127
+- **Nome da mãe:** Maria Antonia
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 15/12/2025 - 13:06h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 67. Samuel Alves da Silva
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Samuel Alves da Silva
+- **Data de nascimento:** 02/11/2013
+- **Sexo:** —
+- **CPF do aluno:** —
+- **RG / Certidão:** 1509756 CPF:08462043123
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99135-4373 / E-mail:samuelalves123@gmail.com
+- **E-mail:** —
+- **Endereço:** 605 norte Al.01QI.01 Lote 05 Bairro:ARNE 72
+- **Bairro:** —
+- **Cidade:** Palmas
+- **Estado (UF):** TO CEP:77001-749
+- **CEP:** —
+- **Nome do responsável:** Natividade Pereira Mota CPF / RG do Resp.:91486130100 / -
+- **CPF do responsável:** —
+- **Nome da mãe:** Natividade Pereira Mota CPF / RG da Mãe:91486130100 / -
+- **Nome do pai:** CPF / RG do Pai:/ -
+- **Contato de emergência:** Natividade Pereira Mota — 63 99135-4373
+- **Escolaridade:** Tipo de Escola:
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Série:
+- **Série:** —
+- **Nome da escola:** Matrícula:
+- **Tamanho da camisa:** P Camisa Entregue: NÃO
+- **Camisa entregue (Sim/Não):** —
+- **Data do cadastro:** 18/11/2025
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 68. Samuel lima
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Samuel lima
+- **Data de nascimento:** 03/04/2010
+- **Sexo:** —
+- **CPF do aluno:** —
+- **RG / Certidão:** 1651142 CPF:78440467168
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99118-8601 / E-mail:fxcerolip@gmail.com
+- **E-mail:** —
+- **Endereço:** 605 norte Al.07 Lote 14 Bairro:Plano Diretor Norte
+- **Bairro:** —
+- **Cidade:** Palmas
+- **Estado (UF):** TO CEP:77001-744
+- **CEP:** —
+- **Nome do responsável:** Antonio Esrael Bezerra Soares CPF / RG do Resp.:04492840705 / -
+- **CPF do responsável:** —
+- **Nome da mãe:** Maria Izabel Soares CPF / RG da Mãe:05595724170 / -
+- **Nome do pai:** CPF / RG do Pai:/ -
+- **Contato de emergência:** Maria Izabel Soares — 63 911-8860
+- **Escolaridade:** Tipo de Escola:
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Série:
+- **Série:** —
+- **Nome da escola:** Matrícula:
+- **Tamanho da camisa:** P Camisa Entregue: NÃO
+- **Camisa entregue (Sim/Não):** —
+- **Data do cadastro:** 18/11/2025 - 15:39h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 69. Victor Gabriel Conceição dos Santos
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Victor Gabriel Conceição dos Santos
+- **Data de nascimento:** 30/06/2014
+- **Sexo:** Masculino
+- **CPF do aluno:** 98774565168
+- **RG / Certidão:** 1644585
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98443-6983
+- **E-mail:** grazieles09@gmail.com
+- **Endereço:** 503 norte Av LO 14 lote 12
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-838
+- **Nome do responsável:** Conceição Maria da Conceição
+- **CPF do responsável:** 88774565165
+- **Nome da mãe:** Conceição Maria da Conceição
+- **Nome do pai:** —
+- **Contato de emergência:** Conceição Maria da Conceição — 63 98496-9968
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Mayara de Sousa
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 18/11/2025 - 11:20h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 70. victor vinicius moreira
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** victor vinicius moreira
+- **Data de nascimento:** 10/10/2011
+- **Sexo:** Masculino
+- **CPF do aluno:** 09849824182
+- **RG / Certidão:** 1918132
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99256-0551
+- **E-mail:** victor.joga10@gmail.com
+- **Endereço:** 303 norte alameda 2 lote 15
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-351
+- **Nome do responsável:** Monica Moreira cabral
+- **CPF do responsável:** 80036511153
+- **Nome da mãe:** Monica Moreira
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 16/12/2025 - 11:14h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 71. Vinicius D. Sousa Cursino Xerente
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Vinicius D. Sousa Cursino Xerente
+- **Data de nascimento:** 21/12/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 03652427130
+- **RG / Certidão:** 925030
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99229-9119
+- **E-mail:** viniciusxerente123@gmail.com
+- **Endereço:** 605 norte alameda 17 lote 2 casa 03
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-749
+- **Nome do responsável:** Zagna Curcino
+- **CPF do responsável:** 03652427130
+- **Nome da mãe:** Zagna Curcino
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Rosana Paulo
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 18/11/2025 - 11:27h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 72. Vinicius Monteiro de Souza
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Vinicius Monteiro de Souza
+- **Data de nascimento:** 25/01/2011
+- **Sexo:** Masculino
+- **CPF do aluno:** 09849824182
+- **RG / Certidão:** 1718713
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99255-4120
+- **E-mail:** vinishowto@gmail.com
+- **Endereço:** 506 norte alameda 11 lote 4
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-341
+- **Nome do responsável:** Sonia Albertos de Souza
+- **CPF do responsável:** 80036511153
+- **Nome da mãe:** Sonia
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 16/12/2025 - 11:21h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 73. Vinicius Souza Pereira
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Vinicius Souza Pereira
+- **Data de nascimento:** 04/05/2008
+- **Sexo:** —
+- **CPF do aluno:** —
+- **RG / Certidão:** 1558807 CPF:09073894140
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99282-6923 / E-mail:viniciusouza123@gmail.com
+- **E-mail:** —
+- **Endereço:** 607 norte Al.18 QI25 Lote 37 Casa 03 Bairro:Setor Norte
+- **Bairro:** —
+- **Cidade:** Palmas
+- **Estado (UF):** TO CEP:77023-440
+- **CEP:** —
+- **Nome do responsável:** Valdery Divino Pereira de Sousa CPF / RG do Resp.:96570572115 / -
+- **CPF do responsável:** —
+- **Nome da mãe:** Eva de Sousa Barbosa CPF / RG da Mãe:09073894140 / -
+- **Nome do pai:** CPF / RG do Pai:/ -
+- **Contato de emergência:** Valdery Divino Pereira de Sousa — 63 99282-6923
+- **Escolaridade:** Tipo de Escola:
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** Série:
+- **Série:** —
+- **Nome da escola:** Matrícula:
+- **Tamanho da camisa:** P Camisa Entregue: NÃO
+- **Camisa entregue (Sim/Não):** —
+- **Data do cadastro:** 18/11/2025
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 74. Walter Lucas
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Walter Lucas
+- **Data de nascimento:** 24/05/2012
+- **Sexo:** Masculino
+- **CPF do aluno:** 09699135166
+- **RG / Certidão:** 1698821
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99292-8819
+- **E-mail:** silva@gmail.com
+- **Endereço:** 503 nortealameda 07 lote28
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-814
+- **Nome do responsável:** Waltermisa Tavares Carvalho
+- **CPF do responsável:** 04019948135
+- **Nome da mãe:** Waltermisa Tavares
+- **Nome do pai:** —
+- **Contato de emergência:** Waltermisa Tavares — 63 99292-8819
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 17/11/2025 - 17:23h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 75. WirluzGabriel
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** WirluzGabriel
+- **Data de nascimento:** 17/05/2009
+- **Sexo:** Masculino
+- **CPF do aluno:** 07945786162
+- **RG / Certidão:** 1471529
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99129-0693
+- **E-mail:** gabrielwirluz123@gmail.com
+- **Endereço:** Chácara Água Fria
+- **Bairro:** Setor de Chácaras
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** Islânia de Jesus Santos
+- **CPF do responsável:** 03232317138
+- **Nome da mãe:** Islânia de Jesus Santos
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** Carleandro
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 18/11/2025 - 15:15h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 76. Wnderley Braz Junior
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Wnderley Braz Junior
+- **Data de nascimento:** 23/12/2015
+- **Sexo:** Masculino
+- **CPF do aluno:** 10334958164
+- **RG / Certidão:** 1175128
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99236-0417
+- **E-mail:** jr2015@gmail.com
+- **Endereço:** 404 norte alameda 10 lote 13
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77006-338
+- **Nome do responsável:** mariana Patricia
+- **CPF do responsável:** 60967650259
+- **Nome da mãe:** Mariana
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 15/12/2025 - 13:22h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 77. Wytallo da Silva Carvalho
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Wytallo da Silva Carvalho
+- **Data de nascimento:** 03/03/2008
+- **Sexo:** Masculino
+- **CPF do aluno:** 08597965150
+- **RG / Certidão:** 1455316
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98450-4930
+- **E-mail:** tafarelcarvalho38@gmail.com
+- **Endereço:** Chacara Agua Fria 39 - lote 69
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77000-000
+- **Nome do responsável:** TafarelRodrigues Carvalho
+- **CPF do responsável:** 03505048305
+- **Nome da mãe:** Tafarel Rodrigues
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 04/12/2025 - 09:26h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 78. Yan da Silva Costa
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Yan da Silva Costa
+- **Data de nascimento:** 14/03/2010
+- **Sexo:** Masculino
+- **CPF do aluno:** 00408835150
+- **RG / Certidão:** 316263
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 98400-0385
+- **E-mail:** joelmadasilvacosta37@gmail.com
+- **Endereço:** 405 norte al.15 QI 2 Lote 27
+- **Bairro:** Plano diretor Norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77002-007
+- **Nome do responsável:** Joelma da Silva Costa
+- **CPF do responsável:** 96147571168
+- **Nome da mãe:** Joelma da Silva Costa
+- **Nome do pai:** —
+- **Contato de emergência:** —
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 18/11/2025 - 15:21h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+### 79. Yuri Bezerra da Silva
+
+- **Professor:** Raphael Santos Oliveira de Sousa
+- **Nome do aluno:** Yuri Bezerra da Silva
+- **Data de nascimento:** 16/06/2009
+- **Sexo:** Masculino
+- **CPF do aluno:** 09487208160
+- **RG / Certidão:** 0741092820210
+- **PCD (Sim/Não):** Não
+- **Tipo de PCD:** —
+- **Telefones:** 63 99295-5322
+- **E-mail:** domingosalvesdasilva@gmail.com
+- **Endereço:** 605 norte alameda 17 lote 1
+- **Bairro:** plano diretor norte
+- **Cidade:** Palmas
+- **Estado (UF):** TO
+- **CEP:** 77001-758
+- **Nome do responsável:** Domingos Alves da Silva
+- **CPF do responsável:** 03286276154
+- **Nome da mãe:** Domingos Alves
+- **Nome do pai:** —
+- **Contato de emergência:** Domingos Alves — 63 99295-5322
+- **Escolaridade:** —
+- **Tipo de escola (Municipal/Estadual/Particular):** —
+- **Turno escolar:** —
+- **Série:** —
+- **Nome da escola:** —
+- **Tamanho da camisa:** P
+- **Camisa entregue (Sim/Não):** Não
+- **Data do cadastro:** 10/12/2025 - 11:49h
+- **Núcleo:** Complexo ARNO 51
+- **Observação:** —
+
+---
+
