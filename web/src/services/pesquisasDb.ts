@@ -71,7 +71,8 @@ export interface Pesquisa {
   publicada: boolean;
   exigir_cpf: boolean;
   objeto_id: string | null;
-  lider_id: string | null;
+  coordenador_id?: string | null;
+  lider_id?: string | null;
   fluxo_id: string | null;
   user_id?: string;
   created_at?: string;
@@ -155,6 +156,16 @@ export const dbService = {
     const { data, error } = await supabase.from("objeto").select("*").eq("id", id).maybeSingle();
     if (error) throw error;
     return data;
+  },
+
+  // --- COORDENADORES ---
+  async getCoordenadores(): Promise<{ id: string; nome: string }[]> {
+    const { data } = await supabase
+      .from("funcionarios")
+      .select("id, nome_completo")
+      .is("deleted_at", null)
+      .order("nome_completo", { ascending: true });
+    return (data || []).map((f: any) => ({ id: f.id, nome: f.nome_completo }));
   },
 
   // --- LÍDERES ---
@@ -521,6 +532,7 @@ export const dbService = {
       pesquisa_id: string;
       pesquisa_titulo: string;
       lider_nome: string | null;
+      coordenador_nome: string | null;
       objeto_nome: string | null;
       valores: Record<string, any>;
     }[];
@@ -530,7 +542,7 @@ export const dbService = {
 
     const { data: pesquisas, error: pErr } = await supabase
       .from("pesquisa")
-      .select("id, titulo, lider:lider_id(nome), objeto:objeto_id(nome)")
+      .select("id, titulo, coordenador:coordenador_id(nome_completo), lider:lider_id(nome), objeto:objeto_id(nome)")
       .in("id", pesquisaIds);
     if (pErr) throw pErr;
 
@@ -561,12 +573,14 @@ export const dbService = {
         valores[i.pergunta_id] = i.valor;
       });
       const pesq = pesquisaMap[r.pesquisa_id];
+      const coordNome = pesq?.coordenador?.nome_completo || pesq?.lider?.nome || null;
       return {
         id: r.id,
         created_at: r.created_at,
         pesquisa_id: r.pesquisa_id,
         pesquisa_titulo: pesq?.titulo || "",
-        lider_nome: pesq?.lider?.nome || null,
+        lider_nome: coordNome,
+        coordenador_nome: coordNome,
         objeto_nome: pesq?.objeto?.nome || null,
         valores,
       };

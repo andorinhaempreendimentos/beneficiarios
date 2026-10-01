@@ -342,7 +342,6 @@ export function Sidebar() {
                 {navLink("/pesquisas/fluxos", "Fluxos", GitFork)}
                 {navLink("/pesquisas/relatorios", "Relatórios", FileBarChart)}
                 {navLink("/pesquisas/territorial", "Territorial", MapPin)}
-                {navLink("/pesquisas/lideres", "Líderes", Users)}
                 {navLink("/pesquisas/objetos", "Objetos", FolderKanban)}
               </SectionGroup>
 

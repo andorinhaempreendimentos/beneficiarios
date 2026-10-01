@@ -339,7 +339,7 @@ export default function RelatoriosGlobaisPage() {
       const row: Record<string, any> = {
         'Pesquisa': r.pesquisa_titulo,
         'Objeto': r.objeto_nome || '-',
-        'Líder': r.lider_nome || '-',
+        'Coordenador': r.coordenador_nome || r.lider_nome || '-',
         'Data': new Date(r.created_at).toLocaleString('pt-BR')
       }
       perguntas.forEach(p => {
@@ -772,7 +772,7 @@ export default function RelatoriosGlobaisPage() {
                           <th className="p-3 pl-5 whitespace-nowrap">Data</th>
                           <th className="p-3 whitespace-nowrap">Pesquisa</th>
                           <th className="p-3 whitespace-nowrap">Objeto</th>
-                          <th className="p-3 whitespace-nowrap">Líder</th>
+                          <th className="p-3 whitespace-nowrap">Coordenador</th>
                           {perguntas.map(p => (
                             <th key={p.id} className="p-3 truncate max-w-[200px]" title={p.titulo}>{p.titulo}</th>
                           ))}
@@ -784,7 +784,7 @@ export default function RelatoriosGlobaisPage() {
                             <td className="p-3 pl-5 text-xs text-zinc-400 whitespace-nowrap">{new Date(r.created_at).toLocaleDateString('pt-BR')}</td>
                             <td className="p-3 font-semibold text-xs whitespace-nowrap">{r.pesquisa_titulo}</td>
                             <td className="p-3 text-xs text-zinc-500 whitespace-nowrap">{r.objeto_nome || '-'}</td>
-                            <td className="p-3 text-xs text-zinc-500 whitespace-nowrap">{r.lider_nome || '-'}</td>
+                            <td className="p-3 text-xs text-zinc-500 whitespace-nowrap">{r.coordenador_nome || r.lider_nome || '-'}</td>
                             {perguntas.map(p => {
                               const val = r.valores[p.id]
                               if (val === undefined) return <td key={p.id} className="p-3 text-zinc-400">-</td>

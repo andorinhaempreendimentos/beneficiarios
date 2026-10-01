@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import Link from 'next/link'
-import { dbService, type Pesquisa, type Objeto, type Lider, type Fluxo } from '@/services/pesquisasDb'
+import { dbService, type Pesquisa, type Objeto, type Fluxo } from '@/services/pesquisasDb'
 import { 
   Plus, 
   Edit2, 
@@ -24,7 +24,7 @@ import {
 export default function PesquisasPage() {
   const [pesquisas, setPesquisas] = useState<Pesquisa[]>([])
   const [objetos, setObjetos] = useState<Objeto[]>([])
-  const [lideres, setLideres] = useState<Lider[]>([])
+  const [coordenadores, setCoordenadores] = useState<{ id: string; nome: string }[]>([])
   const [respostasCounts, setRespostasCounts] = useState<Record<string, number>>({})
   const [busca, setBusca] = useState('')
   const [loading, setLoading] = useState(true)
@@ -43,7 +43,7 @@ export default function PesquisasPage() {
   const [titulo, setTitulo] = useState('')
   const [descricao, setDescricao] = useState('')
   const [objetoId, setObjetoId] = useState<string>('')
-  const [liderId, setLiderId] = useState<string>('')
+  const [coordenadorId, setCoordenadorId] = useState<string>('')
   const [publicada, setPublicada] = useState(false)
   const [exigirCpf, setExigirCpf] = useState(false)
   const [fluxoId, setFluxoId] = useState<string>('')
@@ -52,8 +52,6 @@ export default function PesquisasPage() {
   // Quick Add States
   const [isAddingObjeto, setIsAddingObjeto] = useState<'projeto' | 'evento' | null>(null)
   const [novoObjetoNome, setNovoObjetoNome] = useState('')
-  const [isAddingLider, setIsAddingLider] = useState(false)
-  const [novoLiderNome, setNovoLiderNome] = useState('')
 
   useEffect(() => {
     loadAllData()
@@ -62,16 +60,16 @@ export default function PesquisasPage() {
   const loadAllData = async () => {
     setLoading(true)
     try {
-      const [pesqData, objData, lidData, fluxData, countsData] = await Promise.all([
+      const [pesqData, objData, coordData, fluxData, countsData] = await Promise.all([
         dbService.getPesquisas(),
         dbService.getObjetos(),
-        dbService.getLideres(),
+        dbService.getCoordenadores(),
         dbService.getFluxos(),
         dbService.getRespostasCounts()
       ])
       setPesquisas(pesqData)
       setObjetos(objData)
-      setLideres(lidData)
+      setCoordenadores(coordData)
       setFluxos(fluxData)
       setRespostasCounts(countsData)
     } catch (err) {
@@ -96,7 +94,7 @@ export default function PesquisasPage() {
     setTitulo('')
     setDescricao('')
     setObjetoId(objetos[0]?.id || '')
-    setLiderId('')
+    setCoordenadorId('')
     setPublicada(false)
     setExigirCpf(false)
     setFluxoId(fluxos[0]?.id || '')
@@ -109,7 +107,7 @@ export default function PesquisasPage() {
     setTitulo(p.titulo)
     setDescricao(p.descricao || '')
     setObjetoId(p.objeto_id || '')
-    setLiderId(p.lider_id || '')
+    setCoordenadorId(p.coordenador_id || p.lider_id || '')
     setPublicada(p.publicada)
     setExigirCpf(p.exigir_cpf || false)
     setFluxoId(p.fluxo_id || '')
@@ -131,7 +129,8 @@ export default function PesquisasPage() {
         publicada,
         exigir_cpf: exigirCpf,
         objeto_id: objetoId || null,
-        lider_id: liderId || null,
+        coordenador_id: coordenadorId || null,
+        lider_id: coordenadorId || null,
         fluxo_id: fluxoId || null
       })
       setIsModalOpen(false)
@@ -190,31 +189,14 @@ export default function PesquisasPage() {
     }
   }
 
-  const handleSaveQuickLider = async () => {
-    if (!novoLiderNome.trim()) return
-    try {
-      const novoLid = await dbService.saveLider({
-        nome: novoLiderNome,
-        telefone: null,
-        email: null
-      })
-      setLideres(prev => [novoLid, ...prev])
-      setLiderId(novoLid.id)
-      setNovoLiderNome('')
-      setIsAddingLider(false)
-    } catch (err) {
-      console.error(err)
-    }
-  }
-
   const pesquisasFiltradas = pesquisas.filter(p => {
     const obj = objetos.find(ob => ob.id === p.objeto_id)
-    const lid = lideres.find(l => l.id === p.lider_id)
+    const coord = coordenadores.find(c => c.id === (p.coordenador_id || p.lider_id))
     const termo = busca.toLowerCase()
     return (
       p.titulo.toLowerCase().includes(termo) ||
       (obj?.nome || '').toLowerCase().includes(termo) ||
-      (lid?.nome || '').toLowerCase().includes(termo)
+      (coord?.nome || '').toLowerCase().includes(termo)
     )
   })
 
@@ -258,11 +240,11 @@ export default function PesquisasPage() {
             <span>Objetos</span>
           </Link>
           <Link
-            href="/pesquisas/lideres"
+            href="/coordenadores"
             className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3.5 py-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all shadow-xs"
           >
             <Users className="h-3.5 w-3.5 text-indigo-500" />
-            <span>Líderes</span>
+            <span>Coordenadores</span>
           </Link>
           <button
             onClick={handleOpenAdd}
@@ -278,7 +260,7 @@ export default function PesquisasPage() {
         <div className="flex max-w-md">
           <input
             type="text"
-            placeholder="Buscar por título, objeto ou líder..."
+            placeholder="Buscar por título, objeto ou coordenador..."
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
             className="w-full rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-4 py-2 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:border-sky-500 focus:outline-hidden focus:ring-2 focus:ring-sky-500/20 transition-all text-sm shadow-xs"
@@ -313,7 +295,7 @@ export default function PesquisasPage() {
               <thead>
                 <tr className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-950/40 text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
                   <th className="p-4 pl-6">Pesquisa / Objeto</th>
-                  <th className="p-4">Líder</th>
+                  <th className="p-4">Coordenador</th>
                   <th className="p-4 text-center">Respostas</th>
                   <th className="p-4">Status</th>
                   <th className="p-4 pr-6 text-right">Ações</th>
@@ -322,7 +304,7 @@ export default function PesquisasPage() {
               <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
                 {pesquisasFiltradas.map((p) => {
                   const obj = objetos.find(ob => ob.id === p.objeto_id)
-                  const lid = lideres.find(l => l.id === p.lider_id)
+                  const coord = coordenadores.find(c => c.id === (p.coordenador_id || p.lider_id))
 
                   return (
                     <tr key={p.id} className="hover:bg-zinc-50/80 dark:hover:bg-zinc-800/40 transition-colors group">
@@ -337,7 +319,7 @@ export default function PesquisasPage() {
                         </div>
                       </td>
                       <td className="p-4 text-zinc-600 dark:text-zinc-300 text-sm">
-                        {lid?.nome || <span className="italic text-zinc-400 text-xs">Sem líder</span>}
+                        {coord?.nome || <span className="italic text-zinc-400 text-xs">Sem coordenador</span>}
                       </td>
                       <td className="p-4 text-center font-bold text-zinc-900 dark:text-zinc-100 text-sm">
                         {respostasCounts[p.id] || 0}
@@ -557,68 +539,28 @@ export default function PesquisasPage() {
                 </div>
 
                 <div>
-                  {isAddingLider ? (
-                    <div>
-                      <label className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">
-                        Novo Líder
-                      </label>
-                      <div className="flex gap-2 items-center">
-                        <input
-                          type="text"
-                          required
-                          placeholder="Nome..."
-                          value={novoLiderNome}
-                          onChange={(e) => setNovoLiderNome(e.target.value)}
-                          className="flex-1 min-w-0 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 px-3 py-2 text-sm focus:border-sky-500 focus:outline-hidden focus:ring-2 focus:ring-sky-500/20 transition-all"
-                          autoFocus
-                        />
-                        <button
-                          type="button"
-                          onClick={handleSaveQuickLider}
-                          className="p-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl cursor-pointer transition-colors"
-                          title="Salvar"
-                        >
-                          <Check className="h-4 w-4" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setIsAddingLider(false)
-                            setNovoLiderNome('')
-                          }}
-                          className="p-2 bg-zinc-100 dark:bg-zinc-800 text-zinc-500 rounded-xl cursor-pointer transition-colors"
-                          title="Cancelar"
-                        >
-                          <X className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div>
-                      <div className="flex justify-between items-center mb-2">
-                        <label className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider">
-                          Líder
-                        </label>
-                        <button
-                          type="button"
-                          onClick={() => setIsAddingLider(true)}
-                          className="text-[10px] text-sky-600 font-bold hover:underline cursor-pointer flex items-center gap-0.5"
-                        >
-                          <Plus className="h-2.5 w-2.5" /> Novo
-                        </button>
-                      </div>
-                      <select
-                        value={liderId}
-                        onChange={(e) => setLiderId(e.target.value)}
-                        className="w-full rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 px-3 py-2.5 text-sm focus:border-sky-500 focus:outline-hidden focus:ring-2 focus:ring-sky-500/20 transition-all cursor-pointer"
-                      >
-                        <option value="">Nenhum líder</option>
-                        {lideres.map(lid => (
-                          <option key={lid.id} value={lid.id}>{lid.nome}</option>
-                        ))}
-                      </select>
-                    </div>
-                  )}
+                  <div className="flex justify-between items-center mb-2">
+                    <label className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider">
+                      Coordenador
+                    </label>
+                    <Link
+                      href="/coordenadores"
+                      target="_blank"
+                      className="text-[10px] text-sky-600 font-bold hover:underline cursor-pointer flex items-center gap-0.5"
+                    >
+                      Gerenciar Coordenadores
+                    </Link>
+                  </div>
+                  <select
+                    value={coordenadorId}
+                    onChange={(e) => setCoordenadorId(e.target.value)}
+                    className="w-full rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 px-3 py-2.5 text-sm focus:border-sky-500 focus:outline-hidden focus:ring-2 focus:ring-sky-500/20 transition-all cursor-pointer"
+                  >
+                    <option value="">Nenhum coordenador</option>
+                    {coordenadores.map(coord => (
+                      <option key={coord.id} value={coord.id}>{coord.nome}</option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
