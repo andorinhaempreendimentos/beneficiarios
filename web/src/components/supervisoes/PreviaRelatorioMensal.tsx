@@ -45,8 +45,41 @@ export function PreviaRelatorioMensal({
 
   return (
     <div className="flex flex-col gap-4">
+      {/* Estilos dedicados para impressão isolada da folha oficial */}
+      <style>{`
+        @media print {
+          body {
+            background: #ffffff !important;
+            color: #000000 !important;
+          }
+          body * {
+            visibility: hidden !important;
+          }
+          #folha-relatorio-oficial,
+          #folha-relatorio-oficial * {
+            visibility: visible !important;
+          }
+          #folha-relatorio-oficial {
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: none !important;
+            box-shadow: none !important;
+            background: #ffffff !important;
+          }
+          @page {
+            size: A4 portrait;
+            margin: 1.2cm;
+          }
+        }
+      `}</style>
+
       {/* Barra de Ações da Pré-visualização */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-zinc-100 p-3 rounded-xl border border-zinc-200">
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-zinc-100 p-3 rounded-xl border border-zinc-200 print:hidden">
         <div className="flex items-center gap-2 text-xs text-zinc-600 font-medium">
           <FileText className="h-4 w-4 text-sky-600" />
           <span>Pré-visualização do Relatório Mensal ({nomeMes}/{ano})</span>
@@ -74,7 +107,10 @@ export function PreviaRelatorioMensal({
       </div>
 
       {/* Folha do Documento Oficial A4 */}
-      <div className="bg-white border border-zinc-300 rounded-xl shadow-md p-6 sm:p-10 font-sans text-zinc-800 text-xs leading-relaxed max-w-5xl mx-auto w-full print:border-none print:shadow-none print:p-0">
+      <div
+        id="folha-relatorio-oficial"
+        className="bg-white border border-zinc-300 rounded-xl shadow-md p-6 sm:p-10 font-sans text-zinc-800 text-xs leading-relaxed max-w-5xl mx-auto w-full print:border-none print:shadow-none print:p-0 print:m-0"
+      >
         
         {/* Cabeçalho Institucional */}
         <div className="text-center pb-4 mb-5 border-b border-zinc-200">
