@@ -367,9 +367,9 @@ export default function PesquisasPage() {
                             <span className="text-[11px] text-zinc-500 font-medium">
                               Objeto: {obj ? `${obj.tipo === 'projeto' ? '📁' : '📅'} ${obj.nome}` : <span className="italic text-zinc-400">Sem objeto</span>}
                             </span>
-                            {(nuc || tur) && (
+                            {nuc && (
                               <span className="inline-flex items-center gap-1 text-[11px] text-sky-600 dark:text-sky-400 font-medium bg-sky-50 dark:bg-sky-950/50 px-2 py-0.5 rounded-md border border-sky-100 dark:border-sky-900/60">
-                                📍 {nuc?.identificacao || ''}{tur ? ` • ${tur.nome}` : ''}
+                                📍 {nuc.identificacao}
                               </span>
                             )}
                           </div>
@@ -624,58 +624,20 @@ export default function PesquisasPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">
-                    Núcleo
-                  </label>
-                  <select
-                    value={nucleoId}
-                    onChange={(e) => {
-                      const newNuc = e.target.value
-                      setNucleoId(newNuc)
-                      if (turmaId) {
-                        const t = turmas.find(item => item.id === turmaId)
-                        if (t && t.nucleo_id !== newNuc) {
-                          setTurmaId('')
-                        }
-                      }
-                    }}
-                    className="w-full rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 px-3 py-2.5 text-sm focus:border-sky-500 focus:outline-hidden focus:ring-2 focus:ring-sky-500/20 transition-all cursor-pointer"
-                  >
-                    <option value="">Geral / Sem Núcleo</option>
-                    {nucleos.map(n => (
-                      <option key={n.id} value={n.id}>{n.identificacao}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">
-                    Turma
-                  </label>
-                  <select
-                    value={turmaId}
-                    onChange={(e) => {
-                      const newTurma = e.target.value
-                      setTurmaId(newTurma)
-                      if (newTurma) {
-                        const t = turmas.find(item => item.id === newTurma)
-                        if (t && t.nucleo_id && (!nucleoId || nucleoId !== t.nucleo_id)) {
-                          setNucleoId(t.nucleo_id)
-                        }
-                      }
-                    }}
-                    className="w-full rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 px-3 py-2.5 text-sm focus:border-sky-500 focus:outline-hidden focus:ring-2 focus:ring-sky-500/20 transition-all cursor-pointer"
-                  >
-                    <option value="">Geral / Sem Turma</option>
-                    {turmas
-                      .filter(t => !nucleoId || t.nucleo_id === nucleoId)
-                      .map(t => (
-                        <option key={t.id} value={t.id}>{t.nome}</option>
-                      ))}
-                  </select>
-                </div>
+              <div>
+                <label className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">
+                  Núcleo
+                </label>
+                <select
+                  value={nucleoId}
+                  onChange={(e) => setNucleoId(e.target.value)}
+                  className="w-full rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 px-3 py-2.5 text-sm focus:border-sky-500 focus:outline-hidden focus:ring-2 focus:ring-sky-500/20 transition-all cursor-pointer"
+                >
+                  <option value="">Geral / Sem Núcleo</option>
+                  {nucleos.map(n => (
+                    <option key={n.id} value={n.id}>{n.identificacao}</option>
+                  ))}
+                </select>
               </div>
 
               <div className="flex items-center gap-3 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 p-3 rounded-xl">
