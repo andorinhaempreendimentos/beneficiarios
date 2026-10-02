@@ -59,10 +59,6 @@ export default function PesquisasPage() {
   const [turmas, setTurmas] = useState<{ id: string; nome: string; nucleo_id: string }[]>([])
   const [meusNucleosIds, setMeusNucleosIds] = useState<string[]>([])
 
-  // Quick Add States
-  const [isAddingObjeto, setIsAddingObjeto] = useState<'projeto' | 'evento' | null>(null)
-  const [novoObjetoNome, setNovoObjetoNome] = useState('')
-
   useEffect(() => {
     loadAllData()
   }, [])
@@ -207,27 +203,6 @@ export default function PesquisasPage() {
     } catch (err) {
       console.error(err)
       showToast('error', 'Erro ao alterar status da pesquisa.')
-    }
-  }
-
-  const handleSaveQuickObjeto = async () => {
-    if (!novoObjetoNome.trim() || !isAddingObjeto) return
-    try {
-      const novoObj = await dbService.saveObjeto({
-        nome: novoObjetoNome,
-        tipo: isAddingObjeto,
-        descricao: '',
-        termo_fomento: null,
-        codigo_objeto: null,
-        codigo_programa: null,
-        nome_programa: null
-      })
-      setObjetos(prev => [novoObj, ...prev])
-      setObjetoId(novoObj.id)
-      setNovoObjetoNome('')
-      setIsAddingObjeto(null)
-    } catch (err) {
-      console.error(err)
     }
   }
 
@@ -493,19 +468,6 @@ export default function PesquisasPage() {
 
               <div>
                 <label className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">
-                  Descrição / Objetivo
-                </label>
-                <textarea
-                  value={descricao}
-                  onChange={(e) => setDescricao(e.target.value)}
-                  placeholder="Descreva sobre qual tema é esta pesquisa..."
-                  rows={3}
-                  className="w-full rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 px-4 py-2.5 text-sm focus:border-sky-500 focus:outline-hidden focus:ring-2 focus:ring-sky-500/20 transition-all resize-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">
                   Fluxo de Perguntas
                 </label>
                 <select
@@ -523,80 +485,21 @@ export default function PesquisasPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  {isAddingObjeto ? (
-                    <div>
-                      <label className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">
-                        Novo {isAddingObjeto === 'projeto' ? 'Projeto' : 'Evento'}
-                      </label>
-                      <div className="flex gap-2 items-center">
-                        <input
-                          type="text"
-                          required
-                          placeholder="Nome..."
-                          value={novoObjetoNome}
-                          onChange={(e) => setNovoObjetoNome(e.target.value)}
-                          className="flex-1 min-w-0 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 px-3 py-2 text-sm focus:border-sky-500 focus:outline-hidden focus:ring-2 focus:ring-sky-500/20 transition-all"
-                          autoFocus
-                        />
-                        <button
-                          type="button"
-                          onClick={handleSaveQuickObjeto}
-                          className="p-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl cursor-pointer transition-colors"
-                          title="Salvar"
-                        >
-                          <Check className="h-4 w-4" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setIsAddingObjeto(null)
-                            setNovoObjetoNome('')
-                          }}
-                          className="p-2 bg-zinc-100 dark:bg-zinc-800 text-zinc-500 rounded-xl cursor-pointer transition-colors"
-                          title="Cancelar"
-                        >
-                          <X className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div>
-                      <div className="flex justify-between items-center mb-1.5">
-                        <label className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider">
-                          Objeto
-                        </label>
-                        <div className="flex gap-1.5">
-                          <button
-                            type="button"
-                            onClick={() => setIsAddingObjeto('projeto')}
-                            className="text-[10px] text-sky-600 font-bold hover:underline cursor-pointer flex items-center gap-0.5"
-                          >
-                            <Plus className="h-2 w-2" /> Proj
-                          </button>
-                          <span className="text-[10px] text-zinc-300">|</span>
-                          <button
-                            type="button"
-                            onClick={() => setIsAddingObjeto('evento')}
-                            className="text-[10px] text-purple-600 font-bold hover:underline cursor-pointer flex items-center gap-0.5"
-                          >
-                            <Plus className="h-2 w-2" /> Evento
-                          </button>
-                        </div>
-                      </div>
-                      <select
-                        value={objetoId}
-                        onChange={(e) => setObjetoId(e.target.value)}
-                        className="w-full rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 px-3 py-2.5 text-sm focus:border-sky-500 focus:outline-hidden focus:ring-2 focus:ring-sky-500/20 transition-all cursor-pointer"
-                      >
-                        <option value="">Sem objeto</option>
-                        {objetos.map(obj => (
-                          <option key={obj.id} value={obj.id}>
-                            {obj.tipo === 'projeto' ? '📁' : '📅'} {obj.nome}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  )}
+                  <label className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">
+                    Objeto
+                  </label>
+                  <select
+                    value={objetoId}
+                    onChange={(e) => setObjetoId(e.target.value)}
+                    className="w-full rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 px-3 py-2.5 text-sm focus:border-sky-500 focus:outline-hidden focus:ring-2 focus:ring-sky-500/20 transition-all cursor-pointer"
+                  >
+                    <option value="">Sem objeto</option>
+                    {objetos.map(obj => (
+                      <option key={obj.id} value={obj.id}>
+                        {obj.tipo === 'projeto' ? '📁' : '📅'} {obj.nome}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div>
