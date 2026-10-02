@@ -69,11 +69,6 @@ export function ModalGerarRelatorioMensal({
   const totalSupervisoes = supervisoes.length;
 
   async function handleGerarDocx() {
-    if (totalSupervisoes === 0) {
-      toast.error("Nenhuma supervisão finalizada para gerar relatório.");
-      return;
-    }
-
     setGerando(true);
     try {
       await exportarRelatorioMensalSupervisorDocx({
@@ -242,7 +237,7 @@ export function ModalGerarRelatorioMensal({
           <Button
             variant="primary"
             onClick={handleGerarDocx}
-            disabled={gerando || totalSupervisoes === 0}
+            disabled={gerando}
             className="flex items-center gap-2"
           >
             <Download className="h-4 w-4" />

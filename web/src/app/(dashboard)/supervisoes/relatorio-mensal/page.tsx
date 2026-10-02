@@ -17,6 +17,7 @@ import {
 import { coordenadoresApi } from "@/lib/api/coordenadores";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { ModalGerarRelatorioMensal } from "@/components/supervisoes/ModalGerarRelatorioMensal";
+import { PreviaRelatorioMensal } from "@/components/supervisoes/PreviaRelatorioMensal";
 import { FileText } from "lucide-react";
 import { formatarData } from "@/lib/utils";
 
@@ -109,10 +110,12 @@ export default function RelatorioMensalPage() {
   const supervisoes = pageData?.data ?? [];
   const finalizadas = supervisoes.filter((s) => s.status === "finalizada");
 
-  // Regiões sugeridas a partir dos núcleos visitados
+  // Regiões sugeridas a partir dos núcleos visitados ou núcleo filtrado
+  const nucleoSelecionado = nucleos.find((n) => n.id === ativos.nucleoId);
   const regioesSugeridas = Array.from(
     new Set(finalizadas.map((s) => s.nucleo?.regiao).filter(Boolean) as string[])
   );
+  const regiaoAtual = nucleoSelecionado?.regiao || regioesSugeridas.join(" / ") || "Palmas - TO";
 
   // Agrupar por núcleo
   const porNucleo = finalizadas.reduce<Record<string, SupervisaoApi[]>>((acc, s) => {
@@ -144,7 +147,7 @@ export default function RelatorioMensalPage() {
           <Button
             variant="primary"
             onClick={() => setModalAberto(true)}
-            disabled={loading || finalizadas.length === 0}
+            disabled={loading}
             className="flex items-center gap-2"
           >
             <FileText className="h-4 w-4" />
@@ -204,12 +207,20 @@ export default function RelatorioMensalPage() {
             ))}
           </div>
 
-          {/* Tabela por núcleo */}
-          {Object.keys(porNucleo).length === 0 ? (
-            <div className="py-12 text-center text-sm text-zinc-400">
-              Nenhuma supervisão finalizada no período selecionado.
-            </div>
-          ) : (
+          {/* Pré-visualização do Relatório Oficial (Visível mesmo sem supervisões) */}
+          <PreviaRelatorioMensal
+            mes={Number(ativos.mes)}
+            ano={Number(ativos.ano)}
+            coordenadorNome={coordenadorNome}
+            regiao={regiaoAtual}
+            supervisoes={finalizadas}
+            professoresMap={professoresMap}
+            turmasMap={turmasMap}
+            onGerarRelatorio={() => setModalAberto(true)}
+          />
+
+          {/* Detalhamento por Núcleo (quando houver supervisões no período) */}
+          {Object.keys(porNucleo).length > 0 && (
             <Card>
               <div className="px-5 py-4 border-b border-zinc-100">
                 <h2 className="text-sm font-semibold text-zinc-800">Detalhamento por Núcleo</h2>

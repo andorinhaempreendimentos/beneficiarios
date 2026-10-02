@@ -69,6 +69,7 @@ function mapNucleo(r: any): NucleoApi {
     numero: r.numero,
     bairro: r.bairro,
     cidade: r.cidade,
+    regiao: r.regiao ?? undefined,
     estado: r.estado,
     cep: r.cep,
     status: r.status,

@@ -335,6 +335,25 @@ export async function exportarRelatorioMensalSupervisorDocx(dados: DadosRelatori
     );
   }
 
+  if (supervisoes.length === 0) {
+    for (let i = 0; i < 6; i++) {
+      resumoRows.push(
+        new TableRow({
+          children: [
+            createCell('', wResData),
+            createCell('', wResNucleo),
+            createCell('', wResProf),
+            createCell('', wResHora),
+            createCell('', wResBen),
+            createCell('', wResSit),
+            createCell('', wResPend),
+            createCell('', wResProv),
+          ],
+        })
+      );
+    }
+  }
+
   children.push(
     new Table({
       width: { size: TABLE_WIDTH, type: WidthType.DXA },
