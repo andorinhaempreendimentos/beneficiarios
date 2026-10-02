@@ -174,37 +174,103 @@ export interface RespostaItem {
 export const dbService = {
   // --- OBJETOS ---
   async getObjetos(): Promise<Objeto[]> {
-    const { data, error } = await supabase.from("objeto").select("*").order("created_at", { ascending: false });
+    const { data, error } = await supabase
+      .from("objetos")
+      .select("*")
+      .is("deleted_at", null)
+      .order("created_at", { ascending: false });
     if (error) throw error;
-    return data || [];
+    return (data || []).map((o: any) => ({
+      id: o.id,
+      nome: o.nome,
+      descricao: o.descricao || null,
+      tipo: o.tipo_duracao === 'evento' ? 'evento' : 'projeto',
+      termo_fomento: o.termo_de_fomento || null,
+      codigo_objeto: o.codigo_objeto || null,
+      codigo_programa: o.codigo_programa || null,
+      nome_programa: o.nome_programa || null,
+      created_at: o.created_at
+    }));
   },
 
   async saveObjeto(objeto: Omit<Objeto, "id" | "created_at"> & { id?: string }): Promise<Objeto> {
+    const payload: any = {
+      nome: objeto.nome,
+      descricao: objeto.descricao || null,
+      tipo_duracao: objeto.tipo === 'evento' ? 'evento' : 'periodo',
+      termo_de_fomento: objeto.termo_fomento || null,
+      codigo_objeto: objeto.codigo_objeto || null,
+      codigo_programa: objeto.codigo_programa || null,
+      nome_programa: objeto.nome_programa || null
+    };
+
     if (objeto.id) {
-      const { data, error } = await supabase.from("objeto").update(objeto).eq("id", objeto.id).select().single();
-      if (error) throw error;
-      return data;
-    } else {
-      const { data: userData } = await supabase.auth.getUser();
       const { data, error } = await supabase
-        .from("objeto")
-        .insert({ ...objeto, user_id: userData.user?.id })
+        .from("objetos")
+        .update(payload)
+        .eq("id", objeto.id)
         .select()
         .single();
       if (error) throw error;
-      return data;
+      return {
+        id: data.id,
+        nome: data.nome,
+        descricao: data.descricao || null,
+        tipo: data.tipo_duracao === 'evento' ? 'evento' : 'projeto',
+        termo_fomento: data.termo_de_fomento || null,
+        codigo_objeto: data.codigo_objeto || null,
+        codigo_programa: data.codigo_programa || null,
+        nome_programa: data.nome_programa || null,
+        created_at: data.created_at
+      };
+    } else {
+      const { data, error } = await supabase
+        .from("objetos")
+        .insert({ ...payload, status: 'ativo' })
+        .select()
+        .single();
+      if (error) throw error;
+      return {
+        id: data.id,
+        nome: data.nome,
+        descricao: data.descricao || null,
+        tipo: data.tipo_duracao === 'evento' ? 'evento' : 'projeto',
+        termo_fomento: data.termo_de_fomento || null,
+        codigo_objeto: data.codigo_objeto || null,
+        codigo_programa: data.codigo_programa || null,
+        nome_programa: data.nome_programa || null,
+        created_at: data.created_at
+      };
     }
   },
 
   async deleteObjeto(id: string): Promise<void> {
-    const { error } = await supabase.from("objeto").delete().eq("id", id);
+    const { error } = await supabase
+      .from("objetos")
+      .update({ deleted_at: new Date().toISOString() })
+      .eq("id", id);
     if (error) throw error;
   },
 
   async getObjetoById(id: string): Promise<Objeto | null> {
-    const { data, error } = await supabase.from("objeto").select("*").eq("id", id).maybeSingle();
+    const { data, error } = await supabase
+      .from("objetos")
+      .select("*")
+      .eq("id", id)
+      .maybeSingle();
     if (error) throw error;
-    return data;
+    if (!data) return null;
+    return {
+      id: data.id,
+      nome: data.nome,
+      descricao: data.descricao || null,
+      tipo: data.tipo_duracao === 'evento' ? 'evento' : 'projeto',
+      termo_fomento: data.termo_de_fomento || null,
+      codigo_objeto: data.codigo_objeto || null,
+      codigo_programa: data.codigo_programa || null,
+      nome_programa: data.nome_programa || null,
+      created_at: data.created_at
+    };
   },
 
   // --- COORDENADORES ---
