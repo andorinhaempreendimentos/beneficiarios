@@ -395,11 +395,96 @@ export async function exportarRelatorioMensalSupervisorDocx(dados: DadosRelatori
   }
 
   // 3. REGISTRO DETALHADO POR SUPERVISÃO
-  supervisoes.forEach((s, idx) => {
-    const numSup = idx + 1;
+  if (supervisoes.length === 0) {
     children.push(
-      createSectionHeading(`${proximoNumeroSecao}. REGISTRO DETALHADO – SUPERVISÃO Nº ${numSup}`)
+      createSectionHeading(`${proximoNumeroSecao}. REGISTRO DETALHADO – SUPERVISÃO Nº 1 (MODELO)`)
     );
+
+    const wD1 = 2400;
+    const wD2 = 2400;
+    const wD3 = 2400;
+    const wD4 = 2400;
+
+    children.push(
+      new Table({
+        width: { size: TABLE_WIDTH, type: WidthType.DXA },
+        rows: [
+          new TableRow({
+            children: [
+              createCell('Data:', wD1, { bold: true }),
+              createCell('___/___/______', wD2),
+              createCell('Núcleo:', wD3, { bold: true }),
+              createCell('________________________', wD4),
+            ],
+          }),
+          new TableRow({
+            children: [
+              createCell('Entrada:', wD1, { bold: true }),
+              createCell('___:___', wD2),
+              createCell('Saída:', wD3, { bold: true }),
+              createCell('___:___', wD4),
+            ],
+          }),
+          new TableRow({
+            children: [
+              createCell('Professor(a):', wD1, { bold: true }),
+              createCell('________________________', wD2),
+              createCell('Presença:', wD3, { bold: true }),
+              createCell('☐ Presente   ☐ Ausente', wD4),
+            ],
+          }),
+          new TableRow({
+            children: [
+              createCell('Turma(s)/faixa etária:', wD1, { bold: true }),
+              createCell('________________________', wD2),
+              createCell('Beneficiários presentes:', wD3, { bold: true }),
+              createCell('Presentes: ____   Esperados: ____', wD4),
+            ],
+          }),
+          new TableRow({
+            children: [
+              createCell('Grade de horários:', wD1, { bold: true }),
+              createCell('☐ Conforme   ☐ Não conforme', wD2),
+              createCell('Frequência/chamada:', wD3, { bold: true }),
+              createCell('☐ Conferida   ☐ Pendente', wD4),
+            ],
+          }),
+          new TableRow({
+            children: [
+              createCell('Espaço físico:', wD1, { bold: true }),
+              createCell('☐ Adequado   ☐ Requer atenção', wD2),
+              createCell('Materiais esportivos:', wD3, { bold: true }),
+              createCell('☐ Adequados   ☐ Pendentes', wD4),
+            ],
+          }),
+        ],
+      })
+    );
+
+    children.push(createSubHeading('Atividades desenvolvidas:'));
+    children.push(createTextBlock('(Nenhuma supervisão registrada para este período)'));
+
+    children.push(createSubHeading('Observações / Recomendações:'));
+    children.push(createTextBlock('—'));
+
+    children.push(createSubHeading('Orientações repassadas ao professor:'));
+    children.push(createTextBlock('—'));
+
+    children.push(
+      new Paragraph({
+        spacing: { before: 100, after: 180 },
+        children: [
+          new TextRun({ text: 'Registro fotográfico: ', bold: true, size: 18, font: 'Calibri' }),
+          new TextRun({ text: '☐ Anexado   ☒ Não se aplica', size: 18, font: 'Calibri' }),
+        ],
+      })
+    );
+  } else {
+    supervisoes.forEach((s, idx) => {
+      const numSup = idx + 1;
+      children.push(
+        createSectionHeading(`${proximoNumeroSecao}. REGISTRO DETALHADO – SUPERVISÃO Nº ${numSup}`)
+      );
 
     const nomeNucleo = s.nucleo?.identificacao || '—';
     const profPresente = s.professorPresente === true;
@@ -525,14 +610,31 @@ export async function exportarRelatorioMensalSupervisorDocx(dados: DadosRelatori
       })
     );
   });
+  }
 
   proximoNumeroSecao++;
 
   // 4. REGISTRO FOTOGRÁFICO
   const todasFotos = supervisoes.flatMap((s) => (s.fotos || []).map((f) => ({ ...f, nucleoNome: s.nucleo?.identificacao || 'Núcleo', data: s.dataSupervisao })));
   
-  if (todasFotos.length > 0) {
-    children.push(createSectionHeading(`${proximoNumeroSecao}. REGISTRO FOTOGRÁFICO`));
+  children.push(createSectionHeading(`${proximoNumeroSecao}. REGISTRO FOTOGRÁFICO`));
+
+  if (todasFotos.length === 0) {
+    children.push(
+      new Paragraph({
+        spacing: { before: 0, after: 180 },
+        children: [
+          new TextRun({
+            text: 'Nenhum registro fotográfico anexado no sistema para este período.',
+            size: 18,
+            font: 'Calibri',
+            italics: true,
+            color: '64748B',
+          }),
+        ],
+      })
+    );
+  } else {
     children.push(
       new Paragraph({
         spacing: { before: 0, after: 120 },
@@ -599,9 +701,9 @@ export async function exportarRelatorioMensalSupervisorDocx(dados: DadosRelatori
         }
       }
     }
-
-    proximoNumeroSecao++;
   }
+
+  proximoNumeroSecao++;
 
   // 5. DECLARAÇÃO DO COORDENADOR
   children.push(

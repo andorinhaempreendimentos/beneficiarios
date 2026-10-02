@@ -1,6 +1,6 @@
 "use client";
 
-import { Printer, Download, FileText, CheckSquare, Square } from "lucide-react";
+import { Printer, Download, FileText, CheckSquare, Square, Camera } from "lucide-react";
 import { formatarData } from "@/lib/utils";
 import type { SupervisaoApi, TurmaApi } from "@/lib/api/services";
 
@@ -38,6 +38,7 @@ export function PreviaRelatorioMensal({
   const totalNucleos = nucleosIdsUnicos.length;
   const totalSupervisoes = supervisoes.length;
   const dataHoje = formatarData(new Date().toISOString());
+  const todasFotos = supervisoes.flatMap((s) => (s.fotos || []).map((f) => ({ ...f, nucleoNome: s.nucleo?.identificacao || "Núcleo", data: s.dataSupervisao })));
 
   function handleImprimir() {
     window.print();
@@ -280,10 +281,90 @@ export function PreviaRelatorioMensal({
           </div>
         </div>
 
-        {/* 3. REGISTRO DETALHADO POR SUPERVISÃO (QUANDO HOUVER) */}
-        {supervisoes.length > 0 && (
-          <div className="mb-6 flex flex-col gap-4">
-            {supervisoes.map((s, idx) => {
+        {/* 3. REGISTRO DETALHADO POR SUPERVISÃO */}
+        <div className="mb-6 flex flex-col gap-4">
+          {supervisoes.length === 0 ? (
+            <div className="border border-zinc-300 rounded-sm p-4 bg-white">
+              <h5 className="font-bold text-zinc-900 uppercase text-xs mb-3 pb-1 border-b border-zinc-200">
+                3. REGISTRO DETALHADO – SUPERVISÃO Nº 1 (MODELO)
+              </h5>
+
+              <div className="border border-zinc-300 mb-3 overflow-hidden">
+                <table className="w-full text-[11px] border-collapse">
+                  <tbody>
+                    <tr className="border-b border-zinc-300 divide-x divide-zinc-300">
+                      <td className="w-1/4 p-1.5 bg-zinc-50 font-bold">Data:</td>
+                      <td className="w-1/4 p-1.5 text-zinc-400">___/___/______</td>
+                      <td className="w-1/4 p-1.5 bg-zinc-50 font-bold">Núcleo:</td>
+                      <td className="w-1/4 p-1.5 text-zinc-400">________________________</td>
+                    </tr>
+                    <tr className="border-b border-zinc-300 divide-x divide-zinc-300">
+                      <td className="p-1.5 bg-zinc-50 font-bold">Entrada:</td>
+                      <td className="p-1.5 text-zinc-400">___:___</td>
+                      <td className="p-1.5 bg-zinc-50 font-bold">Saída:</td>
+                      <td className="p-1.5 text-zinc-400">___:___</td>
+                    </tr>
+                    <tr className="border-b border-zinc-300 divide-x divide-zinc-300">
+                      <td className="p-1.5 bg-zinc-50 font-bold">Professor(a):</td>
+                      <td className="p-1.5 text-zinc-400">________________________</td>
+                      <td className="p-1.5 bg-zinc-50 font-bold">Presença:</td>
+                      <td className="p-1.5 text-zinc-600">☐ Presente &nbsp; ☐ Ausente</td>
+                    </tr>
+                    <tr className="border-b border-zinc-300 divide-x divide-zinc-300">
+                      <td className="p-1.5 bg-zinc-50 font-bold">Turma(s)/faixa etária:</td>
+                      <td className="p-1.5 text-zinc-400">________________________</td>
+                      <td className="p-1.5 bg-zinc-50 font-bold">Beneficiários presentes:</td>
+                      <td className="p-1.5 text-zinc-400">____ presentes</td>
+                    </tr>
+                    <tr className="border-b border-zinc-300 divide-x divide-zinc-300">
+                      <td className="p-1.5 bg-zinc-50 font-bold">Grade de horários:</td>
+                      <td className="p-1.5 text-zinc-600">☐ Conforme &nbsp; ☐ Não conforme</td>
+                      <td className="p-1.5 bg-zinc-50 font-bold">Frequência/chamada:</td>
+                      <td className="p-1.5 text-zinc-600">☐ Conferida &nbsp; ☐ Pendente</td>
+                    </tr>
+                    <tr className="border-b border-zinc-300 divide-x divide-zinc-300">
+                      <td className="p-1.5 bg-zinc-50 font-bold">Espaço físico:</td>
+                      <td className="p-1.5 text-zinc-600">☐ Adequado &nbsp; ☐ Requer atenção</td>
+                      <td className="p-1.5 bg-zinc-50 font-bold">Materiais esportivos:</td>
+                      <td className="p-1.5 text-zinc-600">☐ Adequados &nbsp; ☐ Pendentes</td>
+                    </tr>
+                    <tr className="divide-x divide-zinc-300">
+                      <td className="p-1.5 bg-zinc-50 font-bold">Atividade acompanhada:</td>
+                      <td colSpan={3} className="p-1.5 text-zinc-400">____________________________________________________</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="flex flex-col gap-2 text-[11px] mb-2 text-zinc-600">
+                <div>
+                  <span className="font-bold text-zinc-700">Observações da supervisão:</span>
+                  <div className="h-6 border-b border-zinc-200 border-dashed" />
+                </div>
+                <div>
+                  <span className="font-bold text-zinc-700">Ocorrências/dificuldades identificadas:</span>
+                  <div className="h-6 border-b border-zinc-200 border-dashed" />
+                </div>
+                <div>
+                  <span className="font-bold text-zinc-700">Orientações repassadas ao professor:</span>
+                  <div className="h-6 border-b border-zinc-200 border-dashed" />
+                </div>
+                <div>
+                  <span className="font-bold text-zinc-700">Pendências e providências adotadas:</span>
+                  <div className="h-6 border-b border-zinc-200 border-dashed" />
+                </div>
+                <div>
+                  <span className="font-bold text-zinc-700">Prazo para regularização/acompanhamento:</span>
+                  <div className="h-6 border-b border-zinc-200 border-dashed" />
+                </div>
+              </div>
+
+              <div className="text-[11px] pt-1 border-t border-zinc-100 flex items-center justify-between text-zinc-500">
+                <span>Registro fotográfico: ☐ Anexado &nbsp; ☐ Não se aplica</span>
+              </div>
+            </div>
+          ) : (
+            supervisoes.map((s, idx) => {
               const numSup = idx + 1;
               const nomeNucleo = s.nucleo?.identificacao || "—";
               const profPresente = s.professorPresente === true;
@@ -395,9 +476,49 @@ export function PreviaRelatorioMensal({
                   </div>
                 </div>
               );
-            })}
-          </div>
-        )}
+            })
+          )}
+        </div>
+
+        {/* 4. REGISTRO FOTOGRÁFICO */}
+        <div className="mb-6">
+          <h4 className="text-xs font-bold text-zinc-900 uppercase tracking-wide mb-2 flex items-center justify-between">
+            <span>4. REGISTRO FOTOGRÁFICO</span>
+            {todasFotos.length > 0 && (
+              <span className="text-[11px] text-zinc-500 font-normal lowercase">
+                {todasFotos.length} foto(s) comprobatória(s)
+              </span>
+            )}
+          </h4>
+
+          {todasFotos.length === 0 ? (
+            <div className="border border-dashed border-zinc-300 rounded-sm p-6 text-center text-zinc-400 bg-zinc-50/50">
+              <Camera className="h-6 w-6 mx-auto mb-1 text-zinc-300" />
+              <p className="text-xs font-medium text-zinc-600">Nenhum registro fotográfico anexado até o momento</p>
+              <p className="text-[10px] text-zinc-400 mt-0.5">
+                Fotos anexadas às visitas aparecerão automaticamente aqui e serão exportadas no documento Word.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+              {todasFotos.map((foto, idx) => (
+                <div key={idx} className="border border-zinc-200 rounded-sm p-2 bg-zinc-50/50 flex flex-col gap-1.5">
+                  <div className="relative aspect-4/3 w-full bg-zinc-100 rounded-xs overflow-hidden border border-zinc-200">
+                    <img
+                      src={foto.url}
+                      alt={foto.legenda || `Foto da supervisão no núcleo ${foto.nucleoNome}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="text-[10px] text-zinc-600 leading-tight">
+                    <p className="font-semibold text-zinc-800">{foto.nucleoNome} · {formatarData(foto.data)}</p>
+                    {foto.legenda && <p className="text-zinc-500 mt-0.5 line-clamp-2">{foto.legenda}</p>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
         {/* DECLARAÇÃO DO COORDENADOR */}
         <div className="pt-4 border-t border-zinc-200">

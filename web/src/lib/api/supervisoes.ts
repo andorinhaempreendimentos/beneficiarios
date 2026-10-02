@@ -83,7 +83,7 @@ function mapSupervisao(r: any): SupervisaoApi {
     observacoesGerais: r.observacoes_gerais ?? null, status: r.status,
     fotos: r.supervisoes_fotos ? r.supervisoes_fotos.map(mapFoto) : undefined,
     nucleo: r.nucleos ? { identificacao: r.nucleos.identificacao, regiao: r.nucleos.regiao ?? undefined } : undefined,
-    coordenador: r.funcionarios ? { nome: r.funcionarios.nome } : undefined,
+    coordenador: r.funcionarios ? { nome: r.funcionarios.nome_completo || r.funcionarios.nome } : undefined,
     criadoEm: r.created_at, atualizadoEm: r.updated_at,
   };
 }
@@ -93,7 +93,7 @@ export const supervisoesApi = {
     const sb = await getSupabase();
     const { page, limit, from, to } = paginar(num(p?.page), num(p?.limit));
     let q = (sb as any).from('supervisoes')
-      .select('*, nucleos(identificacao, regiao), funcionarios(nome), supervisoes_fotos(*)', { count: 'exact' })
+      .select('*, nucleos(identificacao, regiao), funcionarios(nome_completo), supervisoes_fotos(*)', { count: 'exact' })
       .is('deleted_at', null);
     if (p?.nucleoId) q = q.eq('nucleo_id', p.nucleoId as string);
     if (p?.coordenadorId) q = q.eq('coordenador_id', p.coordenadorId as string);
@@ -107,7 +107,7 @@ export const supervisoesApi = {
   async get(id: string): Promise<SupervisaoApi> {
     const sb = await getSupabase();
     const { data, error } = await (sb as any).from('supervisoes')
-      .select('*, nucleos(identificacao, regiao), funcionarios(nome), supervisoes_fotos(*)')
+      .select('*, nucleos(identificacao, regiao), funcionarios(nome_completo), supervisoes_fotos(*)')
       .eq('id', id).single();
     if (error) throw error;
     return mapSupervisao(data);
