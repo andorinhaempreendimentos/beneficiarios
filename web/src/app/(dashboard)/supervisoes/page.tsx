@@ -104,11 +104,16 @@ export default function SupervisoesPage() {
         title="Supervisões"
         description="Formulários de visita de supervisão aos núcleos"
         actions={
-          semNucleos ? (
-            <span className="text-sm text-zinc-400 italic">Sem núcleos atribuídos</span>
-          ) : (
-            <LinkButton href="/supervisoes/nova">Nova supervisão</LinkButton>
-          )
+          <div className="flex items-center gap-2">
+            <LinkButton href="/supervisoes/relatorio-mensal" variant="secondary">
+              Relatório Mensal
+            </LinkButton>
+            {semNucleos ? (
+              <span className="text-sm text-zinc-400 italic">Sem núcleos atribuídos</span>
+            ) : (
+              <LinkButton href="/supervisoes/nova">Nova supervisão</LinkButton>
+            )}
+          </div>
         }
       />
 

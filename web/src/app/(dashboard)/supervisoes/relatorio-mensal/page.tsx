@@ -1,9 +1,23 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Card, PageHeader, Field, Select, Badge } from "@/components/ui";
+import { Card, PageHeader, Field, Select, Badge, Button } from "@/components/ui";
 import { useQuery } from "@/lib/hooks/useQuery";
-import { supervisoesApi, nucleosApi, type Paginated, type SupervisaoApi, type NucleoApi } from "@/lib/api/services";
+import {
+  supervisoesApi,
+  nucleosApi,
+  funcionariosApi,
+  turmasApi,
+  type Paginated,
+  type SupervisaoApi,
+  type NucleoApi,
+  type FuncionarioApi,
+  type TurmaApi,
+} from "@/lib/api/services";
+import { coordenadoresApi } from "@/lib/api/coordenadores";
+import { useAuth } from "@/components/providers/AuthProvider";
+import { ModalGerarRelatorioMensal } from "@/components/supervisoes/ModalGerarRelatorioMensal";
+import { FileText } from "lucide-react";
 import { formatarData } from "@/lib/utils";
 
 const MESES = [
@@ -32,6 +46,11 @@ function mediaAvaliacao(sups: SupervisaoApi[], campo: keyof SupervisaoApi): stri
 }
 
 export default function RelatorioMensalPage() {
+  const { user } = useAuth();
+  const isCoordenador = Boolean((user as any)?.isCoordenador);
+  const coordenadorId = isCoordenador ? ((user as any)?.entidadeId || user?.id) : undefined;
+  const coordenadorNome = user?.nome || "Coordenador";
+
   const anoAtual = new Date().getFullYear();
   const mesAtual = new Date().getMonth() + 1;
 
@@ -41,9 +60,35 @@ export default function RelatorioMensalPage() {
     nucleoId: "",
   });
   const [ativos, setAtivos] = useState(filtros);
+  const [modalAberto, setModalAberto] = useState(false);
 
-  const { data: nucleosData } = useQuery<Paginated<NucleoApi>>(() => nucleosApi.list({ limit: 200 }), []);
-  const nucleos = nucleosData?.data ?? [];
+  // Núcleos: coordenador vê só os seus; admin vê todos
+  const { data: meusNucleos } = useQuery<NucleoApi[]>(
+    () => isCoordenador ? coordenadoresApi.getMeusNucleos() : Promise.resolve([]),
+    [isCoordenador],
+  );
+  const { data: nucleosData } = useQuery<Paginated<NucleoApi>>(
+    () => isCoordenador
+      ? Promise.resolve({ data: [] as NucleoApi[], total: 0, page: 1, limit: 200 })
+      : nucleosApi.list({ limit: 200 }),
+    [isCoordenador],
+  );
+  const nucleos = isCoordenador ? (meusNucleos ?? []) : (nucleosData?.data ?? []);
+
+  // Dados auxiliares para detalhamento do relatório
+  const { data: funcsData } = useQuery<Paginated<FuncionarioApi>>(() => funcionariosApi.list({ limit: 300 }), []);
+  const { data: turmasData } = useQuery<Paginated<TurmaApi>>(() => turmasApi.list({ limit: 300 }), []);
+
+  const professoresMap = (funcsData?.data ?? []).reduce<Record<string, string>>((acc, f) => {
+    acc[f.id] = f.nomeCompleto;
+    return acc;
+  }, {});
+
+  const turmasMap = (turmasData?.data ?? []).reduce<Record<string, TurmaApi[]>>((acc, t) => {
+    if (!acc[t.nucleoId]) acc[t.nucleoId] = [];
+    acc[t.nucleoId].push(t);
+    return acc;
+  }, {});
 
   const dataInicio = `${ativos.ano}-${String(ativos.mes).padStart(2, "0")}-01`;
   const ultimoDia = new Date(Number(ativos.ano), Number(ativos.mes), 0).getDate();
@@ -54,14 +99,20 @@ export default function RelatorioMensalPage() {
       dataInicio,
       dataFim,
       nucleoId: ativos.nucleoId || undefined,
+      coordenadorId: coordenadorId || undefined,
       status: "finalizada",
       limit: 200,
     }),
-    [ativos],
+    [ativos, coordenadorId],
   );
 
   const supervisoes = pageData?.data ?? [];
   const finalizadas = supervisoes.filter((s) => s.status === "finalizada");
+
+  // Regiões sugeridas a partir dos núcleos visitados
+  const regioesSugeridas = Array.from(
+    new Set(finalizadas.map((s) => s.nucleo?.regiao).filter(Boolean) as string[])
+  );
 
   // Agrupar por núcleo
   const porNucleo = finalizadas.reduce<Record<string, SupervisaoApi[]>>((acc, s) => {
@@ -84,7 +135,22 @@ export default function RelatorioMensalPage() {
     <div className="flex flex-col gap-6 pb-12">
       <PageHeader
         title="Relatório Mensal de Supervisões"
-        description="Consolidado de visitas finalizadas por período"
+        description={
+          isCoordenador
+            ? `Supervisões aos núcleos de ${coordenadorNome}`
+            : "Consolidado de visitas finalizadas por período"
+        }
+        actions={
+          <Button
+            variant="primary"
+            onClick={() => setModalAberto(true)}
+            disabled={loading || finalizadas.length === 0}
+            className="flex items-center gap-2"
+          >
+            <FileText className="h-4 w-4" />
+            GERAR RELATÓRIO MENSAL
+          </Button>
+        }
       />
 
       {/* Filtros */}
@@ -214,6 +280,19 @@ export default function RelatorioMensalPage() {
               </div>
             </Card>
           )}
+
+          {/* Modal de geração do Relatório Mensal em DOCX */}
+          <ModalGerarRelatorioMensal
+            isOpen={modalAberto}
+            onClose={() => setModalAberto(false)}
+            mes={Number(ativos.mes)}
+            ano={Number(ativos.ano)}
+            coordenadorNome={coordenadorNome}
+            supervisoes={finalizadas}
+            regioesSugeridas={regioesSugeridas}
+            professoresMap={professoresMap}
+            turmasMap={turmasMap}
+          />
         </>
       )}
     </div>

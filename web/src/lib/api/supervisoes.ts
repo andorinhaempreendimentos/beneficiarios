@@ -60,7 +60,7 @@ export type SupervisaoApi = {
   observacoesGerais: string | null;
   status: 'rascunho' | 'finalizada';
   fotos?: SupervisaoFotoApi[];
-  nucleo?: { identificacao: string };
+  nucleo?: { identificacao: string; regiao?: string };
   coordenador?: { nome: string };
   criadoEm: string;
   atualizadoEm: string;
@@ -82,7 +82,7 @@ function mapSupervisao(r: any): SupervisaoApi {
     gradeCumprida: r.grade_cumprida ?? null, gradeObservacoes: r.grade_observacoes ?? null,
     observacoesGerais: r.observacoes_gerais ?? null, status: r.status,
     fotos: r.supervisoes_fotos ? r.supervisoes_fotos.map(mapFoto) : undefined,
-    nucleo: r.nucleos ? { identificacao: r.nucleos.identificacao } : undefined,
+    nucleo: r.nucleos ? { identificacao: r.nucleos.identificacao, regiao: r.nucleos.regiao ?? undefined } : undefined,
     coordenador: r.funcionarios ? { nome: r.funcionarios.nome } : undefined,
     criadoEm: r.created_at, atualizadoEm: r.updated_at,
   };
@@ -93,7 +93,7 @@ export const supervisoesApi = {
     const sb = await getSupabase();
     const { page, limit, from, to } = paginar(num(p?.page), num(p?.limit));
     let q = (sb as any).from('supervisoes')
-      .select('*, nucleos(identificacao), funcionarios(nome)', { count: 'exact' })
+      .select('*, nucleos(identificacao, regiao), funcionarios(nome), supervisoes_fotos(*)', { count: 'exact' })
       .is('deleted_at', null);
     if (p?.nucleoId) q = q.eq('nucleo_id', p.nucleoId as string);
     if (p?.coordenadorId) q = q.eq('coordenador_id', p.coordenadorId as string);
@@ -107,7 +107,7 @@ export const supervisoesApi = {
   async get(id: string): Promise<SupervisaoApi> {
     const sb = await getSupabase();
     const { data, error } = await (sb as any).from('supervisoes')
-      .select('*, nucleos(identificacao), funcionarios(nome), supervisoes_fotos(*)')
+      .select('*, nucleos(identificacao, regiao), funcionarios(nome), supervisoes_fotos(*)')
       .eq('id', id).single();
     if (error) throw error;
     return mapSupervisao(data);
