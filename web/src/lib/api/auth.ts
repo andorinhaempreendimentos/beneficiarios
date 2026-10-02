@@ -59,6 +59,7 @@ export async function fetchProfile(userId: string): Promise<AuthProfile> {
       nome: userData.user.user_metadata?.nome_completo || userData.user.email || "Usuário",
       email: userData.user.email || "",
       tipo: meta.tipo || "funcionario",
+      isCoordenador: meta.perfil_id === PERFIL_COORDENADOR,
       perfilId: meta.perfil_id || "",
       entidadeId: meta.entidade_id || null,
     };

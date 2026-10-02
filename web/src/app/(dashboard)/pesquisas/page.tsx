@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import Link from 'next/link'
 import { dbService, type Pesquisa, type Objeto, type Fluxo } from '@/services/pesquisasDb'
+import { useAuth } from '@/components/providers/AuthProvider'
 import { 
   Plus, 
   Edit2, 
@@ -22,6 +23,10 @@ import {
 } from 'lucide-react'
 
 export default function PesquisasPage() {
+  const { user } = useAuth()
+  const isCoordenador = Boolean((user as any)?.isCoordenador)
+  const coordId = user?.entidadeId || user?.refId || ''
+
   const [pesquisas, setPesquisas] = useState<Pesquisa[]>([])
   const [objetos, setObjetos] = useState<Objeto[]>([])
   const [coordenadores, setCoordenadores] = useState<{ id: string; nome: string }[]>([])
@@ -94,7 +99,7 @@ export default function PesquisasPage() {
     setTitulo('')
     setDescricao('')
     setObjetoId(objetos[0]?.id || '')
-    setCoordenadorId('')
+    setCoordenadorId(isCoordenador && coordId ? coordId : '')
     setPublicada(false)
     setExigirCpf(false)
     setFluxoId(fluxos[0]?.id || '')
@@ -190,6 +195,10 @@ export default function PesquisasPage() {
   }
 
   const pesquisasFiltradas = pesquisas.filter(p => {
+    if (isCoordenador && coordId) {
+      const pCoord = p.coordenador_id || p.lider_id
+      if (pCoord !== coordId) return false
+    }
     const obj = objetos.find(ob => ob.id === p.objeto_id)
     const coord = coordenadores.find(c => c.id === (p.coordenador_id || p.lider_id))
     const termo = busca.toLowerCase()
@@ -272,7 +281,7 @@ export default function PesquisasPage() {
         <div className="flex h-64 items-center justify-center">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-sky-600 border-t-transparent"></div>
         </div>
-      ) : pesquisas.length === 0 ? (
+      ) : (isCoordenador ? (pesquisasFiltradas.length === 0 && !busca) : pesquisas.length === 0) ? (
         <div className="text-center py-20 rounded-2xl border border-dashed border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-900/50">
           <ClipboardList className="h-12 w-12 mx-auto text-zinc-400 mb-4" />
           <h3 className="font-bold text-zinc-700 dark:text-zinc-300 text-lg">Nenhuma pesquisa encontrada</h3>
@@ -543,18 +552,21 @@ export default function PesquisasPage() {
                     <label className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider">
                       Coordenador
                     </label>
-                    <Link
-                      href="/coordenadores"
-                      target="_blank"
-                      className="text-[10px] text-sky-600 font-bold hover:underline cursor-pointer flex items-center gap-0.5"
-                    >
-                      Gerenciar Coordenadores
-                    </Link>
+                    {!isCoordenador && (
+                      <Link
+                        href="/coordenadores"
+                        target="_blank"
+                        className="text-[10px] text-sky-600 font-bold hover:underline cursor-pointer flex items-center gap-0.5"
+                      >
+                        Gerenciar Coordenadores
+                      </Link>
+                    )}
                   </div>
                   <select
                     value={coordenadorId}
+                    disabled={isCoordenador}
                     onChange={(e) => setCoordenadorId(e.target.value)}
-                    className="w-full rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 px-3 py-2.5 text-sm focus:border-sky-500 focus:outline-hidden focus:ring-2 focus:ring-sky-500/20 transition-all cursor-pointer"
+                    className="w-full rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 px-3 py-2.5 text-sm focus:border-sky-500 focus:outline-hidden focus:ring-2 focus:ring-sky-500/20 transition-all cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
                   >
                     <option value="">Nenhum coordenador</option>
                     {coordenadores.map(coord => (

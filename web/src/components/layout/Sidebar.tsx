@@ -229,6 +229,7 @@ export function Sidebar() {
               {navLink("/supervisoes", "Supervisões", ClipboardCheck)}
               {navLink("/estoque", "Estoque", Package)}
               {navLink("/pendencias-gerais", "Pendências", AlertCircle)}
+              {navLink("/pesquisas", "Pesquisas", ClipboardList)}
             </>
           ) : (
             <>

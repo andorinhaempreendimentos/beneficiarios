@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ClipboardCheck, AlertCircle, Package, Plus } from "lucide-react";
+import { ClipboardCheck, AlertCircle, Package, Plus, ClipboardList } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useQuery } from "@/lib/hooks/useQuery";
 import { coordenadoresApi } from "@/lib/api/coordenadores";
@@ -215,8 +215,9 @@ export default function PainelCoordenadorPage() {
       )}
 
       {/* Atalhos */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
         {[
+          { label: "Pesquisas", href: "/pesquisas", icon: ClipboardList, cor: "sky" },
           { label: "Nova supervisão", href: "/supervisoes/nova", icon: ClipboardCheck, cor: "violet" },
           { label: "Nova pendência", href: "/pendencias-gerais/nova", icon: AlertCircle, cor: "red" },
           { label: "Ver estoque", href: nucleo ? `/estoque/nucleos/${nucleo.id}` : "/estoque", icon: Package, cor: "sky" },
