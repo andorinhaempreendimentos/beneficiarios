@@ -11,6 +11,7 @@ import {
   type RelatorioSalvo,
   type Fluxo
 } from '@/services/pesquisasDb'
+import { useAuth } from '@/components/providers/AuthProvider'
 import * as XLSX from 'xlsx'
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell
@@ -24,6 +25,10 @@ import { MapaBrasil } from '@/components/pesquisas/MapaBrasil'
 const CHART_COLORS = ['#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#6366f1', '#14b8a6', '#f97316']
 
 export default function RelatoriosGlobaisPage() {
+  const { user } = useAuth()
+  const isCoordenador = Boolean((user as any)?.isCoordenador)
+  const coordId = user?.entidadeId || user?.refId || ''
+
   const [todasPesquisas, setTodasPesquisas] = useState<Pesquisa[]>([])
   const [pesquisasSelecionadas, setPesquisasSelecionadas] = useState<string[]>([])
   const [showSeletorPesquisas, setShowSeletorPesquisas] = useState(false)
@@ -61,14 +66,28 @@ export default function RelatoriosGlobaisPage() {
     ;(async () => {
       setLoadingBase(true)
       try {
-        const [pesqs, cats, rels, fluxos] = await Promise.all([
+        const promises: any[] = [
           dbService.getPesquisas(),
           dbService.getCategorias(),
           dbService.getRelatoriosSalvos(),
           dbService.getFluxos()
-        ])
-        setTodasPesquisas(pesqs)
-        setPesquisasSelecionadas(pesqs.map(p => p.id))
+        ]
+
+        if (isCoordenador && coordId) {
+          promises.push(dbService.getNucleosCoordenador(coordId))
+        }
+
+        const [pesqs, cats, rels, fluxos, meusNucleosData] = await Promise.all(promises)
+        const autorizadosIds: string[] = meusNucleosData || []
+
+        const pesqsFiltradas = isCoordenador ? pesqs.filter((p: any) => {
+          const temNucleoAutorizado = p.nucleo_id ? autorizadosIds.includes(p.nucleo_id) : false
+          const souResponsavel = coordId ? (p.coordenador_id === coordId || p.lider_id === coordId) : false
+          return temNucleoAutorizado || souResponsavel
+        }) : pesqs
+
+        setTodasPesquisas(pesqsFiltradas)
+        setPesquisasSelecionadas(pesqsFiltradas.map((p: any) => p.id))
         setCategorias(cats)
         setRelatoriosSalvos(rels)
         setTodosFluxos(fluxos)
@@ -78,7 +97,7 @@ export default function RelatoriosGlobaisPage() {
         setLoadingBase(false)
       }
     })()
-  }, [])
+  }, [isCoordenador, coordId])
 
   const getRecursiveFluxoIds = useCallback((initialIds: string[]): string[] => {
     const visited = new Set<string>()

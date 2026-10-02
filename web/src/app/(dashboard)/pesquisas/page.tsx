@@ -57,6 +57,7 @@ export default function PesquisasPage() {
   const [fluxos, setFluxos] = useState<Fluxo[]>([])
   const [nucleos, setNucleos] = useState<{ id: string; identificacao: string }[]>([])
   const [turmas, setTurmas] = useState<{ id: string; nome: string; nucleo_id: string }[]>([])
+  const [meusNucleosIds, setMeusNucleosIds] = useState<string[]>([])
 
   // Quick Add States
   const [isAddingObjeto, setIsAddingObjeto] = useState<'projeto' | 'evento' | null>(null)
@@ -69,7 +70,7 @@ export default function PesquisasPage() {
   const loadAllData = async () => {
     setLoading(true)
     try {
-      const [pesqData, objData, coordData, fluxData, countsData, nucleosData, turmasData] = await Promise.all([
+      const promises: any[] = [
         dbService.getPesquisas(),
         dbService.getObjetos(),
         dbService.getCoordenadores(),
@@ -77,14 +78,36 @@ export default function PesquisasPage() {
         dbService.getRespostasCounts(),
         dbService.getNucleos(),
         dbService.getTurmas()
-      ])
+      ]
+
+      if (isCoordenador && coordId) {
+        promises.push(dbService.getNucleosCoordenador(coordId))
+      }
+
+      const results = await Promise.all(promises)
+      const pesqData = results[0]
+      const objData = results[1]
+      const coordData = results[2]
+      const fluxData = results[3]
+      const countsData = results[4]
+      const nucleosData = results[5]
+      const turmasData = results[6]
+      const autorizadosIds: string[] = results[7] || []
+
+      setMeusNucleosIds(autorizadosIds)
       setPesquisas(pesqData)
       setObjetos(objData)
       setCoordenadores(coordData)
       setFluxos(fluxData)
       setRespostasCounts(countsData)
-      setNucleos(nucleosData)
-      setTurmas(turmasData)
+
+      if (isCoordenador && coordId) {
+        setNucleos(nucleosData.filter((n: any) => autorizadosIds.includes(n.id)))
+        setTurmas(turmasData.filter((t: any) => autorizadosIds.includes(t.nucleo_id)))
+      } else {
+        setNucleos(nucleosData)
+        setTurmas(turmasData)
+      }
     } catch (err) {
       console.error(err)
     } finally {
@@ -209,9 +232,11 @@ export default function PesquisasPage() {
   }
 
   const pesquisasFiltradas = pesquisas.filter(p => {
-    if (isCoordenador && coordId) {
+    if (isCoordenador) {
       const pCoord = p.coordenador_id || p.lider_id
-      if (pCoord !== coordId) return false
+      const temNucleoAutorizado = p.nucleo_id ? meusNucleosIds.includes(p.nucleo_id) : false
+      const souResponsavel = coordId ? pCoord === coordId : false
+      if (!temNucleoAutorizado && !souResponsavel) return false
     }
     const obj = objetos.find(ob => ob.id === p.objeto_id)
     const coord = coordenadores.find(c => c.id === (p.coordenador_id || p.lider_id))
@@ -262,13 +287,15 @@ export default function PesquisasPage() {
             <FolderGit2 className="h-3.5 w-3.5 text-amber-500" />
             <span>Objetos</span>
           </Link>
-          <Link
-            href="/coordenadores"
-            className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3.5 py-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all shadow-xs"
-          >
-            <Users className="h-3.5 w-3.5 text-indigo-500" />
-            <span>Coordenadores</span>
-          </Link>
+          {!isCoordenador && (
+            <Link
+              href="/coordenadores"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3.5 py-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all shadow-xs"
+            >
+              <Users className="h-3.5 w-3.5 text-indigo-500" />
+              <span>Coordenadores</span>
+            </Link>
+          )}
           <button
             onClick={handleOpenAdd}
             className="inline-flex items-center gap-2 rounded-xl bg-sky-600 hover:bg-sky-500 px-4 py-2 text-xs font-semibold text-white shadow-xs transition-all cursor-pointer"

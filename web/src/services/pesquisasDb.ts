@@ -822,4 +822,15 @@ export const dbService = {
 
     return { respostas: formatted, total: formatted.length };
   },
+
+  async getNucleosCoordenador(coordenadorId: string): Promise<string[]> {
+    if (!coordenadorId) return [];
+    const { data, error } = await supabase
+      .from("coordenador_nucleos")
+      .select("nucleo_id")
+      .eq("coordenador_id", coordenadorId)
+      .eq("ativo", true);
+    if (error || !data) return [];
+    return data.map((item: any) => item.nucleo_id);
+  },
 };

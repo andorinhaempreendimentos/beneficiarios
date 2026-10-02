@@ -3,10 +3,15 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { dbService, type Pergunta, type Pesquisa } from '@/services/pesquisasDb'
+import { useAuth } from '@/components/providers/AuthProvider'
 import { MapaBrasil } from '@/components/pesquisas/MapaBrasil'
 import { Map, RefreshCw, Loader2, ArrowLeft } from 'lucide-react'
 
 export default function TerritorialPage() {
+  const { user } = useAuth()
+  const isCoordenador = Boolean((user as any)?.isCoordenador)
+  const coordId = user?.entidadeId || user?.refId || ''
+
   const [todasPesquisas, setTodasPesquisas] = useState<Pesquisa[]>([])
   const [perguntas, setPerguntas] = useState<Pergunta[]>([])
   const [respostasBrutas, setRespostasBrutas] = useState<any[]>([])
@@ -18,12 +23,25 @@ export default function TerritorialPage() {
     ;(async () => {
       setLoading(true)
       try {
-        const [pesqs] = await Promise.all([dbService.getPesquisas()])
-        setTodasPesquisas(pesqs)
+        const promises: any[] = [dbService.getPesquisas()]
+        if (isCoordenador && coordId) {
+          promises.push(dbService.getNucleosCoordenador(coordId))
+        }
+
+        const [pesqs, meusNucleosData] = await Promise.all(promises)
+        const autorizadosIds: string[] = meusNucleosData || []
+
+        const pesqsFiltradas = isCoordenador ? pesqs.filter((p: any) => {
+          const temNucleoAutorizado = p.nucleo_id ? autorizadosIds.includes(p.nucleo_id) : false
+          const souResponsavel = coordId ? (p.coordenador_id === coordId || p.lider_id === coordId) : false
+          return temNucleoAutorizado || souResponsavel
+        }) : pesqs
+
+        setTodasPesquisas(pesqsFiltradas)
 
         const todasPergs: Pergunta[] = []
         await Promise.all(
-          pesqs.map(async p => {
+          pesqsFiltradas.map(async (p: any) => {
             const pergs = await dbService.getPerguntas(p.id)
             todasPergs.push(...pergs)
           })
@@ -35,7 +53,7 @@ export default function TerritorialPage() {
         setLoading(false)
       }
     })()
-  }, [])
+  }, [isCoordenador, coordId])
 
   const carregarRespostas = async () => {
     const ids = todasPesquisas.map(p => p.id)

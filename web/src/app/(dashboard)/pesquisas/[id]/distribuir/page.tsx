@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { dbService, type Pesquisa } from '@/services/pesquisasDb'
+import { useAuth } from '@/components/providers/AuthProvider'
 import { QRCodeCanvas } from 'qrcode.react'
 import { 
   ArrowLeft, 
@@ -37,6 +38,10 @@ export default function DistribuirPage() {
   const id = params?.id as string | undefined
   const router = useRouter()
   const qrRef = useRef<HTMLDivElement>(null)
+
+  const { user } = useAuth()
+  const isCoordenador = Boolean((user as any)?.isCoordenador)
+  const coordId = user?.entidadeId || user?.refId || ''
 
   const [pesquisa, setPesquisa] = useState<Pesquisa | null>(null)
   const [alunos, setAlunos] = useState<AlunoItem[]>([])
@@ -83,6 +88,17 @@ export default function DistribuirPage() {
         router.push('/pesquisas')
         return
       }
+
+      if (isCoordenador && coordId) {
+        const meusNucleos = await dbService.getNucleosCoordenador(coordId)
+        const temNucleoAutorizado = pesq.nucleo_id ? meusNucleos.includes(pesq.nucleo_id) : false
+        const souResponsavel = pesq.coordenador_id === coordId || pesq.lider_id === coordId
+        if (!temNucleoAutorizado && !souResponsavel) {
+          router.push('/pesquisas')
+          return
+        }
+      }
+
       setPesquisa(pesq)
 
       if (pesq.turma_id || pesq.nucleo_id) {
