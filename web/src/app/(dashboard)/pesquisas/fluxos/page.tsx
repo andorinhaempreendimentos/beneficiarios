@@ -2,11 +2,17 @@
 
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useAuth } from '@/components/providers/AuthProvider'
 import { dbService, type Fluxo } from '@/services/pesquisasDb'
 import { CategoriasCampo } from '@/components/pesquisas/CategoriasCampo'
 import { Plus, Edit2, Trash2, X, GitFork, ArrowRight, Tag, LayoutGrid, ArrowLeft } from 'lucide-react'
 
 export default function FluxosPage() {
+  const router = useRouter()
+  const { user } = useAuth()
+  const isCoordenador = Boolean((user as any)?.isCoordenador)
+
   const [fluxos, setFluxos] = useState<Fluxo[]>([])
   const [loading, setLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -19,8 +25,12 @@ export default function FluxosPage() {
   const [descricao, setDescricao] = useState('')
 
   useEffect(() => {
+    if (isCoordenador) {
+      router.replace('/pesquisas')
+      return
+    }
     loadFluxos()
-  }, [])
+  }, [isCoordenador, router])
 
   const loadFluxos = async () => {
     setLoading(true)
@@ -92,6 +102,8 @@ export default function FluxosPage() {
       console.error(err)
     }
   }
+
+  if (isCoordenador) return null
 
   if (loading) {
     return (

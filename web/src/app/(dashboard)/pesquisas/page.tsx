@@ -259,13 +259,15 @@ export default function PesquisasPage() {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <Link
-            href="/pesquisas/fluxos"
-            className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3.5 py-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all shadow-xs"
-          >
-            <GitFork className="h-3.5 w-3.5 text-sky-500" />
-            <span>Fluxos</span>
-          </Link>
+          {!isCoordenador && (
+            <Link
+              href="/pesquisas/fluxos"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3.5 py-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all shadow-xs"
+            >
+              <GitFork className="h-3.5 w-3.5 text-sky-500" />
+              <span>Fluxos</span>
+            </Link>
+          )}
           <Link
             href="/pesquisas/relatorios"
             className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3.5 py-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all shadow-xs"
@@ -402,19 +404,21 @@ export default function PesquisasPage() {
                         </button>
                       </td>
                       <td className="p-4 pr-6 text-right space-x-1 whitespace-nowrap">
-                        <Link
-                          href={p.fluxo_id ? `/pesquisas/fluxos/${p.fluxo_id}/builder` : '#'}
-                          className={`inline-flex items-center gap-1.5 p-2 rounded-lg bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 text-xs font-semibold shadow-xs transition-colors ${
-                            p.fluxo_id 
-                              ? 'hover:bg-sky-600 hover:text-white hover:border-sky-600 cursor-pointer' 
-                              : 'opacity-40 cursor-not-allowed'
-                          }`}
-                          title="Desenhar Fluxo"
-                          onClick={(e) => { if (!p.fluxo_id) e.preventDefault(); }}
-                        >
-                          <GitFork className="h-3.5 w-3.5" />
-                          <span>Fluxo</span>
-                        </Link>
+                        {!isCoordenador && (
+                          <Link
+                            href={p.fluxo_id ? `/pesquisas/fluxos/${p.fluxo_id}/builder` : '#'}
+                            className={`inline-flex items-center gap-1.5 p-2 rounded-lg bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 text-xs font-semibold shadow-xs transition-colors ${
+                              p.fluxo_id 
+                                ? 'hover:bg-sky-600 hover:text-white hover:border-sky-600 cursor-pointer' 
+                                : 'opacity-40 cursor-not-allowed'
+                            }`}
+                            title="Desenhar Fluxo"
+                            onClick={(e) => { if (!p.fluxo_id) e.preventDefault(); }}
+                          >
+                            <GitFork className="h-3.5 w-3.5" />
+                            <span>Fluxo</span>
+                          </Link>
+                        )}
 
                         <Link
                           href={`/pesquisas/${p.id}/distribuir`}

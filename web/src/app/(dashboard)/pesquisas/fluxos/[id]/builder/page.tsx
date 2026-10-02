@@ -19,6 +19,7 @@ import {
 import '@xyflow/react/dist/style.css'
 
 import { dbService, type Fluxo, type Pergunta, type CategoriaCampo } from '@/services/pesquisasDb'
+import { useAuth } from '@/components/providers/AuthProvider'
 import { StartNode } from '@/components/pesquisas/builder/StartNode'
 import { EndNode } from '@/components/pesquisas/builder/EndNode'
 import { QuestionNode } from '@/components/pesquisas/builder/QuestionNode'
@@ -54,6 +55,8 @@ export default function BuilderPage() {
   const params = useParams()
   const id = params?.id as string | undefined
   const router = useRouter()
+  const { user } = useAuth()
+  const isCoordenador = Boolean((user as any)?.isCoordenador)
 
   const [fluxo, setFluxo] = useState<Fluxo | null>(null)
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([])
@@ -61,6 +64,12 @@ export default function BuilderPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [toast, setToast] = useState<{ type: 'success' | 'error'; msg: string } | null>(null)
+
+  useEffect(() => {
+    if (isCoordenador) {
+      router.replace('/pesquisas')
+    }
+  }, [isCoordenador, router])
 
   const showToast = (type: 'success' | 'error', msg: string) => {
     setToast({ type, msg })
@@ -601,6 +610,8 @@ export default function BuilderPage() {
       setIsPreviewModalOpen(true)
     }
   }
+
+  if (isCoordenador) return null
 
   if (loading) {
     return (
