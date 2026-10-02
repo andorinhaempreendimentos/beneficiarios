@@ -2,6 +2,49 @@ import { createClient } from "@/lib/supabase/client";
 
 const supabase: any = createClient();
 
+const MATRICULA_SALT = "andorinha_beneficiario_2026";
+
+export function encodeMatricula(matricula: string): string {
+  if (!matricula) return "";
+  try {
+    const textBytes = new TextEncoder().encode(matricula.trim());
+    const saltBytes = new TextEncoder().encode(MATRICULA_SALT);
+    const xorBytes = new Uint8Array(textBytes.length);
+    for (let i = 0; i < textBytes.length; i++) {
+      xorBytes[i] = textBytes[i] ^ saltBytes[i % saltBytes.length];
+    }
+    let binary = "";
+    for (let i = 0; i < xorBytes.length; i++) {
+      binary += String.fromCharCode(xorBytes[i]);
+    }
+    return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  } catch {
+    return matricula;
+  }
+}
+
+export function decodeMatricula(encoded: string): string {
+  if (!encoded) return "";
+  try {
+    let b64 = encoded.replace(/-/g, "+").replace(/_/g, "/");
+    while (b64.length % 4) b64 += "=";
+    const binary = atob(b64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+      bytes[i] = binary.charCodeAt(i);
+    }
+    const saltBytes = new TextEncoder().encode(MATRICULA_SALT);
+    const textBytes = new Uint8Array(bytes.length);
+    for (let i = 0; i < bytes.length; i++) {
+      textBytes[i] = bytes[i] ^ saltBytes[i % saltBytes.length];
+    }
+    const decoded = new TextDecoder().decode(textBytes).trim();
+    return decoded || encoded;
+  } catch {
+    return encoded;
+  }
+}
+
 export interface CategoriaCampo {
   id: string;
   nome: string;
@@ -556,11 +599,23 @@ export const dbService = {
       return a;
     }
 
+    const { data: btData } = await supabase
+      .from("beneficiario_turmas")
+      .select("turma_id")
+      .eq("beneficiario_id", aluno.id)
+      .eq("status", "ativo")
+      .is("deleted_at", null)
+      .limit(1)
+      .maybeSingle();
+
+    const turmaIdAtiva = btData?.turma_id || null;
+
     return {
       beneficiarioId: aluno.id,
       matricula: aluno.matricula,
       nomeCompleto: aluno.nome_completo,
       nucleoId: aluno.nucleo_id,
+      turmaId: turmaIdAtiva,
       desafio: [
         {
           id: "nome",

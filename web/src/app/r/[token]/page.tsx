@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, Suspense } from 'react'
 import { useParams, useSearchParams } from 'next/navigation'
-import { dbService, type Pesquisa, type Pergunta, type Objeto, type Lider, type Fluxo } from '@/services/pesquisasDb'
+import { dbService, decodeMatricula, type Pesquisa, type Pergunta, type Objeto, type Lider, type Fluxo } from '@/services/pesquisasDb'
 import { 
   CheckCircle2, 
   ChevronRight, 
@@ -39,6 +39,7 @@ function ResponderContent() {
     matricula: string
     nomeCompleto: string
     nucleoId: string | null
+    turmaId?: string | null
     desafio: { id: string; pergunta: string; opcoes: string[]; correto: string }[]
   } | null>(null)
   const [respostasDesafio, setRespostasDesafio] = useState<Record<string, string>>({})
@@ -183,7 +184,8 @@ function ResponderContent() {
         }
         pergs = await dbService.getPerguntas(realPesq.fluxo_id)
 
-        const matriculaParam = searchParams.get('m')
+        const rawM = searchParams.get('m')
+        const matriculaParam = rawM ? decodeMatricula(rawM) : null
         if (matriculaParam) {
           const jaRespondeu = await dbService.hasMatriculaResponded(realPesq.id, matriculaParam)
           if (jaRespondeu) {
@@ -1030,7 +1032,7 @@ function ResponderContent() {
         beneficiarioId: dadosDesafio.beneficiarioId,
         matricula: dadosDesafio.matricula,
         nucleoId: dadosDesafio.nucleoId,
-        turmaId: pesquisa.turma_id || null
+        turmaId: dadosDesafio.turmaId || pesquisa.turma_id || null
       })
       setEtapaDesafio(false)
     }

@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { dbService, type Pesquisa } from '@/services/pesquisasDb'
+import { dbService, encodeMatricula, type Pesquisa } from '@/services/pesquisasDb'
 import { useAuth } from '@/components/providers/AuthProvider'
 import { QRCodeCanvas } from 'qrcode.react'
 import { 
@@ -323,10 +323,10 @@ export default function DistribuirPage() {
                   </thead>
                   <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
                     {alunosFiltrados.map((aluno) => {
-                      const linkAluno = `${origin}/r/${pesquisa.token}?m=${aluno.matricula}`
+                      const linkAluno = `${origin}/r/${pesquisa.token}?m=${encodeMatricula(aluno.matricula)}`
                       const fone = aluno.celular || aluno.celularResponsavel
                       const primeiroNome = (aluno.nomeCompleto || '').trim().split(/\s+/)[0]
-                      const msgAluno = `Olá, ${primeiroNome}! Gostaria de convidar você para responder a pesquisa rápida da nossa turma: "${pesquisa.titulo}".\n\nAcesse seu link exclusivo:\n${linkAluno}`
+                      const msgAluno = `Olá, ${primeiroNome}! Gostaria de convidar você para responder a pesquisa: "${pesquisa.titulo}".\n\nAcesse seu link exclusivo:\n${linkAluno}`
                       const isCopied = copiedKey === aluno.id
 
                       return (
