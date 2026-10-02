@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useToast } from "@/components/providers/ToastProvider";
 import { Card, PageHeader, Field, Input, Select, Textarea, LinkButton, Badge } from "@/components/ui";
 import { useQuery } from "@/lib/hooks/useQuery";
@@ -46,6 +46,8 @@ const avaliacaoTone: Record<AvaliacaoNivel, string> = {
 
 export default function NovaSupervisaoPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const nucleoIdParam = searchParams.get("nucleoId") || "";
   const { toast } = useToast();
   const { user } = useAuth();
   const isCoordenador = Boolean((user as any)?.isCoordenador);
@@ -54,7 +56,7 @@ export default function NovaSupervisaoPage() {
   const [salvando, setSalvando] = useState(false);
 
   const [form, setForm] = useState({
-    nucleoId: "",
+    nucleoId: nucleoIdParam,
     coordenadorId: "",
     dataSupervisao: getDataHojeBrasil(),
     horaEntrada: new Date().toTimeString().slice(0, 5),
@@ -102,6 +104,12 @@ export default function NovaSupervisaoPage() {
       setForm((f) => ({ ...f, coordenadorId: user.entidadeId! }));
     }
   }, [isCoordenador, user?.entidadeId]);
+
+  useEffect(() => {
+    if (nucleoIdParam && !form.nucleoId) {
+      setForm((f) => ({ ...f, nucleoId: nucleoIdParam }));
+    }
+  }, [nucleoIdParam, form.nucleoId]);
 
   function set(campo: string, valor: unknown) {
     setForm((f) => ({ ...f, [campo]: valor }));

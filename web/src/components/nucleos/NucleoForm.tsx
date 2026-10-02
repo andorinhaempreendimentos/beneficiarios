@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/components/providers/AuthProvider";
 import { MapPin } from "lucide-react";
 import { z } from "zod";
 import { Button, Field, FormSection, Input, LinkButton, Select, Switch } from "@/components/ui";
@@ -57,6 +59,16 @@ interface NucleoFormProps {
 }
 
 export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], backHref }: NucleoFormProps) {
+  const { user } = useAuth();
+  const router = useRouter();
+  const isCoordenador = Boolean((user as any)?.isCoordenador);
+
+  useEffect(() => {
+    if (isCoordenador) {
+      router.replace(backHref);
+    }
+  }, [isCoordenador, router, backHref]);
+
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
@@ -177,6 +189,8 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], back
       setLoading(false);
     }
   }
+
+  if (isCoordenador) return null;
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
