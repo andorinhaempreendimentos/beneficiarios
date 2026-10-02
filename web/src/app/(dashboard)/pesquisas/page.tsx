@@ -49,10 +49,14 @@ export default function PesquisasPage() {
   const [descricao, setDescricao] = useState('')
   const [objetoId, setObjetoId] = useState<string>('')
   const [coordenadorId, setCoordenadorId] = useState<string>('')
+  const [nucleoId, setNucleoId] = useState<string>('')
+  const [turmaId, setTurmaId] = useState<string>('')
   const [publicada, setPublicada] = useState(false)
   const [exigirCpf, setExigirCpf] = useState(false)
   const [fluxoId, setFluxoId] = useState<string>('')
   const [fluxos, setFluxos] = useState<Fluxo[]>([])
+  const [nucleos, setNucleos] = useState<{ id: string; identificacao: string }[]>([])
+  const [turmas, setTurmas] = useState<{ id: string; nome: string; nucleo_id: string }[]>([])
 
   // Quick Add States
   const [isAddingObjeto, setIsAddingObjeto] = useState<'projeto' | 'evento' | null>(null)
@@ -65,18 +69,22 @@ export default function PesquisasPage() {
   const loadAllData = async () => {
     setLoading(true)
     try {
-      const [pesqData, objData, coordData, fluxData, countsData] = await Promise.all([
+      const [pesqData, objData, coordData, fluxData, countsData, nucleosData, turmasData] = await Promise.all([
         dbService.getPesquisas(),
         dbService.getObjetos(),
         dbService.getCoordenadores(),
         dbService.getFluxos(),
-        dbService.getRespostasCounts()
+        dbService.getRespostasCounts(),
+        dbService.getNucleos(),
+        dbService.getTurmas()
       ])
       setPesquisas(pesqData)
       setObjetos(objData)
       setCoordenadores(coordData)
       setFluxos(fluxData)
       setRespostasCounts(countsData)
+      setNucleos(nucleosData)
+      setTurmas(turmasData)
     } catch (err) {
       console.error(err)
     } finally {
@@ -100,6 +108,8 @@ export default function PesquisasPage() {
     setDescricao('')
     setObjetoId(objetos[0]?.id || '')
     setCoordenadorId(isCoordenador && coordId ? coordId : '')
+    setNucleoId('')
+    setTurmaId('')
     setPublicada(false)
     setExigirCpf(false)
     setFluxoId(fluxos[0]?.id || '')
@@ -113,6 +123,8 @@ export default function PesquisasPage() {
     setDescricao(p.descricao || '')
     setObjetoId(p.objeto_id || '')
     setCoordenadorId(p.coordenador_id || p.lider_id || '')
+    setNucleoId(p.nucleo_id || '')
+    setTurmaId(p.turma_id || '')
     setPublicada(p.publicada)
     setExigirCpf(p.exigir_cpf || false)
     setFluxoId(p.fluxo_id || '')
@@ -136,6 +148,8 @@ export default function PesquisasPage() {
         objeto_id: objetoId || null,
         coordenador_id: coordenadorId || null,
         lider_id: coordenadorId || null,
+        nucleo_id: nucleoId || null,
+        turma_id: turmaId || null,
         fluxo_id: fluxoId || null
       })
       setIsModalOpen(false)
@@ -314,16 +328,23 @@ export default function PesquisasPage() {
                 {pesquisasFiltradas.map((p) => {
                   const obj = objetos.find(ob => ob.id === p.objeto_id)
                   const coord = coordenadores.find(c => c.id === (p.coordenador_id || p.lider_id))
+                  const nuc = nucleos.find(n => n.id === p.nucleo_id)
+                  const tur = turmas.find(t => t.id === p.turma_id)
 
                   return (
                     <tr key={p.id} className="hover:bg-zinc-50/80 dark:hover:bg-zinc-800/40 transition-colors group">
                       <td className="p-4 pl-6">
                         <div>
                           <p className="font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-sky-600 transition-colors">{p.titulo}</p>
-                          <div className="flex items-center gap-2 mt-0.5">
+                          <div className="flex flex-wrap items-center gap-2 mt-1">
                             <span className="text-[11px] text-zinc-500 font-medium">
                               Objeto: {obj ? `${obj.tipo === 'projeto' ? '📁' : '📅'} ${obj.nome}` : <span className="italic text-zinc-400">Sem objeto</span>}
                             </span>
+                            {(nuc || tur) && (
+                              <span className="inline-flex items-center gap-1 text-[11px] text-sky-600 dark:text-sky-400 font-medium bg-sky-50 dark:bg-sky-950/50 px-2 py-0.5 rounded-md border border-sky-100 dark:border-sky-900/60">
+                                📍 {nuc?.identificacao || ''}{tur ? ` • ${tur.nome}` : ''}
+                              </span>
+                            )}
                           </div>
                         </div>
                       </td>
@@ -572,6 +593,60 @@ export default function PesquisasPage() {
                     {coordenadores.map(coord => (
                       <option key={coord.id} value={coord.id}>{coord.nome}</option>
                     ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">
+                    Núcleo
+                  </label>
+                  <select
+                    value={nucleoId}
+                    onChange={(e) => {
+                      const newNuc = e.target.value
+                      setNucleoId(newNuc)
+                      if (turmaId) {
+                        const t = turmas.find(item => item.id === turmaId)
+                        if (t && t.nucleo_id !== newNuc) {
+                          setTurmaId('')
+                        }
+                      }
+                    }}
+                    className="w-full rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 px-3 py-2.5 text-sm focus:border-sky-500 focus:outline-hidden focus:ring-2 focus:ring-sky-500/20 transition-all cursor-pointer"
+                  >
+                    <option value="">Geral / Sem Núcleo</option>
+                    {nucleos.map(n => (
+                      <option key={n.id} value={n.id}>{n.identificacao}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">
+                    Turma
+                  </label>
+                  <select
+                    value={turmaId}
+                    onChange={(e) => {
+                      const newTurma = e.target.value
+                      setTurmaId(newTurma)
+                      if (newTurma) {
+                        const t = turmas.find(item => item.id === newTurma)
+                        if (t && t.nucleo_id && (!nucleoId || nucleoId !== t.nucleo_id)) {
+                          setNucleoId(t.nucleo_id)
+                        }
+                      }
+                    }}
+                    className="w-full rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 px-3 py-2.5 text-sm focus:border-sky-500 focus:outline-hidden focus:ring-2 focus:ring-sky-500/20 transition-all cursor-pointer"
+                  >
+                    <option value="">Geral / Sem Turma</option>
+                    {turmas
+                      .filter(t => !nucleoId || t.nucleo_id === nucleoId)
+                      .map(t => (
+                        <option key={t.id} value={t.id}>{t.nome}</option>
+                      ))}
                   </select>
                 </div>
               </div>

@@ -74,6 +74,8 @@ export interface Pesquisa {
   coordenador_id?: string | null;
   lider_id?: string | null;
   fluxo_id: string | null;
+  nucleo_id?: string | null;
+  turma_id?: string | null;
   user_id?: string;
   created_at?: string;
 }
@@ -112,6 +114,10 @@ export interface Resposta {
   pesquisa_id: string;
   fingerprint: string;
   cpf?: string;
+  beneficiario_id?: string | null;
+  matricula?: string | null;
+  nucleo_id?: string | null;
+  turma_id?: string | null;
   created_at?: string;
 }
 
@@ -338,15 +344,27 @@ export const dbService = {
     pesquisaId: string,
     fingerprint: string,
     itens: { pergunta_id: string; valor: any }[],
-    cpf?: string
+    cpf?: string,
+    meta?: {
+      beneficiarioId?: string;
+      matricula?: string;
+      nucleoId?: string;
+      turmaId?: string;
+    }
   ): Promise<void> {
+    const payload: any = {
+      pesquisa_id: pesquisaId,
+      fingerprint,
+    };
+    if (cpf) payload.cpf = cpf.replace(/\D/g, "");
+    if (meta?.beneficiarioId) payload.beneficiario_id = meta.beneficiarioId;
+    if (meta?.matricula) payload.matricula = meta.matricula;
+    if (meta?.nucleoId) payload.nucleo_id = meta.nucleoId;
+    if (meta?.turmaId) payload.turma_id = meta.turmaId;
+
     const { data: respData, error: respError } = await supabase
       .from("resposta")
-      .insert({
-        pesquisa_id: pesquisaId,
-        fingerprint,
-        ...(cpf ? { cpf: cpf.replace(/\D/g, "") } : {}),
-      })
+      .insert(payload)
       .select()
       .single();
 
@@ -360,6 +378,222 @@ export const dbService = {
 
     const { error: itemsError } = await supabase.from("resposta_item").insert(itemsToInsert);
     if (itemsError) throw itemsError;
+  },
+
+  async hasMatriculaResponded(pesquisaId: string, matricula: string): Promise<boolean> {
+    if (!matricula) return false;
+    const { data, error } = await supabase
+      .from("resposta")
+      .select("id")
+      .eq("pesquisa_id", pesquisaId)
+      .eq("matricula", matricula.trim())
+      .maybeSingle();
+    if (error) throw error;
+    return !!data;
+  },
+
+  async getNucleos(): Promise<{ id: string; identificacao: string }[]> {
+    const { data, error } = await supabase
+      .from("nucleos")
+      .select("id, identificacao")
+      .is("deleted_at", null)
+      .order("identificacao", { ascending: true });
+    if (error) return [];
+    return data || [];
+  },
+
+  async getTurmas(nucleoId?: string): Promise<{ id: string; nome: string; nucleo_id: string }[]> {
+    let q = supabase
+      .from("turmas")
+      .select("id, nome, nucleo_id")
+      .is("deleted_at", null)
+      .order("nome", { ascending: true });
+    if (nucleoId) q = q.eq("nucleo_id", nucleoId);
+    const { data, error } = await q;
+    if (error) return [];
+    return data || [];
+  },
+
+  async getAlunosTurmaComStatus(turmaId: string | null | undefined, pesquisaId: string, nucleoId?: string | null): Promise<{
+    id: string;
+    matricula: string;
+    nomeCompleto: string;
+    celular?: string;
+    celularResponsavel?: string;
+    status: 'respondido' | 'pendente';
+    respondidoEm?: string;
+  }[]> {
+    let alunos: any[] = [];
+
+    if (turmaId) {
+      const { data: btData, error: btErr } = await supabase
+        .from("beneficiario_turmas")
+        .select("beneficiarios(id, matricula, nome_completo, celular, celular_responsavel)")
+        .eq("turma_id", turmaId)
+        .eq("status", "ativo")
+        .is("deleted_at", null);
+
+      if (!btErr && btData) {
+        alunos = btData
+          .map((item: any) => item.beneficiarios)
+          .filter(Boolean);
+      }
+    } else if (nucleoId) {
+      const { data: bData, error: bErr } = await supabase
+        .from("beneficiarios")
+        .select("id, matricula, nome_completo, celular, celular_responsavel")
+        .eq("nucleo_id", nucleoId)
+        .eq("status", "ativo")
+        .is("deleted_at", null)
+        .order("nome_completo", { ascending: true });
+
+      if (!bErr && bData) {
+        alunos = bData;
+      }
+    }
+
+    if (alunos.length === 0) return [];
+
+    const { data: respData } = await supabase
+      .from("resposta")
+      .select("matricula, beneficiario_id, created_at")
+      .eq("pesquisa_id", pesquisaId);
+
+    const respondidosMap = new Map<string, string>();
+    (respData || []).forEach((r: any) => {
+      if (r.matricula) respondidosMap.set(r.matricula, r.created_at);
+      if (r.beneficiario_id) respondidosMap.set(r.beneficiario_id, r.created_at);
+    });
+
+    return alunos.map((a: any) => {
+      const respTime = respondidosMap.get(a.matricula) || respondidosMap.get(a.id);
+      return {
+        id: a.id,
+        matricula: a.matricula,
+        nomeCompleto: a.nome_completo,
+        celular: a.celular,
+        celularResponsavel: a.celular_responsavel,
+        status: respTime ? 'respondido' : 'pendente',
+        respondidoEm: respTime,
+      };
+    });
+  },
+
+  async getDesafioBeneficiario(matricula: string) {
+    const { data: aluno, error } = await supabase
+      .from("beneficiarios")
+      .select("id, matricula, nome_completo, data_nascimento, nucleo_id")
+      .eq("matricula", matricula.trim())
+      .is("deleted_at", null)
+      .maybeSingle();
+
+    if (error || !aluno) return null;
+
+    const mesesNomes = [
+      "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+      "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+    ];
+
+    const partesNome = (aluno.nome_completo || "").trim().split(/\s+/);
+    const primeiroNomeReal = partesNome[0] || "Aluno";
+    const ultimoSobrenomeReal = partesNome.length > 1 ? partesNome[partesNome.length - 1] : "";
+
+    const dNasc = aluno.data_nascimento ? new Date(aluno.data_nascimento + "T12:00:00Z") : new Date("2012-05-15T12:00:00Z");
+    const diaReal = String(dNasc.getUTCDate()).padStart(2, "0");
+    const mesIdx = dNasc.getUTCMonth();
+    const mesReal = mesesNomes[mesIdx] || "Janeiro";
+    const anoReal = String(dNasc.getUTCFullYear());
+
+    let queryOutros = supabase
+      .from("beneficiarios")
+      .select("nome_completo, data_nascimento")
+      .neq("id", aluno.id)
+      .is("deleted_at", null)
+      .limit(30);
+
+    if (aluno.nucleo_id) {
+      queryOutros = queryOutros.eq("nucleo_id", aluno.nucleo_id);
+    }
+    const { data: outrosAlunos } = await queryOutros;
+
+    const outrosNomes = Array.from(new Set(
+      (outrosAlunos || [])
+        .map((o: any) => (o.nome_completo || "").trim().split(/\s+/)[0])
+        .filter((n: string) => n && n.toLowerCase() !== primeiroNomeReal.toLowerCase())
+    ));
+    const distratorNome1 = outrosNomes[0] || "Lucas";
+    const distratorNome2 = outrosNomes[1] || "Matheus";
+
+    const outrosSobrenomes = Array.from(new Set(
+      (outrosAlunos || [])
+        .map((o: any) => {
+          const parts = (o.nome_completo || "").trim().split(/\s+/);
+          return parts.length > 1 ? parts[parts.length - 1] : "";
+        })
+        .filter((s: string) => s && s.toLowerCase() !== ultimoSobrenomeReal.toLowerCase())
+    ));
+    const distratorSobrenome1 = outrosSobrenomes[0] || "Silva";
+    const distratorSobrenome2 = outrosSobrenomes[1] || "Santos";
+
+    const diaNum = parseInt(diaReal, 10);
+    const distratorDia1 = String((diaNum + 7 > 28 ? diaNum - 7 : diaNum + 7)).padStart(2, "0");
+    const distratorDia2 = String((diaNum - 4 < 1 ? diaNum + 11 : diaNum - 4)).padStart(2, "0");
+
+    const outrosMeses = mesesNomes.filter((m) => m !== mesReal);
+    const distratorMes1 = outrosMeses[(mesIdx + 3) % outrosMeses.length];
+    const distratorMes2 = outrosMeses[(mesIdx + 7) % outrosMeses.length];
+
+    const anoNum = parseInt(anoReal, 10);
+    const distratorAno1 = String(anoNum - 2);
+    const distratorAno2 = String(anoNum + 2);
+
+    function shuffle<T>(arr: T[]): T[] {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    return {
+      beneficiarioId: aluno.id,
+      matricula: aluno.matricula,
+      nomeCompleto: aluno.nome_completo,
+      nucleoId: aluno.nucleo_id,
+      desafio: [
+        {
+          id: "nome",
+          pergunta: "Qual é o seu primeiro nome?",
+          opcoes: shuffle([primeiroNomeReal, distratorNome1, distratorNome2]),
+          correto: primeiroNomeReal,
+        },
+        {
+          id: "dia",
+          pergunta: "Qual é o dia do seu nascimento?",
+          opcoes: shuffle([diaReal, distratorDia1, distratorDia2]),
+          correto: diaReal,
+        },
+        {
+          id: "mes",
+          pergunta: "Qual é o mês do seu nascimento?",
+          opcoes: shuffle([mesReal, distratorMes1, distratorMes2]),
+          correto: mesReal,
+        },
+        {
+          id: "ano",
+          pergunta: "Qual é o ano do seu nascimento?",
+          opcoes: shuffle([anoReal, distratorAno1, distratorAno2]),
+          correto: anoReal,
+        },
+        ...(ultimoSobrenomeReal ? [{
+          id: "sobrenome",
+          pergunta: "Qual é o seu último sobrenome?",
+          opcoes: shuffle([ultimoSobrenomeReal, distratorSobrenome1, distratorSobrenome2]),
+          correto: ultimoSobrenomeReal,
+        }] : [])
+      ],
+    };
   },
 
   async hasCpfResponded(pesquisaId: string, cpf: string): Promise<boolean> {

@@ -32,6 +32,25 @@ function ResponderContent() {
   const [cpfCheckando, setCpfCheckando] = useState(false)
   const [cpfConfirmado, setCpfConfirmado] = useState('')
 
+  // Autenticação de Aluno (Desafio KYC por Matrícula)
+  const [etapaDesafio, setEtapaDesafio] = useState(false)
+  const [dadosDesafio, setDadosDesafio] = useState<{
+    beneficiarioId: string
+    matricula: string
+    nomeCompleto: string
+    nucleoId: string | null
+    desafio: { id: string; pergunta: string; opcoes: string[]; correto: string }[]
+  } | null>(null)
+  const [respostasDesafio, setRespostasDesafio] = useState<Record<string, string>>({})
+  const [desafioErro, setDesafioErro] = useState('')
+  const [jaRespondeuMatricula, setJaRespondeuMatricula] = useState(false)
+  const [alunoAutenticado, setAlunoAutenticado] = useState<{
+    beneficiarioId: string
+    matricula: string
+    nucleoId: string | null
+    turmaId: string | null
+  } | null>(null)
+
   useEffect(() => {
     if (perguntas.length > 0) {
       setTodasPerguntasSession(prev => {
@@ -164,7 +183,25 @@ function ResponderContent() {
         }
         pergs = await dbService.getPerguntas(realPesq.fluxo_id)
 
-        if (pesq && pesq.exigir_cpf) {
+        const matriculaParam = searchParams.get('m')
+        if (matriculaParam) {
+          const jaRespondeu = await dbService.hasMatriculaResponded(realPesq.id, matriculaParam)
+          if (jaRespondeu) {
+            setJaRespondeuMatricula(true)
+            setLoading(false)
+            return
+          }
+
+          const desafioObj = await dbService.getDesafioBeneficiario(matriculaParam)
+          if (!desafioObj) {
+            setErrorMsg('Matrícula de aluno não localizada no cadastro.')
+            setLoading(false)
+            return
+          }
+
+          setDadosDesafio(desafioObj)
+          setEtapaDesafio(true)
+        } else if (pesq && pesq.exigir_cpf) {
           setEtapaCpf(true)
         }
       }
@@ -811,7 +848,24 @@ function ResponderContent() {
             pergunta_id: pergId,
             valor: respostasAtuais[pergId]
           }))
-          await dbService.saveRespostaCompleta(pesqId, deviceFp, itens, cpfConfirmado || undefined)
+
+          const meta = alunoAutenticado ? {
+            beneficiarioId: alunoAutenticado.beneficiarioId,
+            matricula: alunoAutenticado.matricula,
+            nucleoId: alunoAutenticado.nucleoId || pesquisa?.nucleo_id || undefined,
+            turmaId: alunoAutenticado.turmaId || pesquisa?.turma_id || undefined
+          } : {
+            nucleoId: pesquisa?.nucleo_id || undefined,
+            turmaId: pesquisa?.turma_id || undefined
+          }
+
+          await dbService.saveRespostaCompleta(
+            pesqId, 
+            deviceFp, 
+            itens, 
+            cpfConfirmado || undefined,
+            meta
+          )
         }
         setRespondeu(true)
         setLoading(false)
@@ -925,6 +979,124 @@ function ResponderContent() {
           <AlertTriangle className="h-12 w-12 text-amber-500 mx-auto" />
           <h3 className="text-lg font-bold">Pesquisa Indisponível</h3>
           <p className="text-sm text-zinc-500 leading-relaxed">{errorMsg}</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (jaRespondeuMatricula) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950 p-6 text-center text-zinc-900 dark:text-zinc-100">
+        <div className="w-full max-w-md rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-8 space-y-6 shadow-xl relative overflow-hidden">
+          <div className="bg-sky-500/10 p-4 rounded-full text-sky-600 border border-sky-500/20 w-fit mx-auto">
+            <CheckCircle2 className="h-12 w-12" />
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-2xl font-extrabold">Pesquisa Já Respondida</h3>
+            <p className="text-sm text-zinc-500 leading-relaxed">
+              Você já enviou sua resposta para esta pesquisa. Muito obrigado pela sua participação!
+            </p>
+          </div>
+          <div className="text-zinc-400 text-[10px] uppercase font-bold tracking-widest pt-4 border-t border-zinc-100 dark:border-zinc-800">
+            Andorinha Pesquisas
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (etapaDesafio && dadosDesafio && pesquisa) {
+    const handleConfirmarDesafio = () => {
+      setDesafioErro('')
+
+      for (const q of dadosDesafio.desafio) {
+        if (!respostasDesafio[q.id]) {
+          setDesafioErro('Por favor, responda a todas as opções para confirmar sua identidade.')
+          return
+        }
+      }
+
+      const erros = dadosDesafio.desafio.filter(q => {
+        const resp = respostasDesafio[q.id]
+        return resp.trim().toLowerCase() !== q.correto.trim().toLowerCase()
+      })
+
+      if (erros.length > 0) {
+        setDesafioErro('Alguma informação não confere com o seu cadastro. Verifique e tente novamente.')
+        return
+      }
+
+      setAlunoAutenticado({
+        beneficiarioId: dadosDesafio.beneficiarioId,
+        matricula: dadosDesafio.matricula,
+        nucleoId: dadosDesafio.nucleoId,
+        turmaId: pesquisa.turma_id || null
+      })
+      setEtapaDesafio(false)
+    }
+
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950 p-6 text-zinc-900 dark:text-zinc-100">
+        <div className="w-full max-w-md rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 sm:p-8 space-y-6 shadow-xl">
+          <div className="text-center space-y-2">
+            <img src="/logo.png" alt="Logo" className="h-10 mx-auto mb-2 object-contain" />
+            <h2 className="text-xl font-extrabold">{pesquisa.titulo}</h2>
+            <p className="text-xs text-zinc-500">
+              Para começar, confirme seus dados:
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {dadosDesafio.desafio.map((item, idx) => (
+              <div key={item.id} className="space-y-1.5">
+                <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300">
+                  {idx + 1}. {item.pergunta}
+                </label>
+                <div className="grid grid-cols-1 gap-1.5">
+                  {item.opcoes.map((opcao) => {
+                    const isSelected = respostasDesafio[item.id] === opcao
+                    return (
+                      <button
+                        key={opcao}
+                        type="button"
+                        onClick={() => {
+                          setDesafioErro('')
+                          setRespostasDesafio(prev => ({ ...prev, [item.id]: opcao }))
+                        }}
+                        className={`w-full text-left px-3.5 py-2.5 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
+                          isSelected
+                            ? 'bg-sky-50 dark:bg-sky-950/40 border-sky-500 text-sky-700 dark:text-sky-300 ring-2 ring-sky-500/20'
+                            : 'bg-zinc-50 dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:border-zinc-300'
+                        }`}
+                      >
+                        {opcao}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            ))}
+
+            {desafioErro && (
+              <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-xs text-red-500 font-semibold flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4 shrink-0" />
+                <span>{desafioErro}</span>
+              </div>
+            )}
+
+            <button
+              type="button"
+              onClick={handleConfirmarDesafio}
+              className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-sky-600 hover:bg-sky-500 px-4 py-3 text-xs font-bold text-white shadow-md shadow-sky-600/20 transition-all cursor-pointer mt-2"
+            >
+              <span>Confirmar e Continuar</span>
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+
+          <div className="text-zinc-400 text-[10px] uppercase font-bold tracking-widest text-center pt-2 border-t border-zinc-100 dark:border-zinc-800">
+            Identificação Segura Andorinha
+          </div>
         </div>
       </div>
     )
