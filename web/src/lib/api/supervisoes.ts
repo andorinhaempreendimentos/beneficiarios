@@ -103,6 +103,7 @@ export const supervisoesApi = {
       .select('*, nucleos(identificacao, regiao), funcionarios(nome_completo), supervisoes_fotos(*)', { count: 'exact' })
       .is('deleted_at', null);
     if (p?.nucleoId) q = q.eq('nucleo_id', p.nucleoId as string);
+    if (p?.nucleoIds && Array.isArray(p.nucleoIds) && p.nucleoIds.length > 0) q = q.in('nucleo_id', p.nucleoIds);
     if (p?.coordenadorId) q = q.eq('coordenador_id', p.coordenadorId as string);
     if (p?.status) q = q.eq('status', p.status as string);
     if (p?.dataInicio) q = q.gte('data_supervisao', p.dataInicio as string);

@@ -74,6 +74,7 @@ export const pendenciasGeraisApi = {
       .select('*, nucleos(identificacao), funcionarios!pendencias_gerais_responsavel_id_fkey(nome_completo)', { count: 'exact' })
       .is('deleted_at', null);
     if (p?.nucleoId) q = q.eq('nucleo_id', p.nucleoId as string);
+    if (p?.nucleoIds && Array.isArray(p.nucleoIds) && p.nucleoIds.length > 0) q = q.in('nucleo_id', p.nucleoIds);
     if (p?.status) q = q.eq('status', p.status as string);
     if (p?.gravidade) q = q.eq('gravidade', p.gravidade as string);
     if (p?.tipo) q = q.eq('tipo', p.tipo as string);

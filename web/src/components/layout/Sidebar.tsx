@@ -226,9 +226,11 @@ export function Sidebar() {
             <>
               {navLink("/coordenador", "Meu Painel", UserCog)}
               {navLink("/nucleos", t("local", "Núcleo", true), Building2)}
+              {navLink("/turmas", t("turma", "Turma", true), GraduationCap)}
+              {navLink("/beneficiarios", "Beneficiários", Users)}
               {navLink("/supervisoes", "Supervisões", ClipboardCheck)}
-              {navLink("/estoque", "Estoque", Package)}
               {navLink("/pendencias-gerais", "Pendências", AlertCircle)}
+              {navLink("/estoque", "Estoque", Package)}
               {navLink("/pesquisas", "Pesquisas", ClipboardList)}
             </>
           ) : (

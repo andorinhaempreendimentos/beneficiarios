@@ -38,7 +38,7 @@ export interface Paginated<T> {
   limit: number;
 }
 
-export type QP = Record<string, string | number | boolean | undefined>;
+export type QP = Record<string, string | number | boolean | string[] | undefined>;
 
 export interface DashboardResumo {
   beneficiariosAtivos: number;
