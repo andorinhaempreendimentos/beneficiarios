@@ -142,7 +142,7 @@ export const coordenadoresApi = {
         funcoes:funcao_id(id, nome, perfil_id, tipo_alocacao),
         coordenador_nucleos(
           nucleo_id, ativo, created_at,
-          nucleo:nucleos(id, identificacao, nome_local, endereco, numero, bairro, cidade, estado, cep, em_funcionamento, organizacao_id)
+          nucleo:nucleos(id, identificacao, nome_local, regiao, endereco, numero, bairro, cidade, estado, cep, em_funcionamento, organizacao_id)
         )
       `)
       .eq('id', id)
@@ -157,7 +157,7 @@ export const coordenadoresApi = {
     const supabase = await getSupabase();
     const { data, error } = await db(supabase)
       .from('coordenador_nucleos')
-      .select('nucleo_id, ativo, created_at, nucleo:nucleos(id, identificacao, nome_local, cidade, estado)')
+      .select('nucleo_id, ativo, created_at, nucleo:nucleos(id, identificacao, nome_local, regiao, cidade, estado)')
       .eq('coordenador_id', coordenadorId)
       .eq('ativo', true);
     if (error) throw error;

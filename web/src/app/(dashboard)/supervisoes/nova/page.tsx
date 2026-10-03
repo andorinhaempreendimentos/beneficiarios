@@ -421,13 +421,9 @@ export default function NovaSupervisaoPage() {
                               <p className="font-semibold text-xs sm:text-sm truncate leading-tight">
                                 {n.identificacao}
                               </p>
-                              {n.regiao ? (
+                              {n.regiao && (
                                 <p className="text-[11px] text-zinc-500 mt-1 truncate">
                                   {n.regiao}
-                                </p>
-                              ) : (
-                                <p className="text-[11px] text-zinc-400 mt-1 italic">
-                                  Sem região
                                 </p>
                               )}
                             </div>
