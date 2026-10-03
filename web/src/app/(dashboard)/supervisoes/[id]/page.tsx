@@ -8,6 +8,7 @@ import { Card, PageHeader, Badge, LinkButton } from "@/components/ui";
 import { useQuery } from "@/lib/hooks/useQuery";
 import { supervisoesApi, type SupervisaoApi } from "@/lib/api/services";
 import { formatarData } from "@/lib/utils";
+import { SupervisaoFotoUpload } from "@/components/supervisoes/SupervisaoFotoUpload";
 
 const avaliacaoLabel: Record<string, string> = {
   otima: "Ótima", boa: "Boa", regular: "Regular", ruim: "Ruim", critica: "Crítica",
@@ -182,6 +183,35 @@ export default function DetalhesSupervisaoPage() {
         </Card>
       )}
 
+      {/* Registros Oficiais da Supervisão */}
+      {(sup.atividadeDesenvolvida || sup.orientacoesProfessor || sup.providenciasNecessarias) && (
+        <Card>
+          <div className="px-5 py-4 border-b border-zinc-100">
+            <h2 className="text-sm font-semibold text-zinc-800">Registros da Supervisão</h2>
+          </div>
+          <div className="p-5 flex flex-col gap-4 text-xs">
+            {sup.atividadeDesenvolvida && (
+              <div>
+                <p className="font-bold text-zinc-700 uppercase tracking-wide mb-0.5">Atividade acompanhada na aula:</p>
+                <p className="text-zinc-600 bg-zinc-50 p-2.5 rounded-lg border border-zinc-200">{sup.atividadeDesenvolvida}</p>
+              </div>
+            )}
+            {sup.orientacoesProfessor && (
+              <div>
+                <p className="font-bold text-zinc-700 uppercase tracking-wide mb-0.5">Orientações repassadas ao professor:</p>
+                <p className="text-zinc-600 bg-zinc-50 p-2.5 rounded-lg border border-zinc-200">{sup.orientacoesProfessor}</p>
+              </div>
+            )}
+            {sup.providenciasNecessarias && (
+              <div>
+                <p className="font-bold text-zinc-700 uppercase tracking-wide mb-0.5">Providências necessárias:</p>
+                <p className="text-zinc-600 bg-zinc-50 p-2.5 rounded-lg border border-zinc-200">{sup.providenciasNecessarias}</p>
+              </div>
+            )}
+          </div>
+        </Card>
+      )}
+
       {/* Observações gerais */}
       {sup.observacoesGerais && (
         <Card>
@@ -192,11 +222,27 @@ export default function DetalhesSupervisaoPage() {
         </Card>
       )}
 
-      {/* Fotos */}
+      {/* Upload de Fotos (se rascunho) */}
+      {!isFinalizada && (
+        <Card>
+          <div className="px-5 py-4 border-b border-zinc-100">
+            <h2 className="text-sm font-semibold text-zinc-800">Anexar Fotos à Visita</h2>
+          </div>
+          <div className="p-5">
+            <SupervisaoFotoUpload
+              supervisaoId={id}
+              fotosExistentes={sup.fotos}
+              onUpdate={() => refetch()}
+            />
+          </div>
+        </Card>
+      )}
+
+      {/* Galeria de Fotos */}
       {sup.fotos && sup.fotos.length > 0 && (
         <Card>
           <div className="px-5 py-4 border-b border-zinc-100">
-            <h2 className="text-sm font-semibold text-zinc-800">Fotos ({sup.fotos.length})</h2>
+            <h2 className="text-sm font-semibold text-zinc-800">Fotos Registradas ({sup.fotos.length})</h2>
           </div>
           <div className="p-4 grid grid-cols-2 md:grid-cols-4 gap-3">
             {sup.fotos.map((f) => (

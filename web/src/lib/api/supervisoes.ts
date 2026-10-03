@@ -58,6 +58,9 @@ export type SupervisaoApi = {
   gradeCumprida: boolean | null;
   gradeObservacoes: string | null;
   observacoesGerais: string | null;
+  atividadeDesenvolvida?: string | null;
+  orientacoesProfessor?: string | null;
+  providenciasNecessarias?: string | null;
   status: 'rascunho' | 'finalizada';
   fotos?: SupervisaoFotoApi[];
   nucleo?: { identificacao: string; regiao?: string };
@@ -80,7 +83,11 @@ function mapSupervisao(r: any): SupervisaoApi {
     materiaisAvaliacao: r.materiais_avaliacao ?? null, materiaisObservacoes: r.materiais_observacoes ?? null,
     uniformesAvaliacao: r.uniformes_avaliacao ?? null, uniformesObservacoes: r.uniformes_observacoes ?? null,
     gradeCumprida: r.grade_cumprida ?? null, gradeObservacoes: r.grade_observacoes ?? null,
-    observacoesGerais: r.observacoes_gerais ?? null, status: r.status,
+    observacoesGerais: r.observacoes_gerais ?? null,
+    atividadeDesenvolvida: r.atividade_desenvolvida ?? null,
+    orientacoesProfessor: r.orientacoes_professor ?? null,
+    providenciasNecessarias: r.providencias_necessarias ?? null,
+    status: r.status,
     fotos: r.supervisoes_fotos ? r.supervisoes_fotos.map(mapFoto) : undefined,
     nucleo: r.nucleos ? { identificacao: r.nucleos.identificacao, regiao: r.nucleos.regiao ?? undefined } : undefined,
     coordenador: r.funcionarios ? { nome: r.funcionarios.nome_completo || r.funcionarios.nome } : undefined,
@@ -124,8 +131,11 @@ export const supervisoesApi = {
       materiais_observacoes: body.materiaisObservacoes ?? null, uniformes_avaliacao: body.uniformesAvaliacao ?? null,
       uniformes_observacoes: body.uniformesObservacoes ?? null, grade_cumprida: body.gradeCumprida ?? null,
       grade_observacoes: body.gradeObservacoes ?? null, observacoes_gerais: body.observacoesGerais ?? null,
+      atividade_desenvolvida: body.atividadeDesenvolvida ?? null,
+      orientacoes_professor: body.orientacoesProfessor ?? null,
+      providencias_necessarias: body.providenciasNecessarias ?? null,
       status: 'rascunho',
-    }).select('*, nucleos(identificacao), funcionarios(nome)').single();
+    }).select('*, nucleos(identificacao), funcionarios(nome_completo)').single();
     if (error) throw error;
     return mapSupervisao(data);
   },
@@ -139,7 +149,10 @@ export const supervisoesApi = {
       materiais_observacoes: body.materiaisObservacoes ?? null, uniformes_avaliacao: body.uniformesAvaliacao ?? null,
       uniformes_observacoes: body.uniformesObservacoes ?? null, grade_cumprida: body.gradeCumprida ?? null,
       grade_observacoes: body.gradeObservacoes ?? null, observacoes_gerais: body.observacoesGerais ?? null,
-    }).eq('id', id).select('*, nucleos(identificacao), funcionarios(nome)').single();
+      atividade_desenvolvida: body.atividadeDesenvolvida ?? null,
+      orientacoes_professor: body.orientacoesProfessor ?? null,
+      providencias_necessarias: body.providenciasNecessarias ?? null,
+    }).eq('id', id).select('*, nucleos(identificacao), funcionarios(nome_completo)').single();
     if (error) throw error;
     return mapSupervisao(data);
   },

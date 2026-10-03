@@ -316,8 +316,10 @@ export async function exportarRelatorioMensalSupervisorDocx(dados: DadosRelatori
     const critica = s.estruturaAvaliacao === 'ruim' || s.estruturaAvaliacao === 'critica' || s.materiaisAvaliacao === 'ruim' || s.materiaisAvaliacao === 'critica';
     const situacao = critica ? 'Requer atenção' : regular ? 'Regular' : 'Conforme';
 
-    const pendencias = s.gradeCumprida === false ? 'Grade horária pendente' : (s.estruturaObservacoes || s.materiaisObservacoes || 'Nenhuma');
-    const providencias = s.observacoesGerais || 'Acompanhamento de rotina';
+    const pendencias = s.gradeCumprida === false
+      ? (s.gradeObservacoes || 'Grade horária pendente')
+      : (s.estruturaObservacoes || s.materiaisObservacoes || 'Nenhuma');
+    const providencias = s.providenciasNecessarias || s.observacoesGerais || 'Acompanhamento de rotina mantido';
 
     resumoRows.push(
       new TableRow({
@@ -575,7 +577,7 @@ export async function exportarRelatorioMensalSupervisorDocx(dados: DadosRelatori
           new TableRow({
             children: [
               createCell('Atividade acompanhada:', wD1, { bold: true }),
-              createCell('Treinamento e vivência esportiva em campo/quadra', wD2 + wD3 + wD4),
+              createCell(s.atividadeDesenvolvida || 'Treinamento e vivência esportiva em campo/quadra', wD2 + wD3 + wD4),
             ],
           }),
         ],
@@ -591,10 +593,10 @@ export async function exportarRelatorioMensalSupervisorDocx(dados: DadosRelatori
     children.push(createTextBlock(difs || 'Nenhuma ocorrência prejudicial identificada no momento da visita.'));
 
     children.push(createSubHeading('Orientações repassadas ao professor:'));
-    children.push(createTextBlock('Reforçada a necessidade de registro rigoroso da lista de presença diária e zeladoria dos materiais e uniformes.'));
+    children.push(createTextBlock(s.orientacoesProfessor || 'Reforçada a necessidade de registro rigoroso da lista de presença diária e zeladoria dos materiais e uniformes.'));
 
     children.push(createSubHeading('Pendências e providências adotadas:'));
-    children.push(createTextBlock(!espacoOk || !matOk ? 'Encaminhado comunicado à coordenação para reposição/reparo necessário.' : 'Sem pendências operacionais.'));
+    children.push(createTextBlock(s.providenciasNecessarias || (!espacoOk || !matOk ? 'Encaminhado comunicado à coordenação para reposição/reparo necessário.' : 'Sem pendências operacionais.')));
 
     children.push(createSubHeading('Prazo para regularização/acompanhamento:'));
     children.push(createTextBlock('Próxima visita de supervisão in loco.'));

@@ -221,8 +221,10 @@ export function PreviaRelatorioMensal({
                     const critica = s.estruturaAvaliacao === "ruim" || s.estruturaAvaliacao === "critica" || s.materiaisAvaliacao === "ruim" || s.materiaisAvaliacao === "critica";
                     const situacao = critica ? "Requer atenção" : regular ? "Regular" : "Conforme";
 
-                    const pendencias = s.gradeCumprida === false ? "Grade horária pendente" : (s.estruturaObservacoes || s.materiaisObservacoes || "Nenhuma");
-                    const providencias = s.observacoesGerais || "Rotina";
+                    const pendencias = s.gradeCumprida === false
+                      ? (s.gradeObservacoes || "Grade horária não cumprida")
+                      : (s.estruturaObservacoes || s.materiaisObservacoes || "Nenhuma");
+                    const providencias = s.providenciasNecessarias || s.observacoesGerais || "Rotina mantida";
 
                     return (
                       <tr key={s.id} className="divide-x divide-zinc-300 hover:bg-zinc-50">
@@ -449,7 +451,9 @@ export function PreviaRelatorioMensal({
                         </tr>
                         <tr className="divide-x divide-zinc-300">
                           <td className="p-1.5 bg-zinc-50 font-bold">Atividade acompanhada:</td>
-                          <td colSpan={3} className="p-1.5">Treinamento e vivência esportiva em campo/quadra</td>
+                          <td colSpan={3} className="p-1.5">
+                            {s.atividadeDesenvolvida || "Treinamento e vivência esportiva em campo/quadra"}
+                          </td>
                         </tr>
                       </tbody>
                     </table>
@@ -462,9 +466,16 @@ export function PreviaRelatorioMensal({
                     </div>
                     <div>
                       <span className="font-bold text-zinc-700">Orientações repassadas ao professor:</span>
-                      <p className="text-zinc-600 mt-0.5">Reforçado o controle e zelo da chamada de presença e materiais.</p>
+                      <p className="text-zinc-600 mt-0.5">{s.orientacoesProfessor || "Reforçado o controle e zelo da chamada de presença e materiais."}</p>
                     </div>
                   </div>
+
+                  {s.providenciasNecessarias && (
+                    <div className="text-[11px] mb-2 p-1.5 bg-zinc-50 rounded-xs border border-zinc-200">
+                      <span className="font-bold text-zinc-700">Providências necessárias: </span>
+                      <span className="text-zinc-600">{s.providenciasNecessarias}</span>
+                    </div>
+                  )}
 
                   <div className="text-[11px] pt-1 border-t border-zinc-100 flex items-center justify-between text-zinc-500">
                     <span>
