@@ -50,6 +50,7 @@ export default function NovaSupervisaoPage() {
   const [salvando, setSalvando] = useState(false);
   const [mostrarDataManual, setMostrarDataManual] = useState(false);
   const [carregandoEsperados, setCarregandoEsperados] = useState(false);
+  const [buscaNucleo, setBuscaNucleo] = useState("");
 
   const [form, setForm] = useState({
     nucleoId: nucleoIdParam,
@@ -96,6 +97,15 @@ export default function NovaSupervisaoPage() {
   const funcionarios = funcData?.data ?? [];
   const semNucleos = isCoordenador && (meusNucleos?.length ?? 1) === 0;
 
+  const nucleosFiltrados = nucleosDisponiveis.filter((n) => {
+    if (!buscaNucleo.trim()) return true;
+    const termo = buscaNucleo.toLowerCase();
+    return (
+      n.identificacao.toLowerCase().includes(termo) ||
+      (n.regiao && n.regiao.toLowerCase().includes(termo))
+    );
+  });
+
   // Auto-seleciona se houver apenas 1 núcleo
   useEffect(() => {
     if (nucleosDisponiveis.length === 1 && !form.nucleoId) {
@@ -124,8 +134,8 @@ export default function NovaSupervisaoPage() {
       setCarregandoEsperados(true);
       try {
         const res = await beneficiariosApi.list({ nucleoId: form.nucleoId, status: "ativo", limit: 1 });
-        if (!cancel && res.total > 0 && !form.beneficiariosEsperados) {
-          setForm((f) => ({ ...f, beneficiariosEsperados: String(res.total) }));
+        if (!cancel) {
+          setForm((f) => ({ ...f, beneficiariosEsperados: res.total > 0 ? String(res.total) : "" }));
         }
       } catch (err) {
         console.error("Erro ao carregar alunos esperados:", err);
@@ -324,35 +334,98 @@ export default function NovaSupervisaoPage() {
 
           {/* Step 1: Identificação */}
           {step === "identificacao" && (
-            <div className="flex flex-col gap-5">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                {/* Núcleos */}
-                <div>
-                  <label className="block text-xs font-semibold text-zinc-700 mb-1.5">
+            <div className="flex flex-col gap-6">
+              {/* Núcleos em Cards */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-xs font-semibold text-zinc-700">
                     Núcleo supervisionado <span className="text-red-500">*</span>
                   </label>
-                  {nucleosDisponiveis.length === 1 ? (
-                    <div className="flex items-center gap-2.5 p-3 rounded-xl bg-zinc-50 border border-zinc-200 text-zinc-800">
-                      <MapPin className="h-4 w-4 text-sky-600 shrink-0" />
-                      <div className="text-xs">
-                        <p className="font-semibold text-zinc-900">{nucleosDisponiveis[0].identificacao}</p>
-                        {nucleosDisponiveis[0].regiao && (
-                          <p className="text-zinc-500">{nucleosDisponiveis[0].regiao}</p>
-                        )}
-                      </div>
-                    </div>
-                  ) : (
-                    <Select value={form.nucleoId} onChange={(e) => set("nucleoId", e.target.value)} required>
-                      <option value="">Selecione o núcleo…</option>
-                      {nucleosDisponiveis.map((n) => (
-                        <option key={n.id} value={n.id}>
-                          {n.identificacao} {n.regiao ? `(${n.regiao})` : ""}
-                        </option>
-                      ))}
-                    </Select>
+                  {nucleosDisponiveis.length > 0 && (
+                    <span className="text-[11px] text-zinc-400">
+                      {form.nucleoId ? "1 núcleo selecionado" : "Clique para selecionar"}
+                    </span>
                   )}
                 </div>
 
+                {nucleosDisponiveis.length > 6 && (
+                  <div className="mb-3">
+                    <Input
+                      type="text"
+                      placeholder="Filtrar núcleo por nome ou região..."
+                      value={buscaNucleo}
+                      onChange={(e) => setBuscaNucleo(e.target.value)}
+                      className="text-xs h-9"
+                    />
+                  </div>
+                )}
+
+                {nucleosDisponiveis.length === 0 ? (
+                  <p className="text-xs text-zinc-500 italic p-4 rounded-xl border border-dashed border-zinc-200 text-center">
+                    Nenhum núcleo vinculado disponível.
+                  </p>
+                ) : nucleosFiltrados.length === 0 ? (
+                  <p className="text-xs text-zinc-500 italic p-4 rounded-xl border border-dashed border-zinc-200 text-center">
+                    Nenhum núcleo corresponde ao filtro.
+                  </p>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                    {nucleosFiltrados.map((n) => {
+                      const isSelected = form.nucleoId === n.id;
+                      return (
+                        <button
+                          key={n.id}
+                          type="button"
+                          onClick={() => set("nucleoId", n.id)}
+                          className={cn(
+                            "flex items-start justify-between p-3.5 rounded-xl border text-left transition-all cursor-pointer",
+                            isSelected
+                              ? "border-sky-600 bg-sky-50/80 text-sky-950 ring-2 ring-sky-500/20 shadow-xs"
+                              : "border-zinc-200 bg-white hover:border-zinc-300 hover:bg-zinc-50/80 text-zinc-800"
+                          )}
+                        >
+                          <div className="flex items-start gap-3 min-w-0 pr-2">
+                            <div
+                              className={cn(
+                                "p-2 rounded-lg shrink-0 mt-0.5 transition-colors",
+                                isSelected ? "bg-sky-600 text-white" : "bg-zinc-100 text-zinc-500"
+                              )}
+                            >
+                              <MapPin className="h-4 w-4" />
+                            </div>
+                            <div className="min-w-0">
+                              <p className="font-semibold text-xs sm:text-sm truncate leading-tight">
+                                {n.identificacao}
+                              </p>
+                              {n.regiao ? (
+                                <p className="text-[11px] text-zinc-500 mt-1 truncate">
+                                  {n.regiao}
+                                </p>
+                              ) : (
+                                <p className="text-[11px] text-zinc-400 mt-1 italic">
+                                  Sem região
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                          <div
+                            className={cn(
+                              "h-5 w-5 rounded-full flex items-center justify-center shrink-0 border mt-0.5 transition-colors",
+                              isSelected
+                                ? "border-sky-600 bg-sky-600 text-white"
+                                : "border-zinc-300 bg-white"
+                            )}
+                          >
+                            {isSelected && <Check className="h-3 w-3 stroke-[3]" />}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-4 border-t border-zinc-100">
                 {!isCoordenador && (
                   <Field label="Coordenador" required>
                     <Select value={form.coordenadorId} onChange={(e) => set("coordenadorId", e.target.value)} required>
