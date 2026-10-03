@@ -262,7 +262,7 @@ export async function exportarRelatorioPrestacaoContasDocx(
       children: [
         new TextRun({
           text:
-            'Durante o período de referência, foram desenvolvidas atividades regulares de futebol e futsal nos núcleos integrantes do projeto, conforme cronograma e planejamento estabelecidos. A execução foi acompanhada por meio do cadastro dos beneficiários, controle de frequência, registros das aulas, acompanhamento dos profissionais e visitas de supervisão realizadas pela coordenação.',
+            'Durante o período de referência, foram desenvolvidas atividades regulares de futebol e futsal nos núcleos integrantes do projeto, conforme cronograma e planejamento estabelecidos. A execução foi acompanhada por meio do cadastro dos beneficiários, controle de frequência, registros das aulas, acompanhamento dos profissionais e supervisões realizadas pela coordenação.',
           size: 19,
           color: '374151',
         }),
@@ -317,7 +317,7 @@ export async function exportarRelatorioPrestacaoContasDocx(
         }),
         new TableRow({
           children: [
-            createDataCell('Visitas de supervisão', 4800),
+            createDataCell('Supervisões', 4800),
             createDataCell(String(resumoIndicadores.supervisoes.previsto), 2400, AlignmentType.CENTER),
             createDataCell(String(resumoIndicadores.supervisoes.realizado), 2400, AlignmentType.CENTER, true),
           ],
@@ -608,7 +608,7 @@ export async function exportarRelatorioPrestacaoContasDocx(
       spacing: { after: 150 },
       children: [
         new TextRun({
-          text: 'Durante a execução do projeto, deverão ser realizadas visitas periódicas aos núcleos pela coordenação, com o objetivo de acompanhar o funcionamento das atividades e verificar as condições de execução.',
+          text: 'Durante a execução do projeto, deverão ser realizadas supervisões periódicas nos núcleos pela coordenação, com o objetivo de acompanhar o funcionamento das atividades e verificar as condições de execução.',
           size: 19,
           color: '374151',
         }),
@@ -616,7 +616,7 @@ export async function exportarRelatorioPrestacaoContasDocx(
     }),
     new Paragraph({
       spacing: { after: 100 },
-      children: [new TextRun({ text: 'Demonstrativo das visitas', bold: true, size: 19 })],
+      children: [new TextRun({ text: 'Demonstrativo das supervisões', bold: true, size: 19 })],
     }),
     new Table({
       width: { size: TABLE_WIDTH, type: WidthType.DXA },
@@ -649,7 +649,7 @@ export async function exportarRelatorioPrestacaoContasDocx(
             )
           : [
               new TableRow({
-                children: [createDataCell('Nenhuma visita de supervisão registrada no período.', TABLE_WIDTH, AlignmentType.CENTER)],
+                children: [createDataCell('Nenhuma supervisão registrada no período.', TABLE_WIDTH, AlignmentType.CENTER)],
               }),
             ]),
       ],
@@ -1216,7 +1216,7 @@ export async function exportarRelatorioPrestacaoContasDocx(
               )
             : [
                 new TableRow({
-                  children: [createDataCell('Nenhuma visita de supervisão registrada no período.', TABLE_WIDTH, AlignmentType.CENTER)],
+                  children: [createDataCell('Nenhuma supervisão registrada no período.', TABLE_WIDTH, AlignmentType.CENTER)],
                 }),
               ]),
         ],

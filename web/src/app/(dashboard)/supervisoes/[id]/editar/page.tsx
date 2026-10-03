@@ -249,7 +249,7 @@ export default function EditarSupervisaoPage() {
           {/* Avaliações */}
           <div className="border-t border-zinc-100 pt-5">
             <h3 className="text-sm font-semibold text-zinc-800 mb-4 pb-2 border-b border-zinc-100">
-              Avaliações da Visita
+              Avaliações da Supervisão
             </h3>
             <div className="flex flex-col gap-5">
               {/* Estrutura física */}
@@ -443,7 +443,7 @@ export default function EditarSupervisaoPage() {
             {/* Providências necessárias */}
             <div className="flex flex-col gap-2">
               <label className="text-xs font-bold text-zinc-800 uppercase">
-                Providências necessárias da visita
+                Providências necessárias da supervisão
               </label>
               <div className="flex flex-wrap gap-1.5">
                 {[
@@ -470,7 +470,7 @@ export default function EditarSupervisaoPage() {
             </div>
 
             {/* Observações gerais */}
-            <Field label="Observações gerais da visita">
+            <Field label="Observações gerais da supervisão">
               <Textarea
                 value={form.observacoesGerais}
                 onChange={(e) => set("observacoesGerais", e.target.value)}

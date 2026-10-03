@@ -295,7 +295,7 @@ export default function NovaSupervisaoPage() {
       <div className="flex flex-col gap-6 pb-12">
         <PageHeader
           title="Nova Supervisão"
-          description="Registro de visita de supervisão ao núcleo"
+          description="Registro de supervisão ao núcleo"
           actions={<LinkButton href="/supervisoes" variant="secondary">Voltar</LinkButton>}
         />
         <Card>
@@ -318,7 +318,7 @@ export default function NovaSupervisaoPage() {
     <div className="flex flex-col gap-6 pb-12">
       <PageHeader
         title="Nova Supervisão"
-        description="Registro de visita de supervisão ao núcleo"
+        description="Registro de supervisão ao núcleo"
         actions={<LinkButton href="/supervisoes" variant="secondary">Voltar</LinkButton>}
       />
 
@@ -458,7 +458,7 @@ export default function NovaSupervisaoPage() {
                 {/* Data com pré-preenchimento automático e opção discreta de alteração */}
                 <div>
                   <label className="block text-xs font-semibold text-zinc-700 mb-1.5">
-                    Data da visita <span className="text-red-500">*</span>
+                    Data da supervisão <span className="text-red-500">*</span>
                   </label>
                   {!mostrarDataManual ? (
                     <div className="flex items-center justify-between p-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-xs">
@@ -844,7 +844,7 @@ export default function NovaSupervisaoPage() {
                 <Textarea
                   value={form.orientacoesProfessor}
                   onChange={(e) => set("orientacoesProfessor", e.target.value)}
-                  placeholder="Orientações e recomendações passadas ao instrutor durante a visita…"
+                  placeholder="Orientações e recomendações passadas ao instrutor durante a supervisão…"
                   rows={2}
                 />
               </div>
@@ -853,7 +853,7 @@ export default function NovaSupervisaoPage() {
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-bold text-zinc-800 uppercase tracking-wide">
-                    Providências necessárias da visita
+                    Providências necessárias da supervisão
                   </label>
                   <span className="text-[11px] text-zinc-400">Sugestões rápidas:</span>
                 </div>
@@ -882,15 +882,15 @@ export default function NovaSupervisaoPage() {
                 />
               </div>
 
-              {/* 4. Observações gerais da visita */}
+              {/* 4. Observações gerais da supervisão */}
               <div className="flex flex-col gap-1.5 border-t border-zinc-100 pt-4">
                 <label className="text-xs font-bold text-zinc-800 uppercase tracking-wide">
-                  Observações gerais da visita
+                  Observações gerais da supervisão
                 </label>
                 <Textarea
                   value={form.observacoesGerais}
                   onChange={(e) => set("observacoesGerais", e.target.value)}
-                  placeholder="Observações adicionais ou notas gerais da visita…"
+                  placeholder="Observações adicionais ou notas gerais da supervisão…"
                   rows={4}
                 />
               </div>

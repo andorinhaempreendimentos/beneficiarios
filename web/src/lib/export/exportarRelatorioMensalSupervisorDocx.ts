@@ -590,7 +590,7 @@ export async function exportarRelatorioMensalSupervisorDocx(dados: DadosRelatori
 
     children.push(createSubHeading('Ocorrências/dificuldades identificadas:'));
     const difs = [s.estruturaObservacoes, s.materiaisObservacoes, s.uniformesObservacoes, s.gradeObservacoes].filter(Boolean).join('; ');
-    children.push(createTextBlock(difs || 'Nenhuma ocorrência prejudicial identificada no momento da visita.'));
+    children.push(createTextBlock(difs || 'Nenhuma ocorrência prejudicial identificada no momento da supervisão.'));
 
     children.push(createSubHeading('Orientações repassadas ao professor:'));
     children.push(createTextBlock(s.orientacoesProfessor || 'Reforçada a necessidade de registro rigoroso da lista de presença diária e zeladoria dos materiais e uniformes.'));
@@ -599,7 +599,7 @@ export async function exportarRelatorioMensalSupervisorDocx(dados: DadosRelatori
     children.push(createTextBlock(s.providenciasNecessarias || (!espacoOk || !matOk ? 'Encaminhado comunicado à coordenação para reposição/reparo necessário.' : 'Sem pendências operacionais.')));
 
     children.push(createSubHeading('Prazo para regularização/acompanhamento:'));
-    children.push(createTextBlock('Próxima visita de supervisão in loco.'));
+    children.push(createTextBlock('Próxima supervisão in loco.'));
 
     const temFotosNestaSup = s.fotos && s.fotos.length > 0;
     children.push(
@@ -642,7 +642,7 @@ export async function exportarRelatorioMensalSupervisorDocx(dados: DadosRelatori
         spacing: { before: 0, after: 120 },
         children: [
           new TextRun({
-            text: `Registros fotográficos comprobatórios das visitas aos núcleos no período (${todasFotos.length} imagem(ns)):`,
+            text: `Registros fotográficos comprobatórios das supervisões nos núcleos no período (${todasFotos.length} imagem(ns)):`,
             size: 18,
             font: 'Calibri',
           }),
@@ -714,7 +714,7 @@ export async function exportarRelatorioMensalSupervisorDocx(dados: DadosRelatori
       spacing: { before: 120, after: 300 },
       children: [
         new TextRun({
-          text: 'Declaro que as informações constantes neste relatório refletem com fidedignidade as visitas de supervisão realizadas aos núcleos sob minha responsabilidade no período indicado, bem como as condições verificadas in loco.',
+          text: 'Declaro que as informações constantes neste relatório refletem com fidedignidade as supervisões realizadas nos núcleos sob minha responsabilidade no período indicado, bem como as condições verificadas in loco.',
           size: 19,
           font: 'Calibri',
           color: '334155',

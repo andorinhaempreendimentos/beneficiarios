@@ -263,7 +263,7 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
             3. Resumo da Execução
           </h2>
           <p className="text-xs text-zinc-600 mb-3 leading-relaxed">
-            Durante o período de referência, foram desenvolvidas atividades regulares de futebol e futsal nos núcleos integrantes do projeto, conforme cronograma e planejamento estabelecidos. A execução foi acompanhada por meio do cadastro dos beneficiários, controle de frequência, registros das aulas, acompanhamento dos profissionais e visitas de supervisão realizadas pela coordenação.
+            Durante o período de referência, foram desenvolvidas atividades regulares de futebol e futsal nos núcleos integrantes do projeto, conforme cronograma e planejamento estabelecidos. A execução foi acompanhada por meio do cadastro dos beneficiários, controle de frequência, registros das aulas, acompanhamento dos profissionais e supervisões realizadas pela coordenação.
           </p>
           <div className="overflow-x-auto border border-zinc-200 rounded-lg">
             <table className="w-full text-xs text-left">
@@ -301,7 +301,7 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
                   <td className="p-2.5 text-center font-bold text-zinc-900">{resumoIndicadores.aulas.realizado}</td>
                 </tr>
                 <tr>
-                  <td className="p-2.5 font-medium">Visitas de supervisão</td>
+                  <td className="p-2.5 font-medium">Supervisões</td>
                   <td className="p-2.5 text-center">{resumoIndicadores.supervisoes.previsto}</td>
                   <td className="p-2.5 text-center font-bold text-zinc-900">{resumoIndicadores.supervisoes.realizado}</td>
                 </tr>
@@ -528,10 +528,10 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
             8. Acompanhamento e Supervisão dos Núcleos
           </h2>
           <p className="text-xs text-zinc-600 mb-3 leading-relaxed">
-            Durante a execução do projeto, deverão ser realizadas visitas periódicas aos núcleos pela coordenação, com o objetivo de acompanhar o funcionamento das atividades e verificar as condições de execução.
+            Durante a execução do projeto, deverão ser realizadas supervisões periódicas nos núcleos pela coordenação, com o objetivo de acompanhar o funcionamento das atividades e verificar as condições de execução.
           </p>
 
-          <h3 className="text-xs font-bold uppercase text-zinc-700 mb-2">Demonstrativo das visitas</h3>
+          <h3 className="text-xs font-bold uppercase text-zinc-700 mb-2">Demonstrativo das supervisões</h3>
           <div className="overflow-x-auto border border-zinc-200 rounded-lg">
             <table className="w-full text-xs text-left">
               <thead className="bg-zinc-100 text-zinc-700 font-semibold uppercase">
@@ -560,7 +560,7 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
                 {supervisoes.length === 0 && (
                   <tr>
                     <td colSpan={6} className="p-4 text-center text-zinc-400">
-                      Nenhuma visita de supervisão registrada no período.
+                      Nenhuma supervisão registrada no período.
                     </td>
                   </tr>
                 )}
@@ -934,8 +934,8 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
               />
               <div>
                 <span className="font-semibold text-zinc-900">Anexo V: Relatórios de Supervisão com Fotos</span>
-                <span className="ml-1 text-[11px] text-zinc-500">({supervisoes.length} visitas)</span>
-                <p className="text-[11px] text-zinc-500 mt-0.5">Fichas de visitas in loco da coordenação e registros fotográficos.</p>
+                <span className="ml-1 text-[11px] text-zinc-500">({supervisoes.length} supervisões)</span>
+                <p className="text-[11px] text-zinc-500 mt-0.5">Fichas de supervisão in loco da coordenação e registros fotográficos.</p>
               </div>
             </label>
 
@@ -1240,7 +1240,7 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
                 ANEXO V — RELATÓRIOS INDIVIDUAIS DE SUPERVISÃO PEDAGÓGICA COM FOTOS
               </h3>
               <p className="text-[10px] text-zinc-300">
-                Total de Visitas Realizadas: {supervisoes.length}
+                Total de Supervisões Realizadas: {supervisoes.length}
               </p>
             </div>
             <div className="overflow-x-auto border border-zinc-200 rounded-lg">
@@ -1271,7 +1271,7 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
                   {supervisoes.length === 0 && (
                     <tr>
                       <td colSpan={6} className="p-2 text-center text-zinc-500 bg-zinc-50/50">
-                        Nenhuma visita de supervisão registrada no período selecionado.
+                        Nenhuma supervisão registrada no período selecionado.
                       </td>
                     </tr>
                   )}

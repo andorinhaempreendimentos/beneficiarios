@@ -248,8 +248,8 @@ export const prestacaoContasApi = {
     if (supsRascunho && supsRascunho.length > 0) {
       alertas.push({
         tipo: 'aviso',
-        mensagem: `${supsRascunho.length} visita(s) de supervisão ainda em status de "Rascunho".`,
-        detalhes: 'Finalize as visitas para que seus pareceres e fotos constem no relatório oficial.',
+        mensagem: `${supsRascunho.length} supervisão(ões) ainda em status de "Rascunho".`,
+        detalhes: 'Finalize as supervisões para que seus pareceres e fotos constem no relatório oficial.',
       });
     }
 
@@ -673,7 +673,7 @@ export const prestacaoContasApi = {
             data: s.data_supervisao,
             nucleoNome: s.nucleos?.identificacao,
             atividade: 'Supervisão Técnica e Acompanhamento de Campo',
-            descricao: f.legenda || `Visita de supervisão ao Núcleo ${s.nucleos?.identificacao}`,
+            descricao: f.legenda || `Supervisão ao Núcleo ${s.nucleos?.identificacao}`,
           });
         }
       }

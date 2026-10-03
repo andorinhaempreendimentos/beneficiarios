@@ -226,7 +226,7 @@ export default function DetalhesSupervisaoPage() {
       {!isFinalizada && (
         <Card>
           <div className="px-5 py-4 border-b border-zinc-100">
-            <h2 className="text-sm font-semibold text-zinc-800">Anexar Fotos à Visita</h2>
+            <h2 className="text-sm font-semibold text-zinc-800">Anexar Fotos à Supervisão</h2>
           </div>
           <div className="p-5">
             <SupervisaoFotoUpload

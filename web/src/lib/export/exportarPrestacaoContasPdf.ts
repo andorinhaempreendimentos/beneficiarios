@@ -186,7 +186,7 @@ export async function exportarRelatorioPrestacaoContasPdf(
       ["Turmas Ativas", String(resumoIndicadores.turmas.previsto), String(resumoIndicadores.turmas.realizado)],
       ["Professores / Equipe", String(resumoIndicadores.professores.previsto), String(resumoIndicadores.professores.realizado)],
       ["Aulas / Atividades Realizadas", String(resumoIndicadores.aulas.previsto), String(resumoIndicadores.aulas.realizado)],
-      ["Visitas de Supervisão", String(resumoIndicadores.supervisoes.previsto), String(resumoIndicadores.supervisoes.realizado)],
+      ["Supervisões", String(resumoIndicadores.supervisoes.previsto), String(resumoIndicadores.supervisoes.realizado)],
     ],
     columnStyles: {
       0: { fontStyle: "bold" },
@@ -333,7 +333,7 @@ export async function exportarRelatorioPrestacaoContasPdf(
     });
     y = (doc as any).lastAutoTable.finalY + 5;
   } else {
-    drawTextBox("Nenhuma visita de supervisão pedagógica registrada no período selecionado.");
+    drawTextBox("Nenhuma supervisão registrada no período selecionado.");
   }
 
   // ── 9. RECURSOS HUMANOS ──────────────────────────────────────────────────
@@ -468,7 +468,7 @@ export async function exportarRelatorioPrestacaoContasPdf(
     `[${incl.anexo2 ? "X" : " "}] Anexo II: Relação nominal analítica de beneficiários atendidos e matriculados (${beneficiariosLista?.length || beneficiarios.totalCadastrados} alunos)`,
     `[${incl.anexo3 ? "X" : " "}] Anexo III: Relatórios consolidados e listas de frequência dos beneficiários (${frequencia.porNucleo.length} núcleos)`,
     `[${incl.anexo4 ? "X" : " "}] Anexo IV: Relatório cronológico de atividades e aulas realizadas (${atividadesRealizadas.length} aulas)`,
-    `[${incl.anexo5 ? "X" : " "}] Anexo V: Relatórios individuais de supervisão pedagógica in loco com fotos comprobatórias (${supervisoes.length} visitas)`,
+    `[${incl.anexo5 ? "X" : " "}] Anexo V: Relatórios individuais de supervisão pedagógica in loco com fotos comprobatórias (${supervisoes.length} supervisões)`,
     `[${incl.anexo6 ? "X" : " "}] Anexo VI: Relação dos profissionais e equipe técnica (${recursosHumanos.profissionais.length} profissionais)`,
     `[${incl.anexo7 ? "X" : " "}] Anexo VII: Demonstrativo de materiais e uniformes distribuídos (${materiais.length} itens)`,
     `[${incl.anexo8 ? "X" : " "}] Anexo VIII: Demonstrativo analítico de cumprimento das metas pactuadas (${cumprimentoMetas.length} indicadores)`,
@@ -672,7 +672,7 @@ export async function exportarRelatorioPrestacaoContasPdf(
 
   // ANEXO V
   if (incl.anexo5) {
-    drawAnnexHeader("ANEXO V — RELATÓRIOS INDIVIDUAIS DE SUPERVISÃO PEDAGÓGICA", `Total de Visitas Realizadas: ${supervisoes.length}`);
+    drawAnnexHeader("ANEXO V — RELATÓRIOS INDIVIDUAIS DE SUPERVISÃO PEDAGÓGICA", `Total de Supervisões Realizadas: ${supervisoes.length}`);
     autoTable(doc, {
       startY: y,
       margin: { left: margin, right: margin },
@@ -689,7 +689,7 @@ export async function exportarRelatorioPrestacaoContasPdf(
             String(s.beneficiariosPresentes),
             s.situacao,
           ])
-        : [["—", "Nenhuma visita de supervisão registrada no período selecionado.", "—", "—", "—", "—"]],
+        : [["—", "Nenhuma supervisão registrada no período selecionado.", "—", "—", "—", "—"]],
       columnStyles: {
         0: { cellWidth: 20 },
         4: { halign: "center", cellWidth: 18 },

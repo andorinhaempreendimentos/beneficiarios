@@ -249,7 +249,7 @@ export function DetalhesNucleoView({
             </div>
             <div>
               <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">Supervisões Realizadas</p>
-              <p className="text-xs text-zinc-400">Histórico de visitas</p>
+              <p className="text-xs text-zinc-400">Histórico de supervisões</p>
             </div>
           </Link>
           <Link
@@ -438,7 +438,7 @@ export function DetalhesNucleoView({
           </div>
           <div>
             <p className="text-sm font-semibold text-zinc-800">Supervisões</p>
-            <p className="text-xs text-zinc-400">Visitas realizadas</p>
+            <p className="text-xs text-zinc-400">Supervisões realizadas</p>
           </div>
         </Link>
         <Link

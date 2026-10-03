@@ -752,7 +752,7 @@ export function TabelaRH({ filtros }: Props) {
                         )}
                         {categoria === "coordenador" && (
                           <div className="font-bold text-sky-700">
-                            {supervisoesRealizadas} visita(s) de supervisão
+                            {supervisoesRealizadas} supervisão(ões)
                           </div>
                         )}
                         {categoria !== "professor" && categoria !== "coordenador" && (

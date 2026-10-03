@@ -102,7 +102,7 @@ export default function SupervisoesPage() {
     <div className="flex flex-col gap-6 pb-12">
       <PageHeader
         title="Supervisões"
-        description="Formulários de visita de supervisão aos núcleos"
+        description="Formulários de supervisão aos núcleos"
         actions={
           <div className="flex items-center gap-2">
             <LinkButton href="/supervisoes/relatorio-mensal" variant="secondary">

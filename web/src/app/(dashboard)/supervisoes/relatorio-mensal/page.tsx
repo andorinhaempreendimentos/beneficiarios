@@ -110,7 +110,7 @@ export default function RelatorioMensalPage() {
   const supervisoes = pageData?.data ?? [];
   const finalizadas = supervisoes.filter((s) => s.status === "finalizada");
 
-  // Regiões sugeridas a partir dos núcleos visitados ou núcleo filtrado
+  // Regiões sugeridas a partir dos núcleos supervisionados ou núcleo filtrado
   const nucleoSelecionado = nucleos.find((n) => n.id === ativos.nucleoId);
   const regioesSugeridas = Array.from(
     new Set(finalizadas.map((s) => s.nucleo?.regiao).filter(Boolean) as string[])
@@ -141,7 +141,7 @@ export default function RelatorioMensalPage() {
         description={
           isCoordenador
             ? `Supervisões aos núcleos de ${coordenadorNome}`
-            : "Consolidado de visitas finalizadas por período"
+            : "Consolidado de supervisões finalizadas por período"
         }
         actions={
           <Button
@@ -230,7 +230,7 @@ export default function RelatorioMensalPage() {
                   <thead>
                     <tr className="border-b border-zinc-200 text-left text-xs font-medium uppercase tracking-wide text-zinc-500 bg-zinc-50/50">
                       <th className="px-5 py-3">Núcleo</th>
-                      <th className="px-5 py-3">Visitas</th>
+                      <th className="px-5 py-3">Supervisões</th>
                       <th className="px-5 py-3">Média presença</th>
                       <th className="px-5 py-3">Estrutura</th>
                       <th className="px-5 py-3">Materiais</th>

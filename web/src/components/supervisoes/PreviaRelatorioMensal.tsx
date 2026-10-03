@@ -183,7 +183,7 @@ export function PreviaRelatorioMensal({
                   <>
                     <tr className="divide-x divide-zinc-300 text-zinc-400 italic">
                       <td className="p-2 text-center" colSpan={8}>
-                        Nenhuma supervisão realizada no período selecionado até o momento. As visitas aparecerão aqui conforme forem registradas.
+                        Nenhuma supervisão realizada no período selecionado até o momento. As supervisões aparecerão aqui conforme forem registradas.
                       </td>
                     </tr>
                     {/* Linhas vazias ilustrativas para pré-visualização fiel ao impresso */}
@@ -507,7 +507,7 @@ export function PreviaRelatorioMensal({
               <Camera className="h-6 w-6 mx-auto mb-1 text-zinc-300" />
               <p className="text-xs font-medium text-zinc-600">Nenhum registro fotográfico anexado até o momento</p>
               <p className="text-[10px] text-zinc-400 mt-0.5">
-                Fotos anexadas às visitas aparecerão automaticamente aqui e serão exportadas no documento Word.
+                Fotos anexadas às supervisões aparecerão automaticamente aqui e serão exportadas no documento Word.
               </p>
             </div>
           ) : (
@@ -537,7 +537,7 @@ export function PreviaRelatorioMensal({
             DECLARAÇÃO DO COORDENADOR
           </h4>
           <p className="text-zinc-700 leading-relaxed mb-4">
-            Declaro que as informações constantes neste relatório refletem com fidedignidade as visitas de supervisão realizadas aos núcleos sob minha responsabilidade no período indicado, bem como as condições verificadas in loco.
+            Declaro que as informações constantes neste relatório refletem com fidedignidade as supervisões realizadas nos núcleos sob minha responsabilidade no período indicado, bem como as condições verificadas in loco.
           </p>
 
           <p className="text-zinc-700 mb-8">
