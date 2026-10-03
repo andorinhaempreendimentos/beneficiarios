@@ -31,8 +31,12 @@ export function TopLocationBar({ nucleos: nucleosProp }: TopLocationBarProps = {
   const { user } = useAuth();
   const isAdmin = user && user.tipo !== 'funcionario' && !user.isProfessor;
 
-  // Ocultar barra na área do professor
-  if (pathname?.startsWith('/professor')) return null;
+  const isCoordenador = Boolean((user as any)?.isCoordenador);
+
+  // Ocultar barra na área do professor e do coordenador
+  if (pathname?.startsWith('/professor') || pathname?.startsWith('/coordenador') || isCoordenador) {
+    return null;
+  }
   const {
     estado,
     cidade,
