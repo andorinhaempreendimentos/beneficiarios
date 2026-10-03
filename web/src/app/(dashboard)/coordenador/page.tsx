@@ -508,7 +508,7 @@ export default function PainelCoordenadorPage() {
           </div>
           <div className="px-5 py-3 border-t border-zinc-100 bg-zinc-50/50 rounded-b-xl">
             <Link
-              href={nucleoAtivoUnico ? `/supervisoes?nucleoId=${nucleoAtivoUnico.id}` : "/supervisoes"}
+              href="/coordenador/supervisoes"
               className="text-xs text-sky-600 hover:underline font-semibold flex items-center gap-1"
             >
               Ver todas as supervisões <ArrowRight className="h-3 w-3" />
@@ -559,11 +559,7 @@ export default function PainelCoordenadorPage() {
           </div>
           <div className="px-5 py-3 border-t border-zinc-100 bg-zinc-50/50 rounded-b-xl">
             <Link
-              href={
-                nucleoAtivoUnico
-                  ? `/pendencias-gerais?nucleoId=${nucleoAtivoUnico.id}`
-                  : "/pendencias-gerais"
-              }
+              href="/coordenador/pendencias"
               className="text-xs text-sky-600 hover:underline font-semibold flex items-center gap-1"
             >
               Ver todas as pendências <ArrowRight className="h-3 w-3" />
@@ -611,9 +607,9 @@ export default function PainelCoordenadorPage() {
           {[
             { label: "Nova Supervisão", href: "/supervisoes/nova", icon: ClipboardCheck, cor: "text-violet-600" },
             { label: "Relatório Mensal", href: "/supervisoes/relatorio-mensal", icon: ClipboardList, cor: "text-emerald-600" },
-            { label: "Turmas & Horários", href: "/turmas", icon: GraduationCap, cor: "text-sky-600" },
-            { label: "Beneficiários", href: "/beneficiarios", icon: Users, cor: "text-blue-600" },
-            { label: "Pendências", href: "/pendencias-gerais", icon: AlertCircle, cor: "text-red-600" },
+            { label: "Meus Núcleos", href: "/coordenador/nucleos", icon: Building2, cor: "text-blue-600" },
+            { label: "Turmas & Horários", href: "/coordenador/turmas", icon: GraduationCap, cor: "text-sky-600" },
+            { label: "Pendências", href: "/coordenador/pendencias", icon: AlertCircle, cor: "text-red-600" },
             { label: "Estoque", href: "/coordenador/estoque", icon: Package, cor: "text-amber-600" },
           ].map((a) => (
             <Link

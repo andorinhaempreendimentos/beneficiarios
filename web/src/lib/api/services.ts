@@ -998,6 +998,7 @@ export const turmasApi = {
     let q = sb.from('turmas').select(TURMA_SELECT, { count: 'exact' }).is('deleted_at', null);
     if (p?.busca) q = q.ilike('nome', `%${p.busca}%`);
     if (p?.nucleoId) q = q.eq('nucleo_id', String(p.nucleoId));
+    if (p?.nucleoIds && Array.isArray(p.nucleoIds) && p.nucleoIds.length > 0) q = q.in('nucleo_id', p.nucleoIds);
     if (p?.atividadeId) q = q.eq('atividade_id', String(p.atividadeId));
     if (bool(p?.exclusiva) !== undefined) q = q.eq('exclusiva', bool(p?.exclusiva)!);
     
@@ -1007,6 +1008,7 @@ export const turmasApi = {
       let qFallback = sb.from('turmas').select(TURMA_FALLBACK_SELECT, { count: 'exact' }).is('deleted_at', null);
       if (p?.busca) qFallback = qFallback.ilike('nome', `%${p.busca}%`);
       if (p?.nucleoId) qFallback = qFallback.eq('nucleo_id', String(p.nucleoId));
+      if (p?.nucleoIds && Array.isArray(p.nucleoIds) && p.nucleoIds.length > 0) qFallback = qFallback.in('nucleo_id', p.nucleoIds);
       if (p?.atividadeId) qFallback = qFallback.eq('atividade_id', String(p.atividadeId));
       if (bool(p?.exclusiva) !== undefined) qFallback = qFallback.eq('exclusiva', bool(p?.exclusiva)!);
       const resFallback = await qFallback.order('created_at', { ascending: false }).range(from, to);

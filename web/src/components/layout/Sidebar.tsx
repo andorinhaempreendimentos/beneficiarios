@@ -225,11 +225,10 @@ export function Sidebar() {
           ) : isCoordenador ? (
             <>
               {navLink("/coordenador", "Meu Painel", UserCog)}
-              {navLink("/nucleos", t("local", "Núcleo", true), Building2)}
-              {navLink("/turmas", t("turma", "Turma", true), GraduationCap)}
-              {navLink("/beneficiarios", "Beneficiários", Users)}
-              {navLink("/supervisoes", "Supervisões", ClipboardCheck)}
-              {navLink("/pendencias-gerais", "Pendências", AlertCircle)}
+              {navLink("/coordenador/nucleos", t("local", "Núcleo", true), Building2)}
+              {navLink("/coordenador/turmas", t("turma", "Turma", true), GraduationCap)}
+              {navLink("/coordenador/supervisoes", "Supervisões", ClipboardCheck)}
+              {navLink("/coordenador/pendencias", "Pendências", AlertCircle)}
               {navLink("/coordenador/estoque", "Estoque", Package)}
               {navLink("/pesquisas", "Pesquisas", ClipboardList)}
             </>
