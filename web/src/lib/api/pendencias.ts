@@ -61,7 +61,7 @@ function mapPendencia(r: any): PendenciaGeralApi {
     resolvidoPorId: r.resolvido_por_id ?? null, observacoesResolucao: r.observacoes_resolucao ?? null,
     createdById: r.created_by_id,
     nucleo: r.nucleos ? { identificacao: r.nucleos.identificacao } : undefined,
-    responsavel: r.funcionarios ? { nome: r.funcionarios.nome } : undefined,
+    responsavel: r.funcionarios ? { nome: r.funcionarios.nome_completo ?? r.funcionarios.nome } : undefined,
     criadoEm: r.created_at, atualizadoEm: r.updated_at,
   };
 }
@@ -71,7 +71,7 @@ export const pendenciasGeraisApi = {
     const sb = await getSupabase();
     const { page, limit, from, to } = paginar(num(p?.page), num(p?.limit));
     let q = (sb as any).from('pendencias_gerais')
-      .select('*, nucleos(identificacao), funcionarios!pendencias_gerais_responsavel_id_fkey(nome)', { count: 'exact' })
+      .select('*, nucleos(identificacao), funcionarios!pendencias_gerais_responsavel_id_fkey(nome_completo)', { count: 'exact' })
       .is('deleted_at', null);
     if (p?.nucleoId) q = q.eq('nucleo_id', p.nucleoId as string);
     if (p?.status) q = q.eq('status', p.status as string);
@@ -85,7 +85,7 @@ export const pendenciasGeraisApi = {
   async get(id: string): Promise<PendenciaGeralApi> {
     const sb = await getSupabase();
     const { data, error } = await (sb as any).from('pendencias_gerais')
-      .select('*, nucleos(identificacao), funcionarios!pendencias_gerais_responsavel_id_fkey(nome)')
+      .select('*, nucleos(identificacao), funcionarios!pendencias_gerais_responsavel_id_fkey(nome_completo)')
       .eq('id', id).single();
     if (error) throw error;
     return mapPendencia(data);

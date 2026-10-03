@@ -122,7 +122,7 @@ function mapMovimentacao(r: any): MovimentacaoEstoqueApi {
     fotoComprovanteUrl: r.foto_comprovante_url ?? null, dataMovimentacao: r.data_movimentacao, criadoEm: r.created_at,
     material: r.materiais ? { nome: r.materiais.nome, unidadeMedida: r.materiais.unidade_medida } : undefined,
     nucleo: r.nucleos ? { identificacao: r.nucleos.identificacao } : undefined,
-    responsavel: r.funcionarios ? { nome: r.funcionarios.nome } : undefined,
+    responsavel: r.funcionarios ? { nome: r.funcionarios.nome_completo ?? r.funcionarios.nome } : undefined,
   };
 }
 function mapTermoEntrega(r: any): TermoEntregaApi {
@@ -213,7 +213,7 @@ export const movimentacoesEstoqueApi = {
     const sb = await getSupabase();
     const { page, limit, from, to } = paginar(num(p?.page), num(p?.limit));
     let q = (sb as any).from('movimentacoes_estoque')
-      .select('*, materiais(nome, unidade_medida), nucleos(identificacao), funcionarios(nome)', { count: 'exact' });
+      .select('*, materiais(nome, unidade_medida), nucleos(identificacao), funcionarios(nome_completo)', { count: 'exact' });
     if (p?.nucleoId) q = q.eq('nucleo_id', p.nucleoId as string);
     if (p?.materialId) q = q.eq('material_id', p.materialId as string);
     if (p?.tipo) q = q.eq('tipo', p.tipo as string);
@@ -233,7 +233,7 @@ export const movimentacoesEstoqueApi = {
       observacoes: (body.observacoes as string | null) ?? null,
       foto_comprovante_url: (body.fotoComprovanteUrl as string | null) ?? null,
       data_movimentacao: (body.dataMovimentacao as string) ?? new Date().toISOString(),
-    }).select('*, materiais(nome, unidade_medida), nucleos(identificacao), funcionarios(nome)').single();
+    }).select('*, materiais(nome, unidade_medida), nucleos(identificacao), funcionarios(nome_completo)').single();
     if (error) throw error;
     return mapMovimentacao(data);
   },

@@ -38,6 +38,10 @@ const AVALIACAO_OPTS: { value: AvaliacaoNivel; label: string }[] = [
   { value: "critica", label: "Crítica" },
 ];
 
+function precisaObs(val: AvaliacaoNivel | "") {
+  return val === "regular" || val === "ruim" || val === "critica";
+}
+
 export default function NovaSupervisaoPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -179,8 +183,16 @@ export default function NovaSupervisaoPage() {
     }
 
     if (step === "avaliacao") {
-      if (!form.estruturaObservacoes.trim()) {
-        toast.error("As observações da estrutura física são obrigatórias.");
+      if (precisaObs(form.estruturaAvaliacao) && !form.estruturaObservacoes.trim()) {
+        toast.error("Observações da estrutura são obrigatórias para condição regular ou inferior.");
+        return false;
+      }
+      if (precisaObs(form.materiaisAvaliacao) && !form.materiaisObservacoes.trim()) {
+        toast.error("Observações dos materiais são obrigatórias para condição regular ou inferior.");
+        return false;
+      }
+      if (precisaObs(form.uniformesAvaliacao) && !form.uniformesObservacoes.trim()) {
+        toast.error("Observações dos uniformes são obrigatórias para condição regular ou inferior.");
         return false;
       }
     }
@@ -206,8 +218,20 @@ export default function NovaSupervisaoPage() {
       return;
     }
 
-    if (!form.estruturaObservacoes.trim()) {
-      toast.error("Observações da estrutura física são obrigatórias.");
+    if (precisaObs(form.estruturaAvaliacao) && !form.estruturaObservacoes.trim()) {
+      toast.error("Observações da estrutura física são obrigatórias para condição regular ou inferior.");
+      setStep("avaliacao");
+      return;
+    }
+
+    if (precisaObs(form.materiaisAvaliacao) && !form.materiaisObservacoes.trim()) {
+      toast.error("Observações dos materiais são obrigatórias para condição regular ou inferior.");
+      setStep("avaliacao");
+      return;
+    }
+
+    if (precisaObs(form.uniformesAvaliacao) && !form.uniformesObservacoes.trim()) {
+      toast.error("Observações dos uniformes são obrigatórias para condição regular ou inferior.");
       setStep("avaliacao");
       return;
     }
@@ -627,13 +651,16 @@ export default function NovaSupervisaoPage() {
           {/* Step 3: Avaliação */}
           {step === "avaliacao" && (
             <div className="flex flex-col gap-6">
-              {/* Estrutura física - NÃO É OPCIONAL */}
+              {/* Estrutura física */}
               <div className="flex flex-col gap-3 border-b border-zinc-100 pb-5">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-semibold text-zinc-800">
-                    Estrutura física do local <span className="text-red-500">*</span>
+                    Estrutura física do local{" "}
+                    {precisaObs(form.estruturaAvaliacao) && <span className="text-red-500">* (Obrigatório justificar)</span>}
                   </span>
-                  <span className="text-[11px] text-zinc-500 font-medium">Avaliação e descrição obrigatórias</span>
+                  <span className="text-[11px] text-zinc-500 font-medium">
+                    {precisaObs(form.estruturaAvaliacao) ? "Justificativa obrigatória" : "Opcional"}
+                  </span>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {AVALIACAO_OPTS.map((opt) => {
@@ -657,15 +684,27 @@ export default function NovaSupervisaoPage() {
                 <Textarea
                   value={form.estruturaObservacoes}
                   onChange={(e) => set("estruturaObservacoes", e.target.value)}
-                  placeholder="Descreva as condições da estrutura (gramado, traves, alambrado, vestiário, iluminação)… *"
+                  placeholder={
+                    precisaObs(form.estruturaAvaliacao)
+                      ? "Descreva os problemas na estrutura física (gramado, alambrado, vestiário, iluminação, etc.)… *"
+                      : "Observações sobre a estrutura física (opcional)…"
+                  }
                   rows={2}
-                  required
+                  className={precisaObs(form.estruturaAvaliacao) && !form.estruturaObservacoes.trim() ? "border-amber-400 focus:ring-amber-500" : ""}
                 />
               </div>
 
               {/* Materiais disponíveis */}
               <div className="flex flex-col gap-3 border-b border-zinc-100 pb-5">
-                <span className="text-sm font-semibold text-zinc-800">Materiais esportivos disponíveis</span>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-semibold text-zinc-800">
+                    Materiais esportivos disponíveis{" "}
+                    {precisaObs(form.materiaisAvaliacao) && <span className="text-red-500">* (Obrigatório justificar)</span>}
+                  </span>
+                  <span className="text-[11px] text-zinc-500 font-medium">
+                    {precisaObs(form.materiaisAvaliacao) ? "Justificativa obrigatória" : "Opcional"}
+                  </span>
+                </div>
                 <div className="flex flex-wrap gap-2">
                   {AVALIACAO_OPTS.map((opt) => {
                     const selected = form.materiaisAvaliacao === opt.value;
@@ -688,14 +727,27 @@ export default function NovaSupervisaoPage() {
                 <Textarea
                   value={form.materiaisObservacoes}
                   onChange={(e) => set("materiaisObservacoes", e.target.value)}
-                  placeholder="Observações sobre bolas, cones, coletes, etc. (opcional)"
+                  placeholder={
+                    precisaObs(form.materiaisAvaliacao)
+                      ? "Descreva as faltas ou avarias nos materiais esportivos (bolas, cones, coletes)… *"
+                      : "Observações sobre bolas, cones, coletes, etc. (opcional)…"
+                  }
                   rows={2}
+                  className={precisaObs(form.materiaisAvaliacao) && !form.materiaisObservacoes.trim() ? "border-amber-400 focus:ring-amber-500" : ""}
                 />
               </div>
 
               {/* Uniformes */}
               <div className="flex flex-col gap-3">
-                <span className="text-sm font-semibold text-zinc-800">Uso e estado dos uniformes</span>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-semibold text-zinc-800">
+                    Uso e estado dos uniformes{" "}
+                    {precisaObs(form.uniformesAvaliacao) && <span className="text-red-500">* (Obrigatório justificar)</span>}
+                  </span>
+                  <span className="text-[11px] text-zinc-500 font-medium">
+                    {precisaObs(form.uniformesAvaliacao) ? "Justificativa obrigatória" : "Opcional"}
+                  </span>
+                </div>
                 <div className="flex flex-wrap gap-2">
                   {AVALIACAO_OPTS.map((opt) => {
                     const selected = form.uniformesAvaliacao === opt.value;
@@ -718,8 +770,13 @@ export default function NovaSupervisaoPage() {
                 <Textarea
                   value={form.uniformesObservacoes}
                   onChange={(e) => set("uniformesObservacoes", e.target.value)}
-                  placeholder="Observações sobre o uso de uniforme pelos alunos (opcional)"
+                  placeholder={
+                    precisaObs(form.uniformesAvaliacao)
+                      ? "Descreva os problemas observados no uso ou estado dos uniformes… *"
+                      : "Observações sobre o uso de uniforme pelos alunos (opcional)…"
+                  }
                   rows={2}
+                  className={precisaObs(form.uniformesAvaliacao) && !form.uniformesObservacoes.trim() ? "border-amber-400 focus:ring-amber-500" : ""}
                 />
               </div>
             </div>

@@ -160,7 +160,7 @@ export const supervisoesApi = {
     const sb = createClient();
     const { data, error } = await (sb as any).from('supervisoes')
       .update({ status: 'finalizada' }).eq('id', id)
-      .select('*, nucleos(identificacao), funcionarios(nome)').single();
+      .select('*, nucleos(identificacao), funcionarios(nome_completo)').single();
     if (error) throw error;
     return mapSupervisao(data);
   },
