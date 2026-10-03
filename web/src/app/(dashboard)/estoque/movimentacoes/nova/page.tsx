@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useToast } from "@/components/providers/ToastProvider";
 import { Card, PageHeader, Field, Input, Select, Textarea, LinkButton } from "@/components/ui";
 import { useQuery } from "@/lib/hooks/useQuery";
@@ -26,11 +26,12 @@ const TIPOS = [
 
 export default function NovaMovimentacaoPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { toast } = useToast();
   const [salvando, setSalvando] = useState(false);
   const [form, setForm] = useState({
-    materialId: "",
-    nucleoId: "",
+    materialId: searchParams.get("materialId") || "",
+    nucleoId: searchParams.get("nucleoId") || "",
     tipo: "entrada",
     quantidade: "",
     responsavelId: "",

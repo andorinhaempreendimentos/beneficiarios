@@ -581,7 +581,7 @@ export default function PainelCoordenadorPage() {
               Estoque Crítico nos Núcleos
             </h2>
             <LinkButton
-              href={nucleoAtivoUnico ? `/estoque/nucleos/${nucleoAtivoUnico.id}` : "/estoque"}
+              href="/coordenador/estoque"
               variant="secondary"
               className="text-xs"
             >
@@ -614,7 +614,7 @@ export default function PainelCoordenadorPage() {
             { label: "Turmas & Horários", href: "/turmas", icon: GraduationCap, cor: "text-sky-600" },
             { label: "Beneficiários", href: "/beneficiarios", icon: Users, cor: "text-blue-600" },
             { label: "Pendências", href: "/pendencias-gerais", icon: AlertCircle, cor: "text-red-600" },
-            { label: "Estoque", href: "/estoque", icon: Package, cor: "text-amber-600" },
+            { label: "Estoque", href: "/coordenador/estoque", icon: Package, cor: "text-amber-600" },
           ].map((a) => (
             <Link
               key={a.href}

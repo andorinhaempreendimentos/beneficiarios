@@ -230,7 +230,7 @@ export function Sidebar() {
               {navLink("/beneficiarios", "Beneficiários", Users)}
               {navLink("/supervisoes", "Supervisões", ClipboardCheck)}
               {navLink("/pendencias-gerais", "Pendências", AlertCircle)}
-              {navLink("/estoque", "Estoque", Package)}
+              {navLink("/coordenador/estoque", "Estoque", Package)}
               {navLink("/pesquisas", "Pesquisas", ClipboardList)}
             </>
           ) : (
