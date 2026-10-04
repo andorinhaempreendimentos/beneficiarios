@@ -280,6 +280,12 @@ export function ExecucaoAulaClient({
   }, [dataAula, isDataRetroativa, isDataFutura, horaInicioPrevista, turma.nucleo, segundosDecorridos]);
 
   const isForaDoHorarioRegular = mounted ? (isDataRetroativa || isForaDaJanelaHorario) : false;
+  const isModoRegularizacao = Boolean(
+    isForaDoHorarioRegular ||
+    isDataRetroativa ||
+    execucao?.justificativaRetroativa ||
+    execucao?.statusAprovacao === "pendente_aprovacao"
+  );
 
   // Atualização do Cronômetro ao Vivo quando a aula estiver em andamento
   useEffect(() => {
@@ -528,13 +534,14 @@ export function ExecucaoAulaClient({
 
   // Verificar se está antes do horário previsto de fim
   const isAntesDoFimPrevisto = useMemo(() => {
+    if (isDataRetroativa || isModoRegularizacao) return false;
     if (!horaFimPrevista) return false;
     const now = new Date();
     const [fH, fM] = horaFimPrevista.split(":").map(Number);
     const fimPrevisto = new Date();
     fimPrevisto.setHours(fH, fM, 0, 0);
     return now < fimPrevisto;
-  }, [horaFimPrevista, segundosDecorridos]);
+  }, [horaFimPrevista, segundosDecorridos, isDataRetroativa, isModoRegularizacao]);
 
   const minutosRestantes = useMemo(() => {
     if (!horaFimPrevista) return 0;
@@ -582,9 +589,14 @@ export function ExecucaoAulaClient({
       }));
       await execucoesAulaApi.salvarPresencas(execucao.id, lista);
 
-      // Montar observações com justificativa de encerramento antecipado
+      // Montar observações com identificação de regularização ou justificativa de encerramento antecipado
       let obsFinais = observacoes.trim();
-      if (justificativaEncerramento.trim()) {
+      if (isModoRegularizacao) {
+        const motivo = justificativaRetroativa.trim() || execucao.justificativaRetroativa || "Regularização de aula anterior/offline";
+        const agoraStr = new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" });
+        const carimbo = `[AULA REGULARIZADA - PENDENTE DE HOMOLOGAÇÃO]\nRegistrada em ${agoraStr} por ${professor?.nomeCompleto || "Professor"}.\nMotivo: ${motivo}`;
+        obsFinais = obsFinais ? `${carimbo}\n\n${obsFinais}` : carimbo;
+      } else if (justificativaEncerramento.trim()) {
         const prefixo = `[ENCERRAMENTO ANTECIPADO - ${minutosRestantes}min antes] ${justificativaEncerramento.trim()}`;
         obsFinais = obsFinais ? `${prefixo}\n\n${obsFinais}` : prefixo;
       }
@@ -634,6 +646,12 @@ export function ExecucaoAulaClient({
             <MapPin className="h-3 w-3 text-zinc-400" />
             {turma.nucleo?.identificacao || "Núcleo"}
           </span>
+          {isModoRegularizacao && (
+            <span className="bg-amber-500/20 text-amber-300 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full border border-amber-400/30 flex items-center gap-1">
+              <AlertTriangle className="h-3 w-3 text-amber-400" />
+              Modo Regularização
+            </span>
+          )}
         </div>
 
         <h1 className="text-xl sm:text-2xl font-black tracking-tight">{turma.nome}</h1>
@@ -663,6 +681,21 @@ export function ExecucaoAulaClient({
           </div>
         </div>
       </div>
+
+      {/* BANNER INFORMATIVO SE MODO REGULARIZAÇÃO */}
+      {isModoRegularizacao && etapa !== "concluida" && (
+        <div className="rounded-2xl border border-amber-300 bg-amber-50/90 p-4 text-xs text-amber-950 flex items-start gap-3 shadow-xs">
+          <div className="h-8 w-8 rounded-xl bg-amber-200/80 text-amber-800 flex items-center justify-center shrink-0">
+            <AlertTriangle className="h-4 w-4 text-amber-700" />
+          </div>
+          <div className="flex-1">
+            <strong className="font-bold block text-sm text-amber-950">Aula em Modo Regularização</strong>
+            <p className="text-amber-800 mt-0.5 leading-relaxed">
+              Esta aula está sendo registrada retroativamente. Você pode preencher as presenças, anexar a foto comprobatória e concluir o registro a qualquer momento. O lançamento será enviado para homologação do Coordenador.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* STEPPER PROGRESS BAR (3 ETAPAS ATÔMICAS) */}
       <div className="grid grid-cols-3 gap-2 bg-zinc-100 p-1.5 rounded-2xl border border-zinc-200">
@@ -1251,17 +1284,26 @@ export function ExecucaoAulaClient({
             />
           </div>
 
-          {/* BOTÃO PRINCIPAL STOP */}
+          {/* BOTÃO PRINCIPAL STOP / CONCLUIR REGULARIZAÇÃO */}
           <button
             type="button"
             onClick={handleEncerrarAula}
             disabled={salvando || uploadingFoto || (!fotoFile && !fotoPreview)}
-            className="w-full bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 active:scale-[0.99] text-white font-extrabold py-5 rounded-2xl text-lg shadow-xl shadow-rose-600/25 flex items-center justify-center gap-3 transition-all cursor-pointer disabled:opacity-50"
+            className={`w-full font-extrabold py-5 rounded-2xl text-lg shadow-xl flex items-center justify-center gap-3 transition-all cursor-pointer disabled:opacity-50 ${
+              isModoRegularizacao
+                ? "bg-gradient-to-r from-amber-600 to-emerald-600 hover:from-amber-500 hover:to-emerald-500 text-white shadow-amber-600/20 active:scale-[0.99]"
+                : "bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 active:scale-[0.99] text-white shadow-rose-600/25"
+            }`}
           >
             {salvando || uploadingFoto ? (
               <>
                 <RefreshCw className="h-6 w-6 animate-spin" />
-                <span>{uploadingFoto ? "Enviando Foto..." : "Registrando Saída..."}</span>
+                <span>{uploadingFoto ? "Enviando Foto..." : isModoRegularizacao ? "Salvando Regularização..." : "Registrando Saída..."}</span>
+              </>
+            ) : isModoRegularizacao ? (
+              <>
+                <CheckCircle2 className="h-6 w-6 text-white" />
+                <span>CONCLUIR E REGULARIZAR AULA</span>
               </>
             ) : (
               <>

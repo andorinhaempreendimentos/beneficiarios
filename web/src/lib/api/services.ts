@@ -2735,7 +2735,7 @@ export const execucoesAulaApi = {
     if (!execData) throw new Error('Aula não encontrada ou já finalizada/rejeitada.');
     const mapped = mapExecucaoAula(execData);
 
-    if (mapped.professorId) {
+    if (mapped.professorId && mapped.statusAprovacao !== 'pendente_aprovacao') {
       try {
         await (sb as any).from('registros_ponto').insert({
           funcionario_id: mapped.professorId,
