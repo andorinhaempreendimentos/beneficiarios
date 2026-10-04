@@ -28,12 +28,13 @@ import {
   Copy,
   MoreVertical,
   UserCheck,
+  AlertTriangle,
 } from "lucide-react";
 import { Badge, Button, Card, Field, Input, Textarea } from "@/components/ui";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useToast } from "@/components/providers/ToastProvider";
 import { GestaoMatriculasProfessor } from "./GestaoMatriculasProfessor";
-import { getDataHojeBrasil } from "@/lib/dateUtils";
+import { getDataHojeBrasil, formatDateBrasil } from "@/lib/dateUtils";
 import { GradeSemanalProfessor } from "./GradeSemanalProfessor";
 import type { FuncionarioApi, TurmaApi, NucleoApi, BeneficiarioApi, SlotAulaGrid, ExecucaoAulaApi } from "@/lib/api/services";
 import { areaProfessorApi, execucoesAulaApi, professoresApi, inscricoesApi } from "@/lib/api/services";
@@ -60,6 +61,22 @@ const DIAS_SEMANA_NOMES = [
   "Sexta-feira",
   "Sábado",
 ];
+
+const SIGLAS_DIA: Record<number, string> = {
+  1: "Seg", 2: "Ter", 3: "Qua", 4: "Qui", 5: "Sex", 6: "Sáb", 0: "Dom"
+};
+
+export interface AulaPendente {
+  id: string;
+  turmaId: string;
+  turmaNome: string;
+  nucleoNome?: string;
+  data: string;
+  dataFormatada: string;
+  diaSemana: string;
+  horaInicio: string;
+  horaFim: string;
+}
 
 export function DashboardProfessorHub({
   professor,
@@ -149,6 +166,116 @@ export function DashboardProfessorHub({
       .catch(() => setAutoEncerradas([]));
   }, [professor?.id]);
 
+  // Detecção de aulas passadas pendentes de registro (offline/retroativo)
+  const [aulasPendentes, setAulasPendentes] = useState<AulaPendente[]>([]);
+  const [modalPendentesAberto, setModalPendentesAberto] = useState(false);
+
+  useEffect(() => {
+    if (!turmas || turmas.length === 0 || !professor?.id) return;
+
+    let cancelado = false;
+    async function checarPendencias() {
+      try {
+        const diasLimite = nucleo?.diasLimiteRetroativo ?? 7;
+        const hoje = new Date();
+        const hojeStr = getDataHojeBrasil();
+        const dataInicioObj = new Date(hoje);
+        dataInicioObj.setDate(hoje.getDate() - diasLimite);
+        const dataInicioStr = formatDateBrasil(dataInicioObj);
+
+        const turmaIds = turmas.map((t) => t.id);
+        const execucoes = await execucoesAulaApi.getExecucoesTurmasPeriodo(turmaIds, dataInicioStr, hojeStr);
+
+        if (cancelado) return;
+
+        const execucoesSet = new Set<string>();
+        execucoes.forEach((e) => {
+          if (e.status !== "rejeitada") {
+            execucoesSet.add(`${e.turmaId}-${e.data}`);
+          }
+        });
+
+        const pendentes: AulaPendente[] = [];
+        const agora = new Date();
+        const horaAtualDecimal = agora.getHours() + agora.getMinutes() / 60;
+
+        for (let i = 0; i <= diasLimite; i++) {
+          const targetDate = new Date(hoje);
+          targetDate.setDate(hoje.getDate() - i);
+          const dataStr = formatDateBrasil(targetDate);
+          const diaSemanaNum = targetDate.getDay();
+          const siglaDia = SIGLAS_DIA[diaSemanaNum];
+          const diaNome = DIAS_SEMANA_NOMES[diaSemanaNum];
+          const [ano, mes, dia] = dataStr.split("-");
+          const dataFormatada = `${dia}/${mes}/${ano}`;
+
+          for (const turma of turmas) {
+            if (turma.dataInicio && dataStr < turma.dataInicio) continue;
+            if (turma.dataFim && dataStr > turma.dataFim) continue;
+
+            const slotsTurma = (turma.slots ?? []).filter(
+              (s: any) => s.dia === siglaDia || s.dia_semana === diaSemanaNum
+            );
+
+            for (let idx = 0; idx < slotsTurma.length; idx++) {
+              const slot = slotsTurma[idx];
+              const horaFimDecimal = Number(slot.fim) || 10;
+
+              // Se for hoje, só é pendente se o horário previsto já encerrou
+              if (dataStr === hojeStr && horaAtualDecimal < horaFimDecimal) {
+                continue;
+              }
+
+              const chave = `${turma.id}-${dataStr}`;
+              if (!execucoesSet.has(chave)) {
+                const fmtH = (v: any) => {
+                  const s = String(v ?? "");
+                  return s.includes(":") ? s.slice(0, 5) : `${s.padStart(2, "0")}:00`;
+                };
+
+                pendentes.push({
+                  id: `${turma.id}-${dataStr}-${idx}`,
+                  turmaId: turma.id,
+                  turmaNome: turma.nome,
+                  nucleoNome: turma.nucleo?.identificacao || nucleo?.identificacao,
+                  data: dataStr,
+                  dataFormatada,
+                  diaSemana: diaNome,
+                  horaInicio: fmtH(slot.inicio),
+                  horaFim: fmtH(slot.fim),
+                });
+              }
+            }
+          }
+        }
+
+        pendentes.sort((a, b) => b.data.localeCompare(a.data));
+        setAulasPendentes(pendentes);
+
+        if (pendentes.length > 0) {
+          const jaVisto = typeof window !== "undefined" ? sessionStorage.getItem(`pendencias_modal_${professor.id}`) : "true";
+          if (!jaVisto) {
+            setModalPendentesAberto(true);
+          }
+        }
+      } catch (err) {
+        console.error("Erro ao verificar aulas pendentes:", err);
+      }
+    }
+
+    checarPendencias();
+    return () => {
+      cancelado = true;
+    };
+  }, [turmas, professor?.id, nucleo]);
+
+  function fecharModalPendencias() {
+    setModalPendentesAberto(false);
+    if (professor?.id && typeof window !== "undefined") {
+      sessionStorage.setItem(`pendencias_modal_${professor.id}`, "true");
+    }
+  }
+
   // Estados de controle do ponto / atividade da modal
   const [statusAtividade, setStatusAtividade] = useState<Record<string, "em_andamento" | "concluido">>({});
   const [horaInicio, setHoraInicio] = useState<Record<string, string>>({});
@@ -218,9 +345,6 @@ export function DashboardProfessorHub({
     }
   }
 
-const SIGLAS_DIA: Record<number, string> = {
-  1: "Seg", 2: "Ter", 3: "Qua", 4: "Qui", 5: "Sex", 6: "Sáb", 0: "Dom"
-};
 
 function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: string } {
   const agora = new Date();
@@ -340,6 +464,39 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
 
       {/* 1. SEÇÃO DE IDENTIFICAÇÃO E RÉGUA DE MÉTRICAS 360° */}
       <div className="flex flex-col gap-4">
+        {/* BANNER DE AULAS PENDENTES DE REGISTRO (OFFLINE/RETROATIVO) */}
+        {aulasPendentes.length > 0 && (
+          <div className="rounded-3xl border-2 border-amber-300 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 p-4 sm:p-5 shadow-md flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 animate-in fade-in">
+            <div className="flex items-center gap-3.5 min-w-0">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-amber-500 text-white shadow-sm">
+                <AlertTriangle className="h-6 w-6" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-xs font-extrabold uppercase tracking-wider text-amber-950">
+                    Atenção: Aulas Pendentes de Registro
+                  </span>
+                  <span className="rounded-full bg-amber-200/90 px-2 py-0.5 text-[10px] font-bold text-amber-950 font-mono">
+                    {aulasPendentes.length} {aulasPendentes.length === 1 ? "aula pendente" : "aulas pendentes"}
+                  </span>
+                </div>
+                <p className="text-xs text-amber-900/90 mt-1 font-medium leading-relaxed">
+                  Você possui treinos passados ainda não lançados (ex: falta de sinal de internet). Regularize para validar ponto e chamada.
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setModalPendentesAberto(true)}
+              className="shrink-0 rounded-xl bg-amber-600 hover:bg-amber-700 active:scale-95 text-white px-4 py-2.5 text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <span>Ver e Regularizar</span>
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+        )}
+
         {/* Banner Superior com novo design e anatomia */}
         <div className="rounded-3xl bg-gradient-to-r from-[#0d3b66] via-[#092d4f] to-[#1e1b4b] p-5 sm:p-6 text-white shadow-xl border border-sky-800/40 relative">
           {/* Barra superior de ações rápidas no mobile */}
@@ -1017,6 +1174,83 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
           </div>
         </div>
       )}
+
+      {/* MODAL AO CONECTAR / REGULARIZAR AULAS PENDENTES (OFFLINE/RETROATIVO) */}
+      {modalPendentesAberto && (
+        <div className="fixed inset-0 z-[55] flex items-end sm:items-center justify-center bg-black/60 p-0 sm:p-4 backdrop-blur-sm animate-in fade-in">
+          <div className="w-full max-w-lg rounded-t-3xl sm:rounded-3xl bg-white p-5 sm:p-6 shadow-2xl border border-zinc-200 flex flex-col gap-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-100 text-amber-700 shrink-0">
+                  <AlertTriangle className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-extrabold text-zinc-900">Aulas Pendentes de Registro</h3>
+                  <p className="text-xs text-zinc-500">Regularize treinos anteriores para lançar ponto e chamada</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={fecharModalPendencias}
+                className="rounded-full p-1.5 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600 cursor-pointer"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="rounded-2xl bg-amber-50 border border-amber-200 p-3.5 text-xs text-amber-900 flex flex-col gap-1">
+              <p className="font-bold">Ficou sem conexão ou não conseguiu registrar no horário?</p>
+              <p className="text-amber-800 text-[11px] leading-relaxed">
+                Clique em uma aula para lançá-la. O sistema solicitará sua justificativa retroativa e registrará seu ponto.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-2.5 max-h-80 overflow-y-auto divide-y divide-zinc-100">
+              {aulasPendentes.map((ap) => (
+                <div
+                  key={ap.id}
+                  className="pt-2.5 first:pt-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 p-3 rounded-2xl bg-zinc-50/70 border border-zinc-200 hover:bg-amber-50/40 hover:border-amber-200 transition-all"
+                >
+                  <div className="min-w-0">
+                    <h4 className="font-bold text-zinc-900 text-xs truncate">{ap.turmaNome}</h4>
+                    <div className="flex items-center gap-1.5 text-[11px] text-zinc-600 mt-0.5">
+                      <span className="font-semibold text-amber-800">{ap.diaSemana}, {ap.dataFormatada}</span>
+                      <span>·</span>
+                      <span>{ap.horaInicio} às {ap.horaFim}</span>
+                    </div>
+                    {ap.nucleoNome && (
+                      <p className="text-[10px] text-zinc-400 mt-0.5 truncate">📍 {ap.nucleoNome}</p>
+                    )}
+                  </div>
+
+                  <Link
+                    href={`/professor/aula/${ap.turmaId}?data=${ap.data}`}
+                    onClick={() => setModalPendentesAberto(false)}
+                    className="shrink-0 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white px-3.5 py-2 text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    <PlayCircle className="h-4 w-4" />
+                    <span>Regularizar</span>
+                  </Link>
+                </div>
+              ))}
+            </div>
+
+            <div className="border-t border-zinc-100 pt-3 flex items-center justify-between">
+              <span className="text-[11px] text-zinc-400">
+                {aulasPendentes.length} {aulasPendentes.length === 1 ? "pendência encontrada" : "pendências encontradas"}
+              </span>
+              <button
+                type="button"
+                onClick={fecharModalPendencias}
+                className="rounded-xl border border-zinc-200 px-4 py-2 text-xs font-semibold text-zinc-600 hover:bg-zinc-50 cursor-pointer"
+              >
+                Lembrar mais tarde
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* MODAL DE RESUMO SEMANAL (TEXTO) */}
       {showResumoSemana && (() => {
         const SIGLAS_DIA_MAP: Record<number, string> = { 0: "Dom", 1: "Seg", 2: "Ter", 3: "Qua", 4: "Qui", 5: "Sex", 6: "Sáb" };

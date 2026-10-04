@@ -2859,6 +2859,19 @@ export const execucoesAulaApi = {
     return (data ?? []).map(mapExecucaoAula);
   },
 
+  async getExecucoesTurmasPeriodo(turmaIds: string[], dataInicio: string, dataFim: string): Promise<ExecucaoAulaApi[]> {
+    if (!turmaIds || turmaIds.length === 0) return [];
+    const sb = await getSupabase();
+    const { data, error } = await (sb as any).from('execucoes_aula')
+      .select('*')
+      .in('turma_id', turmaIds)
+      .gte('data', dataInicio)
+      .lte('data', dataFim);
+
+    if (error) throw error;
+    return (data ?? []).map(mapExecucaoAula);
+  },
+
   async getAutoEncerradas(professorId: string): Promise<ExecucaoAulaApi[]> {
     const sb = await getSupabase();
     const { data, error } = await (sb as any).from('execucoes_aula')
