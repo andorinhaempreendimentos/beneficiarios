@@ -1,21 +1,44 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useToast } from "@/components/providers/ToastProvider";
 import { useAuth } from "@/components/providers/AuthProvider";
-import { Card, PageHeader, Field, Input, Select, Textarea, LinkButton } from "@/components/ui";
+import { Card, Field, Input, Select, Textarea, LinkButton } from "@/components/ui";
 import { useQuery } from "@/lib/hooks/useQuery";
 import { coordenadoresApi } from "@/lib/api/coordenadores";
 import {
   pendenciasGeraisApi,
-  funcionariosApi,
+  turmasApi,
   type NucleoApi,
-  type FuncionarioApi,
+  type TurmaApi,
   type Paginated,
 } from "@/lib/api/services";
-import { ArrowLeft, Save, Plus } from "lucide-react";
+import { ArrowLeft, Save, Building2, UserCheck, AlertCircle } from "lucide-react";
+
+const sugestoesPorTipo: Record<string, { tituloPlaceholder: string; descPlaceholder: string }> = {
+  estrutura: {
+    tituloPlaceholder: "Ex: Alambrado rompido na quadra 1, iluminação queimada no vestiário",
+    descPlaceholder: "Descreva o problema físico, localização exata e impacto nas atividades dos alunos...",
+  },
+  material: {
+    tituloPlaceholder: "Ex: Bolas de futsal desgastadas, falta de coletes tamanho M",
+    descPlaceholder: "Descreva os itens danificados ou em falta, quantidades necessárias e turmas afetadas...",
+  },
+  professor: {
+    tituloPlaceholder: "Ex: Necessidade de substituição na terça-feira, ajuste de horário",
+    descPlaceholder: "Descreva a ocorrência técnica, horários e alinhamentos necessários com a equipe docente...",
+  },
+  beneficiario: {
+    tituloPlaceholder: "Ex: Solicitação de uniforme especial, divergência em frequência de aluno",
+    descPlaceholder: "Descreva a situação do beneficiário e providências necessárias...",
+  },
+  outro: {
+    tituloPlaceholder: "Ex: Reunião com parceiros locais, entrega de materiais",
+    descPlaceholder: "Descreva detalhadamente a situação e as medidas necessárias...",
+  },
+};
 
 export default function NovaPendenciaCoordenadorPage() {
   const router = useRouter();
@@ -42,16 +65,51 @@ export default function NovaPendenciaCoordenadorPage() {
     [],
   );
 
-  const { data: funcData } = useQuery<Paginated<FuncionarioApi>>(
-    () => funcionariosApi.list({ limit: 100 }),
-    [],
+  const nucleos = meusNucleos ?? [];
+
+  // Pré-selecionar se coordenador tiver apenas 1 núcleo
+  useEffect(() => {
+    if (!form.nucleoId && nucleos.length === 1) {
+      setForm((f) => ({ ...f, nucleoId: nucleos[0].id }));
+    }
+  }, [nucleos, form.nucleoId]);
+
+  // Carregar turmas do núcleo selecionado para extrair apenas os professores deste núcleo
+  const { data: turmasData, loading: loadingTurmas } = useQuery<Paginated<TurmaApi>>(
+    () =>
+      form.nucleoId
+        ? turmasApi.list({ nucleoId: form.nucleoId, limit: 100 })
+        : Promise.resolve({ data: [], total: 0, page: 1, limit: 100 }),
+    [form.nucleoId],
   );
 
-  const nucleos = meusNucleos ?? [];
-  const funcionarios = funcData?.data ?? [];
+  // Professores vinculados às turmas do núcleo escolhido
+  const professoresDoNucleo = useMemo(() => {
+    if (!turmasData?.data) return [];
+    const map = new Map<string, string>();
+    for (const t of turmasData.data) {
+      if (t.responsaveis && t.responsaveisNomes) {
+        t.responsaveis.forEach((id, idx) => {
+          const nome = t.responsaveisNomes?.[idx];
+          if (id && nome && !map.has(id)) {
+            map.set(id, nome);
+          }
+        });
+      }
+    }
+    return Array.from(map.entries()).map(([id, nome]) => ({ id, nome }));
+  }, [turmasData]);
 
   function set(campo: string, valor: string) {
     setForm((f) => ({ ...f, [campo]: valor }));
+  }
+
+  function handleNucleoChange(novoNucleoId: string) {
+    setForm((f) => ({
+      ...f,
+      nucleoId: novoNucleoId,
+      responsavelId: "",
+    }));
   }
 
   async function salvar(e: React.FormEvent) {
@@ -80,6 +138,8 @@ export default function NovaPendenciaCoordenadorPage() {
       setSalvando(false);
     }
   }
+
+  const sugestaoAtual = sugestoesPorTipo[form.tipo] || sugestoesPorTipo.outro;
 
   return (
     <div className="flex flex-col gap-6 pb-12">
@@ -110,10 +170,10 @@ export default function NovaPendenciaCoordenadorPage() {
       <Card>
         <form onSubmit={salvar} className="p-6 flex flex-col gap-5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <Field label="Núcleo" required>
+            <Field label="Núcleo Responsável" required>
               <Select
                 value={form.nucleoId}
-                onChange={(e) => set("nucleoId", e.target.value)}
+                onChange={(e) => handleNucleoChange(e.target.value)}
                 required
               >
                 <option value="">Selecione o núcleo…</option>
@@ -151,20 +211,6 @@ export default function NovaPendenciaCoordenadorPage() {
               </Select>
             </Field>
 
-            <Field label="Responsável pelo Tratamento">
-              <Select
-                value={form.responsavelId}
-                onChange={(e) => set("responsavelId", e.target.value)}
-              >
-                <option value="">Sem responsável específico (coordenação geral)</option>
-                {funcionarios.map((f) => (
-                  <option key={f.id} value={f.id}>
-                    {f.nomeCompleto}
-                  </option>
-                ))}
-              </Select>
-            </Field>
-
             <Field label="Prazo Desejado para Solução">
               <Input
                 type="date"
@@ -174,11 +220,47 @@ export default function NovaPendenciaCoordenadorPage() {
             </Field>
           </div>
 
+          {/* Campo Responsável contextualizado */}
+          <div className="rounded-xl border border-zinc-200 bg-zinc-50/60 p-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-zinc-600 flex items-center gap-1.5">
+                <UserCheck className="h-4 w-4 text-sky-600" />
+                Responsável pelo Tratamento
+              </label>
+              <span className="text-[11px] text-zinc-400">
+                Padrão: subentendido para Coordenação / Professor do Núcleo
+              </span>
+            </div>
+            <Select
+              value={form.responsavelId}
+              onChange={(e) => set("responsavelId", e.target.value)}
+              className="bg-white"
+            >
+              <option value="">
+                {form.nucleoId
+                  ? "Coordenação / Professor do Núcleo (Automático)"
+                  : "Selecione o núcleo primeiro…"}
+              </option>
+              {professoresDoNucleo.length > 0 && (
+                <optgroup label="Professores com Turmas neste Núcleo">
+                  {professoresDoNucleo.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      👤 Prof. {p.nome}
+                    </option>
+                  ))}
+                </optgroup>
+              )}
+            </Select>
+            <p className="text-[11px] text-zinc-500 mt-1.5">
+              Não é obrigatório escolher alguém. O acompanhamento fica subentendido sob sua coordenação, podendo ser direcionado a um professor específico deste núcleo se necessário.
+            </p>
+          </div>
+
           <Field label="Título / Resumo da Pendência" required>
             <Input
               value={form.titulo}
               onChange={(e) => set("titulo", e.target.value)}
-              placeholder="Ex: Trave sem rede no campo 2, Falta de coletes tamanho M"
+              placeholder={sugestaoAtual.tituloPlaceholder}
               required
             />
           </Field>
@@ -188,7 +270,7 @@ export default function NovaPendenciaCoordenadorPage() {
               rows={4}
               value={form.descricao}
               onChange={(e) => set("descricao", e.target.value)}
-              placeholder="Descreva detalhadamente a situação encontrada, impacto nas atividades e o que precisa ser feito..."
+              placeholder={sugestaoAtual.descPlaceholder}
               required
             />
           </Field>
