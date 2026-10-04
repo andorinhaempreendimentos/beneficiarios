@@ -228,7 +228,7 @@ export function Sidebar() {
               {navLink("/coordenador/nucleos", t("local", "Núcleo", true), Building2)}
               {navLink("/coordenador/turmas", t("turma", "Turma", true), GraduationCap)}
               {navLink("/coordenador/supervisoes", "Supervisões", ClipboardCheck)}
-              {navLink("/coordenador/pendencias", "Pendências", AlertCircle)}
+              {navLink("/coordenador/pendencias-gerais", "Pendências", AlertCircle)}
               {navLink("/coordenador/estoque", "Estoque", Package)}
               {navLink("/pesquisas", "Pesquisas", ClipboardList)}
             </>

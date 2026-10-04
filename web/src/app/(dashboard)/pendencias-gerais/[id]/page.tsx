@@ -2,6 +2,7 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
+import { useAuth } from "@/components/providers/AuthProvider";
 import { useToast } from "@/components/providers/ToastProvider";
 import { Card, PageHeader, Field, LinkButton } from "@/components/ui";
 import { useQuery } from "@/lib/hooks/useQuery";
@@ -11,6 +12,7 @@ import { formatarData } from "@/lib/utils";
 export default function DetalhesPendenciaPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
+  const { user } = useAuth();
   const { toast } = useToast();
   const [resolvendoForm, setResolvendoForm] = useState(false);
   const [providencias, setProvidencias] = useState("");
@@ -26,10 +28,9 @@ export default function DetalhesPendenciaPage() {
     if (!providencias.trim()) { toast.error("Descreva as providências tomadas."); return; }
     setSalvando(true);
     try {
-      // TODO: pegar usuário logado via session
       await pendenciasGeraisApi.resolver(id, {
         providencias: providencias.trim(),
-        resolvidoPorId: p!.createdById, // fallback temporário
+        resolvidoPorId: user?.refId || user?.id || p?.createdById || "",
         observacoesResolucao: obsResolucao.trim() || undefined,
       });
       toast.success("Pendência resolvida.");
@@ -59,7 +60,12 @@ export default function DetalhesPendenciaPage() {
         description={`Pendência · ${p.nucleo?.identificacao ?? ""}`}
         actions={
           <div className="flex items-center gap-2">
-            <LinkButton href="/pendencias-gerais" variant="secondary">Voltar</LinkButton>
+            <LinkButton
+              href={user?.isCoordenador ? "/coordenador/pendencias-gerais" : "/pendencias-gerais"}
+              variant="secondary"
+            >
+              Voltar
+            </LinkButton>
             {p.status !== "resolvida" && p.status !== "cancelada" && (
               <button
                 type="button"
