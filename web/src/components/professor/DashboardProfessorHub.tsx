@@ -365,18 +365,10 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
   }
 
   // Se não houver slot definido no banco para hoje
-  const ehDiaPadrao = siglaHoje === "Seg" || siglaHoje === "Qua" || siglaHoje === "Sex";
-  if (ehDiaPadrao && horaAtualDecimal >= 10) {
-    return {
-      encerrado: true,
-      motivo: "O horário desta aula (08:00 às 10:00) já encerrou hoje."
-    };
-  } else if (!ehDiaPadrao && (!turma.slots || turma.slots.length === 0)) {
-    return {
-      encerrado: true,
-      motivo: "Esta turma não possui treino/aula agendado para o dia de hoje."
-    };
-  }
+  return {
+    encerrado: true,
+    motivo: "Esta turma não possui treino/aula agendado para o dia de hoje."
+  };
 
   return { encerrado: false };
 }

@@ -88,27 +88,8 @@ export function GradeSemanalProfessor({
     });
   }, [domBase, hojeStr, dataLimiteRetro]);
 
-  // Slots
-  const items: SlotAulaGrid[] = [];
-  slotsGrid.forEach((s) => items.push(s));
-  turmas.forEach((t) => {
-    const jaTem = items.some((s) => s.turmaId === t.id);
-    if (!jaTem) {
-      ["Seg", "Qua", "Sex"].forEach((d) => {
-        items.push({
-          id: `def-${t.id}-${d}`,
-          turmaId: t.id,
-          turmaNome: t.nome,
-          dia: d as any,
-          diaSemanaNum: d === "Seg" ? 1 : d === "Qua" ? 3 : 5,
-          inicio: 8,
-          fim: 10,
-          atividadeNome: t.atividade?.nome || "Futsal / Treino",
-          nucleoNome: t.nucleo?.identificacao || "Polo Esportivo",
-        });
-      });
-    }
-  });
+  // Slots reais vindos do banco
+  const items: SlotAulaGrid[] = slotsGrid ?? [];
 
   function getSlot(dia: string, hora: number) {
     return items.find((s) => s.dia === dia && hora >= s.inicio && hora < s.fim);
