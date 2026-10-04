@@ -210,6 +210,7 @@ export function DashboardProfessorHub({
           const dataFormatada = `${dia}/${mes}/${ano}`;
 
           for (const turma of turmas) {
+            if (turma.tipo === "operacional" || turma.nome?.toLowerCase().includes("planejamento")) continue;
             if (turma.dataInicio && dataStr < turma.dataInicio) continue;
             if (turma.dataFim && dataStr > turma.dataFim) continue;
 
