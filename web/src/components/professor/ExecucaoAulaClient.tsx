@@ -286,6 +286,7 @@ export function ExecucaoAulaClient({
     execucao?.justificativaRetroativa ||
     execucao?.statusAprovacao === "pendente_aprovacao"
   );
+  const dispensaFoto = beneficiarios.length === 0 && isModoRegularizacao;
 
   // Atualização do Cronômetro ao Vivo quando a aula estiver em andamento
   useEffect(() => {
@@ -402,7 +403,7 @@ export function ExecucaoAulaClient({
   // STEP 1: Iniciar Aula (Play)
   const handleIniciarAula = async () => {
     const isPlanejamento = turma.tipo === "operacional" || turma.nome?.toLowerCase().includes("planejamento");
-    if (beneficiarios.length === 0 && !isPlanejamento) {
+    if (beneficiarios.length === 0 && !isPlanejamento && !isModoRegularizacao) {
       toast.error("Não é possível iniciar a aula: nenhum beneficiário matriculado nesta turma.");
       return;
     }
@@ -469,7 +470,11 @@ export function ExecucaoAulaClient({
       }
 
       setShowJustificativaModal(false);
-      setEtapa("chamada");
+      if (beneficiarios.length === 0 && isModoRegularizacao) {
+        setEtapa("finalizacao");
+      } else {
+        setEtapa("chamada");
+      }
       toast.success("▶ Aula iniciada com sucesso! Ponto de entrada registrado.");
     } catch (err: any) {
       toast.error(`Erro ao iniciar aula: ${err.message || "Tente novamente."}`);
@@ -559,7 +564,7 @@ export function ExecucaoAulaClient({
       return;
     }
 
-    if (!fotoFile && !fotoPreview) {
+    if (!dispensaFoto && !fotoFile && !fotoPreview) {
       toast.error("A foto comprobatória da turma reunida é obrigatória para encerrar a aula.");
       return;
     }
@@ -594,7 +599,8 @@ export function ExecucaoAulaClient({
       if (isModoRegularizacao) {
         const motivo = justificativaRetroativa.trim() || execucao.justificativaRetroativa || "Regularização de aula anterior/offline";
         const agoraStr = new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" });
-        const carimbo = `[AULA REGULARIZADA - PENDENTE DE HOMOLOGAÇÃO]\nRegistrada em ${agoraStr} por ${professor?.nomeCompleto || "Professor"}.\nMotivo: ${motivo}`;
+        const carimboSemAlunos = dispensaFoto ? "\n[TURMA SEM BENEFICIÁRIOS MATRICULADOS NA DATA - DISPENSA DE FOTO]" : "";
+        const carimbo = `[AULA REGULARIZADA - PENDENTE DE HOMOLOGAÇÃO]${carimboSemAlunos}\nRegistrada em ${agoraStr} por ${professor?.nomeCompleto || "Professor"}.\nMotivo: ${motivo}`;
         obsFinais = obsFinais ? `${carimbo}\n\n${obsFinais}` : carimbo;
       } else if (justificativaEncerramento.trim()) {
         const prefixo = `[ENCERRAMENTO ANTECIPADO - ${minutosRestantes}min antes] ${justificativaEncerramento.trim()}`;
@@ -603,7 +609,7 @@ export function ExecucaoAulaClient({
 
       // Finaliza a aula e registra ponto de saída
       const aulaConcluida = await execucoesAulaApi.finalizarAula(execucao.id, {
-        fotoComprovanteUrl: finalFotoUrl,
+        fotoComprovanteUrl: finalFotoUrl || undefined,
         observacoes: obsFinais || undefined,
       });
 
@@ -1016,7 +1022,25 @@ export function ExecucaoAulaClient({
 
             {/* LISTA DE BENEFICIÁRIOS */}
             <div className="divide-y divide-zinc-100 mt-2">
-              {beneficiariosFiltrados.length === 0 ? (
+              {beneficiarios.length === 0 ? (
+                <div className="py-8 text-center text-xs flex flex-col items-center gap-3 bg-amber-50/60 rounded-2xl border border-amber-200 p-6">
+                  <AlertCircle className="h-8 w-8 text-amber-600" />
+                  <div className="max-w-md">
+                    <h4 className="font-bold text-sm text-amber-950">Turma sem beneficiários matriculados</h4>
+                    <p className="text-amber-800 mt-1 leading-relaxed">
+                      Esta turma não possuía alunos matriculados nesta data. Você pode prosseguir direto para o fechamento da regularização sem necessidade de registrar chamada.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setEtapa("finalizacao")}
+                    className="mt-2 px-5 py-2.5 bg-amber-600 hover:bg-amber-500 active:scale-95 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 cursor-pointer shadow-sm transition-all"
+                  >
+                    <span>Prosseguir para Concluir Regularização</span>
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
+              ) : beneficiariosFiltrados.length === 0 ? (
                 <div className="py-8 text-center text-xs text-zinc-400 flex flex-col items-center gap-2">
                   <AlertCircle className="h-6 w-6 text-zinc-300" />
                   <span>Nenhum beneficiário encontrado com os filtros atuais.</span>
@@ -1189,8 +1213,19 @@ export function ExecucaoAulaClient({
             </div>
           </div>
 
-          {/* UPLOAD / CÂMERA DE FOTO COMPROBATÓRIA */}
-          <div className="flex flex-col gap-2">
+          {/* UPLOAD / CÂMERA DE FOTO COMPROBATÓRIA OU DISPENSA */}
+          {dispensaFoto ? (
+            <div className="rounded-2xl border border-amber-300 bg-amber-50/80 p-4 text-xs text-amber-950 flex items-start gap-3">
+              <Info className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+              <div>
+                <strong className="font-bold block text-sm text-amber-950">Foto Comprobatória Dispensada</strong>
+                <p className="text-amber-800 mt-0.5 leading-relaxed">
+                  Esta aula está sendo regularizada e a turma não possuía beneficiários matriculados nesta data. A foto com a turma reunida não é necessária para concluir a regularização.
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-2">
             <label className="text-xs font-bold text-zinc-900 flex items-center justify-between">
               <span>Foto com a Turma (Obrigatório) *</span>
               {fotoPreview && <span className="text-[10px] text-emerald-600 font-bold">✓ Foto Anexada</span>}
@@ -1268,6 +1303,7 @@ export function ExecucaoAulaClient({
               </div>
             )}
           </div>
+          )}
 
           {/* OBSERVAÇÕES PEDAGÓGICAS / DIÁRIO */}
           <div className="flex flex-col gap-1.5">
@@ -1288,7 +1324,7 @@ export function ExecucaoAulaClient({
           <button
             type="button"
             onClick={handleEncerrarAula}
-            disabled={salvando || uploadingFoto || (!fotoFile && !fotoPreview)}
+            disabled={salvando || uploadingFoto || (!dispensaFoto && !fotoFile && !fotoPreview)}
             className={`w-full font-extrabold py-5 rounded-2xl text-lg shadow-xl flex items-center justify-center gap-3 transition-all cursor-pointer disabled:opacity-50 ${
               isModoRegularizacao
                 ? "bg-gradient-to-r from-amber-600 to-emerald-600 hover:from-amber-500 hover:to-emerald-500 text-white shadow-amber-600/20 active:scale-[0.99]"
@@ -1303,7 +1339,7 @@ export function ExecucaoAulaClient({
             ) : isModoRegularizacao ? (
               <>
                 <CheckCircle2 className="h-6 w-6 text-white" />
-                <span>CONCLUIR E REGULARIZAR AULA</span>
+                <span>{dispensaFoto ? "CONCLUIR REGULARIZAÇÃO (SEM ALUNOS)" : "CONCLUIR E REGULARIZAR AULA"}</span>
               </>
             ) : (
               <>

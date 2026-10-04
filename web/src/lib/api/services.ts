@@ -2712,7 +2712,7 @@ export const execucoesAulaApi = {
 
   async finalizarAula(
     id: string,
-    params: { fotoComprovanteUrl: string; observacoes?: string }
+    params: { fotoComprovanteUrl?: string; observacoes?: string }
   ): Promise<ExecucaoAulaApi> {
     const sb = createClient();
     const now = new Date();
@@ -2722,7 +2722,7 @@ export const execucoesAulaApi = {
       .update({
         hora_fim_real: now.toISOString(),
         status: 'concluida',
-        foto_comprovante_url: params.fotoComprovanteUrl,
+        foto_comprovante_url: params.fotoComprovanteUrl || null,
         observacoes: params.observacoes || null,
         atualizado_em: now.toISOString(),
       })
