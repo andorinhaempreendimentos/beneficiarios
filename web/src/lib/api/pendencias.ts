@@ -26,7 +26,7 @@ function num(v: unknown): number | undefined {
   return v !== undefined && v !== '' && !Number.isNaN(n) ? n : undefined;
 }
 
-export type TipoPendencia = 'estrutura' | 'material' | 'professor' | 'beneficiario' | 'outro';
+export type TipoPendencia = 'estrutura' | 'material' | 'professor' | 'beneficiario' | 'outro' | (string & {});
 export type GravidadePendencia = 'baixa' | 'media' | 'alta' | 'critica';
 export type StatusPendencia = 'aberta' | 'em_andamento' | 'resolvida' | 'cancelada';
 
@@ -76,9 +76,13 @@ export const pendenciasGeraisApi = {
     if (p?.nucleoId) q = q.eq('nucleo_id', p.nucleoId as string);
     if (p?.nucleoIds && Array.isArray(p.nucleoIds) && p.nucleoIds.length > 0) q = q.in('nucleo_id', p.nucleoIds);
     if (p?.status) q = q.eq('status', p.status as string);
-    if (p?.gravidade) q = q.eq('gravidade', p.gravidade as string);
-    if (p?.tipo) q = q.eq('tipo', p.tipo as string);
-    if (p?.responsavelId) q = q.eq('responsavel_id', p.responsavelId as string);
+    if (p?.tipo) {
+      if (p.tipo === 'outro') {
+        q = q.or('tipo.eq.outro,tipo.ilike.outro:%');
+      } else {
+        q = q.eq('tipo', p.tipo as string);
+      }
+    }
     const { data, count, error } = await q.order('created_at', { ascending: false }).range(from, to);
     if (error) throw error;
     return { data: (data ?? []).map(mapPendencia), total: count ?? 0, page, limit };

@@ -427,8 +427,19 @@ export default function CoordenadorPendenciasGeraisPage() {
                           <span className="text-zinc-400 text-[11px]">Avulsa</span>
                         )}
                       </td>
-                      <td className="px-4 py-3.5 text-center text-zinc-500 capitalize">
-                        {p.tipo}
+                      <td className="px-4 py-3.5 text-center">
+                        {p.tipo.startsWith("outro:") || p.tipo.includes("(manual)") ? (
+                          <div className="flex flex-col items-center">
+                            <span className="text-zinc-800 font-medium text-[11px]">
+                              {p.tipo.replace(/^outro:\s*/i, "").replace(/\s*\(manual\)/i, "")}
+                            </span>
+                            <span className="text-[9px] font-semibold text-amber-700 bg-amber-50 rounded px-1 mt-0.5 border border-amber-200">
+                              manual
+                            </span>
+                          </div>
+                        ) : (
+                          <span className="text-zinc-500 capitalize">{p.tipo}</span>
+                        )}
                       </td>
                       <td className="px-4 py-3.5 text-center">
                         <Badge tone={gravidadeTone[p.gravidade] ?? "zinc"} className="font-semibold uppercase text-[10px]">

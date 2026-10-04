@@ -49,6 +49,7 @@ export default function NovaPendenciaCoordenadorPage() {
 
   const initialNucleoId = searchParams.get("nucleoId") || "";
 
+  const [outroTipoCustomizado, setOutroTipoCustomizado] = useState("");
   const [form, setForm] = useState({
     nucleoId: initialNucleoId,
     tipo: "estrutura",
@@ -118,11 +119,19 @@ export default function NovaPendenciaCoordenadorPage() {
       toast.error("Núcleo, tipo, título e descrição são obrigatórios.");
       return;
     }
+    if (form.tipo === "outro" && !outroTipoCustomizado.trim()) {
+      toast.error("Informe a especificação para o outro tipo de ocorrência.");
+      return;
+    }
     setSalvando(true);
     try {
+      const tipoFinal = form.tipo === "outro"
+        ? `outro: ${outroTipoCustomizado.trim()} (manual)`
+        : form.tipo;
+
       await pendenciasGeraisApi.create({
         nucleoId: form.nucleoId,
-        tipo: form.tipo,
+        tipo: tipoFinal,
         titulo: form.titulo.trim(),
         descricao: form.descricao.trim(),
         gravidade: form.gravidade,
@@ -198,6 +207,24 @@ export default function NovaPendenciaCoordenadorPage() {
                 <option value="outro">Outro assunto</option>
               </Select>
             </Field>
+
+            {form.tipo === "outro" && (
+              <Field
+                label="Qual o outro tipo de ocorrência?"
+                required
+                className="md:col-span-2"
+              >
+                <Input
+                  value={outroTipoCustomizado}
+                  onChange={(e) => setOutroTipoCustomizado(e.target.value)}
+                  placeholder="Ex: Manutenção Elétrica, Hidráulica, Transporte, Limpeza..."
+                  required
+                />
+                <p className="text-[11px] text-zinc-500 mt-1">
+                  Nota: este tipo será salvo com a marcação <span className="font-semibold text-amber-600">(manual)</span> para indicar que foi adicionado pela equipe.
+                </p>
+              </Field>
+            )}
 
             <Field label="Nível de Gravidade">
               <Select

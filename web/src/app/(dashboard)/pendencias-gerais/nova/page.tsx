@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/components/providers/AuthProvider";
 import { useToast } from "@/components/providers/ToastProvider";
 import { Card, PageHeader, Field, Input, Select, Textarea, LinkButton } from "@/components/ui";
 import { useQuery } from "@/lib/hooks/useQuery";
@@ -9,8 +10,10 @@ import { pendenciasGeraisApi, nucleosApi, funcionariosApi, type Paginated, type 
 
 export default function NovaPendenciaPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const { toast } = useToast();
   const [salvando, setSalvando] = useState(false);
+  const [outroTipoCustomizado, setOutroTipoCustomizado] = useState("");
   const [form, setForm] = useState({
     nucleoId: "", tipo: "", titulo: "", descricao: "",
     gravidade: "media", responsavelId: "", prazo: "",
@@ -31,17 +34,25 @@ export default function NovaPendenciaPage() {
       toast.error("Núcleo, tipo, título e descrição são obrigatórios.");
       return;
     }
+    if (form.tipo === "outro" && !outroTipoCustomizado.trim()) {
+      toast.error("Informe a especificação para o outro tipo de ocorrência.");
+      return;
+    }
     setSalvando(true);
     try {
+      const tipoFinal = form.tipo === "outro"
+        ? `outro: ${outroTipoCustomizado.trim()} (manual)`
+        : form.tipo;
+
       const criada = await pendenciasGeraisApi.create({
         nucleoId: form.nucleoId,
-        tipo: form.tipo,
+        tipo: tipoFinal,
         titulo: form.titulo.trim(),
         descricao: form.descricao.trim(),
         gravidade: form.gravidade,
         responsavelId: form.responsavelId || null,
         prazo: form.prazo || null,
-        createdById: "", // TODO: pegar do contexto de autenticação
+        createdById: user?.refId || user?.id || "",
       });
       toast.success("Pendência criada.");
       router.push(`/pendencias-gerais/${criada.id}`);
@@ -78,6 +89,19 @@ export default function NovaPendenciaPage() {
                 <option value="outro">Outro</option>
               </Select>
             </Field>
+            {form.tipo === "outro" && (
+              <Field label="Especificar outro tipo" required className="md:col-span-2">
+                <Input
+                  value={outroTipoCustomizado}
+                  onChange={(e) => setOutroTipoCustomizado(e.target.value)}
+                  placeholder="Ex: Manutenção Elétrica, Hidráulica, Transporte, Limpeza..."
+                  required
+                />
+                <p className="text-[11px] text-zinc-500 mt-1">
+                  Nota: este tipo será salvo com a marcação <span className="font-semibold text-amber-600">(manual)</span> para indicar que foi adicionado pela equipe.
+                </p>
+              </Field>
+            )}
             <Field label="Gravidade">
               <Select value={form.gravidade} onChange={(e) => set("gravidade", e.target.value)}>
                 <option value="baixa">Baixa</option>

@@ -95,7 +95,16 @@ export default function DetalhesPendenciaPage() {
           </div>
           <div>
             <p className="text-xs text-zinc-400">Tipo</p>
-            <p className="font-medium text-zinc-700 capitalize">{p.tipo}</p>
+            {p.tipo.startsWith("outro:") || p.tipo.includes("(manual)") ? (
+              <p className="font-medium text-zinc-700 flex items-center gap-1.5 flex-wrap">
+                <span>{p.tipo.replace(/^outro:\s*/i, "").replace(/\s*\(manual\)/i, "")}</span>
+                <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 rounded px-1.5 py-0.5 border border-amber-200">
+                  adicionado manualmente
+                </span>
+              </p>
+            ) : (
+              <p className="font-medium text-zinc-700 capitalize">{p.tipo}</p>
+            )}
           </div>
           <div>
             <p className="text-xs text-zinc-400">Responsável</p>
