@@ -53,6 +53,14 @@ interface ExecucaoAulaClientProps {
   autoStart?: boolean;
 }
 
+const JUSTIFICATIVAS_PREDEFINIDAS = [
+  "Sem internet no local",
+  "Reposição de aula aprovada",
+  "Chuva / Condições climáticas",
+  "Problema no aparelho / sistema",
+  "Atividade externa / Evento",
+];
+
 function parseHora(timeStr: string | null | undefined, fallback = "00:00"): string {
   if (!timeStr) return fallback;
   if (timeStr.includes("T")) {
@@ -807,6 +815,25 @@ export function ExecucaoAulaClient({
                 <label className="block text-[11px] font-bold uppercase text-amber-900 mb-1">
                   Justificativa Obrigatória do Atraso:
                 </label>
+                <div className="flex flex-wrap gap-1.5 mb-2">
+                  {JUSTIFICATIVAS_PREDEFINIDAS.map((motivo) => {
+                    const isSelected = justificativaRetroativa === motivo;
+                    return (
+                      <button
+                        key={motivo}
+                        type="button"
+                        onClick={() => setJustificativaRetroativa(isSelected ? "" : motivo)}
+                        className={`text-[10px] px-2 py-0.5 rounded-full border transition-all text-left font-medium cursor-pointer ${
+                          isSelected
+                            ? "bg-amber-600 text-white border-amber-600 shadow-xs"
+                            : "bg-white hover:bg-amber-50 text-amber-900 border-amber-300"
+                        }`}
+                      >
+                        {motivo}
+                      </button>
+                    );
+                  })}
+                </div>
                 <textarea
                   value={justificativaRetroativa}
                   onChange={(e) => setJustificativaRetroativa(e.target.value)}
@@ -1412,6 +1439,26 @@ export function ExecucaoAulaClient({
               Esta aula está fora do horário regular ou em data anterior. Por favor, detalhe o motivo para análise do
               Coordenador:
             </p>
+
+            <div className="flex flex-wrap gap-1.5">
+              {JUSTIFICATIVAS_PREDEFINIDAS.map((motivo) => {
+                const isSelected = justificativaRetroativa === motivo;
+                return (
+                  <button
+                    key={motivo}
+                    type="button"
+                    onClick={() => setJustificativaRetroativa(isSelected ? "" : motivo)}
+                    className={`text-[11px] px-2.5 py-1 rounded-full border transition-all text-left font-medium cursor-pointer ${
+                      isSelected
+                        ? "bg-amber-600 text-white border-amber-600 shadow-xs"
+                        : "bg-zinc-50 hover:bg-amber-50 text-zinc-700 hover:text-amber-800 border-zinc-200 hover:border-amber-300"
+                    }`}
+                  >
+                    {motivo}
+                  </button>
+                );
+              })}
+            </div>
 
             <textarea
               value={justificativaRetroativa}
