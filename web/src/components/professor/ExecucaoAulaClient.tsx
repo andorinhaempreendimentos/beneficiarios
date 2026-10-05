@@ -1038,12 +1038,14 @@ export function ExecucaoAulaClient({
                   const presencaItem = presencas[b.id];
                   const status = presencaItem?.status || "presente";
 
-                  const faixa = turma.faixaEtaria || turma.categoria;
+                  const min = turma.idadeMinima ?? turma.faixaEtaria?.idadeMinima ?? turma.categoria?.idadeMinima;
+                  const max = turma.idadeMaxima ?? turma.faixaEtaria?.idadeMaxima ?? turma.categoria?.idadeMaxima;
                   const idade = calcularIdade(b.dataNascimento);
                   const isAdaptado = Boolean(
                     idade !== null &&
-                    faixa &&
-                    (idade < faixa.idadeMinima || idade > faixa.idadeMaxima)
+                    min != null &&
+                    max != null &&
+                    (idade < min || idade > max)
                   );
 
                   return (

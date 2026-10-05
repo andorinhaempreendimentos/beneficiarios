@@ -146,7 +146,7 @@ export default function CoordenadorTurmasPage() {
                   <th className="px-5 py-3">Turma</th>
                   <th className="px-4 py-3">Núcleo</th>
                   <th className="px-4 py-3">Professor Responsável</th>
-                  <th className="px-4 py-3 text-center">Faixa Etária</th>
+                  <th className="px-4 py-3 text-center">Idade</th>
                   <th className="px-4 py-3 text-center">Alunos / Capacidade</th>
                   <th className="px-4 py-3">Dias / Horários</th>
                   <th className="px-5 py-3 text-right">Ação</th>
@@ -178,7 +178,7 @@ export default function CoordenadorTurmasPage() {
                         {profNome}
                       </td>
                       <td className="px-4 py-3.5 text-center text-zinc-600">
-                        {t.faixaEtaria?.nome || t.faixaEtaria?.sigla || "—"}
+                        {t.idadeMinima != null && t.idadeMaxima != null ? `${t.idadeMinima} a ${t.idadeMaxima} anos` : "—"}
                       </td>
                       <td className="px-4 py-3.5 text-center">
                         <span className="font-bold text-zinc-900">

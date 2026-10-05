@@ -120,12 +120,14 @@ export function GestaoMatriculasRoster({
                 </tr>
               ) : (
                 matriculados.map((aluno) => {
-                  const faixa = turmaAtual.faixaEtaria || turmaAtual.categoria;
+                  const min = turmaAtual.idadeMinima ?? turmaAtual.faixaEtaria?.idadeMinima ?? turmaAtual.categoria?.idadeMinima;
+                  const max = turmaAtual.idadeMaxima ?? turmaAtual.faixaEtaria?.idadeMaxima ?? turmaAtual.categoria?.idadeMaxima;
                   const idade = aluno.dataNascimento ? calcularIdade(aluno.dataNascimento) : null;
                   const isAdaptado = Boolean(
                     idade !== null &&
-                    faixa &&
-                    (idade < faixa.idadeMinima || idade > faixa.idadeMaxima)
+                    min != null &&
+                    max != null &&
+                    (idade < min || idade > max)
                   );
 
                   return (

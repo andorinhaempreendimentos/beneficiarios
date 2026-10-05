@@ -233,13 +233,12 @@ export function InscricaoPublicaForm({ turmaId, nucleoId, onSubmit }: InscricaoP
        }
     }
 
-    // Validação de Faixa etária da turma (apenas no fluxo de inscrição em turma)
+    // Validação de Idade da turma (apenas no fluxo de inscrição em turma)
     if (turmaId && dataNascimento) {
       try {
         const turmaInfo = await turmasApi.get(turmaId);
-        const faixa = turmaInfo.faixaEtaria || turmaInfo.categoria;
-        const min = faixa?.idadeMinima ?? 6;
-        const max = faixa?.idadeMaxima ?? 17;
+        const min = turmaInfo.idadeMinima ?? turmaInfo.faixaEtaria?.idadeMinima ?? turmaInfo.categoria?.idadeMinima ?? 6;
+        const max = turmaInfo.idadeMaxima ?? turmaInfo.faixaEtaria?.idadeMaxima ?? turmaInfo.categoria?.idadeMaxima ?? 17;
         if (idade !== null && (idade < min || idade > max)) {
           setErro(`A idade do beneficiário (${idade} anos) está fora do limite permitido para esta turma (Permitido: ${min} a ${max} anos).`);
           return;

@@ -7,21 +7,34 @@ import { GradeSemanal } from "./GradeSemanal";
 import {
   turmasApi,
   funcionariosApi,
-  faixasEtariasApi,
   FUNCAO_PROFESSOR_ID,
   type TurmaApi,
   type NucleoApi,
   type AtividadeApi,
   type FuncionarioApi,
-  type FaixaEtariaApi,
 } from "@/lib/api/services";
+
+const OPCOES_IDADE = Array.from({ length: 27 }, (_, i) => i + 4); // 4 a 30 anos
 
 const turmaSchema = z.object({
   nome: z.string().min(2, "Nome deve ter pelo menos 2 caracteres."),
   nucleoId: z.string().min(1, "Selecione um núcleo."),
   atividadeId: z.string().min(1, "Selecione uma atividade."),
   vagasTotais: z.number().min(0, "Vagas inválidas."),
-});
+  idadeMinima: z.number().nullable().optional(),
+  idadeMaxima: z.number().nullable().optional(),
+}).refine(
+  (d) => {
+    if (d.idadeMinima != null && d.idadeMaxima != null) {
+      return d.idadeMinima <= d.idadeMaxima;
+    }
+    return true;
+  },
+  {
+    message: "Idade mínima não pode ser maior que idade máxima.",
+    path: ["idadeMinima"],
+  }
+);
 
 type FieldErrors = Partial<Record<string, string>>;
 
@@ -48,8 +61,8 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
   const [exclusiva, setExclusiva] = useState(t?.exclusiva ?? false);
   const [nucleoId, setNucleoId] = useState(t?.nucleoId ?? "");
   const [atividadeId, setAtividadeId] = useState(t?.atividadeId ?? "");
-  const [faixaEtariaId, setFaixaEtariaId] = useState(t?.faixaEtariaId ?? t?.categoriaId ?? "");
-  const [faixasEtarias, setFaixasEtarias] = useState<FaixaEtariaApi[]>([]);
+  const [idadeMinima, setIdadeMinima] = useState<number>(t?.idadeMinima ?? 6);
+  const [idadeMaxima, setIdadeMaxima] = useState<number>(t?.idadeMaxima ?? 17);
   const [slots, setSlots] = useState<any[]>(t?.slots ?? []);
   const [permitirFilaEspera, setPermitirFilaEspera] = useState(t?.permitirFilaEspera ?? true);
   const [responsaveisIds, setResponsaveisIds] = useState<string[]>(t?.responsaveis ?? []);
@@ -66,9 +79,6 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
     }
     turmasApi.list({ limit: 500 }).then((res) => {
       setTodasTurmas(res.data);
-    }).catch(() => {});
-    faixasEtariasApi.list({ limit: 50 }).then((res) => {
-      setFaixasEtarias(res.data);
     }).catch(() => {});
   }, [initialFuncionarios]);
 
@@ -132,9 +142,8 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
     if (atividadeSelecionada?.nome) {
       partes.push(atividadeSelecionada.nome);
     }
-    const faixa = faixasEtarias.find((f) => f.id === faixaEtariaId);
-    if (faixa?.nome) {
-      partes.push(faixa.nome);
+    if (tipo === "regular" && idadeMinima != null && idadeMaxima != null) {
+      partes.push(`${idadeMinima} a ${idadeMaxima} anos`);
     }
     if (turno) {
       partes.push(identificador ? `${turno} ${identificador}` : turno);
@@ -143,7 +152,7 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
     if (partes.length > 0) {
       setNome(partes.join(" - "));
     }
-  }, [tipo, nucleoId, atividadeId, faixaEtariaId, turno, identificador, nucleoSelecionado, atividadeSelecionada, faixasEtarias]);
+  }, [tipo, nucleoId, atividadeId, idadeMinima, idadeMaxima, turno, identificador, nucleoSelecionado, atividadeSelecionada]);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -159,8 +168,10 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
       tipo,
       nucleoId: nId,
       atividadeId: aId,
-      faixaEtariaId: tipo === "regular" ? (faixaEtariaId || null) : null,
-      categoriaId: tipo === "regular" ? (faixaEtariaId || null) : null,
+      idadeMinima: tipo === "regular" ? idadeMinima : null,
+      idadeMaxima: tipo === "regular" ? idadeMaxima : null,
+      faixaEtariaId: null,
+      categoriaId: null,
       vagasTotais: tipo === "operacional" ? 0 : Number(formData.get("vagasTotais") || 30),
       permitirFilaEspera: tipo === "operacional" ? false : permitirFilaEspera,
       exclusiva,
@@ -244,16 +255,39 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
           </Field>
 
           {tipo === "regular" && (
-            <Field label="Faixa Etária" required hint="Regra etária que define se o aluno é Regular ou Adaptado">
-              <Select value={faixaEtariaId} onChange={(e) => setFaixaEtariaId(e.target.value)}>
-                <option value="">Selecione a faixa etária</option>
-                {faixasEtarias.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.nome} ({c.idadeMinima}–{c.idadeMaxima} anos)
-                  </option>
-                ))}
-              </Select>
-            </Field>
+            <div className="sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Field label="Idade Mínima" required hint="Idade mínima permitida" error={fieldErrors.idadeMinima}>
+                <Select
+                  value={idadeMinima}
+                  onChange={(e) => {
+                    const novaMin = Number(e.target.value);
+                    setIdadeMinima(novaMin);
+                    if (idadeMaxima < novaMin) {
+                      setIdadeMaxima(novaMin);
+                    }
+                  }}
+                >
+                  {OPCOES_IDADE.map((idade) => (
+                    <option key={idade} value={idade}>
+                      {idade} anos
+                    </option>
+                  ))}
+                </Select>
+              </Field>
+
+              <Field label="Idade Máxima" required hint="Idade máxima permitida" error={fieldErrors.idadeMaxima}>
+                <Select
+                  value={idadeMaxima}
+                  onChange={(e) => setIdadeMaxima(Number(e.target.value))}
+                >
+                  {OPCOES_IDADE.filter((idade) => idade >= idadeMinima).map((idade) => (
+                    <option key={idade} value={idade}>
+                      {idade} anos
+                    </option>
+                  ))}
+                </Select>
+              </Field>
+            </div>
           )}
 
           {tipo === "regular" && (
@@ -290,7 +324,7 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
                   setNome(e.target.value);
                   setNomeEditadoManualmente(true);
                 }}
-                placeholder="Ex: Taquari - Futebol - Sub-12 - Manhã A"
+                placeholder="Ex: Taquari - Futebol - 6 a 12 anos - Manhã A"
               />
             </Field>
           </div>

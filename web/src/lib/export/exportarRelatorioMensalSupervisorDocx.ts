@@ -508,7 +508,7 @@ export async function exportarRelatorioMensalSupervisorDocx(dados: DadosRelatori
     let turmasFaixas = 'Turmas regulares de futebol/futsal';
     if (turmasMap && turmasMap[s.nucleoId]) {
       const faixas = turmasMap[s.nucleoId]
-        .map((t) => t.faixaEtaria?.nome || t.categoria?.nome || t.nome)
+        .map((t) => (t.idadeMinima != null && t.idadeMaxima != null ? `${t.idadeMinima} a ${t.idadeMaxima} anos` : t.nome))
         .filter(Boolean);
       if (faixas.length > 0) turmasFaixas = Array.from(new Set(faixas)).join(', ');
     }

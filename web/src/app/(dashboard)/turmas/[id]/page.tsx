@@ -63,11 +63,11 @@ export default async function DetalhesTurmaPage({ params }: { params: Promise<{ 
               {t.tipo === "operacional" ? "Operacional" : "Regular"}
             </Badge>
           </div>
-          {t.tipo !== "operacional" && (t.faixaEtaria || t.categoria) && (
+          {t.tipo !== "operacional" && (t.idadeMinima != null || t.idadeMaxima != null) && (
             <div>
-              <p className="text-zinc-500">Faixa Etária</p>
+              <p className="text-zinc-500">Idade Permitida</p>
               <p className="text-zinc-800">
-                {(t.faixaEtaria || t.categoria)?.nome} ({(t.faixaEtaria || t.categoria)?.idadeMinima} a {(t.faixaEtaria || t.categoria)?.idadeMaxima} anos)
+                {t.idadeMinima} a {t.idadeMaxima} anos
               </p>
             </div>
           )}

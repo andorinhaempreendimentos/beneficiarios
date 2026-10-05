@@ -360,10 +360,10 @@ export default function TurmasPage() {
                             </div>
                             <div className="mt-0.5 flex items-center justify-between text-[11px] text-zinc-500">
                               <span>
-                                {(t.faixaEtaria || t.categoria) ? (
-                                  <><strong>{(t.faixaEtaria || t.categoria)?.nome}</strong> ({(t.faixaEtaria || t.categoria)?.idadeMinima}–{(t.faixaEtaria || t.categoria)?.idadeMaxima} anos)</>
+                                {t.idadeMinima != null && t.idadeMaxima != null ? (
+                                  <strong>{t.idadeMinima} a {t.idadeMaxima} anos</strong>
                                 ) : (
-                                  <span>Faixa livre</span>
+                                  <span>Idade livre</span>
                                 )}
                               </span>
                               <span>{vagasTotais - matriculadosCount} vagas livres</span>
@@ -412,7 +412,7 @@ export default function TurmasPage() {
                       <th className="px-5 py-3">Turma</th>
                       <th className="px-5 py-3">Núcleo</th>
                       <th className="px-5 py-3">Atividade</th>
-                      <th className="px-5 py-3">Faixa Etária</th>
+                      <th className="px-5 py-3">Idade</th>
                       <th className="px-5 py-3 text-center">Matriculados / Vagas</th>
                       <th className="px-5 py-3">Exclusiva</th>
                       <th className="px-5 py-3 text-right">Ações</th>
@@ -446,8 +446,8 @@ export default function TurmasPage() {
                           <td className="px-5 py-3 text-zinc-600">{nucleo?.identificacao ?? "—"}</td>
                           <td className="px-5 py-3 text-zinc-600">{atividade?.nome ?? "—"}</td>
                           <td className="px-5 py-3">
-                            {(t.faixaEtaria || t.categoria) ? (
-                              <Badge tone="sky">{(t.faixaEtaria || t.categoria)?.sigla || (t.faixaEtaria || t.categoria)?.nome}</Badge>
+                            {t.idadeMinima != null && t.idadeMaxima != null ? (
+                              <Badge tone="sky">{t.idadeMinima} a {t.idadeMaxima} anos</Badge>
                             ) : (
                               <span className="text-zinc-400">—</span>
                             )}

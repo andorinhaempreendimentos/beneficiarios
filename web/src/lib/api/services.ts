@@ -252,7 +252,9 @@ export interface TurmaApi {
   nome: string;
   tipo: "regular" | "operacional";
   nucleoId: string;
-  atividadeId: string;
+  atividadeId?: string;
+  idadeMinima?: number;
+  idadeMaxima?: number;
   faixaEtariaId?: string | null;
   faixaEtaria?: { id: string; nome: string; sigla: string; idadeMinima: number; idadeMaxima: number };
   categoriaId?: string | null;
@@ -525,6 +527,8 @@ function mapTurma(r: any): TurmaApi {
   } : undefined;
 
   const faixaEtariaId = r.faixa_etaria_id ?? r.categoria_id ?? null;
+  const idadeMinima = r.idade_minima != null ? Number(r.idade_minima) : faixaRaw?.idade_minima != null ? Number(faixaRaw.idade_minima) : undefined;
+  const idadeMaxima = r.idade_maxima != null ? Number(r.idade_maxima) : faixaRaw?.idade_maxima != null ? Number(faixaRaw.idade_maxima) : undefined;
 
   return {
     id: r.id,
@@ -532,6 +536,8 @@ function mapTurma(r: any): TurmaApi {
     tipo: (r.tipo as 'regular' | 'operacional') ?? 'regular',
     nucleoId: r.nucleo_id,
     atividadeId: r.atividade_id,
+    idadeMinima,
+    idadeMaxima,
     faixaEtariaId,
     faixaEtaria: faixaEtariaObj,
     categoriaId: faixaEtariaId,
@@ -1150,13 +1156,15 @@ export const turmasApi = {
   },
 };
 
-function toTurmaRow(b: Record<string, unknown>): Database['public']['Tables']['turmas']['Insert'] {
+function toTurmaRow(b: Record<string, unknown>): any {
   return {
     nome: b.nome as string,
     tipo: (b.tipo as Database['public']['Enums']['tipo_turma']) ?? 'regular',
     nucleo_id: b.nucleoId as string,
     atividade_id: b.atividadeId as string,
     faixa_etaria_id: ((b.faixaEtariaId || b.categoriaId) as string) || null,
+    idade_minima: b.idadeMinima != null ? Number(b.idadeMinima) : null,
+    idade_maxima: b.idadeMaxima != null ? Number(b.idadeMaxima) : null,
     vagas_totais: b.vagasTotais as number | undefined,
     permitir_fila_espera: (b.permitirFilaEspera as boolean) ?? true,
     exclusiva: b.exclusiva as boolean | undefined,
