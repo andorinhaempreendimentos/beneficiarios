@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
+
+export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
   const path = request.nextUrl.searchParams.get("path");
@@ -24,24 +25,27 @@ export async function GET(request: NextRequest) {
   if (cleanPath.startsWith("/")) cleanPath = cleanPath.substring(1);
   if (cleanPath.startsWith("comprovacoes/")) cleanPath = cleanPath.replace("comprovacoes/", "");
 
-  // 3. Obter URL assinada no Supabase Storage
+  // 3. Obter arquivo diretamente do Supabase Storage e entregar bytes ao navegador
   try {
-    const storageClient = process.env.SUPABASE_SERVICE_ROLE_KEY
-      ? createAdminClient()
-      : supabase;
-
-    const { data, error } = await storageClient.storage
+    const { data, error } = await supabase.storage
       .from("comprovacoes")
-      .createSignedUrl(cleanPath, 300);
+      .download(cleanPath);
 
-    if (error || !data?.signedUrl) {
+    if (error || !data) {
       return NextResponse.json(
         { error: error?.message || "Arquivo não encontrado" },
         { status: 404 }
       );
     }
 
-    return NextResponse.redirect(data.signedUrl);
+    const buffer = await data.arrayBuffer();
+    return new NextResponse(buffer, {
+      status: 200,
+      headers: {
+        "Content-Type": data.type || "image/jpeg",
+        "Cache-Control": "private, max-age=3600, stale-while-revalidate=86400",
+      },
+    });
   } catch (err: any) {
     return NextResponse.json(
       { error: err?.message || "Erro ao obter comprovante" },
