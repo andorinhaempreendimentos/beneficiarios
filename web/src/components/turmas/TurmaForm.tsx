@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { z } from "zod";
 import { Button, Field, FormSection, Input, LinkButton, Select, Switch } from "@/components/ui";
 import { GradeSemanal } from "./GradeSemanal";
@@ -15,6 +15,21 @@ import {
 } from "@/lib/api/services";
 
 const OPCOES_IDADE = Array.from({ length: 27 }, (_, i) => i + 4); // 4 a 30 anos
+
+const OPCOES_IDENTIFICADOR = [
+  "A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
+  "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
+  "U", "V", "W", "X", "Y", "Z",
+];
+
+function extrairIdentificador(nome?: string): string | null {
+  if (!nome) return null;
+  const mTurma = nome.match(/Turma\s+([A-Z0-9]{1,2})\b/i);
+  if (mTurma) return mTurma[1].toUpperCase();
+  const mFinal = nome.trim().match(/\b([A-Z]{1,2}|\d{1,2})$/i);
+  if (mFinal) return mFinal[1].toUpperCase();
+  return null;
+}
 
 const turmaSchema = z.object({
   nome: z.string().min(2, "Nome deve ter pelo menos 2 caracteres."),
@@ -57,7 +72,7 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
   const [nome, setNome] = useState(t?.nome ?? "");
   const [nomeEditadoManualmente, setNomeEditadoManualmente] = useState(Boolean(t?.nome));
   const [turno, setTurno] = useState<string>("");
-  const [identificador, setIdentificador] = useState<string>("A");
+  const [identificador, setIdentificador] = useState<string>(extrairIdentificador(t?.nome) || "A");
   const [exclusiva, setExclusiva] = useState(t?.exclusiva ?? false);
   const [nucleoId, setNucleoId] = useState(t?.nucleoId ?? "");
   const [atividadeId, setAtividadeId] = useState(t?.atividadeId ?? "");
@@ -81,6 +96,31 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
       setTodasTurmas(res.data);
     }).catch(() => {});
   }, [initialFuncionarios]);
+
+  // Identificadores (A, B, C...) já ocupados por turmas com o mesmo núcleo e atividade
+  const identificadoresOcupados = useMemo(() => {
+    if (!nucleoId || !atividadeId) return new Set<string>();
+    const ocupados = new Set<string>();
+    todasTurmas.forEach((turma) => {
+      if (turma.id === t?.id) return;
+      if (turma.nucleoId === nucleoId && turma.atividadeId === atividadeId) {
+        const idt = extrairIdentificador(turma.nome);
+        if (idt) ocupados.add(idt);
+      }
+    });
+    return ocupados;
+  }, [nucleoId, atividadeId, todasTurmas, t?.id]);
+
+  // Se o identificador atual estiver ocupado para o núcleo/atividade selecionado, seleciona o próximo livre
+  useEffect(() => {
+    if (tipo !== "regular") return;
+    if (identificadoresOcupados.has(identificador)) {
+      const primeiraLivre = OPCOES_IDENTIFICADOR.find((letra) => !identificadoresOcupados.has(letra));
+      if (primeiraLivre) {
+        setIdentificador(primeiraLivre);
+      }
+    }
+  }, [identificadoresOcupados, identificador, tipo]);
 
   // IDs de funcionários que já são responsáveis em OUTRAS turmas
   const idsResponsaveisEmOutrasTurmas = new Set<string>();
@@ -142,22 +182,27 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
     if (atividadeSelecionada?.nome) {
       partes.push(atividadeSelecionada.nome);
     }
-    if (tipo === "regular" && idadeMinima != null && idadeMaxima != null) {
-      partes.push(`${idadeMinima} a ${idadeMaxima} anos`);
-    }
-    if (turno) {
-      partes.push(identificador ? `${turno} ${identificador}` : turno);
+    if (identificador) {
+      partes.push(`Turma ${identificador}`);
     }
 
     if (partes.length > 0) {
       setNome(partes.join(" - "));
     }
-  }, [tipo, nucleoId, atividadeId, idadeMinima, idadeMaxima, turno, identificador, nucleoSelecionado, atividadeSelecionada]);
+  }, [tipo, nucleoId, atividadeId, identificador, nucleoSelecionado, atividadeSelecionada]);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setLoading(true);
     setErro(null);
+
+    if (tipo === "regular" && identificadoresOcupados.has(identificador)) {
+      const msg = `A Turma ${identificador} já está cadastrada para esta atividade neste núcleo. Escolha outro identificador.`;
+      setErro(msg);
+      toast.error(msg);
+      setLoading(false);
+      return;
+    }
 
     const formData = new FormData(event.currentTarget);
     const nId = (formData.get("nucleoId") as string) || nucleoId;
@@ -291,28 +336,37 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
           )}
 
           {tipo === "regular" && (
-            <>
-              <Field label="Turno (opcional para o nome)">
-                <Select value={turno} onChange={(e) => setTurno(e.target.value)}>
-                  <option value="">Sem turno no nome</option>
-                  <option value="Manhã">Manhã</option>
-                  <option value="Tarde">Tarde</option>
-                  <option value="Noite">Noite</option>
-                  <option value="Sábado">Sábado</option>
+            <div className="sm:col-span-2">
+              <Field
+                label="Identificador da Turma"
+                required
+                hint={
+                  !nucleoId || !atividadeId
+                    ? "Selecione primeiro o núcleo e a atividade para verificar disponibilidade"
+                    : identificadoresOcupados.size > 0
+                    ? `Letras já em uso neste núcleo e atividade: ${Array.from(identificadoresOcupados).sort().join(", ")}`
+                    : "Identificador único da turma (Turma A, B, C...)"
+                }
+              >
+                <Select
+                  value={identificador}
+                  onChange={(e) => {
+                    setIdentificador(e.target.value);
+                    setNomeEditadoManualmente(false);
+                  }}
+                  disabled={!nucleoId || !atividadeId}
+                >
+                  {OPCOES_IDENTIFICADOR.map((letra) => {
+                    const ocupado = identificadoresOcupados.has(letra);
+                    return (
+                      <option key={letra} value={letra} disabled={ocupado}>
+                        Turma {letra} {ocupado ? "— (Já em uso neste núcleo/atividade)" : ""}
+                      </option>
+                    );
+                  })}
                 </Select>
               </Field>
-
-              <Field label="Identificador / Turma">
-                <Select value={identificador} onChange={(e) => setIdentificador(e.target.value)}>
-                  <option value="A">Turma A</option>
-                  <option value="B">Turma B</option>
-                  <option value="C">Turma C</option>
-                  <option value="D">Turma D</option>
-                  <option value="1">Turma 1</option>
-                  <option value="2">Turma 2</option>
-                </Select>
-              </Field>
-            </>
+            </div>
           )}
 
           <div className="sm:col-span-2">
@@ -324,7 +378,7 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
                   setNome(e.target.value);
                   setNomeEditadoManualmente(true);
                 }}
-                placeholder="Ex: Taquari - Futebol - 6 a 12 anos - Manhã A"
+                placeholder="Ex: Taquari - Futebol - Turma A"
               />
             </Field>
           </div>
