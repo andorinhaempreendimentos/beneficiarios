@@ -100,19 +100,7 @@ const DIAS_SEMANA_MAP: Record<number, string> = {
   6: "Sábado",
 };
 
-function formatStorageUrl(pathOrUrl?: string): string {
-  if (!pathOrUrl) return "";
-  if (
-    pathOrUrl.startsWith("http://") ||
-    pathOrUrl.startsWith("https://") ||
-    pathOrUrl.startsWith("data:") ||
-    pathOrUrl.startsWith("blob:")
-  ) {
-    return pathOrUrl;
-  }
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-  return `${supabaseUrl}/storage/v1/object/public/comprovacoes/${pathOrUrl}`;
-}
+import { formatStorageUrl } from "@/lib/storage";
 
 export function ExecucaoAulaClient({
   turma,
