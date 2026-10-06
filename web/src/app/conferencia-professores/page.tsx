@@ -49,8 +49,43 @@ interface AulaItem {
   id: string;
   inicio: string;
   fim: string;
-  idadeMin: string | number;
-  idadeMax: string | number;
+  idadeMin: number;
+  idadeMax: number;
+}
+
+function timeToMinutes(t: string): number {
+  if (!t || !t.includes(":")) return 0;
+  const [h, m] = t.split(":").map(Number);
+  return (h || 0) * 60 + (m || 0);
+}
+
+function getErrosAula(diaId: string, aulaIndex: number, aulas: AulaItem[]): string[] {
+  const aula = aulas[aulaIndex];
+  if (!aula) return [];
+  const erros: string[] = [];
+
+  const tInicio = timeToMinutes(aula.inicio);
+  const tFim = timeToMinutes(aula.fim);
+
+  if (!aula.inicio || !aula.fim) {
+    erros.push("Horário de início e término são obrigatórios.");
+  } else if (tFim <= tInicio) {
+    erros.push("Horário de término deve ser mais tarde que o início.");
+  }
+
+  if (aulaIndex > 0) {
+    const anterior = aulas[aulaIndex - 1];
+    const tFimAnterior = timeToMinutes(anterior.fim);
+    if (tInicio < tFimAnterior) {
+      erros.push(`Horário de início sobrepõe a aula anterior (que termina às ${anterior.fim}).`);
+    }
+  }
+
+  if (Number(aula.idadeMin) > Number(aula.idadeMax)) {
+    erros.push("Idade mínima não pode ser maior que a idade máxima.");
+  }
+
+  return erros;
 }
 
 export default function ConferenciaProfessoresPage() {
@@ -59,7 +94,7 @@ export default function ConferenciaProfessoresPage() {
   const [professores, setProfessores] = useState<Professor[]>([]);
   const [atividades, setAtividades] = useState<Atividade[]>([]);
 
-  // Passos: 1 (Quem é você), 2 (Dias da semana), 3 (Aulas de cada dia), 4 (Sucesso)
+  // Passos: 1 (Identificação), 2 (Dias da semana), 3 (Aulas de cada dia), 4 (Sucesso)
   const [passo, setPasso] = useState<number>(1);
 
   // Passo 1: Identificação
@@ -118,7 +153,6 @@ export default function ConferenciaProfessoresPage() {
       if (existe) {
         return prev.filter((d) => d !== diaId);
       } else {
-        // Se ainda não existia, já inicializa com 1 aula padrão para agilizar
         setAulasPorDia((aulas) => {
           if (!aulas[diaId] || aulas[diaId].length === 0) {
             return {
@@ -129,7 +163,7 @@ export default function ConferenciaProfessoresPage() {
                   inicio: "08:00",
                   fim: "09:30",
                   idadeMin: 8,
-                  idadeMax: 12,
+                  idadeMax: 11,
                 },
               ],
             };
@@ -141,8 +175,19 @@ export default function ConferenciaProfessoresPage() {
     });
   };
 
+  // Conferir se a última aula do dia está válida para permitir adicionar outra aula
+  const podeAdicionarNovaAula = (diaId: string): boolean => {
+    const aulas = aulasPorDia[diaId] || [];
+    if (aulas.length === 0) return true;
+    const indexUltima = aulas.length - 1;
+    const erros = getErrosAula(diaId, indexUltima, aulas);
+    return erros.length === 0;
+  };
+
   // Adicionar aula a um dia específico
   const adicionarAulaNoDia = (diaId: string) => {
+    if (!podeAdicionarNovaAula(diaId)) return;
+
     setAulasPorDia((prev) => {
       const listaAtual = prev[diaId] || [];
       const ultimaAula = listaAtual[listaAtual.length - 1];
@@ -160,12 +205,15 @@ export default function ConferenciaProfessoresPage() {
         novoFim = `${String(horaFim).padStart(2, "0")}:${String(minFim).padStart(2, "0")}`;
       }
 
+      const idadeMinSugerida = ultimaAula?.idadeMax ? Math.min(21, Number(ultimaAula.idadeMax)) : 12;
+      const idadeMaxSugerida = Math.min(21, idadeMinSugerida + 3);
+
       const novaAula: AulaItem = {
         id: Math.random().toString(36).substring(2, 9),
         inicio: proximoInicio,
         fim: novoFim,
-        idadeMin: ultimaAula?.idadeMax ? Number(ultimaAula.idadeMax) + 1 : 12,
-        idadeMax: ultimaAula?.idadeMax ? Number(ultimaAula.idadeMax) + 4 : 15,
+        idadeMin: idadeMinSugerida,
+        idadeMax: idadeMaxSugerida,
       };
 
       return {
@@ -196,9 +244,28 @@ export default function ConferenciaProfessoresPage() {
   ) => {
     setAulasPorDia((prev) => ({
       ...prev,
-      [diaId]: (prev[diaId] || []).map((a) =>
-        a.id === aulaId ? { ...a, [campo]: valor } : a
-      ),
+      [diaId]: (prev[diaId] || []).map((a) => {
+        if (a.id !== aulaId) return a;
+        if (campo === "idadeMin") {
+          const novaMin = Number(valor);
+          const maxAtual = Number(a.idadeMax);
+          return {
+            ...a,
+            idadeMin: novaMin,
+            idadeMax: maxAtual < novaMin ? novaMin : a.idadeMax,
+          };
+        }
+        if (campo === "idadeMax") {
+          const novaMax = Number(valor);
+          const minAtual = Number(a.idadeMin);
+          return {
+            ...a,
+            idadeMax: novaMax,
+            idadeMin: minAtual > novaMax ? novaMax : a.idadeMin,
+          };
+        }
+        return { ...a, [campo]: valor };
+      }),
     }));
   };
 
@@ -228,14 +295,15 @@ export default function ConferenciaProfessoresPage() {
 
   const podeAvancarPasso2 = diasSelecionados.length > 0;
 
-  // Validação do envio no Passo 3
+  // Validação geral do Passo 3 para envio
   const podeEnviarPasso3 = useMemo(() => {
     if (diasSelecionados.length === 0) return false;
     for (const diaId of diasSelecionados) {
       const aulas = aulasPorDia[diaId] || [];
       if (aulas.length === 0) return false;
-      for (const aula of aulas) {
-        if (!aula.inicio || !aula.fim) return false;
+      for (let i = 0; i < aulas.length; i++) {
+        const erros = getErrosAula(diaId, i, aulas);
+        if (erros.length > 0) return false;
       }
     }
     return true;
@@ -252,7 +320,6 @@ export default function ConferenciaProfessoresPage() {
       setEnviando(true);
       setErroEnvio(null);
 
-      // Prepara estrutura por dia
       const aulasFormatadasPorDia: Record<string, any[]> = {};
       diasSelecionados.forEach((diaId) => {
         const diaNome = DIAS_SEMANA_LISTA.find((d) => d.id === diaId)?.nome || diaId;
@@ -261,8 +328,8 @@ export default function ConferenciaProfessoresPage() {
           aula_numero: index + 1,
           horario_inicio: a.inicio,
           horario_fim: a.fim,
-          idade_minima: Number(a.idadeMin) || null,
-          idade_maxima: Number(a.idadeMax) || null,
+          idade_minima: Number(a.idadeMin),
+          idade_maxima: Number(a.idadeMax),
         }));
       });
 
@@ -637,7 +704,7 @@ export default function ConferenciaProfessoresPage() {
                     Aulas e horários de cada dia
                   </h2>
                   <p className="text-xs text-zinc-500 mt-1">
-                    Para cada dia selecionado, informe os horários e a idade dos alunos. Se der mais de uma aula no dia, toque em <strong>+ Adicionar aula</strong>.
+                    Para cada dia selecionado, informe os horários e a idade dos alunos. Toque em <strong>+ Adicionar aula</strong> para incluir mais turmas no dia.
                   </p>
                 </div>
 
@@ -646,6 +713,7 @@ export default function ConferenciaProfessoresPage() {
                   {diasSelecionados.map((diaId) => {
                     const diaObj = DIAS_SEMANA_LISTA.find((d) => d.id === diaId);
                     const aulas = aulasPorDia[diaId] || [];
+                    const podeAdd = podeAdicionarNovaAula(diaId);
 
                     return (
                       <div
@@ -665,108 +733,150 @@ export default function ConferenciaProfessoresPage() {
                               {aulas.length} {aulas.length === 1 ? "aula" : "aulas"}
                             </span>
                           </div>
-
-                          <button
-                            type="button"
-                            onClick={() => adicionarAulaNoDia(diaId)}
-                            className="px-2.5 py-1 bg-sky-600 hover:bg-sky-700 text-white rounded-lg text-xs font-bold flex items-center gap-1 transition-all shadow-2xs shrink-0"
-                          >
-                            <Plus className="w-3.5 h-3.5 stroke-[3]" />
-                            <span>Adicionar aula</span>
-                          </button>
                         </div>
 
                         {/* Lista de Aulas do Dia (Condensada) */}
                         <div className="space-y-2">
-                          {aulas.map((aula, index) => (
-                            <div
-                              key={aula.id}
-                              className="bg-white rounded-xl border border-zinc-200 p-2.5 shadow-2xs hover:border-zinc-300 transition-colors space-y-2"
-                            >
-                              <div className="flex items-center justify-between border-b border-zinc-100 pb-1">
-                                <span className="text-xs font-extrabold text-zinc-900 flex items-center gap-1.5">
-                                  <span>⚽</span> {index + 1}ª Aula ({diaObj?.curto})
-                                </span>
+                          {aulas.map((aula, index) => {
+                            const errosAula = getErrosAula(diaId, index, aulas);
+                            const horarioTexto =
+                              aula.inicio && aula.fim ? ` - das ${aula.inicio} às ${aula.fim}` : "";
 
-                                {aulas.length > 1 && (
-                                  <button
-                                    type="button"
-                                    onClick={() => removerAulaDoDia(diaId, aula.id)}
-                                    className="p-1 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-md transition-colors flex items-center gap-1 text-xs font-semibold"
-                                    title="Remover esta aula"
-                                  >
-                                    <Trash2 className="w-3.5 h-3.5" />
-                                    <span>Excluir</span>
-                                  </button>
+                            return (
+                              <div
+                                key={aula.id}
+                                className={`bg-white rounded-xl border p-2.5 shadow-2xs transition-colors space-y-2 ${
+                                  errosAula.length > 0
+                                    ? "border-rose-300 ring-1 ring-rose-200"
+                                    : "border-zinc-200 hover:border-zinc-300"
+                                }`}
+                              >
+                                <div className="flex items-center justify-between border-b border-zinc-100 pb-1">
+                                  <span className="text-xs font-extrabold text-zinc-900 flex items-center gap-1.5">
+                                    <span>⚽</span> {index + 1}ª Aula ({diaObj?.nome}
+                                    {horarioTexto})
+                                  </span>
+
+                                  {aulas.length > 1 && (
+                                    <button
+                                      type="button"
+                                      onClick={() => removerAulaDoDia(diaId, aula.id)}
+                                      className="p-1 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-md transition-colors flex items-center gap-1 text-xs font-semibold"
+                                      title="Remover esta aula"
+                                    >
+                                      <Trash2 className="w-3.5 h-3.5" />
+                                      <span>Excluir</span>
+                                    </button>
+                                  )}
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                                  {/* Horário */}
+                                  <div className="bg-zinc-50/80 rounded-lg p-2 border border-zinc-200/60">
+                                    <span className="text-3xs uppercase font-extrabold tracking-wider text-zinc-500 block mb-1">
+                                      Horário
+                                    </span>
+                                    <div className="flex items-center gap-1.5">
+                                      <input
+                                        type="time"
+                                        value={aula.inicio}
+                                        onChange={(e) =>
+                                          updateAulaCampo(diaId, aula.id, "inicio", e.target.value)
+                                        }
+                                        className="w-full h-8 px-2 rounded-md border border-zinc-300 bg-white text-zinc-900 font-bold text-xs focus:ring-1 focus:ring-sky-500"
+                                      />
+                                      <span className="text-zinc-400 font-semibold text-xs shrink-0">
+                                        às
+                                      </span>
+                                      <input
+                                        type="time"
+                                        value={aula.fim}
+                                        onChange={(e) =>
+                                          updateAulaCampo(diaId, aula.id, "fim", e.target.value)
+                                        }
+                                        className="w-full h-8 px-2 rounded-md border border-zinc-300 bg-white text-zinc-900 font-bold text-xs focus:ring-1 focus:ring-sky-500"
+                                      />
+                                    </div>
+                                  </div>
+
+                                  {/* Idades com Selects travados para Min <= Max */}
+                                  <div className="bg-zinc-50/80 rounded-lg p-2 border border-zinc-200/60">
+                                    <span className="text-3xs uppercase font-extrabold tracking-wider text-zinc-500 block mb-1">
+                                      Idade dos alunos
+                                    </span>
+                                    <div className="flex items-center gap-1.5">
+                                      <span className="text-zinc-500 text-xs shrink-0 font-medium">
+                                        de
+                                      </span>
+                                      <select
+                                        value={aula.idadeMin}
+                                        onChange={(e) =>
+                                          updateAulaCampo(diaId, aula.id, "idadeMin", Number(e.target.value))
+                                        }
+                                        className="w-full h-8 px-2 rounded-md border border-zinc-300 bg-white text-zinc-900 font-bold text-xs focus:ring-1 focus:ring-sky-500"
+                                      >
+                                        {IDADES_OPCOES.filter((idade) => idade <= Number(aula.idadeMax)).map(
+                                          (idade) => (
+                                            <option key={idade} value={idade}>
+                                              {idade} anos
+                                            </option>
+                                          )
+                                        )}
+                                      </select>
+                                      <span className="text-zinc-500 text-xs shrink-0 font-medium">
+                                        até
+                                      </span>
+                                      <select
+                                        value={aula.idadeMax}
+                                        onChange={(e) =>
+                                          updateAulaCampo(diaId, aula.id, "idadeMax", Number(e.target.value))
+                                        }
+                                        className="w-full h-8 px-2 rounded-md border border-zinc-300 bg-white text-zinc-900 font-bold text-xs focus:ring-1 focus:ring-sky-500"
+                                      >
+                                        {IDADES_OPCOES.filter((idade) => idade >= Number(aula.idadeMin)).map(
+                                          (idade) => (
+                                            <option key={idade} value={idade}>
+                                              {idade} anos
+                                            </option>
+                                          )
+                                        )}
+                                      </select>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Mensagens de erro de validação (se houver) */}
+                                {errosAula.length > 0 && (
+                                  <div className="bg-rose-50 border border-rose-200 rounded-lg p-2 text-rose-700 text-2xs space-y-0.5 animate-fadeIn">
+                                    {errosAula.map((err, i) => (
+                                      <div key={i} className="flex items-center gap-1.5">
+                                        <AlertCircle className="w-3.5 h-3.5 shrink-0 text-rose-500" />
+                                        <span>{err}</span>
+                                      </div>
+                                    ))}
+                                  </div>
                                 )}
                               </div>
+                            );
+                          })}
+                        </div>
 
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                                {/* Horário */}
-                                <div className="bg-zinc-50/80 rounded-lg p-2 border border-zinc-200/60">
-                                  <span className="text-3xs uppercase font-extrabold tracking-wider text-zinc-500 block mb-1">
-                                    Horário
-                                  </span>
-                                  <div className="flex items-center gap-1.5">
-                                    <input
-                                      type="time"
-                                      value={aula.inicio}
-                                      onChange={(e) =>
-                                        updateAulaCampo(diaId, aula.id, "inicio", e.target.value)
-                                      }
-                                      className="w-full h-8 px-2 rounded-md border border-zinc-300 bg-white text-zinc-900 font-bold text-xs focus:ring-1 focus:ring-sky-500"
-                                    />
-                                    <span className="text-zinc-400 font-semibold text-xs shrink-0">às</span>
-                                    <input
-                                      type="time"
-                                      value={aula.fim}
-                                      onChange={(e) =>
-                                        updateAulaCampo(diaId, aula.id, "fim", e.target.value)
-                                      }
-                                      className="w-full h-8 px-2 rounded-md border border-zinc-300 bg-white text-zinc-900 font-bold text-xs focus:ring-1 focus:ring-sky-500"
-                                    />
-                                  </div>
-                                </div>
-
-                                {/* Idades */}
-                                <div className="bg-zinc-50/80 rounded-lg p-2 border border-zinc-200/60">
-                                  <span className="text-3xs uppercase font-extrabold tracking-wider text-zinc-500 block mb-1">
-                                    Idade dos alunos
-                                  </span>
-                                  <div className="flex items-center gap-1.5">
-                                    <span className="text-zinc-500 text-xs shrink-0 font-medium">de</span>
-                                    <select
-                                      value={aula.idadeMin}
-                                      onChange={(e) =>
-                                        updateAulaCampo(diaId, aula.id, "idadeMin", Number(e.target.value))
-                                      }
-                                      className="w-full h-8 px-2 rounded-md border border-zinc-300 bg-white text-zinc-900 font-bold text-xs focus:ring-1 focus:ring-sky-500"
-                                    >
-                                      {IDADES_OPCOES.map((idade) => (
-                                        <option key={idade} value={idade}>
-                                          {idade} anos
-                                        </option>
-                                      ))}
-                                    </select>
-                                    <span className="text-zinc-500 text-xs shrink-0 font-medium">até</span>
-                                    <select
-                                      value={aula.idadeMax}
-                                      onChange={(e) =>
-                                        updateAulaCampo(diaId, aula.id, "idadeMax", Number(e.target.value))
-                                      }
-                                      className="w-full h-8 px-2 rounded-md border border-zinc-300 bg-white text-zinc-900 font-bold text-xs focus:ring-1 focus:ring-sky-500"
-                                    >
-                                      {IDADES_OPCOES.map((idade) => (
-                                        <option key={idade} value={idade}>
-                                          {idade} anos
-                                        </option>
-                                      ))}
-                                    </select>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          ))}
+                        {/* Botão Adicionar Aula logo abaixo dos cards */}
+                        <div className="pt-1">
+                          <button
+                            type="button"
+                            disabled={!podeAdd}
+                            onClick={() => adicionarAulaNoDia(diaId)}
+                            className="w-full sm:w-auto px-4 py-2 bg-sky-600 hover:bg-sky-700 disabled:bg-zinc-200 disabled:text-zinc-400 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-2xs"
+                          >
+                            <Plus className="w-3.5 h-3.5 stroke-[3]" />
+                            <span>Adicionar outra aula na {diaObj?.nome}</span>
+                          </button>
+                          {!podeAdd && (
+                            <span className="text-3xs text-amber-700 font-medium block mt-1">
+                              * Preencha e confira o horário da aula anterior para liberar nova aula.
+                            </span>
+                          )}
                         </div>
                       </div>
                     );
@@ -776,7 +886,8 @@ export default function ConferenciaProfessoresPage() {
                 {/* Observações / Recado adicional */}
                 <div>
                   <label className="block text-sm font-bold text-zinc-800 mb-1.5">
-                    Algum recado ou observação sobre suas turmas? <span className="text-zinc-400 font-normal">(Opcional)</span>
+                    Algum recado ou observação sobre suas turmas?{" "}
+                    <span className="text-zinc-400 font-normal">(Opcional)</span>
                   </label>
                   <textarea
                     rows={3}
@@ -787,7 +898,7 @@ export default function ConferenciaProfessoresPage() {
                   />
                 </div>
 
-                {/* Alerta de Erro */}
+                {/* Alerta de Erro de Envio */}
                 {erroEnvio && (
                   <div className="p-3.5 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl flex items-center gap-2">
                     <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
