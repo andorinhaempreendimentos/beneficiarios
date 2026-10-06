@@ -342,6 +342,26 @@ export default function TurmasPage() {
                                 <span className="font-medium text-zinc-800">{t.idadeMinima} a {t.idadeMaxima} anos</span>
                               </div>
                             )}
+                            {t.tipo !== "operacional" && !t.atividade?.usoInterno && (t.slots ?? []).length > 0 && (() => {
+                              const ORDEM = ["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"];
+                              const dias = [...new Set((t.slots ?? []).map((s: any) => s.dia))].sort(
+                                (a, b) => ORDEM.indexOf(a as string) - ORDEM.indexOf(b as string)
+                              );
+                              return (
+                                <div className="flex items-center gap-1.5 flex-wrap">
+                                  <span className="shrink-0 rounded-md bg-orange-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-orange-700">
+                                    Dias
+                                  </span>
+                                  <div className="flex gap-1 flex-wrap">
+                                    {dias.map((dia) => (
+                                      <span key={dia as string} className="rounded-md bg-zinc-200 px-1.5 py-0.5 text-[9px] font-bold text-zinc-700">
+                                        {dia}
+                                      </span>
+                                    ))}
+                                  </div>
+                                </div>
+                              );
+                            })()}
                           </div>
                         </div>
 
