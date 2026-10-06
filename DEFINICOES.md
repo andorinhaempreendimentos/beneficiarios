@@ -13,7 +13,9 @@ Espaço de tempo fixo para a aplicação de aulas/atividades, como por exemplo f
 
 ### Identificador da Turma
 
-Letra (A, B, C…) que diferencia turmas com a mesma **atividade**, **núcleo**, **idade mínima** e **idade máxima**. É um campo próprio na tabela (`identificador VARCHAR(10)`). O nome da turma é gerado automaticamente a partir desses dados.
+Letra (A, B, C…) que diferencia turmas com a mesma **atividade** no mesmo **núcleo**. É um campo próprio na tabela (`identificador VARCHAR(10)`). O nome da turma é gerado automaticamente a partir de `[Núcleo] - [Atividade] - Turma [Identificador]`.
+
+A faixa etária (`idade_minima` / `idade_maxima`) é dado estruturado separado — **não aparece no nome**.
 
 **Formato do nome gerado:**
 ```
@@ -21,7 +23,8 @@ Letra (A, B, C…) que diferencia turmas com a mesma **atividade**, **núcleo**,
 ```
 
 **Exemplos reais:**
-- `Complexo ARNO 51 - Futebol de Campo - Sub-11 - Manhã A`
-- `Campo T31 - Taquari - Futebol de Campo - Sub-13 - Tarde A`
+- `Campo T31 - Taquari - Futebol de Campo - Turma A` (6–7 anos)
+- `Campo T31 - Taquari - Futebol de Campo - Turma B` (8–9 anos)
+- `Campo T31 - Taquari - Futebol de Campo - Turma C` (10–11 anos)
 
-**Regra:** o identificador deve ser único por combinação de **núcleo + atividade + idade mínima + idade máxima**. Garantido por índice único no banco (`turmas_nucleo_atividade_faixa_identificador_uniq`). É um campo próprio na tabela (`identificador VARCHAR(10)`).
+**Regra:** o identificador deve ser único por combinação de **núcleo + atividade**. Garantido por índice único no banco (`turmas_nucleo_atividade_identificador_uniq`). É um campo próprio na tabela (`identificador VARCHAR(10)`).
