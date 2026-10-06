@@ -1,0 +1,106 @@
+import { NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
+
+function getAdminClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://qrzszjogxrrjqjkoowoi.supabase.co";
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "sb_publishable_AoXvaZk10chLPIIwIWIskA_s4z1xCUY";
+  return createClient(url, key);
+}
+
+export async function GET() {
+  try {
+    const supabase = getAdminClient();
+
+    // 1. Núcleos ativos
+    const { data: nucleos, error: errNuc } = await supabase
+      .from("nucleos")
+      .select("id, identificacao, nome_local")
+      .is("deleted_at", null)
+      .order("identificacao");
+
+    if (errNuc) throw errNuc;
+
+    // 2. Professores ativos
+    const { data: professores, error: errProf } = await supabase
+      .from("funcionarios")
+      .select("id, nome_completo, nucleo_id, funcao")
+      .is("deleted_at", null)
+      .ilike("funcao", "%Professor%")
+      .order("nome_completo");
+
+    if (errProf) throw errProf;
+
+    // 3. Modalidades / Atividades esportivas
+    const { data: atividades, error: errAtiv } = await supabase
+      .from("atividades")
+      .select("id, nome")
+      .not("nome", "ilike", "%Planejamento%")
+      .not("nome", "ilike", "%Capacitação%")
+      .order("nome");
+
+    if (errAtiv) throw errAtiv;
+
+    // 4. Mapeamento nucleo <-> atividades
+    const { data: nucleoAtiv, error: errNA } = await supabase
+      .from("nucleo_atividades")
+      .select("nucleo_id, atividade_id");
+
+    if (errNA) throw errNA;
+
+    return NextResponse.json({
+      nucleos: nucleos || [],
+      professores: professores || [],
+      atividades: atividades || [],
+      nucleoAtividades: nucleoAtiv || [],
+    });
+  } catch (error: any) {
+    console.error("[conferencia-professores GET]", error);
+    return NextResponse.json({ error: error.message || "Erro ao carregar dados" }, { status: 500 });
+  }
+}
+
+export async function POST(req: Request) {
+  try {
+    const body = await req.json();
+    const {
+      nucleoId,
+      nucleoNome,
+      professorId,
+      professorNome,
+      modalidadeId,
+      modalidadeNome,
+      qtdTurmas,
+      dadosTurmas,
+      observacoes,
+    } = body;
+
+    if (!nucleoNome || !professorNome || !modalidadeNome || !dadosTurmas || !dadosTurmas.length) {
+      return NextResponse.json({ error: "Campos obrigatórios não preenchidos." }, { status: 400 });
+    }
+
+    const supabase = getAdminClient();
+
+    const { data, error } = await supabase
+      .from("respostas_conferencia_professores")
+      .insert({
+        nucleo_id: nucleoId || null,
+        nucleo_nome: nucleoNome,
+        professor_id: professorId || null,
+        professor_nome: professorNome,
+        modalidade_id: modalidadeId || null,
+        modalidade_nome: modalidadeNome,
+        qtd_turmas: Number(qtdTurmas) || dadosTurmas.length,
+        dados_turmas: dadosTurmas,
+        observacoes: observacoes || null,
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    return NextResponse.json({ success: true, id: data.id });
+  } catch (error: any) {
+    console.error("[conferencia-professores POST]", error);
+    return NextResponse.json({ error: error.message || "Erro ao salvar resposta" }, { status: 500 });
+  }
+}
