@@ -1,15 +1,17 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-function getAdminClient() {
+function getSupabaseClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://qrzszjogxrrjqjkoowoi.supabase.co";
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "sb_publishable_AoXvaZk10chLPIIwIWIskA_s4z1xCUY";
+  const key =
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFyenN6am9neHJyanFqa29vd29pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU5NDk1OTUsImV4cCI6MjEwMTUyNTU5NX0.8ftSA1_vxOAbUsp32MoGnvd4gU4qNQ73NoqquYTvQZo";
   return createClient(url, key);
 }
 
 export async function GET() {
   try {
-    const supabase = getAdminClient();
+    const supabase = getSupabaseClient();
 
     // 1. Núcleos ativos
     const { data: nucleos, error: errNuc } = await supabase
@@ -78,7 +80,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Campos obrigatórios não preenchidos." }, { status: 400 });
     }
 
-    const supabase = getAdminClient();
+    const supabase = getSupabaseClient();
 
     const { data, error } = await supabase
       .from("respostas_conferencia_professores")
