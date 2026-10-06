@@ -14,6 +14,8 @@ import {
   Send,
   Plus,
   Trash2,
+  Lock,
+  Pencil,
 } from "lucide-react";
 
 interface Nucleo {
@@ -114,6 +116,10 @@ export default function ConferenciaProfessoresPage() {
     Sex: [{ id: "1", inicio: "08:00", fim: "09:30", idadeMin: 8, idadeMax: 11 }],
   });
 
+  // Passo 3: Controle sequencial de dias (apenas 1 dia aberto por vez)
+  const [diaAtivoIndex, setDiaAtivoIndex] = useState<number>(0);
+  const [diasConfirmados, setDiasConfirmados] = useState<string[]>([]);
+
   // Observações gerais e status de envio
   const [observacoes, setObservacoes] = useState<string>("");
   const [enviando, setEnviando] = useState<boolean>(false);
@@ -151,6 +157,7 @@ export default function ConferenciaProfessoresPage() {
     setDiasSelecionados((prev) => {
       const existe = prev.includes(diaId);
       if (existe) {
+        setDiasConfirmados((conf) => conf.filter((d) => d !== diaId));
         return prev.filter((d) => d !== diaId);
       } else {
         setAulasPorDia((aulas) => {
@@ -173,6 +180,44 @@ export default function ConferenciaProfessoresPage() {
         return [...prev, diaId];
       }
     });
+  };
+
+  // Validação de todas as aulas de um dia
+  const validarDia = (diaId: string): boolean => {
+    const aulas = aulasPorDia[diaId] || [];
+    if (aulas.length === 0) return false;
+    for (let i = 0; i < aulas.length; i++) {
+      const erros = getErrosAula(diaId, i, aulas);
+      if (erros.length > 0) return false;
+    }
+    return true;
+  };
+
+  // Confirmar aulas do dia e avançar para o próximo dia
+  const confirmarDiaEAvancar = (diaId: string, idxAtual: number) => {
+    if (!validarDia(diaId)) return;
+
+    setDiasConfirmados((prev) => (prev.includes(diaId) ? prev : [...prev, diaId]));
+
+    // Procura o próximo dia ainda não confirmado a partir do atual
+    const proximoNaoConfirmado = diasSelecionados.findIndex(
+      (d, i) => i > idxAtual && !diasConfirmados.includes(d)
+    );
+
+    if (proximoNaoConfirmado !== -1) {
+      setDiaAtivoIndex(proximoNaoConfirmado);
+    } else if (idxAtual + 1 < diasSelecionados.length && !diasConfirmados.includes(diasSelecionados[idxAtual + 1])) {
+      setDiaAtivoIndex(idxAtual + 1);
+    } else {
+      // Se todos os outros já foram confirmados ou é o último dia
+      setDiaAtivoIndex(-1);
+    }
+  };
+
+  // Reabrir dia confirmado para edição
+  const editarDia = (diaId: string, idx: number) => {
+    setDiasConfirmados((prev) => prev.filter((d) => d !== diaId));
+    setDiaAtivoIndex(idx);
   };
 
   // Conferir se a última aula do dia está válida para permitir adicionar outra aula
@@ -295,19 +340,16 @@ export default function ConferenciaProfessoresPage() {
 
   const podeAvancarPasso2 = diasSelecionados.length > 0;
 
-  // Validação geral do Passo 3 para envio
+  // Validação geral do Passo 3 para envio (todos os dias devem estar confirmados e válidos)
   const podeEnviarPasso3 = useMemo(() => {
     if (diasSelecionados.length === 0) return false;
+    const todosConfirmados = diasSelecionados.every((d) => diasConfirmados.includes(d));
+    if (!todosConfirmados) return false;
     for (const diaId of diasSelecionados) {
-      const aulas = aulasPorDia[diaId] || [];
-      if (aulas.length === 0) return false;
-      for (let i = 0; i < aulas.length; i++) {
-        const erros = getErrosAula(diaId, i, aulas);
-        if (erros.length > 0) return false;
-      }
+      if (!validarDia(diaId)) return false;
     }
     return true;
-  }, [diasSelecionados, aulasPorDia]);
+  }, [diasSelecionados, diasConfirmados, aulasPorDia]);
 
   // Total geral de aulas na semana
   const totalAulasSemana = useMemo(() => {
@@ -681,7 +723,11 @@ export default function ConferenciaProfessoresPage() {
                   <button
                     type="button"
                     disabled={!podeAvancarPasso2}
-                    onClick={() => setPasso(3)}
+                    onClick={() => {
+                      setDiasConfirmados((prev) => prev.filter((d) => diasSelecionados.includes(d)));
+                      setDiaAtivoIndex(0);
+                      setPasso(3);
+                    }}
                     className="px-8 py-3.5 bg-sky-600 hover:bg-sky-700 disabled:bg-zinc-200 disabled:text-zinc-400 text-white font-bold rounded-xl text-sm flex items-center gap-2 transition-all shadow-sm"
                   >
                     <span>Continuar</span>
@@ -708,20 +754,129 @@ export default function ConferenciaProfessoresPage() {
                   </p>
                 </div>
 
-                {/* Blocos por dia da semana */}
-                <div className="space-y-6">
-                  {diasSelecionados.map((diaId) => {
+                {/* Blocos por dia da semana com desbloqueio sequencial */}
+                <div className="space-y-4">
+                  {diasSelecionados.map((diaId, idx) => {
                     const diaObj = DIAS_SEMANA_LISTA.find((d) => d.id === diaId);
                     const aulas = aulasPorDia[diaId] || [];
                     const podeAdd = podeAdicionarNovaAula(diaId);
+                    const diaValido = validarDia(diaId);
+
+                    const isAtivo = idx === diaAtivoIndex;
+                    const isConfirmado = diasConfirmados.includes(diaId);
+                    const isBloqueado = !isAtivo && !isConfirmado;
+
+                    // 1. DIA CONFIRMADO (Card verde compacto com botão Editar)
+                    if (isConfirmado && !isAtivo) {
+                      return (
+                        <div
+                          key={diaId}
+                          className="rounded-2xl border-2 border-emerald-300 bg-emerald-50/50 p-4 transition-all space-y-3"
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <span className="px-3 py-1 rounded-xl bg-emerald-600 text-white font-black text-xs sm:text-sm flex items-center justify-center shrink-0 shadow-2xs">
+                                {diaObj?.nome}
+                              </span>
+                              <span className="text-2xs text-emerald-800 bg-emerald-100 border border-emerald-200 px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1">
+                                <Check className="w-3 h-3 stroke-[3]" />
+                                <span>
+                                  Confirmado ({aulas.length} {aulas.length === 1 ? "aula" : "aulas"})
+                                </span>
+                              </span>
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={() => editarDia(diaId, idx)}
+                              className="px-3 py-1.5 rounded-xl border border-emerald-300 bg-white hover:bg-emerald-100 text-emerald-700 font-bold text-xs flex items-center gap-1.5 shadow-2xs transition-all"
+                            >
+                              <Pencil className="w-3.5 h-3.5" />
+                              <span>Editar</span>
+                            </button>
+                          </div>
+
+                          {/* Resumo compacto das aulas */}
+                          <div className="flex flex-wrap gap-2 pt-1">
+                            {aulas.map((aula, aIdx) => (
+                              <div
+                                key={aula.id}
+                                className="text-xs bg-white border border-emerald-200 text-zinc-800 px-3 py-1.5 rounded-xl font-medium shadow-2xs flex items-center gap-2"
+                              >
+                                <span className="font-extrabold text-emerald-700">
+                                  {aIdx + 1}ª Aula:
+                                </span>
+                                <span className="font-bold text-zinc-900">
+                                  {aula.inicio} às {aula.fim}
+                                </span>
+                                <span className="text-zinc-300">•</span>
+                                <span className="text-zinc-600 font-semibold">
+                                  {aula.idadeMin} a {aula.idadeMax} anos
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    }
+
+                    // 2. DIA BLOQUEADO (Aguardando confirmação do anterior)
+                    if (isBloqueado) {
+                      const diaAnteriorObj =
+                        idx > 0
+                          ? DIAS_SEMANA_LISTA.find((d) => d.id === diasSelecionados[idx - 1])
+                          : null;
+
+                      return (
+                        <div
+                          key={diaId}
+                          className="rounded-2xl border border-zinc-200 bg-zinc-50/70 p-4 select-none opacity-80"
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="px-3 py-1 rounded-xl bg-zinc-200 text-zinc-600 font-black text-xs sm:text-sm">
+                              {diaObj?.nome}
+                            </span>
+                            <span className="text-2xs text-zinc-500 font-bold flex items-center gap-1">
+                              <Lock className="w-3 h-3 text-zinc-400" />
+                              <span>Bloqueado</span>
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-2 text-xs text-zinc-500 font-medium py-1">
+                            <Lock className="w-4 h-4 text-zinc-400 shrink-0" />
+                            <span>
+                              Bloqueado até você confirmar as aulas de{" "}
+                              <strong className="text-zinc-700 font-bold">
+                                {diaAnteriorObj?.nome || "dias anteriores"}
+                              </strong>
+                              .
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    }
+
+                    // 3. DIA ATIVO (Em edição)
+                    const proximoDiaNaoConfirmado = diasSelecionados.find(
+                      (d, i) => i > idx && !diasConfirmados.includes(d)
+                    );
+                    const proximoDiaObj = proximoDiaNaoConfirmado
+                      ? DIAS_SEMANA_LISTA.find((d) => d.id === proximoDiaNaoConfirmado)
+                      : idx + 1 < diasSelecionados.length
+                      ? DIAS_SEMANA_LISTA.find((d) => d.id === diasSelecionados[idx + 1])
+                      : null;
+
+                    const textoBotaoAvanco = proximoDiaObj
+                      ? `Confirmar ${diaObj?.nome} e ir para ${proximoDiaObj.nome}`
+                      : `Confirmar ${diaObj?.nome}`;
 
                     return (
                       <div
                         key={diaId}
-                        className="rounded-2xl border border-sky-200 bg-sky-50/30 p-3.5 space-y-3"
+                        className="rounded-2xl border-2 border-sky-400 bg-sky-50/30 p-4 space-y-3.5 shadow-sm ring-2 ring-sky-100"
                       >
                         {/* Cabeçalho do Dia */}
-                        <div className="flex items-center justify-between border-b border-sky-100 pb-2">
+                        <div className="flex items-center justify-between border-b border-sky-100 pb-2.5">
                           <div className="flex items-center gap-2">
                             <span className="px-3 py-1 rounded-xl bg-sky-600 text-white font-black text-xs sm:text-sm flex items-center justify-center shrink-0 shadow-2xs">
                               {diaObj?.nome}
@@ -730,10 +885,13 @@ export default function ConferenciaProfessoresPage() {
                               {aulas.length} {aulas.length === 1 ? "aula" : "aulas"}
                             </span>
                           </div>
+                          <span className="text-3xs uppercase font-extrabold tracking-wider text-sky-700 bg-sky-100 px-2.5 py-1 rounded-full">
+                            Editando agora
+                          </span>
                         </div>
 
                         {/* Lista de Aulas do Dia (Condensada) */}
-                        <div className="space-y-2">
+                        <div className="space-y-2.5">
                           {aulas.map((aula, index) => {
                             const errosAula = getErrosAula(diaId, index, aulas);
                             const horarioTexto =
@@ -868,7 +1026,7 @@ export default function ConferenciaProfessoresPage() {
                         </div>
 
                         {/* Botão Adicionar Aula logo abaixo dos cards */}
-                        <div className="pt-1">
+                        <div className="pt-1 flex flex-col gap-1">
                           <button
                             type="button"
                             disabled={!podeAdd}
@@ -879,15 +1037,59 @@ export default function ConferenciaProfessoresPage() {
                             <span>Adicionar outra aula na {diaObj?.nome}</span>
                           </button>
                           {!podeAdd && (
-                            <span className="text-3xs text-amber-700 font-medium block mt-1">
+                            <span className="text-3xs text-amber-700 font-medium">
                               * Preencha e confira o horário da aula anterior para liberar nova aula.
                             </span>
                           )}
+                        </div>
+
+                        {/* Botão de confirmação e avanço do dia */}
+                        <div className="pt-3 border-t border-sky-100 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+                          {!diaValido ? (
+                            <span className="text-2xs text-amber-700 font-medium flex items-center gap-1.5">
+                              <AlertCircle className="w-3.5 h-3.5 shrink-0 text-amber-600" />
+                              Corrija os erros acima para confirmar este dia.
+                            </span>
+                          ) : (
+                            <span className="text-2xs text-emerald-700 font-medium flex items-center gap-1.5">
+                              <CheckCircle2 className="w-3.5 h-3.5 shrink-0 text-emerald-600" />
+                              Aulas deste dia preenchidas corretamente.
+                            </span>
+                          )}
+
+                          <button
+                            type="button"
+                            disabled={!diaValido}
+                            onClick={() => confirmarDiaEAvancar(diaId, idx)}
+                            className="px-5 py-2.5 bg-sky-700 hover:bg-sky-800 disabled:bg-zinc-200 disabled:text-zinc-400 text-white font-extrabold rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-sm"
+                          >
+                            <Check className="w-4 h-4 stroke-[3]" />
+                            <span>{textoBotaoAvanco}</span>
+                            {proximoDiaObj && <ChevronRight className="w-4 h-4" />}
+                          </button>
                         </div>
                       </div>
                     );
                   })}
                 </div>
+
+                {/* Banner quando todos os dias estão confirmados */}
+                {diasSelecionados.length > 0 &&
+                  diasSelecionados.every((d) => diasConfirmados.includes(d)) && (
+                    <div className="bg-emerald-50 border border-emerald-300 rounded-2xl p-4 text-emerald-950 flex items-center gap-3 shadow-2xs">
+                      <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0">
+                        <Check className="w-5 h-5 stroke-[3]" />
+                      </div>
+                      <div className="text-xs">
+                        <strong className="block font-black text-sm text-emerald-900">
+                          Todos os dias conferidos com sucesso!
+                        </strong>
+                        <span className="text-emerald-800">
+                          Total de <strong>{totalAulasSemana} {totalAulasSemana === 1 ? "aula" : "aulas"}</strong> configuradas para a semana. Você já pode enviar suas respostas abaixo.
+                        </span>
+                      </div>
+                    </div>
+                  )}
 
                 {/* Observações / Recado adicional */}
                 <div>
@@ -909,6 +1111,18 @@ export default function ConferenciaProfessoresPage() {
                   <div className="p-3.5 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl flex items-center gap-2">
                     <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
                     <span>{erroEnvio}</span>
+                  </div>
+                )}
+
+                {/* Alerta quando ainda faltam dias para confirmar */}
+                {!podeEnviarPasso3 && (
+                  <div className="p-3 bg-amber-50 border border-amber-200 text-amber-800 text-xs rounded-xl flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 shrink-0 text-amber-600" />
+                    <span>
+                      Confirme as aulas de cada dia acima para liberar o envio das respostas (
+                      {diasConfirmados.filter((d) => diasSelecionados.includes(d)).length} de{" "}
+                      {diasSelecionados.length} confirmados).
+                    </span>
                   </div>
                 )}
 
