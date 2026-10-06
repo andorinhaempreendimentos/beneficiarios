@@ -723,13 +723,10 @@ export default function ConferenciaProfessoresPage() {
                         {/* Cabeçalho do Dia */}
                         <div className="flex items-center justify-between border-b border-sky-100 pb-2">
                           <div className="flex items-center gap-2">
-                            <span className="w-7 h-7 rounded-lg bg-sky-600 text-white font-extrabold text-xs flex items-center justify-center shrink-0">
-                              {diaObj?.curto}
-                            </span>
-                            <span className="font-extrabold text-sm text-zinc-900 leading-tight">
+                            <span className="px-3 py-1 rounded-xl bg-sky-600 text-white font-black text-xs sm:text-sm flex items-center justify-center shrink-0 shadow-2xs">
                               {diaObj?.nome}
                             </span>
-                            <span className="text-2xs text-zinc-500 bg-white px-2 py-0.5 rounded-full border border-zinc-200 font-semibold">
+                            <span className="text-2xs text-zinc-600 bg-white px-2.5 py-0.5 rounded-full border border-zinc-200 font-bold">
                               {aulas.length} {aulas.length === 1 ? "aula" : "aulas"}
                             </span>
                           </div>
@@ -742,18 +739,27 @@ export default function ConferenciaProfessoresPage() {
                             const horarioTexto =
                               aula.inicio && aula.fim ? ` - das ${aula.inicio} às ${aula.fim}` : "";
 
+                            const fundosAulas = [
+                              "bg-white border-zinc-300",
+                              "bg-slate-50 border-slate-300",
+                              "bg-sky-50/50 border-sky-300",
+                              "bg-amber-50/50 border-amber-300",
+                              "bg-emerald-50/50 border-emerald-300",
+                            ];
+                            const estiloFundo = fundosAulas[index % fundosAulas.length];
+
                             return (
                               <div
                                 key={aula.id}
-                                className={`bg-white rounded-xl border p-2.5 shadow-2xs transition-colors space-y-2 ${
+                                className={`rounded-xl border-2 p-3 shadow-2xs transition-colors space-y-2 ${
                                   errosAula.length > 0
-                                    ? "border-rose-300 ring-1 ring-rose-200"
-                                    : "border-zinc-200 hover:border-zinc-300"
+                                    ? "border-rose-400 bg-rose-50/40 ring-1 ring-rose-200"
+                                    : estiloFundo
                                 }`}
                               >
-                                <div className="flex items-center justify-between border-b border-zinc-100 pb-1">
-                                  <span className="text-xs font-extrabold text-zinc-900 flex items-center gap-1.5">
-                                    <span>⚽</span> {index + 1}ª Aula ({diaObj?.nome}
+                                <div className="flex items-center justify-between border-b border-zinc-200/60 pb-1.5">
+                                  <span className="text-xs font-black text-zinc-900">
+                                    {index + 1}ª Aula ({diaObj?.nome}
                                     {horarioTexto})
                                   </span>
 
