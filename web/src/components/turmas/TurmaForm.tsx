@@ -122,23 +122,64 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
     }
   }, [identificadoresOcupados, identificador, tipo]);
 
-  // IDs de funcionários que já são responsáveis em OUTRAS turmas
-  const idsResponsaveisEmOutrasTurmas = new Set<string>();
-  todasTurmas.forEach((item) => {
-    if (item.id !== t?.id) {
-      (item.responsaveis ?? []).forEach((fId) => idsResponsaveisEmOutrasTurmas.add(fId));
-    }
-  });
-
-  // Filtra apenas professores/instrutores não vinculados a outras turmas
+  // Filtra todos os professores/instrutores cadastrados
   const professoresDisponiveis = listaFuncionarios.filter((f) => {
-    const isProf =
+    return (
       f.professorResponsavel ||
-      f.funcaoId === FUNCAO_PROFESSOR_ID;
-
-    if (!isProf) return false;
-    return !idsResponsaveisEmOutrasTurmas.has(f.id);
+      f.funcaoId === FUNCAO_PROFESSOR_ID
+    );
   });
+
+  // Detecta choque de horário para os professores selecionados
+  const conflitosAgenda = useMemo(() => {
+    if (responsaveisIds.length === 0 || slots.length === 0) return [];
+    const conflitos: {
+      professorNome: string;
+      turmaConflitoNome: string;
+      dia: string;
+      inicio: number;
+      fim: number;
+      outroInicio: number;
+      outroFim: number;
+    }[] = [];
+
+    const outrasTurmas = todasTurmas.filter((item) => item.id !== t?.id);
+
+    responsaveisIds.forEach((fId) => {
+      const func = listaFuncionarios.find((f) => f.id === fId);
+      const profNome = func?.nomeCompleto || "Professor";
+
+      const turmasDoProfessor = outrasTurmas.filter((outra) =>
+        (outra.responsaveis ?? []).includes(fId)
+      );
+
+      turmasDoProfessor.forEach((outra) => {
+        (outra.slots ?? []).forEach((outroSlot) => {
+          slots.forEach((meuSlot) => {
+            if (meuSlot.dia === outroSlot.dia) {
+              const sobreposicao =
+                Math.max(meuSlot.inicio, outroSlot.inicio) <
+                Math.min(meuSlot.fim, outroSlot.fim);
+
+              if (sobreposicao) {
+                conflitos.push({
+                  professorNome: profNome,
+                  turmaConflitoNome: outra.nome,
+                  dia: meuSlot.dia,
+                  inicio: meuSlot.inicio,
+                  fim: meuSlot.fim,
+                  outroInicio: outroSlot.inicio,
+                  outroFim: outroSlot.fim,
+                });
+              }
+            }
+          });
+        });
+      });
+    });
+
+    return conflitos;
+  }, [responsaveisIds, slots, todasTurmas, listaFuncionarios, t?.id]);
 
   const nucleoSelecionado = nucleos.find((n) => n.id === nucleoId);
 
@@ -198,6 +239,15 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
 
     if (tipo === "regular" && identificadoresOcupados.has(identificador)) {
       const msg = `A Turma ${identificador} já está cadastrada para esta atividade neste núcleo. Escolha outro identificador.`;
+      setErro(msg);
+      toast.error(msg);
+      setLoading(false);
+      return;
+    }
+
+    if (conflitosAgenda.length > 0) {
+      const c = conflitosAgenda[0];
+      const msg = `Conflito de agenda: o professor ${c.professorNome} já possui aula na "${c.turmaConflitoNome}" (${c.dia} das ${c.outroInicio}h às ${c.outroFim}h). Não é permitido o mesmo professor em turmas no mesmo horário.`;
       setErro(msg);
       toast.error(msg);
       setLoading(false);
@@ -468,6 +518,21 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
               <span className="text-xs text-zinc-500 block mt-0.5">Se ativado, quando as vagas forem preenchidas, novos inscritos entram automaticamente na fila (`reservada`).</span>
             </div>
             <Switch checked={permitirFilaEspera} onChange={setPermitirFilaEspera} />
+          </div>
+        )}
+
+        {conflitosAgenda.length > 0 && (
+          <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-4 text-xs text-red-800 flex flex-col gap-1.5">
+            <span className="font-bold flex items-center gap-1.5 text-sm text-red-900">
+              ⚠️ Choque de horário detectado para o mesmo professor
+            </span>
+            {conflitosAgenda.map((c, idx) => (
+              <p key={idx}>
+                O professor <strong>{c.professorNome}</strong> já possui aula na turma{" "}
+                <strong>{c.turmaConflitoNome}</strong> em <strong>{c.dia}</strong> das{" "}
+                <strong>{c.outroInicio}h às {c.outroFim}h</strong>. Não é permitido o mesmo professor em turmas no mesmo horário.
+              </p>
+            ))}
           </div>
         )}
 
