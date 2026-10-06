@@ -72,7 +72,7 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
   const [nome, setNome] = useState(t?.nome ?? "");
   const [nomeEditadoManualmente, setNomeEditadoManualmente] = useState(Boolean(t?.nome));
   const [turno, setTurno] = useState<string>("");
-  const [identificador, setIdentificador] = useState<string>(extrairIdentificador(t?.nome) || "A");
+  const [identificador, setIdentificador] = useState<string>(t?.identificador || extrairIdentificador(t?.nome) || "A");
   const [exclusiva, setExclusiva] = useState(t?.exclusiva ?? false);
   const [nucleoId, setNucleoId] = useState(t?.nucleoId ?? "");
   const [atividadeId, setAtividadeId] = useState(t?.atividadeId ?? "");
@@ -261,6 +261,7 @@ export function TurmaForm({ turma: t, nucleos = [], atividades = [], funcionario
     const data = {
       nome: ((formData.get("nome") as string) || nome || "").trim(),
       tipo,
+      identificador: tipo === "regular" ? identificador : null,
       nucleoId: nId,
       atividadeId: aId,
       idadeMinima: tipo === "regular" ? idadeMinima : null,

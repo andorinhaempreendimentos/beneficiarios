@@ -251,6 +251,7 @@ export interface TurmaApi {
   id: string;
   nome: string;
   tipo: "regular" | "operacional";
+  identificador?: string | null;
   nucleoId: string;
   atividadeId?: string;
   idadeMinima?: number;
@@ -534,6 +535,7 @@ function mapTurma(r: any): TurmaApi {
     id: r.id,
     nome: r.nome,
     tipo: (r.tipo as 'regular' | 'operacional') ?? 'regular',
+    identificador: r.identificador ?? null,
     nucleoId: r.nucleo_id,
     atividadeId: r.atividade_id,
     idadeMinima,
@@ -1160,6 +1162,7 @@ function toTurmaRow(b: Record<string, unknown>): any {
   return {
     nome: b.nome as string,
     tipo: (b.tipo as Database['public']['Enums']['tipo_turma']) ?? 'regular',
+    identificador: (b.identificador as string) || null,
     nucleo_id: b.nucleoId as string,
     atividade_id: b.atividadeId as string,
     faixa_etaria_id: ((b.faixaEtariaId || b.categoriaId) as string) || null,
