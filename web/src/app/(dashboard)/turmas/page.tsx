@@ -218,58 +218,84 @@ export default function TurmasPage() {
       />
 
       <FilterBar onFilter={aplicar} onClear={limpar}>
-        <Field label="Busca">
-          <Input placeholder="Nome da turma" value={filtros.busca}
-            onChange={(e) => setFiltros((f) => ({ ...f, busca: e.target.value }))} />
+        <Field label="Busca" className="xl:col-span-2">
+          <Input
+            placeholder="Nome da turma"
+            value={filtros.busca}
+            onChange={(e) => setFiltros((f) => ({ ...f, busca: e.target.value }))}
+          />
         </Field>
-        <Field label="Núcleo">
-          <Select value={filtros.nucleoId} onChange={(e) => setFiltros((f) => ({ ...f, nucleoId: e.target.value }))}>
+        <Field label="Núcleo" className="xl:col-span-2">
+          <Select
+            value={filtros.nucleoId}
+            onChange={(e) => setFiltros((f) => ({ ...f, nucleoId: e.target.value }))}
+          >
             <option value="">Todos</option>
-            {nucleos.map((n) => <option key={n.id} value={n.id}>{n.identificacao}</option>)}
+            {nucleos.map((n) => (
+              <option key={n.id} value={n.id}>
+                {n.identificacao}
+              </option>
+            ))}
           </Select>
         </Field>
-        <Field label="Atividade">
-          <Select value={filtros.atividadeId} onChange={(e) => setFiltros((f) => ({ ...f, atividadeId: e.target.value }))}>
+        <Field label="Atividade" className="xl:col-span-1">
+          <Select
+            value={filtros.atividadeId}
+            onChange={(e) => setFiltros((f) => ({ ...f, atividadeId: e.target.value }))}
+          >
             <option value="">Todas</option>
-            {atividades.map((a) => <option key={a.id} value={a.id}>{a.nome}</option>)}
+            {atividades.map((a) => (
+              <option key={a.id} value={a.id}>
+                {a.nome}
+              </option>
+            ))}
           </Select>
         </Field>
-        <Field label="Exclusiva">
-          <Select value={filtros.exclusiva} onChange={(e) => setFiltros((f) => ({ ...f, exclusiva: e.target.value }))}>
+        <Field label="Exclusiva" className="xl:col-span-1">
+          <Select
+            value={filtros.exclusiva}
+            onChange={(e) => setFiltros((f) => ({ ...f, exclusiva: e.target.value }))}
+          >
             <option value="">Todas</option>
             <option value="true">Sim</option>
             <option value="false">Não</option>
           </Select>
         </Field>
-        <Field label="Atividades internas">
-          <label className="flex items-center gap-2 cursor-pointer pt-1.5">
-            <input
-              type="checkbox"
-              checked={mostrarUsoInterno}
-              onChange={(e) => setMostrarUsoInterno(e.target.checked)}
-              className="h-4 w-4 rounded border-zinc-300 accent-sky-600"
-            />
-            <span className="text-sm text-zinc-600">Exibir</span>
-          </label>
+
+        <Field label="Faixa Etária" className="sm:col-span-2 lg:col-span-1 xl:col-span-2">
+          <div className="flex items-center gap-1.5">
+            <div className="flex-1">
+              <Select
+                value={filtros.idadeMin}
+                onChange={(e) => setFiltros((f) => ({ ...f, idadeMin: e.target.value }))}
+              >
+                <option value="">De: mín</option>
+                {Array.from({ length: 27 }, (_, i) => i + 4).map((idade) => (
+                  <option key={idade} value={idade}>
+                    {idade} anos
+                  </option>
+                ))}
+              </Select>
+            </div>
+            <span className="text-xs font-semibold text-zinc-400">até</span>
+            <div className="flex-1">
+              <Select
+                value={filtros.idadeMax}
+                onChange={(e) => setFiltros((f) => ({ ...f, idadeMax: e.target.value }))}
+              >
+                <option value="">Até: máx</option>
+                {Array.from({ length: 27 }, (_, i) => i + 4).map((idade) => (
+                  <option key={idade} value={idade}>
+                    {idade} anos
+                  </option>
+                ))}
+              </Select>
+            </div>
+          </div>
         </Field>
-        <Field label="Idade — de">
-          <Select value={filtros.idadeMin} onChange={(e) => setFiltros((f) => ({ ...f, idadeMin: e.target.value }))}>
-            <option value="">Qualquer</option>
-            {Array.from({ length: 27 }, (_, i) => i + 4).map((idade) => (
-              <option key={idade} value={idade}>{idade} anos</option>
-            ))}
-          </Select>
-        </Field>
-        <Field label="Idade — até">
-          <Select value={filtros.idadeMax} onChange={(e) => setFiltros((f) => ({ ...f, idadeMax: e.target.value }))}>
-            <option value="">Qualquer</option>
-            {Array.from({ length: 27 }, (_, i) => i + 4).map((idade) => (
-              <option key={idade} value={idade}>{idade} anos</option>
-            ))}
-          </Select>
-        </Field>
-        <Field label="Dias da semana">
-          <div className="flex flex-wrap gap-1.5 pt-1">
+
+        <Field label="Dias com Aula" className="sm:col-span-2 lg:col-span-2 xl:col-span-3">
+          <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
             {DIAS_SEMANA.map((dia) => {
               const ativo = filtros.diasSemana.includes(dia);
               return (
@@ -284,17 +310,38 @@ export default function TurmasPage() {
                         : [...f.diasSemana, dia],
                     }))
                   }
-                  className={`rounded-md px-2 py-1 text-[11px] font-bold transition-colors cursor-pointer ${
+                  className={`h-9 min-w-[2.5rem] px-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer border flex items-center justify-center ${
                     ativo
-                      ? "bg-sky-600 text-white"
-                      : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
+                      ? "bg-sky-600 border-sky-600 text-white shadow-xs"
+                      : "bg-zinc-50 border-zinc-200 text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
                   }`}
                 >
                   {dia}
                 </button>
               );
             })}
+            {filtros.diasSemana.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setFiltros((f) => ({ ...f, diasSemana: [] }))}
+                className="ml-1 text-[11px] font-semibold text-zinc-400 hover:text-zinc-600 underline cursor-pointer"
+              >
+                Limpar
+              </button>
+            )}
           </div>
+        </Field>
+
+        <Field label="Atividades internas" className="xl:col-span-1">
+          <label className="flex h-9 items-center justify-between gap-2 rounded-lg border border-zinc-200 bg-zinc-50/60 px-3 cursor-pointer hover:bg-zinc-100/80 transition-colors">
+            <span className="text-xs font-medium text-zinc-700">Exibir</span>
+            <input
+              type="checkbox"
+              checked={mostrarUsoInterno}
+              onChange={(e) => setMostrarUsoInterno(e.target.checked)}
+              className="h-4 w-4 rounded border-zinc-300 accent-sky-600 cursor-pointer"
+            />
+          </label>
         </Field>
       </FilterBar>
 
