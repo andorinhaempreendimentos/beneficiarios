@@ -76,11 +76,13 @@ export async function POST(req: Request) {
       observacoes,
     } = body;
 
-    if (!nucleoNome || !professorNome || !modalidadeNome || !dadosTurmas || !dadosTurmas.length) {
+    if (!nucleoNome || !professorNome || !modalidadeNome || !dadosTurmas) {
       return NextResponse.json({ error: "Campos obrigatórios não preenchidos." }, { status: 400 });
     }
 
     const supabase = getSupabaseClient();
+
+    const qtd = Number(qtdTurmas) || (Array.isArray(dadosTurmas) ? dadosTurmas.length : 1);
 
     const { data, error } = await supabase
       .from("respostas_conferencia_professores")
@@ -91,7 +93,7 @@ export async function POST(req: Request) {
         professor_nome: professorNome,
         modalidade_id: modalidadeId || null,
         modalidade_nome: modalidadeNome,
-        qtd_turmas: Number(qtdTurmas) || dadosTurmas.length,
+        qtd_turmas: qtd,
         dados_turmas: dadosTurmas,
         observacoes: observacoes || null,
       })
