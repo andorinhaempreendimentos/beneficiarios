@@ -40,7 +40,7 @@ const DIA_NUM_TO_KEY: Record<number, string> = {
   0: "Dom", 1: "Seg", 2: "Ter", 3: "Qua", 4: "Qui", 5: "Sex", 6: "Sáb",
 };
 
-const HORAS = Array.from({ length: 16 }, (_, i) => i + 6); // 6h–21h
+const HORAS_PADRAO = Array.from({ length: 13 }, (_, i) => i + 7); // 07h–19h padrão se vazio
 
 function formatH(h: number) {
   return `${String(h).padStart(2, "0")}:00`;
@@ -120,10 +120,11 @@ export function GradePoloClient({ nucleos, atividades, categorias }: GradePoloCl
   }, [slots]);
 
   const horasVisiveis = useMemo(() => {
-    if (slots.length === 0) return HORAS;
-    const min = Math.max(6, Math.min(...slots.map((s) => s.inicio)) - 1);
-    const max = Math.min(22, Math.max(...slots.map((s) => s.fim)) + 1);
-    return HORAS.filter((h) => h >= min && h <= max);
+    if (slots.length === 0) return HORAS_PADRAO;
+    const min = Math.max(0, Math.min(...slots.map((s) => s.inicio)) - 1);
+    const max = Math.min(23, Math.max(...slots.map((s) => s.fim)) + 1);
+    const total = Math.max(1, max - min + 1);
+    return Array.from({ length: total }, (_, i) => i + min);
   }, [slots]);
 
   return (

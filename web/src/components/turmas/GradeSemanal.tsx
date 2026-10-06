@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui";
-import { Plus, X, Clock } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import type { AtividadeApi } from "@/lib/api/services";
 
 const DIAS_OPCOES = [
@@ -15,13 +15,7 @@ const DIAS_OPCOES = [
   { key: "Sáb", label: "Sábado" },
 ];
 
-const PERIODOS = [
-  { key: "manha", label: "Manhã", range: [6, 12] },
-  { key: "tarde", label: "Tarde", range: [12, 18] },
-  { key: "noite", label: "Noite", range: [18, 22] },
-];
-
-const TODAS_HORAS = Array.from({ length: 17 }, (_, i) => i + 6); // 06h–22h
+const TODAS_HORAS = Array.from({ length: 18 }, (_, i) => i + 6); // 06h–23h
 
 export interface SlotAula {
   dia: string;
@@ -370,43 +364,70 @@ function ModalOpcoesSlot({
 
 export function GradeSemanal({ atividade, atividadeNome = "Aula", atividadesLocais = [], slots = [], onChange }: GradeSemanalProps) {
   const [items, setItems] = useState<SlotAula[]>(slots);
-  const [diasVisiveis, setDiasVisiveis] = useState<Set<string>>(
-    new Set(["Seg", "Ter", "Qua", "Qui", "Sex"])
-  );
-  const [periodosVisiveis, setPeriodosVisiveis] = useState<Set<string>>(
-    new Set(["manha", "tarde"])
-  );
+  const [diasVisiveis, setDiasVisiveis] = useState<Set<string>>(() => {
+    const base = new Set(["Seg", "Ter", "Qua", "Qui", "Sex"]);
+    slots.forEach((s) => {
+      if (s.dia) base.add(s.dia);
+    });
+    return base;
+  });
   const [dragging, setDragging] = useState<{ dia: string; inicio: number } | null>(null);
   const [dragHover, setDragHover] = useState<number | null>(null);
   const [modalAberto, setModalAberto] = useState(false);
   const [slotDraft, setSlotDraft] = useState<{ dia: string; inicio: number; fim: number } | null>(null);
   const [slotSelecionadoOpcoes, setSlotSelecionadoOpcoes] = useState<SlotAula | null>(null);
 
-  const horasVisiveis = TODAS_HORAS.filter((h) =>
-    [...periodosVisiveis].some((p) => {
-      const periodo = PERIODOS.find((x) => x.key === p);
-      return periodo && h >= periodo.range[0] && h < periodo.range[1];
-    })
-  );
+  // Sincroniza se slots forem atualizados externamente
+  useEffect(() => {
+    setItems(slots);
+    if (slots.length > 0) {
+      setDiasVisiveis((prev) => {
+        const next = new Set(prev);
+        slots.forEach((s) => {
+          if (s.dia) next.add(s.dia);
+        });
+        return next;
+      });
+    }
+  }, [slots]);
+
+  // Faixa dinâmica: 1 hora antes da aula mais cedo até 1 hora depois da aula mais tarde
+  const horasVisiveis = useMemo(() => {
+    if (items.length === 0) {
+      // Sem slots cadastrados: faixa padrão enxuta das 07:00 às 19:00
+      return Array.from({ length: 13 }, (_, i) => i + 7);
+    }
+    const maisCedo = Math.min(...items.map((s) => s.inicio));
+    const maisTarde = Math.max(...items.map((s) => s.fim));
+
+    const inicioGrade = Math.max(0, maisCedo - 1);
+    const fimGrade = Math.min(23, maisTarde + 1);
+
+    const totalHoras = Math.max(1, fimGrade - inicioGrade + 1);
+    return Array.from({ length: totalHoras }, (_, i) => i + inicioGrade);
+  }, [items]);
 
   const diasColuna = DIAS_OPCOES.filter((d) => diasVisiveis.has(d.key));
 
   function notify(next: SlotAula[]) {
     setItems(next);
+    // Garante que o dia do novo slot esteja visível nas colunas
+    setDiasVisiveis((prev) => {
+      let changed = false;
+      const nextSet = new Set(prev);
+      next.forEach((s) => {
+        if (s.dia && !nextSet.has(s.dia)) {
+          nextSet.add(s.dia);
+          changed = true;
+        }
+      });
+      return changed ? nextSet : prev;
+    });
     onChange?.(next);
   }
 
   function toggleDia(key: string) {
     setDiasVisiveis((prev) => {
-      const next = new Set(prev);
-      if (next.has(key)) next.delete(key);
-      else next.add(key);
-      return next;
-    });
-  }
-
-  function togglePeriodo(key: string) {
-    setPeriodosVisiveis((prev) => {
       const next = new Set(prev);
       if (next.has(key)) next.delete(key);
       else next.add(key);
@@ -493,27 +514,17 @@ export function GradeSemanal({ atividade, atividadeNome = "Aula", atividadesLoca
           </div>
         </div>
 
-        <div className="flex flex-col gap-1.5">
-          <span className="text-[11px] font-semibold uppercase tracking-wide text-zinc-400">Período</span>
-          <div className="flex flex-wrap gap-1">
-            {PERIODOS.map((p) => (
-              <button
-                key={p.key}
-                type="button"
-                onClick={() => togglePeriodo(p.key)}
-                className={[
-                  "flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-medium transition-colors",
-                  periodosVisiveis.has(p.key)
-                    ? "bg-sky-500 text-white"
-                    : "bg-white text-zinc-500 ring-1 ring-zinc-200 hover:bg-zinc-100",
-                ].join(" ")}
-              >
-                <Clock size={11} />
-                {p.label}
-              </button>
-            ))}
+        {horasVisiveis.length > 0 && (
+          <div className="flex flex-col gap-1.5">
+            <span className="text-[11px] font-semibold uppercase tracking-wide text-zinc-400">Horários Exibidos</span>
+            <div className="flex items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-xs font-semibold text-zinc-700 ring-1 ring-zinc-200">
+              <span>{formatHora(horasVisiveis[0])}</span>
+              <span className="text-zinc-400">às</span>
+              <span>{formatHora(horasVisiveis[horasVisiveis.length - 1] + 1)}</span>
+              <span className="ml-1 text-[10px] font-normal text-zinc-400">(dinâmico: 1h antes/depois)</span>
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="ml-auto self-end">
           <Button
@@ -532,7 +543,7 @@ export function GradeSemanal({ atividade, atividadeNome = "Aula", atividadesLoca
       {/* Grade */}
       {diasColuna.length === 0 || horasVisiveis.length === 0 ? (
         <div className="rounded-xl border border-dashed border-zinc-200 bg-zinc-50 py-8 text-center text-sm text-zinc-400">
-          Selecione ao menos um dia e um período.
+          Selecione ao menos um dia da semana.
         </div>
       ) : (
         <div className="overflow-x-auto rounded-xl border border-zinc-200 bg-white select-none">
