@@ -334,6 +334,14 @@ export default function TurmasPage() {
                                 <span className="font-medium truncate text-zinc-800">{atividade.nome}</span>
                               </div>
                             )}
+                            {t.tipo !== "operacional" && !t.atividade?.usoInterno && (t.idadeMinima != null && t.idadeMaxima != null) && (
+                              <div className="flex items-center gap-1.5 text-zinc-600">
+                                <span className="shrink-0 rounded-md bg-sky-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-sky-700">
+                                  Idade
+                                </span>
+                                <span className="font-medium text-zinc-800">{t.idadeMinima} a {t.idadeMaxima} anos</span>
+                              </div>
+                            )}
                           </div>
                         </div>
 
@@ -350,14 +358,7 @@ export default function TurmasPage() {
                             <div className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-100">
                               <div className="h-full rounded-full bg-sky-500" style={{ width: `${vagasOcupadasPct}%` }} />
                             </div>
-                            <div className="mt-0.5 flex items-center justify-between text-[11px] text-zinc-500">
-                              <span>
-                                {t.idadeMinima != null && t.idadeMaxima != null ? (
-                                  <strong>{t.idadeMinima} a {t.idadeMaxima} anos</strong>
-                                ) : (
-                                  <span>Idade livre</span>
-                                )}
-                              </span>
+                            <div className="mt-0.5 flex items-center justify-end text-[11px] text-zinc-500">
                               <span>{vagasTotais - matriculadosCount} vagas livres</span>
                             </div>
                           </div>
