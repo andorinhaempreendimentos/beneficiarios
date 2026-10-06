@@ -648,43 +648,41 @@ export default function ConferenciaProfessoresPage() {
                     return (
                       <div
                         key={diaId}
-                        className="rounded-3xl border-2 border-sky-100 bg-sky-50/20 p-5 space-y-4"
+                        className="rounded-2xl border border-sky-200 bg-sky-50/30 p-3.5 space-y-3"
                       >
                         {/* Cabeçalho do Dia */}
-                        <div className="flex items-center justify-between border-b border-sky-100/80 pb-3">
-                          <div className="flex items-center gap-2.5">
-                            <span className="w-9 h-9 rounded-xl bg-sky-600 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-2xs">
+                        <div className="flex items-center justify-between border-b border-sky-100 pb-2">
+                          <div className="flex items-center gap-2">
+                            <span className="w-7 h-7 rounded-lg bg-sky-600 text-white font-extrabold text-xs flex items-center justify-center shrink-0">
                               {diaObj?.curto}
                             </span>
-                            <div>
-                              <span className="font-extrabold text-base text-zinc-900 block leading-tight">
-                                {diaObj?.nome}
-                              </span>
-                              <span className="text-xs text-zinc-500 font-medium">
-                                {aulas.length} {aulas.length === 1 ? "aula cadastrada" : "aulas cadastradas"}
-                              </span>
-                            </div>
+                            <span className="font-extrabold text-sm text-zinc-900 leading-tight">
+                              {diaObj?.nome}
+                            </span>
+                            <span className="text-2xs text-zinc-500 bg-white px-2 py-0.5 rounded-full border border-zinc-200 font-semibold">
+                              {aulas.length} {aulas.length === 1 ? "aula" : "aulas"}
+                            </span>
                           </div>
 
                           <button
                             type="button"
                             onClick={() => adicionarAulaNoDia(diaId)}
-                            className="px-3.5 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs shrink-0"
+                            className="px-2.5 py-1 bg-sky-600 hover:bg-sky-700 text-white rounded-lg text-xs font-bold flex items-center gap-1 transition-all shadow-2xs shrink-0"
                           >
                             <Plus className="w-3.5 h-3.5 stroke-[3]" />
                             <span>Adicionar aula</span>
                           </button>
                         </div>
 
-                        {/* Lista de Aulas do Dia */}
-                        <div className="space-y-3.5">
+                        {/* Lista de Aulas do Dia (Condensada) */}
+                        <div className="space-y-2">
                           {aulas.map((aula, index) => (
                             <div
                               key={aula.id}
-                              className="bg-white rounded-2xl border border-zinc-200 p-4 shadow-2xs space-y-3 relative"
+                              className="bg-white rounded-xl border border-zinc-200 p-2.5 shadow-2xs hover:border-zinc-300 transition-colors space-y-2"
                             >
-                              <div className="flex items-center justify-between">
-                                <span className="text-xs font-extrabold text-sky-900 flex items-center gap-1.5">
+                              <div className="flex items-center justify-between border-b border-zinc-100 pb-1">
+                                <span className="text-xs font-extrabold text-zinc-900 flex items-center gap-1.5">
                                   <span>⚽</span> {index + 1}ª Aula ({diaObj?.curto})
                                 </span>
 
@@ -692,7 +690,7 @@ export default function ConferenciaProfessoresPage() {
                                   <button
                                     type="button"
                                     onClick={() => removerAulaDoDia(diaId, aula.id)}
-                                    className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors flex items-center gap-1 text-xs font-semibold"
+                                    className="p-1 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-md transition-colors flex items-center gap-1 text-xs font-semibold"
                                     title="Remover esta aula"
                                   >
                                     <Trash2 className="w-3.5 h-3.5" />
@@ -701,80 +699,73 @@ export default function ConferenciaProfessoresPage() {
                                 )}
                               </div>
 
-                              {/* Horários */}
-                              <div className="grid grid-cols-2 gap-3">
-                                <div>
-                                  <label className="text-2xs font-bold text-zinc-600 block mb-1">
-                                    Início da aula:
-                                  </label>
-                                  <input
-                                    type="time"
-                                    value={aula.inicio}
-                                    onChange={(e) =>
-                                      updateAulaCampo(diaId, aula.id, "inicio", e.target.value)
-                                    }
-                                    className="w-full h-11 px-3 rounded-xl border border-zinc-300 bg-white text-zinc-900 text-sm font-bold focus:ring-2 focus:ring-sky-500"
-                                  />
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                                {/* Horário */}
+                                <div className="bg-zinc-50/80 rounded-lg p-2 border border-zinc-200/60">
+                                  <span className="text-3xs uppercase font-extrabold tracking-wider text-zinc-500 block mb-1">
+                                    Horário
+                                  </span>
+                                  <div className="flex items-center gap-1.5">
+                                    <input
+                                      type="time"
+                                      value={aula.inicio}
+                                      onChange={(e) =>
+                                        updateAulaCampo(diaId, aula.id, "inicio", e.target.value)
+                                      }
+                                      className="w-full h-8 px-2 rounded-md border border-zinc-300 bg-white text-zinc-900 font-bold text-xs focus:ring-1 focus:ring-sky-500"
+                                    />
+                                    <span className="text-zinc-400 font-semibold text-xs shrink-0">às</span>
+                                    <input
+                                      type="time"
+                                      value={aula.fim}
+                                      onChange={(e) =>
+                                        updateAulaCampo(diaId, aula.id, "fim", e.target.value)
+                                      }
+                                      className="w-full h-8 px-2 rounded-md border border-zinc-300 bg-white text-zinc-900 font-bold text-xs focus:ring-1 focus:ring-sky-500"
+                                    />
+                                  </div>
                                 </div>
-                                <div>
-                                  <label className="text-2xs font-bold text-zinc-600 block mb-1">
-                                    Término da aula:
-                                  </label>
-                                  <input
-                                    type="time"
-                                    value={aula.fim}
-                                    onChange={(e) =>
-                                      updateAulaCampo(diaId, aula.id, "fim", e.target.value)
-                                    }
-                                    className="w-full h-11 px-3 rounded-xl border border-zinc-300 bg-white text-zinc-900 text-sm font-bold focus:ring-2 focus:ring-sky-500"
-                                  />
-                                </div>
-                              </div>
 
-                              {/* Idades */}
-                              <div>
-                                <label className="text-2xs font-bold text-zinc-600 block mb-1">
-                                  Idade aproximada dos alunos:
-                                </label>
-                                <div className="grid grid-cols-2 gap-3">
-                                  <div>
-                                    <div className="relative">
+                                {/* Idades */}
+                                <div className="bg-zinc-50/80 rounded-lg p-2 border border-zinc-200/60">
+                                  <span className="text-3xs uppercase font-extrabold tracking-wider text-zinc-500 block mb-1">
+                                    Idade dos alunos
+                                  </span>
+                                  <div className="flex items-center gap-1.5">
+                                    <span className="text-zinc-500 text-xs shrink-0 font-medium">de</span>
+                                    <div className="relative w-full">
                                       <input
                                         type="number"
                                         min="4"
                                         max="25"
-                                        placeholder="Mais novo (ex: 8)"
+                                        placeholder="Ex: 8"
                                         value={aula.idadeMin}
                                         onChange={(e) =>
                                           updateAulaCampo(diaId, aula.id, "idadeMin", e.target.value)
                                         }
-                                        className="w-full h-11 px-3 pr-12 rounded-xl border border-zinc-300 bg-white text-zinc-900 text-sm font-bold focus:ring-2 focus:ring-sky-500"
+                                        className="w-full h-8 px-2 pr-7 rounded-md border border-zinc-300 bg-white text-zinc-900 font-bold text-xs focus:ring-1 focus:ring-sky-500"
                                       />
-                                      <span className="absolute right-3 top-3 text-xs text-zinc-400 font-semibold pointer-events-none">
+                                      <span className="absolute right-1.5 top-1.5 text-3xs text-zinc-400 font-medium pointer-events-none">
                                         anos
                                       </span>
                                     </div>
-                                    <span className="text-3xs text-zinc-400 block mt-0.5">Aluno mais novo</span>
-                                  </div>
-
-                                  <div>
-                                    <div className="relative">
+                                    <span className="text-zinc-500 text-xs shrink-0 font-medium">até</span>
+                                    <div className="relative w-full">
                                       <input
                                         type="number"
                                         min="4"
                                         max="25"
-                                        placeholder="Mais velho (ex: 11)"
+                                        placeholder="Ex: 11"
                                         value={aula.idadeMax}
                                         onChange={(e) =>
                                           updateAulaCampo(diaId, aula.id, "idadeMax", e.target.value)
                                         }
-                                        className="w-full h-11 px-3 pr-12 rounded-xl border border-zinc-300 bg-white text-zinc-900 text-sm font-bold focus:ring-2 focus:ring-sky-500"
+                                        className="w-full h-8 px-2 pr-7 rounded-md border border-zinc-300 bg-white text-zinc-900 font-bold text-xs focus:ring-1 focus:ring-sky-500"
                                       />
-                                      <span className="absolute right-3 top-3 text-xs text-zinc-400 font-semibold pointer-events-none">
+                                      <span className="absolute right-1.5 top-1.5 text-3xs text-zinc-400 font-medium pointer-events-none">
                                         anos
                                       </span>
                                     </div>
-                                    <span className="text-3xs text-zinc-400 block mt-0.5">Aluno mais velho</span>
                                   </div>
                                 </div>
                               </div>
