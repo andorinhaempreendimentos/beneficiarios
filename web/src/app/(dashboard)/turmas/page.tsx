@@ -23,12 +23,10 @@ import {
   turmasApi,
   nucleosApi,
   atividadesApi,
-  beneficiariosApi,
   type Paginated,
   type TurmaApi,
   type NucleoApi,
   type AtividadeApi,
-  type BeneficiarioApi,
   type QP,
 } from "@/lib/api/services";
 import { useLocationFilter } from "@/components/providers/LocationFilterProvider";
@@ -125,11 +123,9 @@ export default function TurmasPage() {
   const { data: pageData, loading, refetch } = useQuery<Paginated<TurmaApi>>(() => turmasApi.list(queryParams), [queryParams]);
   const { data: nucleosData } = useQuery<Paginated<NucleoApi>>(() => nucleosApi.list({ limit: 200 }), []);
   const { data: atividadesData } = useQuery<Paginated<AtividadeApi>>(() => atividadesApi.list({ limit: 200 }), []);
-  const { data: beneficiariosData } = useQuery<Paginated<BeneficiarioApi>>(() => beneficiariosApi.list({ limit: 100 }), []);
 
   const nucleos = nucleosData?.data ?? [];
   const atividades = atividadesData?.data ?? [];
-  const beneficiarios = beneficiariosData?.data ?? [];
 
   const rawResultado = pageData?.data ?? [];
 
@@ -258,11 +254,7 @@ export default function TurmasPage() {
                     const nucleo = nucleos.find((n) => n.id === t.nucleoId);
                     const atividade = atividades.find((a) => a.id === t.atividadeId);
                     const isSelected = selectedIds.includes(t.id);
-
-                    const matriculadosCount = beneficiarios.filter((b) =>
-                      b.turmasInfo?.some((ti) => ti.turmaId === t.id)
-                    ).length;
-
+                    const matriculadosCount = t.vagasOcupadas ?? 0;
                     const vagasTotais = t.vagasTotais || 0;
                     const vagasOcupadasPct = vagasTotais > 0 ? Math.min(100, Math.round((matriculadosCount / vagasTotais) * 100)) : 0;
 
@@ -425,10 +417,7 @@ export default function TurmasPage() {
                       const nucleo = nucleos.find((n) => n.id === t.nucleoId);
                       const atividade = atividades.find((a) => a.id === t.atividadeId);
                       const isSelected = selectedIds.includes(t.id);
-
-                      const matriculadosCount = beneficiarios.filter((b) =>
-                        b.turmasInfo?.some((ti) => ti.turmaId === t.id)
-                      ).length;
+                      const matriculadosCount = t.vagasOcupadas ?? 0;
 
                       return (
                         <tr key={t.id} className={`border-b border-zinc-100 last:border-0 hover:bg-zinc-50 ${isSelected ? "bg-sky-50/30" : ""}`}>
