@@ -67,11 +67,6 @@ export default function BeneficiariosPage() {
     return () => clearTimeout(timer);
   }, [filtros]);
 
-  const { data: pageData, loading, refetch } = useQuery<Paginated<BeneficiarioApi>>(
-    () => beneficiariosApi.list({ ...ativos, page: pagina, limit: PER_PAGE }),
-    [ativos, pagina],
-  );
-
   const { data: nucleosData } = useQuery<Paginated<NucleoApi>>(() => nucleosApi.list({ limit: 200 }), []);
   const { data: atividadesData } = useQuery<Paginated<AtividadeApi>>(() => atividadesApi.list({ limit: 200 }), []);
   const { data: turmasData } = useQuery<Paginated<TurmaApi>>(() => turmasApi.list({ limit: 200 }), []);
@@ -79,7 +74,50 @@ export default function BeneficiariosPage() {
   const nucleos = nucleosData?.data ?? [];
   const atividades = atividadesData?.data ?? [];
   const turmasDisponiveis = turmasData?.data ?? [];
+
+  // Calcular nucleoIds para filtro de localização (passa ao servidor em vez de filtrar client-side)
+  const nucleoIdsFiltrados = useMemo<string[] | undefined>(() => {
+    const temFiltroLocal = estado !== "Todos" || cidade !== "Todas" || organizacaoId !== "Todas" || nucleoId !== "Todos";
+    if (!temFiltroLocal || nucleos.length === 0) return undefined;
+
+    const matching = nucleos.filter((n) => {
+      let estadoUf = (n as any).estado as string | undefined;
+      const cidadeNome = n.cidade || "Não informada";
+      if (!estadoUf) {
+        if (cidadeNome.toLowerCase() === "palmas") estadoUf = "TO";
+        else if (cidadeNome.toLowerCase() === "recife") estadoUf = "PE";
+        else estadoUf = "Não informado";
+      }
+      const bateEstado = estado === "Todos" || estadoUf === estado;
+      const bateCidade = cidade === "Todas" || cidadeNome === cidade;
+      const bateOrg = organizacaoId === "Todas" || n.organizacaoId === organizacaoId;
+      const bateNucleo = nucleoId === "Todos" || n.id === nucleoId;
+      return bateEstado && bateCidade && bateOrg && bateNucleo;
+    }).map((n) => n.id);
+
+    // Se nenhum núcleo bate, retornar lista impossível para não trazer nada
+    return matching.length > 0 ? matching : ["00000000-0000-0000-0000-000000000000"];
+  }, [nucleos, estado, cidade, organizacaoId, nucleoId]);
+
+  const queryParams = useMemo(() => {
+    const params: Record<string, unknown> = { ...ativos, page: pagina, limit: PER_PAGE };
+    // Se form tem nucleoId específico, usa ele; senão usa os nucleoIds da localização
+    if (!ativos.nucleoId && nucleoIdsFiltrados) {
+      params.nucleoIds = nucleoIdsFiltrados;
+      delete params.nucleoId;
+    }
+    return params;
+  }, [ativos, pagina, nucleoIdsFiltrados]);
+
+  const { data: pageData, loading, refetch } = useQuery<Paginated<BeneficiarioApi>>(
+    () => beneficiariosApi.list(queryParams as any),
+    [queryParams],
+  );
+
   const rawResultado = pageData?.data ?? [];
+
+  // Resultado já vem filtrado do servidor — sem filtro client-side de localização
+  const resultado = rawResultado;
 
   async function alterarStatusLote() {
     if (selectedIds.length === 0 || !novoStatus) return;
@@ -98,6 +136,7 @@ export default function BeneficiariosPage() {
     }
   }
 
+
   async function transferirParaTurma() {
     if (selectedIds.length === 0 || !turmaDestinoId) return;
     setProcessando(true);
@@ -115,36 +154,9 @@ export default function BeneficiariosPage() {
     }
   }
 
-  const resultado = useMemo(() => {
-    return rawResultado.filter((b) => {
-      let estadoUf = b.estado;
-      let cidadeNome = b.cidade || b.nucleoNome || b.turmasInfo?.[0]?.nucleoNome || "Não informada";
-
-      const nucleoEncontrado = nucleos.find(
-        (n) => n.id === b.nucleoId || n.identificacao === b.nucleoNome || n.identificacao === b.turmasInfo?.[0]?.nucleoNome
-      );
-
-      if (nucleoEncontrado) {
-        cidadeNome = nucleoEncontrado.cidade || cidadeNome;
-        if (!estadoUf) {
-          if (cidadeNome.toLowerCase() === "palmas") estadoUf = "TO";
-          else if (cidadeNome.toLowerCase() === "recife") estadoUf = "PE";
-          else estadoUf = "Não informado";
-        }
-      } else if (!estadoUf) {
-        estadoUf = "Não informado";
-      }
-
-      const bateEstado = estado === "Todos" || estadoUf === estado;
-      const bateCidade = cidade === "Todas" || cidadeNome === cidade;
-      const bateOrg = organizacaoId === "Todas" || (nucleoEncontrado?.organizacaoId === organizacaoId);
-      const bateNucleo = nucleoId === "Todos" || (b.nucleoId ?? nucleoEncontrado?.id) === nucleoId;
-      return bateEstado && bateCidade && bateOrg && bateNucleo;
-    });
-  }, [rawResultado, estado, cidade, organizacaoId, nucleoId, nucleos]);
-  
   const total = pageData?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
+
 
   const aplicar = useCallback(() => { setPagina(1); setAtivos(filtros); }, [filtros]);
   const limpar = useCallback(() => { setFiltros(EMPTY); setAtivos(EMPTY); setPagina(1); }, []);

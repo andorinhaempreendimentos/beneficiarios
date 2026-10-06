@@ -1223,6 +1223,7 @@ export const beneficiariosApi = {
     if (p?.status) q = q.eq('status', String(p.status));
     if (p?.tipoMatricula) q = q.eq('tipo_matricula', String(p.tipoMatricula));
     if (p?.nucleoId) q = q.eq('nucleo_id', String(p.nucleoId));
+    if (p?.nucleoIds && Array.isArray(p.nucleoIds) && p.nucleoIds.length > 0) q = q.in('nucleo_id', p.nucleoIds as string[]);
     if (beneficiarioIds) q = q.in('id', beneficiarioIds);
     const idadeMin = num(p?.idadeMin);
     const idadeMax = num(p?.idadeMax);
@@ -1239,6 +1240,7 @@ export const beneficiariosApi = {
       if (p?.status) qFallback = qFallback.eq('status', String(p.status));
       if (p?.tipoMatricula) qFallback = qFallback.eq('tipo_matricula', String(p.tipoMatricula));
       if (p?.nucleoId) qFallback = qFallback.eq('nucleo_id', String(p.nucleoId));
+      if (p?.nucleoIds && Array.isArray(p.nucleoIds) && p.nucleoIds.length > 0) qFallback = qFallback.in('nucleo_id', p.nucleoIds as string[]);
       if (beneficiarioIds) qFallback = qFallback.in('id', beneficiarioIds);
       if (idadeMin !== undefined) qFallback = qFallback.lte('data_nascimento', dataNascimentoMaxima(idadeMin));
       if (idadeMax !== undefined) qFallback = qFallback.gte('data_nascimento', dataNascimentoMinima(idadeMax));
