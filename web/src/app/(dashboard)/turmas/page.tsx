@@ -32,7 +32,8 @@ import {
 import { useLocationFilter } from "@/components/providers/LocationFilterProvider";
 
 const PER_PAGE = 15;
-const EMPTY = { busca: "", nucleoId: "", atividadeId: "", exclusiva: "" };
+const DIAS_SEMANA = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
+const EMPTY = { busca: "", nucleoId: "", atividadeId: "", exclusiva: "", idadeMin: "", idadeMax: "", diasSemana: [] as string[] };
 
 type FiltrosForm = typeof EMPTY;
 
@@ -148,9 +149,23 @@ export default function TurmasPage() {
       const bateCidade = cidade === "Todas" || cidadeNome === cidade;
       const bateOrg = organizacaoId === "Todas" || (nucleoEncontrado?.organizacaoId === organizacaoId);
       const bateNucleo = nucleoId === "Todos" || (t.nucleoId ?? nucleoEncontrado?.id) === nucleoId;
-      return bateEstado && bateCidade && bateOrg && bateNucleo;
+
+      // Filtro de idade: turma deve cobrir a faixa
+      const minFiltro = ativos.idadeMin !== "" ? Number(ativos.idadeMin) : null;
+      const maxFiltro = ativos.idadeMax !== "" ? Number(ativos.idadeMax) : null;
+      const bateIdade =
+        (minFiltro === null || (t.idadeMinima != null && t.idadeMinima >= minFiltro)) &&
+        (maxFiltro === null || (t.idadeMaxima != null && t.idadeMaxima <= maxFiltro));
+
+      // Filtro de dias: turma deve ter slot em TODOS os dias selecionados
+      const diasFiltro = ativos.diasSemana;
+      const bateDias =
+        diasFiltro.length === 0 ||
+        diasFiltro.every((dia) => (t.slots ?? []).some((s: any) => s.dia === dia));
+
+      return bateEstado && bateCidade && bateOrg && bateNucleo && bateIdade && bateDias;
     });
-  }, [rawResultado, estado, cidade, organizacaoId, nucleoId, nucleos, mostrarUsoInterno]);
+  }, [rawResultado, estado, cidade, organizacaoId, nucleoId, nucleos, mostrarUsoInterno, ativos.idadeMin, ativos.idadeMax, ativos.diasSemana]);
 
   const total = pageData?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
@@ -236,6 +251,50 @@ export default function TurmasPage() {
             />
             <span className="text-sm text-zinc-600">Exibir</span>
           </label>
+        </Field>
+        <Field label="Idade — de">
+          <Select value={filtros.idadeMin} onChange={(e) => setFiltros((f) => ({ ...f, idadeMin: e.target.value }))}>
+            <option value="">Qualquer</option>
+            {Array.from({ length: 27 }, (_, i) => i + 4).map((idade) => (
+              <option key={idade} value={idade}>{idade} anos</option>
+            ))}
+          </Select>
+        </Field>
+        <Field label="Idade — até">
+          <Select value={filtros.idadeMax} onChange={(e) => setFiltros((f) => ({ ...f, idadeMax: e.target.value }))}>
+            <option value="">Qualquer</option>
+            {Array.from({ length: 27 }, (_, i) => i + 4).map((idade) => (
+              <option key={idade} value={idade}>{idade} anos</option>
+            ))}
+          </Select>
+        </Field>
+        <Field label="Dias da semana">
+          <div className="flex flex-wrap gap-1.5 pt-1">
+            {DIAS_SEMANA.map((dia) => {
+              const ativo = filtros.diasSemana.includes(dia);
+              return (
+                <button
+                  key={dia}
+                  type="button"
+                  onClick={() =>
+                    setFiltros((f) => ({
+                      ...f,
+                      diasSemana: ativo
+                        ? f.diasSemana.filter((d) => d !== dia)
+                        : [...f.diasSemana, dia],
+                    }))
+                  }
+                  className={`rounded-md px-2 py-1 text-[11px] font-bold transition-colors cursor-pointer ${
+                    ativo
+                      ? "bg-sky-600 text-white"
+                      : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
+                  }`}
+                >
+                  {dia}
+                </button>
+              );
+            })}
+          </div>
         </Field>
       </FilterBar>
 
