@@ -43,6 +43,8 @@ const DIAS_SEMANA_LISTA = [
   { id: "Dom", nome: "Domingo", curto: "Dom" },
 ];
 
+const IDADES_OPCOES = [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21];
+
 interface AulaItem {
   id: string;
   inicio: string;
@@ -733,39 +735,33 @@ export default function ConferenciaProfessoresPage() {
                                   </span>
                                   <div className="flex items-center gap-1.5">
                                     <span className="text-zinc-500 text-xs shrink-0 font-medium">de</span>
-                                    <div className="relative w-full">
-                                      <input
-                                        type="number"
-                                        min="4"
-                                        max="25"
-                                        placeholder="Ex: 8"
-                                        value={aula.idadeMin}
-                                        onChange={(e) =>
-                                          updateAulaCampo(diaId, aula.id, "idadeMin", e.target.value)
-                                        }
-                                        className="w-full h-8 px-2 pr-7 rounded-md border border-zinc-300 bg-white text-zinc-900 font-bold text-xs focus:ring-1 focus:ring-sky-500"
-                                      />
-                                      <span className="absolute right-1.5 top-1.5 text-3xs text-zinc-400 font-medium pointer-events-none">
-                                        anos
-                                      </span>
-                                    </div>
+                                    <select
+                                      value={aula.idadeMin}
+                                      onChange={(e) =>
+                                        updateAulaCampo(diaId, aula.id, "idadeMin", Number(e.target.value))
+                                      }
+                                      className="w-full h-8 px-2 rounded-md border border-zinc-300 bg-white text-zinc-900 font-bold text-xs focus:ring-1 focus:ring-sky-500"
+                                    >
+                                      {IDADES_OPCOES.map((idade) => (
+                                        <option key={idade} value={idade}>
+                                          {idade} anos
+                                        </option>
+                                      ))}
+                                    </select>
                                     <span className="text-zinc-500 text-xs shrink-0 font-medium">até</span>
-                                    <div className="relative w-full">
-                                      <input
-                                        type="number"
-                                        min="4"
-                                        max="25"
-                                        placeholder="Ex: 11"
-                                        value={aula.idadeMax}
-                                        onChange={(e) =>
-                                          updateAulaCampo(diaId, aula.id, "idadeMax", e.target.value)
-                                        }
-                                        className="w-full h-8 px-2 pr-7 rounded-md border border-zinc-300 bg-white text-zinc-900 font-bold text-xs focus:ring-1 focus:ring-sky-500"
-                                      />
-                                      <span className="absolute right-1.5 top-1.5 text-3xs text-zinc-400 font-medium pointer-events-none">
-                                        anos
-                                      </span>
-                                    </div>
+                                    <select
+                                      value={aula.idadeMax}
+                                      onChange={(e) =>
+                                        updateAulaCampo(diaId, aula.id, "idadeMax", Number(e.target.value))
+                                      }
+                                      className="w-full h-8 px-2 rounded-md border border-zinc-300 bg-white text-zinc-900 font-bold text-xs focus:ring-1 focus:ring-sky-500"
+                                    >
+                                      {IDADES_OPCOES.map((idade) => (
+                                        <option key={idade} value={idade}>
+                                          {idade} anos
+                                        </option>
+                                      ))}
+                                    </select>
                                   </div>
                                 </div>
                               </div>
