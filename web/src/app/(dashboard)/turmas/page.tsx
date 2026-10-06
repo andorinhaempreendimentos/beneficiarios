@@ -113,13 +113,8 @@ export default function TurmasPage() {
   }, [filtros]);
 
   const queryParams = useMemo<QP>(() => {
-    const p: QP = { page: pagina, limit: PER_PAGE };
-    if (ativos.busca) p.busca = ativos.busca;
-    if (ativos.nucleoId) p.nucleoId = ativos.nucleoId;
-    if (ativos.atividadeId) p.atividadeId = ativos.atividadeId;
-    if (ativos.exclusiva !== "") p.exclusiva = ativos.exclusiva === "true";
-    return p;
-  }, [pagina, ativos]);
+    return { page: 1, limit: 500 };
+  }, []);
 
   const { data: pageData, loading, refetch } = useQuery<Paginated<TurmaApi>>(() => turmasApi.list(queryParams), [queryParams]);
   const { data: nucleosData } = useQuery<Paginated<NucleoApi>>(() => nucleosApi.list({ limit: 200 }), []);
@@ -145,10 +140,32 @@ export default function TurmasPage() {
         else estadoUf = "Não informado";
       }
 
+      // Filtro de busca por nome
+      if (ativos.busca && !t.nome.toLowerCase().includes(ativos.busca.toLowerCase())) {
+        return false;
+      }
+
+      // Filtro de atividade
+      if (ativos.atividadeId && t.atividadeId !== ativos.atividadeId) {
+        return false;
+      }
+
+      // Filtro de exclusiva
+      if (ativos.exclusiva !== "") {
+        const isExclusiva = ativos.exclusiva === "true";
+        if (Boolean(t.exclusiva) !== isExclusiva) return false;
+      }
+
+      // Filtro de núcleo: se selecionado, filtra pelo núcleo; se vazio ("Todos"), traz todos os núcleos
+      if (ativos.nucleoId && t.nucleoId !== ativos.nucleoId) {
+        return false;
+      }
+
+      // Localização global
       const bateEstado = estado === "Todos" || estadoUf === estado;
       const bateCidade = cidade === "Todas" || cidadeNome === cidade;
       const bateOrg = organizacaoId === "Todas" || (nucleoEncontrado?.organizacaoId === organizacaoId);
-      const bateNucleo = nucleoId === "Todos" || (t.nucleoId ?? nucleoEncontrado?.id) === nucleoId;
+      if (!bateEstado || !bateCidade || !bateOrg) return false;
 
       // Filtro de idade: turma deve cobrir a faixa
       const minFiltro = ativos.idadeMin !== "" ? Number(ativos.idadeMin) : null;
@@ -156,19 +173,25 @@ export default function TurmasPage() {
       const bateIdade =
         (minFiltro === null || (t.idadeMinima != null && t.idadeMinima >= minFiltro)) &&
         (maxFiltro === null || (t.idadeMaxima != null && t.idadeMaxima <= maxFiltro));
+      if (!bateIdade) return false;
 
       // Filtro de dias: turma deve ter slot em TODOS os dias selecionados
       const diasFiltro = ativos.diasSemana;
       const bateDias =
         diasFiltro.length === 0 ||
         diasFiltro.every((dia) => (t.slots ?? []).some((s: any) => s.dia === dia));
+      if (!bateDias) return false;
 
-      return bateEstado && bateCidade && bateOrg && bateNucleo && bateIdade && bateDias;
+      return true;
     });
-  }, [rawResultado, estado, cidade, organizacaoId, nucleoId, nucleos, mostrarUsoInterno, ativos.idadeMin, ativos.idadeMax, ativos.diasSemana]);
+  }, [rawResultado, estado, cidade, organizacaoId, nucleos, mostrarUsoInterno, ativos]);
 
-  const total = pageData?.total ?? 0;
+  const total = resultado.length;
   const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
+  const resultadoPaginado = useMemo(() => {
+    const from = (pagina - 1) * PER_PAGE;
+    return resultado.slice(from, from + PER_PAGE);
+  }, [resultado, pagina]);
 
   const aplicar = useCallback(() => { setPagina(1); setAtivos(filtros); }, [filtros]);
   const limpar = useCallback(() => { setFiltros(EMPTY); setAtivos(EMPTY); setPagina(1); }, []);
@@ -356,7 +379,7 @@ export default function TurmasPage() {
                     Nenhuma turma encontrada.
                   </div>
                 ) : (
-                  resultado.map((t) => {
+                  resultadoPaginado.map((t) => {
                     const nucleo = nucleos.find((n) => n.id === t.nucleoId);
                     const atividade = atividades.find((a) => a.id === t.atividadeId);
                     const isSelected = selectedIds.includes(t.id);
@@ -540,7 +563,7 @@ export default function TurmasPage() {
                   <tbody>
                     {resultado.length === 0 ? (
                       <tr><td colSpan={8} className="px-5 py-8 text-center text-sm text-zinc-400">Nenhuma turma encontrada.</td></tr>
-                    ) : resultado.map((t) => {
+                    ) : resultadoPaginado.map((t) => {
                       const nucleo = nucleos.find((n) => n.id === t.nucleoId);
                       const atividade = atividades.find((a) => a.id === t.atividadeId);
                       const isSelected = selectedIds.includes(t.id);
