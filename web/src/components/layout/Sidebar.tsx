@@ -63,7 +63,7 @@ export function Sidebar() {
   const beneficiariosGrupoAtivo = pathname.startsWith("/beneficiarios") || pathname.startsWith("/inscricoes");
   const rhAtivo = ["/funcionarios", "/coordenadores", "/professor"].some((p) => pathname.startsWith(p));
   const patrimonioAtivo = ["/equipamentos", "/estoque"].some((p) => pathname.startsWith(p));
-  const gestaoAtivo = ["/supervisoes", "/pendencias-gerais", "/relatorios"].some((p) => pathname.startsWith(p));
+  const gestaoAtivo = ["/supervisoes", "/pendencias-gerais", "/relatorios", "/conferencia-professores"].some((p) => pathname.startsWith(p));
   const pesquisasAtivo = pathname.startsWith("/pesquisas");
   const sistemaAtivo = ["/usuarios", "/configuracoes"].some((p) => pathname.startsWith(p));
 
@@ -231,6 +231,7 @@ export function Sidebar() {
               {navLink("/coordenador/pendencias-gerais", "Pendências", AlertCircle)}
               {navLink("/coordenador/estoque", "Estoque", Package)}
               {navLink("/pesquisas", "Pesquisas", ClipboardList)}
+              {navLink("/conferencia-professores/respostas", "Conferência", CalendarCheck)}
             </>
           ) : (
             <>
@@ -336,6 +337,7 @@ export function Sidebar() {
                 {navLink("/supervisoes", "Supervisões", ClipboardCheck)}
                 {navLink("/pendencias-gerais", "Pendências", AlertCircle)}
                 {navLink("/relatorios", "Relatórios", FileBarChart)}
+                {navLink("/conferencia-professores/respostas", "Conferência", CalendarCheck)}
               </SectionGroup>
 
               {/* Pesquisas */}
