@@ -36,13 +36,13 @@ interface Atividade {
 }
 
 const DIAS_SEMANA_LISTA = [
-  { id: "Dom", nome: "Domingo", curto: "Dom" },
-  { id: "Seg", nome: "Segunda-feira", curto: "Seg" },
-  { id: "Ter", nome: "Terça-feira", curto: "Ter" },
-  { id: "Qua", nome: "Quarta-feira", curto: "Qua" },
-  { id: "Qui", nome: "Quinta-feira", curto: "Qui" },
-  { id: "Sex", nome: "Sexta-feira", curto: "Sex" },
-  { id: "Sab", nome: "Sábado", curto: "Sáb" },
+  { id: "Seg", nome: "Segunda-feira", curto: "Segunda" },
+  { id: "Ter", nome: "Terça-feira", curto: "Terça" },
+  { id: "Qua", nome: "Quarta-feira", curto: "Quarta" },
+  { id: "Qui", nome: "Quinta-feira", curto: "Quinta" },
+  { id: "Sex", nome: "Sexta-feira", curto: "Sexta" },
+  { id: "Sab", nome: "Sábado", curto: "Sábado" },
+  { id: "Dom", nome: "Domingo", curto: "Domingo" },
 ];
 
 const IDADES_OPCOES = [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21];
@@ -689,7 +689,7 @@ export default function ConferenciaProfessoresPage() {
                   </p>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
                   {DIAS_SEMANA_LISTA.map((dia) => {
                     const ativo = diasSelecionados.includes(dia.id);
                     return (
@@ -697,20 +697,20 @@ export default function ConferenciaProfessoresPage() {
                         key={dia.id}
                         type="button"
                         onClick={() => toggleDia(dia.id)}
-                        className={`h-16 rounded-2xl border-2 font-bold text-sm flex items-center justify-center gap-2 transition-all select-none ${
+                        className={`h-14 sm:h-16 rounded-2xl border-2 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2 transition-all select-none ${
                           ativo
                             ? "border-sky-600 bg-sky-600 text-white shadow-md scale-[1.02]"
                             : "border-zinc-200 bg-zinc-50/50 text-zinc-700 hover:bg-zinc-100/80"
                         }`}
                       >
                         <div
-                          className={`w-5 h-5 rounded-md flex items-center justify-center text-xs ${
+                          className={`w-4 h-4 sm:w-5 sm:h-5 rounded-md flex items-center justify-center text-xs shrink-0 ${
                             ativo ? "bg-white text-sky-600" : "border border-zinc-300 bg-white"
                           }`}
                         >
-                          {ativo && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                          {ativo && <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5 stroke-[3]" />}
                         </div>
-                        <span>{dia.curto}</span>
+                        <span className="truncate">{dia.curto}</span>
                       </button>
                     );
                   })}
