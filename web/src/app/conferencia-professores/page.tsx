@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import {
   CheckCircle2,
   ChevronRight,
@@ -16,6 +16,9 @@ import {
   Trash2,
   Lock,
   Pencil,
+  X,
+  ChevronDown,
+  Search,
 } from "lucide-react";
 
 interface Nucleo {
@@ -90,6 +93,243 @@ function getErrosAula(diaId: string, aulaIndex: number, aulas: AulaItem[]): stri
   return erros;
 }
 
+// =========================================================================
+// COMPONENTES DE SELEÇÃO E DROPDOWN CSS CUSTOMIZADOS (ELEGANTES E MOBILE)
+// =========================================================================
+
+interface OptionItem {
+  value: string | number;
+  label: string;
+  disabled?: boolean;
+  sublabel?: string;
+}
+
+function CustomSelect({
+  value,
+  onChange,
+  options,
+  placeholder = "-- Toque para selecionar --",
+  searchable = false,
+  className = "",
+  buttonClassName = "",
+  size = "md",
+  disabled = false,
+}: {
+  value: string | number;
+  onChange: (val: any) => void;
+  options: OptionItem[];
+  placeholder?: string;
+  searchable?: boolean;
+  className?: string;
+  buttonClassName?: string;
+  size?: "sm" | "md";
+  disabled?: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleOutside(e: MouseEvent | TouchEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    if (open) {
+      document.addEventListener("mousedown", handleOutside);
+      document.addEventListener("touchstart", handleOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleOutside);
+      document.removeEventListener("touchstart", handleOutside);
+    };
+  }, [open]);
+
+  const selectedOption = options.find((o) => o.value === value);
+
+  const filteredOptions = useMemo(() => {
+    if (!searchable || !searchTerm.trim()) return options;
+    const term = searchTerm.toLowerCase();
+    return options.filter(
+      (o) =>
+        o.label.toLowerCase().includes(term) ||
+        (o.sublabel && o.sublabel.toLowerCase().includes(term))
+    );
+  }, [options, searchable, searchTerm]);
+
+  return (
+    <div ref={containerRef} className={`relative ${className}`}>
+      <button
+        type="button"
+        disabled={disabled}
+        onClick={() => {
+          if (!disabled) {
+            setOpen((prev) => !prev);
+            setSearchTerm("");
+          }
+        }}
+        className={`w-full flex items-center justify-between bg-white font-bold text-zinc-900 transition-all text-left shadow-2xs ${
+          open
+            ? "border-2 border-sky-500 ring-2 ring-sky-100"
+            : "border border-zinc-300 hover:border-zinc-400"
+        } ${
+          size === "sm"
+            ? "h-8.5 px-2.5 text-xs rounded-xl"
+            : "h-12 px-4 text-sm sm:text-base rounded-xl"
+        } ${disabled ? "opacity-50 cursor-not-allowed bg-zinc-50" : ""} ${buttonClassName}`}
+      >
+        <span className={`truncate ${!selectedOption ? "text-zinc-400 font-normal" : ""}`}>
+          {selectedOption ? selectedOption.label : placeholder}
+        </span>
+        <ChevronDown
+          className={`shrink-0 ml-1.5 transition-transform duration-200 text-zinc-400 ${
+            size === "sm" ? "w-3.5 h-3.5" : "w-4 h-4"
+          } ${open ? "rotate-180 text-sky-600" : ""}`}
+        />
+      </button>
+
+      {open && (
+        <div className="absolute z-50 left-0 right-0 mt-1.5 bg-white border border-zinc-200 rounded-2xl shadow-xl overflow-hidden animate-fadeIn">
+          {searchable && (
+            <div className="p-2 border-b border-zinc-100 bg-zinc-50/70">
+              <div className="relative">
+                <Search className="w-3.5 h-3.5 text-zinc-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Buscar opção..."
+                  className="w-full h-8 pl-8 pr-2 text-xs rounded-lg border border-zinc-200 bg-white text-zinc-800 placeholder-zinc-400 focus:outline-none focus:border-sky-500"
+                  autoFocus
+                />
+              </div>
+            </div>
+          )}
+
+          <div className="max-h-56 overflow-y-auto p-1 divide-y divide-zinc-50">
+            {filteredOptions.length === 0 ? (
+              <div className="py-3 px-3 text-xs text-zinc-400 text-center">
+                Nenhum resultado encontrado
+              </div>
+            ) : (
+              filteredOptions.map((opt) => {
+                const isSelected = opt.value === value;
+                return (
+                  <button
+                    key={String(opt.value)}
+                    type="button"
+                    disabled={opt.disabled}
+                    onClick={() => {
+                      if (!opt.disabled) {
+                        onChange(opt.value);
+                        setOpen(false);
+                      }
+                    }}
+                    className={`w-full text-left px-3 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-between transition-colors ${
+                      opt.disabled
+                        ? "text-zinc-400 bg-zinc-50/60 cursor-not-allowed italic"
+                        : isSelected
+                        ? "bg-sky-50 text-sky-700 font-bold"
+                        : "text-zinc-700 hover:bg-zinc-100/80"
+                    }`}
+                  >
+                    <div className="truncate pr-2">
+                      <div className="truncate">{opt.label}</div>
+                      {opt.sublabel && (
+                        <div className="text-3xs text-zinc-400 truncate">{opt.sublabel}</div>
+                      )}
+                    </div>
+                    {isSelected && <Check className="w-4 h-4 text-sky-600 shrink-0 stroke-[2.5]" />}
+                  </button>
+                );
+              })
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Seletor de Horários CSS elegante (sem widgets nativos do navegador)
+function TimeSelect({
+  value,
+  onChange,
+  className = "",
+}: {
+  value: string;
+  onChange: (val: string) => void;
+  className?: string;
+}) {
+  const timeOptions = useMemo(() => {
+    const list: string[] = [];
+    for (let h = 6; h <= 22; h++) {
+      for (const m of [0, 15, 30, 45]) {
+        if (h === 22 && m > 0) break;
+        const hh = String(h).padStart(2, "0");
+        const mm = String(m).padStart(2, "0");
+        list.push(`${hh}:${mm}`);
+      }
+    }
+    if (value && !list.includes(value)) {
+      list.push(value);
+      list.sort();
+    }
+    return list.map((t) => ({ value: t, label: t }));
+  }, [value]);
+
+  return (
+    <CustomSelect
+      value={value}
+      onChange={onChange}
+      options={timeOptions}
+      placeholder="00:00"
+      size="sm"
+      className={className}
+      buttonClassName="font-mono font-bold text-center justify-center gap-1"
+    />
+  );
+}
+
+// Seletor de Idades CSS elegante (4 a 21 anos)
+function AgeSelect({
+  value,
+  onChange,
+  minAllowed = 4,
+  maxAllowed = 21,
+  className = "",
+}: {
+  value: number;
+  onChange: (val: number) => void;
+  minAllowed?: number;
+  maxAllowed?: number;
+  className?: string;
+}) {
+  const options = useMemo(() => {
+    const list: OptionItem[] = [];
+    for (let i = 4; i <= 21; i++) {
+      list.push({
+        value: i,
+        label: `${i} anos`,
+        disabled: i < minAllowed || i > maxAllowed,
+      });
+    }
+    return list;
+  }, [minAllowed, maxAllowed]);
+
+  return (
+    <CustomSelect
+      value={value}
+      onChange={(v) => onChange(Number(v))}
+      options={options}
+      placeholder="Selecione"
+      size="sm"
+      className={className}
+      buttonClassName="text-center justify-center gap-1 font-bold"
+    />
+  );
+}
+
 export default function ConferenciaProfessoresPage() {
   const [loadingDados, setLoadingDados] = useState(true);
   const [nucleos, setNucleos] = useState<Nucleo[]>([]);
@@ -106,16 +346,14 @@ export default function ConferenciaProfessoresPage() {
   const [professorNomeManual, setProfessorNomeManual] = useState<string>("");
   const [modalidade, setModalidade] = useState<string>("Futebol de Campo");
   const [modalidadeManual, setModalidadeManual] = useState<string>("");
+  const [nomeConfirmado, setNomeConfirmado] = useState<boolean | null>(null);
+  const [trocarProfessor, setTrocarProfessor] = useState<boolean>(false);
 
-  // Passo 2: Dias da semana selecionados
-  const [diasSelecionados, setDiasSelecionados] = useState<string[]>(["Seg", "Qua", "Sex"]);
+  // Passo 2: Dias da semana selecionados (iniciar vazio)
+  const [diasSelecionados, setDiasSelecionados] = useState<string[]>([]);
 
-  // Passo 3: Mapa de aulas por dia (diaId -> lista de aulas)
-  const [aulasPorDia, setAulasPorDia] = useState<Record<string, AulaItem[]>>({
-    Seg: [{ id: "1", inicio: "08:00", fim: "09:30", idadeMin: 8, idadeMax: 11 }],
-    Qua: [{ id: "1", inicio: "08:00", fim: "09:30", idadeMin: 8, idadeMax: 11 }],
-    Sex: [{ id: "1", inicio: "08:00", fim: "09:30", idadeMin: 8, idadeMax: 11 }],
-  });
+  // Passo 3: Mapa de aulas por dia (iniciar vazio)
+  const [aulasPorDia, setAulasPorDia] = useState<Record<string, AulaItem[]>>({});
 
   // Passo 3: Controle sequencial de dias (apenas 1 dia aberto por vez)
   const [diaAtivoIndex, setDiaAtivoIndex] = useState<number>(0);
@@ -153,6 +391,15 @@ export default function ConferenciaProfessoresPage() {
     const filtrados = professores.filter((p) => p.nucleo_id === nucleoSelecionadoId);
     return filtrados.length > 0 ? filtrados : professores;
   }, [nucleoSelecionadoId, professores]);
+
+  // Professor sugerido diretamente pelo vínculo do núcleo
+  const professorSugerido = useMemo(() => {
+    if (!nucleoSelecionadoId) return null;
+    const direto = professores.find((p) => p.nucleo_id === nucleoSelecionadoId);
+    if (direto) return direto;
+    if (professoresDoNucleo.length === 1) return professoresDoNucleo[0];
+    return null;
+  }, [nucleoSelecionadoId, professores, professoresDoNucleo]);
 
   // Toggle de seleção do dia da semana
   const toggleDia = (diaId: string) => {
@@ -454,7 +701,7 @@ export default function ConferenciaProfessoresPage() {
             <div className="flex items-center justify-between text-xs font-bold text-zinc-600 mb-2">
               <span>Passo {passo} de 3</span>
               <span>
-                {passo === 1 && "Quem é você"}
+                {passo === 1 && "Núcleo e Nome"}
                 {passo === 2 && "Dias de aula"}
                 {passo === 3 && "Horários e idades das aulas"}
               </span>
@@ -518,104 +765,161 @@ export default function ConferenciaProfessoresPage() {
         ) : (
           <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-zinc-200/80">
             {/* ========================================================= */}
-            {/* PASSO 1: IDENTIFICAÇÃO                                   */}
+            {/* PASSO 1: NÚCLEO E NOME                                    */}
             {/* ========================================================= */}
             {passo === 1 && (
               <div className="space-y-6">
                 <div>
-                  <h2 className="text-xl font-extrabold text-zinc-900 flex items-center gap-2">
-                    <span className="w-7 h-7 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center text-sm font-black">
+                  <h2 className="text-xl sm:text-2xl font-extrabold text-zinc-900 flex items-center gap-2">
+                    <span className="w-8 h-8 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center text-sm font-black shrink-0">
                       1
                     </span>
-                    Quem é você e onde você dá aulas?
+                    Núcleo e Nome
                   </h2>
-                  <p className="text-xs text-zinc-500 mt-1">
-                    Selecione seu núcleo, confirme seu nome e qual modalidade esportiva você leciona.
+                  <p className="text-xs sm:text-sm text-zinc-500 mt-1">
+                    Selecione seu núcleo, confirme seu nome e qual atividade você leciona.
                   </p>
                 </div>
 
-                {/* Núcleo */}
+                {/* Núcleo com Dropdown CSS elegante */}
                 <div>
-                  <label className="block text-sm font-bold text-zinc-800 mb-1.5">
+                  <label className="block text-base sm:text-lg font-bold text-zinc-900 mb-2">
                     Qual é o núcleo onde você dá aulas? <span className="text-rose-500">*</span>
                   </label>
-                  <select
+                  <CustomSelect
                     value={nucleoSelecionadoId}
-                    onChange={(e) => {
-                      setNucleoSelecionadoId(e.target.value);
+                    onChange={(val) => {
+                      setNucleoSelecionadoId(val);
                       setProfessorSelecionadoId("");
+                      setNomeConfirmado(null);
+                      setTrocarProfessor(false);
                     }}
-                    className="w-full h-12 px-4 rounded-xl border border-zinc-300 bg-white text-zinc-900 font-medium focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm"
-                  >
-                    <option value="">-- Toque para selecionar seu núcleo --</option>
-                    {nucleos.map((n) => {
+                    placeholder="-- Toque para selecionar seu núcleo --"
+                    options={nucleos.map((n) => {
                       const jaPreenchido = nucleosPreenchidosIds.includes(n.id);
-                      return (
-                        <option
-                          key={n.id}
-                          value={n.id}
-                          disabled={jaPreenchido}
-                          className={jaPreenchido ? "text-zinc-400 bg-zinc-100 italic" : ""}
-                        >
-                          {jaPreenchido
-                            ? `✓ ${n.identificacao} (Já preenchido)`
-                            : `${n.identificacao}${n.nome_local ? ` (${n.nome_local})` : ""}`}
-                        </option>
-                      );
+                      return {
+                        value: n.id,
+                        label: jaPreenchido
+                          ? `✓ ${n.identificacao} (Já preenchido)`
+                          : `${n.identificacao}${n.nome_local ? ` (${n.nome_local})` : ""}`,
+                        disabled: jaPreenchido,
+                      };
                     })}
-                  </select>
+                    searchable
+                  />
                 </div>
 
-                {/* Professor */}
+                {/* Pergunta do Nome com exibição e botões SIM / NÃO */}
                 {nucleoSelecionadoId && (
                   <div className="animate-fadeIn">
-                    <label className="block text-sm font-bold text-zinc-800 mb-1.5">
+                    <label className="block text-base sm:text-lg font-bold text-zinc-900 mb-2">
                       Esse é o seu nome? <span className="text-rose-500">*</span>
                     </label>
-                    <select
-                      value={professorSelecionadoId}
-                      onChange={(e) => setProfessorSelecionadoId(e.target.value)}
-                      className="w-full h-12 px-4 rounded-xl border border-zinc-300 bg-white text-zinc-900 font-medium focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm"
-                    >
-                      <option value="">-- Selecione seu nome na lista --</option>
-                      {professoresDoNucleo.map((p) => (
-                        <option key={p.id} value={p.id}>
-                          {p.nome_completo}
-                        </option>
-                      ))}
-                    </select>
+
+                    {professorSugerido && !trocarProfessor ? (
+                      <div className="bg-sky-50/70 border-2 border-sky-200 rounded-2xl p-4 sm:p-5">
+                        <div className="text-base sm:text-lg font-black text-zinc-900">
+                          {professorSugerido.nome_completo}
+                        </div>
+                        <p className="text-xs text-zinc-500 mt-0.5">
+                          Professor vinculado a este núcleo
+                        </p>
+
+                        <div className="grid grid-cols-2 gap-3 mt-4">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setProfessorSelecionadoId(professorSugerido.id);
+                              setNomeConfirmado(true);
+                              setTrocarProfessor(false);
+                            }}
+                            className={`h-12 rounded-xl font-black text-sm flex items-center justify-center gap-2 transition-all shadow-xs ${
+                              nomeConfirmado === true && professorSelecionadoId === professorSugerido.id
+                                ? "bg-emerald-600 text-white ring-2 ring-emerald-300"
+                                : "bg-white border-2 border-emerald-500 text-emerald-700 hover:bg-emerald-50"
+                            }`}
+                          >
+                            <Check className="w-4 h-4 stroke-[3]" />
+                            <span>SIM</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setNomeConfirmado(false);
+                              setTrocarProfessor(true);
+                              setProfessorSelecionadoId("");
+                            }}
+                            className="h-12 rounded-xl font-black text-sm flex items-center justify-center gap-2 transition-all shadow-xs bg-white border-2 border-zinc-300 text-zinc-700 hover:bg-zinc-100"
+                          >
+                            <X className="w-4 h-4 stroke-[2.5]" />
+                            <span>NÃO</span>
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        <p className="text-xs font-semibold text-zinc-600">
+                          Selecione o seu nome na lista de professores:
+                        </p>
+                        <CustomSelect
+                          value={professorSelecionadoId}
+                          onChange={(val) => {
+                            setProfessorSelecionadoId(val);
+                            setNomeConfirmado(true);
+                          }}
+                          placeholder="-- Toque para selecionar seu nome --"
+                          options={professores.map((p) => ({
+                            value: p.id,
+                            label: p.nome_completo,
+                          }))}
+                          searchable
+                        />
+                        {professorSugerido && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setTrocarProfessor(false);
+                              setNomeConfirmado(null);
+                              setProfessorSelecionadoId("");
+                            }}
+                            className="text-xs font-bold text-sky-600 hover:underline pt-1 inline-block"
+                          >
+                            ← Voltar para {professorSugerido.nome_completo}
+                          </button>
+                        )}
+                      </div>
+                    )}
                   </div>
                 )}
 
-                {/* Modalidade */}
+                {/* Modalidade / Atividade (Sem Emojis) */}
                 <div>
-                  <label className="block text-sm font-bold text-zinc-800 mb-2">
-                    Qual esporte você ensina nesse núcleo? <span className="text-rose-500">*</span>
+                  <label className="block text-base sm:text-lg font-bold text-zinc-900 mb-2">
+                    QUAL ATIVIDADE VOCÊ ENSINA NO NÚCLEO? <span className="text-rose-500">*</span>
                   </label>
                   <div className="grid grid-cols-2 gap-3">
                     <button
                       type="button"
                       onClick={() => setModalidade("Futebol de Campo")}
-                      className={`p-4 rounded-2xl border-2 font-bold text-sm flex flex-col items-center justify-center gap-2 transition-all ${
+                      className={`p-4 rounded-2xl border-2 font-black text-sm sm:text-base flex items-center justify-center transition-all ${
                         modalidade === "Futebol de Campo"
-                          ? "border-sky-600 bg-sky-50 text-sky-800 shadow-sm"
-                          : "border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300"
+                          ? "border-sky-600 bg-sky-50 text-sky-800 shadow-sm ring-2 ring-sky-200"
+                          : "border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300"
                       }`}
                     >
-                      <span className="text-2xl">⚽</span>
                       <span>Futebol de Campo</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => setModalidade("Futsal")}
-                      className={`p-4 rounded-2xl border-2 font-bold text-sm flex flex-col items-center justify-center gap-2 transition-all ${
+                      className={`p-4 rounded-2xl border-2 font-black text-sm sm:text-base flex items-center justify-center transition-all ${
                         modalidade === "Futsal"
-                          ? "border-sky-600 bg-sky-50 text-sky-800 shadow-sm"
-                          : "border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300"
+                          ? "border-sky-600 bg-sky-50 text-sky-800 shadow-sm ring-2 ring-sky-200"
+                          : "border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300"
                       }`}
                     >
-                      <span className="text-2xl">🥅</span>
                       <span>Futsal</span>
                     </button>
                   </div>
@@ -864,22 +1168,14 @@ export default function ConferenciaProfessoresPage() {
                         className="rounded-2xl border-2 border-sky-400 bg-sky-50/30 p-4 space-y-3.5 shadow-sm ring-2 ring-sky-100"
                       >
                         {/* Cabeçalho do Dia */}
-                        <div className="flex items-center justify-between border-b border-sky-100 pb-2.5">
-                          <div className="flex items-center gap-2">
-                            <span className="px-3 py-1 rounded-xl bg-sky-600 text-white font-black text-xs sm:text-sm flex items-center justify-center shrink-0 shadow-2xs">
-                              {diaObj?.nome}
-                            </span>
-                            <span className="text-2xs text-zinc-600 bg-white px-2.5 py-0.5 rounded-full border border-zinc-200 font-bold">
-                              {aulas.length} {aulas.length === 1 ? "aula" : "aulas"}
-                            </span>
-                          </div>
-                          <span className="text-3xs uppercase font-extrabold tracking-wider text-sky-700 bg-sky-100 px-2.5 py-1 rounded-full">
-                            Editando agora
+                        <div className="flex items-center justify-between border-b border-sky-100 pb-3">
+                          <span className="px-4 py-2 rounded-xl bg-sky-600 text-white font-black text-sm sm:text-base flex items-center justify-center shrink-0 shadow-xs">
+                            {diaObj?.nome}
                           </span>
                         </div>
 
                         {/* Lista de Aulas do Dia (Condensada) */}
-                        <div className="space-y-2.5">
+                        <div className="space-y-3">
                           {aulas.map((aula, index) => {
                             const errosAula = getErrosAula(diaId, index, aulas);
                             const horarioTexto =
@@ -897,23 +1193,23 @@ export default function ConferenciaProfessoresPage() {
                             return (
                               <div
                                 key={aula.id}
-                                className={`rounded-xl border-2 p-3 shadow-2xs transition-colors space-y-2 ${
+                                className={`rounded-2xl border-2 overflow-hidden shadow-2xs transition-colors ${
                                   errosAula.length > 0
                                     ? "border-rose-400 bg-rose-50/40 ring-1 ring-rose-200"
                                     : estiloFundo
                                 }`}
                               >
-                                <div className="flex items-center justify-between border-b border-zinc-200/60 pb-1.5">
-                                  <span className="text-xs font-black text-zinc-900">
-                                    {index + 1}ª Aula ({diaObj?.nome}
-                                    {horarioTexto})
+                                {/* HEADER SEPARADO DA AULA COM FUNDO DESTACADO */}
+                                <div className="bg-zinc-100/90 px-3.5 py-2.5 border-b border-zinc-200/80 flex items-center justify-between">
+                                  <span className="text-xs sm:text-sm font-black text-zinc-900">
+                                    {index + 1}ª Aula ({diaObj?.nome}{horarioTexto})
                                   </span>
 
                                   {aulas.length > 1 && (
                                     <button
                                       type="button"
                                       onClick={() => removerAulaDoDia(diaId, aula.id)}
-                                      className="p-1 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-md transition-colors flex items-center gap-1 text-xs font-semibold"
+                                      className="px-2 py-1 text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-colors flex items-center gap-1 text-xs font-bold"
                                       title="Remover esta aula"
                                     >
                                       <Trash2 className="w-3.5 h-3.5" />
@@ -922,92 +1218,79 @@ export default function ConferenciaProfessoresPage() {
                                   )}
                                 </div>
 
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                                  {/* Horário */}
-                                  <div className="bg-zinc-50/80 rounded-lg p-2 border border-zinc-200/60">
-                                    <span className="text-3xs uppercase font-extrabold tracking-wider text-zinc-500 block mb-1">
-                                      Horário
-                                    </span>
-                                    <div className="flex items-center gap-1.5">
-                                      <input
-                                        type="time"
-                                        value={aula.inicio}
-                                        onChange={(e) =>
-                                          updateAulaCampo(diaId, aula.id, "inicio", e.target.value)
-                                        }
-                                        className="w-full h-8 px-2 rounded-md border border-zinc-300 bg-white text-zinc-900 font-bold text-xs focus:ring-1 focus:ring-sky-500"
-                                      />
-                                      <span className="text-zinc-400 font-semibold text-xs shrink-0">
-                                        às
+                                {/* CORPO DO CARD COM HORÁRIOS E IDADES CSS */}
+                                <div className="p-3 space-y-2.5">
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+                                    {/* Horário com TimeSelect */}
+                                    <div className="bg-zinc-50/90 rounded-xl p-2.5 border border-zinc-200/70">
+                                      <span className="text-2xs uppercase font-extrabold tracking-wider text-zinc-500 block mb-1.5">
+                                        Horário da aula
                                       </span>
-                                      <input
-                                        type="time"
-                                        value={aula.fim}
-                                        onChange={(e) =>
-                                          updateAulaCampo(diaId, aula.id, "fim", e.target.value)
-                                        }
-                                        className="w-full h-8 px-2 rounded-md border border-zinc-300 bg-white text-zinc-900 font-bold text-xs focus:ring-1 focus:ring-sky-500"
-                                      />
-                                    </div>
-                                  </div>
-
-                                  {/* Idades com Selects travados para Min <= Max */}
-                                  <div className="bg-zinc-50/80 rounded-lg p-2 border border-zinc-200/60">
-                                    <span className="text-3xs uppercase font-extrabold tracking-wider text-zinc-500 block mb-1">
-                                      Idade dos alunos
-                                    </span>
-                                    <div className="flex items-center gap-1.5">
-                                      <span className="text-zinc-500 text-xs shrink-0 font-medium">
-                                        de
-                                      </span>
-                                      <select
-                                        value={aula.idadeMin}
-                                        onChange={(e) =>
-                                          updateAulaCampo(diaId, aula.id, "idadeMin", Number(e.target.value))
-                                        }
-                                        className="w-full h-8 px-2 rounded-md border border-zinc-300 bg-white text-zinc-900 font-bold text-xs focus:ring-1 focus:ring-sky-500"
-                                      >
-                                        {IDADES_OPCOES.filter((idade) => idade <= Number(aula.idadeMax)).map(
-                                          (idade) => (
-                                            <option key={idade} value={idade}>
-                                              {idade} anos
-                                            </option>
-                                          )
-                                        )}
-                                      </select>
-                                      <span className="text-zinc-500 text-xs shrink-0 font-medium">
-                                        até
-                                      </span>
-                                      <select
-                                        value={aula.idadeMax}
-                                        onChange={(e) =>
-                                          updateAulaCampo(diaId, aula.id, "idadeMax", Number(e.target.value))
-                                        }
-                                        className="w-full h-8 px-2 rounded-md border border-zinc-300 bg-white text-zinc-900 font-bold text-xs focus:ring-1 focus:ring-sky-500"
-                                      >
-                                        {IDADES_OPCOES.filter((idade) => idade >= Number(aula.idadeMin)).map(
-                                          (idade) => (
-                                            <option key={idade} value={idade}>
-                                              {idade} anos
-                                            </option>
-                                          )
-                                        )}
-                                      </select>
-                                    </div>
-                                  </div>
-                                </div>
-
-                                {/* Mensagens de erro de validação (se houver) */}
-                                {errosAula.length > 0 && (
-                                  <div className="bg-rose-50 border border-rose-200 rounded-lg p-2 text-rose-700 text-2xs space-y-0.5 animate-fadeIn">
-                                    {errosAula.map((err, i) => (
-                                      <div key={i} className="flex items-center gap-1.5">
-                                        <AlertCircle className="w-3.5 h-3.5 shrink-0 text-rose-500" />
-                                        <span>{err}</span>
+                                      <div className="flex items-center gap-2">
+                                        <TimeSelect
+                                          value={aula.inicio}
+                                          onChange={(val) =>
+                                            updateAulaCampo(diaId, aula.id, "inicio", val)
+                                          }
+                                          className="flex-1"
+                                        />
+                                        <span className="text-zinc-400 font-bold text-xs shrink-0">
+                                          às
+                                        </span>
+                                        <TimeSelect
+                                          value={aula.fim}
+                                          onChange={(val) =>
+                                            updateAulaCampo(diaId, aula.id, "fim", val)
+                                          }
+                                          className="flex-1"
+                                        />
                                       </div>
-                                    ))}
+                                    </div>
+
+                                    {/* Idades com AgeSelect */}
+                                    <div className="bg-zinc-50/90 rounded-xl p-2.5 border border-zinc-200/70">
+                                      <span className="text-2xs uppercase font-extrabold tracking-wider text-zinc-500 block mb-1.5">
+                                        Idade dos alunos
+                                      </span>
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-zinc-500 text-xs shrink-0 font-bold">
+                                          de
+                                        </span>
+                                        <AgeSelect
+                                          value={aula.idadeMin}
+                                          onChange={(val) =>
+                                            updateAulaCampo(diaId, aula.id, "idadeMin", val)
+                                          }
+                                          maxAllowed={aula.idadeMax}
+                                          className="flex-1"
+                                        />
+                                        <span className="text-zinc-500 text-xs shrink-0 font-bold">
+                                          até
+                                        </span>
+                                        <AgeSelect
+                                          value={aula.idadeMax}
+                                          onChange={(val) =>
+                                            updateAulaCampo(diaId, aula.id, "idadeMax", val)
+                                          }
+                                          minAllowed={aula.idadeMin}
+                                          className="flex-1"
+                                        />
+                                      </div>
+                                    </div>
                                   </div>
-                                )}
+
+                                  {/* Mensagens de erro de validação (se houver) */}
+                                  {errosAula.length > 0 && (
+                                    <div className="bg-rose-50 border border-rose-200 rounded-lg p-2 text-rose-700 text-2xs space-y-0.5 animate-fadeIn">
+                                      {errosAula.map((err, i) => (
+                                        <div key={i} className="flex items-center gap-1.5">
+                                          <AlertCircle className="w-3.5 h-3.5 shrink-0 text-rose-500" />
+                                          <span>{err}</span>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  )}
+                                </div>
                               </div>
                             );
                           })}
