@@ -564,12 +564,6 @@ export default function ConferenciaProfessoresPage() {
                       );
                     })}
                   </select>
-                  {nucleosPreenchidosIds.length > 0 && (
-                    <p className="text-3xs text-zinc-500 mt-1.5 flex items-center gap-1">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                      <span>Núcleos com ✓ já foram preenchidos e não podem ser selecionados novamente.</span>
-                    </p>
-                  )}
                 </div>
 
                 {/* Professor */}
@@ -581,7 +575,7 @@ export default function ConferenciaProfessoresPage() {
                     <select
                       value={professorSelecionadoId}
                       onChange={(e) => setProfessorSelecionadoId(e.target.value)}
-                      className="w-full h-12 px-4 rounded-xl border border-zinc-300 bg-white text-zinc-900 font-medium focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm mb-2"
+                      className="w-full h-12 px-4 rounded-xl border border-zinc-300 bg-white text-zinc-900 font-medium focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm"
                     >
                       <option value="">-- Selecione seu nome na lista --</option>
                       {professoresDoNucleo.map((p) => (
@@ -589,18 +583,7 @@ export default function ConferenciaProfessoresPage() {
                           {p.nome_completo}
                         </option>
                       ))}
-                      <option value="outro">Meu nome não está na lista (digitar)</option>
                     </select>
-
-                    {professorSelecionadoId === "outro" && (
-                      <input
-                        type="text"
-                        placeholder="Digite seu nome completo..."
-                        value={professorNomeManual}
-                        onChange={(e) => setProfessorNomeManual(e.target.value)}
-                        className="w-full h-12 px-4 rounded-xl border border-zinc-300 bg-white text-zinc-900 font-medium focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm"
-                      />
-                    )}
                   </div>
                 )}
 
@@ -635,25 +618,6 @@ export default function ConferenciaProfessoresPage() {
                       <span className="text-2xl">🥅</span>
                       <span>Futsal</span>
                     </button>
-                  </div>
-
-                  <div className="mt-2">
-                    <button
-                      type="button"
-                      onClick={() => setModalidade(modalidade === "Outra" ? "Futebol de Campo" : "Outra")}
-                      className="text-xs text-zinc-500 hover:text-sky-700 underline font-medium"
-                    >
-                      {modalidade === "Outra" ? "Voltar para Futebol/Futsal" : "É outro esporte? Clique aqui"}
-                    </button>
-                    {modalidade === "Outra" && (
-                      <input
-                        type="text"
-                        placeholder="Ex: Treinamento de Goleiros, Futevôlei..."
-                        value={modalidadeManual}
-                        onChange={(e) => setModalidadeManual(e.target.value)}
-                        className="mt-2 w-full h-11 px-4 rounded-xl border border-zinc-300 bg-white text-zinc-900 text-sm focus:ring-2 focus:ring-sky-500"
-                      />
-                    )}
                   </div>
                 </div>
 
