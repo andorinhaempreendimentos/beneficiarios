@@ -274,9 +274,16 @@ export default function RespostasConferenciaStandalonePage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Erro ao apagar");
 
+      if (data.deletedCount === 0) {
+        alert("Aviso: Nenhum registro foi excluído no banco de dados.");
+        return;
+      }
+
       // Atualiza lista local
       setRespostas((prev) => prev.filter((r) => !idsParaApagar.includes(r.id)));
       setSelecionados((prev) => prev.filter((id) => !idsParaApagar.includes(id)));
+      setCopiadoFeedback(`${data.deletedCount} resposta(s) excluída(s) com sucesso!`);
+      setTimeout(() => setCopiadoFeedback(null), 3000);
     } catch (err: any) {
       alert(`Erro ao excluir: ${err.message}`);
     } finally {

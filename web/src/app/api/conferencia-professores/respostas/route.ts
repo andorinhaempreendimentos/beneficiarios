@@ -37,14 +37,15 @@ export async function DELETE(req: Request) {
     }
 
     const supabase = getSupabaseClient();
-    const { error } = await supabase
+    const { data: deletados, error } = await supabase
       .from("respostas_conferencia_professores")
       .delete()
-      .in("id", targets);
+      .in("id", targets)
+      .select("id");
 
     if (error) throw error;
 
-    return NextResponse.json({ success: true, deletedCount: targets.length });
+    return NextResponse.json({ success: true, deletedCount: deletados?.length || 0 });
   } catch (err: any) {
     console.error("[respostas DELETE]", err);
     return NextResponse.json({ error: err.message || "Erro ao excluir resposta" }, { status: 500 });
