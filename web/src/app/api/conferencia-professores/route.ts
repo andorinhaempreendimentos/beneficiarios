@@ -49,11 +49,25 @@ export async function GET() {
 
     if (errNA) throw errNA;
 
+    // 5. Núcleos com turmas já preenchidas/enviadas
+    const { data: respostasExistentes } = await supabase
+      .from("respostas_conferencia_professores")
+      .select("nucleo_id");
+
+    const nucleosPreenchidosIds = Array.from(
+      new Set(
+        (respostasExistentes || [])
+          .map((r) => r.nucleo_id)
+          .filter((id): id is string => Boolean(id))
+      )
+    );
+
     return NextResponse.json({
       nucleos: nucleos || [],
       professores: professores || [],
       atividades: atividades || [],
       nucleoAtividades: nucleoAtiv || [],
+      nucleosPreenchidosIds,
     });
   } catch (error: any) {
     console.error("[conferencia-professores GET]", error);

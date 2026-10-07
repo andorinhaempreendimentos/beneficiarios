@@ -95,6 +95,7 @@ export default function ConferenciaProfessoresPage() {
   const [nucleos, setNucleos] = useState<Nucleo[]>([]);
   const [professores, setProfessores] = useState<Professor[]>([]);
   const [atividades, setAtividades] = useState<Atividade[]>([]);
+  const [nucleosPreenchidosIds, setNucleosPreenchidosIds] = useState<string[]>([]);
 
   // Passos: 1 (Identificação), 2 (Dias da semana), 3 (Aulas de cada dia), 4 (Sucesso)
   const [passo, setPasso] = useState<number>(1);
@@ -136,6 +137,7 @@ export default function ConferenciaProfessoresPage() {
         if (data.nucleos) setNucleos(data.nucleos);
         if (data.professores) setProfessores(data.professores);
         if (data.atividades) setAtividades(data.atividades);
+        if (data.nucleosPreenchidosIds) setNucleosPreenchidosIds(data.nucleosPreenchidosIds);
       } catch (err) {
         console.error("Erro ao carregar dados:", err);
       } finally {
@@ -540,12 +542,28 @@ export default function ConferenciaProfessoresPage() {
                     className="w-full h-12 px-4 rounded-xl border border-zinc-300 bg-white text-zinc-900 font-medium focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm"
                   >
                     <option value="">-- Toque para selecionar seu núcleo --</option>
-                    {nucleos.map((n) => (
-                      <option key={n.id} value={n.id}>
-                        {n.identificacao} {n.nome_local ? `(${n.nome_local})` : ""}
-                      </option>
-                    ))}
+                    {nucleos.map((n) => {
+                      const jaPreenchido = nucleosPreenchidosIds.includes(n.id);
+                      return (
+                        <option
+                          key={n.id}
+                          value={n.id}
+                          disabled={jaPreenchido}
+                          className={jaPreenchido ? "text-zinc-400 bg-zinc-100 italic" : ""}
+                        >
+                          {jaPreenchido
+                            ? `✓ ${n.identificacao} (Já preenchido)`
+                            : `${n.identificacao}${n.nome_local ? ` (${n.nome_local})` : ""}`}
+                        </option>
+                      );
+                    })}
                   </select>
+                  {nucleosPreenchidosIds.length > 0 && (
+                    <p className="text-3xs text-zinc-500 mt-1.5 flex items-center gap-1">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                      <span>Núcleos com ✓ já foram preenchidos e não podem ser selecionados novamente.</span>
+                    </p>
+                  )}
                 </div>
 
                 {/* Professor */}
@@ -1076,17 +1094,99 @@ export default function ConferenciaProfessoresPage() {
                 {/* Banner quando todos os dias estão confirmados */}
                 {diasSelecionados.length > 0 &&
                   diasSelecionados.every((d) => diasConfirmados.includes(d)) && (
-                    <div className="bg-emerald-50 border border-emerald-300 rounded-2xl p-4 text-emerald-950 flex items-center gap-3 shadow-2xs">
-                      <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0">
-                        <Check className="w-5 h-5 stroke-[3]" />
+                    <div className="space-y-4 animate-fadeIn">
+                      <div className="bg-emerald-50 border border-emerald-300 rounded-2xl p-4 text-emerald-950 flex items-center gap-3 shadow-2xs">
+                        <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0">
+                          <Check className="w-5 h-5 stroke-[3]" />
+                        </div>
+                        <div className="text-xs">
+                          <strong className="block font-black text-sm text-emerald-900">
+                            Todos os dias conferidos com sucesso!
+                          </strong>
+                          <span className="text-emerald-800">
+                            Total de <strong>{totalAulasSemana} {totalAulasSemana === 1 ? "aula" : "aulas"}</strong> configuradas para a semana. Confira o quadro semanal abaixo antes de enviar.
+                          </span>
+                        </div>
                       </div>
-                      <div className="text-xs">
-                        <strong className="block font-black text-sm text-emerald-900">
-                          Todos os dias conferidos com sucesso!
-                        </strong>
-                        <span className="text-emerald-800">
-                          Total de <strong>{totalAulasSemana} {totalAulasSemana === 1 ? "aula" : "aulas"}</strong> configuradas para a semana. Você já pode enviar suas respostas abaixo.
-                        </span>
+
+                      {/* QUADRO SEMANAL DAS AULAS (GRADE DE CONFERÊNCIA FINAL) */}
+                      <div className="rounded-2xl border-2 border-sky-300 bg-white p-4 sm:p-5 space-y-4 shadow-sm">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-sky-100 pb-3">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-9 h-9 rounded-xl bg-sky-600 text-white flex items-center justify-center shrink-0 shadow-2xs">
+                              <Calendar className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <h3 className="text-sm sm:text-base font-extrabold text-zinc-900">
+                                Quadro Semanal das Aulas
+                              </h3>
+                              <p className="text-2xs text-zinc-500">
+                                Grade completa para conferência final antes do envio
+                              </p>
+                            </div>
+                          </div>
+
+                          <span className="self-start sm:self-auto px-3 py-1 rounded-full bg-emerald-100 border border-emerald-200 text-emerald-800 font-extrabold text-2xs flex items-center gap-1">
+                            <Check className="w-3.5 h-3.5 stroke-[3]" />
+                            {totalAulasSemana} {totalAulasSemana === 1 ? "aula na semana" : "aulas na semana"}
+                          </span>
+                        </div>
+
+                        {/* Grade de dias e turmas */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                          {diasSelecionados.map((diaId) => {
+                            const diaObj = DIAS_SEMANA_LISTA.find((d) => d.id === diaId);
+                            const aulas = aulasPorDia[diaId] || [];
+
+                            return (
+                              <div
+                                key={diaId}
+                                className="rounded-xl border border-sky-200 bg-sky-50/20 overflow-hidden shadow-2xs flex flex-col"
+                              >
+                                {/* Cabeçalho do dia */}
+                                <div className="bg-sky-600 text-white px-3 py-2 flex items-center justify-between">
+                                  <span className="font-extrabold text-xs">{diaObj?.nome}</span>
+                                  <span className="text-3xs bg-sky-700 px-2 py-0.5 rounded-full font-bold">
+                                    {aulas.length} {aulas.length === 1 ? "aula" : "aulas"}
+                                  </span>
+                                </div>
+
+                                {/* Aulas do dia */}
+                                <div className="p-2.5 space-y-2 flex-1 divide-y divide-zinc-100">
+                                  {aulas.map((aula, aIdx) => (
+                                    <div key={aula.id} className="pt-2 first:pt-0 space-y-1">
+                                      <div className="flex items-center justify-between text-2xs">
+                                        <span className="font-black text-sky-800 bg-sky-100/80 px-1.5 py-0.5 rounded border border-sky-200">
+                                          {aIdx + 1}ª Turma
+                                        </span>
+                                        <span className="font-bold text-zinc-900 flex items-center gap-1">
+                                          <Clock className="w-3 h-3 text-zinc-400" />
+                                          {aula.inicio} às {aula.fim}
+                                        </span>
+                                      </div>
+                                      <div className="flex items-center justify-between text-3xs text-zinc-600 px-0.5">
+                                        <span>Alunos:</span>
+                                        <span className="font-bold text-zinc-800 bg-zinc-100 px-1.5 py-0.5 rounded">
+                                          {aula.idadeMin} a {aula.idadeMax} anos
+                                        </span>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        {/* Resumo no rodapé do quadro */}
+                        <div className="bg-sky-50/60 border border-sky-100 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2 text-2xs text-zinc-700">
+                          <div>
+                            <strong>Núcleo:</strong> {nucleoNomeFinal} • <strong>Professor:</strong> {professorNomeFinal}
+                          </div>
+                          <div>
+                            <strong>Modalidade:</strong> {modalidadeFinal}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   )}
