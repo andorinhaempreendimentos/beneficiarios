@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 function getSupabaseClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://qrzszjogxrrjqjkoowoi.supabase.co";
   const key =
@@ -19,7 +22,14 @@ export async function GET() {
 
     if (error) throw error;
 
-    return NextResponse.json({ respostas: data || [] });
+    return NextResponse.json(
+      { respostas: data || [] },
+      {
+        headers: {
+          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
+        },
+      }
+    );
   } catch (err: any) {
     console.error("[respostas GET]", err);
     return NextResponse.json({ error: err.message || "Erro ao buscar respostas" }, { status: 500 });

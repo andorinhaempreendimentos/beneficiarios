@@ -105,7 +105,9 @@ export default function RespostasConferenciaStandalonePage() {
     try {
       setLoading(true);
       setErro(null);
-      const res = await fetch("/api/conferencia-professores/respostas");
+      const res = await fetch(`/api/conferencia-professores/respostas?t=${Date.now()}`, {
+        cache: "no-store",
+      });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Falha ao carregar respostas");
       setRespostas(data.respostas || []);
@@ -167,8 +169,8 @@ export default function RespostasConferenciaStandalonePage() {
   const respostasFiltradas = useMemo(() => {
     return respostas.filter((item) => {
       const matchBusca =
-        item.nucleo_nome.toLowerCase().includes(busca.toLowerCase()) ||
-        item.professor_nome.toLowerCase().includes(busca.toLowerCase());
+        (item.nucleo_nome || "").toLowerCase().includes(busca.toLowerCase()) ||
+        (item.professor_nome || "").toLowerCase().includes(busca.toLowerCase());
       const matchModalidade =
         filtroModalidade === "todos" || item.modalidade_nome === filtroModalidade;
       return matchBusca && matchModalidade;
