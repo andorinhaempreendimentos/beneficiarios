@@ -165,6 +165,36 @@ export default function RespostasConferenciaStandalonePage() {
     });
   };
 
+  // Helper para calcular soma de horas semanais trabalhadas
+  const calcularHorasSemana = (dadosTurmas: RespostaConferencia["dados_turmas"]): string => {
+    const aulasPorDia = dadosTurmas?.aulas_por_dia || {};
+    let totalMinutos = 0;
+
+    Object.values(aulasPorDia).forEach((aulas) => {
+      if (Array.isArray(aulas)) {
+        aulas.forEach((aula) => {
+          if (aula.horario_inicio && aula.horario_fim) {
+            const [h1, m1] = aula.horario_inicio.split(":").map(Number);
+            const [h2, m2] = aula.horario_fim.split(":").map(Number);
+            if (!isNaN(h1) && !isNaN(m1) && !isNaN(h2) && !isNaN(m2)) {
+              const minInicio = h1 * 60 + m1;
+              const minFim = h2 * 60 + m2;
+              if (minFim > minInicio) {
+                totalMinutos += minFim - minInicio;
+              }
+            }
+          }
+        });
+      }
+    });
+
+    if (totalMinutos === 0) return "0h";
+    const horas = Math.floor(totalMinutos / 60);
+    const minutos = totalMinutos % 60;
+    if (minutos === 0) return `${horas}h`;
+    return `${horas}h ${minutos}min`;
+  };
+
   // Lista filtrada
   const respostasFiltradas = useMemo(() => {
     return respostas.filter((item) => {
@@ -209,6 +239,7 @@ export default function RespostasConferenciaStandalonePage() {
         texto += `👤 Professor: ${r.professor_nome}\n`;
         texto += `⚽ Modalidade: ${r.modalidade_nome}\n`;
         texto += `📅 Total de Aulas: ${r.qtd_turmas || 0} na semana\n`;
+        texto += `⏱️ Carga Horária: ${calcularHorasSemana(r.dados_turmas)} por semana\n`;
 
         const aulasPorDia = r.dados_turmas?.aulas_por_dia;
         if (aulasPorDia && typeof aulasPorDia === "object") {
@@ -578,6 +609,10 @@ export default function RespostasConferenciaStandalonePage() {
                           <span className="px-2.5 py-0.5 rounded-full text-3xs font-extrabold bg-emerald-100 text-emerald-800">
                             {r.qtd_turmas || 0} aulas na semana
                           </span>
+                          <span className="px-2.5 py-0.5 rounded-full text-3xs font-extrabold bg-purple-100 text-purple-800 flex items-center gap-1">
+                            <Clock className="w-3 h-3 text-purple-700" />
+                            {calcularHorasSemana(r.dados_turmas)} / semana
+                          </span>
                         </div>
 
                         <div className="text-xs text-zinc-600 flex flex-wrap items-center gap-x-3 gap-y-1">
@@ -640,8 +675,8 @@ export default function RespostasConferenciaStandalonePage() {
                           <Calendar className="w-3.5 h-3.5 text-sky-600" />
                           Grade Semanal (Domingo a Sábado)
                         </h4>
-                        <span className="text-3xs text-zinc-400 font-bold">
-                          Total: {r.qtd_turmas || 0} aulas
+                        <span className="text-3xs text-zinc-500 font-bold">
+                          Total: {r.qtd_turmas || 0} aulas • {calcularHorasSemana(r.dados_turmas)} na semana
                         </span>
                       </div>
 
