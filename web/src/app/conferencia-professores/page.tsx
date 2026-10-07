@@ -36,13 +36,13 @@ interface Atividade {
 }
 
 const DIAS_SEMANA_LISTA = [
+  { id: "Dom", nome: "Domingo", curto: "Dom" },
   { id: "Seg", nome: "Segunda-feira", curto: "Seg" },
   { id: "Ter", nome: "Terça-feira", curto: "Ter" },
   { id: "Qua", nome: "Quarta-feira", curto: "Qua" },
   { id: "Qui", nome: "Quinta-feira", curto: "Qui" },
   { id: "Sex", nome: "Sexta-feira", curto: "Sex" },
   { id: "Sab", nome: "Sábado", curto: "Sáb" },
-  { id: "Dom", nome: "Domingo", curto: "Dom" },
 ];
 
 const IDADES_OPCOES = [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21];
@@ -158,9 +158,10 @@ export default function ConferenciaProfessoresPage() {
   const toggleDia = (diaId: string) => {
     setDiasSelecionados((prev) => {
       const existe = prev.includes(diaId);
+      let novaLista: string[];
       if (existe) {
         setDiasConfirmados((conf) => conf.filter((d) => d !== diaId));
-        return prev.filter((d) => d !== diaId);
+        novaLista = prev.filter((d) => d !== diaId);
       } else {
         setAulasPorDia((aulas) => {
           if (!aulas[diaId] || aulas[diaId].length === 0) {
@@ -179,8 +180,13 @@ export default function ConferenciaProfessoresPage() {
           }
           return aulas;
         });
-        return [...prev, diaId];
+        novaLista = [...prev, diaId];
       }
+      return novaLista.sort(
+        (a, b) =>
+          DIAS_SEMANA_LISTA.findIndex((d) => d.id === a) -
+          DIAS_SEMANA_LISTA.findIndex((d) => d.id === b)
+      );
     });
   };
 
