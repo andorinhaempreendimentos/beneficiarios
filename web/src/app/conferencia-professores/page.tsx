@@ -158,7 +158,7 @@ function CustomSelect({
   }, [options, searchable, searchTerm]);
 
   return (
-    <div ref={containerRef} className={`relative ${className}`}>
+    <div ref={containerRef} className={`relative ${open ? "z-50" : "z-auto"} ${className}`}>
       <button
         type="button"
         disabled={disabled}
@@ -189,7 +189,11 @@ function CustomSelect({
       </button>
 
       {open && (
-        <div className="absolute z-50 left-0 right-0 mt-1.5 bg-white border border-zinc-200 rounded-2xl shadow-xl overflow-hidden animate-fadeIn">
+        <div
+          className={`absolute z-50 left-0 mt-1.5 bg-white border border-zinc-200 rounded-2xl shadow-2xl overflow-hidden animate-fadeIn ${
+            size === "sm" ? "min-w-[140px] w-full" : "w-full"
+          }`}
+        >
           {searchable && (
             <div className="p-2 border-b border-zinc-100 bg-zinc-50/70">
               <div className="relative">
@@ -1198,14 +1202,14 @@ export default function ConferenciaProfessoresPage() {
                             return (
                               <div
                                 key={aula.id}
-                                className={`rounded-2xl border-2 overflow-hidden shadow-2xs transition-colors ${
+                                className={`rounded-2xl border-2 shadow-2xs transition-colors ${
                                   errosAula.length > 0
                                     ? "border-rose-400 bg-rose-50/40 ring-1 ring-rose-200"
                                     : estiloFundo
                                 }`}
                               >
                                 {/* HEADER SEPARADO DA AULA COM FUNDO DESTACADO */}
-                                <div className="bg-zinc-100/90 px-3.5 py-2.5 border-b border-zinc-200/80 flex items-center justify-between">
+                                <div className="bg-zinc-100/90 px-3.5 py-2.5 rounded-t-2xl border-b border-zinc-200/80 flex items-center justify-between">
                                   <span className="text-xs sm:text-sm font-black text-zinc-900">
                                     {index + 1}ª Aula ({diaObj?.nome}{horarioTexto})
                                   </span>
