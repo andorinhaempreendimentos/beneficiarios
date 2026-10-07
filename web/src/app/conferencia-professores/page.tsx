@@ -352,6 +352,8 @@ export default function ConferenciaProfessoresPage() {
   const [modalidadeManual, setModalidadeManual] = useState<string>("");
   const [nomeConfirmado, setNomeConfirmado] = useState<boolean | null>(null);
   const [trocarProfessor, setTrocarProfessor] = useState<boolean>(false);
+  const [mostrarListaProfessores, setMostrarListaProfessores] = useState<boolean>(false);
+  const inputNomeRef = useRef<HTMLInputElement>(null);
 
   // Passo 2: Dias da semana selecionados (iniciar vazio)
   const [diasSelecionados, setDiasSelecionados] = useState<string[]>([]);
@@ -581,11 +583,13 @@ export default function ConferenciaProfessoresPage() {
   }, [nucleoSelecionadoId, nucleos]);
 
   const professorNomeFinal = useMemo(() => {
-    if (professorSelecionadoId === "outro") return professorNomeManual.trim();
+    if (professorSelecionadoId === "outro" || (trocarProfessor && !mostrarListaProfessores && professorNomeManual.trim())) {
+      return professorNomeManual.trim();
+    }
     if (!professorSelecionadoId) return "";
     const p = professores.find((item) => item.id === professorSelecionadoId);
     return p ? p.nome_completo : "";
-  }, [professorSelecionadoId, professorNomeManual, professores]);
+  }, [professorSelecionadoId, professorNomeManual, professores, trocarProfessor, mostrarListaProfessores]);
 
   const modalidadeFinal = useMemo(() => {
     if (modalidade === "Outra") return modalidadeManual.trim();
@@ -594,7 +598,7 @@ export default function ConferenciaProfessoresPage() {
 
   // Validações dos passos
   const podeAvancarPasso1 = Boolean(
-    nucleoNomeFinal && professorNomeFinal && modalidadeFinal
+    nucleoNomeFinal && professorNomeFinal && modalidadeFinal && nomeConfirmado === true
   );
 
   const podeAvancarPasso2 = diasSelecionados.length > 0;
@@ -763,8 +767,10 @@ export default function ConferenciaProfessoresPage() {
                 setModalidade("");
                 setNucleoSelecionadoId("");
                 setProfessorSelecionadoId("");
+                setProfessorNomeManual("");
                 setNomeConfirmado(null);
                 setTrocarProfessor(false);
+                setMostrarListaProfessores(false);
               }}
               className="px-6 py-3 bg-sky-600 hover:bg-sky-700 text-white rounded-xl font-bold text-sm transition-all shadow-sm"
             >
@@ -800,8 +806,10 @@ export default function ConferenciaProfessoresPage() {
                     onChange={(val) => {
                       setNucleoSelecionadoId(val);
                       setProfessorSelecionadoId("");
+                      setProfessorNomeManual("");
                       setNomeConfirmado(null);
                       setTrocarProfessor(false);
+                      setMostrarListaProfessores(false);
                     }}
                     placeholder="-- Toque para selecionar seu núcleo --"
                     options={nucleos.map((n) => {
@@ -825,7 +833,189 @@ export default function ConferenciaProfessoresPage() {
                       Esse é o seu nome? <span className="text-rose-500">*</span>
                     </label>
 
-                    {professorSugerido && !trocarProfessor ? (
+                    {trocarProfessor ? (
+                      mostrarListaProfessores ? (
+                        /* Modo: Selecionar outro professor da lista cadastrada */
+                        <div className="space-y-3 bg-zinc-50 border-2 border-zinc-200 rounded-2xl p-4 sm:p-5 animate-fadeIn">
+                          <div className="flex items-center justify-between">
+                            <p className="text-xs sm:text-sm font-bold text-zinc-700">
+                              Selecione seu nome na lista de professores:
+                            </p>
+                            <button
+                              type="button"
+                              onClick={() => setMostrarListaProfessores(false)}
+                              className="text-xs font-bold text-sky-600 hover:underline"
+                            >
+                              ← Voltar para editar nome
+                            </button>
+                          </div>
+                          <CustomSelect
+                            value={professorSelecionadoId}
+                            onChange={(val) => {
+                              setProfessorSelecionadoId(val);
+                              setProfessorNomeManual("");
+                              setNomeConfirmado(true);
+                            }}
+                            placeholder="-- Toque para selecionar seu nome --"
+                            options={professores.map((p) => ({
+                              value: p.id,
+                              label: p.nome_completo,
+                            }))}
+                            searchable
+                          />
+                          {professorSugerido && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setTrocarProfessor(false);
+                                setNomeConfirmado(null);
+                                setProfessorSelecionadoId("");
+                                setProfessorNomeManual("");
+                                setMostrarListaProfessores(false);
+                              }}
+                              className="text-xs font-bold text-zinc-500 hover:text-zinc-800 hover:underline inline-block pt-1"
+                            >
+                              ← Voltar para {professorSugerido.nome_completo}
+                            </button>
+                          )}
+                        </div>
+                      ) : nomeConfirmado ? (
+                        /* Estado 2: Nome corrigido com sucesso e confirmado */
+                        <div className="bg-emerald-50 border-2 border-emerald-500 rounded-2xl p-4 sm:p-5 shadow-sm animate-fadeIn">
+                          <div className="flex items-center justify-between gap-3">
+                            <div className="flex items-center gap-3 min-w-0">
+                              <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-sm">
+                                <Check className="w-5 h-5 stroke-[3]" />
+                              </div>
+                              <div className="min-w-0">
+                                <span className="text-[11px] font-black uppercase tracking-wider text-emerald-700 block">
+                                  Nome corrigido e confirmado
+                                </span>
+                                <div className="text-base sm:text-lg font-black text-zinc-900 truncate">
+                                  {professorNomeManual.trim()}
+                                </div>
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => setNomeConfirmado(false)}
+                              className="shrink-0 px-3 py-2 rounded-xl border-2 border-emerald-300 bg-white hover:bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center gap-1.5 transition-all shadow-xs"
+                            >
+                              <Pencil className="w-3.5 h-3.5" />
+                              <span>Editar</span>
+                            </button>
+                          </div>
+                          {professorSugerido && (
+                            <div className="mt-3 pt-3 border-t border-emerald-200/60 flex items-center justify-between text-xs">
+                              <span className="text-emerald-700">
+                                Nome anterior: <span className="line-through text-zinc-500">{professorSugerido.nome_completo}</span>
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setTrocarProfessor(false);
+                                  setNomeConfirmado(null);
+                                  setProfessorSelecionadoId("");
+                                  setProfessorNomeManual("");
+                                }}
+                                className="text-zinc-500 hover:text-zinc-800 underline font-semibold"
+                              >
+                                Desfazer correção
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        /* Estado 1: Campo preenchido com nome atual em DESTAQUE para correção */
+                        <div className="bg-amber-50/90 border-2 border-amber-400 rounded-2xl p-4 sm:p-6 shadow-md shadow-amber-500/10 ring-4 ring-amber-200/60 animate-fadeIn space-y-4">
+                          <div className="flex items-start gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5">
+                              <Pencil className="w-5 h-5 stroke-[2.5]" />
+                            </div>
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <span className="px-2 py-0.5 rounded-md bg-amber-200 text-amber-900 text-[10px] font-black uppercase tracking-wider">
+                                  Correção de Nome
+                                </span>
+                              </div>
+                              <h3 className="text-base sm:text-lg font-extrabold text-amber-950 mt-1">
+                                Corrija o seu nome abaixo:
+                              </h3>
+                              <p className="text-xs sm:text-sm text-amber-900/80 mt-0.5">
+                                O nome vinculado a este núcleo é <strong>{professorSugerido?.nome_completo}</strong>. Altere o texto no campo e clique em <strong>Confirmar Correção</strong>.
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="relative">
+                            <label className="block text-xs font-black uppercase tracking-wider text-amber-950 mb-1.5">
+                              Seu nome completo correto <span className="text-rose-600">*</span>:
+                            </label>
+                            <input
+                              ref={inputNomeRef}
+                              type="text"
+                              value={professorNomeManual}
+                              onChange={(e) => setProfessorNomeManual(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter" && professorNomeManual.trim().length >= 3) {
+                                  e.preventDefault();
+                                  setNomeConfirmado(true);
+                                }
+                              }}
+                              placeholder="Digite seu nome completo"
+                              className="w-full h-13 px-4 rounded-xl border-2 border-amber-500 bg-white font-extrabold text-base sm:text-lg text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-4 focus:ring-amber-300 focus:border-amber-600 shadow-inner transition-all"
+                            />
+                            {professorNomeManual.trim().length > 0 && professorNomeManual.trim().length < 3 && (
+                              <p className="text-xs font-semibold text-rose-600 mt-1">
+                                Digite pelo menos 3 caracteres.
+                              </p>
+                            )}
+                          </div>
+
+                          <div className="flex flex-col sm:flex-row gap-2.5 pt-1">
+                            <button
+                              type="button"
+                              disabled={professorNomeManual.trim().length < 3}
+                              onClick={() => {
+                                if (professorNomeManual.trim().length >= 3) {
+                                  setNomeConfirmado(true);
+                                }
+                              }}
+                              className="h-12 px-6 rounded-xl font-black text-sm flex items-center justify-center gap-2 transition-all shadow-sm bg-emerald-600 hover:bg-emerald-700 text-white disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                            >
+                              <Check className="w-4 h-4 stroke-[3]" />
+                              <span>Confirmar Correção</span>
+                            </button>
+
+                            {professorSugerido && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setTrocarProfessor(false);
+                                  setNomeConfirmado(null);
+                                  setProfessorSelecionadoId("");
+                                  setProfessorNomeManual("");
+                                }}
+                                className="h-12 px-4 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 text-zinc-600 hover:text-zinc-900 hover:bg-amber-100/70 transition-all cursor-pointer"
+                              >
+                                <span>Cancelar e Voltar</span>
+                              </button>
+                            )}
+                          </div>
+
+                          <div className="pt-2 border-t border-amber-200/80">
+                            <button
+                              type="button"
+                              onClick={() => setMostrarListaProfessores(true)}
+                              className="text-xs font-bold text-amber-900 hover:text-amber-950 underline cursor-pointer"
+                            >
+                              Ou escolher outro professor já cadastrado na lista →
+                            </button>
+                          </div>
+                        </div>
+                      )
+                    ) : professorSugerido ? (
+                      /* Card padrão do professor vinculado ao núcleo */
                       <div className="bg-sky-50/70 border-2 border-sky-200 rounded-2xl p-4 sm:p-5">
                         <div className="text-base sm:text-lg font-black text-zinc-900">
                           {professorSugerido.nome_completo}
@@ -842,7 +1032,7 @@ export default function ConferenciaProfessoresPage() {
                               setNomeConfirmado(true);
                               setTrocarProfessor(false);
                             }}
-                            className={`h-12 rounded-xl font-black text-sm flex items-center justify-center gap-2 transition-all shadow-xs ${
+                            className={`h-12 rounded-xl font-black text-sm flex items-center justify-center gap-2 transition-all shadow-xs cursor-pointer ${
                               nomeConfirmado === true && professorSelecionadoId === professorSugerido.id
                                 ? "bg-emerald-600 text-white ring-2 ring-emerald-300"
                                 : "bg-white border-2 border-emerald-500 text-emerald-700 hover:bg-emerald-50"
@@ -857,9 +1047,12 @@ export default function ConferenciaProfessoresPage() {
                             onClick={() => {
                               setNomeConfirmado(false);
                               setTrocarProfessor(true);
-                              setProfessorSelecionadoId("");
+                              setMostrarListaProfessores(false);
+                              setProfessorNomeManual(professorSugerido.nome_completo);
+                              setProfessorSelecionadoId("outro");
+                              setTimeout(() => inputNomeRef.current?.focus(), 80);
                             }}
-                            className="h-12 rounded-xl font-black text-sm flex items-center justify-center gap-2 transition-all shadow-xs bg-white border-2 border-zinc-300 text-zinc-700 hover:bg-zinc-100"
+                            className="h-12 rounded-xl font-black text-sm flex items-center justify-center gap-2 transition-all shadow-xs bg-white border-2 border-zinc-300 text-zinc-700 hover:bg-zinc-100 cursor-pointer"
                           >
                             <X className="w-4 h-4 stroke-[2.5]" />
                             <span>NÃO</span>
@@ -867,6 +1060,7 @@ export default function ConferenciaProfessoresPage() {
                         </div>
                       </div>
                     ) : (
+                      /* Caso núcleo não tenha professor vinculado */
                       <div className="space-y-2">
                         <p className="text-xs font-semibold text-zinc-600">
                           Selecione o seu nome na lista de professores:
@@ -884,19 +1078,6 @@ export default function ConferenciaProfessoresPage() {
                           }))}
                           searchable
                         />
-                        {professorSugerido && (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setTrocarProfessor(false);
-                              setNomeConfirmado(null);
-                              setProfessorSelecionadoId("");
-                            }}
-                            className="text-xs font-bold text-sky-600 hover:underline pt-1 inline-block"
-                          >
-                            ← Voltar para {professorSugerido.nome_completo}
-                          </button>
-                        )}
                       </div>
                     )}
                   </div>
