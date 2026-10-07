@@ -344,7 +344,7 @@ export default function ConferenciaProfessoresPage() {
   const [nucleoSelecionadoId, setNucleoSelecionadoId] = useState<string>("");
   const [professorSelecionadoId, setProfessorSelecionadoId] = useState<string>("");
   const [professorNomeManual, setProfessorNomeManual] = useState<string>("");
-  const [modalidade, setModalidade] = useState<string>("Futebol de Campo");
+  const [modalidade, setModalidade] = useState<string>("");
   const [modalidadeManual, setModalidadeManual] = useState<string>("");
   const [nomeConfirmado, setNomeConfirmado] = useState<boolean | null>(null);
   const [trocarProfessor, setTrocarProfessor] = useState<boolean>(false);
@@ -756,6 +756,11 @@ export default function ConferenciaProfessoresPage() {
               onClick={() => {
                 setSucesso(false);
                 setPasso(1);
+                setModalidade("");
+                setNucleoSelecionadoId("");
+                setProfessorSelecionadoId("");
+                setNomeConfirmado(null);
+                setTrocarProfessor(false);
               }}
               className="px-6 py-3 bg-sky-600 hover:bg-sky-700 text-white rounded-xl font-bold text-sm transition-all shadow-sm"
             >
