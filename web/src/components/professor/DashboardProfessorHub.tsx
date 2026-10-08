@@ -1062,7 +1062,7 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
                   <div className="flex items-center justify-between">
                     <div>
                       <span className="text-xs font-bold text-zinc-500 uppercase">Turma</span>
-                      <p className="text-sm font-bold text-zinc-900">{turmaInfo?.nome || ae.turmaId.slice(0, 8)}</p>
+                      <p className="text-sm font-bold text-zinc-900">{turmaInfo?.nome || ae.turmaId?.slice(0, 8) || "—"}</p>
                     </div>
                     <div className="text-right">
                       <span className="text-xs font-bold text-zinc-500 uppercase">Data</span>

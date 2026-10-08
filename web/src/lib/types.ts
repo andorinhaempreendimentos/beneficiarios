@@ -128,7 +128,7 @@ export interface Nucleo {
   beneficiariosInativos: number;
 }
 
-export interface Turma {
+export interface Grupo {
   id: string;
   nome: string;
   nucleoId: string;
@@ -144,6 +144,39 @@ export interface Turma {
   dataInicio: string;
   duracao: string;
 }
+
+export type Turma = Grupo;
+
+export interface GrupoHorario {
+  id: string;
+  grupoId: string;
+  diaSemana: number;
+  horaInicio: string;
+  horaFim: string;
+  duracaoMinutos?: number;
+  atividadeId?: string;
+  responsavelId?: string;
+  nucleoId?: string;
+}
+
+export type TurmaHorario = GrupoHorario;
+
+export interface GrupoResponsavel {
+  grupoId: string;
+  responsavelId: string;
+  principal?: boolean;
+}
+
+export type TurmaResponsavel = GrupoResponsavel;
+
+export interface BeneficiarioGrupo {
+  beneficiarioId: string;
+  grupoId: string;
+  dataMatricula?: string;
+  status?: string;
+}
+
+export type BeneficiarioTurma = BeneficiarioGrupo;
 
 export type CategoriaEquipamento =
   | "Esportivo"
@@ -244,11 +277,14 @@ export type StatusInscricao =
 
 export type TipoMatricula = "online" | "interna";
 
-export interface VinculoTurma {
-  turmaId: string;
+export interface VinculoGrupo {
+  grupoId?: string;
+  turmaId?: string; // alias retrocompatível
   status: "Ativo" | "Evadido";
   dataRegistro: string;
 }
+
+export type VinculoTurma = VinculoGrupo;
 
 export interface PerguntaParQ {
   pergunta: string;
@@ -265,7 +301,8 @@ export type StatusPresenca = "presente" | "falta" | "falta_justificada";
 
 export interface RegistroPresenca {
   id: string;
-  turmaId: string;
+  grupoId?: string;
+  turmaId?: string; // alias retrocompatível
   data: string; // ISO date "YYYY-MM-DD"
   beneficiarioId: string;
   status: StatusPresenca;
@@ -290,7 +327,8 @@ export interface RegistroPonto {
 export interface ConfirmacaoAtividade {
   id: string;
   funcionarioId: string;
-  turmaId: string;
+  grupoId?: string;
+  turmaId?: string; // alias retrocompatível
   data: string; // ISO date "YYYY-MM-DD"
   fotoUrl?: string;
   observacao?: string;
@@ -338,6 +376,7 @@ export interface Beneficiario {
   emailResponsavel?: string;
   rgResponsavel?: string;
   cpfResponsavel?: string;
+  grupos?: VinculoGrupo[];
   turmas: VinculoTurma[];
   parQ: PerguntaParQ[];
   atestadoMedicoUrl?: string;

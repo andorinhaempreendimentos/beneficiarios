@@ -5,9 +5,11 @@ import { z } from "zod";
 import { Button, Field, FormSection, Input, LinkButton, Select, Switch } from "@/components/ui";
 import { GradeSemanal } from "./GradeSemanal";
 import {
+  gruposApi,
   turmasApi,
   funcionariosApi,
   FUNCAO_PROFESSOR_ID,
+  type GrupoApi,
   type TurmaApi,
   type NucleoApi,
   type AtividadeApi,
@@ -55,6 +57,7 @@ const grupoSchema = z.object({
 type FieldErrors = Partial<Record<string, string>>;
 
 export interface GrupoFormProps {
+  grupo?: GrupoApi;
   turma?: TurmaApi;
   nucleos?: NucleoApi[];
   atividades?: AtividadeApi[];
@@ -63,12 +66,14 @@ export interface GrupoFormProps {
 }
 
 export function GrupoForm({
-  turma: t,
+  grupo,
+  turma,
   nucleos = [],
   atividades = [],
   funcionarios: initialFuncionarios = [],
   backHref,
 }: GrupoFormProps) {
+  const t = grupo || turma;
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
@@ -314,16 +319,16 @@ export function GrupoForm({
     setFieldErrors({});
 
     try {
-      let savedTurma: TurmaApi;
+      let savedTurma: GrupoApi;
       if (t?.id) {
-        savedTurma = await turmasApi.update(t.id, data);
+        savedTurma = await gruposApi.update(t.id, data);
         toast.success(`${termoGrupo} atualizado(a) com sucesso!`);
       } else {
-        savedTurma = await turmasApi.create(data);
+        savedTurma = await gruposApi.create(data);
         toast.success(`${termoGrupo} cadastrado(a) com sucesso!`);
       }
-      await turmasApi.setResponsaveis(savedTurma.id, responsaveisIds);
-      await turmasApi.setHorarios(savedTurma.id, slots);
+      await gruposApi.setResponsaveis(savedTurma.id, responsaveisIds);
+      await gruposApi.setHorarios(savedTurma.id, slots);
       window.location.href = backHref;
     } catch (err: any) {
       const msg = err.message || `Erro ao salvar ${termoGrupo.toLowerCase()}.`;

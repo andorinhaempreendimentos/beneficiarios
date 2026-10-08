@@ -88,7 +88,7 @@ export function ProfessorClientWrapper({
     ? dadosSupabase.turmas
     : turmas.filter((t) => {
         const nomeProfLower = professorAtual.nomeCompleto.toLowerCase();
-        const responsavelDireto = (t.responsaveis ?? []).some((r) => r.toLowerCase().includes(nomeProfLower));
+        const responsavelDireto = (t.responsaveis ?? []).some((r) => r === professorAtual.id || r.toLowerCase().includes(nomeProfLower));
         const responsavelNome = (t.responsaveisNomes ?? []).some((r) => r.toLowerCase().includes(nomeProfLower));
         const mesmoNucleo = professorAtual.nucleoId && t.nucleoId === professorAtual.nucleoId;
         return responsavelDireto || responsavelNome || mesmoNucleo;
@@ -99,7 +99,7 @@ export function ProfessorClientWrapper({
     : (() => {
         const idsTurmas = new Set(turmasDoProfessor.map((t) => t.id));
         return todosBeneficiarios.filter((b) => {
-          if ((b.turmasInfo ?? []).some((ti) => ti.turmaId && idsTurmas.has(ti.turmaId))) return true;
+          if ((b.turmasInfo ?? []).some((ti) => (ti.grupoId && idsTurmas.has(ti.grupoId)) || (ti.turmaId && idsTurmas.has(ti.turmaId)))) return true;
           if (professorAtual.nucleoId) {
             if (b.nucleoId === professorAtual.nucleoId) return true;
             if ((b.turmasInfo ?? []).some((ti) => ti.nucleoId === professorAtual.nucleoId)) return true;

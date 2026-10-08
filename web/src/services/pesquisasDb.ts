@@ -118,6 +118,7 @@ export interface Pesquisa {
   lider_id?: string | null;
   fluxo_id: string | null;
   nucleo_id?: string | null;
+  grupo_id?: string | null;
   turma_id?: string | null;
   user_id?: string;
   created_at?: string;
@@ -160,6 +161,7 @@ export interface Resposta {
   beneficiario_id?: string | null;
   matricula?: string | null;
   nucleo_id?: string | null;
+  grupo_id?: string | null;
   turma_id?: string | null;
   created_at?: string;
 }
@@ -390,8 +392,14 @@ export const dbService = {
   },
 
   async savePesquisa(pesquisa: Omit<Pesquisa, "id" | "created_at"> & { id?: string }): Promise<Pesquisa> {
+    const rawPayload = { ...pesquisa } as any;
+    if (rawPayload.turma_id && !rawPayload.grupo_id) {
+      rawPayload.grupo_id = rawPayload.turma_id;
+    }
+    delete rawPayload.turma_id;
+
     if (pesquisa.id) {
-      const { id, user_id, created_at, ...updatePayload } = pesquisa as any;
+      const { id, user_id, created_at, ...updatePayload } = rawPayload;
       const { data: updatedRows, error } = await supabase
         .from("pesquisa")
         .update(updatePayload)
@@ -410,7 +418,7 @@ export const dbService = {
       const { data: userData } = await supabase.auth.getUser();
       const { data, error } = await supabase
         .from("pesquisa")
-        .insert({ ...pesquisa, user_id: userData.user?.id })
+        .insert({ ...rawPayload, user_id: userData.user?.id })
         .select()
         .single();
       if (error) throw error;
@@ -458,6 +466,7 @@ export const dbService = {
       beneficiarioId?: string;
       matricula?: string;
       nucleoId?: string;
+      grupoId?: string;
       turmaId?: string;
     }
   ): Promise<void> {
@@ -469,7 +478,8 @@ export const dbService = {
     if (meta?.beneficiarioId) payload.beneficiario_id = meta.beneficiarioId;
     if (meta?.matricula) payload.matricula = meta.matricula;
     if (meta?.nucleoId) payload.nucleo_id = meta.nucleoId;
-    if (meta?.turmaId) payload.turma_id = meta.turmaId;
+    const gId = meta?.grupoId || meta?.turmaId;
+    if (gId) payload.grupo_id = gId;
 
     const { data: respData, error: respError } = await supabase
       .from("resposta")
@@ -511,9 +521,9 @@ export const dbService = {
     return data || [];
   },
 
-  async getTurmas(nucleoId?: string): Promise<{ id: string; nome: string; nucleo_id: string }[]> {
+  async getGrupos(nucleoId?: string): Promise<{ id: string; nome: string; nucleo_id: string }[]> {
     let q = supabase
-      .from("turmas")
+      .from("grupos")
       .select("id, nome, nucleo_id")
       .is("deleted_at", null)
       .order("nome", { ascending: true });
@@ -523,7 +533,11 @@ export const dbService = {
     return data || [];
   },
 
-  async getAlunosTurmaComStatus(turmaId: string | null | undefined, pesquisaId: string, nucleoId?: string | null): Promise<{
+  async getTurmas(nucleoId?: string): Promise<{ id: string; nome: string; nucleo_id: string }[]> {
+    return this.getGrupos(nucleoId);
+  },
+
+  async getAlunosGrupoComStatus(grupoId: string | null | undefined, pesquisaId: string, nucleoId?: string | null): Promise<{
     id: string;
     matricula: string;
     nomeCompleto: string;
@@ -534,11 +548,11 @@ export const dbService = {
   }[]> {
     let alunos: any[] = [];
 
-    if (turmaId) {
+    if (grupoId) {
       const { data: btData, error: btErr } = await supabase
-        .from("beneficiario_turmas")
+        .from("beneficiario_grupos")
         .select("beneficiarios(id, matricula, nome_completo, celular, celular_responsavel)")
-        .eq("turma_id", turmaId)
+        .eq("grupo_id", grupoId)
         .eq("status", "ativo")
         .is("deleted_at", null);
 
@@ -586,6 +600,10 @@ export const dbService = {
         respondidoEm: respTime,
       };
     });
+  },
+
+  async getAlunosTurmaComStatus(turmaId: string | null | undefined, pesquisaId: string, nucleoId?: string | null) {
+    return this.getAlunosGrupoComStatus(turmaId, pesquisaId, nucleoId);
   },
 
   async getDesafioBeneficiario(matricula: string) {
@@ -666,22 +684,23 @@ export const dbService = {
     }
 
     const { data: btData } = await supabase
-      .from("beneficiario_turmas")
-      .select("turma_id")
+      .from("beneficiario_grupos")
+      .select("grupo_id")
       .eq("beneficiario_id", aluno.id)
       .eq("status", "ativo")
       .is("deleted_at", null)
       .limit(1)
       .maybeSingle();
 
-    const turmaIdAtiva = btData?.turma_id || null;
+    const grupoIdAtivo = btData?.grupo_id || null;
 
     return {
       beneficiarioId: aluno.id,
       matricula: aluno.matricula,
       nomeCompleto: aluno.nome_completo,
       nucleoId: aluno.nucleo_id,
-      turmaId: turmaIdAtiva,
+      grupoId: grupoIdAtivo,
+      turmaId: grupoIdAtivo,
       desafio: [
         {
           id: "nome",

@@ -66,20 +66,23 @@ export function AprovacaoPendenciasManager({
   const turmasMap = useMemo(() => new Map(turmas.map((t) => [t.id, t])), [turmas]);
   const funcionariosMap = useMemo(() => new Map(funcionarios.map((f) => [f.id, f])), [funcionarios]);
 
-  function getTurmaNome(turmaId: string): string {
+  function getTurmaNome(turmaId?: string): string {
+    if (!turmaId) return "Não informada";
     const turma = turmasMap.get(turmaId);
     if (turma?.nome) return turma.nome;
     return `Turma #${turmaId.slice(0, 8)}`;
   }
 
-  function getProfessorNome(turmaId: string, professorId?: string): string {
+  function getProfessorNome(turmaId?: string, professorId?: string): string {
     if (professorId) {
       const func = funcionariosMap.get(professorId);
       if (func?.nomeCompleto) return func.nomeCompleto;
     }
-    const turma = turmasMap.get(turmaId);
-    if (turma?.responsaveisNomes && turma.responsaveisNomes.length > 0) {
-      return turma.responsaveisNomes.join(", ");
+    if (turmaId) {
+      const turma = turmasMap.get(turmaId);
+      if (turma?.responsaveisNomes && turma.responsaveisNomes.length > 0) {
+        return turma.responsaveisNomes.join(", ");
+      }
     }
     return professorId ? `Professor #${professorId.slice(0, 8)}` : "Não identificado";
   }

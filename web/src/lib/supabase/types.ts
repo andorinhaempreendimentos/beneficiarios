@@ -110,6 +110,10 @@ export type Database = {
           idade_minima: number | null
           nome: string
           nucleo_id: string | null
+          termo_grupo: string | null
+          termo_participante: string | null
+          termo_responsavel: string | null
+          termo_sessao: string | null
           tipo_aprovacao: Database["public"]["Enums"]["tipo_aprovacao"]
           updated_at: string
           uso_interno: boolean | null
@@ -124,6 +128,10 @@ export type Database = {
           idade_minima?: number | null
           nome: string
           nucleo_id?: string | null
+          termo_grupo?: string | null
+          termo_participante?: string | null
+          termo_responsavel?: string | null
+          termo_sessao?: string | null
           tipo_aprovacao?: Database["public"]["Enums"]["tipo_aprovacao"]
           updated_at?: string
           uso_interno?: boolean | null
@@ -138,6 +146,10 @@ export type Database = {
           idade_minima?: number | null
           nome?: string
           nucleo_id?: string | null
+          termo_grupo?: string | null
+          termo_participante?: string | null
+          termo_responsavel?: string | null
+          termo_sessao?: string | null
           tipo_aprovacao?: Database["public"]["Enums"]["tipo_aprovacao"]
           updated_at?: string
           uso_interno?: boolean | null
@@ -308,6 +320,57 @@ export type Database = {
           },
         ]
       }
+      beneficiario_grupos: {
+        Row: {
+          beneficiario_id: string
+          created_at: string
+          data_evasao: string | null
+          data_matricula: string
+          deleted_at: string | null
+          grupo_id: string
+          id: string
+          status: Database["public"]["Enums"]["status_beneficiario_turma"]
+          updated_at: string
+        }
+        Insert: {
+          beneficiario_id: string
+          created_at?: string
+          data_evasao?: string | null
+          data_matricula?: string
+          deleted_at?: string | null
+          grupo_id: string
+          id?: string
+          status?: Database["public"]["Enums"]["status_beneficiario_turma"]
+          updated_at?: string
+        }
+        Update: {
+          beneficiario_id?: string
+          created_at?: string
+          data_evasao?: string | null
+          data_matricula?: string
+          deleted_at?: string | null
+          grupo_id?: string
+          id?: string
+          status?: Database["public"]["Enums"]["status_beneficiario_turma"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "beneficiario_turmas_beneficiario_id_fkey"
+            columns: ["beneficiario_id"]
+            isOneToOne: false
+            referencedRelation: "beneficiarios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "beneficiario_turmas_turma_id_fkey"
+            columns: ["grupo_id"]
+            isOneToOne: false
+            referencedRelation: "grupos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       beneficiario_parq: {
         Row: {
           beneficiario_id: string
@@ -381,57 +444,6 @@ export type Database = {
             columns: ["execucao_aula_id"]
             isOneToOne: false
             referencedRelation: "execucoes_sessao"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      beneficiario_turmas: {
-        Row: {
-          beneficiario_id: string
-          created_at: string
-          data_evasao: string | null
-          data_matricula: string
-          deleted_at: string | null
-          id: string
-          status: Database["public"]["Enums"]["status_beneficiario_turma"]
-          turma_id: string
-          updated_at: string
-        }
-        Insert: {
-          beneficiario_id: string
-          created_at?: string
-          data_evasao?: string | null
-          data_matricula?: string
-          deleted_at?: string | null
-          id?: string
-          status?: Database["public"]["Enums"]["status_beneficiario_turma"]
-          turma_id: string
-          updated_at?: string
-        }
-        Update: {
-          beneficiario_id?: string
-          created_at?: string
-          data_evasao?: string | null
-          data_matricula?: string
-          deleted_at?: string | null
-          id?: string
-          status?: Database["public"]["Enums"]["status_beneficiario_turma"]
-          turma_id?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "beneficiario_turmas_beneficiario_id_fkey"
-            columns: ["beneficiario_id"]
-            isOneToOne: false
-            referencedRelation: "beneficiarios"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "beneficiario_turmas_turma_id_fkey"
-            columns: ["turma_id"]
-            isOneToOne: false
-            referencedRelation: "turmas"
             referencedColumns: ["id"]
           },
         ]
@@ -627,63 +639,24 @@ export type Database = {
           },
         ]
       }
-      categoria_turmas: {
+      categoria_campo: {
         Row: {
           created_at: string
           id: string
-          idade_maxima: number
-          idade_minima: number
           nome: string
-          sigla: string
-          updated_at: string
+          user_id: string | null
         }
         Insert: {
           created_at?: string
           id?: string
-          idade_maxima: number
-          idade_minima: number
           nome: string
-          sigla: string
-          updated_at?: string
+          user_id?: string | null
         }
         Update: {
           created_at?: string
           id?: string
-          idade_maxima?: number
-          idade_minima?: number
           nome?: string
-          sigla?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      faixas_etarias: {
-        Row: {
-          created_at: string
-          id: string
-          idade_maxima: number
-          idade_minima: number
-          nome: string
-          sigla: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          idade_maxima: number
-          idade_minima: number
-          nome: string
-          sigla: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          idade_maxima?: number
-          idade_minima?: number
-          nome?: string
-          sigla?: string
-          updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -767,30 +740,30 @@ export type Database = {
           created_at: string
           data: string
           enviado_por: string | null
+          grupo_id: string
           id: string
           observacao: string | null
           storage_key: string
-          turma_id: string
           updated_at: string
         }
         Insert: {
           created_at?: string
           data: string
           enviado_por?: string | null
+          grupo_id: string
           id?: string
           observacao?: string | null
           storage_key: string
-          turma_id: string
           updated_at?: string
         }
         Update: {
           created_at?: string
           data?: string
           enviado_por?: string | null
+          grupo_id?: string
           id?: string
           observacao?: string | null
           storage_key?: string
-          turma_id?: string
           updated_at?: string
         }
         Relationships: [
@@ -803,9 +776,9 @@ export type Database = {
           },
           {
             foreignKeyName: "confirmacoes_atividade_turma_id_fkey"
-            columns: ["turma_id"]
+            columns: ["grupo_id"]
             isOneToOne: false
-            referencedRelation: "turmas"
+            referencedRelation: "grupos"
             referencedColumns: ["id"]
           },
         ]
@@ -967,10 +940,12 @@ export type Database = {
         Row: {
           aprovado_em: string | null
           aprovado_por_user_id: string | null
+          atividade_id: string | null
           atualizado_em: string
           criado_em: string
           data: string
           foto_comprovante_url: string | null
+          grupo_id: string
           hora_fim_prevista: string
           hora_fim_real: string | null
           hora_inicio_prevista: string
@@ -983,15 +958,16 @@ export type Database = {
           sessao_id: string | null
           status: Database["public"]["Enums"]["status_execucao_aula"]
           status_aprovacao: Database["public"]["Enums"]["status_aprovacao_aula"]
-          turma_id: string
         }
         Insert: {
           aprovado_em?: string | null
           aprovado_por_user_id?: string | null
+          atividade_id?: string | null
           atualizado_em?: string
           criado_em?: string
           data: string
           foto_comprovante_url?: string | null
+          grupo_id: string
           hora_fim_prevista: string
           hora_fim_real?: string | null
           hora_inicio_prevista: string
@@ -1004,15 +980,16 @@ export type Database = {
           sessao_id?: string | null
           status?: Database["public"]["Enums"]["status_execucao_aula"]
           status_aprovacao?: Database["public"]["Enums"]["status_aprovacao_aula"]
-          turma_id: string
         }
         Update: {
           aprovado_em?: string | null
           aprovado_por_user_id?: string | null
+          atividade_id?: string | null
           atualizado_em?: string
           criado_em?: string
           data?: string
           foto_comprovante_url?: string | null
+          grupo_id?: string
           hora_fim_prevista?: string
           hora_fim_real?: string | null
           hora_inicio_prevista?: string
@@ -1025,7 +1002,6 @@ export type Database = {
           sessao_id?: string | null
           status?: Database["public"]["Enums"]["status_execucao_aula"]
           status_aprovacao?: Database["public"]["Enums"]["status_aprovacao_aula"]
-          turma_id?: string
         }
         Relationships: [
           {
@@ -1033,6 +1009,13 @@ export type Database = {
             columns: ["aprovado_por_user_id"]
             isOneToOne: false
             referencedRelation: "usuarios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "execucoes_aula_atividade_id_fkey"
+            columns: ["atividade_id"]
+            isOneToOne: false
+            referencedRelation: "atividades"
             referencedColumns: ["id"]
           },
           {
@@ -1053,17 +1036,77 @@ export type Database = {
             foreignKeyName: "execucoes_aula_sessao_id_fkey"
             columns: ["sessao_id"]
             isOneToOne: false
-            referencedRelation: "turma_horarios"
+            referencedRelation: "grupo_horarios"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "execucoes_aula_turma_id_fkey"
-            columns: ["turma_id"]
+            columns: ["grupo_id"]
             isOneToOne: false
-            referencedRelation: "turmas"
+            referencedRelation: "grupos"
             referencedColumns: ["id"]
           },
         ]
+      }
+      faixas_etarias: {
+        Row: {
+          created_at: string
+          id: string
+          idade_maxima: number
+          idade_minima: number
+          nome: string
+          sigla: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          idade_maxima: number
+          idade_minima: number
+          nome: string
+          sigla: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          idade_maxima?: number
+          idade_minima?: number
+          nome?: string
+          sigla?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      fluxo: {
+        Row: {
+          created_at: string
+          descricao: string | null
+          flow_data: Json
+          id: string
+          nome: string
+          tipo: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          descricao?: string | null
+          flow_data?: Json
+          id?: string
+          nome: string
+          tipo?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          descricao?: string | null
+          flow_data?: Json
+          id?: string
+          nome?: string
+          tipo?: string
+          user_id?: string | null
+        }
+        Relationships: []
       }
       funcionario_jornada: {
         Row: {
@@ -1243,44 +1286,236 @@ export type Database = {
           },
         ]
       }
+      grupo_horarios: {
+        Row: {
+          atividade_id: string | null
+          created_at: string
+          dia_semana: number
+          grupo_id: string
+          hora_fim: string
+          hora_inicio: string
+          id: string
+          nucleo_id: string | null
+          responsavel_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          atividade_id?: string | null
+          created_at?: string
+          dia_semana: number
+          grupo_id: string
+          hora_fim: string
+          hora_inicio: string
+          id?: string
+          nucleo_id?: string | null
+          responsavel_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          atividade_id?: string | null
+          created_at?: string
+          dia_semana?: number
+          grupo_id?: string
+          hora_fim?: string
+          hora_inicio?: string
+          id?: string
+          nucleo_id?: string | null
+          responsavel_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "turma_horarios_atividade_id_fkey"
+            columns: ["atividade_id"]
+            isOneToOne: false
+            referencedRelation: "atividades"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "turma_horarios_nucleo_id_fkey"
+            columns: ["nucleo_id"]
+            isOneToOne: false
+            referencedRelation: "nucleos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "turma_horarios_responsavel_id_fkey"
+            columns: ["responsavel_id"]
+            isOneToOne: false
+            referencedRelation: "funcionarios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "turma_horarios_turma_id_fkey"
+            columns: ["grupo_id"]
+            isOneToOne: false
+            referencedRelation: "grupos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      grupo_responsaveis: {
+        Row: {
+          created_at: string
+          funcionario_id: string
+          grupo_id: string
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          funcionario_id: string
+          grupo_id: string
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          funcionario_id?: string
+          grupo_id?: string
+          id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "turma_responsaveis_funcionario_id_fkey"
+            columns: ["funcionario_id"]
+            isOneToOne: false
+            referencedRelation: "funcionarios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "turma_responsaveis_turma_id_fkey"
+            columns: ["grupo_id"]
+            isOneToOne: false
+            referencedRelation: "grupos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      grupos: {
+        Row: {
+          atividade_id: string | null
+          created_at: string
+          data_fim: string | null
+          data_inicio: string | null
+          deleted_at: string | null
+          exclusiva: boolean
+          faixa_etaria_id: string | null
+          id: string
+          idade_maxima: number | null
+          idade_minima: number | null
+          identificador: string | null
+          nome: string
+          nucleo_id: string
+          permitir_fila_espera: boolean
+          status_inicial: Database["public"]["Enums"]["status_inscricao"]
+          tipo: Database["public"]["Enums"]["tipo_turma"]
+          updated_at: string
+          vagas_totais: number
+        }
+        Insert: {
+          atividade_id?: string | null
+          created_at?: string
+          data_fim?: string | null
+          data_inicio?: string | null
+          deleted_at?: string | null
+          exclusiva?: boolean
+          faixa_etaria_id?: string | null
+          id?: string
+          idade_maxima?: number | null
+          idade_minima?: number | null
+          identificador?: string | null
+          nome: string
+          nucleo_id: string
+          permitir_fila_espera?: boolean
+          status_inicial?: Database["public"]["Enums"]["status_inscricao"]
+          tipo?: Database["public"]["Enums"]["tipo_turma"]
+          updated_at?: string
+          vagas_totais?: number
+        }
+        Update: {
+          atividade_id?: string | null
+          created_at?: string
+          data_fim?: string | null
+          data_inicio?: string | null
+          deleted_at?: string | null
+          exclusiva?: boolean
+          faixa_etaria_id?: string | null
+          id?: string
+          idade_maxima?: number | null
+          idade_minima?: number | null
+          identificador?: string | null
+          nome?: string
+          nucleo_id?: string
+          permitir_fila_espera?: boolean
+          status_inicial?: Database["public"]["Enums"]["status_inscricao"]
+          tipo?: Database["public"]["Enums"]["tipo_turma"]
+          updated_at?: string
+          vagas_totais?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "turmas_atividade_id_fkey"
+            columns: ["atividade_id"]
+            isOneToOne: false
+            referencedRelation: "atividades"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "turmas_categoria_id_fkey"
+            columns: ["faixa_etaria_id"]
+            isOneToOne: false
+            referencedRelation: "faixas_etarias"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "turmas_nucleo_id_fkey"
+            columns: ["nucleo_id"]
+            isOneToOne: false
+            referencedRelation: "nucleos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       inscricoes: {
         Row: {
           beneficiario_id: string
           created_at: string
           expira_em: string | null
+          grupo_id: string | null
           id: string
           nucleo_id: string | null
           observacoes: string | null
           origem: string
           respostas_formulario: Json | null
           status: Database["public"]["Enums"]["status_inscricao"]
-          turma_id: string | null
           updated_at: string
         }
         Insert: {
           beneficiario_id: string
           created_at?: string
           expira_em?: string | null
+          grupo_id?: string | null
           id?: string
           nucleo_id?: string | null
           observacoes?: string | null
           origem?: string
           respostas_formulario?: Json | null
           status?: Database["public"]["Enums"]["status_inscricao"]
-          turma_id?: string | null
           updated_at?: string
         }
         Update: {
           beneficiario_id?: string
           created_at?: string
           expira_em?: string | null
+          grupo_id?: string | null
           id?: string
           nucleo_id?: string | null
           observacoes?: string | null
           origem?: string
           respostas_formulario?: Json | null
           status?: Database["public"]["Enums"]["status_inscricao"]
-          turma_id?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -1300,12 +1535,39 @@ export type Database = {
           },
           {
             foreignKeyName: "inscricoes_turma_id_fkey"
-            columns: ["turma_id"]
+            columns: ["grupo_id"]
             isOneToOne: false
-            referencedRelation: "turmas"
+            referencedRelation: "grupos"
             referencedColumns: ["id"]
           },
         ]
+      }
+      lider: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          nome: string
+          telefone: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          nome: string
+          telefone?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          nome?: string
+          telefone?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
       }
       materiais: {
         Row: {
@@ -1575,6 +1837,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      objeto: {
+        Row: {
+          codigo_objeto: string | null
+          codigo_programa: string | null
+          created_at: string
+          descricao: string | null
+          id: string
+          nome: string
+          nome_programa: string | null
+          termo_fomento: string | null
+          tipo: string | null
+          user_id: string | null
+        }
+        Insert: {
+          codigo_objeto?: string | null
+          codigo_programa?: string | null
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          nome: string
+          nome_programa?: string | null
+          termo_fomento?: string | null
+          tipo?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          codigo_objeto?: string | null
+          codigo_programa?: string | null
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          nome?: string
+          nome_programa?: string | null
+          termo_fomento?: string | null
+          tipo?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
       }
       objeto_cargos_previstos: {
         Row: {
@@ -1950,6 +2251,151 @@ export type Database = {
         }
         Relationships: []
       }
+      pergunta: {
+        Row: {
+          categoria_id: string | null
+          config: Json
+          created_at: string
+          fluxo_id: string | null
+          id: string
+          obrigatoria: boolean
+          ordem: number
+          tipo: string
+          titulo: string
+        }
+        Insert: {
+          categoria_id?: string | null
+          config?: Json
+          created_at?: string
+          fluxo_id?: string | null
+          id?: string
+          obrigatoria?: boolean
+          ordem: number
+          tipo: string
+          titulo: string
+        }
+        Update: {
+          categoria_id?: string | null
+          config?: Json
+          created_at?: string
+          fluxo_id?: string | null
+          id?: string
+          obrigatoria?: boolean
+          ordem?: number
+          tipo?: string
+          titulo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pergunta_categoria_id_fkey"
+            columns: ["categoria_id"]
+            isOneToOne: false
+            referencedRelation: "categoria_campo"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pergunta_fluxo_id_fkey"
+            columns: ["fluxo_id"]
+            isOneToOne: false
+            referencedRelation: "fluxo"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pesquisa: {
+        Row: {
+          coordenador_id: string | null
+          created_at: string
+          descricao: string | null
+          exigir_cpf: boolean
+          fluxo_id: string | null
+          grupo_id: string | null
+          id: string
+          lider_id: string | null
+          nucleo_id: string | null
+          objeto_id: string | null
+          publicada: boolean
+          titulo: string
+          token: string
+          user_id: string | null
+        }
+        Insert: {
+          coordenador_id?: string | null
+          created_at?: string
+          descricao?: string | null
+          exigir_cpf?: boolean
+          fluxo_id?: string | null
+          grupo_id?: string | null
+          id?: string
+          lider_id?: string | null
+          nucleo_id?: string | null
+          objeto_id?: string | null
+          publicada?: boolean
+          titulo: string
+          token: string
+          user_id?: string | null
+        }
+        Update: {
+          coordenador_id?: string | null
+          created_at?: string
+          descricao?: string | null
+          exigir_cpf?: boolean
+          fluxo_id?: string | null
+          grupo_id?: string | null
+          id?: string
+          lider_id?: string | null
+          nucleo_id?: string | null
+          objeto_id?: string | null
+          publicada?: boolean
+          titulo?: string
+          token?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pesquisa_coordenador_id_fkey"
+            columns: ["coordenador_id"]
+            isOneToOne: false
+            referencedRelation: "funcionarios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pesquisa_fluxo_id_fkey"
+            columns: ["fluxo_id"]
+            isOneToOne: false
+            referencedRelation: "fluxo"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pesquisa_lider_id_fkey"
+            columns: ["lider_id"]
+            isOneToOne: false
+            referencedRelation: "lider"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pesquisa_nucleo_id_fkey"
+            columns: ["nucleo_id"]
+            isOneToOne: false
+            referencedRelation: "nucleos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pesquisa_objeto_id_fkey"
+            columns: ["objeto_id"]
+            isOneToOne: false
+            referencedRelation: "objetos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pesquisa_turma_id_fkey"
+            columns: ["grupo_id"]
+            isOneToOne: false
+            referencedRelation: "grupos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       refresh_tokens: {
         Row: {
           created_at: string
@@ -2046,33 +2492,33 @@ export type Database = {
           beneficiario_id: string
           created_at: string
           data: string
+          grupo_id: string
           id: string
           observacao: string | null
           presente: boolean
           status: string
-          turma_id: string
           updated_at: string
         }
         Insert: {
           beneficiario_id: string
           created_at?: string
           data: string
+          grupo_id: string
           id?: string
           observacao?: string | null
           presente?: boolean
           status?: string
-          turma_id: string
           updated_at?: string
         }
         Update: {
           beneficiario_id?: string
           created_at?: string
           data?: string
+          grupo_id?: string
           id?: string
           observacao?: string | null
           presente?: boolean
           status?: string
-          turma_id?: string
           updated_at?: string
         }
         Relationships: [
@@ -2085,12 +2531,42 @@ export type Database = {
           },
           {
             foreignKeyName: "registros_presenca_turma_id_fkey"
-            columns: ["turma_id"]
+            columns: ["grupo_id"]
             isOneToOne: false
-            referencedRelation: "turmas"
+            referencedRelation: "grupos"
             referencedColumns: ["id"]
           },
         ]
+      }
+      relatorio_salvo: {
+        Row: {
+          created_at: string
+          descricao: string | null
+          filtros: Json
+          id: string
+          nome: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          descricao?: string | null
+          filtros?: Json
+          id?: string
+          nome: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          descricao?: string | null
+          filtros?: Json
+          id?: string
+          nome?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
       }
       relatorios_prestacao_contas: {
         Row: {
@@ -2152,8 +2628,174 @@ export type Database = {
           },
         ]
       }
+      resposta: {
+        Row: {
+          beneficiario_id: string | null
+          cpf: string | null
+          created_at: string
+          fingerprint: string
+          grupo_id: string | null
+          id: string
+          matricula: string | null
+          nucleo_id: string | null
+          pesquisa_id: string | null
+        }
+        Insert: {
+          beneficiario_id?: string | null
+          cpf?: string | null
+          created_at?: string
+          fingerprint: string
+          grupo_id?: string | null
+          id?: string
+          matricula?: string | null
+          nucleo_id?: string | null
+          pesquisa_id?: string | null
+        }
+        Update: {
+          beneficiario_id?: string | null
+          cpf?: string | null
+          created_at?: string
+          fingerprint?: string
+          grupo_id?: string | null
+          id?: string
+          matricula?: string | null
+          nucleo_id?: string | null
+          pesquisa_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resposta_beneficiario_id_fkey"
+            columns: ["beneficiario_id"]
+            isOneToOne: false
+            referencedRelation: "beneficiarios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resposta_nucleo_id_fkey"
+            columns: ["nucleo_id"]
+            isOneToOne: false
+            referencedRelation: "nucleos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resposta_pesquisa_id_fkey"
+            columns: ["pesquisa_id"]
+            isOneToOne: false
+            referencedRelation: "pesquisa"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resposta_turma_id_fkey"
+            columns: ["grupo_id"]
+            isOneToOne: false
+            referencedRelation: "grupos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      resposta_item: {
+        Row: {
+          id: string
+          pergunta_id: string | null
+          resposta_id: string | null
+          valor: Json
+        }
+        Insert: {
+          id?: string
+          pergunta_id?: string | null
+          resposta_id?: string | null
+          valor: Json
+        }
+        Update: {
+          id?: string
+          pergunta_id?: string | null
+          resposta_id?: string | null
+          valor?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resposta_item_pergunta_id_fkey"
+            columns: ["pergunta_id"]
+            isOneToOne: false
+            referencedRelation: "pergunta"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resposta_item_resposta_id_fkey"
+            columns: ["resposta_id"]
+            isOneToOne: false
+            referencedRelation: "resposta"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      respostas_conferencia_professores: {
+        Row: {
+          created_at: string | null
+          dados_turmas: Json
+          id: string
+          modalidade_id: string | null
+          modalidade_nome: string
+          nucleo_id: string | null
+          nucleo_nome: string
+          observacoes: string | null
+          professor_id: string | null
+          professor_nome: string
+          qtd_turmas: number
+        }
+        Insert: {
+          created_at?: string | null
+          dados_turmas: Json
+          id?: string
+          modalidade_id?: string | null
+          modalidade_nome: string
+          nucleo_id?: string | null
+          nucleo_nome: string
+          observacoes?: string | null
+          professor_id?: string | null
+          professor_nome: string
+          qtd_turmas: number
+        }
+        Update: {
+          created_at?: string | null
+          dados_turmas?: Json
+          id?: string
+          modalidade_id?: string | null
+          modalidade_nome?: string
+          nucleo_id?: string | null
+          nucleo_nome?: string
+          observacoes?: string | null
+          professor_id?: string | null
+          professor_nome?: string
+          qtd_turmas?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "respostas_conferencia_professores_modalidade_id_fkey"
+            columns: ["modalidade_id"]
+            isOneToOne: false
+            referencedRelation: "atividades"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "respostas_conferencia_professores_nucleo_id_fkey"
+            columns: ["nucleo_id"]
+            isOneToOne: false
+            referencedRelation: "nucleos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "respostas_conferencia_professores_professor_id_fkey"
+            columns: ["professor_id"]
+            isOneToOne: false
+            referencedRelation: "funcionarios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       supervisoes: {
         Row: {
+          atividade_desenvolvida: string | null
           beneficiarios_esperados: number | null
           beneficiarios_presentes: number | null
           coordenador_id: string
@@ -2171,14 +2813,17 @@ export type Database = {
           materiais_observacoes: string | null
           nucleo_id: string
           observacoes_gerais: string | null
+          orientacoes_professor: string | null
           professor_presente: boolean | null
           professores_ids: string[] | null
+          providencias_necessarias: string | null
           status: string
           uniformes_avaliacao: string | null
           uniformes_observacoes: string | null
           updated_at: string
         }
         Insert: {
+          atividade_desenvolvida?: string | null
           beneficiarios_esperados?: number | null
           beneficiarios_presentes?: number | null
           coordenador_id: string
@@ -2196,14 +2841,17 @@ export type Database = {
           materiais_observacoes?: string | null
           nucleo_id: string
           observacoes_gerais?: string | null
+          orientacoes_professor?: string | null
           professor_presente?: boolean | null
           professores_ids?: string[] | null
+          providencias_necessarias?: string | null
           status?: string
           uniformes_avaliacao?: string | null
           uniformes_observacoes?: string | null
           updated_at?: string
         }
         Update: {
+          atividade_desenvolvida?: string | null
           beneficiarios_esperados?: number | null
           beneficiarios_presentes?: number | null
           coordenador_id?: string
@@ -2221,8 +2869,10 @@ export type Database = {
           materiais_observacoes?: string | null
           nucleo_id?: string
           observacoes_gerais?: string | null
+          orientacoes_professor?: string | null
           professor_presente?: boolean | null
           professores_ids?: string[] | null
+          providencias_necessarias?: string | null
           status?: string
           uniformes_avaliacao?: string | null
           uniformes_observacoes?: string | null
@@ -2346,170 +2996,17 @@ export type Database = {
           },
         ]
       }
-      turma_horarios: {
+      test_mcp: {
         Row: {
-          atividade_id?: string | null
-          created_at: string
-          dia_semana: number
-          hora_fim: string
-          hora_inicio: string
-          id: string
-          nucleo_id?: string | null
-          responsavel_id?: string | null
-          turma_id: string
-          updated_at: string
+          id: number | null
         }
         Insert: {
-          atividade_id?: string | null
-          created_at?: string
-          dia_semana: number
-          hora_fim: string
-          hora_inicio: string
-          id?: string
-          nucleo_id?: string | null
-          responsavel_id?: string | null
-          turma_id: string
-          updated_at?: string
+          id?: number | null
         }
         Update: {
-          atividade_id?: string | null
-          created_at?: string
-          dia_semana?: number
-          hora_fim?: string
-          hora_inicio?: string
-          id?: string
-          nucleo_id?: string | null
-          responsavel_id?: string | null
-          turma_id?: string
-          updated_at?: string
+          id?: number | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "turma_horarios_turma_id_fkey"
-            columns: ["turma_id"]
-            isOneToOne: false
-            referencedRelation: "turmas"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      turma_responsaveis: {
-        Row: {
-          created_at: string
-          funcionario_id: string
-          id: string
-          turma_id: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          funcionario_id: string
-          id?: string
-          turma_id: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          funcionario_id?: string
-          id?: string
-          turma_id?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "turma_responsaveis_funcionario_id_fkey"
-            columns: ["funcionario_id"]
-            isOneToOne: false
-            referencedRelation: "funcionarios"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "turma_responsaveis_turma_id_fkey"
-            columns: ["turma_id"]
-            isOneToOne: false
-            referencedRelation: "turmas"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      turmas: {
-        Row: {
-          atividade_id: string | null
-          categoria_id?: string | null
-          faixa_etaria_id: string | null
-          tipo: Database["public"]["Enums"]["tipo_turma"]
-          created_at: string
-          data_fim: string | null
-          data_inicio: string | null
-          deleted_at: string | null
-          exclusiva: boolean
-          id: string
-          nome: string
-          nucleo_id: string
-          permitir_fila_espera: boolean
-          status_inicial: Database["public"]["Enums"]["status_inscricao"]
-          updated_at: string
-          vagas_totais: number
-        }
-        Insert: {
-          atividade_id?: string | null
-          categoria_id?: string | null
-          faixa_etaria_id?: string | null
-          tipo?: Database["public"]["Enums"]["tipo_turma"]
-          created_at?: string
-          data_fim?: string | null
-          data_inicio?: string | null
-          deleted_at?: string | null
-          exclusiva?: boolean
-          id?: string
-          nome: string
-          nucleo_id: string
-          permitir_fila_espera?: boolean
-          status_inicial?: Database["public"]["Enums"]["status_inscricao"]
-          updated_at?: string
-          vagas_totais?: number
-        }
-        Update: {
-          atividade_id?: string | null
-          categoria_id?: string | null
-          faixa_etaria_id?: string | null
-          tipo?: Database["public"]["Enums"]["tipo_turma"]
-          created_at?: string
-          data_fim?: string | null
-          data_inicio?: string | null
-          deleted_at?: string | null
-          exclusiva?: boolean
-          id?: string
-          nome?: string
-          nucleo_id?: string
-          permitir_fila_espera?: boolean
-          status_inicial?: Database["public"]["Enums"]["status_inscricao"]
-          updated_at?: string
-          vagas_totais?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "turmas_atividade_id_fkey"
-            columns: ["atividade_id"]
-            isOneToOne: false
-            referencedRelation: "atividades"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "turmas_categoria_id_fkey"
-            columns: ["faixa_etaria_id"]
-            isOneToOne: false
-            referencedRelation: "faixas_etarias"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "turmas_nucleo_id_fkey"
-            columns: ["nucleo_id"]
-            isOneToOne: false
-            referencedRelation: "nucleos"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       usuarios: {
         Row: {
@@ -2563,18 +3060,7 @@ export type Database = {
       }
     }
     Views: {
-      sessoes: {
-        Row: Database["public"]["Tables"]["turma_horarios"]["Row"]
-        Insert: Database["public"]["Tables"]["turma_horarios"]["Insert"]
-        Update: Database["public"]["Tables"]["turma_horarios"]["Update"]
-        Relationships: Database["public"]["Tables"]["turma_horarios"]["Relationships"]
-      }
-      execucoes_aula: {
-        Row: Database["public"]["Tables"]["execucoes_sessao"]["Row"]
-        Insert: Database["public"]["Tables"]["execucoes_sessao"]["Insert"]
-        Update: Database["public"]["Tables"]["execucoes_sessao"]["Update"]
-        Relationships: Database["public"]["Tables"]["execucoes_sessao"]["Relationships"]
-      }
+      [_ in never]: never
     }
     Functions: {
       admin_atualizar_usuario: {
@@ -2609,13 +3095,13 @@ export type Database = {
           beneficiario_id: string
           created_at: string
           expira_em: string | null
+          grupo_id: string | null
           id: string
           nucleo_id: string | null
           observacoes: string | null
           origem: string
           respostas_formulario: Json | null
           status: Database["public"]["Enums"]["status_inscricao"]
-          turma_id: string | null
           updated_at: string
         }
         SetofOptions: {
@@ -2625,6 +3111,10 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      atribuir_turma_inscricao: {
+        Args: { p_inscricao_id: string; p_turma_id: string }
+        Returns: undefined
+      }
       auto_encerrar_aulas: { Args: never; Returns: undefined }
       cancelar_inscricao: {
         Args: { p_id: string }
@@ -2632,13 +3122,13 @@ export type Database = {
           beneficiario_id: string
           created_at: string
           expira_em: string | null
+          grupo_id: string | null
           id: string
           nucleo_id: string | null
           observacoes: string | null
           origem: string
           respostas_formulario: Json | null
           status: Database["public"]["Enums"]["status_inscricao"]
-          turma_id: string | null
           updated_at: string
         }
         SetofOptions: {
@@ -2660,13 +3150,13 @@ export type Database = {
           beneficiario_id: string
           created_at: string
           expira_em: string | null
+          grupo_id: string | null
           id: string
           nucleo_id: string | null
           observacoes: string | null
           origem: string
           respostas_formulario: Json | null
           status: Database["public"]["Enums"]["status_inscricao"]
-          turma_id: string | null
           updated_at: string
         }
         SetofOptions: {
@@ -2682,6 +3172,7 @@ export type Database = {
         Args: { p_beneficiario_id: string; p_turma_id: string }
         Returns: undefined
       }
+      export_all_public_tables_json: { Args: never; Returns: Json }
       get_logo_url: { Args: never; Returns: string }
       has_permissao: {
         Args: { p_acao: string; p_modulo: string }
@@ -2731,13 +3222,13 @@ export type Database = {
           beneficiario_id: string
           created_at: string
           expira_em: string | null
+          grupo_id: string | null
           id: string
           nucleo_id: string | null
           observacoes: string | null
           origem: string
           respostas_formulario: Json | null
           status: Database["public"]["Enums"]["status_inscricao"]
-          turma_id: string | null
           updated_at: string
         }
         SetofOptions: {
@@ -2965,8 +3456,8 @@ export const Constants = {
         "entrada_intervalo",
         "saida_intervalo",
       ],
+      tipo_turma: ["regular", "operacional"],
       tipo_usuario: ["admin", "gestor", "funcionario", "beneficiario"],
     },
   },
 } as const
-

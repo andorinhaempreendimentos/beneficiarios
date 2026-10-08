@@ -69,14 +69,17 @@ export function GestaoMatriculasProfessor({
       const sb = createClient();
       const ids = turmas.map((t) => t.id);
       const { data: bts } = await sb
-        .from("beneficiario_turmas")
-        .select("turma_id")
-        .in("turma_id", ids)
+        .from("beneficiario_grupos")
+        .select("grupo_id")
+        .in("grupo_id", ids)
         .eq("status", "ativo")
         .is("deleted_at", null);
       const map: Record<string, number> = {};
-      for (const bt of bts ?? []) {
-        map[bt.turma_id] = (map[bt.turma_id] ?? 0) + 1;
+      for (const bt of (bts ?? []) as any[]) {
+        const gid = bt.grupo_id || bt.turma_id;
+        if (gid) {
+          map[gid] = (map[gid] ?? 0) + 1;
+        }
       }
       return map;
     },

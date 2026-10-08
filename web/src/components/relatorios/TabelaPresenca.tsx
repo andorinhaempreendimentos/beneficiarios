@@ -109,7 +109,7 @@ export function TabelaPresenca({ filtros }: Props) {
         // 1. Buscar execuções de aula dentro do período
         let qAulas = sb
           .from("execucoes_sessao")
-          .select("id, turma_id, data, observacoes, professor_id")
+          .select("id, grupo_id, data, observacoes, professor_id")
           .order("data", { ascending: true });
 
         if (filtros.dataInicio) {
@@ -119,7 +119,7 @@ export function TabelaPresenca({ filtros }: Props) {
           qAulas = qAulas.lte("data", filtros.dataFim);
         }
         if (filtros.turmaId) {
-          qAulas = qAulas.eq("turma_id", filtros.turmaId);
+          qAulas = qAulas.eq("grupo_id", filtros.turmaId);
         }
 
         const { data: aulasData, error: aulasErr } = await qAulas;
@@ -127,7 +127,7 @@ export function TabelaPresenca({ filtros }: Props) {
 
         const aulasMapeadas: ExecucaoAulaItem[] = (aulasData || []).map((a: any) => ({
           id: a.id,
-          turmaId: a.turma_id,
+          turmaId: a.grupo_id || a.turma_id,
           data: a.data,
           observacoes: a.observacoes,
           professorId: a.professor_id,
@@ -153,15 +153,15 @@ export function TabelaPresenca({ filtros }: Props) {
           }));
         }
 
-        // 3. Buscar matrículas reais dos beneficiários nas turmas
+        // 3. Buscar matrículas reais dos beneficiários nas turmas/grupos
         const { data: matData, error: matErr } = await sb
-          .from("beneficiario_turmas")
-          .select("beneficiario_id, turma_id, status")
+          .from("beneficiario_grupos")
+          .select("beneficiario_id, grupo_id, status")
           .is("deleted_at", null);
 
         const matriculasMapeadas: MatriculaItem[] = (matData || []).map((m: any) => ({
           beneficiarioId: m.beneficiario_id,
-          turmaId: m.turma_id,
+          turmaId: m.grupo_id || m.turma_id,
           status: m.status,
         }));
 

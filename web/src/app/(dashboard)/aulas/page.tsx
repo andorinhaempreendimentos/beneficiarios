@@ -238,7 +238,7 @@ export default function AulasAdminPage() {
                   </tr>
                 ) : (
                   resultado.map((a) => {
-                    const turma = turmaMap.get(a.turmaId);
+                    const turma = a.turmaId ? turmaMap.get(a.turmaId) : null;
                     const prof = a.professorId ? funcMap.get(a.professorId) : null;
                     const st = STATUS_MAP[a.status] || STATUS_MAP.em_andamento;
                     const StIcon = st.icon;
@@ -252,7 +252,7 @@ export default function AulasAdminPage() {
                           </div>
                         </td>
                         <td className="px-4 py-3">
-                          <span className="font-medium text-zinc-900">{turma?.nome ?? a.turmaId.slice(0, 8)}</span>
+                          <span className="font-medium text-zinc-900">{turma?.nome ?? (a.turmaId ? a.turmaId.slice(0, 8) : "—")}</span>
                         </td>
                         <td className="px-4 py-3 text-zinc-600">
                           {prof?.nomeCompleto ?? "—"}

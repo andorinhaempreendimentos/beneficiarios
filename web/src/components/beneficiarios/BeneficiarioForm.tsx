@@ -55,9 +55,16 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
   const [pcd, setPcd] = useState(b?.pcd ?? false);
   const [vinculos, setVinculos] = useState<VinculoTurma[]>(() => {
     if (b?.turmas && b.turmas.length > 0) return b.turmas;
+    if ((b as any)?.gruposInfo && (b as any).gruposInfo.length > 0) {
+      return (b as any).gruposInfo.map((ti: any) => ({
+        turmaId: ti.grupoId || ti.turmaId || "",
+        status: "Ativo",
+        dataRegistro: "",
+      }));
+    }
     if ((b as any)?.turmasInfo && (b as any).turmasInfo.length > 0) {
       return (b as any).turmasInfo.map((ti: any) => ({
-        turmaId: ti.turmaId || "",
+        turmaId: ti.grupoId || ti.turmaId || "",
         status: "Ativo",
         dataRegistro: "",
       }));
@@ -78,6 +85,7 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
   const [buscandoCep, setBuscandoCep] = useState(false);
 
   const initialNucleoId = b?.nucleoId ||
+    (b as any)?.gruposInfo?.[0]?.nucleoId ||
     (b as any)?.turmasInfo?.[0]?.nucleoId ||
     (b as any)?.turmas?.[0]?.nucleoId ||
     "";
@@ -191,7 +199,7 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
   }
 
   function adicionarTurma() {
-    setVinculos((v) => [...v, { turmaId: "", status: "Ativo", dataRegistro: "" }]);
+    setVinculos((v) => [...v, { grupoId: "", turmaId: "", status: "Ativo", dataRegistro: "" }]);
   }
 
   function removerTurma(index: number) {

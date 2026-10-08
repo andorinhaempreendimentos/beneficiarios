@@ -14,7 +14,7 @@ export function ChamadaView({ turmas, funcionarios = [] }: { turmas: TurmaApi[];
   const { toast } = useToast();
   const { user } = useAuth();
   const searchParams = useSearchParams();
-  const queryTurmaId = searchParams.get("turmaId");
+  const queryTurmaId = searchParams.get("grupoId") || searchParams.get("turmaId");
   const queryData = searchParams.get("data") || new Date().toISOString().split("T")[0];
 
   const [dataAula, setDataAula] = useState<string>(queryData);

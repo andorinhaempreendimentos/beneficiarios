@@ -1,6 +1,7 @@
 export interface ExecucaoSessaoApi {
   id: string;
-  turmaId: string;
+  grupoId?: string;
+  turmaId?: string; // alias retrocompatível
   nucleoId?: string;
   sessaoId?: string;
   atividadeId?: string;

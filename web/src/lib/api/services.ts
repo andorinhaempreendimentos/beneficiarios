@@ -280,6 +280,8 @@ export interface TurmaApi {
   slots?: any[];
 }
 
+export type GrupoApi = TurmaApi;
+
 export interface BeneficiarioApi {
   id: string;
   matricula: string;
@@ -304,8 +306,20 @@ export interface BeneficiarioApi {
   cpf?: string;
   fotoUrl?: string;
   criadoEm: string;
-  turmasInfo?: Array<{
+  gruposInfo?: Array<{
+    grupoId?: string;
     turmaId?: string;
+    grupoNome?: string;
+    turmaNome?: string;
+    nucleoId?: string;
+    nucleoNome?: string;
+    atividadeId?: string;
+    atividadeNome?: string;
+  }>;
+  turmasInfo?: Array<{
+    grupoId?: string;
+    turmaId?: string;
+    grupoNome?: string;
     turmaNome?: string;
     nucleoId?: string;
     nucleoNome?: string;
@@ -510,7 +524,7 @@ const DIA_KEY_MAP: Record<number, string> = {
 };
 
 function mapTurma(r: any): TurmaApi {
-  const horarios = r.turma_horarios ?? [];
+  const horarios = r.grupo_horarios ?? r.turma_horarios ?? [];
   const slots = horarios.map((th: any) => {
     const inicioHour = parseInt(String(th.hora_inicio || '').split(':')[0], 10);
     const fimHour = parseInt(String(th.hora_fim || '').split(':')[0], 10);
@@ -547,6 +561,8 @@ function mapTurma(r: any): TurmaApi {
   const idadeMinima = r.idade_minima != null ? Number(r.idade_minima) : faixaRaw?.idade_minima != null ? Number(faixaRaw.idade_minima) : undefined;
   const idadeMaxima = r.idade_maxima != null ? Number(r.idade_maxima) : faixaRaw?.idade_maxima != null ? Number(faixaRaw.idade_maxima) : undefined;
 
+  const responsaveisList = r.grupo_responsaveis ?? r.turma_responsaveis ?? [];
+
   return {
     id: r.id,
     nome: r.nome,
@@ -560,8 +576,8 @@ function mapTurma(r: any): TurmaApi {
     faixaEtaria: faixaEtariaObj,
     categoriaId: faixaEtariaId,
     categoria: faixaEtariaObj,
-    responsaveis: (r.turma_responsaveis ?? []).map((tr: any) => tr.funcionario_id),
-    responsaveisNomes: (r.turma_responsaveis ?? []).map((tr: any) => tr.funcionarios?.nome_completo).filter(Boolean),
+    responsaveis: responsaveisList.map((tr: any) => tr.funcionario_id || tr.responsavel_id),
+    responsaveisNomes: responsaveisList.map((tr: any) => tr.funcionarios?.nome_completo).filter(Boolean),
     vagasTotais,
     vagasOcupadas,
     vagasLivres: Math.max(0, vagasTotais - vagasOcupadas),
@@ -586,17 +602,20 @@ function parseSexoDisplay(s: string | null | undefined): string {
 }
 
 function mapBeneficiario(r: any): BeneficiarioApi {
-  const turmasInfo = (r.beneficiario_turmas ?? []).map((bt: any) => {
-    const t = bt.turmas;
+  const vinculosList = r.beneficiario_grupos ?? r.beneficiario_turmas ?? [];
+  const turmasInfo = vinculosList.map((bt: any) => {
+    const t = bt.grupos || bt.turmas;
     return {
       turmaId: t?.id,
       turmaNome: t?.nome,
+      grupoId: t?.id,
+      grupoNome: t?.nome,
       nucleoId: t?.nucleo_id || r.nucleo_id,
       nucleoNome: t?.nucleos?.identificacao || r.nucleos?.identificacao,
       atividadeId: t?.atividade_id,
       atividadeNome: t?.atividades?.nome,
     };
-  }).filter((vt: any) => vt.turmaNome || vt.nucleoNome || vt.atividadeNome);
+  }).filter((vt: any) => vt.turmaNome || vt.grupoNome || vt.nucleoNome || vt.atividadeNome);
 
   return {
     id: r.id, matricula: r.matricula, nomeCompleto: r.nome_completo,
@@ -646,12 +665,15 @@ function mapEquipamento(r: any): EquipamentoApi {
 }
 
 function mapInscricao(r: any): InscricaoApi {
+  const grupoData = r.grupos || r.turmas;
+  const gid = r.grupo_id || r.turma_id;
   return {
-    id: r.id, turmaId: r.turma_id, beneficiarioId: r.beneficiario_id, status: r.status,
+    id: r.id, turmaId: gid, grupoId: gid, beneficiarioId: r.beneficiario_id, status: r.status,
     origem: r.origem, observacoes: r.observacoes ?? undefined, criadoEm: r.created_at,
-    turma: r.turmas ? mapTurma(r.turmas) : undefined,
+    turma: grupoData ? mapTurma(grupoData) : undefined,
+    grupo: grupoData ? mapTurma(grupoData) : undefined,
     beneficiario: r.beneficiarios ? mapBeneficiario(r.beneficiarios) : undefined,
-  };
+  } as any;
 }
 
 function mapUsuario(r: any): UsuarioApi {
@@ -677,9 +699,11 @@ function mapPerfil(r: any): PerfilApi {
 }
 
 function mapExecucaoSessao(r: any): ExecucaoSessaoApi {
+  const gid = r.grupo_id || r.turma_id;
   return {
     id: r.id,
-    turmaId: r.turma_id,
+    grupoId: gid,
+    turmaId: gid,
     nucleoId: r.nucleo_id ?? undefined,
     sessaoId: r.sessao_id ?? undefined,
     atividadeId: r.atividade_id ?? undefined,
@@ -1033,15 +1057,16 @@ function toAtividadeRow(b: Record<string, unknown>): Database['public']['Tables'
   } as any;
 }
 
-// ── Turmas ───────────────────────────────────────────────────────────────
+// ── Grupos ───────────────────────────────────────────────────────────────
 
-const TURMA_SELECT = '*, nucleos(*), atividades(*), turma_responsaveis(*, funcionarios(nome_completo)), turma_horarios(*, nucleos(id, identificacao), atividades(*), funcionarios(id, nome_completo)), faixas_etarias(*)';
+const GRUPO_SELECT = '*, nucleos(*), atividades(*), grupo_responsaveis(*, funcionarios(nome_completo)), grupo_horarios(*, nucleos(id, identificacao), atividades(*), funcionarios(id, nome_completo)), faixas_etarias(*)';
+const TURMA_SELECT = GRUPO_SELECT;
 
-export const turmasApi = {
+export const gruposApi = {
   async list(p?: QP): Promise<Paginated<TurmaApi>> {
     const sb = await getSupabase();
     const { page, limit, from, to } = paginar(num(p?.page), num(p?.limit));
-    let q = sb.from('turmas').select(TURMA_SELECT, { count: 'exact' }).is('deleted_at', null);
+    let q = sb.from('grupos').select(GRUPO_SELECT, { count: 'exact' }).is('deleted_at', null);
     if (p?.busca) q = q.ilike('nome', `%${p.busca}%`);
     if (p?.nucleoId) q = q.eq('nucleo_id', String(p.nucleoId));
     if (p?.nucleoIds && Array.isArray(p.nucleoIds) && p.nucleoIds.length > 0) q = q.in('nucleo_id', p.nucleoIds);
@@ -1055,14 +1080,15 @@ export const turmasApi = {
     if (rows.length > 0) {
       const ids = rows.map((r: any) => r.id);
       const { data: bts } = await sb
-        .from('beneficiario_turmas')
-        .select('turma_id')
-        .in('turma_id', ids)
+        .from('beneficiario_grupos')
+        .select('grupo_id')
+        .in('grupo_id', ids)
         .eq('status', 'ativo')
         .is('deleted_at', null);
       const ocupadosMap = new Map<string, number>();
       for (const bt of bts ?? []) {
-        ocupadosMap.set(bt.turma_id, (ocupadosMap.get(bt.turma_id) ?? 0) + 1);
+        const gid = (bt as any).grupo_id;
+        ocupadosMap.set(gid, (ocupadosMap.get(gid) ?? 0) + 1);
       }
       for (const r of rows as any[]) {
         r._vagasOcupadas = ocupadosMap.get(r.id) ?? 0;
@@ -1072,13 +1098,13 @@ export const turmasApi = {
   },
   async get(id: string): Promise<TurmaApi> {
     const sb = await getSupabase();
-    const { data, error } = await sb.from('turmas').select(TURMA_SELECT).eq('id', id).single();
+    const { data, error } = await sb.from('grupos').select(GRUPO_SELECT).eq('id', id).single();
     if (error) throw error;
     if (data) {
       const { count: ocupadasCount } = await sb
-        .from('beneficiario_turmas')
+        .from('beneficiario_grupos')
         .select('id', { count: 'exact', head: true })
-        .eq('turma_id', id)
+        .eq('grupo_id', id)
         .eq('status', 'ativo')
         .is('deleted_at', null);
       (data as any)._vagasOcupadas = ocupadasCount ?? 0;
@@ -1087,39 +1113,39 @@ export const turmasApi = {
   },
   async create(body: Record<string, unknown>): Promise<TurmaApi> {
     const sb = createClient();
-    const { data, error } = await sb.from('turmas').insert(toTurmaRow(body)).select(TURMA_SELECT).single();
+    const { data, error } = await sb.from('grupos').insert(toTurmaRow(body)).select(GRUPO_SELECT).single();
     if (error) throw error;
     return mapTurma(data);
   },
   async update(id: string, body: Record<string, unknown>): Promise<TurmaApi> {
     const sb = createClient();
-    const { data, error } = await sb.from('turmas').update(toTurmaRow(body)).eq('id', id).select(TURMA_SELECT).single();
+    const { data, error } = await sb.from('grupos').update(toTurmaRow(body)).eq('id', id).select(GRUPO_SELECT).single();
     if (error) throw error;
     return mapTurma(data);
   },
   async remove(id: string): Promise<void> {
     const sb = createClient();
-    const { error } = await sb.from('turmas').update({ deleted_at: new Date().toISOString() }).eq('id', id);
+    const { error } = await sb.from('grupos').update({ deleted_at: new Date().toISOString() }).eq('id', id);
     if (error) throw error;
   },
   async setResponsaveis(turmaId: string, funcionarioIds: string[]): Promise<void> {
     const sb = createClient();
-    const { error: delErr } = await sb.from('turma_responsaveis').delete().eq('turma_id', turmaId);
+    const { error: delErr } = await sb.from('grupo_responsaveis').delete().eq('grupo_id', turmaId);
     if (delErr) throw delErr;
     if (funcionarioIds.length === 0) return;
-    const { error } = await sb.from('turma_responsaveis').insert(
-      funcionarioIds.map((funcionario_id) => ({ turma_id: turmaId, funcionario_id })),
+    const { error } = await sb.from('grupo_responsaveis').insert(
+      funcionarioIds.map((funcionario_id) => ({ grupo_id: turmaId, funcionario_id })),
     );
     if (error) throw error;
   },
   async setHorarios(turmaId: string, slots: any[]): Promise<void> {
     const sb = createClient();
-    const { error: delErr } = await sb.from('turma_horarios').delete().eq('turma_id', turmaId);
+    const { error: delErr } = await sb.from('grupo_horarios').delete().eq('grupo_id', turmaId);
     if (delErr) throw delErr;
     if (!slots || slots.length === 0) return;
 
-    // Buscar nucleo_id da turma para herança padrão
-    const { data: turmaData } = await sb.from('turmas').select('nucleo_id').eq('id', turmaId).single();
+    // Buscar nucleo_id do grupo para herança padrão
+    const { data: turmaData } = await sb.from('grupos').select('nucleo_id').eq('id', turmaId).single();
     const nucleoPadraoId = turmaData?.nucleo_id || null;
 
     const KEY_TO_DIA: Record<string, number> = {
@@ -1127,7 +1153,7 @@ export const turmasApi = {
     };
 
     const rows = slots.map((s) => ({
-      turma_id: turmaId,
+      grupo_id: turmaId,
       dia_semana: KEY_TO_DIA[s.dia] ?? 1,
       hora_inicio: `${String(s.inicio).padStart(2, '0')}:00:00`,
       hora_fim: `${String(s.fim).padStart(2, '0')}:00:00`,
@@ -1136,7 +1162,7 @@ export const turmasApi = {
       responsavel_id: s.responsavelId || null,
     }));
 
-    const { error } = await sb.from('turma_horarios' as any).insert(rows as any);
+    const { error } = await sb.from('grupo_horarios' as any).insert(rows as any);
     if (error) throw error;
   },
   async matricular(turmaId: string, beneficiarioId: string): Promise<void> {
@@ -1146,8 +1172,8 @@ export const turmasApi = {
       p_beneficiario_id: beneficiarioId,
     });
     if (error) {
-      const { error: errIns } = await sb.from('beneficiario_turmas').insert({
-        turma_id: turmaId,
+      const { error: errIns } = await sb.from('beneficiario_grupos').insert({
+        grupo_id: turmaId,
         beneficiario_id: beneficiarioId,
       });
       if (errIns && !errIns.message?.includes('duplicate key')) throw errIns;
@@ -1172,12 +1198,12 @@ export const turmasApi = {
   },
   async listarBeneficiarios(turmaId: string): Promise<BeneficiarioApi[]> {
     const sb = createClient();
-    const { data: bTurmas, error } = await (sb.from('beneficiario_turmas') as any)
+    const { data: bTurmas, error } = await (sb.from('beneficiario_grupos') as any)
       .select(`
-        turma_id,
+        grupo_id,
         beneficiarios(*, nucleos(identificacao))
       `)
-      .eq('turma_id', turmaId)
+      .eq('grupo_id', turmaId)
       .is('deleted_at', null)
       .eq('status', 'ativo');
 
@@ -1187,6 +1213,19 @@ export const turmasApi = {
       .filter(Boolean) as BeneficiarioApi[];
   },
 };
+
+export const turmasApi = gruposApi;
+export const grupoHorariosApi = {
+  async list(grupoId?: string): Promise<any[]> {
+    const sb = await getSupabase();
+    let q = sb.from('grupo_horarios').select('*, nucleos(*), atividades(*), funcionarios(*)');
+    if (grupoId) q = q.eq('grupo_id', grupoId);
+    const { data, error } = await q;
+    if (error) throw error;
+    return data ?? [];
+  }
+};
+export const turmaHorariosApi = grupoHorariosApi;
 
 function toTurmaRow(b: Record<string, unknown>): any {
   return {
@@ -1227,25 +1266,26 @@ export const beneficiariosApi = {
     const sb = await getSupabase();
     const { page, limit, from, to } = paginar(num(p?.page), num(p?.limit));
     let beneficiarioIds: string[] | null = null;
-    if (p?.turmaId) {
+    if (p?.turmaId || (p as any)?.grupoId) {
+      const gid = String(p?.turmaId || (p as any)?.grupoId);
       const { data: vinculos, error: eV } = await sb
-        .from('beneficiario_turmas')
+        .from('beneficiario_grupos')
         .select('beneficiario_id')
-        .eq('turma_id', String(p.turmaId))
+        .eq('grupo_id', gid)
         .is('deleted_at', null);
       if (eV) throw eV;
       beneficiarioIds = Array.from(new Set((vinculos ?? []).map((v) => v.beneficiario_id)));
       if (beneficiarioIds.length === 0) return { data: [], total: 0, page, limit };
     } else if (p?.atividadeId) {
-      const { data: turmas, error: eT } = await sb.from('turmas').select('id').eq('atividade_id', String(p.atividadeId));
+      const { data: turmas, error: eT } = await sb.from('grupos').select('id').eq('atividade_id', String(p.atividadeId));
       if (eT) throw eT;
       const turmaIds = (turmas ?? []).map((t) => t.id);
-      const { data: vinculos, error: eV } = await sb.from('beneficiario_turmas').select('beneficiario_id').in('turma_id', turmaIds.length ? turmaIds : ['00000000-0000-0000-0000-000000000000']);
+      const { data: vinculos, error: eV } = await sb.from('beneficiario_grupos').select('beneficiario_id').in('grupo_id', turmaIds.length ? turmaIds : ['00000000-0000-0000-0000-000000000000']);
       if (eV) throw eV;
       beneficiarioIds = Array.from(new Set((vinculos ?? []).map((v) => v.beneficiario_id)));
       if (beneficiarioIds.length === 0) return { data: [], total: 0, page, limit };
     }
-    const BENEFICIARIO_FULL_SELECT = '*, nucleos(*), beneficiario_turmas(*, turmas(*, nucleos(*), atividades(*)))';
+    const BENEFICIARIO_FULL_SELECT = '*, nucleos(*), beneficiario_grupos(*, grupos(*, nucleos(*), atividades(*)))';
     let q = sb.from('beneficiarios').select(BENEFICIARIO_FULL_SELECT, { count: 'exact' }).is('deleted_at', null);
     if (p?.nome) q = q.ilike('nome_completo', `%${p.nome}%`);
     if (p?.matricula) q = q.ilike('matricula', `%${p.matricula}%`);
@@ -1283,7 +1323,7 @@ export const beneficiariosApi = {
   },
   async get(id: string): Promise<BeneficiarioApi> {
     const sb = await getSupabase();
-    const BENEFICIARIO_FULL_SELECT = '*, nucleos(*), beneficiario_turmas(*, turmas(*, nucleos(*), atividades(*)))';
+    const BENEFICIARIO_FULL_SELECT = '*, nucleos(*), beneficiario_grupos(*, grupos(*, nucleos(*), atividades(*)))';
     let { data, error } = await sb.from('beneficiarios').select(BENEFICIARIO_FULL_SELECT).eq('id', id).single();
     if (error) {
       const resFallback = await sb.from('beneficiarios').select('*').eq('id', id).single();
@@ -1728,7 +1768,7 @@ function toEquipamentoRow(b: Record<string, unknown>): Database['public']['Table
 
 // ── Inscrições ───────────────────────────────────────────────────────────
 
-const INSCRICAO_SELECT = '*, turmas(*, nucleos(*), atividades(*)), beneficiarios(*)';
+const INSCRICAO_SELECT = '*, grupos(*, nucleos(*), atividades(*)), beneficiarios(*)';
 
 export const inscricoesApi = {
   async list(p?: QP): Promise<Paginated<InscricaoApi>> {
@@ -1736,10 +1776,10 @@ export const inscricoesApi = {
     const { page, limit, from, to } = paginar(num(p?.page), num(p?.limit));
     let q = sb.from('inscricoes').select(INSCRICAO_SELECT, { count: 'exact' });
     if (p?.status) q = q.eq('status', String(p.status) as Database['public']['Enums']['status_inscricao']);
-    if (p?.turmaId) q = q.eq('turma_id', String(p.turmaId));
+    if (p?.turmaId || (p as any)?.grupoId) q = q.eq('grupo_id', String(p?.turmaId || (p as any)?.grupoId));
     if (p?.beneficiarioId) q = q.eq('beneficiario_id', String(p.beneficiarioId));
     if (p?.nucleoId) q = q.eq('nucleo_id', String(p.nucleoId));
-    if (p?.semTurma) q = q.is('turma_id', null);
+    if (p?.semTurma || (p as any)?.semGrupo) q = q.is('grupo_id', null);
     const { data, count, error } = await q.order('created_at', { ascending: false }).range(from, to);
     if (error) throw error;
     return { data: (data ?? []).map(mapInscricao), total: count ?? 0, page, limit };
@@ -2011,7 +2051,7 @@ function montarResumo(
   funcionarios: { status: string }[],
   turmas: { id: string; atividade_id?: string | null; vagas_totais: number }[],
   atividades: { id: string; nome: string; disponivel_pre_inscricao?: boolean }[],
-  matriculas: { turma_id: string }[],
+  matriculas: { grupo_id?: string; turma_id?: string }[],
   recentes: any[],
   totalObjetos: number = 0,
   totalOrganizacoes: number = 0,
@@ -2022,8 +2062,9 @@ function montarResumo(
   const porNucleo = new Map<string, number>();
   for (const b of aprovados) {
     let nid = b.nucleo_id;
-    if (!nid && b.beneficiario_turmas && b.beneficiario_turmas.length > 0) {
-      nid = b.beneficiario_turmas[0]?.turmas?.nucleo_id;
+    const bgList = b.beneficiario_grupos || b.beneficiario_turmas;
+    if (!nid && bgList && bgList.length > 0) {
+      nid = bgList[0]?.grupos?.nucleo_id || bgList[0]?.turmas?.nucleo_id;
     }
     if (!nid) continue;
     porNucleo.set(nid, (porNucleo.get(nid) ?? 0) + 1);
@@ -2057,7 +2098,10 @@ function montarResumo(
   }
 
   const ocupacaoPorTurma = new Map<string, number>();
-  for (const m of matriculas) ocupacaoPorTurma.set(m.turma_id, (ocupacaoPorTurma.get(m.turma_id) ?? 0) + 1);
+  for (const m of matriculas) {
+    const gid = (m as any).grupo_id || (m as any).turma_id;
+    if (gid) ocupacaoPorTurma.set(gid, (ocupacaoPorTurma.get(gid) ?? 0) + 1);
+  }
 
   const totalVagas = turmas.reduce((acc, t) => acc + (t.vagas_totais || 0), 0);
   const totalOcupadas = turmas.reduce((acc, t) => acc + (ocupacaoPorTurma.get(t.id) ?? 0), 0);
@@ -2228,14 +2272,14 @@ export const dashboardApi = {
       organizacoesRes,
     ] = await Promise.all([
       sb.from('beneficiarios').select('id', { count: 'exact', head: true }).is('deleted_at', null),
-      sb.from('beneficiarios').select('id, nucleo_id, beneficiario_turmas(turmas(nucleo_id))').is('deleted_at', null).eq('status', 'ativo'),
+      sb.from('beneficiarios').select('id, nucleo_id, beneficiario_grupos(grupos(nucleo_id))').is('deleted_at', null).eq('status', 'ativo'),
       sb.from('nucleos').select('id, identificacao, nome_local, cep, endereco, numero, bairro, cidade, estado, complemento, latitude, longitude, em_funcionamento, organizacao_id, organizacoes(id, nome, estado, cidade), nucleo_atividades(atividade_id)').is('deleted_at', null),
       sb.from('funcionarios').select('status, nucleo_id').is('deleted_at', null),
-      sb.from('turmas').select('id, nucleo_id, atividade_id, vagas_totais').is('deleted_at', null),
+      sb.from('grupos').select('id, nucleo_id, atividade_id, vagas_totais').is('deleted_at', null),
       sb.from('atividades').select('id, nome, disponivel_pre_inscricao').is('deleted_at', null),
-      sb.from('beneficiario_turmas').select('turma_id').is('deleted_at', null),
+      sb.from('beneficiario_grupos').select('grupo_id').is('deleted_at', null),
       sb.from('beneficiarios')
-        .select('id, nome_completo, status, data_cadastro, created_at, nucleo_id, nucleos(identificacao), beneficiario_turmas(turmas(nucleos(identificacao)))')
+        .select('id, nome_completo, status, data_cadastro, created_at, nucleo_id, nucleos(identificacao), beneficiario_grupos(grupos(nucleos(identificacao)))')
         .is('deleted_at', null)
         .order('created_at', { ascending: false })
         .limit(5),
@@ -2306,18 +2350,18 @@ export const areaProfessorApi = {
 
     let turmaIds: string[] = [];
     if (!isAdmin && funcionarioId) {
-      const { data: resp } = await (sb.from('turma_responsaveis') as any)
-        .select('turma_id')
+      const { data: resp } = await (sb.from('grupo_responsaveis') as any)
+        .select('grupo_id')
         .eq('funcionario_id', funcionarioId);
-      turmaIds = (resp ?? []).map((r: any) => r.turma_id);
+      turmaIds = (resp ?? []).map((r: any) => r.grupo_id);
     }
 
-    let queryTurmas = sb.from('turmas').select(`
+    let queryTurmas = sb.from('grupos').select(`
       *,
       nucleos(*),
       atividades(*),
-      turma_horarios(*),
-      turma_responsaveis(*, funcionarios(nome_completo))
+      grupo_horarios(*),
+      grupo_responsaveis(*, funcionarios(nome_completo))
     `).is('deleted_at', null);
 
     if (!isAdmin && turmaIds.length > 0) {
@@ -2333,7 +2377,7 @@ export const areaProfessorApi = {
 
     const slotsGrid: SlotAulaGrid[] = [];
     (turmasRaw ?? []).forEach((t: any) => {
-      const horarios = t.turma_horarios ?? [];
+      const horarios = t.grupo_horarios ?? t.turma_horarios ?? [];
       horarios.forEach((th: any) => {
         const hInicioStr = String(th.hora_inicio || '08:00');
         const hFimStr = String(th.hora_fim || '10:00');
@@ -2366,19 +2410,20 @@ export const areaProfessorApi = {
     let beneficiariosMapped: BeneficiarioApi[] = [];
 
     if (targetTurmaIds.length > 0) {
-      const { data: bTurmas } = await (sb.from('beneficiario_turmas') as any)
+      const { data: bTurmas } = await (sb.from('beneficiario_grupos') as any)
         .select(`
-          turma_id,
+          grupo_id,
           beneficiarios(*, nucleos(identificacao))
         `)
-        .in('turma_id', targetTurmaIds)
+        .in('grupo_id', targetTurmaIds)
         .is('deleted_at', null)
         .eq('status', 'ativo');
 
       const ocupadosMap = new Map<string, number>();
       const bMap = new Map<string, any>();
       (bTurmas ?? []).forEach((bt: any) => {
-        ocupadosMap.set(bt.turma_id, (ocupadosMap.get(bt.turma_id) ?? 0) + 1);
+        const gid = bt.grupo_id || bt.turma_id;
+        ocupadosMap.set(gid, (ocupadosMap.get(gid) ?? 0) + 1);
         if (bt.beneficiarios) {
           bMap.set(bt.beneficiarios.id, mapBeneficiario(bt.beneficiarios));
         }
@@ -2425,7 +2470,7 @@ export const areaProfessorApi = {
   async salvarPresencas(payload: { turmaId: string; dataAula: string; presencas: Array<{ beneficiarioId: string; presente: boolean }>; atividadeId?: string }) {
     const sb = createClient();
     const rows = payload.presencas.map((p) => ({
-      turma_id: payload.turmaId,
+      grupo_id: payload.turmaId,
       data: payload.dataAula,
       beneficiario_id: p.beneficiarioId,
       presente: p.presente,
@@ -2434,14 +2479,14 @@ export const areaProfessorApi = {
     }));
 
     const { error } = await (sb.from('registros_presenca') as any)
-      .upsert(rows, { onConflict: 'turma_id,data,beneficiario_id' });
+      .upsert(rows, { onConflict: 'grupo_id,data,beneficiario_id' });
 
     if (error) throw error;
 
     if (payload.atividadeId) {
       await (sb as any).from('execucoes_sessao')
         .update({ atividade_id: payload.atividadeId })
-        .eq('turma_id', payload.turmaId)
+        .eq('grupo_id', payload.turmaId)
         .eq('data', payload.dataAula)
         .is('atividade_id', null);
     }
@@ -2452,7 +2497,7 @@ export const areaProfessorApi = {
   async salvarAplicacaoAtividade(payload: { turmaId: string; funcionarioId: string; dataAula: string; horaInicio: string; horaFim?: string; descricao: string; fotoUrl?: string }) {
     const sb = createClient();
     const { error: errConf } = await (sb.from('confirmacoes_atividade') as any).insert({
-      turma_id: payload.turmaId,
+      grupo_id: payload.turmaId,
       enviado_por: payload.funcionarioId,
       data: payload.dataAula,
       observacao: payload.descricao,
@@ -2467,7 +2512,7 @@ export const areaProfessorApi = {
       tipo: 'entrada',
       hora: payload.horaInicio,
       status: 'confirmado',
-      observacao: `Atividade ministrada na turma: ${payload.descricao}`,
+      observacao: `Atividade ministrada no grupo: ${payload.descricao}`,
     });
 
     if (errPonto) console.warn("Aviso ao salvar registros_ponto:", errPonto.message);
@@ -2479,7 +2524,7 @@ export const areaProfessorApi = {
     const sb = createClient();
     let q = (sb.from('registros_presenca') as any)
       .select('*')
-      .eq('turma_id', turmaId);
+      .eq('grupo_id', turmaId);
     if (dataAula) {
       q = q.eq('data', dataAula);
     }
@@ -2611,7 +2656,7 @@ export const execucoesSessaoApi = {
     // Evita duplicatas: se já existir aula ativa para a turma na data, retorna ela
     const { data: existente } = await (sb as any).from('execucoes_sessao')
       .select('*')
-      .eq('turma_id', params.turmaId)
+      .eq('grupo_id', params.turmaId)
       .eq('data', params.data)
       .in('status', ['em_andamento', 'pendente_aprovacao', 'concluida'])
       .order('criado_em', { ascending: false })
@@ -2622,10 +2667,10 @@ export const execucoesSessaoApi = {
       return mapExecucaoSessao(existente);
     }
 
-    // Se nucleoId não foi informado explicitamente, herdar da turma
+    // Se nucleoId não foi informado explicitamente, herdar do grupo
     let nucleoIdFinal = params.nucleoId;
     if (!nucleoIdFinal) {
-      const { data: turmaData } = await (sb as any).from('turmas')
+      const { data: turmaData } = await (sb as any).from('grupos')
         .select('nucleo_id')
         .eq('id', params.turmaId)
         .maybeSingle();
@@ -2648,7 +2693,7 @@ export const execucoesSessaoApi = {
     }
 
     const payload = {
-      turma_id: params.turmaId,
+      grupo_id: params.turmaId,
       nucleo_id: nucleoIdFinal || null,
       sessao_id: params.sessaoId || null,
       atividade_id: params.atividadeId || null,
@@ -2751,10 +2796,10 @@ export const execucoesSessaoApi = {
   async getExecucao(turmaId: string, data?: string): Promise<ExecucaoSessaoApi | null> {
     const sb = await getSupabase();
 
-    // 1. Prioridade: se houver sessão em andamento para esta turma, recupera ela
+    // 1. Prioridade: se houver sessão em andamento para esta turma/grupo, recupera ela
     let queryAndamento = (sb as any).from('execucoes_sessao')
       .select('*')
-      .eq('turma_id', turmaId)
+      .eq('grupo_id', turmaId)
       .eq('status', 'em_andamento');
 
     if (data) {
@@ -2774,7 +2819,7 @@ export const execucoesSessaoApi = {
     if (data) {
       const { data: execData, error } = await (sb as any).from('execucoes_sessao')
         .select('*')
-        .eq('turma_id', turmaId)
+        .eq('grupo_id', turmaId)
         .eq('data', data)
         .order('criado_em', { ascending: false })
         .limit(1)
@@ -2872,11 +2917,11 @@ export const execucoesSessaoApi = {
   async listPendencias(p?: { nucleoId?: string }): Promise<ExecucaoSessaoApi[]> {
     const sb = createClient();
     let q = (sb as any).from('execucoes_sessao')
-      .select('*, turmas!inner(id, nucleo_id)')
+      .select('*, grupos!inner(id, nucleo_id)')
       .eq('status_aprovacao', 'pendente_aprovacao');
 
     if (p?.nucleoId) {
-      q = q.eq('turmas.nucleo_id', p.nucleoId);
+      q = q.eq('grupos.nucleo_id', p.nucleoId);
     }
 
     const { data, error } = await q.order('criado_em', { ascending: false });
@@ -2961,11 +3006,12 @@ export const execucoesSessaoApi = {
     return mapped;
   },
 
-  async listAll(p?: { turmaId?: string; professorId?: string; status?: string; data?: string; limit?: number }): Promise<ExecucaoSessaoApi[]> {
+  async listAll(p?: { turmaId?: string; grupoId?: string; professorId?: string; status?: string; data?: string; limit?: number }): Promise<ExecucaoSessaoApi[]> {
     const sb = await getSupabase();
     let q = (sb as any).from('execucoes_sessao').select('*, funcionarios(nome_completo)');
 
-    if (p?.turmaId) q = q.eq('turma_id', p.turmaId);
+    const targetId = p?.grupoId || p?.turmaId;
+    if (targetId) q = q.eq('grupo_id', targetId);
     if (p?.professorId) q = q.eq('professor_id', p.professorId);
     if (p?.status) q = q.eq('status', p.status);
     if (p?.data) q = q.eq('data', p.data);
@@ -2973,7 +3019,7 @@ export const execucoesSessaoApi = {
     let { data, error } = await q.order('criado_em', { ascending: false }).limit(p?.limit || 200);
     if (error) {
       let qFallback = (sb as any).from('execucoes_sessao').select('*');
-      if (p?.turmaId) qFallback = qFallback.eq('turma_id', p.turmaId);
+      if (targetId) qFallback = qFallback.eq('grupo_id', targetId);
       if (p?.professorId) qFallback = qFallback.eq('professor_id', p.professorId);
       if (p?.status) qFallback = qFallback.eq('status', p.status);
       if (p?.data) qFallback = qFallback.eq('data', p.data);
@@ -2989,7 +3035,7 @@ export const execucoesSessaoApi = {
     const sb = await getSupabase();
     const { data, error } = await (sb as any).from('execucoes_sessao')
       .select('*')
-      .in('turma_id', turmaIds)
+      .in('grupo_id', turmaIds)
       .gte('data', dataInicio)
       .lte('data', dataFim);
 
