@@ -352,7 +352,7 @@ export async function exportarRelatorioPrestacaoContasDocx(
             createHeaderCell('Professor', 1600),
             createHeaderCell('Nº Turmas', 800, AlignmentType.CENTER),
             createHeaderCell('Beneficiários', 1000, AlignmentType.CENTER),
-            createHeaderCell('Aulas', 1000, AlignmentType.CENTER),
+            createHeaderCell('Sessões', 1000, AlignmentType.CENTER),
           ],
         }),
         ...execucaoPorNucleo.map(
@@ -365,7 +365,7 @@ export async function exportarRelatorioPrestacaoContasDocx(
                 createDataCell(item.professores.join(', ') || '—', 1600),
                 createDataCell(String(item.totalTurmas), 800, AlignmentType.CENTER),
                 createDataCell(String(item.beneficiariosAtendidos), 1000, AlignmentType.CENTER, true),
-                createDataCell(String(item.aulasRealizadas), 1000, AlignmentType.CENTER),
+                createDataCell(String(item.sessoesRealizadas), 1000, AlignmentType.CENTER),
               ],
             })
         ),
@@ -1034,7 +1034,7 @@ export async function exportarRelatorioPrestacaoContasDocx(
               createHeaderCell('Professores', 1600),
               createHeaderCell('Turmas', 800, AlignmentType.CENTER),
               createHeaderCell('Alunos', 1000, AlignmentType.CENTER),
-              createHeaderCell('Aulas', 1000, AlignmentType.CENTER),
+              createHeaderCell('Sessões', 1000, AlignmentType.CENTER),
             ],
           }),
           ...execucaoPorNucleo.map(
@@ -1047,7 +1047,7 @@ export async function exportarRelatorioPrestacaoContasDocx(
                   createDataCell(item.professores.join(', ') || '—', 1600),
                   createDataCell(String(item.totalTurmas), 800, AlignmentType.CENTER),
                   createDataCell(String(item.beneficiariosAtendidos), 1000, AlignmentType.CENTER, true),
-                  createDataCell(String(item.aulasRealizadas), 1000, AlignmentType.CENTER),
+                  createDataCell(String(item.sessoesRealizadas), 1000, AlignmentType.CENTER),
                 ],
               })
           ),

@@ -78,10 +78,8 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], back
   const [permitirChamadaRetroativa, setPermitirChamadaRetroativa] = useState(n?.permitirChamadaRetroativa ?? false);
   const [organizacaoId, setOrganizacaoId] = useState(n?.organizacaoId ?? (organizacoes[0]?.id || ""));
   const [atividadeIds, setAtividadeIds] = useState<string[]>(
-    n?.atividadeIds ?? atividades.filter(a => a.disponivelPreInscricao).map((a) => a.id)
+    n?.atividadeIds ?? atividades.map((a) => a.id)
   );
-
-  const atividadesVisiveis = atividades.filter(a => a.disponivelPreInscricao);
 
   const [cep, setCep] = useState(n?.cep ?? "");
   const [endereco, setEndereco] = useState(n?.endereco ?? "");
@@ -117,6 +115,12 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], back
 
     if (!orgId) {
       setErro("Por favor, selecione uma organização responsável.");
+      setLoading(false);
+      return;
+    }
+
+    if (emFuncionamento && atividadeIds.length === 0) {
+      setErro("Selecione pelo menos uma atividade para o catálogo do núcleo em funcionamento.");
       setLoading(false);
       return;
     }
@@ -236,22 +240,37 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], back
         <p className="mb-3 text-xs text-zinc-500">
           Selecione quais atividades este núcleo tem estrutura para disponibilizar aos beneficiários:
         </p>
+        {emFuncionamento && atividadeIds.length === 0 && (
+          <p className="mb-3 rounded-lg border border-amber-200 bg-amber-50 p-2 text-xs font-medium text-amber-800">
+            Atenção: Núcleos em funcionamento devem ter pelo menos uma atividade selecionada para habilitar o agendamento de sessões.
+          </p>
+        )}
         {atividades.length === 0 ? (
           <p className="text-sm text-zinc-400">Nenhuma atividade cadastrada no sistema.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {atividadesVisiveis.map((a) => {
+            {atividades.map((a) => {
               const checked = atividadeIds.includes(a.id);
               return (
                 <label
                   key={a.id}
-                  className={`flex items-center justify-between rounded-lg border p-3 cursor-pointer transition-colors ${
+                  className={`flex items-start justify-between rounded-lg border p-3 cursor-pointer transition-colors ${
                     checked
                       ? "border-sky-500 bg-sky-50/50 text-sky-900"
                       : "border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50"
                   }`}
                 >
-                  <span className="text-sm font-medium">{a.nome}</span>
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-sm font-semibold">{a.nome}</span>
+                    <span className="text-[11px] text-zinc-500">
+                      {a.termoGrupo || "Turma"} • {a.termoSessao || "Treino"}
+                    </span>
+                    {!a.disponivelPreInscricao && (
+                      <span className="mt-1 inline-block w-fit rounded bg-zinc-100 px-1.5 py-0.5 text-[10px] font-medium text-zinc-600">
+                        Controle Interno
+                      </span>
+                    )}
+                  </div>
                   <Switch checked={checked} onChange={() => toggleAtividade(a.id)} />
                 </label>
               );

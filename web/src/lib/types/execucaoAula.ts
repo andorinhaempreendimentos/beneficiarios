@@ -1,7 +1,11 @@
-export interface ExecucaoAulaApi {
+export interface ExecucaoSessaoApi {
   id: string;
   turmaId: string;
+  nucleoId?: string;
+  sessaoId?: string;
+  atividadeId?: string;
   professorId: string;
+  professorNome?: string;
   data: string;
   horaInicioPrevista: string;
   horaFimPrevista: string;
@@ -16,6 +20,8 @@ export interface ExecucaoAulaApi {
   aprovadoEm?: string;
   criadoEm: string;
 }
+
+export type ExecucaoAulaApi = ExecucaoSessaoApi;
 
 export interface BeneficiarioPresencaApi {
   id: string;

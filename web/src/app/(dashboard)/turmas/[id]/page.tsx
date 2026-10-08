@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { Badge, Card, CardBody, CardHeader, LinkButton, PageHeader } from "@/components/ui";
 import { GestaoMatriculasRoster } from "@/components/turmas/GestaoMatriculasRoster";
 import { turmasApi, nucleosApi, atividadesApi, beneficiariosApi } from "@/lib/api/services";
-import { formatarData } from "@/lib/utils";
+import { formatarData, formatarNomeGrupo } from "@/lib/utils";
 
 export default async function DetalhesTurmaPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -17,6 +17,11 @@ export default async function DetalhesTurmaPage({ params }: { params: Promise<{ 
     beneficiariosApi.list({ limit: 500 }).catch(() => ({ data: [], total: 0, page: 1, limit: 500 })),
   ]);
 
+  const termoGrupo = atividade?.termoGrupo || "Grupo";
+  const termoResponsavel = atividade?.termoResponsavel || "Responsável";
+  const termoParticipante = atividade?.termoParticipante || "Beneficiário";
+  const nomeAdaptado = formatarNomeGrupo(t.nome, termoGrupo);
+
   const usoInterno = t.tipo === "operacional" || (atividade?.usoInterno ?? false);
   const matriculados = matriculadosRes.data;
   const qtdOcupadas = matriculadosRes.total;
@@ -26,7 +31,7 @@ export default async function DetalhesTurmaPage({ params }: { params: Promise<{ 
   return (
     <div className="flex flex-col gap-6">
       <PageHeader
-        title={t.nome}
+        title={nomeAdaptado}
         description={t.dataInicio ? `Início: ${formatarData(t.dataInicio)}` : "Sem data de início"}
         actions={
           <div className="flex items-center gap-2">
@@ -82,7 +87,7 @@ export default async function DetalhesTurmaPage({ params }: { params: Promise<{ 
         <>
           <Card>
             <CardHeader>
-              <h3 className="text-sm font-medium text-zinc-700">Vagas e responsáveis</h3>
+              <h3 className="text-sm font-medium text-zinc-700">Vagas e {termoResponsavel.toLowerCase()}(is)</h3>
             </CardHeader>
             <CardBody className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2 lg:grid-cols-3">
               <div>
@@ -90,7 +95,7 @@ export default async function DetalhesTurmaPage({ params }: { params: Promise<{ 
                 <p className="text-zinc-800">{t.vagasTotais}</p>
               </div>
               <div>
-                <p className="text-zinc-500">Beneficiários matriculados</p>
+                <p className="text-zinc-500">{termoParticipante}s matriculados</p>
                 <p className="text-zinc-800">{qtdOcupadas}</p>
               </div>
               <div>
@@ -98,7 +103,7 @@ export default async function DetalhesTurmaPage({ params }: { params: Promise<{ 
                 <Badge tone={vagasLivres > 0 ? "green" : "red"}>{vagasLivres}</Badge>
               </div>
               <div>
-                <p className="text-zinc-500">Responsável(is)</p>
+                <p className="text-zinc-500">{termoResponsavel}(is)</p>
                 <p className="text-zinc-800">
                   {(t.responsaveisNomes && t.responsaveisNomes.length > 0)
                     ? t.responsaveisNomes.join(", ")
@@ -120,7 +125,7 @@ export default async function DetalhesTurmaPage({ params }: { params: Promise<{ 
       {usoInterno && (
         <Card>
           <CardHeader>
-            <h3 className="text-sm font-medium text-zinc-700">Responsável(is)</h3>
+            <h3 className="text-sm font-medium text-zinc-700">{termoResponsavel}(is)</h3>
           </CardHeader>
           <CardBody className="text-sm">
             <p className="text-zinc-800">

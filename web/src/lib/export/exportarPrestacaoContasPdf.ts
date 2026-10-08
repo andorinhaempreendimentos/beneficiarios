@@ -204,7 +204,7 @@ export async function exportarRelatorioPrestacaoContasPdf(
     theme: "grid",
     headStyles: { fillColor: [244, 244, 245], textColor: [30, 41, 59], fontStyle: "bold", fontSize: 7, cellPadding: 1.2 },
     styles: { fontSize: 6.8, cellPadding: 1.2, textColor: [30, 41, 59] },
-    head: [["Núcleo", "Região / Bairro", "Modalidades", "Professores", "Turmas", "Alunos", "Aulas"]],
+    head: [["Núcleo", "Região / Bairro", "Modalidades", "Professores", "Turmas", "Alunos", "Sessões"]],
     body: execucaoPorNucleo.map((item) => [
       item.identificacao,
       item.bairro || item.regiao || "—",
@@ -212,7 +212,7 @@ export async function exportarRelatorioPrestacaoContasPdf(
       item.professores.join(", ") || "—",
       String(item.totalTurmas),
       String(item.beneficiariosAtendidos),
-      String(item.aulasRealizadas),
+      String(item.sessoesRealizadas),
     ]),
     columnStyles: {
       0: { fontStyle: "bold" },
@@ -561,7 +561,7 @@ export async function exportarRelatorioPrestacaoContasPdf(
       theme: "grid",
       headStyles: { fillColor: [244, 244, 245], textColor: [30, 41, 59], fontStyle: "bold", fontSize: 7, cellPadding: 1.2 },
       styles: { fontSize: 6.8, cellPadding: 1.2, textColor: [30, 41, 59] },
-      head: [["Núcleo Esportivo", "Região / Bairro", "Modalidades", "Professores", "Turmas", "Alunos", "Aulas"]],
+      head: [["Núcleo Esportivo", "Região / Bairro", "Modalidades", "Professores", "Turmas", "Alunos", "Sessões"]],
       body: execucaoPorNucleo.map((item) => [
         item.identificacao,
         item.bairro || item.regiao || "—",
@@ -569,7 +569,7 @@ export async function exportarRelatorioPrestacaoContasPdf(
         item.professores.join(", ") || "—",
         String(item.totalTurmas),
         String(item.beneficiariosAtendidos),
-        String(item.aulasRealizadas),
+        String(item.sessoesRealizadas),
       ]),
       columnStyles: {
         0: { fontStyle: "bold" },

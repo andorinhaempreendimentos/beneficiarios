@@ -6,7 +6,7 @@ import { ChevronDown, CheckCircle, ArrowLeft, MapPin, ShieldCheck, AlertTriangle
 import { z } from "zod";
 import type { PerguntaParQ } from "@/lib/types";
 import { validarCpf, validarEmail } from "@/lib/mascaras";
-import { beneficiariosApi, inscricoesApi, turmasApi, configuracoesApi } from "@/lib/api/services";
+import { beneficiariosApi, inscricoesApi, turmasApi, configuracoesApi, type TurmaApi } from "@/lib/api/services";
 import {
   obterGeolocalizacaoNavegador,
   validarConformidadeLocalizacao,
@@ -80,6 +80,17 @@ export function InscricaoPublicaForm({ turmaId, nucleoId, onSubmit }: InscricaoP
   const [erro, setErro] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+
+  // Termos dinâmicos baseados no grupo/atividade
+  const [turmaInfo, setTurmaInfo] = useState<TurmaApi | null>(null);
+  useEffect(() => {
+    if (turmaId) {
+      turmasApi.get(turmaId).then(setTurmaInfo).catch(() => null);
+    }
+  }, [turmaId]);
+
+  const termoGrupo = turmaInfo?.atividade?.termoGrupo || "Grupo";
+  const termoParticipante = turmaInfo?.atividade?.termoParticipante || "Participante";
 
   // Estado de Geolocalização
   const [geoConfig, setGeoConfig] = useState<GeolocalizacaoConfig | null>(null);
@@ -177,7 +188,7 @@ export function InscricaoPublicaForm({ turmaId, nucleoId, onSubmit }: InscricaoP
 
     // Validações de CPF
     if (cpf && !validarCpf(cpf)) {
-      setErro("CPF do beneficiário inválido. Por favor, confira os números digitados.");
+      setErro(`CPF do ${termoParticipante.toLowerCase()} inválido. Por favor, confira os números digitados.`);
       return;
     }
 
@@ -233,14 +244,14 @@ export function InscricaoPublicaForm({ turmaId, nucleoId, onSubmit }: InscricaoP
        }
     }
 
-    // Validação de Idade da turma (apenas no fluxo de inscrição em turma)
+    // Validação de Idade da turma/grupo (apenas no fluxo de inscrição em turma/grupo)
     if (turmaId && dataNascimento) {
       try {
-        const turmaInfo = await turmasApi.get(turmaId);
-        const min = turmaInfo.idadeMinima ?? turmaInfo.faixaEtaria?.idadeMinima ?? turmaInfo.categoria?.idadeMinima ?? 6;
-        const max = turmaInfo.idadeMaxima ?? turmaInfo.faixaEtaria?.idadeMaxima ?? turmaInfo.categoria?.idadeMaxima ?? 17;
+        const info = turmaInfo || await turmasApi.get(turmaId);
+        const min = info.idadeMinima ?? info.faixaEtaria?.idadeMinima ?? info.categoria?.idadeMinima ?? 6;
+        const max = info.idadeMaxima ?? info.faixaEtaria?.idadeMaxima ?? info.categoria?.idadeMaxima ?? 17;
         if (idade !== null && (idade < min || idade > max)) {
-          setErro(`A idade do beneficiário (${idade} anos) está fora do limite permitido para esta turma (Permitido: ${min} a ${max} anos).`);
+          setErro(`A idade do ${termoParticipante.toLowerCase()} (${idade} anos) está fora do limite permitido para este ${termoGrupo.toLowerCase()} (Permitido: ${min} a ${max} anos).`);
           return;
         }
       } catch (e) {
@@ -369,7 +380,7 @@ export function InscricaoPublicaForm({ turmaId, nucleoId, onSubmit }: InscricaoP
         <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
           <h2 className="text-base font-bold text-zinc-900 flex items-center gap-2">
             <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-sky-100 text-sky-700 text-xs font-bold">1</span>
-            Identificação do Beneficiário
+            Identificação do {termoParticipante}
           </h2>
           <span className="text-[11px] text-zinc-400 font-medium">* Campos obrigatórios</span>
         </div>
@@ -381,7 +392,7 @@ export function InscricaoPublicaForm({ turmaId, nucleoId, onSubmit }: InscricaoP
               type="text"
               name="nomeCompleto"
               required
-              placeholder="Digite o nome completo do beneficiário"
+              placeholder={`Digite o nome completo do ${termoParticipante.toLowerCase()}`}
               className="w-full rounded-xl border border-zinc-300 px-3.5 py-2.5 text-sm transition-all focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none"
             />
             {fieldErrors.nomeCompleto && <span className="text-[11px] text-red-500">{fieldErrors.nomeCompleto}</span>}
@@ -400,7 +411,7 @@ export function InscricaoPublicaForm({ turmaId, nucleoId, onSubmit }: InscricaoP
             {fieldErrors.dataNascimento && <span className="text-[11px] text-red-500">{fieldErrors.dataNascimento}</span>}
             {idade !== null && (
               <span className="text-[11px] font-medium text-sky-600">
-                Beneficiário possui {idade} anos
+                {termoParticipante} possui {idade} anos
               </span>
             )}
           </div>
@@ -421,7 +432,7 @@ export function InscricaoPublicaForm({ turmaId, nucleoId, onSubmit }: InscricaoP
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-zinc-700 h-6.5 flex items-center">CPF do beneficiário</label>
+            <label className="text-xs font-semibold text-zinc-700 h-6.5 flex items-center">CPF do {termoParticipante.toLowerCase()}</label>
             <input
               type="text"
               name="cpf"
@@ -433,7 +444,7 @@ export function InscricaoPublicaForm({ turmaId, nucleoId, onSubmit }: InscricaoP
 
           {/* Documento Discreto Integrado (Prefix Select no Input) */}
           <div className="flex flex-col gap-1.5 sm:col-span-1">
-            <label className="text-xs font-semibold text-zinc-700">Documento do beneficiário</label>
+            <label className="text-xs font-semibold text-zinc-700">Documento do {termoParticipante.toLowerCase()}</label>
             <div className="relative flex items-center w-full rounded-xl border border-zinc-300 bg-white transition-all focus-within:border-sky-500 focus-within:ring-2 focus-within:ring-sky-500/20">
               <select
                 value={tipoDocumento}
@@ -1061,7 +1072,7 @@ export function InscricaoPublicaForm({ turmaId, nucleoId, onSubmit }: InscricaoP
             <span>Processando Inscrição...</span>
           ) : (
             <>
-              <span>Confirmar Inscrição do Beneficiário</span>
+              <span>Confirmar Inscrição do {termoParticipante}</span>
               <CheckCircle className="w-4 h-4" />
             </>
           )}

@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
-import { turmasApi, beneficiariosApi, funcionariosApi, execucoesAulaApi } from "@/lib/api/services";
-import { ExecucaoAulaClient } from "@/components/professor/ExecucaoAulaClient";
+import { turmasApi, beneficiariosApi, funcionariosApi, execucoesSessaoApi } from "@/lib/api/services";
+import { ExecucaoSessaoClient } from "@/components/professor/ExecucaoSessaoClient";
 import { getDataHojeBrasil } from "@/lib/dateUtils";
 
 export const dynamic = "force-dynamic";
@@ -19,7 +19,7 @@ export default async function AulaTurmaPage({ params, searchParams }: AulaTurmaP
     turmasApi.get(turmaId).catch(() => null),
     beneficiariosApi.list({ turmaId, limit: 200 }).catch(() => ({ data: [] })),
     funcionariosApi.list({ limit: 200 }).catch(() => ({ data: [] })),
-    execucoesAulaApi.getExecucao(turmaId, dataQuery).catch(() => null),
+    execucoesSessaoApi.getExecucao(turmaId, dataQuery).catch(() => null),
   ]);
 
   if (!turma) {
@@ -27,13 +27,13 @@ export default async function AulaTurmaPage({ params, searchParams }: AulaTurmaP
   }
 
   const presencasIniciais = execucaoExistente
-    ? await execucoesAulaApi.getPresencas(execucaoExistente.id).catch(() => [])
+    ? await execucoesSessaoApi.getPresencas(execucaoExistente.id).catch(() => [])
     : [];
 
   const autoStart = sp?.autoStart === "true";
 
   return (
-    <ExecucaoAulaClient
+    <ExecucaoSessaoClient
       turma={turma}
       beneficiarios={beneficiariosRes.data}
       funcionarios={funcionariosRes.data}

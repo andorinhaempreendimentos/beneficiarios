@@ -60,7 +60,7 @@ export function SelecionarAtividade({ atividades, turmas, nucleoId }: Selecionar
                 )}
                 <span className="flex items-center gap-1">
                   <Users className="h-3 w-3" />
-                  {turmasDaAtividade.length} turma{turmasDaAtividade.length !== 1 ? "s" : ""}
+                  {turmasDaAtividade.length} {(a as any).termoGrupo ? `${(a as any).termoGrupo.toLowerCase()}${turmasDaAtividade.length !== 1 ? "s" : ""}` : `grupo${turmasDaAtividade.length !== 1 ? "s" : ""}`}
                 </span>
               </div>
 

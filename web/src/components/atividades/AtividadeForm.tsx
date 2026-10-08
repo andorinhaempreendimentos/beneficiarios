@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { z } from "zod";
-import { HelpCircle, Plus, Trash2, Globe, Lock } from "lucide-react";
+import { HelpCircle, Plus, Trash2, Globe, Lock, AlertTriangle } from "lucide-react";
 import { Button, Field, FormSection, Input, LinkButton, Switch } from "@/components/ui";
-import type { PerguntaAtividade, Turno } from "@/lib/types";
+import type { PerguntaAtividade } from "@/lib/types";
 import { atividadesApi, type AtividadeApi } from "@/lib/api/services";
 import { useToast } from "@/components/providers/ToastProvider";
 
@@ -25,7 +25,10 @@ export function AtividadeForm({ atividade: a, backHref }: AtividadeFormProps) {
   const [erro, setErro] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [disponivelPreInscricao, setDisponivelPreInscricao] = useState(a?.disponivelPreInscricao ?? false);
-  const [turnos, setTurnos] = useState<Set<Turno>>(new Set((a?.turnos ?? []) as Turno[]));
+  const [termoGrupo, setTermoGrupo] = useState(a?.termoGrupo ?? "Turma");
+  const [termoSessao, setTermoSessao] = useState(a?.termoSessao ?? "Treino");
+  const [termoResponsavel, setTermoResponsavel] = useState(a?.termoResponsavel ?? "Professor");
+  const [termoParticipante, setTermoParticipante] = useState(a?.termoParticipante ?? "Aluno");
   const [perguntas, setPerguntas] = useState<PerguntaAtividade[]>(a?.perguntas ?? []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -39,7 +42,10 @@ export function AtividadeForm({ atividade: a, backHref }: AtividadeFormProps) {
     const data = {
       nome: nome.trim(),
       disponivelPreInscricao,
-      turnos: Array.from(turnos),
+      termoGrupo: termoGrupo.trim() || "Turma",
+      termoSessao: termoSessao.trim() || "Treino",
+      termoResponsavel: termoResponsavel.trim() || "Professor",
+      termoParticipante: termoParticipante.trim() || "Aluno",
       perguntas,
     };
 
@@ -72,15 +78,6 @@ export function AtividadeForm({ atividade: a, backHref }: AtividadeFormProps) {
     } finally {
       setLoading(false);
     }
-  }
-
-  function toggleTurno(turno: Turno, ativo: boolean) {
-    setTurnos((prev) => {
-      const next = new Set(prev);
-      if (ativo) next.add(turno);
-      else next.delete(turno);
-      return next;
-    });
   }
 
   function adicionarPergunta() {
@@ -167,13 +164,75 @@ export function AtividadeForm({ atividade: a, backHref }: AtividadeFormProps) {
           </div>
         </div>
 
-        {disponivelPreInscricao && (
-          <div className="mt-4 flex flex-wrap gap-6 rounded-2xl bg-zinc-50 p-4 border border-zinc-200">
-            <Switch checked={turnos.has("manha")} onChange={(v) => toggleTurno("manha", v)} label="Manhã" />
-            <Switch checked={turnos.has("tarde")} onChange={(v) => toggleTurno("tarde", v)} label="Tarde" />
-            <Switch checked={turnos.has("noite")} onChange={(v) => toggleTurno("noite", v)} label="Noite" />
+      </FormSection>
+
+      <FormSection title="Vocabulário da Atividade">
+        <p className="text-xs text-zinc-500 mb-3 -mt-2">
+          Defina como o sistema deve chamar cada elemento quando esta atividade estiver rodando nas telas e relatórios.
+        </p>
+
+        {/* Banner de Impacto da Edição do Vocabulário */}
+        <div className="flex items-start gap-3 rounded-xl border border-amber-300 bg-amber-50/80 p-4 mb-5 text-xs text-amber-950">
+          <div className="p-1.5 rounded-lg bg-amber-200/80 text-amber-800 shrink-0 mt-0.5">
+            <AlertTriangle className="h-4 w-4" />
           </div>
-        )}
+          <div className="flex flex-col gap-1">
+            <span className="font-bold text-amber-900 text-sm">
+              Atenção: Impacto Global do Vocabulário
+            </span>
+            <p className="leading-relaxed text-amber-800">
+              Alterar estes 4 termos adaptará imediatamente a interface em todas as telas onde esta atividade for utilizada:
+            </p>
+            <ul className="list-disc list-inside space-y-0.5 mt-1 text-amber-900 font-medium">
+              <li><strong>Agrupamento:</strong> Título dos grupos, crachás e listagens vinculadas.</li>
+              <li><strong>Encontro/Sessão:</strong> Telas de chamada, agenda do professor e grade semanal.</li>
+              <li><strong>Responsável:</strong> Rótulos do condutor na chamada, turmas e escalas.</li>
+              <li><strong>Participante:</strong> Botões de presença/falta e contadores de frequência.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <Field label="Como chamar o agrupamento de pessoas? (Raiz: Grupo)">
+            <Input
+              name="termoGrupo"
+              value={termoGrupo}
+              onChange={(e) => setTermoGrupo(e.target.value)}
+              placeholder="Ex: Turma, Time, Equipe, Classe"
+            />
+            <span className="text-[11px] text-zinc-500 mt-1 block">Ex: Turma, Time, Equipe, Classe, Elenco</span>
+          </Field>
+
+          <Field label="Como chamar o encontro ou momento? (Raiz: Sessão)">
+            <Input
+              name="termoSessao"
+              value={termoSessao}
+              onChange={(e) => setTermoSessao(e.target.value)}
+              placeholder="Ex: Treino, Aula, Oficina, Encontro"
+            />
+            <span className="text-[11px] text-zinc-500 mt-1 block">Ex: Treino, Aula, Oficina, Encontro, Prática</span>
+          </Field>
+
+          <Field label="Como chamar quem conduz a atividade? (Raiz: Responsável)">
+            <Input
+              name="termoResponsavel"
+              value={termoResponsavel}
+              onChange={(e) => setTermoResponsavel(e.target.value)}
+              placeholder="Ex: Professor, Instrutor, Treinador, Oficineiro"
+            />
+            <span className="text-[11px] text-zinc-500 mt-1 block">Ex: Professor, Instrutor, Treinador, Oficineiro, Tutor</span>
+          </Field>
+
+          <Field label="Como chamar quem frequenta ou pratica? (Raiz: Participante)">
+            <Input
+              name="termoParticipante"
+              value={termoParticipante}
+              onChange={(e) => setTermoParticipante(e.target.value)}
+              placeholder="Ex: Aluno, Atleta, Corredor, Participante"
+            />
+            <span className="text-[11px] text-zinc-500 mt-1 block">Ex: Aluno, Atleta, Corredor, Participante, Estudante</span>
+          </Field>
+        </div>
       </FormSection>
 
       <FormSection title="Perguntas Personalizadas">

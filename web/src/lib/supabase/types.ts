@@ -380,7 +380,7 @@ export type Database = {
             foreignKeyName: "beneficiario_presencas_execucao_aula_id_fkey"
             columns: ["execucao_aula_id"]
             isOneToOne: false
-            referencedRelation: "execucoes_aula"
+            referencedRelation: "execucoes_sessao"
             referencedColumns: ["id"]
           },
         ]
@@ -963,7 +963,7 @@ export type Database = {
           },
         ]
       }
-      execucoes_aula: {
+      execucoes_sessao: {
         Row: {
           aprovado_em: string | null
           aprovado_por_user_id: string | null
@@ -977,8 +977,10 @@ export type Database = {
           hora_inicio_real: string | null
           id: string
           justificativa_retroativa: string | null
+          nucleo_id: string | null
           observacoes: string | null
           professor_id: string
+          sessao_id: string | null
           status: Database["public"]["Enums"]["status_execucao_aula"]
           status_aprovacao: Database["public"]["Enums"]["status_aprovacao_aula"]
           turma_id: string
@@ -996,8 +998,10 @@ export type Database = {
           hora_inicio_real?: string | null
           id?: string
           justificativa_retroativa?: string | null
+          nucleo_id?: string | null
           observacoes?: string | null
           professor_id: string
+          sessao_id?: string | null
           status?: Database["public"]["Enums"]["status_execucao_aula"]
           status_aprovacao?: Database["public"]["Enums"]["status_aprovacao_aula"]
           turma_id: string
@@ -1015,8 +1019,10 @@ export type Database = {
           hora_inicio_real?: string | null
           id?: string
           justificativa_retroativa?: string | null
+          nucleo_id?: string | null
           observacoes?: string | null
           professor_id?: string
+          sessao_id?: string | null
           status?: Database["public"]["Enums"]["status_execucao_aula"]
           status_aprovacao?: Database["public"]["Enums"]["status_aprovacao_aula"]
           turma_id?: string
@@ -1030,10 +1036,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "execucoes_aula_nucleo_id_fkey"
+            columns: ["nucleo_id"]
+            isOneToOne: false
+            referencedRelation: "nucleos"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "execucoes_aula_professor_id_fkey"
             columns: ["professor_id"]
             isOneToOne: false
             referencedRelation: "funcionarios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "execucoes_aula_sessao_id_fkey"
+            columns: ["sessao_id"]
+            isOneToOne: false
+            referencedRelation: "turma_horarios"
             referencedColumns: ["id"]
           },
           {
@@ -2328,29 +2348,38 @@ export type Database = {
       }
       turma_horarios: {
         Row: {
+          atividade_id?: string | null
           created_at: string
           dia_semana: number
           hora_fim: string
           hora_inicio: string
           id: string
+          nucleo_id?: string | null
+          responsavel_id?: string | null
           turma_id: string
           updated_at: string
         }
         Insert: {
+          atividade_id?: string | null
           created_at?: string
           dia_semana: number
           hora_fim: string
           hora_inicio: string
           id?: string
+          nucleo_id?: string | null
+          responsavel_id?: string | null
           turma_id: string
           updated_at?: string
         }
         Update: {
+          atividade_id?: string | null
           created_at?: string
           dia_semana?: number
           hora_fim?: string
           hora_inicio?: string
           id?: string
+          nucleo_id?: string | null
+          responsavel_id?: string | null
           turma_id?: string
           updated_at?: string
         }
@@ -2405,7 +2434,7 @@ export type Database = {
       }
       turmas: {
         Row: {
-          atividade_id: string
+          atividade_id: string | null
           categoria_id?: string | null
           faixa_etaria_id: string | null
           tipo: Database["public"]["Enums"]["tipo_turma"]
@@ -2423,7 +2452,7 @@ export type Database = {
           vagas_totais: number
         }
         Insert: {
-          atividade_id: string
+          atividade_id?: string | null
           categoria_id?: string | null
           faixa_etaria_id?: string | null
           tipo?: Database["public"]["Enums"]["tipo_turma"]
@@ -2441,7 +2470,7 @@ export type Database = {
           vagas_totais?: number
         }
         Update: {
-          atividade_id?: string
+          atividade_id?: string | null
           categoria_id?: string | null
           faixa_etaria_id?: string | null
           tipo?: Database["public"]["Enums"]["tipo_turma"]
@@ -2534,7 +2563,18 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      sessoes: {
+        Row: Database["public"]["Tables"]["turma_horarios"]["Row"]
+        Insert: Database["public"]["Tables"]["turma_horarios"]["Insert"]
+        Update: Database["public"]["Tables"]["turma_horarios"]["Update"]
+        Relationships: Database["public"]["Tables"]["turma_horarios"]["Relationships"]
+      }
+      execucoes_aula: {
+        Row: Database["public"]["Tables"]["execucoes_sessao"]["Row"]
+        Insert: Database["public"]["Tables"]["execucoes_sessao"]["Insert"]
+        Update: Database["public"]["Tables"]["execucoes_sessao"]["Update"]
+        Relationships: Database["public"]["Tables"]["execucoes_sessao"]["Relationships"]
+      }
     }
     Functions: {
       admin_atualizar_usuario: {

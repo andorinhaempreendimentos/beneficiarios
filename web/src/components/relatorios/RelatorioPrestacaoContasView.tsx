@@ -328,7 +328,7 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
                   <th className="p-2.5">Professor</th>
                   <th className="p-2.5 text-center">Nº de Turmas</th>
                   <th className="p-2.5 text-center">Beneficiários Atendidos</th>
-                  <th className="p-2.5 text-center">Aulas Realizadas</th>
+                  <th className="p-2.5 text-center">Sessões Realizadas</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-200">
@@ -340,7 +340,7 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
                     <td className="p-2.5 text-zinc-600">{item.professores.join(", ") || "—"}</td>
                     <td className="p-2.5 text-center font-medium">{item.totalTurmas}</td>
                     <td className="p-2.5 text-center font-semibold text-sky-800">{item.beneficiariosAtendidos}</td>
-                    <td className="p-2.5 text-center font-medium">{item.aulasRealizadas}</td>
+                    <td className="p-2.5 text-center font-medium">{item.sessoesRealizadas}</td>
                   </tr>
                 ))}
               </tbody>
@@ -1069,7 +1069,7 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
                     <th className="p-2">Professores Vinculados</th>
                     <th className="p-2 text-center">Nº Turmas</th>
                     <th className="p-2 text-center">Beneficiários</th>
-                    <th className="p-2 text-center">Aulas</th>
+                    <th className="p-2 text-center">Sessões</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-zinc-200">
@@ -1081,7 +1081,7 @@ export function RelatorioPrestacaoContasView({ dados, onSalvar, salvando }: Prop
                       <td className="p-2 text-zinc-600">{item.professores.join(", ") || "—"}</td>
                       <td className="p-2 text-center">{item.totalTurmas}</td>
                       <td className="p-2 text-center font-bold">{item.beneficiariosAtendidos}</td>
-                      <td className="p-2 text-center">{item.aulasRealizadas}</td>
+                      <td className="p-2 text-center">{item.sessoesRealizadas}</td>
                     </tr>
                   ))}
                 </tbody>

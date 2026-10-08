@@ -1,5 +1,5 @@
 import { PageHeader } from "@/components/ui";
-import { TurmaForm } from "@/components/turmas/TurmaForm";
+import { GrupoForm } from "@/components/turmas/GrupoForm";
 import { nucleosApi, atividadesApi, funcionariosApi } from "@/lib/api/services";
 
 export default async function NovaTurmaPage() {
@@ -11,8 +11,8 @@ export default async function NovaTurmaPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <PageHeader title="Nova turma" description="Cadastro de turma vinculada a núcleo e atividade" />
-      <TurmaForm
+      <PageHeader title="Novo grupo" description="Cadastro de grupo vinculado a núcleo e grade de sessões" />
+      <GrupoForm
         nucleos={nucleosRes.data}
         atividades={atividadesRes.data}
         funcionarios={funcionariosRes.data}
@@ -21,4 +21,3 @@ export default async function NovaTurmaPage() {
     </div>
   );
 }
-

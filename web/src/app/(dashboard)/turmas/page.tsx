@@ -30,6 +30,7 @@ import {
   type QP,
 } from "@/lib/api/services";
 import { useLocationFilter } from "@/components/providers/LocationFilterProvider";
+import { formatarNomeGrupo } from "@/lib/utils";
 
 const PER_PAGE = 15;
 const DIAS_SEMANA = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
@@ -381,7 +382,9 @@ export default function TurmasPage() {
                 ) : (
                   resultadoPaginado.map((t) => {
                     const nucleo = nucleos.find((n) => n.id === t.nucleoId);
-                    const atividade = atividades.find((a) => a.id === t.atividadeId);
+                    const atividade = atividades.find((a) => a.id === t.atividadeId) || t.atividade;
+                    const termoGrupo = atividade?.termoGrupo || "Grupo";
+                    const nomeAdaptado = formatarNomeGrupo(t.nome, termoGrupo);
                     const isSelected = selectedIds.includes(t.id);
                     const matriculadosCount = t.vagasOcupadas ?? 0;
                     const vagasTotais = t.vagasTotais || 0;
@@ -415,12 +418,12 @@ export default function TurmasPage() {
                           <Check className={`h-4 w-4 stroke-[3] transition-transform ${isSelected ? "scale-100 text-white" : "scale-85 text-zinc-400 opacity-60 group-hover:opacity-100"}`} />
                         </label>
 
-                        {/* Header: Tag Turma, Nome & Status */}
+                        {/* Header: Tag Grupo/Turma, Nome & Status */}
                         <div className="flex items-start justify-between gap-2 pl-7">
                           <div>
                             <div className="flex items-center gap-1.5 mb-0.5">
                               <span className="rounded-md bg-sky-100 px-1.5 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-sky-800">
-                                Turma
+                                {termoGrupo}
                               </span>
                               {t.exclusiva && (
                                 <span className="rounded-md bg-amber-100 px-1.5 py-0.5 text-[9px] font-bold uppercase text-amber-800">
@@ -434,7 +437,7 @@ export default function TurmasPage() {
                               )}
                             </div>
                             <Link href={`/turmas/${t.id}`} className="font-bold text-zinc-900 text-sm hover:text-sky-600">
-                              {t.nome}
+                              {nomeAdaptado}
                             </Link>
                           </div>
                           {t.tipo !== "operacional" && !t.atividade?.usoInterno && (
@@ -580,7 +583,9 @@ export default function TurmasPage() {
                             />
                           </td>
                           <td className="px-5 py-3 font-medium text-zinc-900">
-                            <Link href={`/turmas/${t.id}`} className="hover:text-sky-600">{t.nome}</Link>
+                            <Link href={`/turmas/${t.id}`} className="hover:text-sky-600">
+                              {formatarNomeGrupo(t.nome, atividade?.termoGrupo || t.atividade?.termoGrupo)}
+                            </Link>
                           </td>
                           <td className="px-5 py-3 text-zinc-600">{nucleo?.identificacao ?? "—"}</td>
                           <td className="px-5 py-3 text-zinc-600">{atividade?.nome ?? "—"}</td>

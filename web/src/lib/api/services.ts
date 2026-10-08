@@ -1,9 +1,9 @@
 import { createServerClient } from '@supabase/ssr';
 import { createClient as createBrowserClient } from '@/lib/supabase/client';
 import type { Database } from '@/lib/supabase/types';
-import type { StatusInscricao, ExecucaoAulaApi, BeneficiarioPresencaApi } from '@/lib/types';
+import type { StatusInscricao, ExecucaoSessaoApi, ExecucaoAulaApi, BeneficiarioPresencaApi } from '@/lib/types';
 import { getDataHojeBrasil, getHoraAgoraBrasil } from '@/lib/dateUtils';
-export type { ExecucaoAulaApi, BeneficiarioPresencaApi };
+export type { ExecucaoSessaoApi, ExecucaoAulaApi, BeneficiarioPresencaApi };
 
 async function getSupabase() {
   if (typeof window === 'undefined') {
@@ -245,6 +245,10 @@ export interface AtividadeApi {
   perguntas: { id: string; pergunta: string; disponivelInscricao: boolean }[];
   nucleoId: string;
   criadoEm: string;
+  termoGrupo?: string;
+  termoSessao?: string;
+  termoResponsavel?: string;
+  termoParticipante?: string;
 }
 
 export interface TurmaApi {
@@ -494,6 +498,10 @@ function mapAtividade(r: any): AtividadeApi {
       id: p.id, pergunta: p.enunciado, disponivelInscricao: p.disponivel_inscricao,
     })),
     nucleoId: r.nucleo_id, criadoEm: r.created_at,
+    termoGrupo: r.termo_grupo || 'Turma',
+    termoSessao: r.termo_sessao || 'Treino',
+    termoResponsavel: r.termo_responsavel || 'Professor',
+    termoParticipante: r.termo_participante || 'Aluno',
   };
 }
 
@@ -506,12 +514,20 @@ function mapTurma(r: any): TurmaApi {
   const slots = horarios.map((th: any) => {
     const inicioHour = parseInt(String(th.hora_inicio || '').split(':')[0], 10);
     const fimHour = parseInt(String(th.hora_fim || '').split(':')[0], 10);
+    const duracaoHoras = (!isNaN(fimHour) && !isNaN(inicioHour) && fimHour > inicioHour) ? (fimHour - inicioHour) : 1;
     return {
+      id: th.id,
       dia: DIA_KEY_MAP[th.dia_semana] || 'Seg',
       inicio: isNaN(inicioHour) ? 8 : inicioHour,
       fim: isNaN(fimHour) ? 10 : fimHour,
-      atividadeId: r.atividade_id,
-      atividadeNome: r.atividades?.nome,
+      duracaoHoras,
+      duracaoMinutos: duracaoHoras * 60,
+      nucleoId: th.nucleo_id || r.nucleo_id || undefined,
+      nucleoNome: th.nucleos?.identificacao || r.nucleos?.identificacao || undefined,
+      atividadeId: th.atividade_id || r.atividade_id || undefined,
+      atividadeNome: th.atividades?.nome || r.atividades?.nome || undefined,
+      responsavelId: th.responsavel_id || undefined,
+      responsavelNome: th.funcionarios?.nome_completo || undefined,
     };
   });
 
@@ -660,11 +676,15 @@ function mapPerfil(r: any): PerfilApi {
   };
 }
 
-function mapExecucaoAula(r: any): ExecucaoAulaApi {
+function mapExecucaoSessao(r: any): ExecucaoSessaoApi {
   return {
     id: r.id,
     turmaId: r.turma_id,
+    nucleoId: r.nucleo_id ?? undefined,
+    sessaoId: r.sessao_id ?? undefined,
+    atividadeId: r.atividade_id ?? undefined,
     professorId: r.professor_id,
+    professorNome: r.funcionarios?.nome_completo ?? r.professor_nome ?? undefined,
     data: r.data,
     horaInicioPrevista: r.hora_inicio_prevista,
     horaFimPrevista: r.hora_fim_prevista,
@@ -680,6 +700,8 @@ function mapExecucaoAula(r: any): ExecucaoAulaApi {
     criadoEm: r.criado_em || r.created_at,
   };
 }
+
+const mapExecucaoAula = mapExecucaoSessao;
 
 function mapBeneficiarioPresenca(r: any): BeneficiarioPresencaApi {
   return {
@@ -911,6 +933,19 @@ export const nucleosApi = {
     const { error } = await sb.from('nucleos').update({ deleted_at: new Date().toISOString() }).eq('id', id);
     if (error) throw error;
   },
+  async listAtividades(nucleoId: string): Promise<AtividadeApi[]> {
+    if (!nucleoId) return [];
+    const sb = await getSupabase();
+    const { data, error } = await sb
+      .from('nucleo_atividades')
+      .select('atividades(*)')
+      .eq('nucleo_id', nucleoId);
+    if (error) throw error;
+    return (data ?? [])
+      .map((r: any) => r.atividades)
+      .filter((a: any) => Boolean(a) && !a.deleted_at)
+      .map(mapAtividade);
+  },
 };
 
 function toNucleoRow(b: Record<string, unknown>): Database['public']['Tables']['nucleos']['Insert'] {
@@ -991,13 +1026,16 @@ function toAtividadeRow(b: Record<string, unknown>): Database['public']['Tables'
     idade_minima: b.idadeMinima as number | null | undefined,
     idade_maxima: b.idadeMaxima as number | null | undefined,
     nucleo_id: uuidOrNull(b.nucleoId) as any,
-  };
+    termo_grupo: (b.termoGrupo as string) || 'Turma',
+    termo_sessao: (b.termoSessao as string) || 'Treino',
+    termo_responsavel: (b.termoResponsavel as string) || 'Professor',
+    termo_participante: (b.termoParticipante as string) || 'Aluno',
+  } as any;
 }
 
 // ── Turmas ───────────────────────────────────────────────────────────────
 
-const TURMA_SELECT = '*, nucleos(*), atividades(*), turma_responsaveis(*, funcionarios(nome_completo)), turma_horarios(*), faixas_etarias(*)';
-const TURMA_FALLBACK_SELECT = '*, nucleos(*), atividades(*), turma_responsaveis(*), turma_horarios(*), faixas_etarias(*)';
+const TURMA_SELECT = '*, nucleos(*), atividades(*), turma_responsaveis(*, funcionarios(nome_completo)), turma_horarios(*, nucleos(id, identificacao), atividades(*), funcionarios(id, nome_completo)), faixas_etarias(*)';
 
 export const turmasApi = {
   async list(p?: QP): Promise<Paginated<TurmaApi>> {
@@ -1010,20 +1048,9 @@ export const turmasApi = {
     if (p?.atividadeId) q = q.eq('atividade_id', String(p.atividadeId));
     if (bool(p?.exclusiva) !== undefined) q = q.eq('exclusiva', bool(p?.exclusiva)!);
     
-    let { data, count, error } = await q.order('created_at', { ascending: false }).range(from, to);
-    if (error) {
-      console.warn('[turmasApi.list fallback]', error.message);
-      let qFallback = sb.from('turmas').select(TURMA_FALLBACK_SELECT, { count: 'exact' }).is('deleted_at', null);
-      if (p?.busca) qFallback = qFallback.ilike('nome', `%${p.busca}%`);
-      if (p?.nucleoId) qFallback = qFallback.eq('nucleo_id', String(p.nucleoId));
-      if (p?.nucleoIds && Array.isArray(p.nucleoIds) && p.nucleoIds.length > 0) qFallback = qFallback.in('nucleo_id', p.nucleoIds);
-      if (p?.atividadeId) qFallback = qFallback.eq('atividade_id', String(p.atividadeId));
-      if (bool(p?.exclusiva) !== undefined) qFallback = qFallback.eq('exclusiva', bool(p?.exclusiva)!);
-      const resFallback = await qFallback.order('created_at', { ascending: false }).range(from, to);
-      if (resFallback.error) throw resFallback.error;
-      data = resFallback.data as any;
-      count = resFallback.count;
-    }
+    const { data, count, error } = await q.order('created_at', { ascending: false }).range(from, to);
+    if (error) throw error;
+
     const rows = data ?? [];
     if (rows.length > 0) {
       const ids = rows.map((r: any) => r.id);
@@ -1045,12 +1072,8 @@ export const turmasApi = {
   },
   async get(id: string): Promise<TurmaApi> {
     const sb = await getSupabase();
-    let { data, error } = await sb.from('turmas').select(TURMA_SELECT).eq('id', id).single();
-    if (error) {
-      const resFallback = await sb.from('turmas').select(TURMA_FALLBACK_SELECT).eq('id', id).single();
-      if (resFallback.error) throw resFallback.error;
-      data = resFallback.data as any;
-    }
+    const { data, error } = await sb.from('turmas').select(TURMA_SELECT).eq('id', id).single();
+    if (error) throw error;
     if (data) {
       const { count: ocupadasCount } = await sb
         .from('beneficiario_turmas')
@@ -1095,6 +1118,10 @@ export const turmasApi = {
     if (delErr) throw delErr;
     if (!slots || slots.length === 0) return;
 
+    // Buscar nucleo_id da turma para herança padrão
+    const { data: turmaData } = await sb.from('turmas').select('nucleo_id').eq('id', turmaId).single();
+    const nucleoPadraoId = turmaData?.nucleo_id || null;
+
     const KEY_TO_DIA: Record<string, number> = {
       Dom: 0, Seg: 1, Ter: 2, Qua: 3, Qui: 4, Sex: 5, Sáb: 6
     };
@@ -1104,9 +1131,12 @@ export const turmasApi = {
       dia_semana: KEY_TO_DIA[s.dia] ?? 1,
       hora_inicio: `${String(s.inicio).padStart(2, '0')}:00:00`,
       hora_fim: `${String(s.fim).padStart(2, '0')}:00:00`,
+      nucleo_id: s.nucleoId || nucleoPadraoId,
+      atividade_id: s.atividadeId || null,
+      responsavel_id: s.responsavelId || null,
     }));
 
-    const { error } = await sb.from('turma_horarios').insert(rows);
+    const { error } = await sb.from('turma_horarios' as any).insert(rows as any);
     if (error) throw error;
   },
   async matricular(turmaId: string, beneficiarioId: string): Promise<void> {
@@ -1979,7 +2009,7 @@ function montarResumo(
   aprovados: any[],
   nucleos: any[],
   funcionarios: { status: string }[],
-  turmas: { id: string; atividade_id: string; vagas_totais: number }[],
+  turmas: { id: string; atividade_id?: string | null; vagas_totais: number }[],
   atividades: { id: string; nome: string; disponivel_pre_inscricao?: boolean }[],
   matriculas: { turma_id: string }[],
   recentes: any[],
@@ -2392,7 +2422,7 @@ export const areaProfessorApi = {
     };
   },
 
-  async salvarPresencas(payload: { turmaId: string; dataAula: string; presencas: Array<{ beneficiarioId: string; presente: boolean }> }) {
+  async salvarPresencas(payload: { turmaId: string; dataAula: string; presencas: Array<{ beneficiarioId: string; presente: boolean }>; atividadeId?: string }) {
     const sb = createClient();
     const rows = payload.presencas.map((p) => ({
       turma_id: payload.turmaId,
@@ -2407,6 +2437,15 @@ export const areaProfessorApi = {
       .upsert(rows, { onConflict: 'turma_id,data,beneficiario_id' });
 
     if (error) throw error;
+
+    if (payload.atividadeId) {
+      await (sb as any).from('execucoes_sessao')
+        .update({ atividade_id: payload.atividadeId })
+        .eq('turma_id', payload.turmaId)
+        .eq('data', payload.dataAula)
+        .is('atividade_id', null);
+    }
+
     return true;
   },
 
@@ -2534,15 +2573,19 @@ export const areaProfessorApi = {
 
 export const professoresApi = areaProfessorApi;
 
-export const execucoesAulaApi = {
-  async iniciarAula(params: {
+export const execucoesSessaoApi = {
+  async iniciarSessao(params: {
     turmaId: string;
     professorId: string;
     data: string;
     horaInicioPrevista: string;
     horaFimPrevista: string;
+    horaInicioReal?: string;
+    nucleoId?: string;
+    sessaoId?: string;
+    atividadeId?: string;
     justificativaRetroativa?: string;
-  }): Promise<ExecucaoAulaApi> {
+  }): Promise<ExecucaoSessaoApi> {
     const sb = createClient();
     const now = new Date();
     const horaPonto = `${getHoraAgoraBrasil()}:00`;
@@ -2551,22 +2594,22 @@ export const execucoesAulaApi = {
     // Bloqueio absoluto: data futura
     const hojeISO = getDataHojeBrasil();
     if (params.data > hojeISO) {
-      throw new Error('Não é permitido iniciar uma aula em data futura.');
+      throw new Error('Não é permitido iniciar uma sessão em data futura.');
     }
 
     // Bloqueia se tiver aula auto-encerrada pendente de confirmação
-    const { data: autoEncerradas } = await (sb as any).from('execucoes_aula')
+    const { data: autoEncerradas } = await (sb as any).from('execucoes_sessao')
       .select('id')
       .eq('professor_id', params.professorId)
       .eq('status', 'encerrada_automaticamente')
       .limit(1);
 
     if (autoEncerradas && autoEncerradas.length > 0) {
-      throw new Error('Você possui uma aula encerrada automaticamente que precisa ser confirmada antes de iniciar uma nova.');
+      throw new Error('Você possui uma sessão encerrada automaticamente que precisa ser confirmada antes de iniciar uma nova.');
     }
 
     // Evita duplicatas: se já existir aula ativa para a turma na data, retorna ela
-    const { data: existente } = await (sb as any).from('execucoes_aula')
+    const { data: existente } = await (sb as any).from('execucoes_sessao')
       .select('*')
       .eq('turma_id', params.turmaId)
       .eq('data', params.data)
@@ -2576,28 +2619,56 @@ export const execucoesAulaApi = {
       .maybeSingle();
 
     if (existente) {
-      return mapExecucaoAula(existente);
+      return mapExecucaoSessao(existente);
+    }
+
+    // Se nucleoId não foi informado explicitamente, herdar da turma
+    let nucleoIdFinal = params.nucleoId;
+    if (!nucleoIdFinal) {
+      const { data: turmaData } = await (sb as any).from('turmas')
+        .select('nucleo_id')
+        .eq('id', params.turmaId)
+        .maybeSingle();
+      nucleoIdFinal = turmaData?.nucleo_id || null;
+    }
+
+    // Regra de Ouro 3: Hora Real (Verdade Efetiva vs. Hora do Clique)
+    // Se data for retroativa ou informada horaInicioReal, salvar o horário do evento no dia da aula, não o timestamp now do clique dias depois.
+    const isRetroativa = params.data < hojeISO;
+    let horaInicioRealFinal: string;
+    if (params.horaInicioReal) {
+      horaInicioRealFinal = params.horaInicioReal.includes('T')
+        ? params.horaInicioReal
+        : `${params.data}T${params.horaInicioReal.length === 5 ? `${params.horaInicioReal}:00` : params.horaInicioReal}`;
+    } else if (isRetroativa) {
+      const horaPadrao = params.horaInicioPrevista || '08:00';
+      horaInicioRealFinal = `${params.data}T${horaPadrao.length === 5 ? `${horaPadrao}:00` : horaPadrao}`;
+    } else {
+      horaInicioRealFinal = now.toISOString();
     }
 
     const payload = {
       turma_id: params.turmaId,
+      nucleo_id: nucleoIdFinal || null,
+      sessao_id: params.sessaoId || null,
+      atividade_id: params.atividadeId || null,
       professor_id: params.professorId,
       data: params.data,
       hora_inicio_prevista: params.horaInicioPrevista,
       hora_fim_prevista: params.horaFimPrevista,
-      hora_inicio_real: now.toISOString(),
+      hora_inicio_real: horaInicioRealFinal,
       status: isPendente ? 'pendente_aprovacao' : 'em_andamento',
       status_aprovacao: isPendente ? 'pendente_aprovacao' : 'aprovado',
       justificativa_retroativa: params.justificativaRetroativa || null,
     };
 
-    const { data, error } = await (sb as any).from('execucoes_aula')
+    const { data, error } = await (sb as any).from('execucoes_sessao')
       .insert(payload)
       .select('*')
       .single();
 
     if (error) throw error;
-    const mapped = mapExecucaoAula(data);
+    const mapped = mapExecucaoSessao(data);
 
     if (!isPendente && params.professorId) {
       try {
@@ -2607,7 +2678,7 @@ export const execucoesAulaApi = {
           tipo: 'entrada',
           hora: horaPonto,
           status: 'ok',
-          observacao: `Início de aula - Turma ${params.turmaId}`,
+          observacao: `Início de sessão - Turma ${params.turmaId}`,
         });
       } catch (e) {
         console.warn('Aviso ao registrar ponto de entrada:', e);
@@ -2615,6 +2686,10 @@ export const execucoesAulaApi = {
     }
 
     return mapped;
+  },
+
+  async iniciarAula(params: any): Promise<ExecucaoSessaoApi> {
+    return this.iniciarSessao(params);
   },
 
   async salvarPresencas(
@@ -2673,11 +2748,11 @@ export const execucoesAulaApi = {
     return (data ?? []).map(mapBeneficiarioPresenca);
   },
 
-  async getExecucao(turmaId: string, data?: string): Promise<ExecucaoAulaApi | null> {
+  async getExecucao(turmaId: string, data?: string): Promise<ExecucaoSessaoApi | null> {
     const sb = await getSupabase();
 
-    // 1. Prioridade: se houver aula em andamento para esta turma, recupera ela
-    let queryAndamento = (sb as any).from('execucoes_aula')
+    // 1. Prioridade: se houver sessão em andamento para esta turma, recupera ela
+    let queryAndamento = (sb as any).from('execucoes_sessao')
       .select('*')
       .eq('turma_id', turmaId)
       .eq('status', 'em_andamento');
@@ -2692,12 +2767,12 @@ export const execucoesAulaApi = {
       .maybeSingle();
 
     if (!errAndamento && emAndamento) {
-      return mapExecucaoAula(emAndamento);
+      return mapExecucaoSessao(emAndamento);
     }
 
     // 2. Se informada a data, busca por data
     if (data) {
-      const { data: execData, error } = await (sb as any).from('execucoes_aula')
+      const { data: execData, error } = await (sb as any).from('execucoes_sessao')
         .select('*')
         .eq('turma_id', turmaId)
         .eq('data', data)
@@ -2706,34 +2781,58 @@ export const execucoesAulaApi = {
         .maybeSingle();
 
       if (error) throw error;
-      return execData ? mapExecucaoAula(execData) : null;
+      return execData ? mapExecucaoSessao(execData) : null;
     }
 
     return null;
   },
 
-  async getById(id: string): Promise<ExecucaoAulaApi | null> {
+  async getById(id: string): Promise<ExecucaoSessaoApi | null> {
     const sb = await getSupabase();
-    const { data, error } = await (sb as any).from('execucoes_aula')
+    const { data, error } = await (sb as any).from('execucoes_sessao')
       .select('*')
       .eq('id', id)
       .maybeSingle();
 
     if (error) throw error;
-    return data ? mapExecucaoAula(data) : null;
+    return data ? mapExecucaoSessao(data) : null;
   },
 
-  async finalizarAula(
+  async finalizarSessao(
     id: string,
-    params: { fotoComprovanteUrl?: string; observacoes?: string }
-  ): Promise<ExecucaoAulaApi> {
+    params: {
+      fotoComprovanteUrl?: string;
+      observacoes?: string;
+      horaFimReal?: string;
+    }
+  ): Promise<ExecucaoSessaoApi> {
     const sb = createClient();
     const now = new Date();
+    const hojeISO = getDataHojeBrasil();
     const horaPonto = `${getHoraAgoraBrasil()}:00`;
 
-    const { data: execData, error } = await (sb as any).from('execucoes_aula')
+    // Buscar dados atuais da sessão para verificar data e hora fim prevista
+    const { data: atual } = await (sb as any).from('execucoes_sessao')
+      .select('data, hora_fim_prevista, hora_inicio_real')
+      .eq('id', id)
+      .maybeSingle();
+
+    const isRetroativa = atual?.data && atual.data < hojeISO;
+    let horaFimRealFinal: string;
+    if (params.horaFimReal) {
+      horaFimRealFinal = params.horaFimReal.includes('T')
+        ? params.horaFimReal
+        : `${atual?.data || hojeISO}T${params.horaFimReal.length === 5 ? `${params.horaFimReal}:00` : params.horaFimReal}`;
+    } else if (isRetroativa && atual?.hora_fim_prevista) {
+      const horaPadrao = atual.hora_fim_prevista;
+      horaFimRealFinal = `${atual.data}T${horaPadrao.length === 5 ? `${horaPadrao}:00` : horaPadrao}`;
+    } else {
+      horaFimRealFinal = now.toISOString();
+    }
+
+    const { data: execData, error } = await (sb as any).from('execucoes_sessao')
       .update({
-        hora_fim_real: now.toISOString(),
+        hora_fim_real: horaFimRealFinal,
         status: 'concluida',
         foto_comprovante_url: params.fotoComprovanteUrl || null,
         observacoes: params.observacoes || null,
@@ -2746,7 +2845,7 @@ export const execucoesAulaApi = {
 
     if (error) throw error;
     if (!execData) throw new Error('Aula não encontrada ou já finalizada/rejeitada.');
-    const mapped = mapExecucaoAula(execData);
+    const mapped = mapExecucaoSessao(execData);
 
     if (mapped.professorId && mapped.statusAprovacao !== 'pendente_aprovacao') {
       try {
@@ -2766,9 +2865,13 @@ export const execucoesAulaApi = {
     return mapped;
   },
 
-  async listPendencias(p?: { nucleoId?: string }): Promise<ExecucaoAulaApi[]> {
+  async finalizarAula(id: string, params: any): Promise<ExecucaoSessaoApi> {
+    return this.finalizarSessao(id, params);
+  },
+
+  async listPendencias(p?: { nucleoId?: string }): Promise<ExecucaoSessaoApi[]> {
     const sb = createClient();
-    let q = (sb as any).from('execucoes_aula')
+    let q = (sb as any).from('execucoes_sessao')
       .select('*, turmas!inner(id, nucleo_id)')
       .eq('status_aprovacao', 'pendente_aprovacao');
 
@@ -2778,20 +2881,20 @@ export const execucoesAulaApi = {
 
     const { data, error } = await q.order('criado_em', { ascending: false });
     if (error) {
-      let simpleQ = (sb as any).from('execucoes_aula')
+      let simpleQ = (sb as any).from('execucoes_sessao')
         .select('*')
         .eq('status_aprovacao', 'pendente_aprovacao')
         .order('criado_em', { ascending: false });
       const { data: simpleData, error: simpleErr } = await simpleQ;
       if (simpleErr) throw simpleErr;
-      return (simpleData ?? []).map(mapExecucaoAula);
+      return (simpleData ?? []).map(mapExecucaoSessao);
     }
-    return (data ?? []).map(mapExecucaoAula);
+    return (data ?? []).map(mapExecucaoSessao);
   },
 
   async countPendencias(): Promise<number> {
     const sb = await getSupabase();
-    const { count, error } = await (sb as any).from('execucoes_aula')
+    const { count, error } = await (sb as any).from('execucoes_sessao')
       .select('id', { count: 'exact', head: true })
       .eq('status_aprovacao', 'pendente_aprovacao');
     if (error) return 0;
@@ -2801,7 +2904,7 @@ export const execucoesAulaApi = {
   async avaliarPendencia(
     id: string,
     params: { aprovado: boolean; userId: string; motivoRejeicao?: string }
-  ): Promise<ExecucaoAulaApi> {
+  ): Promise<ExecucaoSessaoApi> {
     const sb = createClient();
     const now = new Date().toISOString();
     const status = params.aprovado ? 'concluida' : 'rejeitada';
@@ -2818,14 +2921,14 @@ export const execucoesAulaApi = {
       updatePayload.observacoes = params.motivoRejeicao;
     }
 
-    const { data: execData, error } = await (sb as any).from('execucoes_aula')
+    const { data: execData, error } = await (sb as any).from('execucoes_sessao')
       .update(updatePayload)
       .eq('id', id)
       .select('*')
       .single();
 
     if (error) throw error;
-    const mapped = mapExecucaoAula(execData);
+    const mapped = mapExecucaoSessao(execData);
 
     if (params.aprovado && mapped.professorId) {
       try {
@@ -2858,43 +2961,52 @@ export const execucoesAulaApi = {
     return mapped;
   },
 
-  async listAll(p?: { turmaId?: string; professorId?: string; status?: string; data?: string; limit?: number }): Promise<ExecucaoAulaApi[]> {
+  async listAll(p?: { turmaId?: string; professorId?: string; status?: string; data?: string; limit?: number }): Promise<ExecucaoSessaoApi[]> {
     const sb = await getSupabase();
-    let q = (sb as any).from('execucoes_aula').select('*');
+    let q = (sb as any).from('execucoes_sessao').select('*, funcionarios(nome_completo)');
 
     if (p?.turmaId) q = q.eq('turma_id', p.turmaId);
     if (p?.professorId) q = q.eq('professor_id', p.professorId);
     if (p?.status) q = q.eq('status', p.status);
     if (p?.data) q = q.eq('data', p.data);
 
-    const { data, error } = await q.order('criado_em', { ascending: false }).limit(p?.limit || 200);
-    if (error) throw error;
-    return (data ?? []).map(mapExecucaoAula);
+    let { data, error } = await q.order('criado_em', { ascending: false }).limit(p?.limit || 200);
+    if (error) {
+      let qFallback = (sb as any).from('execucoes_sessao').select('*');
+      if (p?.turmaId) qFallback = qFallback.eq('turma_id', p.turmaId);
+      if (p?.professorId) qFallback = qFallback.eq('professor_id', p.professorId);
+      if (p?.status) qFallback = qFallback.eq('status', p.status);
+      if (p?.data) qFallback = qFallback.eq('data', p.data);
+      const res = await qFallback.order('criado_em', { ascending: false }).limit(p?.limit || 200);
+      if (res.error) throw res.error;
+      data = res.data;
+    }
+    return (data ?? []).map(mapExecucaoSessao);
   },
 
-  async getExecucoesTurmasPeriodo(turmaIds: string[], dataInicio: string, dataFim: string): Promise<ExecucaoAulaApi[]> {
+  async getExecucoesTurmasPeriodo(turmaIds: string[], dataInicio: string, dataFim: string): Promise<ExecucaoSessaoApi[]> {
     if (!turmaIds || turmaIds.length === 0) return [];
     const sb = await getSupabase();
-    const { data, error } = await (sb as any).from('execucoes_aula')
+    const { data, error } = await (sb as any).from('execucoes_sessao')
       .select('*')
       .in('turma_id', turmaIds)
       .gte('data', dataInicio)
       .lte('data', dataFim);
 
     if (error) throw error;
-    return (data ?? []).map(mapExecucaoAula);
+    return (data ?? []).map(mapExecucaoSessao);
   },
 
-  async getAutoEncerradas(professorId: string): Promise<ExecucaoAulaApi[]> {
+  async getAutoEncerradas(professorId: string): Promise<ExecucaoSessaoApi[]> {
     const sb = await getSupabase();
-    const { data, error } = await (sb as any).from('execucoes_aula')
+    const { data, error } = await (sb as any).from('execucoes_sessao')
       .select('*')
       .eq('professor_id', professorId)
       .eq('status', 'encerrada_automaticamente')
       .order('criado_em', { ascending: false });
 
     if (error) throw error;
-    return (data ?? []).map(mapExecucaoAula);
+    return (data ?? []).map(mapExecucaoSessao);
   },
 
   async confirmarEncerramento(
@@ -2905,7 +3017,7 @@ export const execucoesAulaApi = {
       divergencia?: boolean;
       justificativaDivergencia?: string;
     }
-  ): Promise<ExecucaoAulaApi> {
+  ): Promise<ExecucaoSessaoApi> {
     const sb = createClient();
     const updatePayload: Record<string, unknown> = {
       status: 'concluida',
@@ -2923,14 +3035,14 @@ export const execucoesAulaApi = {
       updatePayload.observacoes = params.observacoes;
     }
 
-    const { data, error } = await (sb as any).from('execucoes_aula')
+    const { data, error } = await (sb as any).from('execucoes_sessao')
       .update(updatePayload)
       .eq('id', id)
       .select('*')
       .single();
 
     if (error) throw error;
-    const mapped = mapExecucaoAula(data);
+    const mapped = mapExecucaoSessao(data);
 
     // Registrar ponto do professor (mesmo padrão de avaliarPendencia)
     if (mapped.professorId && !params.divergencia) {
@@ -2964,6 +3076,8 @@ export const execucoesAulaApi = {
     return mapped;
   },
 };
+
+export const execucoesAulaApi = execucoesSessaoApi;
 
 export const registrosPontoApi = {
   async listByFuncionarioMes(funcionarioId: string, ano: number, mes: number) {

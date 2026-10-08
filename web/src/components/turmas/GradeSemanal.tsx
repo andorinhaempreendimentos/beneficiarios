@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui";
 import { Plus, X } from "lucide-react";
-import type { AtividadeApi } from "@/lib/api/services";
+import type { AtividadeApi, FuncionarioApi, NucleoApi } from "@/lib/api/services";
 
 const DIAS_OPCOES = [
   { key: "Dom", label: "Domingo" },
@@ -18,11 +18,18 @@ const DIAS_OPCOES = [
 const TODAS_HORAS = Array.from({ length: 18 }, (_, i) => i + 6); // 06h–23h
 
 export interface SlotAula {
+  id?: string;
   dia: string;
   inicio: number;
   fim: number;
+  duracaoHoras?: number;
+  duracaoMinutos?: number;
+  nucleoId?: string;
+  nucleoNome?: string;
   atividadeId?: string;
   atividadeNome?: string;
+  responsavelId?: string;
+  responsavelNome?: string;
   isControleInterno?: boolean;
 }
 
@@ -30,6 +37,10 @@ interface GradeSemanalProps {
   atividade?: AtividadeApi;
   atividadeNome?: string;
   atividadesLocais?: AtividadeApi[];
+  funcionarios?: FuncionarioApi[];
+  nucleos?: NucleoApi[];
+  nucleoPadraoId?: string;
+  nucleoPadraoNome?: string;
   slots?: SlotAula[];
   onChange?: (slots: SlotAula[]) => void;
 }
@@ -43,6 +54,10 @@ interface ModalSlotProps {
   atividadeAtual?: AtividadeApi;
   atividadeNome: string;
   atividadesLocais?: AtividadeApi[];
+  funcionarios?: FuncionarioApi[];
+  nucleos?: NucleoApi[];
+  nucleoPadraoId?: string;
+  nucleoPadraoNome?: string;
   diasVisiveis: string[];
   initialDia?: string;
   initialInicio?: number;
@@ -55,6 +70,10 @@ function ModalSlot({
   atividadeAtual,
   atividadeNome,
   atividadesLocais = [],
+  funcionarios = [],
+  nucleos = [],
+  nucleoPadraoId,
+  nucleoPadraoNome,
   diasVisiveis,
   initialDia,
   initialInicio,
@@ -67,6 +86,8 @@ function ModalSlot({
   const [fim, setFim] = useState(initialFim ?? 9);
 
   const [selectedAtividadeId, setSelectedAtividadeId] = useState(atividadeAtual?.id || "");
+  const [selectedResponsavelId, setSelectedResponsavelId] = useState("");
+  const [selectedNucleoId, setSelectedNucleoId] = useState(nucleoPadraoId || "");
 
   const atvSelecionada = atividadesLocais.find((a) => a.id === selectedAtividadeId) || atividadeAtual;
   const isControleInterno = atvSelecionada ? !atvSelecionada.disponivelPreInscricao : false;
@@ -74,12 +95,22 @@ function ModalSlot({
 
   function handleConfirm() {
     if (fim <= inicio) return;
+    const duracaoHoras = fim - inicio;
+    const respSelecionado = funcionarios.find((f) => f.id === selectedResponsavelId);
+    const nucleoObj = nucleos.find((n) => n.id === selectedNucleoId);
+    const nucleoFinalNome = nucleoObj?.identificacao || nucleoPadraoNome;
     onConfirm({
       dia,
       inicio,
       fim,
+      duracaoHoras,
+      duracaoMinutos: duracaoHoras * 60,
+      nucleoId: selectedNucleoId || nucleoPadraoId,
+      nucleoNome: nucleoFinalNome,
       atividadeId: atvSelecionada?.id,
       atividadeNome: nomeExibicao,
+      responsavelId: respSelecionado?.id,
+      responsavelNome: respSelecionado?.nomeCompleto,
       isControleInterno,
     });
     onClose();
@@ -93,8 +124,8 @@ function ModalSlot({
       >
         <div className="mb-5 flex items-center justify-between border-b border-zinc-100 pb-3">
           <div>
-            <h3 className="text-sm font-bold text-zinc-900">Adicionar Slot de Horário</h3>
-            <p className="text-xs text-zinc-500">Defina o tipo de aula ou atividade de controle interno</p>
+            <h3 className="text-sm font-bold text-zinc-900">Adicionar Sessão / Horário</h3>
+            <p className="text-xs text-zinc-500">Defina o tipo de atividade e o responsável pela sessão</p>
           </div>
           <button type="button" onClick={onClose} className="rounded-lg p-1 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600">
             <X size={16} />
@@ -104,7 +135,7 @@ function ModalSlot({
         <div className="flex flex-col gap-4">
           {atividadesLocais.length > 0 && (
             <div>
-              <label className="mb-1.5 block text-xs font-semibold text-zinc-700">Atividade / Bloco</label>
+              <label className="mb-1.5 block text-xs font-semibold text-zinc-700">Atividade da Sessão</label>
               <select
                 value={selectedAtividadeId}
                 onChange={(e) => setSelectedAtividadeId(e.target.value)}
@@ -112,7 +143,25 @@ function ModalSlot({
               >
                 {atividadesLocais.map((a) => (
                   <option key={a.id} value={a.id}>
-                    {a.nome} {!a.disponivelPreInscricao ? "(🔒 Controle Interno)" : "(Turma)"}
+                    {a.nome} ({a.termoGrupo || "Grupo"} • {a.termoSessao || "Treino"}) {!a.disponivelPreInscricao ? "[Interno]" : ""}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {funcionarios.length > 0 && (
+            <div>
+              <label className="mb-1.5 block text-xs font-semibold text-zinc-700">Responsável / Professor</label>
+              <select
+                value={selectedResponsavelId}
+                onChange={(e) => setSelectedResponsavelId(e.target.value)}
+                className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-medium text-zinc-800 focus:border-sky-500 focus:outline-none"
+              >
+                <option value="">Selecione o responsável (opcional)</option>
+                {funcionarios.map((f) => (
+                  <option key={f.id} value={f.id}>
+                    {f.nomeCompleto} {f.funcao ? `(${f.funcao})` : ""}
                   </option>
                 ))}
               </select>
@@ -167,6 +216,37 @@ function ModalSlot({
             </div>
           </div>
 
+          {fim > inicio && (
+            <div className="rounded-xl bg-sky-50 border border-sky-200/80 p-2.5 text-xs text-sky-900 flex items-center justify-between">
+              <span>Horário: <strong>{formatHora(inicio)} às {formatHora(fim)}</strong></span>
+              <span className="font-bold text-sky-700 bg-white border border-sky-200 px-2 py-0.5 rounded-md">
+                Duração: {fim - inicio}h
+              </span>
+            </div>
+          )}
+
+          {nucleos.length > 0 && (
+            <div>
+              <label className="mb-1.5 block text-xs font-semibold text-zinc-700">Espaço / Núcleo da Sessão</label>
+              <select
+                value={selectedNucleoId}
+                onChange={(e) => setSelectedNucleoId(e.target.value)}
+                className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-medium text-zinc-800 focus:border-sky-500 focus:outline-none"
+              >
+                <option value={nucleoPadraoId || ""}>
+                  {nucleoPadraoNome ? `${nucleoPadraoNome} (Padrão do Grupo)` : "Núcleo padrão do grupo"}
+                </option>
+                {nucleos
+                  .filter((n) => n.id !== nucleoPadraoId)
+                  .map((n) => (
+                    <option key={n.id} value={n.id}>
+                      {n.identificacao}
+                    </option>
+                  ))}
+              </select>
+            </div>
+          )}
+
           {fim <= inicio && (
             <p className="text-xs text-red-500">Horário de fim deve ser após o início.</p>
           )}
@@ -193,8 +273,14 @@ function ModalSlot({
 interface ModalOpcoesSlotProps {
   slot: SlotAula;
   atividadesLocais?: AtividadeApi[];
+  funcionarios?: FuncionarioApi[];
+  nucleos?: NucleoApi[];
+  nucleoPadraoId?: string;
+  nucleoPadraoNome?: string;
   onDuplicar: (diaDestino: string) => void;
   onTrocarAtividade: (novaAtividade: AtividadeApi) => void;
+  onTrocarResponsavel?: (novoResponsavel: FuncionarioApi | null) => void;
+  onTrocarNucleo?: (novoNucleo: NucleoApi | null) => void;
   onDeletar: () => void;
   onClose: () => void;
 }
@@ -202,14 +288,24 @@ interface ModalOpcoesSlotProps {
 function ModalOpcoesSlot({
   slot,
   atividadesLocais = [],
+  funcionarios = [],
+  nucleos = [],
+  nucleoPadraoId,
+  nucleoPadraoNome,
   onDuplicar,
   onTrocarAtividade,
+  onTrocarResponsavel,
+  onTrocarNucleo,
   onDeletar,
   onClose,
 }: ModalOpcoesSlotProps) {
   const [aba, setAba] = useState<"opcoes" | "duplicar" | "trocar">("opcoes");
   const [diaDestino, setDiaDestino] = useState(slot.dia);
   const [novaAtividadeId, setNovaAtividadeId] = useState(slot.atividadeId || "");
+  const [novoResponsavelId, setNovoResponsavelId] = useState(slot.responsavelId || "");
+  const [novoNucleoId, setNovoNucleoId] = useState(slot.nucleoId || nucleoPadraoId || "");
+
+  const duracao = slot.duracaoHoras || (slot.fim - slot.inicio);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs" onClick={onClose}>
@@ -221,11 +317,15 @@ function ModalOpcoesSlot({
           <div>
             <h3 className="text-sm font-extrabold text-zinc-900 flex items-center gap-1.5">
               <span>{slot.isControleInterno ? "🔒" : "📌"}</span>
-              <span>{slot.atividadeNome || "Slot de Horário"}</span>
+              <span>{slot.atividadeNome || "Sessão"}</span>
             </h3>
             <p className="text-xs text-zinc-500 font-medium">
-              {DIAS_OPCOES.find((d) => d.key === slot.dia)?.label} ({formatHora(slot.inicio)} às {formatHora(slot.fim)})
+              {DIAS_OPCOES.find((d) => d.key === slot.dia)?.label} ({formatHora(slot.inicio)} às {formatHora(slot.fim)} • {duracao}h)
             </p>
+            <div className="mt-1 flex flex-wrap gap-1 text-[11px] text-zinc-600">
+              {slot.nucleoNome && <span className="rounded bg-zinc-100 px-1.5 py-0.5">📍 {slot.nucleoNome}</span>}
+              {slot.responsavelNome && <span className="rounded bg-sky-50 text-sky-700 px-1.5 py-0.5">👤 {slot.responsavelNome}</span>}
+            </div>
           </div>
           <button type="button" onClick={onClose} className="rounded-full p-1 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600">
             <X size={16} />
@@ -256,8 +356,8 @@ function ModalOpcoesSlot({
               <div className="flex items-center gap-3">
                 <span className="p-2 rounded-xl bg-amber-100 text-amber-700 font-bold">🔄</span>
                 <div>
-                  <span className="block text-zinc-900">Trocar Atividade</span>
-                  <span className="text-[11px] font-normal text-zinc-500">Alterar tipo de aula ou controle interno</span>
+                  <span className="block text-zinc-900">Editar Detalhes</span>
+                  <span className="text-[11px] font-normal text-zinc-500">Alterar atividade, responsável ou núcleo</span>
                 </div>
               </div>
             </button>
@@ -322,18 +422,60 @@ function ModalOpcoesSlot({
 
         {aba === "trocar" && (
           <div className="flex flex-col gap-4">
-            <label className="text-xs font-bold text-zinc-800 block">Selecione a nova atividade para este slot:</label>
-            <select
-              value={novaAtividadeId}
-              onChange={(e) => setNovaAtividadeId(e.target.value)}
-              className="w-full rounded-xl border border-zinc-200 bg-white px-3.5 py-2.5 text-xs font-medium text-zinc-800 focus:border-sky-500 focus:outline-none"
-            >
-              {atividadesLocais.map((a) => (
-                <option key={a.id} value={a.id}>
-                  {a.nome} {!a.disponivelPreInscricao ? "(🔒 Controle Interno)" : "(Turma)"}
-                </option>
-              ))}
-            </select>
+            <div>
+              <label className="text-xs font-bold text-zinc-800 block mb-1">Atividade da sessão:</label>
+              <select
+                value={novaAtividadeId}
+                onChange={(e) => setNovaAtividadeId(e.target.value)}
+                className="w-full rounded-xl border border-zinc-200 bg-white px-3.5 py-2.5 text-xs font-medium text-zinc-800 focus:border-sky-500 focus:outline-none"
+              >
+                {atividadesLocais.map((a) => (
+                  <option key={a.id} value={a.id}>
+                    {a.nome} ({a.termoGrupo || "Grupo"} • {a.termoSessao || "Treino"}) {!a.disponivelPreInscricao ? "[Interno]" : ""}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {funcionarios.length > 0 && (
+              <div>
+                <label className="text-xs font-bold text-zinc-800 block mb-1">Responsável / Professor:</label>
+                <select
+                  value={novoResponsavelId}
+                  onChange={(e) => setNovoResponsavelId(e.target.value)}
+                  className="w-full rounded-xl border border-zinc-200 bg-white px-3.5 py-2.5 text-xs font-medium text-zinc-800 focus:border-sky-500 focus:outline-none"
+                >
+                  <option value="">Sem responsável definido</option>
+                  {funcionarios.map((f) => (
+                    <option key={f.id} value={f.id}>
+                      {f.nomeCompleto} {f.funcao ? `(${f.funcao})` : ""}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {nucleos.length > 0 && (
+              <div>
+                <label className="text-xs font-bold text-zinc-800 block mb-1">Espaço / Núcleo da Sessão:</label>
+                <select
+                  value={novoNucleoId}
+                  onChange={(e) => setNovoNucleoId(e.target.value)}
+                  className="w-full rounded-xl border border-zinc-200 bg-white px-3.5 py-2.5 text-xs font-medium text-zinc-800 focus:border-sky-500 focus:outline-none"
+                >
+                  <option value={nucleoPadraoId || ""}>
+                    {nucleoPadraoNome ? `${nucleoPadraoNome} (Padrão do Grupo)` : "Núcleo padrão do grupo"}
+                  </option>
+                  {nucleos
+                    .filter((n) => n.id !== nucleoPadraoId)
+                    .map((n) => (
+                      <option key={n.id} value={n.id}>
+                        {n.identificacao}
+                      </option>
+                    ))}
+                </select>
+              </div>
+            )}
 
             <div className="flex justify-end gap-2 pt-2 border-t border-zinc-100">
               <button
@@ -348,7 +490,11 @@ function ModalOpcoesSlot({
                 size="sm"
                 onClick={() => {
                   const novaAtv = atividadesLocais.find((a) => a.id === novaAtividadeId);
+                  const novoResp = funcionarios.find((f) => f.id === novoResponsavelId) || null;
+                  const novoNuc = nucleos.find((n) => n.id === novoNucleoId) || null;
                   if (novaAtv) onTrocarAtividade(novaAtv);
+                  if (onTrocarResponsavel) onTrocarResponsavel(novoResp);
+                  if (onTrocarNucleo) onTrocarNucleo(novoNuc);
                   onClose();
                 }}
               >
@@ -362,7 +508,17 @@ function ModalOpcoesSlot({
   );
 }
 
-export function GradeSemanal({ atividade, atividadeNome = "Aula", atividadesLocais = [], slots = [], onChange }: GradeSemanalProps) {
+export function GradeSemanal({
+  atividade,
+  atividadeNome = "Aula",
+  atividadesLocais = [],
+  funcionarios = [],
+  nucleos = [],
+  nucleoPadraoId,
+  nucleoPadraoNome,
+  slots = [],
+  onChange,
+}: GradeSemanalProps) {
   const [items, setItems] = useState<SlotAula[]>(slots);
   const [diasVisiveis, setDiasVisiveis] = useState<Set<string>>(() => {
     const base = new Set(["Seg", "Ter", "Qua", "Qui", "Sex"]);
@@ -489,6 +645,10 @@ export function GradeSemanal({ atividade, atividadeNome = "Aula", atividadesLoca
     return hora >= lo && hora <= hi;
   };
 
+  const totalCargaHoraria = useMemo(() => {
+    return items.reduce((acc, s) => acc + (s.duracaoHoras || (s.fim - s.inicio)), 0);
+  }, [items]);
+
   return (
     <div className="flex flex-col gap-3">
       {/* Controles acima da grade */}
@@ -525,6 +685,15 @@ export function GradeSemanal({ atividade, atividadeNome = "Aula", atividadesLoca
             </div>
           </div>
         )}
+
+        <div className="flex flex-col gap-1.5">
+          <span className="text-[11px] font-semibold uppercase tracking-wide text-zinc-400">Carga Horária Semanal</span>
+          <div className="flex items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-xs font-semibold text-zinc-700 ring-1 ring-zinc-200">
+            <span>Total:</span>
+            <span className="font-extrabold text-sky-700">{totalCargaHoraria}h</span>
+            <span className="text-[10px] font-normal text-zinc-400">({items.length} {items.length === 1 ? "sessão" : "sessões"})</span>
+          </div>
+        </div>
 
         <div className="ml-auto self-end">
           <Button
@@ -583,18 +752,41 @@ export function GradeSemanal({ atividade, atividadeNome = "Aula", atividadesLoca
                       >
                         {isStart && slot && (
                           <div
-                            className={`absolute inset-x-0.5 z-10 rounded-md border px-1.5 py-0.5 text-[11px] font-semibold leading-tight shadow-sm cursor-pointer hover:opacity-90 ${
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSlotSelecionadoOpcoes(slot);
+                            }}
+                            className={`absolute inset-x-0.5 z-10 flex flex-col justify-between rounded-md border p-1.5 text-[11px] font-semibold leading-tight shadow-sm cursor-pointer hover:opacity-95 overflow-hidden transition-all ${
                               slot.isControleInterno
                                 ? "bg-amber-600 border-amber-700 text-white"
                                 : "bg-sky-600 border-sky-700 text-white"
                             }`}
                             style={{ top: 2, height: `calc(${(slot.fim - slot.inicio) * 48}px - 4px)` }}
                           >
-                            <div className="truncate flex items-center gap-1">
-                              {slot.isControleInterno && <span>🔒</span>}
-                              <span>{slot.atividadeNome || atividadeNome}</span>
+                            <div className="flex flex-col gap-0.5">
+                              <div className="flex items-center justify-between gap-1">
+                                <div className="truncate flex items-center gap-1 font-bold">
+                                  {slot.isControleInterno && <span>🔒</span>}
+                                  <span>{slot.atividadeNome || atividadeNome}</span>
+                                </div>
+                                <span className="shrink-0 rounded bg-black/25 px-1 py-0.2 text-[9px] font-black uppercase tracking-tight">
+                                  {slot.duracaoHoras || (slot.fim - slot.inicio)}h
+                                </span>
+                              </div>
+                              {slot.nucleoNome && (
+                                <div className="truncate opacity-95 text-[9.5px] font-medium flex items-center gap-0.5">
+                                  <span>📍 {slot.nucleoNome}</span>
+                                </div>
+                              )}
+                              {slot.responsavelNome && (
+                                <div className="truncate opacity-95 text-[9.5px] font-medium flex items-center gap-0.5">
+                                  <span>👤 {slot.responsavelNome}</span>
+                                </div>
+                              )}
                             </div>
-                            <div className="opacity-90 text-[10px] font-normal">{formatHora(slot.inicio)}–{formatHora(slot.fim)}</div>
+                            <div className="opacity-90 text-[9.5px] font-normal mt-auto">
+                              {formatHora(slot.inicio)}–{formatHora(slot.fim)}
+                            </div>
                           </div>
                         )}
                       </div>
@@ -613,6 +805,10 @@ export function GradeSemanal({ atividade, atividadeNome = "Aula", atividadesLoca
           atividadeAtual={atividade}
           atividadeNome={atividadeNome}
           atividadesLocais={atividadesLocais}
+          funcionarios={funcionarios}
+          nucleos={nucleos}
+          nucleoPadraoId={nucleoPadraoId}
+          nucleoPadraoNome={nucleoPadraoNome}
           diasVisiveis={[...diasVisiveis]}
           initialDia={slotDraft?.dia}
           initialInicio={slotDraft?.inicio}
@@ -630,6 +826,10 @@ export function GradeSemanal({ atividade, atividadeNome = "Aula", atividadesLoca
         <ModalOpcoesSlot
           slot={slotSelecionadoOpcoes}
           atividadesLocais={atividadesLocais}
+          funcionarios={funcionarios}
+          nucleos={nucleos}
+          nucleoPadraoId={nucleoPadraoId}
+          nucleoPadraoNome={nucleoPadraoNome}
           onDuplicar={(diaDestino) => {
             const copia: SlotAula = {
               ...slotSelecionadoOpcoes,
@@ -647,6 +847,24 @@ export function GradeSemanal({ atividade, atividadeNome = "Aula", atividadesLoca
               atividadeId: novaAtv.id,
               atividadeNome: novaAtv.nome,
               isControleInterno: !novaAtv.disponivelPreInscricao,
+            };
+            notify(items.map((s) => (s === slotSelecionadoOpcoes ? atualizado : s)));
+            setSlotSelecionadoOpcoes(null);
+          }}
+          onTrocarResponsavel={(novoResp) => {
+            const atualizado: SlotAula = {
+              ...slotSelecionadoOpcoes,
+              responsavelId: novoResp ? novoResp.id : undefined,
+              responsavelNome: novoResp ? novoResp.nomeCompleto : undefined,
+            };
+            notify(items.map((s) => (s === slotSelecionadoOpcoes ? atualizado : s)));
+            setSlotSelecionadoOpcoes(null);
+          }}
+          onTrocarNucleo={(novoNuc) => {
+            const atualizado: SlotAula = {
+              ...slotSelecionadoOpcoes,
+              nucleoId: novoNuc ? novoNuc.id : nucleoPadraoId,
+              nucleoNome: novoNuc ? novoNuc.identificacao : nucleoPadraoNome,
             };
             notify(items.map((s) => (s === slotSelecionadoOpcoes ? atualizado : s)));
             setSlotSelecionadoOpcoes(null);

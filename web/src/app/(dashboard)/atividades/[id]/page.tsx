@@ -20,15 +20,34 @@ export default async function DetalhesAtividadePage({ params }: { params: Promis
 
       <Card>
         <CardHeader>
-          <h3 className="text-sm font-medium text-zinc-700">Configurações</h3>
+          <h3 className="text-sm font-medium text-zinc-700">Configurações Gerais</h3>
         </CardHeader>
-        <CardBody className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-3">
-          <p className="text-zinc-600">Disponível na pré-inscrição: {a.disponivelPreInscricao ? "Sim" : "Não"}</p>
-          <div className="flex items-center gap-1 text-zinc-600">
-            Turnos:
-            {(a.turnos ?? []).map((t) => (
-              <Badge key={t} tone="zinc">{TURNO_LABEL[t] ?? t}</Badge>
-            ))}
+        <CardBody className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
+          <p className="text-zinc-600">Disponível na pré-inscrição: <strong>{a.disponivelPreInscricao ? "Sim" : "Não"}</strong></p>
+          <p className="text-zinc-600">Visibilidade: <strong>{a.disponivelPreInscricao ? "Pública (Portal)" : "Interna (Planejamento)"}</strong></p>
+        </CardBody>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <h3 className="text-sm font-medium text-zinc-700">Vocabulário da Atividade</h3>
+        </CardHeader>
+        <CardBody className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-xl border border-zinc-200 bg-zinc-50/50 p-3">
+            <span className="text-xs text-zinc-400 block font-medium">Agrupamento [Grupo]:</span>
+            <span className="text-sm font-bold text-zinc-900 mt-0.5 block">{a.termoGrupo || "Turma"}</span>
+          </div>
+          <div className="rounded-xl border border-zinc-200 bg-zinc-50/50 p-3">
+            <span className="text-xs text-zinc-400 block font-medium">Encontro [Sessão]:</span>
+            <span className="text-sm font-bold text-zinc-900 mt-0.5 block">{a.termoSessao || "Treino"}</span>
+          </div>
+          <div className="rounded-xl border border-zinc-200 bg-zinc-50/50 p-3">
+            <span className="text-xs text-zinc-400 block font-medium">Condutor [Responsável]:</span>
+            <span className="text-sm font-bold text-zinc-900 mt-0.5 block">{a.termoResponsavel || "Professor"}</span>
+          </div>
+          <div className="rounded-xl border border-zinc-200 bg-zinc-50/50 p-3">
+            <span className="text-xs text-zinc-400 block font-medium">Praticante [Participante]:</span>
+            <span className="text-sm font-bold text-zinc-900 mt-0.5 block">{a.termoParticipante || "Aluno"}</span>
           </div>
         </CardBody>
       </Card>

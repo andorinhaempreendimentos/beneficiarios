@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/ui";
-import { TurmaForm } from "@/components/turmas/TurmaForm";
+import { GrupoForm } from "@/components/turmas/GrupoForm";
 import { turmasApi, nucleosApi, atividadesApi, funcionariosApi } from "@/lib/api/services";
 
 export default async function EditarTurmaPage({ params }: { params: Promise<{ id: string }> }) {
@@ -16,8 +16,8 @@ export default async function EditarTurmaPage({ params }: { params: Promise<{ id
 
   return (
     <div className="flex flex-col gap-6">
-      <PageHeader title="Editar turma" description={t.nome} />
-      <TurmaForm
+      <PageHeader title="Editar grupo" description={t.nome} />
+      <GrupoForm
         turma={t}
         nucleos={nucleosRes.data}
         atividades={atividadesRes.data}
@@ -27,4 +27,3 @@ export default async function EditarTurmaPage({ params }: { params: Promise<{ id
     </div>
   );
 }
-

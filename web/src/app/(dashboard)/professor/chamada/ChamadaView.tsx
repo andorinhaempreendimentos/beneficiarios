@@ -55,6 +55,12 @@ export function ChamadaView({ turmas, funcionarios = [] }: { turmas: TurmaApi[];
 
   const turmaAtual = turmasPermitidas.find((t) => t.id === turmaSelecionadaId);
 
+  // Termos dinâmicos baseados na atividade da turma/grupo selecionado
+  const termoGrupo = turmaAtual?.atividade?.termoGrupo || "Turma";
+  const termoSessao = turmaAtual?.atividade?.termoSessao || "Aula";
+  const termoResponsavel = turmaAtual?.atividade?.termoResponsavel || "Professor";
+  const termoParticipante = turmaAtual?.atividade?.termoParticipante || "Aluno";
+
   const { data: beneficiariosRes, loading } = useQuery(
     () => (turmaSelecionadaId ? beneficiariosApi.list({ turmaId: turmaSelecionadaId, limit: 100 }) : Promise.resolve({ data: [], total: 0, page: 1, limit: 100 })),
     [turmaSelecionadaId]
@@ -75,13 +81,16 @@ export function ChamadaView({ turmas, funcionarios = [] }: { turmas: TurmaApi[];
         presente: presencas[aluno.id] !== "falta",
       }));
 
+      const atividadeId = turmaAtual?.atividadeId || turmaAtual?.atividade?.id;
+
       await areaProfessorApi.salvarPresencas({
         turmaId: turmaSelecionadaId,
         dataAula,
         presencas: listaPresencas,
+        atividadeId,
       });
 
-      toast.success(`Chamada da turma "${turmaAtual?.nome}" salva com sucesso para a data ${dataAula.split('-').reverse().join('/')}!`);
+      toast.success(`Chamada do ${termoSessao.toLowerCase()} "${turmaAtual?.nome}" salva com sucesso para a data ${dataAula.split('-').reverse().join('/')}!`);
     } catch (err: any) {
       toast.error(`Erro ao salvar chamada: ${err.message || "Tente novamente."}`);
     } finally {
@@ -96,13 +105,13 @@ export function ChamadaView({ turmas, funcionarios = [] }: { turmas: TurmaApi[];
           href="/professor"
           className="inline-flex items-center gap-1.5 text-xs font-semibold text-sky-600 hover:text-sky-800"
         >
-          <ArrowLeft className="h-4 w-4" /> Voltar ao Painel do Professor
+          <ArrowLeft className="h-4 w-4" /> Voltar ao Painel do {termoResponsavel}
         </Link>
       </div>
 
       <PageHeader
-        title="Chamada Diária — Lista de Presença"
-        description="Frequência dos beneficiários inscritos na turma aberta"
+        title={`Chamada Diária — Lista de Presença do ${termoSessao}`}
+        description={`Frequência de ${termoParticipante.toLowerCase()}s inscritos no(a) ${termoGrupo.toLowerCase()} selecionado(a)`}
       />
 
       <Card className="p-6">
@@ -111,7 +120,7 @@ export function ChamadaView({ turmas, funcionarios = [] }: { turmas: TurmaApi[];
           <div>
             <div className="flex items-center gap-2">
               <span className="rounded-md bg-sky-100 px-2 py-0.5 text-[10px] font-extrabold uppercase text-sky-800">
-                Turma Selecionada
+                {termoGrupo} Selecionada
               </span>
               {turmaAtual && (
                 <span className="text-xs font-mono font-semibold text-zinc-400">
@@ -121,15 +130,20 @@ export function ChamadaView({ turmas, funcionarios = [] }: { turmas: TurmaApi[];
             </div>
             <h3 className="text-lg font-bold text-zinc-900 flex items-center gap-2 mt-1">
               <GraduationCap className="h-5 w-5 text-sky-600" />
-              <span>{turmaAtual?.nome || "Nenhuma turma disponível"}</span>
+              <span>{turmaAtual?.nome || `Nenhum(a) ${termoGrupo.toLowerCase()} disponível`}</span>
             </h3>
+            {turmaAtual && (
+              <span className="text-xs text-zinc-500 font-medium block mt-0.5">
+                {termoResponsavel}: {turmaAtual.responsaveisNomes?.join(", ") || profDoUsuario?.nomeCompleto || "Não informado"}
+              </span>
+            )}
           </div>
 
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
             <div className="flex flex-col gap-1">
               <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-1">
                 <Calendar className="h-3 w-3 text-sky-600" />
-                Data da Aula
+                Data do {termoSessao}
               </span>
               <input
                 type="date"
@@ -141,7 +155,7 @@ export function ChamadaView({ turmas, funcionarios = [] }: { turmas: TurmaApi[];
 
             <div className="w-full sm:w-64 flex flex-col gap-1">
               <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">
-                Turmas do Professor
+                {termoGrupo}s do {termoResponsavel}
               </span>
               <Select
                 value={turmaSelecionadaId}
@@ -149,7 +163,7 @@ export function ChamadaView({ turmas, funcionarios = [] }: { turmas: TurmaApi[];
                 disabled={turmasPermitidas.length <= 1}
               >
                 {turmasPermitidas.length === 0 ? (
-                  <option value="">Nenhuma turma vinculada</option>
+                  <option value="">Nenhum(a) {termoGrupo.toLowerCase()} vinculado(a)</option>
                 ) : (
                   turmasPermitidas.map((t) => (
                     <option key={t.id} value={t.id}>{t.nome}</option>
@@ -160,14 +174,14 @@ export function ChamadaView({ turmas, funcionarios = [] }: { turmas: TurmaApi[];
           </div>
         </div>
 
-        {loading && <div className="py-8 text-center text-sm text-zinc-400">Carregando alunos da turma…</div>}
+        {loading && <div className="py-8 text-center text-sm text-zinc-400">Carregando {termoParticipante.toLowerCase()}s do {termoGrupo.toLowerCase()}…</div>}
 
         {!loading && (
           <div className="divide-y divide-zinc-100">
             {alunosReais.length === 0 ? (
               <div className="py-8 text-center flex flex-col items-center justify-center text-zinc-400 gap-2">
                 <AlertCircle className="h-6 w-6 text-zinc-300" />
-                <span className="text-sm font-medium">Nenhum aluno matriculado nesta turma até o momento.</span>
+                <span className="text-sm font-medium">Nenhum {termoParticipante.toLowerCase()} matriculado neste {termoGrupo.toLowerCase()} até o momento.</span>
               </div>
             ) : (
               alunosReais.map((aluno) => {
@@ -190,7 +204,7 @@ export function ChamadaView({ turmas, funcionarios = [] }: { turmas: TurmaApi[];
                         }`}
                       >
                         <UserCheck className="h-3.5 w-3.5" />
-                        Presente
+                        {termoParticipante} Presente
                       </button>
 
                       <button
@@ -215,7 +229,7 @@ export function ChamadaView({ turmas, funcionarios = [] }: { turmas: TurmaApi[];
 
         <div className="mt-6 flex justify-end pt-4 border-t border-zinc-100">
           <Button onClick={handleSalvarChamada} disabled={alunosReais.length === 0 || salvando}>
-            {salvando ? "Salvando…" : `Salvar Chamada de ${dataAula.split('-').reverse().join('/')}`}
+            {salvando ? "Salvando…" : `Salvar Chamada do ${termoSessao} de ${dataAula.split('-').reverse().join('/')}`}
           </Button>
         </div>
       </Card>

@@ -35,23 +35,25 @@ import { getDataHojeBrasil } from "@/lib/dateUtils";
 import { useToast } from "@/components/providers/ToastProvider";
 import { useAuth } from "@/components/providers/AuthProvider";
 import {
-  execucoesAulaApi,
+  execucoesSessaoApi,
   professoresApi,
   type TurmaApi,
   type FuncionarioApi,
   type BeneficiarioApi,
 } from "@/lib/api/services";
-import type { ExecucaoAulaApi, BeneficiarioPresencaApi } from "@/lib/types/execucaoAula";
+import type { ExecucaoSessaoApi, BeneficiarioPresencaApi } from "@/lib/types/execucaoAula";
 
-interface ExecucaoAulaClientProps {
+interface ExecucaoSessaoClientProps {
   turma: TurmaApi;
   beneficiarios: BeneficiarioApi[];
   funcionarios?: FuncionarioApi[];
   dataQuery: string;
-  execucaoInicial: ExecucaoAulaApi | null;
+  execucaoInicial: ExecucaoSessaoApi | null;
   presencasIniciais: BeneficiarioPresencaApi[];
   autoStart?: boolean;
 }
+
+export type ExecucaoAulaClientProps = ExecucaoSessaoClientProps;
 
 const JUSTIFICATIVAS_PREDEFINIDAS = [
   "Sem internet no local",
@@ -102,7 +104,7 @@ const DIAS_SEMANA_MAP: Record<number, string> = {
 
 import { formatStorageUrl } from "@/lib/storage";
 
-export function ExecucaoAulaClient({
+export function ExecucaoSessaoClient({
   turma,
   beneficiarios,
   funcionarios = [],
@@ -110,17 +112,36 @@ export function ExecucaoAulaClient({
   execucaoInicial,
   presencasIniciais,
   autoStart,
-}: ExecucaoAulaClientProps) {
+}: ExecucaoSessaoClientProps) {
   const { toast } = useToast();
   const { user } = useAuth();
   const router = useRouter();
 
   const autoStartRef = useRef(autoStart);
 
-  const [execucao, setExecucao] = useState<ExecucaoAulaApi | null>(execucaoInicial);
+  const [execucao, setExecucao] = useState<ExecucaoSessaoApi | null>(execucaoInicial);
   const [dataAula, setDataAula] = useState<string>(
     execucaoInicial?.data || dataQuery || getDataHojeBrasil()
   );
+
+  // Horários e Atividade da Sessão para a data selecionada
+  const slotHoje = useMemo(() => {
+    if (!turma.slots || turma.slots.length === 0) return null;
+    const [ano, mes, dia] = dataAula.split("-").map(Number);
+    const dataObj = new Date(ano, mes - 1, dia);
+    const diaSemana = dataObj.getDay(); // 0 = Domingo, 1 = Segunda...
+    return (
+      turma.slots.find((s: any) => s.dia_semana === diaSemana || s.dia === DIAS_SEMANA_MAP[diaSemana]?.slice(0, 3)) ||
+      null
+    );
+  }, [turma.slots, dataAula]);
+
+  // Termos dinâmicos baseados na atividade vinculada à sessão ou ao grupo
+  const atividadeSessao = slotHoje?.atividade || turma.atividade;
+  const termoGrupo = atividadeSessao?.termoGrupo || turma.atividade?.termoGrupo || "Grupo";
+  const termoSessao = atividadeSessao?.termoSessao || turma.atividade?.termoSessao || "Sessão";
+  const termoResponsavel = atividadeSessao?.termoResponsavel || turma.atividade?.termoResponsavel || "Responsável";
+  const termoParticipante = atividadeSessao?.termoParticipante || turma.atividade?.termoParticipante || "Participante";
 
   // Etapas: "inicio" (Step 1) | "chamada" (Step 2) | "finalizacao" (Step 3) | "concluida"
   const [etapa, setEtapa] = useState<"inicio" | "chamada" | "finalizacao" | "concluida">(() => {
@@ -206,18 +227,6 @@ export function ExecucaoAulaClient({
     return null;
   }, [user, funcionarios, turma]);
 
-  // Horários Previstos da Turma para a data da aula
-  const slotHoje = useMemo(() => {
-    if (!turma.slots || turma.slots.length === 0) return null;
-    const [ano, mes, dia] = dataAula.split("-").map(Number);
-    const dataObj = new Date(ano, mes - 1, dia);
-    const diaSemana = dataObj.getDay(); // 0 = Domingo, 1 = Segunda...
-    return (
-      turma.slots.find((s: any) => s.dia_semana === diaSemana || s.dia === DIAS_SEMANA_MAP[diaSemana]?.slice(0, 3)) ||
-      null
-    );
-  }, [turma.slots, dataAula]);
-
   const horaInicioPrevista = useMemo(() => {
     if (!slotHoje) return "08:00";
     const ini = String(slotHoje.inicio);
@@ -229,6 +238,18 @@ export function ExecucaoAulaClient({
     const fim = String(slotHoje.fim);
     return fim.includes(":") ? fim.slice(0, 5) : `${fim.padStart(2, "0")}:00`;
   }, [slotHoje]);
+
+  // Horários Efetivos (Regra de Ouro 3: Hora Real no Retroativo)
+  const [horaInicioEfetiva, setHoraInicioEfetiva] = useState(horaInicioPrevista);
+  const [horaFimEfetiva, setHoraFimEfetiva] = useState(horaFimPrevista);
+
+  useEffect(() => {
+    setHoraInicioEfetiva(horaInicioPrevista);
+  }, [horaInicioPrevista]);
+
+  useEffect(() => {
+    setHoraFimEfetiva(horaFimPrevista);
+  }, [horaFimPrevista]);
 
   // Verificação de Janela e Retroatividade
   const hojeStr = useMemo(() => getDataHojeBrasil(), []);
@@ -435,12 +456,18 @@ export function ExecucaoAulaClient({
         throw new Error("Professor responsável não identificado para esta turma.");
       }
 
-      const novaExecucao = await execucoesAulaApi.iniciarAula({
+      const atividadeId = slotHoje?.atividadeId || turma.atividadeId || turma.atividade?.id;
+
+      const novaExecucao = await execucoesSessaoApi.iniciarSessao({
         turmaId: turma.id,
+        nucleoId: slotHoje?.nucleoId || turma.nucleoId || turma.nucleo?.id,
+        sessaoId: slotHoje?.id,
         professorId,
         data: dataAula,
         horaInicioPrevista,
         horaFimPrevista,
+        horaInicioReal: isForaDoHorarioRegular ? horaInicioEfetiva : undefined,
+        atividadeId,
         justificativaRetroativa: isForaDoHorarioRegular ? justificativaRetroativa.trim() : undefined,
       });
 
@@ -454,7 +481,7 @@ export function ExecucaoAulaClient({
       }));
 
       if (listaPresencasParaSalvar.length > 0) {
-        await execucoesAulaApi.salvarPresencas(novaExecucao.id, listaPresencasParaSalvar);
+        await execucoesSessaoApi.salvarPresencas(novaExecucao.id, listaPresencasParaSalvar);
       }
 
       setShowJustificativaModal(false);
@@ -463,7 +490,7 @@ export function ExecucaoAulaClient({
       } else {
         setEtapa("chamada");
       }
-      toast.success("▶ Aula iniciada com sucesso! Ponto de entrada registrado.");
+      toast.success(`▶ ${termoSessao} iniciado(a) com sucesso! Ponto de entrada registrado.`);
     } catch (err: any) {
       toast.error(`Erro ao iniciar aula: ${err.message || "Tente novamente."}`);
     } finally {
@@ -506,7 +533,7 @@ export function ExecucaoAulaClient({
         observacao: presencas[b.id]?.observacao,
       }));
 
-      await execucoesAulaApi.salvarPresencas(execucao.id, lista);
+      await execucoesSessaoApi.salvarPresencas(execucao.id, lista);
       toast.success("Presenças atualizadas com sucesso!");
     } catch (err: any) {
       toast.error(`Erro ao salvar presenças: ${err.message || "Tente novamente."}`);
@@ -580,7 +607,7 @@ export function ExecucaoAulaClient({
         status: presencas[b.id]?.status || ("presente" as const),
         observacao: presencas[b.id]?.observacao,
       }));
-      await execucoesAulaApi.salvarPresencas(execucao.id, lista);
+      await execucoesSessaoApi.salvarPresencas(execucao.id, lista);
 
       // Montar observações com identificação de regularização ou justificativa de encerramento antecipado
       let obsFinais = observacoes.trim();
@@ -596,17 +623,18 @@ export function ExecucaoAulaClient({
       }
 
       // Finaliza a aula e registra ponto de saída
-      const aulaConcluida = await execucoesAulaApi.finalizarAula(execucao.id, {
+      const aulaConcluida = await execucoesSessaoApi.finalizarSessao(execucao.id, {
         fotoComprovanteUrl: finalFotoUrl || undefined,
         observacoes: obsFinais || undefined,
+        horaFimReal: isModoRegularizacao ? horaFimEfetiva : undefined,
       });
 
       setExecucao(aulaConcluida);
       setEtapa("concluida");
       setShowEncerrarAntecipadoModal(false);
-      toast.success("⏹ Aula finalizada com sucesso! Ponto de saída e relatório registrados.");
+      toast.success(`⏹ ${termoSessao} finalizado(a) com sucesso! Ponto de saída e relatório registrados.`);
     } catch (err: any) {
-      toast.error(`Erro ao finalizar aula: ${err.message || "Tente novamente."}`);
+      toast.error(`Erro ao finalizar ${termoSessao.toLowerCase()}: ${err.message || "Tente novamente."}`);
     } finally {
       setSalvando(false);
       setUploadingFoto(false);
@@ -660,17 +688,17 @@ export function ExecucaoAulaClient({
           </div>
 
           <div>
-            <span className="text-[10px] uppercase font-bold text-zinc-400 block">Professor</span>
+            <span className="text-[10px] uppercase font-bold text-zinc-400 block">{termoResponsavel}</span>
             <span className="font-semibold text-white truncate block mt-0.5">
               {professor?.nomeCompleto || turma.responsaveisNomes?.[0] || "Instrutor"}
             </span>
           </div>
 
           <div className="col-span-2 sm:col-span-1">
-            <span className="text-[10px] uppercase font-bold text-zinc-400 block">Inscritos</span>
+            <span className="text-[10px] uppercase font-bold text-zinc-400 block">{termoParticipante}s Inscritos</span>
             <span className="font-semibold text-white flex items-center gap-1 mt-0.5">
               <Users className="h-3.5 w-3.5 text-emerald-400" />
-              {beneficiarios.length} Beneficiários
+              {beneficiarios.length} {termoParticipante}s
             </span>
           </div>
         </div>
@@ -683,9 +711,9 @@ export function ExecucaoAulaClient({
             <AlertTriangle className="h-4 w-4 text-amber-700" />
           </div>
           <div className="flex-1">
-            <strong className="font-bold block text-sm text-amber-950">Aula em Modo Regularização</strong>
+            <strong className="font-bold block text-sm text-amber-950">{termoSessao} em Modo Regularização</strong>
             <p className="text-amber-800 mt-0.5 leading-relaxed">
-              Esta aula está sendo registrada retroativamente. Você pode preencher as presenças, anexar a foto comprobatória e concluir o registro a qualquer momento. O lançamento será enviado para homologação do Coordenador.
+              Este(a) {termoSessao.toLowerCase()} está sendo registrado(a) retroativamente. Você pode preencher as presenças, anexar a foto comprobatória e concluir o registro a qualquer momento. O lançamento será enviado para homologação do Coordenador.
             </p>
           </div>
         </div>
@@ -781,10 +809,10 @@ export function ExecucaoAulaClient({
             <div className="h-16 w-16 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-200 shadow-sm">
               <Play className="h-8 w-8 fill-emerald-600 ml-1" />
             </div>
-            <h2 className="text-xl font-bold text-zinc-900">Etapa 1: Iniciar Execução da Aula</h2>
+            <h2 className="text-xl font-bold text-zinc-900">Etapa 1: Iniciar Execução do(a) {termoSessao}</h2>
             <p className="text-xs text-zinc-500 max-w-md">
               Ao clicar no botão abaixo, o sistema baterá o seu <strong>ponto de entrada</strong> e liberará a chamada
-              dos beneficiários em tempo real.
+              dos {termoParticipante.toLowerCase()}s em tempo real.
             </p>
           </div>
 
@@ -793,10 +821,10 @@ export function ExecucaoAulaClient({
             <div className="rounded-xl bg-red-50 border border-red-200 p-4 text-xs text-red-900 flex flex-col gap-2">
               <div className="flex items-center gap-2 font-bold text-red-900">
                 <AlertTriangle className="h-4 w-4 text-red-600 flex-shrink-0" />
-                <span>Aula Futura — Início Bloqueado</span>
+                <span>{termoSessao} Futuro(a) — Início Bloqueado</span>
               </div>
               <p className="text-red-800">
-                Não é possível iniciar uma aula em data futura. Volte no dia da aula para iniciá-la.
+                Não é possível iniciar um(a) {termoSessao.toLowerCase()} em data futura. Volte no dia previsto para iniciá-lo(a).
               </p>
             </div>
           )}
@@ -809,7 +837,7 @@ export function ExecucaoAulaClient({
                 <span>Núcleo / Unidade Desativada</span>
               </div>
               <p className="text-red-800">
-                O funcionamento deste núcleo encontra-se temporariamente suspenso. Não é possível iniciar ou registrar aulas nesta unidade.
+                O funcionamento deste núcleo encontra-se temporariamente suspenso. Não é possível iniciar ou registrar {termoSessao.toLowerCase()}s nesta unidade.
               </p>
             </div>
           )}
@@ -822,7 +850,7 @@ export function ExecucaoAulaClient({
                 <span>Fora do Horário — Cedo Demais</span>
               </div>
               <p className="text-red-800">
-                A aula está prevista para {horaInicioPrevista}. Aguarde o horário permitido (tolerância de {turma.nucleo?.toleranciaInicioMinutos ?? 15} min antes).
+                O(A) {termoSessao.toLowerCase()} está previsto(a) para {horaInicioPrevista}. Aguarde o horário permitido (tolerância de {turma.nucleo?.toleranciaInicioMinutos ?? 15} min antes).
               </p>
             </div>
           )}
@@ -832,12 +860,36 @@ export function ExecucaoAulaClient({
             <div className="rounded-xl bg-amber-50 border border-amber-200 p-4 text-xs text-amber-900 flex flex-col gap-2">
               <div className="flex items-center gap-2 font-bold text-amber-900">
                 <AlertTriangle className="h-4 w-4 text-amber-600 flex-shrink-0" />
-                <span>Aula Fora da Janela Regular ou Retroativa</span>
+                <span>{termoSessao} Fora da Janela Regular ou Retroativo(a)</span>
               </div>
               <p className="text-amber-800">
-                Esta aula está sendo iniciada fora da tolerância regular do horário previsto ({horaInicioPrevista} às{" "}
+                Este(a) {termoSessao.toLowerCase()} está sendo iniciado(a) fora da tolerância regular do horário previsto ({horaInicioPrevista} às{" "}
                 {horaFimPrevista}). O registro ficará <strong>Pendente de Aprovação</strong> do Coordenador do Núcleo.
               </p>
+              <div className="grid grid-cols-2 gap-2 my-1 p-2.5 bg-amber-100/60 rounded-lg border border-amber-300">
+                <div>
+                  <label className="block text-[10px] font-bold uppercase text-amber-950 mb-0.5">
+                    Horário Real Início:
+                  </label>
+                  <input
+                    type="time"
+                    value={horaInicioEfetiva}
+                    onChange={(e) => setHoraInicioEfetiva(e.target.value)}
+                    className="w-full text-xs p-1.5 rounded-md border border-amber-400 bg-white font-mono text-zinc-900 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold uppercase text-amber-950 mb-0.5">
+                    Horário Real Término:
+                  </label>
+                  <input
+                    type="time"
+                    value={horaFimEfetiva}
+                    onChange={(e) => setHoraFimEfetiva(e.target.value)}
+                    className="w-full text-xs p-1.5 rounded-md border border-amber-400 bg-white font-mono text-zinc-900 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                  />
+                </div>
+              </div>
               <div className="mt-1">
                 <label className="block text-[11px] font-bold uppercase text-amber-900 mb-1">
                   Justificativa Obrigatória do Atraso:
@@ -888,7 +940,7 @@ export function ExecucaoAulaClient({
             ) : (
               <>
                 <Play className="h-7 w-7 fill-white" />
-                <span>INICIAR AULA (PLAY)</span>
+                <span>INICIAR {termoSessao.toUpperCase()} (PLAY)</span>
               </>
             )}
           </button>
@@ -921,7 +973,7 @@ export function ExecucaoAulaClient({
               </div>
               <div>
                 <span className="text-[10px] uppercase font-bold text-zinc-400 block leading-none">
-                  Aula em Andamento
+                  {termoSessao} em Andamento
                 </span>
                 <span className="text-xs text-zinc-300 font-medium">Início: {parseHora(execucao?.horaInicioReal, "08:00")}</span>
               </div>
@@ -929,7 +981,7 @@ export function ExecucaoAulaClient({
 
             <div className="flex items-center gap-3">
               <div className="text-right">
-                <span className="text-[10px] uppercase font-bold text-zinc-400 block leading-none">Tempo de Aula</span>
+                <span className="text-[10px] uppercase font-bold text-zinc-400 block leading-none">Tempo de {termoSessao}</span>
                 <span className="text-base font-black font-mono tracking-wider text-emerald-400">
                   {formatTimer(segundosDecorridos)}
                 </span>
@@ -984,7 +1036,7 @@ export function ExecucaoAulaClient({
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <input
                 type="text"
-                placeholder="Buscar beneficiário por nome ou matrícula…"
+                placeholder={`Buscar ${termoParticipante.toLowerCase()} por nome ou matrícula…`}
                 value={busca}
                 onChange={(e) => setBusca(e.target.value)}
                 className="text-xs p-2.5 rounded-xl border border-zinc-200 bg-zinc-50 focus:bg-white focus:outline-none focus:border-sky-500 w-full"
@@ -1014,9 +1066,9 @@ export function ExecucaoAulaClient({
                 <div className="py-8 text-center text-xs flex flex-col items-center gap-3 bg-amber-50/60 rounded-2xl border border-amber-200 p-6">
                   <AlertCircle className="h-8 w-8 text-amber-600" />
                   <div className="max-w-md">
-                    <h4 className="font-bold text-sm text-amber-950">Turma sem beneficiários matriculados</h4>
+                    <h4 className="font-bold text-sm text-amber-950">{termoGrupo} sem {termoParticipante.toLowerCase()}s matriculados</h4>
                     <p className="text-amber-800 mt-1 leading-relaxed">
-                      Esta turma não possuía alunos matriculados nesta data. Você pode prosseguir direto para o fechamento da regularização sem necessidade de registrar chamada.
+                      Este(a) {termoGrupo.toLowerCase()} não possuía {termoParticipante.toLowerCase()}s matriculados nesta data. Você pode prosseguir direto para o fechamento da regularização sem necessidade de registrar chamada.
                     </p>
                   </div>
                   <button
@@ -1031,7 +1083,7 @@ export function ExecucaoAulaClient({
               ) : beneficiariosFiltrados.length === 0 ? (
                 <div className="py-8 text-center text-xs text-zinc-400 flex flex-col items-center gap-2">
                   <AlertCircle className="h-6 w-6 text-zinc-300" />
-                  <span>Nenhum beneficiário encontrado com os filtros atuais.</span>
+                  <span>Nenhum {termoParticipante.toLowerCase()} encontrado com os filtros atuais.</span>
                 </div>
               ) : (
                 beneficiariosFiltrados.map((b) => {
@@ -1076,7 +1128,7 @@ export function ExecucaoAulaClient({
                           >
                             <span className="flex items-center gap-1">
                               <UserCheck className="h-3 w-3" />
-                              <span className="hidden sm:inline">Presente</span>
+                              <span className="hidden sm:inline">{termoParticipante} Presente</span>
                             </span>
                           </button>
 
@@ -1174,7 +1226,7 @@ export function ExecucaoAulaClient({
                 <span>Etapa 3: Foto Comprobatória & Fechamento</span>
               </h3>
               <p className="text-xs text-zinc-500">
-                Evidência fotográfica obrigatória da turma reunida para validar o ponto e a chamada.
+                Evidência fotográfica obrigatória do(a) {termoGrupo.toLowerCase()} reunido(a) para validar a execução e a presença.
               </p>
             </div>
 
@@ -1195,7 +1247,7 @@ export function ExecucaoAulaClient({
             </div>
             <div>
               <span className="text-[10px] uppercase font-bold text-zinc-400 block">Presentes</span>
-              <span className="font-bold text-emerald-600">{contadores.presentes} Beneficiários</span>
+              <span className="font-bold text-emerald-600">{contadores.presentes} {termoParticipante}s</span>
             </div>
             <div>
               <span className="text-[10px] uppercase font-bold text-zinc-400 block">Faltas</span>
@@ -1210,14 +1262,14 @@ export function ExecucaoAulaClient({
               <div>
                 <strong className="font-bold block text-sm text-amber-950">Foto Comprobatória Dispensada</strong>
                 <p className="text-amber-800 mt-0.5 leading-relaxed">
-                  Esta aula está sendo regularizada e a turma não possuía beneficiários matriculados nesta data. A foto com a turma reunida não é necessária para concluir a regularização.
+                  Este(a) {termoSessao.toLowerCase()} está sendo regularizado(a) e o(a) {termoGrupo.toLowerCase()} não possuía {termoParticipante.toLowerCase()}s matriculados nesta data. A foto com o(a) {termoGrupo.toLowerCase()} não é necessária para concluir a regularização.
                 </p>
               </div>
             </div>
           ) : (
             <div className="flex flex-col gap-2">
             <label className="text-xs font-bold text-zinc-900 flex items-center justify-between">
-              <span>Foto com a Turma (Obrigatório) *</span>
+              <span>Foto com o(a) {termoGrupo} (Obrigatório) *</span>
               {fotoPreview && <span className="text-[10px] text-emerald-600 font-bold">✓ Foto Anexada</span>}
             </label>
 
@@ -1299,12 +1351,12 @@ export function ExecucaoAulaClient({
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-bold text-zinc-900 flex items-center gap-1">
               <FileText className="h-3.5 w-3.5 text-zinc-500" />
-              <span>Diário de Atividades / Observações da Aula:</span>
+              <span>Diário de Atividades / Observações do(a) {termoSessao}:</span>
             </label>
             <textarea
               value={observacoes}
               onChange={(e) => setObservacoes(e.target.value)}
-              placeholder="Ex: Treino tático de fundamentos, passes e coletivo. Turma bastante participativa."
+              placeholder={`Ex: ${termoSessao} prático de fundamentos e dinâmicas. ${termoGrupo} bastante participativa.`}
               rows={3}
               className="w-full text-xs p-3 rounded-xl border border-zinc-200 bg-zinc-50 focus:bg-white focus:outline-none focus:border-sky-500"
             />
@@ -1329,12 +1381,12 @@ export function ExecucaoAulaClient({
             ) : isModoRegularizacao ? (
               <>
                 <CheckCircle2 className="h-6 w-6 text-white" />
-                <span>{dispensaFoto ? "CONCLUIR REGULARIZAÇÃO (SEM ALUNOS)" : "CONCLUIR E REGULARIZAR AULA"}</span>
+                <span>{dispensaFoto ? `CONCLUIR REGULARIZAÇÃO (SEM ${termoParticipante.toUpperCase()}S)` : `CONCLUIR E REGULARIZAR ${termoSessao.toUpperCase()}`}</span>
               </>
             ) : (
               <>
                 <Square className="h-6 w-6 fill-white" />
-                <span>ENCERRAR AULA (STOP)</span>
+                <span>ENCERRAR {termoSessao.toUpperCase()} (STOP)</span>
               </>
             )}
           </button>
@@ -1358,7 +1410,7 @@ export function ExecucaoAulaClient({
             </div>
 
             <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-800">
-              <strong>Atenção:</strong> Você está encerrando a aula antes do horário previsto. É obrigatório informar o motivo.
+              <strong>Atenção:</strong> Você está encerrando o(a) {termoSessao.toLowerCase()} antes do horário previsto. É obrigatório informar o motivo.
             </div>
 
             <div className="flex flex-col gap-1.5">
@@ -1366,7 +1418,7 @@ export function ExecucaoAulaClient({
               <textarea
                 value={justificativaEncerramento}
                 onChange={(e) => setJustificativaEncerramento(e.target.value)}
-                placeholder="Ex: Chuva forte impossibilitou continuidade da aula ao ar livre..."
+                placeholder={`Ex: Chuva forte impossibilitou continuidade do(a) ${termoSessao.toLowerCase()} ao ar livre...`}
                 rows={3}
                 className="w-full text-xs p-3 rounded-xl border border-zinc-200 bg-zinc-50 focus:bg-white focus:outline-none focus:border-amber-500"
                 autoFocus
@@ -1407,9 +1459,9 @@ export function ExecucaoAulaClient({
               <CheckCircle2 className="h-10 w-10 text-emerald-600" />
             </div>
 
-            <h2 className="text-2xl font-black text-zinc-900">Aula Concluída com Sucesso!</h2>
+            <h2 className="text-2xl font-black text-zinc-900">{termoSessao} Concluído(a) com Sucesso!</h2>
             <p className="text-xs text-zinc-500 max-w-md">
-              A tríplice vinculação (Ponto de Entrada/Saída, Chamada dos Beneficiários e Comprovação Fotográfica) foi
+              A verdade comprovada (Horário Real Efetivo, Chamada de {termoParticipante}s e Evidência Fotográfica) foi
               registrada de forma atômica no sistema.
             </p>
           </div>
@@ -1421,7 +1473,7 @@ export function ExecucaoAulaClient({
               <div>
                 <span className="font-bold block text-sm text-amber-900">Pendente de Validação do Coordenador</span>
                 <span className="text-amber-800">
-                  Por ter sido lançada fora da janela regular de horários, esta aula e seus registros de ponto serão
+                  Por ter sido lançado(a) fora da janela regular de horários, este(a) {termoSessao.toLowerCase()} e seus registros de presença serão
                   auditados pelo Coordenador do Núcleo.
                 </span>
                 {execucao.justificativaRetroativa && (
@@ -1441,18 +1493,18 @@ export function ExecucaoAulaClient({
           {/* RESUMO GERAL */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-left">
             <div className="p-3 rounded-xl bg-zinc-50 border border-zinc-200">
-              <span className="text-[10px] uppercase font-bold text-zinc-400 block">Ponto Entrada</span>
+              <span className="text-[10px] uppercase font-bold text-zinc-400 block">Horário Entrada Real</span>
               <span className="text-sm font-bold text-zinc-900">{parseHora(execucao?.horaInicioReal, "08:00")}</span>
             </div>
 
             <div className="p-3 rounded-xl bg-zinc-50 border border-zinc-200">
-              <span className="text-[10px] uppercase font-bold text-zinc-400 block">Ponto Saída</span>
+              <span className="text-[10px] uppercase font-bold text-zinc-400 block">Horário Saída Real</span>
               <span className="text-sm font-bold text-zinc-900">{parseHora(execucao?.horaFimReal, "10:00")}</span>
             </div>
 
             <div className="p-3 rounded-xl bg-zinc-50 border border-zinc-200">
               <span className="text-[10px] uppercase font-bold text-zinc-400 block">Presentes</span>
-              <span className="text-sm font-bold text-emerald-600">{contadores.presentes} Beneficiários</span>
+              <span className="text-sm font-bold text-emerald-600">{contadores.presentes} {termoParticipante}s</span>
             </div>
 
             <div className="p-3 rounded-xl bg-zinc-50 border border-zinc-200">
@@ -1481,14 +1533,14 @@ export function ExecucaoAulaClient({
               href="/professor"
               className="w-full sm:w-auto px-6 py-3 rounded-xl bg-zinc-900 text-white font-bold text-xs hover:bg-zinc-800 transition-colors"
             >
-              Voltar ao Painel do Professor
+              Voltar ao Painel do(a) {termoResponsavel}
             </Link>
 
             <Link
               href={`/turmas/${turma.id}/presenca`}
               className="w-full sm:w-auto px-6 py-3 rounded-xl bg-zinc-100 text-zinc-800 font-bold text-xs hover:bg-zinc-200 transition-colors"
             >
-              Ver Espelho de Presenças da Turma
+              Ver Espelho de Presenças do(a) {termoGrupo}
             </Link>
           </div>
         </Card>
@@ -1504,7 +1556,7 @@ export function ExecucaoAulaClient({
             </div>
 
             <p className="text-xs text-zinc-600">
-              Esta aula está fora do horário regular ou em data anterior. Por favor, detalhe o motivo para análise do
+              Este(a) {termoSessao.toLowerCase()} está fora do horário regular ou em data anterior. Por favor, detalhe o motivo para análise do
               Coordenador:
             </p>
 
@@ -1526,6 +1578,31 @@ export function ExecucaoAulaClient({
                   </button>
                 );
               })}
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 p-2.5 bg-zinc-50 rounded-xl border border-zinc-200">
+              <div>
+                <label className="block text-[10px] font-bold uppercase text-zinc-600 mb-1">
+                  Horário Real de Início:
+                </label>
+                <input
+                  type="time"
+                  value={horaInicioEfetiva}
+                  onChange={(e) => setHoraInicioEfetiva(e.target.value)}
+                  className="w-full text-xs p-2 rounded-lg border border-zinc-300 bg-white font-mono text-zinc-900 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold uppercase text-zinc-600 mb-1">
+                  Horário Real de Término:
+                </label>
+                <input
+                  type="time"
+                  value={horaFimEfetiva}
+                  onChange={(e) => setHoraFimEfetiva(e.target.value)}
+                  className="w-full text-xs p-2 rounded-lg border border-zinc-300 bg-white font-mono text-zinc-900 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                />
+              </div>
             </div>
 
             <textarea
@@ -1558,3 +1635,5 @@ export function ExecucaoAulaClient({
     </div>
   );
 }
+
+export const ExecucaoAulaClient = ExecucaoSessaoClient;

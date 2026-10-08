@@ -54,7 +54,7 @@ export interface ExecucaoNucleoItem {
   professores: string[];
   totalTurmas: number;
   beneficiariosAtendidos: number;
-  aulasRealizadas: number;
+  sessoesRealizadas: number;
 }
 
 export interface BeneficiarioListaItem {
@@ -93,6 +93,8 @@ export interface FrequenciaNucleoItem {
   beneficiariosAtivos: number;
   presencasRegistradas: number;
   faltasRegistradas: number;
+  sessoesNaoRegistradas?: number;
+  faltasNaoRegistradas?: number;
   frequenciaMedia: number; // %
 }
 
@@ -221,7 +223,7 @@ export const prestacaoContasApi = {
 
     // 1. Verificar aulas sem chamada
     const { data: aulasSemChamada } = await sb
-      .from('execucoes_aula')
+      .from('execucoes_sessao')
       .select('id, data, turmas(nome, nucleo_id, nucleos(identificacao)), beneficiario_presencas(id)')
       .gte('data', dataInicio)
       .lte('data', dataFim);
@@ -296,7 +298,10 @@ export const prestacaoContasApi = {
       .single();
 
     // 3. Núcleos do Objeto
-    let qNucleos = sb.from('nucleos').select('*, organizacoes!inner(*)').is('deleted_at', null);
+    let qNucleos = sb
+      .from('nucleos')
+      .select('*, organizacoes!inner(*), nucleo_atividades(*, atividades(*))')
+      .is('deleted_at', null);
     if (orgData?.id) {
       qNucleos = qNucleos.eq('organizacao_id', orgData.id);
     }
@@ -307,7 +312,7 @@ export const prestacaoContasApi = {
     // 4. Turmas
     const { data: turmasRaw } = await sb
       .from('turmas')
-      .select('*, atividades(*), turma_horarios(*), turma_responsaveis(funcionario_id, funcionarios(*))')
+      .select('*, atividades(*), turma_horarios(*, atividades(*)), turma_responsaveis(funcionario_id, funcionarios(*))')
       .in('nucleo_id', nucleosIds.length > 0 ? nucleosIds : ['00000000-0000-0000-0000-000000000000'])
       .is('deleted_at', null);
     const turmas = turmasRaw ?? [];
@@ -333,8 +338,8 @@ export const prestacaoContasApi = {
 
     // 7. Aulas e Presenças
     const { data: aulasRaw } = await sb
-      .from('execucoes_aula')
-      .select('*, turmas(*, nucleos(*), atividades(*)), funcionarios(*), beneficiario_presencas(*)')
+      .from('execucoes_sessao')
+      .select('*, turmas(*, nucleos(*), atividades(*)), atividades:atividade_id(*), funcionarios(*), beneficiario_presencas(*)')
       .in('turma_id', turmasIds.length > 0 ? turmasIds : ['00000000-0000-0000-0000-000000000000'])
       .gte('data', dataInicio)
       .lte('data', dataFim)
@@ -439,16 +444,48 @@ export const prestacaoContasApi = {
     // Execução por Núcleo
     const execucaoPorNucleo: ExecucaoNucleoItem[] = nucleos.map((n: any) => {
       const turmasDoNucleo = turmas.filter((t: any) => t.nucleo_id === n.id);
-      const modalidades = Array.from(new Set(turmasDoNucleo.map((t: any) => t.atividades?.nome).filter(Boolean)));
-      const professores = Array.from(
+      const beneficiariosDoNucleo = beneficiarios.filter((b: any) => b.nucleo_id === n.id);
+      const sessoesDoNucleo = aulas.filter((a: any) => a.turmas?.nucleo_id === n.id && a.status === 'concluida');
+
+      // Regra de Ouro 1: Plano vs. Fato (Desacoplamento Histórico)
+      // 1. Modalidades que de fato foram executadas nas sessões do período
+      const modalidadesReais = Array.from(
         new Set(
-          turmasDoNucleo.flatMap((t: any) =>
-            (t.turma_responsaveis ?? []).map((tr: any) => tr.funcionarios?.nome_completo).filter(Boolean)
-          )
+          sessoesDoNucleo
+            .map((a: any) => a.atividades?.nome || a.turmas?.atividades?.nome)
+            .filter(Boolean)
         )
       );
-      const beneficiariosDoNucleo = beneficiarios.filter((b: any) => b.nucleo_id === n.id);
-      const aulasDoNucleo = aulas.filter((a: any) => a.turmas?.nucleo_id === n.id && a.status === 'concluida');
+
+      const modalidades = modalidadesReais.length > 0
+        ? modalidadesReais
+        : Array.from(
+            new Set(
+              (n.nucleo_atividades ?? [])
+                .map((na: any) => na.atividades?.nome)
+                .concat(turmasDoNucleo.map((t: any) => t.atividades?.nome))
+                .filter(Boolean)
+            )
+          );
+
+      // 2. Responsáveis que de fato executaram as sessões no período
+      const professoresReais = Array.from(
+        new Set(
+          sessoesDoNucleo
+            .map((a: any) => a.funcionarios?.nome_completo)
+            .filter(Boolean)
+        )
+      );
+
+      const professores = professoresReais.length > 0
+        ? professoresReais
+        : Array.from(
+            new Set(
+              turmasDoNucleo.flatMap((t: any) =>
+                (t.turma_responsaveis ?? []).map((tr: any) => tr.funcionarios?.nome_completo).filter(Boolean)
+              )
+            )
+          );
 
       return {
         nucleoId: n.id,
@@ -459,21 +496,63 @@ export const prestacaoContasApi = {
         professores,
         totalTurmas: turmasDoNucleo.length,
         beneficiariosAtendidos: beneficiariosDoNucleo.length,
-        aulasRealizadas: aulasDoNucleo.length,
+        sessoesRealizadas: sessoesDoNucleo.length,
       };
     });
+
+    // Regra de Ouro 2: Fim do Vazio (Denominador Oficial de Frequência)
+    // Função para identificar sessões previstas na grade que venceram e não possuem registro
+    const obterDatasPrevistasNaoRegistradas = (
+      dataInicioStr: string,
+      dataFimStr: string,
+      diasSemana: Set<number>,
+      datasExecutadas: Set<string>,
+      turmaDataInicio?: string | null,
+      turmaDataFim?: string | null
+    ): string[] => {
+      if (diasSemana.size === 0 || !dataInicioStr || !dataFimStr) return [];
+
+      const hoje = new Date();
+      const hojeStr = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}-${String(hoje.getDate()).padStart(2, '0')}`;
+      const fimLimiteStr = dataFimStr < hojeStr ? dataFimStr : hojeStr;
+
+      const [iAno, iMes, iDia] = dataInicioStr.split('-').map(Number);
+      const [fAno, fMes, fDia] = fimLimiteStr.split('-').map(Number);
+      if (isNaN(iAno) || isNaN(fAno)) return [];
+
+      const cur = new Date(iAno, iMes - 1, iDia, 12, 0, 0);
+      const fim = new Date(fAno, fMes - 1, fDia, 12, 0, 0);
+
+      const datasNaoRegistradas: string[] = [];
+
+      while (cur <= fim) {
+        const curIso = `${cur.getFullYear()}-${String(cur.getMonth() + 1).padStart(2, '0')}-${String(cur.getDate()).padStart(2, '0')}`;
+        const dentroCiclo =
+          (!turmaDataInicio || curIso >= turmaDataInicio.slice(0, 10)) &&
+          (!turmaDataFim || curIso <= turmaDataFim.slice(0, 10));
+
+        if (dentroCiclo && diasSemana.has(cur.getDay())) {
+          if (curIso < hojeStr && !datasExecutadas.has(curIso)) {
+            datasNaoRegistradas.push(curIso);
+          }
+        }
+        cur.setDate(cur.getDate() + 1);
+      }
+
+      return datasNaoRegistradas;
+    };
 
     // Frequência por Núcleo
     let totalPresencasGeral = 0;
     let totalChamadasGeral = 0;
     const frequenciaPorNucleo: FrequenciaNucleoItem[] = nucleos.map((n: any) => {
       const beneficiariosAtivosNucleo = beneficiarios.filter((b: any) => b.nucleo_id === n.id && b.status === 'ativo').length;
-      const aulasDoNucleo = aulas.filter((a: any) => a.turmas?.nucleo_id === n.id);
+      const sessoesDoNucleo = aulas.filter((a: any) => a.turmas?.nucleo_id === n.id);
 
       let presencasNucleo = 0;
       let faltasNucleo = 0;
 
-      for (const aula of aulasDoNucleo) {
+      for (const aula of sessoesDoNucleo) {
         const presencas = (aula as any).beneficiario_presencas ?? [];
         for (const p of presencas) {
           if (p.status === 'presente') presencasNucleo++;
@@ -481,10 +560,51 @@ export const prestacaoContasApi = {
         }
       }
 
-      totalPresencasGeral += presencasNucleo;
-      totalChamadasGeral += presencasNucleo + faltasNucleo;
+      // Regra de Ouro 2: Detectar sessões previstas na grade e não registradas
+      const turmasDoNucleo = turmas.filter((t: any) => t.nucleo_id === n.id);
+      let sessoesNaoRegistradas = 0;
+      let faltasNaoRegistradas = 0;
 
-      const totalRegistros = presencasNucleo + faltasNucleo;
+      for (const t of turmasDoNucleo) {
+        const horarios = t.turma_horarios ?? [];
+        if (horarios.length === 0) continue;
+
+        const diasSemana = new Set<number>(
+          horarios.map((th: any) => Number(th.dia_semana)).filter((d: number) => !isNaN(d))
+        );
+        if (diasSemana.size === 0) continue;
+
+        const datasExecutadas = new Set(
+          aulas.filter((a: any) => a.turma_id === t.id).map((a: any) => String(a.data).slice(0, 10))
+        );
+
+        const alunosAtivosTurma = beneficiarios.filter(
+          (b: any) =>
+            b.status === 'ativo' &&
+            (b.beneficiario_turmas ?? []).some(
+              (bt: any) => bt.turma_id === t.id && (bt.status === 'ativo' || !bt.status) && !bt.deleted_at
+            )
+        ).length;
+
+        const pendentes = obterDatasPrevistasNaoRegistradas(
+          dataInicio,
+          dataFim,
+          diasSemana,
+          datasExecutadas,
+          t.data_inicio,
+          t.data_fim
+        );
+
+        sessoesNaoRegistradas += pendentes.length;
+        // Toda sessão prevista que não foi lançada conta como falta no denominador para cada aluno ativo
+        faltasNaoRegistradas += pendentes.length * alunosAtivosTurma;
+      }
+
+      const faltasTotais = faltasNucleo + faltasNaoRegistradas;
+      totalPresencasGeral += presencasNucleo;
+      totalChamadasGeral += presencasNucleo + faltasTotais;
+
+      const totalRegistros = presencasNucleo + faltasTotais;
       const freqMedia = totalRegistros > 0 ? Math.round((presencasNucleo / totalRegistros) * 100) : 0;
 
       return {
@@ -492,7 +612,9 @@ export const prestacaoContasApi = {
         nucleoNome: n.identificacao,
         beneficiariosAtivos: beneficiariosAtivosNucleo,
         presencasRegistradas: presencasNucleo,
-        faltasRegistradas: faltasNucleo,
+        faltasRegistradas: faltasTotais,
+        sessoesNaoRegistradas,
+        faltasNaoRegistradas,
         frequenciaMedia: freqMedia,
       };
     });
@@ -500,16 +622,17 @@ export const prestacaoContasApi = {
     const frequenciaMediaGeral =
       totalChamadasGeral > 0 ? Math.round((totalPresencasGeral / totalChamadasGeral) * 100) : 0;
 
-    // Aulas Realizadas (Diário)
+    // Sessões Realizadas (Diário) - Lê atividade real executada direto de execucoes_sessao
     const atividadesRealizadas: AulaRealizadaItem[] = aulas
       .filter((a: any) => a.status === 'concluida')
       .map((a: any) => {
         const presencas = ((a as any).beneficiario_presencas ?? []).filter((p: any) => p.status === 'presente').length;
+        const modalidadeReal = a.atividades?.nome || a.turmas?.atividades?.nome || 'Atividade Esportiva';
         return {
           id: a.id,
           data: a.data,
           nucleoNome: a.turmas?.nucleos?.identificacao ?? '',
-          modalidade: a.turmas?.atividades?.nome ?? '',
+          modalidade: modalidadeReal,
           turmaNome: a.turmas?.nome ?? '',
           professorNome: a.funcionarios?.nome_completo ?? '',
           atividadeDescricao: a.observacoes || '',

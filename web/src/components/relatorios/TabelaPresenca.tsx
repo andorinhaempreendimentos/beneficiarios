@@ -108,7 +108,7 @@ export function TabelaPresenca({ filtros }: Props) {
       try {
         // 1. Buscar execuções de aula dentro do período
         let qAulas = sb
-          .from("execucoes_aula")
+          .from("execucoes_sessao")
           .select("id, turma_id, data, observacoes, professor_id")
           .order("data", { ascending: true });
 
@@ -248,12 +248,62 @@ export function TabelaPresenca({ filtros }: Props) {
 
         // Aulas realizadas desta turma no período
         const aulasDaTurma = t ? execucoesAula.filter((e) => e.turmaId === t.id) : [];
-        const totalAulasTurma = aulasDaTurma.length;
+
+        // Regra de Ouro 2: Detectar sessões previstas na grade que venceram sem registro
+        const diasSemanaTurma = new Set<number>();
+        const DIA_NUM_MAP: Record<string, number> = {
+          Dom: 0, Seg: 1, Ter: 2, Qua: 3, Qui: 4, Sex: 5, Sáb: 6,
+          dom: 0, seg: 1, ter: 2, qua: 3, qui: 4, sex: 5, sab: 6,
+          Domingo: 0, Segunda: 1, Terça: 2, Quarta: 3, Quinta: 4, Sexta: 5, Sábado: 6,
+        };
+        for (const s of (t?.slots || [])) {
+          if (typeof s.diaSemana === "number") diasSemanaTurma.add(s.diaSemana);
+          else if (typeof s.dia_semana === "number") diasSemanaTurma.add(s.dia_semana);
+          else if (typeof s.dia === "string" && DIA_NUM_MAP[s.dia] !== undefined) {
+            diasSemanaTurma.add(DIA_NUM_MAP[s.dia]);
+          }
+        }
+
+        const sessoesPrevistasNaoRegistradas: string[] = [];
+        if (t && diasSemanaTurma.size > 0 && filtros.dataInicio) {
+          const hoje = new Date();
+          const hojeStr = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, "0")}-${String(hoje.getDate()).padStart(2, "0")}`;
+          const fimStr = filtros.dataFim && filtros.dataFim < hojeStr ? filtros.dataFim : hojeStr;
+
+          const [iA, iM, iD] = filtros.dataInicio.split("-").map(Number);
+          const [fA, fM, fD] = fimStr.split("-").map(Number);
+
+          if (!isNaN(iA) && !isNaN(fA)) {
+            const curD = new Date(iA, iM - 1, iD, 12, 0, 0);
+            const fimD = new Date(fA, fM - 1, fD, 12, 0, 0);
+            const datasExecutadas = new Set(aulasDaTurma.map((a) => a.data.slice(0, 10)));
+
+            while (curD <= fimD) {
+              const curIso = `${curD.getFullYear()}-${String(curD.getMonth() + 1).padStart(2, "0")}-${String(curD.getDate()).padStart(2, "0")}`;
+              const dentroCiclo =
+                (!t.dataInicio || curIso >= t.dataInicio.slice(0, 10)) &&
+                (!t.dataFim || curIso <= t.dataFim.slice(0, 10));
+
+              if (dentroCiclo && diasSemanaTurma.has(curD.getDay())) {
+                if (curIso < hojeStr && !datasExecutadas.has(curIso)) {
+                  sessoesPrevistasNaoRegistradas.push(curIso);
+                }
+              }
+              curD.setDate(curD.getDate() + 1);
+            }
+          }
+        }
+
+        const totalAulasTurma = aulasDaTurma.length + sessoesPrevistasNaoRegistradas.length;
 
         let presencasQtd = 0;
-        let faltasQtd = 0;
+        let faltasQtd = sessoesPrevistasNaoRegistradas.length; // Sessões não registradas entram como falta no denominador
         let justificadasQtd = 0;
         const aulasStatus: Record<string, "presente" | "falta" | "justificada" | "nao_registrado"> = {};
+
+        for (const dataNr of sessoesPrevistasNaoRegistradas) {
+          aulasStatus[`nao_reg_${dataNr}`] = "nao_registrado";
+        }
 
         for (const aula of aulasDaTurma) {
           const st = presencasPorAulaAluno.get(`${aula.id}_${b.id}`);

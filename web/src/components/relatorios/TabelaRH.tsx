@@ -167,7 +167,7 @@ export function TabelaRH({ filtros }: Props) {
         }
 
         // 2. Buscar Aulas ministradas por professor no período
-        let qAulas = sb.from("execucoes_aula").select("id, professor_id, data");
+        let qAulas = sb.from("execucoes_sessao").select("id, professor_id, data");
         if (filtros.dataInicio) qAulas = qAulas.gte("data", filtros.dataInicio);
         if (filtros.dataFim) qAulas = qAulas.lte("data", filtros.dataFim);
 

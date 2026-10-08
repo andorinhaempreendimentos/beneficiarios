@@ -49,3 +49,26 @@ export function formatarTelefone(telefone: string): string {
   }
   return digitos.replace(/(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
 }
+
+/**
+ * Adapta visualmente o nome do grupo conforme o vocabulário da atividade.
+ * Ex: "Arena Esperança - Grupo A", com termoGrupo="Time" -> "Arena Esperança - Time A"
+ * Ex: "Arena Esperança - Turma A", com termoGrupo="Classe" -> "Arena Esperança - Classe A"
+ * Se termoGrupo for "Grupo" ou não for fornecido, retorna o nome original.
+ */
+export function formatarNomeGrupo(nome?: string | null, termoGrupo?: string | null): string {
+  if (!nome) return "";
+  const termo = (termoGrupo || "").trim();
+  if (!termo || termo.toLowerCase() === "grupo") {
+    return nome;
+  }
+  // Se contiver "- Grupo [X]" ou "- Turma [X]" ou similar, substitui pela palavra do termo
+  if (/(\s*-\s*)(?:Grupo|Turma)(\s+[A-Za-z0-9]+)/i.test(nome)) {
+    return nome.replace(/(\s*-\s*)(?:Grupo|Turma)(\s+[A-Za-z0-9]+)/i, `$1${termo}$2`);
+  }
+  // Se começar com "Grupo [X]" ou "Turma [X]"
+  if (/^(?:Grupo|Turma)(\s+[A-Za-z0-9]+)/i.test(nome)) {
+    return nome.replace(/^(?:Grupo|Turma)(\s+[A-Za-z0-9]+)/i, `${termo}$1`);
+  }
+  return nome;
+}

@@ -48,32 +48,7 @@ interface InscricaoPublicaWizardProps {
   configGeo?: GeolocalizacaoConfig | null;
 }
 
-type TurnoFiltro = "todos" | "manha" | "tarde" | "noite";
 
-const OPCOES_TURNOS: { id: TurnoFiltro; label: string; sub: string; icone: string }[] = [
-  { id: "todos", label: "Qualquer Período", sub: "Todos os turnos disponíveis", icone: "🗓️" },
-  { id: "manha", label: "Manhã", sub: "Turno matutino (7h às 12h)", icone: "☀️" },
-  { id: "tarde", label: "Tarde", sub: "Turno vespertino (13h às 18h)", icone: "⛅" },
-  { id: "noite", label: "Noite", sub: "Turno noturno (18h às 22h)", icone: "🌙" },
-];
-
-function turmaPertenceAoTurno(t: TurmaApi, turno: TurnoFiltro): boolean {
-  if (turno === "todos") return true;
-  const nomeLower = (t.nome || "").toLowerCase();
-  if (turno === "manha") {
-    if (nomeLower.includes("manhã") || nomeLower.includes("manha") || nomeLower.includes("matutino")) return true;
-    if (Array.isArray(t.slots) && t.slots.some((s: any) => Number(s.inicio) < 12)) return true;
-  }
-  if (turno === "tarde") {
-    if (nomeLower.includes("tarde") || nomeLower.includes("vespertino")) return true;
-    if (Array.isArray(t.slots) && t.slots.some((s: any) => Number(s.inicio) >= 12 && Number(s.inicio) < 18)) return true;
-  }
-  if (turno === "noite") {
-    if (nomeLower.includes("noite") || nomeLower.includes("noturno")) return true;
-    if (Array.isArray(t.slots) && t.slots.some((s: any) => Number(s.inicio) >= 18)) return true;
-  }
-  return false;
-}
 
 export function InscricaoPublicaWizard({
   nucleos,
@@ -109,9 +84,8 @@ export function InscricaoPublicaWizard({
     ).sort();
   }, [nucleosComEstado, estadoSelecionado]);
 
-  // Atividade e Período selecionados
+  // Atividade selecionada
   const [atividadeId, setAtividadeId] = useState<string>("");
-  const [turnoFiltro, setTurnoFiltro] = useState<TurnoFiltro>("todos");
 
   // Referência de Localização para ordenação de proximidade (GPS ou Rua digitada)
   const [refLocalizacao, setRefLocalizacao] = useState<ReferenciaLocalizacao | null>(null);
@@ -178,19 +152,16 @@ export function InscricaoPublicaWizard({
     return turmasDaCidade.filter((t) => t.atividadeId === atividadeId);
   }, [turmasDaCidade, atividadeId]);
 
-  // Núcleos compatíveis na Etapa 3 (que possuem turmas da atividade + período escolhido)
+  // Núcleos compatíveis na Etapa 3 (que possuem grupos da atividade)
   const nucleosCompativeis = useMemo(() => {
     if (!atividadeId) return [];
 
     return nucleosDaCidade
       .map((nucleo) => {
-        // Encontrar turmas deste núcleo para esta atividade
+        // Encontrar turmas/grupos deste núcleo para esta atividade
         const turmasDoNucleo = turmasDaAtividadeNaCidade.filter((t) => t.nucleoId === nucleo.id);
 
-        // Filtrar exclusivamente pelo período selecionado (Manhã, Tarde, Noite, ou Todos)
-        const turmasFiltradas = turmasDoNucleo.filter((t) => turmaPertenceAoTurno(t, turnoFiltro));
-
-        const vagasTotais = turmasFiltradas.reduce(
+        const vagasTotais = turmasDoNucleo.reduce(
           (acc, t) => acc + Math.max(0, Number(t.vagasTotais || 0) - Number((t as any).qtdBeneficiarios || 0)),
           0
         );
@@ -207,10 +178,10 @@ export function InscricaoPublicaWizard({
 
         return {
           nucleo,
-          turmas: turmasFiltradas,
+          turmas: turmasDoNucleo,
           vagasDisponiveis: vagasTotais,
           distanciaKm,
-          primeiraTurmaId: turmasFiltradas[0]?.id || null,
+          primeiraTurmaId: turmasDoNucleo[0]?.id || null,
         };
       })
       .filter((item) => item.turmas.length > 0)
@@ -222,7 +193,7 @@ export function InscricaoPublicaWizard({
         if (b.distanciaKm != null) return 1;
         return 0;
       });
-  }, [nucleosDaCidade, turmasDaAtividadeNaCidade, atividadeId, turnoFiltro, refLocalizacao]);
+  }, [nucleosDaCidade, turmasDaAtividadeNaCidade, atividadeId, refLocalizacao]);
 
   // Handlers de navegação
   const handleSelecionarEstado = (uf: string) => {
@@ -461,41 +432,9 @@ export function InscricaoPublicaWizard({
                     </div>
                   </div>
 
-                  {/* Se selecionada, exibir seletor simplificado de período (Manhã / Tarde / Noite) */}
+                  {/* Se selecionada, exibir botão direto para avançar */}
                   {isSelected && (
-                    <div className="mt-2 space-y-3 border-t border-sky-200/80 pt-3">
-                      <div className="space-y-1.5">
-                        <label className="text-xs font-bold text-zinc-800 flex items-center gap-1.5">
-                          <Clock className="h-3.5 w-3.5 text-sky-600" />
-                          <span>Selecione o Período Desejado:</span>
-                        </label>
-                        <div className="grid grid-cols-2 gap-2">
-                          {OPCOES_TURNOS.map((opt) => {
-                            const ativo = turnoFiltro === opt.id;
-                            return (
-                              <button
-                                key={opt.id}
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setTurnoFiltro(opt.id);
-                                }}
-                                className={`flex items-center gap-2 p-2 rounded-xl border text-left transition-all cursor-pointer ${
-                                  ativo
-                                    ? "border-sky-500 bg-sky-100/70 text-sky-900 font-bold shadow-2xs ring-1 ring-sky-500/20"
-                                    : "border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-700 font-medium"
-                                }`}
-                              >
-                                <span className="text-sm shrink-0">{opt.icone}</span>
-                                <div className="leading-tight">
-                                  <span className="text-xs block">{opt.label}</span>
-                                </div>
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-
+                    <div className="mt-2 border-t border-sky-200/80 pt-3">
                       <button
                         type="button"
                         onClick={(e) => {
@@ -545,18 +484,13 @@ export function InscricaoPublicaWizard({
               className="flex items-center gap-1.5 text-xs font-bold text-zinc-600 hover:text-zinc-900 bg-zinc-100 hover:bg-zinc-200 px-3 py-1.5 rounded-lg transition cursor-pointer"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
-              <span>Alterar Atividade e Período</span>
+              <span>Alterar Atividade</span>
             </button>
 
             <div className="flex flex-wrap items-center gap-2 text-xs">
               <span className="rounded-md bg-emerald-100 px-2 py-0.5 font-bold text-emerald-800">
                 {atividadeSelecionada?.nome}
               </span>
-              {turnoFiltro !== "todos" && (
-                <span className="rounded-md bg-sky-100 px-2 py-0.5 font-bold text-sky-800">
-                  Período: {turnoFiltro === "manha" ? "Manhã" : turnoFiltro === "tarde" ? "Tarde" : "Noite"}
-                </span>
-              )}
               <span className="text-zinc-500 font-medium">em {cidadeSelecionada} - {estadoSelecionado}</span>
             </div>
           </div>
@@ -629,9 +563,15 @@ export function InscricaoPublicaWizard({
                       <span>{[nucleo.bairro, nucleo.cidadeNome, nucleo.regiao].filter(Boolean).join(" · ")}</span>
                     </div>
 
-                    {/* Resumo de dias e horários das turmas deste núcleo */}
-                    <div className="rounded-xl bg-zinc-50 p-2.5 space-y-1 text-xs text-zinc-600 border border-zinc-100">
+                    {/* Resumo de grupos, faixas de idade e grade semanal de sessões */}
+                    <div className="rounded-xl bg-zinc-50 p-2.5 space-y-1.5 text-xs text-zinc-600 border border-zinc-100">
                       {turmasDoPolo.map((t) => {
+                        const termoGrupo = t.atividade?.termoGrupo || atividadeSelecionada?.termoGrupo || "Grupo";
+                        const termoSessao = t.atividade?.termoSessao || atividadeSelecionada?.termoSessao || "Sessão";
+                        const min = t.idadeMinima ?? t.faixaEtaria?.idadeMinima ?? t.categoria?.idadeMinima;
+                        const max = t.idadeMaxima ?? t.faixaEtaria?.idadeMaxima ?? t.categoria?.idadeMaxima;
+                        const faixaStr = min != null && max != null ? `${min} a ${max} anos` : null;
+
                         const slotStr =
                           Array.isArray(t.slots) && t.slots.length > 0
                             ? t.slots
@@ -639,10 +579,23 @@ export function InscricaoPublicaWizard({
                                 .filter(Boolean)
                                 .join(", ")
                             : "";
+
                         return (
-                          <div key={t.id} className="flex items-center gap-2 text-[11px]">
-                            <Clock className="h-3 w-3 text-zinc-400 shrink-0" />
-                            <span>{t.nome}{slotStr ? ` (${slotStr})` : ""}</span>
+                          <div key={t.id} className="flex flex-col gap-0.5 text-[11px] pb-1 border-b border-zinc-100 last:border-b-0 last:pb-0">
+                            <div className="flex items-center justify-between gap-1">
+                              <span className="font-bold text-zinc-800">{t.nome}</span>
+                              {faixaStr && (
+                                <span className="bg-amber-100 text-amber-900 text-[10px] px-1.5 py-0.2 rounded font-extrabold">
+                                  {faixaStr}
+                                </span>
+                              )}
+                            </div>
+                            {slotStr && (
+                              <div className="flex items-center gap-1 text-zinc-500">
+                                <Clock className="h-3 w-3 text-sky-500 shrink-0" />
+                                <span>{termoSessao}s: {slotStr}</span>
+                              </div>
+                            )}
                           </div>
                         );
                       })}
@@ -662,14 +615,14 @@ export function InscricaoPublicaWizard({
             <div className="rounded-2xl border border-dashed border-zinc-300 bg-zinc-50/50 p-8 text-center space-y-2">
               <Building className="mx-auto h-8 w-8 text-zinc-400" />
               <p className="text-sm font-medium text-zinc-600">
-                Nenhum núcleo com vagas abertas para este horário selecionado.
+                Nenhum núcleo com vagas abertas para a modalidade selecionada.
               </p>
               <button
                 type="button"
                 onClick={() => setEtapa(2)}
                 className="text-xs font-bold text-sky-600 hover:underline cursor-pointer"
               >
-                Voltar e escolher outro horário ou modalidade
+                Voltar e escolher outra modalidade
               </button>
             </div>
           )}

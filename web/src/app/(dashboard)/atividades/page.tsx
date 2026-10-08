@@ -201,6 +201,22 @@ export default function AtividadesPage() {
                           </Badge>
                         </div>
 
+                        {/* Vocabulário da Atividade */}
+                        <div className="flex flex-wrap items-center gap-1.5 py-1 text-[10px]">
+                          <span className="rounded-md bg-zinc-100 px-2 py-0.5 text-zinc-700 font-medium">
+                            Grupo: <strong>{a.termoGrupo || "Turma"}</strong>
+                          </span>
+                          <span className="rounded-md bg-zinc-100 px-2 py-0.5 text-zinc-700 font-medium">
+                            Sessão: <strong>{a.termoSessao || "Treino"}</strong>
+                          </span>
+                          <span className="rounded-md bg-zinc-100 px-2 py-0.5 text-zinc-700 font-medium">
+                            Resp.: <strong>{a.termoResponsavel || "Professor"}</strong>
+                          </span>
+                          <span className="rounded-md bg-zinc-100 px-2 py-0.5 text-zinc-700 font-medium">
+                            Part.: <strong>{a.termoParticipante || "Aluno"}</strong>
+                          </span>
+                        </div>
+
                         {/* Turnos & Faixa Etária */}
                         <div className="flex flex-col gap-1.5 border-t border-zinc-100 pt-2 text-xs">
                           <div className="flex items-center justify-between">

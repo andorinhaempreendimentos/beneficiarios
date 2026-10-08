@@ -18,13 +18,16 @@ export function InstrucoesInscricaoBanner({
     ? [nucleo.endereco, nucleo.bairro, nucleo.cidade, nucleo.regiao].filter(Boolean).join(", ")
     : null;
 
+  const termoGrupo = atividade?.termoGrupo || "Grupo";
+  const termoParticipante = atividade?.termoParticipante || "Participante";
+
   const ETAPA_LOCALIZACAO = {
     titulo: "Localização",
     sub: "Selecione seu Estado e Cidade.",
   };
   const ETAPA_ATIVIDADE = {
-    titulo: "Atividade e Horário",
-    sub: "Escolha a modalidade e turno ideal.",
+    titulo: "Atividade",
+    sub: `Escolha a modalidade e ${termoGrupo.toLowerCase()} ideal.`,
   };
   const ETAPA_NUCLEO = {
     titulo: "Escolha o Núcleo",
@@ -32,7 +35,7 @@ export function InstrucoesInscricaoBanner({
   };
   const ETAPA_DADOS = {
     titulo: "Preencha os Dados",
-    sub: "Informe os dados do aluno e do responsável.",
+    sub: `Informe os dados do ${termoParticipante.toLowerCase()} e do responsável.`,
   };
 
   const etapasMap = {
