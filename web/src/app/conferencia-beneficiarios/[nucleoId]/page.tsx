@@ -267,9 +267,8 @@ export default function ConferenciaBeneficiariosPage({
       for (let j = i + 1; j < turmas.length; j++) {
         const t1 = turmas[i];
         const t2 = turmas[j];
-        const maxMin = Math.max(t1.idadeMinima, t2.idadeMinima);
-        const minMax = Math.min(t1.idadeMaxima, t2.idadeMaxima);
-        if (maxMin <= minMax) {
+        // Exatamente a mesma faixa etária detectada
+        if (t1.idadeMinima === t2.idadeMinima && t1.idadeMaxima === t2.idadeMaxima) {
           lista.push({
             t1,
             t2,
@@ -600,7 +599,7 @@ export default function ConferenciaBeneficiariosPage({
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-100 pb-2">
                               <div>
                                 <p className="font-black text-sm text-zinc-900">
-                                  Turma {p.t1.identificador} ({p.t1.idadeMinima} a {p.t1.idadeMaxima} anos) e Turma {p.t2.identificador} ({p.t2.idadeMinima} a {p.t2.idadeMaxima} anos)
+                                  Turma {p.t1.identificador} e Turma {p.t2.identificador} — Faixa idêntica ({p.t1.idadeMinima} a {p.t1.idadeMaxima} anos)
                                 </p>
                                 <p className="text-xs text-zinc-500 mt-0.5">
                                   {p.t1.diasResumo} ({p.t1.horarioResumo}) • {p.t2.diasResumo} ({p.t2.horarioResumo})
