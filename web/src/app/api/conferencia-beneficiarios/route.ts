@@ -57,8 +57,28 @@ export async function GET() {
 
     const respostasPorNucleoMap: Record<string, any> = {};
     (respostas || []).forEach((r) => {
-      if (r.nucleo_id && !respostasPorNucleoMap[r.nucleo_id]) {
-        respostasPorNucleoMap[r.nucleo_id] = r;
+      if (!r.nucleo_id) return;
+      if (!respostasPorNucleoMap[r.nucleo_id]) {
+        respostasPorNucleoMap[r.nucleo_id] = {
+          ...r,
+          novos_alunos_cadastrados: Array.isArray(r.novos_alunos_cadastrados)
+            ? [...r.novos_alunos_cadastrados]
+            : [],
+          envios_individuais: [r],
+        };
+      } else {
+        const principal = respostasPorNucleoMap[r.nucleo_id];
+        principal.envios_individuais.push(r);
+
+        const alunosExtras = Array.isArray(r.novos_alunos_cadastrados)
+          ? r.novos_alunos_cadastrados
+          : [];
+        principal.novos_alunos_cadastrados.push(...alunosExtras);
+
+        principal.total_alunos_informado = Math.max(
+          principal.total_alunos_informado,
+          principal.novos_alunos_cadastrados.length
+        );
       }
     });
 

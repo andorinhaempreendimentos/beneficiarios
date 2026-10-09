@@ -109,51 +109,24 @@ export async function POST(req: Request) {
 
     const supabase = getSupabaseClient();
 
-    // 4. Buscar registro existente na tabela de conferência
-    const { data: registroExistente } = await supabase
+    // 4. Salvar cada envio em linha individual para garantir concorrência atômica perfeita (sem race condition)
+    // Registro isolado estritamente na tabela de conferência (sem alterar tabelas oficiais).
+    const { error: errInsert } = await supabase
       .from("respostas_conferencia_beneficiarios")
-      .select("id, novos_alunos_cadastrados, total_alunos_informado")
-      .eq("nucleo_id", nucleoId)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+      .insert({
+        nucleo_id: nucleoId,
+        nucleo_nome: nucleoNome,
+        professor_nome: `Responsável: ${responsavel.nomeCompleto.trim()}`,
+        tem_alunos_pre_existentes: false,
+        total_alunos_sistema: 0,
+        total_alunos_informado: novosAlunosParaSalvar.length,
+        distribuicao_turmas: {},
+        alocacoes_alunos: [],
+        novos_alunos_cadastrados: novosAlunosParaSalvar,
+        observacoes: `Inscrição individual enviada pelo responsável ${responsavel.nomeCompleto.trim()} (WhatsApp: ${responsavel.whatsapp.trim()}, CPF: ${responsavel.cpf.trim()})`,
+      });
 
-    if (registroExistente) {
-      const listaAtual = Array.isArray(registroExistente.novos_alunos_cadastrados)
-        ? registroExistente.novos_alunos_cadastrados
-        : [];
-
-      const listaAtualizada = [...novosAlunosParaSalvar, ...listaAtual];
-      const novoTotal = (registroExistente.total_alunos_informado || 0) + novosAlunosParaSalvar.length;
-
-      const { error: errUpdate } = await supabase
-        .from("respostas_conferencia_beneficiarios")
-        .update({
-          novos_alunos_cadastrados: listaAtualizada,
-          total_alunos_informado: novoTotal,
-          updated_at: agora,
-        })
-        .eq("id", registroExistente.id);
-
-      if (errUpdate) throw errUpdate;
-    } else {
-      const { error: errInsert } = await supabase
-        .from("respostas_conferencia_beneficiarios")
-        .insert({
-          nucleo_id: nucleoId,
-          nucleo_nome: nucleoNome,
-          professor_nome: null,
-          tem_alunos_pre_existentes: false,
-          total_alunos_sistema: 0,
-          total_alunos_informado: novosAlunosParaSalvar.length,
-          distribuicao_turmas: {},
-          alocacoes_alunos: [],
-          novos_alunos_cadastrados: novosAlunosParaSalvar,
-          observacoes: "Inscrições enviadas por responsáveis",
-        });
-
-      if (errInsert) throw errInsert;
-    }
+    if (errInsert) throw errInsert;
 
     return NextResponse.json({
       success: true,
