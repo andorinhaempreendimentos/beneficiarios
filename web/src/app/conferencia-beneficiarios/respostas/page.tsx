@@ -173,7 +173,8 @@ export default function RespostasConferenciaBeneficiariosPage() {
   // Copiar link individual
   const copiarLinkIndividual = (nucleo: NucleoItem) => {
     const url = `${BASE_URL}/conferencia-beneficiarios/${nucleo.id}`;
-    const texto = `Olá Professor(a) ${nucleo.professorNome}!\n\nSegue o link exclusivo para a conferência e alocação dos alunos do núcleo *${nucleo.identificacao}*:\n\n${url}\n\nPor favor, acerte as quantidades e distribua os alunos nas turmas oficiais. Obrigado!`;
+    const primeiroNome = nucleo.professorNome?.trim().split(" ")[0] || "Professor";
+    const texto = `Olá Professor(a) ${primeiroNome}!\n\nSegue o link exclusivo para a conferência e alocação dos alunos do núcleo *${nucleo.identificacao}*:\n\n${url}\n\nPor favor, acerte as quantidades e distribua os alunos nas turmas oficiais. Obrigado!`;
 
     navigator.clipboard.writeText(texto);
     setCopiadoId(nucleo.id);
@@ -206,29 +207,13 @@ export default function RespostasConferenciaBeneficiariosPage() {
       return;
     }
 
-    const rotuloFiltro =
-      filtroStatus === "com_alunos"
-        ? "CENÁRIO A - COM ALUNOS"
-        : filtroStatus === "sem_alunos"
-        ? "CENÁRIO B - SEM ALUNOS"
-        : filtroStatus === "preenchidos"
-        ? "PREENCHIDOS"
-        : filtroStatus === "pendentes"
-        ? "PENDENTES"
-        : busca
-        ? `BUSCA: "${busca.toUpperCase()}"`
-        : "TODOS OS 20 NÚCLEOS";
-
-    let texto = `📋 *LINKS DE CONFERÊNCIA DE BENEFICIÁRIOS - ESCOLINHAS*\n📌 *Filtro:* ${rotuloFiltro} (${nucleosFiltrados.length} núcleos)\n\n`;
+    let texto = `📋 *LINKS DE CONFERÊNCIA DE BENEFICIÁRIOS - ESCOLINHAS*\n\n`;
 
     nucleosFiltrados.forEach((n, idx) => {
       const url = `${BASE_URL}/conferencia-beneficiarios/${n.id}`;
-      const statusIcon = n.respondido ? "✅" : "⏳";
-      const cenario = n.temAlunosPreExistentes
-        ? `[Cenário A: ${n.totalAlunosSistema} alunos]`
-        : `[Cenário B: Sem alunos]`;
+      const primeiroNome = n.professorNome?.trim().split(" ")[0] || "Professor";
 
-      texto += `${idx + 1}. *${n.identificacao}* (${n.professorNome}) ${statusIcon} ${cenario}\n${url}\n\n`;
+      texto += `${idx + 1}. *${n.identificacao}* (${primeiroNome})\n${url}\n\n`;
     });
 
     navigator.clipboard.writeText(texto);
