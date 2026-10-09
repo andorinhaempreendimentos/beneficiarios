@@ -207,7 +207,8 @@ export default function ConferenciaBeneficiariosPage({
       const turmasLista: TurmaItem[] = data.turmas || [];
       const vagasIniciais: Record<string, number> = {};
       turmasLista.forEach((t) => {
-        vagasIniciais[t.id] = t.vagasTotais || 40;
+        // Cenário A: vagas padrão da turma. Cenário B: inicia em 0 para o professor definir
+        vagasIniciais[t.id] = data.temAlunos ? t.vagasTotais || 40 : 0;
       });
       setVagasPorTurma(vagasIniciais);
 
@@ -219,7 +220,11 @@ export default function ConferenciaBeneficiariosPage({
           setTotalConfirmado(true);
         }
         if (resp.distribuicao_turmas && typeof resp.distribuicao_turmas === "object") {
-          setVagasPorTurma(resp.distribuicao_turmas);
+          const { _mesmosAlunosRespostas, _totalAlunosUnicos, ...turmasVagas } = resp.distribuicao_turmas;
+          setVagasPorTurma(turmasVagas);
+          if (_mesmosAlunosRespostas && typeof _mesmosAlunosRespostas === "object") {
+            setMesmosAlunosRespostas(_mesmosAlunosRespostas);
+          }
         }
         if (resp.alocacoes_alunos && typeof resp.alocacoes_alunos === "object") {
           setAlocacoes(resp.alocacoes_alunos);
@@ -252,6 +257,124 @@ export default function ConferenciaBeneficiariosPage({
   const totalAlunosAlocados = useMemo(() => {
     return Object.keys(alocacoes).length;
   }, [alocacoes]);
+
+  // Cenário B: Detecção de turmas com mesma faixa etária (ou sobreposição)
+  const [mesmosAlunosRespostas, setMesmosAlunosRespostas] = useState<Record<string, "mesmos" | "diferentes">>({});
+
+  const paresSobrepostos = useMemo(() => {
+    const lista: Array<{ t1: TurmaItem; t2: TurmaItem; key: string }> = [];
+    for (let i = 0; i < turmas.length; i++) {
+      for (let j = i + 1; j < turmas.length; j++) {
+        const t1 = turmas[i];
+        const t2 = turmas[j];
+        const maxMin = Math.max(t1.idadeMinima, t2.idadeMinima);
+        const minMax = Math.min(t1.idadeMaxima, t2.idadeMaxima);
+        if (maxMin <= minMax) {
+          lista.push({
+            t1,
+            t2,
+            key: `${t1.id}_${t2.id}`,
+          });
+        }
+      }
+    }
+    return lista;
+  }, [turmas]);
+
+  // Pares ativos onde o professor já definiu vagas (> 0) em ambas as turmas
+  const paresAtivos = useMemo(() => {
+    return paresSobrepostos.filter(
+      (p) => (vagasPorTurma[p.t1.id] || 0) > 0 && (vagasPorTurma[p.t2.id] || 0) > 0
+    );
+  }, [paresSobrepostos, vagasPorTurma]);
+
+  // Dedução e cálculo de alunos únicos para o Cenário B
+  const { totalAlunosUnicosCenarioB, totalDescontoMesmosAlunos } = useMemo(() => {
+    let deducao = 0;
+    paresAtivos.forEach((p) => {
+      if (mesmosAlunosRespostas[p.key] === "mesmos") {
+        const v1 = vagasPorTurma[p.t1.id] || 0;
+        const v2 = vagasPorTurma[p.t2.id] || 0;
+        deducao += Math.min(v1, v2);
+      }
+    });
+    return {
+      totalAlunosUnicosCenarioB: Math.max(0, totalVagasDistribuidas - deducao),
+      totalDescontoMesmosAlunos: deducao,
+    };
+  }, [totalVagasDistribuidas, paresAtivos, mesmosAlunosRespostas, vagasPorTurma]);
+
+  // Saldo restante no Cenário B
+  const saldoRestanteCenarioB = useMemo(() => {
+    return (totalInformado || 0) - totalAlunosUnicosCenarioB;
+  }, [totalInformado, totalAlunosUnicosCenarioB]);
+
+  // Função de envio unificada para o Cenário B
+  const handleSalvarCenarioB = async () => {
+    if (!totalInformado || totalInformado <= 0) {
+      setErroEnvio("Por favor, informe a quantidade total de alunos atendidos no topo da página.");
+      return;
+    }
+
+    try {
+      setEnviando(true);
+      setErroEnvio(null);
+
+      // Montar resumo de faixas semelhantes nas observações
+      let obsFinal = observacoes.trim();
+      const sobreposicoesTexto: string[] = [];
+      paresSobrepostos.forEach((p) => {
+        const v1 = vagasPorTurma[p.t1.id] || 0;
+        const v2 = vagasPorTurma[p.t2.id] || 0;
+        if (v1 > 0 && v2 > 0 && mesmosAlunosRespostas[p.key]) {
+          const resp = mesmosAlunosRespostas[p.key];
+          const desc =
+            resp === "mesmos"
+              ? "Mesmos alunos (participam nos dois horários)"
+              : "Alunos diferentes (turmas com alunos distintos)";
+          sobreposicoesTexto.push(
+            `• Turma ${p.t1.identificador} (${v1} vagas) e Turma ${p.t2.identificador} (${v2} vagas): ${desc}`
+          );
+        }
+      });
+
+      if (sobreposicoesTexto.length > 0) {
+        const bloco = `[Auditoria - Faixas Etárias Semelhantes]:\n${sobreposicoesTexto.join("\n")}`;
+        obsFinal = obsFinal ? `${obsFinal}\n\n${bloco}` : bloco;
+      }
+
+      const res = await fetch("/api/conferencia-beneficiarios", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nucleoId: nucleo.id,
+          nucleoNome: nucleo.identificacao,
+          professorNome: professorNome || null,
+          temAlunosPreExistentes: false,
+          totalAlunosSistema: 0,
+          totalAlunosInformado: totalInformado,
+          distribuicaoTurmas: {
+            ...vagasPorTurma,
+            _mesmosAlunosRespostas: mesmosAlunosRespostas,
+            _totalAlunosUnicos: totalAlunosUnicosCenarioB,
+          },
+          alocacoesAlunos: {},
+          novosAlunosCadastrados: [],
+          observacoes: obsFinal,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Erro ao salvar conferência.");
+
+      setSucesso(true);
+      setPasso(4);
+    } catch (err: any) {
+      setErroEnvio(err.message || "Erro ao enviar conferência.");
+    } finally {
+      setEnviando(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-50 via-zinc-50 to-white text-zinc-900 pb-20">
@@ -339,15 +462,15 @@ export default function ConferenciaBeneficiariosPage({
               )}
             </div>
 
-            {/* Barra de Progresso dos Passos */}
-            {!sucesso && (
+            {/* Barra de Progresso dos Passos (Apenas Cenário A) */}
+            {!sucesso && temAlunos && (
               <div className="bg-white rounded-2xl p-4 shadow-sm border border-zinc-200">
                 <div className="flex items-center justify-between text-xs font-bold text-zinc-600 mb-2">
                   <span>Passo {passo} de 3</span>
                   <span>
-                    {passo === 1 && (temAlunos ? "Conferir Total de Alunos" : "Informar Total Atendido")}
+                    {passo === 1 && "Conferir Total de Alunos"}
                     {passo === 2 && "Distribuir Vagas na Grade"}
-                    {passo === 3 && (temAlunos ? "Alocação Inteligente nas Turmas" : "Cadastro Rápido de Alunos")}
+                    {passo === 3 && "Alocação Inteligente nas Turmas"}
                   </span>
                 </div>
                 <div className="w-full bg-zinc-100 h-2.5 rounded-full overflow-hidden">
@@ -359,18 +482,353 @@ export default function ConferenciaBeneficiariosPage({
               </div>
             )}
 
-            {/* Navegação e Esqueleto Base dos Passos */}
-            <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-zinc-200 space-y-6">
-              {/* PASSO 1: TOTAL DE ALUNOS */}
-              {passo === 1 && (
-                <div className="space-y-6 animate-fadeIn">
+            {/* CENÁRIO B: PÁGINA ÚNICA UNIFICADA (NÚCLEOS SEM ALUNOS CADASTRADOS) */}
+            {!temAlunos && !sucesso && (
+              <div className="space-y-6 animate-fadeIn">
+                {/* 1. QUANTIDADE DE ALUNOS ATENDIDOS (IMAGE 1) */}
+                <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-zinc-200 space-y-4">
                   <div className="border-b border-zinc-100 pb-4">
                     <h3 className="text-lg sm:text-xl font-black text-zinc-900 flex items-center gap-2">
-                      <span className="w-7 h-7 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center text-xs font-black">
+                      <span className="w-7 h-7 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center text-xs font-black">
                         1
                       </span>
-                      {temAlunos ? "Conferência do Total de Alunos" : "Quantidade de Alunos Atendidos"}
+                      Quantidade de Alunos Atendidos
                     </h3>
+                    <p className="text-xs text-zinc-500 mt-1">
+                      Informe a quantidade média de alunos que você atende durante a semana neste núcleo.
+                    </p>
+                  </div>
+
+                  <div className="bg-amber-50/70 border-2 border-amber-300 rounded-2xl p-5 space-y-3">
+                    <label className="block text-sm font-bold text-zinc-900">
+                      Quantos alunos no total participam das aulas na semana? <span className="text-rose-500">*</span>
+                    </label>
+                    <p className="text-xs text-zinc-500">
+                      Informe a soma estimada de alunos que frequentam seu núcleo.
+                    </p>
+                    <input
+                      type="number"
+                      min={1}
+                      max={500}
+                      value={totalInformado || ""}
+                      onChange={(e) => setTotalInformado(Number(e.target.value))}
+                      placeholder="Ex: 80"
+                      className="w-full h-14 px-4 rounded-xl border-2 border-amber-400 bg-white font-black text-2xl text-zinc-900 focus:outline-none focus:ring-4 focus:ring-amber-200"
+                    />
+                  </div>
+                </div>
+
+                {/* 2. DISTRIBUIÇÃO DE VAGAS NA GRADE SEMANAL (IMAGE 2) */}
+                <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-zinc-200 space-y-6">
+                  <div className="border-b border-zinc-100 pb-4">
+                    <h3 className="text-lg sm:text-xl font-black text-zinc-900 flex items-center gap-2">
+                      <span className="w-7 h-7 rounded-lg bg-sky-100 text-sky-800 flex items-center justify-center text-xs font-black">
+                        2
+                      </span>
+                      Distribuição de Vagas na Grade Semanal
+                    </h3>
+                    <p className="text-xs text-zinc-500 mt-1">
+                      Selecione a quantidade de alunos para cada turma. O sistema desconta automaticamente do número total informado.
+                    </p>
+                  </div>
+
+                  {/* Barra de Metas e Dedução em Tempo Real */}
+                  <div className="bg-zinc-50 border-2 border-zinc-200 rounded-2xl p-4 sm:p-5 space-y-3">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+                      <div className="bg-white p-3 rounded-xl border border-zinc-200 shadow-2xs">
+                        <span className="text-3xs font-bold text-zinc-500 uppercase tracking-wider block">
+                          Alunos a Distribuir
+                        </span>
+                        <strong className="text-xl font-black text-zinc-900">{totalInformado || 0}</strong>
+                      </div>
+
+                      <div className="bg-white p-3 rounded-xl border border-zinc-200 shadow-2xs">
+                        <span className="text-3xs font-bold text-zinc-500 uppercase tracking-wider block">
+                          Vagas Alocadas
+                        </span>
+                        <strong className="text-xl font-black text-sky-700">{totalVagasDistribuidas}</strong>
+                      </div>
+
+                      <div className="bg-white p-3 rounded-xl border border-zinc-200 shadow-2xs">
+                        <span className="text-3xs font-bold text-zinc-500 uppercase tracking-wider block">
+                          Alunos Únicos
+                        </span>
+                        <strong className="text-xl font-black text-emerald-700">{totalAlunosUnicosCenarioB}</strong>
+                      </div>
+
+                      <div
+                        className={`p-3 rounded-xl border shadow-2xs ${
+                          totalInformado > 0 && saldoRestanteCenarioB === 0
+                            ? "bg-emerald-50 border-emerald-300 text-emerald-800"
+                            : totalInformado > 0 && saldoRestanteCenarioB > 0
+                            ? "bg-amber-50 border-amber-300 text-amber-800"
+                            : totalInformado > 0 && saldoRestanteCenarioB < 0
+                            ? "bg-rose-50 border-rose-300 text-rose-800"
+                            : "bg-zinc-100 border-zinc-200 text-zinc-600"
+                        }`}
+                      >
+                        <span className="text-3xs font-bold uppercase tracking-wider block">
+                          {!totalInformado
+                            ? "Saldo"
+                            : saldoRestanteCenarioB === 0
+                            ? "Saldo Exato"
+                            : saldoRestanteCenarioB > 0
+                            ? "Restam Alocar"
+                            : "Excedente"}
+                        </span>
+                        <strong className="text-xl font-black">
+                          {!totalInformado ? "-" : saldoRestanteCenarioB === 0 ? "0" : Math.abs(saldoRestanteCenarioB)}
+                        </strong>
+                      </div>
+                    </div>
+
+                    {/* Feedback do Saldo */}
+                    <div className="pt-1 flex flex-wrap items-center justify-between gap-2 text-xs">
+                      {!totalInformado ? (
+                        <span className="text-zinc-500 flex items-center gap-1.5">
+                          <Info className="w-4 h-4 text-zinc-400" /> Defina a quantidade total acima para acompanhar o saldo.
+                        </span>
+                      ) : saldoRestanteCenarioB === 0 ? (
+                        <span className="text-emerald-700 font-bold flex items-center gap-1.5">
+                          <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Vagas conferem exatamente com o total informado ({totalInformado} alunos).
+                        </span>
+                      ) : saldoRestanteCenarioB > 0 ? (
+                        <span className="text-amber-800 font-bold flex items-center gap-1.5">
+                          <Info className="w-4 h-4 text-amber-600" /> Restam <strong>{saldoRestanteCenarioB} alunos</strong> para atingir o total informado de {totalInformado}.
+                        </span>
+                      ) : (
+                        <span className="text-rose-700 font-bold flex items-center gap-1.5">
+                          <AlertCircle className="w-4 h-4 text-rose-600" /> As vagas alocadas ultrapassam o total informado em <strong>{Math.abs(saldoRestanteCenarioB)} alunos</strong>.
+                        </span>
+                      )}
+
+                      {totalDescontoMesmosAlunos > 0 && (
+                        <span className="text-3xs font-extrabold text-emerald-800 bg-emerald-100 border border-emerald-300 px-2.5 py-1 rounded-full">
+                          Dedução de {totalDescontoMesmosAlunos} alunos (mesmos alunos nos dois horários)
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Grade Semanal das Turmas */}
+                  <div className="space-y-3">
+                    {turmas.map((t) => {
+                      const vagas = vagasPorTurma[t.id] || 0;
+                      return (
+                        <div
+                          key={t.id}
+                          className={`rounded-2xl p-4 sm:p-5 border-2 transition-all space-y-3 ${
+                            vagas > 0
+                              ? "bg-white border-sky-400 shadow-xs"
+                              : "bg-zinc-50/70 border-zinc-200 hover:border-zinc-300"
+                          }`}
+                        >
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2">
+                                <span className="px-2.5 py-1 bg-sky-100 text-sky-800 text-xs font-black rounded-lg">
+                                  Turma {t.identificador}
+                                </span>
+                                <h4 className="font-black text-sm sm:text-base text-zinc-900">
+                                  {t.nome}
+                                </h4>
+                              </div>
+                              <p className="text-xs text-zinc-500">
+                                Faixa Etária: <strong>{t.idadeMinima} a {t.idadeMaxima} anos</strong>
+                              </p>
+                            </div>
+
+                            {/* Dropdown de Vagas da Turma */}
+                            <div className="flex items-center gap-2 shrink-0 self-start sm:self-center">
+                              <label className="text-xs font-bold text-zinc-600">Vagas:</label>
+                              <select
+                                value={vagas}
+                                onChange={(e) => {
+                                  const val = Number(e.target.value);
+                                  setVagasPorTurma((prev) => ({ ...prev, [t.id]: val }));
+                                }}
+                                className={`h-11 px-3.5 rounded-xl border-2 text-sm font-black focus:outline-none transition-all cursor-pointer ${
+                                  vagas > 0
+                                    ? "border-sky-500 bg-white text-sky-950 focus:ring-4 focus:ring-sky-200"
+                                    : "border-zinc-300 bg-white text-zinc-500 focus:ring-4 focus:ring-zinc-200"
+                                }`}
+                              >
+                                <option value={0}>Definir vagas...</option>
+                                {Array.from({ length: 150 }, (_, i) => i + 1).map((n) => (
+                                  <option key={n} value={n}>
+                                    {n} {n === 1 ? "aluno" : "alunos"}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                          </div>
+
+                          {/* Dias e Horários da Turma */}
+                          <div className="bg-zinc-100/70 rounded-xl p-2.5 text-xs text-zinc-600 flex flex-wrap items-center gap-2">
+                            <Clock className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+                            <span>
+                              <strong>Dias e Horários:</strong> {t.diasResumo || "Dias a definir"} ({t.horarioResumo})
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* 3. VERIFICAÇÃO DE MESMA FAIXA ETÁRIA */}
+                  {paresAtivos.length > 0 && (
+                    <div className="bg-amber-50/70 border-2 border-amber-300 rounded-3xl p-5 sm:p-6 space-y-4 animate-fadeIn">
+                      <div className="flex items-start gap-3">
+                        <div className="w-10 h-10 rounded-2xl bg-amber-200 text-amber-900 flex items-center justify-center shrink-0">
+                          <Users className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <h4 className="font-black text-sm sm:text-base text-zinc-900">
+                            Atenção: Turmas com Mesma Faixa Etária Detectadas
+                          </h4>
+                          <p className="text-xs text-zinc-600 mt-0.5">
+                            Identificamos turmas com faixas de idade compatíveis onde você já definiu vagas. Responda abaixo para sabermos se são os mesmos alunos ou turmas com alunos diferentes:
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="space-y-3 pt-2">
+                        {paresAtivos.map((p) => {
+                          const resp = mesmosAlunosRespostas[p.key];
+                          const v1 = vagasPorTurma[p.t1.id] || 0;
+                          const v2 = vagasPorTurma[p.t2.id] || 0;
+
+                          return (
+                            <div
+                              key={p.key}
+                              className="bg-white border-2 border-amber-200 rounded-2xl p-4 sm:p-5 space-y-3 shadow-xs"
+                            >
+                              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-100 pb-2">
+                                <div>
+                                  <p className="font-black text-sm text-zinc-900">
+                                    Turma {p.t1.identificador} ({p.t1.idadeMinima} a {p.t1.idadeMaxima} anos) e Turma {p.t2.identificador} ({p.t2.idadeMinima} a {p.t2.idadeMaxima} anos)
+                                  </p>
+                                  <p className="text-xs text-zinc-500 mt-0.5">
+                                    {p.t1.diasResumo} ({p.t1.horarioResumo}) • {p.t2.diasResumo} ({p.t2.horarioResumo})
+                                  </p>
+                                </div>
+                                <div className="text-xs font-bold text-zinc-600 bg-zinc-50 px-2.5 py-1 rounded-lg">
+                                  {v1} vagas e {v2} vagas
+                                </div>
+                              </div>
+
+                              <p className="text-xs font-bold text-zinc-800">
+                                Esses mesmos alunos participam das duas turmas?
+                              </p>
+
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    setMesmosAlunosRespostas((prev) => ({ ...prev, [p.key]: "mesmos" }))
+                                  }
+                                  className={`p-3.5 rounded-xl border-2 text-xs font-bold text-left transition-all flex items-center justify-between cursor-pointer ${
+                                    resp === "mesmos"
+                                      ? "border-emerald-500 bg-emerald-50 text-emerald-950 ring-2 ring-emerald-200"
+                                      : "border-zinc-200 bg-zinc-50 hover:bg-zinc-100 text-zinc-700"
+                                  }`}
+                                >
+                                  <div>
+                                    <p className="font-black text-sm">Sim, são os mesmos alunos</p>
+                                    <p className="text-3xs font-medium text-emerald-700 mt-0.5">
+                                      Participam em ambos os horários (não duplica na soma do núcleo)
+                                    </p>
+                                  </div>
+                                  {resp === "mesmos" && <Check className="w-5 h-5 text-emerald-600 shrink-0" />}
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    setMesmosAlunosRespostas((prev) => ({ ...prev, [p.key]: "diferentes" }))
+                                  }
+                                  className={`p-3.5 rounded-xl border-2 text-xs font-bold text-left transition-all flex items-center justify-between cursor-pointer ${
+                                    resp === "diferentes"
+                                      ? "border-sky-500 bg-sky-50 text-sky-950 ring-2 ring-sky-200"
+                                      : "border-zinc-200 bg-zinc-50 hover:bg-zinc-100 text-zinc-700"
+                                  }`}
+                                >
+                                  <div>
+                                    <p className="font-black text-sm">Não, são alunos diferentes</p>
+                                    <p className="text-3xs font-medium text-sky-700 mt-0.5">
+                                      Turmas com pessoas distintas (cada turma soma suas vagas)
+                                    </p>
+                                  </div>
+                                  {resp === "diferentes" && <Check className="w-5 h-5 text-sky-600 shrink-0" />}
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 4. OBSERVAÇÕES E BOTÃO DE FINALIZAR */}
+                  <div className="pt-4 border-t border-zinc-100 space-y-4">
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-bold text-zinc-700">
+                        Observações adicionais (opcional):
+                      </label>
+                      <textarea
+                        value={observacoes}
+                        onChange={(e) => setObservacoes(e.target.value)}
+                        placeholder="Alguma turma com lista de espera, detalhe específico de horário ou observação sobre o núcleo?"
+                        rows={3}
+                        className="w-full p-3.5 rounded-xl border border-zinc-300 text-xs text-zinc-900 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                      />
+                    </div>
+
+                    {erroEnvio && (
+                      <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl flex items-center gap-2">
+                        <AlertCircle className="w-4 h-4 text-rose-500 shrink-0" />
+                        <span>{erroEnvio}</span>
+                      </div>
+                    )}
+
+                    <div className="pt-2 flex items-center justify-end">
+                      <button
+                        type="button"
+                        disabled={enviando || !totalInformado || totalInformado <= 0}
+                        onClick={handleSalvarCenarioB}
+                        className="w-full sm:w-auto px-8 py-3.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-xl font-black text-sm flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
+                      >
+                        {enviando ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            <span>Enviando Conferência...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Send className="w-4 h-4" />
+                            <span>Finalizar e Enviar Conferência</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* CENÁRIO A: PASSOS PROGRESSIVOS (NÚCLEOS COM ALUNOS CADASTRADOS) */}
+            {temAlunos && !sucesso && (
+              <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-zinc-200 space-y-6">
+                {/* PASSO 1: TOTAL DE ALUNOS */}
+                {passo === 1 && (
+                  <div className="space-y-6 animate-fadeIn">
+                    <div className="border-b border-zinc-100 pb-4">
+                      <h3 className="text-lg sm:text-xl font-black text-zinc-900 flex items-center gap-2">
+                        <span className="w-7 h-7 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center text-xs font-black">
+                          1
+                        </span>
+                        Conferência do Total de Alunos
+                      </h3>
                     <p className="text-xs text-zinc-500 mt-1">
                       {temAlunos
                         ? "Confirme se o total de alunos cadastrados corresponde ao número real que treina com você."
@@ -1595,8 +2053,12 @@ export default function ConferenciaBeneficiariosPage({
                 </div>
               )}
 
-              {/* PASSO 4: SUCESSO / CONFIRMAÇÃO */}
-              {passo === 4 && (
+              </div>
+            )}
+
+            {/* CONFIRMAÇÃO DE SUCESSO (CENÁRIOS A E B) */}
+            {(sucesso || passo === 4) && (
+              <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-zinc-200">
                 <div className="text-center py-8 space-y-4 animate-fadeIn">
                   <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
                     <CheckCircle2 className="w-10 h-10" />
@@ -1615,14 +2077,14 @@ export default function ConferenciaBeneficiariosPage({
                         setSucesso(false);
                         carregarDados();
                       }}
-                      className="px-5 py-2.5 rounded-xl border border-zinc-300 hover:bg-zinc-50 text-xs font-bold text-zinc-700"
+                      className="px-5 py-2.5 rounded-xl border border-zinc-300 hover:bg-zinc-50 text-xs font-bold text-zinc-700 cursor-pointer"
                     >
                       Revisar Respostas
                     </button>
                   </div>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </>
         )}
       </main>
