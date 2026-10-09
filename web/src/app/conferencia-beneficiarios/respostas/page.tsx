@@ -180,20 +180,6 @@ export default function RespostasConferenciaBeneficiariosPage() {
     setTimeout(() => setCopiadoId(null), 3000);
   };
 
-  // Copiar todos os links
-  const copiarTodosLinks = () => {
-    let texto = `📋 *LINKS DE CONFERÊNCIA DE BENEFICIÁRIOS - ESCOLINHAS*\n\n`;
-    nucleos.forEach((n, idx) => {
-      const url = `${BASE_URL}/conferencia-beneficiarios/${n.id}`;
-      const statusIcon = n.respondido ? "✅" : "⏳";
-      texto += `${idx + 1}. *${n.identificacao}* (${n.professorNome}) ${statusIcon}\n${url}\n\n`;
-    });
-
-    navigator.clipboard.writeText(texto);
-    setCopiadoTodos(true);
-    setTimeout(() => setCopiadoTodos(false), 3000);
-  };
-
   // Filtragem dos núcleos
   const nucleosFiltrados = useMemo(() => {
     return nucleos.filter((n) => {
@@ -212,6 +198,43 @@ export default function RespostasConferenciaBeneficiariosPage() {
       return true;
     });
   }, [nucleos, busca, filtroStatus]);
+
+  // Copiar links dos núcleos atualmente filtrados na tela
+  const copiarLinksFiltrados = () => {
+    if (nucleosFiltrados.length === 0) {
+      alert("Nenhum núcleo filtrado para copiar.");
+      return;
+    }
+
+    const rotuloFiltro =
+      filtroStatus === "com_alunos"
+        ? "CENÁRIO A - COM ALUNOS"
+        : filtroStatus === "sem_alunos"
+        ? "CENÁRIO B - SEM ALUNOS"
+        : filtroStatus === "preenchidos"
+        ? "PREENCHIDOS"
+        : filtroStatus === "pendentes"
+        ? "PENDENTES"
+        : busca
+        ? `BUSCA: "${busca.toUpperCase()}"`
+        : "TODOS OS 20 NÚCLEOS";
+
+    let texto = `📋 *LINKS DE CONFERÊNCIA DE BENEFICIÁRIOS - ESCOLINHAS*\n📌 *Filtro:* ${rotuloFiltro} (${nucleosFiltrados.length} núcleos)\n\n`;
+
+    nucleosFiltrados.forEach((n, idx) => {
+      const url = `${BASE_URL}/conferencia-beneficiarios/${n.id}`;
+      const statusIcon = n.respondido ? "✅" : "⏳";
+      const cenario = n.temAlunosPreExistentes
+        ? `[Cenário A: ${n.totalAlunosSistema} alunos]`
+        : `[Cenário B: Sem alunos]`;
+
+      texto += `${idx + 1}. *${n.identificacao}* (${n.professorNome}) ${statusIcon} ${cenario}\n${url}\n\n`;
+    });
+
+    navigator.clipboard.writeText(texto);
+    setCopiadoTodos(true);
+    setTimeout(() => setCopiadoTodos(false), 3000);
+  };
 
   // Estatísticas gerais
   const stats = useMemo(() => {
@@ -325,18 +348,23 @@ export default function RespostasConferenciaBeneficiariosPage() {
 
           <div className="flex items-center gap-2.5">
             <button
-              onClick={copiarTodosLinks}
-              className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
+              onClick={copiarLinksFiltrados}
+              disabled={nucleosFiltrados.length === 0}
+              className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
             >
               {copiadoTodos ? (
                 <>
                   <Check className="w-4 h-4" />
-                  <span>Copiados para WhatsApp!</span>
+                  <span>Copiados ({nucleosFiltrados.length})!</span>
                 </>
               ) : (
                 <>
                   <Share2 className="w-4 h-4" />
-                  <span>Copiar Todos os Links</span>
+                  <span>
+                    {nucleosFiltrados.length === nucleos.length
+                      ? "Copiar Todos os Links"
+                      : `Copiar Filtrados (${nucleosFiltrados.length})`}
+                  </span>
                 </>
               )}
             </button>
