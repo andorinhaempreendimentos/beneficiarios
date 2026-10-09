@@ -102,11 +102,8 @@ export default function PaginaCadastroResponsavel({
   const [sexoAluno, setSexoAluno] = useState<"M" | "F">("M");
 
   // Dias e turnos específicos de cada dia para este aluno
-  // Ex: { "Segunda-feira": "Manhã", "Quarta-feira": "Manhã", "Sexta-feira": "Tarde" }
-  const [diasTurnos, setDiasTurnos] = useState<Record<string, "Manhã" | "Tarde" | "Noite">>({
-    "Segunda-feira": "Manhã",
-    "Quarta-feira": "Manhã",
-  });
+  // Ex: { "Segunda-feira": "Manhã", "Quarta-feira": null }
+  const [diasTurnos, setDiasTurnos] = useState<Record<string, ("Manhã" | "Tarde" | "Noite") | null>>({});
 
   const [erroAluno, setErroAluno] = useState<string | null>(null);
   const [erroEnvio, setErroEnvio] = useState<string | null>(null);
@@ -156,10 +153,10 @@ export default function PaginaCadastroResponsavel({
   function toggleDia(dia: string) {
     setDiasTurnos((prev) => {
       const copy = { ...prev };
-      if (copy[dia]) {
+      if (dia in copy) {
         delete copy[dia];
       } else {
-        copy[dia] = "Manhã"; // Turno padrão ao marcar
+        copy[dia] = null; // Nenhum turno pré-marcado
       }
       return copy;
     });
@@ -194,9 +191,16 @@ export default function PaginaCadastroResponsavel({
       return;
     }
 
+    // Verificar se algum dia marcado não teve turno selecionado
+    const diaSemTurno = diasKeys.find((dia) => !diasTurnos[dia]);
+    if (diaSemTurno) {
+      setErroAluno(`Selecione o turno (Manhã, Tarde ou Noite) para ${diaSemTurno}.`);
+      return;
+    }
+
     const diasParticipacao: DiaParticipacao[] = diasKeys.map((dia) => ({
       dia,
-      turno: diasTurnos[dia],
+      turno: diasTurnos[dia] as "Manhã" | "Tarde" | "Noite",
     }));
 
     const novoAluno: AlunoItem = {
@@ -213,10 +217,7 @@ export default function PaginaCadastroResponsavel({
     // Limpar campos do aluno para permitir adicionar o próximo
     setNomeAluno("");
     setDataNascAluno("");
-    setDiasTurnos({
-      "Segunda-feira": "Manhã",
-      "Quarta-feira": "Manhã",
-    });
+    setDiasTurnos({});
   }
 
   // Remover aluno da lista
@@ -252,6 +253,12 @@ export default function PaginaCadastroResponsavel({
     if (listaFinalAlunos.length === 0 && nomeAluno.trim() && dataNascAluno) {
       const diasKeys = Object.keys(diasTurnos);
       if (diasKeys.length > 0) {
+        const diaSemTurno = diasKeys.find((dia) => !diasTurnos[dia]);
+        if (diaSemTurno) {
+          setErroEnvio(`Selecione o turno (Manhã, Tarde ou Noite) para ${diaSemTurno}.`);
+          return;
+        }
+
         listaFinalAlunos.push({
           idTemp: `aluno_${Date.now()}`,
           nomeCompleto: nomeAluno.trim().toUpperCase(),
@@ -260,7 +267,7 @@ export default function PaginaCadastroResponsavel({
           sexo: sexoAluno,
           diasParticipacao: diasKeys.map((dia) => ({
             dia,
-            turno: diasTurnos[dia],
+            turno: diasTurnos[dia] as "Manhã" | "Tarde" | "Noite",
           })),
         });
         setAlunos(listaFinalAlunos);
@@ -701,15 +708,17 @@ export default function PaginaCadastroResponsavel({
 
                 <div className="space-y-2.5">
                   {DIAS_SEMANA.map((dia) => {
-                    const estaMarcado = Boolean(diasTurnos[dia]);
-                    const turnoAtual = diasTurnos[dia] || "Manhã";
+                    const estaMarcado = dia in diasTurnos;
+                    const turnoAtual = diasTurnos[dia];
 
                     return (
                       <div
                         key={dia}
                         className={`p-3 rounded-2xl border-2 transition-all ${
                           estaMarcado
-                            ? "border-emerald-400 bg-white shadow-xs"
+                            ? turnoAtual
+                              ? "border-emerald-400 bg-white shadow-xs"
+                              : "border-amber-300 bg-white shadow-xs"
                             : "border-zinc-200 bg-white/70 hover:border-zinc-300"
                         }`}
                       >
@@ -734,8 +743,14 @@ export default function PaginaCadastroResponsavel({
                           </button>
 
                           {estaMarcado && (
-                            <span className="text-3xs font-extrabold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
-                              {turnoAtual}
+                            <span
+                              className={`text-3xs font-extrabold px-2 py-0.5 rounded-md border ${
+                                turnoAtual
+                                  ? "text-emerald-800 bg-emerald-50 border-emerald-200"
+                                  : "text-amber-800 bg-amber-50 border-amber-200"
+                              }`}
+                            >
+                              {turnoAtual || "Selecione o turno"}
                             </span>
                           )}
                         </div>
