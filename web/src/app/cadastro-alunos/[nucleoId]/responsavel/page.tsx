@@ -18,9 +18,11 @@ import {
   Check,
 } from "lucide-react";
 
+type TurnoOpcao = "Manhã" | "Tarde" | "Noite" | "Não sei";
+
 interface DiaParticipacao {
   dia: string;
-  turno: "Manhã" | "Tarde" | "Noite";
+  turno: TurnoOpcao;
 }
 
 interface AlunoItem {
@@ -41,7 +43,8 @@ const DIAS_SEMANA = [
   "Sábado",
 ];
 
-const TURNOS: Array<"Manhã" | "Tarde" | "Noite"> = ["Manhã", "Tarde", "Noite"];
+const TURNOS: TurnoOpcao[] = ["Manhã", "Tarde", "Noite", "Não sei"];
+const DIA_NAO_SEI = "Não sei informar os dias da semana";
 
 function calcularIdade(dataNasc: string): number | null {
   if (!dataNasc) return null;
@@ -102,8 +105,8 @@ export default function PaginaCadastroResponsavel({
   const [sexoAluno, setSexoAluno] = useState<"M" | "F">("M");
 
   // Dias e turnos específicos de cada dia para este aluno
-  // Ex: { "Segunda-feira": "Manhã", "Quarta-feira": null }
-  const [diasTurnos, setDiasTurnos] = useState<Record<string, ("Manhã" | "Tarde" | "Noite") | null>>({});
+  // Ex: { "Segunda-feira": "Manhã", "Quarta-feira": "Não sei", "Não sei informar os dias da semana": "Manhã" }
+  const [diasTurnos, setDiasTurnos] = useState<Record<string, TurnoOpcao | null>>({});
 
   const [erroAluno, setErroAluno] = useState<string | null>(null);
   const [erroEnvio, setErroEnvio] = useState<string | null>(null);
@@ -153,6 +156,7 @@ export default function PaginaCadastroResponsavel({
   function toggleDia(dia: string) {
     setDiasTurnos((prev) => {
       const copy = { ...prev };
+      delete copy[DIA_NAO_SEI]; // Se selecionou dia específico, desmarca "Não sei informar os dias"
       if (dia in copy) {
         delete copy[dia];
       } else {
@@ -162,8 +166,19 @@ export default function PaginaCadastroResponsavel({
     });
   }
 
+  // Alternar opção "Não sei informar os dias da semana"
+  function toggleNaoSeiDias() {
+    setDiasTurnos((prev) => {
+      const res: Record<string, TurnoOpcao | null> = {};
+      if (!(DIA_NAO_SEI in prev)) {
+        res[DIA_NAO_SEI] = null; // Limpa os outros e deixa apenas não sei
+      }
+      return res;
+    });
+  }
+
   // Definir turno de um dia específico
-  function setTurnoDoDia(dia: string, turno: "Manhã" | "Tarde" | "Noite") {
+  function setTurnoDoDia(dia: string, turno: TurnoOpcao) {
     setDiasTurnos((prev) => ({
       ...prev,
       [dia]: turno,
@@ -187,20 +202,20 @@ export default function PaginaCadastroResponsavel({
 
     const diasKeys = Object.keys(diasTurnos);
     if (diasKeys.length === 0) {
-      setErroAluno("Selecione pelo menos um dia em que o aluno vai para o núcleo.");
+      setErroAluno("Selecione os dias em que o aluno vai para o núcleo ou marque 'Não sei informar os dias da semana'.");
       return;
     }
 
     // Verificar se algum dia marcado não teve turno selecionado
     const diaSemTurno = diasKeys.find((dia) => !diasTurnos[dia]);
     if (diaSemTurno) {
-      setErroAluno(`Selecione o turno (Manhã, Tarde ou Noite) para ${diaSemTurno}.`);
+      setErroAluno(`Selecione o turno (ou marque 'Não sei') para: ${diaSemTurno}.`);
       return;
     }
 
     const diasParticipacao: DiaParticipacao[] = diasKeys.map((dia) => ({
       dia,
-      turno: diasTurnos[dia] as "Manhã" | "Tarde" | "Noite",
+      turno: diasTurnos[dia] as TurnoOpcao,
     }));
 
     const novoAluno: AlunoItem = {
@@ -255,7 +270,7 @@ export default function PaginaCadastroResponsavel({
       if (diasKeys.length > 0) {
         const diaSemTurno = diasKeys.find((dia) => !diasTurnos[dia]);
         if (diaSemTurno) {
-          setErroEnvio(`Selecione o turno (Manhã, Tarde ou Noite) para ${diaSemTurno}.`);
+          setErroEnvio(`Selecione o turno (ou marque 'Não sei') para: ${diaSemTurno}.`);
           return;
         }
 
@@ -267,7 +282,7 @@ export default function PaginaCadastroResponsavel({
           sexo: sexoAluno,
           diasParticipacao: diasKeys.map((dia) => ({
             dia,
-            turno: diasTurnos[dia] as "Manhã" | "Tarde" | "Noite",
+            turno: diasTurnos[dia] as TurnoOpcao,
           })),
         });
         setAlunos(listaFinalAlunos);
@@ -338,7 +353,7 @@ export default function PaginaCadastroResponsavel({
 
     sucessoDados.alunos.forEach((a: AlunoItem, idx: number) => {
       const rotina = a.diasParticipacao
-        .map((dp) => `${dp.dia.replace("-feira", "")} (${dp.turno})`)
+        .map((dp) => `${dp.dia.includes("Não sei") ? "Dias a definir" : dp.dia.replace("-feira", "")} (${dp.turno})`)
         .join(", ");
 
       texto += `${idx + 1}. *${a.nomeCompleto}* (${a.idade !== null ? `${a.idade} anos` : a.dataNascimento})\n` +
@@ -456,7 +471,7 @@ export default function PaginaCadastroResponsavel({
                           key={dp.dia}
                           className="text-3xs px-2 py-0.5 rounded bg-zinc-100 text-zinc-700 font-bold"
                         >
-                          {dp.dia.replace("-feira", "")}: <strong>{dp.turno}</strong>
+                          {dp.dia.includes("Não sei") ? "Dias a definir" : dp.dia.replace("-feira", "")}: <strong>{dp.turno}</strong>
                         </span>
                       ))}
                     </div>
@@ -533,7 +548,7 @@ export default function PaginaCadastroResponsavel({
           )}
 
           <p className="text-xs text-zinc-500 pt-2 border-t border-zinc-100">
-            Preencha seus dados de responsável e indique quais dias e turnos seu filho frequenta o núcleo.
+            Preencha seus dados de responsável e indique quais dias e turnos o aluno frequenta o núcleo.
           </p>
         </div>
 
@@ -545,7 +560,7 @@ export default function PaginaCadastroResponsavel({
                 <Heart className="w-4 h-4" />
               </div>
               <div>
-                <h2 className="text-base font-black text-zinc-900">1. Dados do Responsável (Pai / Mãe)</h2>
+                <h2 className="text-base font-black text-zinc-900">1. Dados do Responsável</h2>
                 <p className="text-3xs text-zinc-500">Identificação para contato oficial</p>
               </div>
             </div>
@@ -610,7 +625,7 @@ export default function PaginaCadastroResponsavel({
                   <User className="w-4 h-4" />
                 </div>
                 <div>
-                  <h2 className="text-base font-black text-zinc-900">2. Dados do Aluno (Filho)</h2>
+                  <h2 className="text-base font-black text-zinc-900">2. Dados do Aluno</h2>
                   <p className="text-3xs text-zinc-500">Informe os dias e turnos em que frequenta</p>
                 </div>
               </div>
@@ -707,6 +722,98 @@ export default function PaginaCadastroResponsavel({
                 </div>
 
                 <div className="space-y-2.5">
+                  {/* Opção: Não sei informar os dias da semana */}
+                  {(() => {
+                    const naoSeiMarcado = DIA_NAO_SEI in diasTurnos;
+                    const turnoNaoSei = diasTurnos[DIA_NAO_SEI];
+
+                    return (
+                      <div
+                        className={`p-3 rounded-2xl border-2 transition-all ${
+                          naoSeiMarcado
+                            ? turnoNaoSei
+                              ? "border-emerald-400 bg-white shadow-xs"
+                              : "border-amber-300 bg-white shadow-xs"
+                            : "border-dashed border-zinc-300 bg-white/60 hover:border-zinc-400"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <button
+                            type="button"
+                            onClick={toggleNaoSeiDias}
+                            className="flex items-center gap-2.5 cursor-pointer text-left flex-1"
+                          >
+                            <div
+                              className={`w-5 h-5 rounded-lg border-2 flex items-center justify-center transition-all ${
+                                naoSeiMarcado
+                                  ? "bg-amber-600 border-amber-600 text-white"
+                                  : "border-zinc-300 bg-white"
+                              }`}
+                            >
+                              {naoSeiMarcado && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                            </div>
+                            <div>
+                              <span
+                                className={`text-xs font-black ${
+                                  naoSeiMarcado ? "text-zinc-900" : "text-zinc-700"
+                                }`}
+                              >
+                                Não sei informar os dias da semana
+                              </span>
+                              <span className="block text-3xs text-zinc-400 font-medium">
+                                Marque se você ainda não tem certeza dos dias em que o aluno frequenta
+                              </span>
+                            </div>
+                          </button>
+
+                          {naoSeiMarcado && (
+                            <span
+                              className={`text-3xs font-extrabold px-2 py-0.5 rounded-md border ${
+                                turnoNaoSei
+                                  ? "text-emerald-800 bg-emerald-50 border-emerald-200"
+                                  : "text-amber-800 bg-amber-50 border-amber-200"
+                              }`}
+                            >
+                              {turnoNaoSei || "Selecione o turno"}
+                            </span>
+                          )}
+                        </div>
+
+                        {naoSeiMarcado && (
+                          <div className="mt-2.5 pt-2 border-t border-zinc-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <span className="text-3xs font-bold text-zinc-500">
+                              Turno que costuma ir:
+                            </span>
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 w-full sm:w-auto">
+                              {TURNOS.map((t) => (
+                                <button
+                                  key={t}
+                                  type="button"
+                                  onClick={() => setTurnoDoDia(DIA_NAO_SEI, t)}
+                                  className={`px-3 py-1.5 rounded-lg text-3xs font-black transition-all cursor-pointer ${
+                                    turnoNaoSei === t
+                                      ? "bg-emerald-600 text-white shadow-2xs"
+                                      : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
+                                  }`}
+                                >
+                                  {t}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
+
+                  <div className="relative py-1 flex items-center">
+                    <div className="flex-grow border-t border-zinc-200"></div>
+                    <span className="flex-shrink mx-2 text-3xs font-bold uppercase tracking-wider text-zinc-400">
+                      ou escolha os dias específicos
+                    </span>
+                    <div className="flex-grow border-t border-zinc-200"></div>
+                  </div>
+
                   {DIAS_SEMANA.map((dia) => {
                     const estaMarcado = dia in diasTurnos;
                     const turnoAtual = diasTurnos[dia];
@@ -761,7 +868,7 @@ export default function PaginaCadastroResponsavel({
                             <span className="text-3xs font-bold text-zinc-500">
                               Turno na {dia.replace("-feira", "")}:
                             </span>
-                            <div className="grid grid-cols-3 gap-1.5 w-full sm:w-auto">
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 w-full sm:w-auto">
                               {TURNOS.map((t) => (
                                 <button
                                   key={t}
@@ -834,7 +941,7 @@ export default function PaginaCadastroResponsavel({
                               key={dp.dia}
                               className="text-3xs px-2 py-0.5 rounded bg-zinc-100 text-zinc-700 font-bold"
                             >
-                              {dp.dia.replace("-feira", "")}: <strong>{dp.turno}</strong>
+                              {dp.dia.includes("Não sei") ? "Dias a definir" : dp.dia.replace("-feira", "")}: <strong>{dp.turno}</strong>
                             </span>
                           ))}
                         </div>
