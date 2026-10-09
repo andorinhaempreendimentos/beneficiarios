@@ -5,7 +5,6 @@ import {
   User,
   Heart,
   Calendar,
-  Sparkles,
   Phone,
   AlertCircle,
   CheckCircle2,
@@ -15,8 +14,13 @@ import {
   Send,
   Loader2,
   Users,
+  Plus,
+  Trash2,
   Copy,
   Check,
+  Sun,
+  Sunrise,
+  Moon,
 } from "lucide-react";
 
 interface HorarioTurma {
@@ -38,6 +42,29 @@ interface Turma {
   diasResumo: string;
   horarioResumo: string;
 }
+
+interface FilhoItem {
+  idTemp: string;
+  nomeCompleto: string;
+  dataNascimento: string;
+  idade: number | null;
+  sexo: "M" | "F";
+  cpf: string;
+  diasSemana: string[];
+  turno: "Manhã" | "Tarde" | "Noite";
+  observacoes: string;
+}
+
+const DIAS_DISPONIVEIS = [
+  "Segunda-feira",
+  "Terça-feira",
+  "Quarta-feira",
+  "Quinta-feira",
+  "Sexta-feira",
+  "Sábado",
+];
+
+const TURNOS: Array<"Manhã" | "Tarde" | "Noite"> = ["Manhã", "Tarde", "Noite"];
 
 function calcularIdade(dataNasc: string): number | null {
   if (!dataNasc) return null;
@@ -85,26 +112,32 @@ export default function PaginaCadastroResponsavel({
   const [modalidadeNome, setModalidadeNome] = useState("");
   const [turmas, setTurmas] = useState<Turma[]>([]);
 
-  // Dados do Filho (Aluno)
-  const [nomeAluno, setNomeAluno] = useState("");
-  const [dataNascAluno, setDataNascAluno] = useState("");
-  const [sexoAluno, setSexoAluno] = useState<"M" | "F">("M");
-  const [cpfAluno, setCpfAluno] = useState("");
-  const [turmaId, setTurmaId] = useState("");
-
-  // Dados do Responsável
+  // 1. DADOS DO RESPONSÁVEL (PRIMEIRA COISA DO FORMULÁRIO)
   const [nomeResponsavel, setNomeResponsavel] = useState("");
-  const [parentesco, setParentesco] = useState("Mãe");
-  const [whatsapp, setWhatsapp] = useState("");
-  const [observacoes, setObservacoes] = useState("");
+  const [whatsappResponsavel, setWhatsappResponsavel] = useState("");
+  const [cpfResponsavel, setCpfResponsavel] = useState("");
 
-  // Validação e Envio
-  const [erroForm, setErroForm] = useState<string | null>(null);
+  // 2. LISTA DE FILHOS CADASTRADOS
+  const [filhos, setFilhos] = useState<FilhoItem[]>([]);
+
+  // 3. CAMPOS DO FORMULÁRIO PARA ADICIONAR UM FILHO
+  const [nomeFilho, setNomeFilho] = useState("");
+  const [dataNascFilho, setDataNascFilho] = useState("");
+  const [sexoFilho, setSexoFilho] = useState<"M" | "F">("M");
+  const [cpfFilho, setCpfFilho] = useState("");
+  const [diasFilho, setDiasFilho] = useState<string[]>(["Segunda-feira", "Quarta-feira"]);
+  const [turnoFilho, setTurnoFilho] = useState<"Manhã" | "Tarde" | "Noite">("Tarde");
+  const [obsFilho, setObsFilho] = useState("");
+  const [erroFilho, setErroFilho] = useState<string | null>(null);
+
+  // Estado de envio e tela de sucesso
+  const [erroEnvio, setErroEnvio] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
   const [sucesso, setSucesso] = useState(false);
   const [sucessoDados, setSucessoDados] = useState<any>(null);
+  const [copiadoComprovante, setCopiadoComprovante] = useState(false);
 
-  // Carregar dados do núcleo
+  // Carregar informações do núcleo
   useEffect(() => {
     async function carregarDados() {
       try {
@@ -122,10 +155,6 @@ export default function PaginaCadastroResponsavel({
         setProfessorNome(data.professor?.nome || "");
         setModalidadeNome(data.modalidade || "Futebol");
         setTurmas(data.turmas || []);
-
-        if (data.turmas && data.turmas.length > 0) {
-          setTurmaId(data.turmas[0].id);
-        }
       } catch (err: any) {
         console.error("Erro ao carregar dados:", err);
         setErroCarregamento(err.message || "Erro desconhecido ao carregar página.");
@@ -139,83 +168,112 @@ export default function PaginaCadastroResponsavel({
     }
   }, [nucleoId]);
 
-  // Idade calculada
-  const idadeCalculada = useMemo(() => {
-    return calcularIdade(dataNascAluno);
-  }, [dataNascAluno]);
+  // Idade calculada do filho em digitação
+  const idadeFilhoCalculada = useMemo(() => {
+    return calcularIdade(dataNascFilho);
+  }, [dataNascFilho]);
 
-  // Turma sugerida
-  const turmaSugerida = useMemo(() => {
-    if (idadeCalculada === null || turmas.length === 0) return null;
-    return (
-      turmas.find(
-        (t) => idadeCalculada >= t.idadeMinima && idadeCalculada <= t.idadeMaxima
-      ) || null
-    );
-  }, [idadeCalculada, turmas]);
-
-  // Selecionar turma sugerida automaticamente
-  useEffect(() => {
-    if (turmaSugerida) {
-      setTurmaId(turmaSugerida.id);
-    }
-  }, [turmaSugerida]);
-
-  // Turma escolhida atualmente
-  const turmaSelecionada = useMemo(() => {
-    return turmas.find((t) => t.id === turmaId) || null;
-  }, [turmas, turmaId]);
-
-  // Feedback de cópia do comprovante
-  const [copiadoComprovante, setCopiadoComprovante] = useState(false);
-
-  function handleCopiarComprovante() {
-    if (!sucessoDados || !nucleo) return;
-    const texto = `📋 *COMPROVANTE DE PRÉ-INSCRIÇÃO • ESCOLINHA ESPORTIVA*\n\n` +
-      `*Aluno:* ${sucessoDados.alunoNome}\n` +
-      `*Núcleo:* ${nucleo.identificacao}\n` +
-      `*Turma:* Turma ${sucessoDados.turma.identificador} (${sucessoDados.turma.diasResumo})\n` +
-      `*Horário:* ${sucessoDados.turma.horarioResumo}\n` +
-      `*Responsável:* ${sucessoDados.responsavelNome}\n` +
-      `*WhatsApp:* ${sucessoDados.whatsapp}\n` +
-      `*Protocolo:* ${sucessoDados.protocolo}\n\n` +
-      `A coordenação entrará em contato para confirmar o início dos treinos.`;
-
-    navigator.clipboard.writeText(texto);
-    setCopiadoComprovante(true);
-    setTimeout(() => setCopiadoComprovante(false), 3000);
+  // Alternar dia da semana
+  function toggleDia(dia: string) {
+    setDiasFilho((prev) => {
+      if (prev.includes(dia)) {
+        if (prev.length === 1) return prev; // manter pelo menos 1 dia
+        return prev.filter((d) => d !== dia);
+      } else {
+        return [...prev, dia];
+      }
+    });
   }
 
-  // Submissão do formulário
+  // Adicionar filho à lista
+  function handleAdicionarFilho() {
+    setErroFilho(null);
+
+    const nomeLimpo = nomeFilho.trim().toUpperCase();
+    if (!nomeLimpo) {
+      setErroFilho("Por favor, informe o nome completo do filho.");
+      return;
+    }
+
+    if (!dataNascFilho) {
+      setErroFilho("Informe a data de nascimento do aluno.");
+      return;
+    }
+
+    if (diasFilho.length === 0) {
+      setErroFilho("Selecione pelo menos um dia da semana que o aluno pode participar.");
+      return;
+    }
+
+    const novoFilho: FilhoItem = {
+      idTemp: `filho_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+      nomeCompleto: nomeLimpo,
+      dataNascimento: dataNascFilho,
+      idade: idadeFilhoCalculada,
+      sexo: sexoFilho,
+      cpf: cpfFilho ? formatarCpf(cpfFilho) : "",
+      diasSemana: diasFilho,
+      turno: turnoFilho,
+      observacoes: obsFilho.trim(),
+    };
+
+    setFilhos((prev) => [...prev, novoFilho]);
+
+    // Limpar campos do filho
+    setNomeFilho("");
+    setDataNascFilho("");
+    setCpfFilho("");
+    setObsFilho("");
+  }
+
+  // Remover filho da lista
+  function handleRemoverFilho(idTemp: string) {
+    setFilhos((prev) => prev.filter((f) => f.idTemp !== idTemp));
+  }
+
+  // Enviar inscrição completa
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setErroForm(null);
-
-    const nomeAlunoLimpo = nomeAluno.trim().toUpperCase();
-    if (!nomeAlunoLimpo) {
-      setErroForm("Por favor, informe o nome completo do aluno.");
-      return;
-    }
-
-    if (!dataNascAluno) {
-      setErroForm("Por favor, preencha a data de nascimento do aluno.");
-      return;
-    }
-
-    if (!turmaId || !turmaSelecionada) {
-      setErroForm("Selecione a turma em que deseja matricular o aluno.");
-      return;
-    }
+    setErroEnvio(null);
 
     const nomeRespLimpo = nomeResponsavel.trim();
     if (!nomeRespLimpo) {
-      setErroForm("Por favor, informe o nome completo do responsável.");
+      setErroEnvio("Por favor, preencha o nome completo do responsável.");
       return;
     }
 
-    const whatsappLimpo = whatsapp.replace(/\D/g, "");
-    if (whatsappLimpo.length < 10) {
-      setErroForm("Por favor, informe um número de WhatsApp válido com DDD.");
+    const whatsLimpo = whatsappResponsavel.replace(/\D/g, "");
+    if (whatsLimpo.length < 10) {
+      setErroEnvio("Por favor, informe um WhatsApp válido com DDD.");
+      return;
+    }
+
+    const cpfRespLimpo = cpfResponsavel.replace(/\D/g, "");
+    if (cpfRespLimpo.length !== 11) {
+      setErroEnvio("Por favor, informe um CPF válido com 11 dígitos para o responsável.");
+      return;
+    }
+
+    // Se o usuário digitou dados de um filho mas esqueceu de clicar em 'Adicionar Filho', adicionar automaticamente
+    let listaFinalFilhos = [...filhos];
+    if (listaFinalFilhos.length === 0 && nomeFilho.trim() && dataNascFilho) {
+      const autoFilho: FilhoItem = {
+        idTemp: `filho_${Date.now()}`,
+        nomeCompleto: nomeFilho.trim().toUpperCase(),
+        dataNascimento: dataNascFilho,
+        idade: idadeFilhoCalculada,
+        sexo: sexoFilho,
+        cpf: cpfFilho ? formatarCpf(cpfFilho) : "",
+        diasSemana: diasFilho,
+        turno: turnoFilho,
+        observacoes: obsFilho.trim(),
+      };
+      listaFinalFilhos.push(autoFilho);
+      setFilhos(listaFinalFilhos);
+    }
+
+    if (listaFinalFilhos.length === 0) {
+      setErroEnvio("Adicione pelo menos um filho na lista antes de enviar a inscrição.");
       return;
     }
 
@@ -225,22 +283,12 @@ export default function PaginaCadastroResponsavel({
       const payload = {
         nucleoId: nucleo!.id,
         nucleoNome: nucleo!.identificacao,
-        aluno: {
-          nomeCompleto: nomeAlunoLimpo,
-          dataNascimento: dataNascAluno,
-          idade: idadeCalculada,
-          sexo: sexoAluno,
-          cpf: cpfAluno || null,
-          turmaId: turmaSelecionada.id,
-          turmaNome: turmaSelecionada.nome,
-          turmaIdentificador: turmaSelecionada.identificador,
-        },
         responsavel: {
           nomeCompleto: nomeRespLimpo,
-          parentesco,
-          whatsapp,
+          whatsapp: whatsappResponsavel,
+          cpf: formatarCpf(cpfResponsavel),
         },
-        observacoes,
+        filhos: listaFinalFilhos,
       };
 
       const res = await fetch("/api/cadastro-alunos/responsavel", {
@@ -254,31 +302,61 @@ export default function PaginaCadastroResponsavel({
         throw new Error(data.error || "Erro ao realizar inscrição.");
       }
 
-      const protocoloGerado = `EA-${Math.floor(100000 + Math.random() * 900000)}`;
+      const protocolo = `EA-${Math.floor(100000 + Math.random() * 900000)}`;
 
       setSucessoDados({
-        alunoNome: nomeAlunoLimpo,
-        idade: idadeCalculada,
-        turma: turmaSelecionada,
-        responsavelNome: nomeRespLimpo,
-        whatsapp,
-        protocolo: protocoloGerado,
+        responsavel: {
+          nomeCompleto: nomeRespLimpo,
+          whatsapp: whatsappResponsavel,
+          cpf: formatarCpf(cpfResponsavel),
+        },
+        filhos: listaFinalFilhos,
+        protocolo,
       });
       setSucesso(true);
     } catch (err: any) {
       console.error("Erro ao enviar:", err);
-      setErroForm(err.message || "Falha ao enviar inscrição. Tente novamente.");
+      setErroEnvio(err.message || "Falha ao enviar inscrição. Tente novamente.");
     } finally {
       setEnviando(false);
     }
   }
 
-  // Limpar para cadastrar outro filho
+  // Copiar Comprovante
+  function handleCopiarComprovante() {
+    if (!sucessoDados || !nucleo) return;
+
+    let texto = `📋 *COMPROVANTE DE PRÉ-INSCRIÇÃO • ESCOLINHA ESPORTIVA*\n\n` +
+      `*Núcleo:* ${nucleo.identificacao}\n` +
+      `*Responsável:* ${sucessoDados.responsavel.nomeCompleto}\n` +
+      `*CPF Responsável:* ${sucessoDados.responsavel.cpf}\n` +
+      `*WhatsApp:* ${sucessoDados.responsavel.whatsapp}\n` +
+      `*Protocolo:* ${sucessoDados.protocolo}\n\n` +
+      `*FILHOS INSCRITOS (${sucessoDados.filhos.length}):*\n`;
+
+    sucessoDados.filhos.forEach((f: FilhoItem, idx: number) => {
+      texto += `${idx + 1}. *${f.nomeCompleto}* (${f.idade ? `${f.idade} anos` : f.dataNascimento})\n` +
+        `   • Turno: ${f.turno}\n` +
+        `   • Dias: ${f.diasSemana.join(", ")}\n`;
+    });
+
+    texto += `\nA coordenação entrará em contato para confirmar a turma e data de início dos treinos.`;
+
+    navigator.clipboard.writeText(texto);
+    setCopiadoComprovante(true);
+    setTimeout(() => setCopiadoComprovante(false), 3000);
+  }
+
+  // Reiniciar formulário
   function handleNovoCadastro() {
-    setNomeAluno("");
-    setDataNascAluno("");
-    setCpfAluno("");
-    setObservacoes("");
+    setNomeResponsavel("");
+    setWhatsappResponsavel("");
+    setCpfResponsavel("");
+    setFilhos([]);
+    setNomeFilho("");
+    setDataNascFilho("");
+    setCpfFilho("");
+    setObsFilho("");
     setSucesso(false);
     setSucessoDados(null);
   }
@@ -308,7 +386,7 @@ export default function PaginaCadastroResponsavel({
     );
   }
 
-  // Tela de Sucesso / Comprovante
+  // TELA DE SUCESSO / COMPROVANTE
   if (sucesso && sucessoDados) {
     return (
       <div className="min-h-screen bg-zinc-50/70 flex flex-col items-center justify-center p-4 py-10">
@@ -325,12 +403,12 @@ export default function PaginaCadastroResponsavel({
               Matrícula em Processamento
             </h1>
             <p className="text-xs text-zinc-600">
-              Recebemos os dados do aluno com sucesso. Nossa equipe entrará em contato via WhatsApp para confirmar o início das atividades.
+              Recebemos os dados da sua família com sucesso! Nossa equipe entrará em contato via WhatsApp para confirmar a turma e horários definitivos.
             </p>
           </div>
 
           {/* Cartão de Resumo da Inscrição */}
-          <div className="p-4 sm:p-5 rounded-2xl bg-zinc-50 border border-zinc-200 text-left space-y-3">
+          <div className="p-4 sm:p-5 rounded-2xl bg-zinc-50 border border-zinc-200 text-left space-y-3.5">
             <div className="flex justify-between items-center text-xs border-b border-zinc-200/60 pb-2">
               <span className="text-zinc-500 font-medium">Protocolo:</span>
               <span className="font-mono font-black text-emerald-800 bg-emerald-100/70 px-2 py-0.5 rounded-md">
@@ -339,30 +417,42 @@ export default function PaginaCadastroResponsavel({
             </div>
 
             <div className="flex justify-between items-center text-xs border-b border-zinc-200/60 pb-2">
-              <span className="text-zinc-500 font-medium">Aluno:</span>
-              <strong className="text-zinc-900">{sucessoDados.alunoNome}</strong>
-            </div>
-
-            <div className="flex justify-between items-center text-xs border-b border-zinc-200/60 pb-2">
               <span className="text-zinc-500 font-medium">Núcleo:</span>
               <strong className="text-zinc-900">{nucleo.identificacao}</strong>
             </div>
 
-            <div className="flex justify-between items-center text-xs border-b border-zinc-200/60 pb-2">
-              <span className="text-zinc-500 font-medium">Turma Escolhida:</span>
-              <strong className="text-sky-700 font-black">
-                Turma {sucessoDados.turma.identificador} ({sucessoDados.turma.diasResumo})
-              </strong>
+            <div className="space-y-1 border-b border-zinc-200/60 pb-2">
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-zinc-500 font-medium">Responsável:</span>
+                <strong className="text-zinc-900">{sucessoDados.responsavel.nomeCompleto}</strong>
+              </div>
+              <div className="flex justify-between items-center text-3xs text-zinc-500">
+                <span>CPF: {sucessoDados.responsavel.cpf}</span>
+                <span>WhatsApp: {sucessoDados.responsavel.whatsapp}</span>
+              </div>
             </div>
 
-            <div className="flex justify-between items-center text-xs border-b border-zinc-200/60 pb-2">
-              <span className="text-zinc-500 font-medium">Horário dos Treinos:</span>
-              <strong className="text-zinc-800">{sucessoDados.turma.horarioResumo}</strong>
-            </div>
-
-            <div className="flex justify-between items-center text-xs">
-              <span className="text-zinc-500 font-medium">Responsável / WhatsApp:</span>
-              <strong className="text-zinc-900">{sucessoDados.whatsapp}</strong>
+            {/* Lista dos Filhos Cadastrados */}
+            <div className="space-y-2 pt-1">
+              <span className="text-3xs font-black uppercase tracking-wider text-zinc-500 block">
+                Filhos Inscritos ({sucessoDados.filhos.length}):
+              </span>
+              <div className="space-y-2">
+                {sucessoDados.filhos.map((f: FilhoItem, idx: number) => (
+                  <div key={f.idTemp} className="p-3 bg-white rounded-xl border border-zinc-200 text-xs space-y-1">
+                    <div className="flex items-center justify-between font-black text-zinc-900">
+                      <span>{idx + 1}. {f.nomeCompleto}</span>
+                      <span className="text-3xs px-2 py-0.5 bg-emerald-50 text-emerald-800 font-extrabold rounded-md">
+                        {f.idade !== null ? `${f.idade} anos` : "S/D"}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between text-3xs text-zinc-500">
+                      <span>Turno: <strong>{f.turno}</strong></span>
+                      <span>Dias: {f.diasSemana.join(", ")}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -401,7 +491,7 @@ export default function PaginaCadastroResponsavel({
             onClick={handleNovoCadastro}
             className="w-full py-3.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-800 font-black text-xs rounded-xl transition-all cursor-pointer"
           >
-            Cadastrar Outro Filho Neste Núcleo
+            Fazer Nova Inscrição
           </button>
         </div>
       </div>
@@ -415,7 +505,7 @@ export default function PaginaCadastroResponsavel({
         <div className="bg-white rounded-3xl p-6 sm:p-7 shadow-xs border border-zinc-200 space-y-3">
           <div>
             <span className="text-3xs uppercase tracking-wider font-black text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
-              Escolinha Esportiva • Inscrição Aberta
+              Escolinha Esportiva • Inscrição de Alunos
             </span>
             <h1 className="text-xl sm:text-2xl font-black text-zinc-900 mt-2">
               {nucleo.identificacao}
@@ -433,163 +523,20 @@ export default function PaginaCadastroResponsavel({
           )}
 
           <p className="text-xs text-zinc-500 pt-2 border-t border-zinc-100">
-            Preencha o formulário abaixo para inscrever seu filho no projeto esportivo gratuito.
+            Preencha seus dados de responsável e adicione seus filhos para participar das aulas gratuitas.
           </p>
         </div>
 
-        {/* Formulário do Responsável */}
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* SEÇÃO 1: DADOS DO ALUNO */}
-          <div className="bg-white rounded-3xl p-6 sm:p-7 shadow-xs border border-zinc-200 space-y-5">
-            <div className="flex items-center gap-2.5 border-b border-zinc-100 pb-3">
-              <div className="w-8 h-8 rounded-xl bg-sky-100 text-sky-800 flex items-center justify-center">
-                <User className="w-4 h-4" />
-              </div>
-              <div>
-                <h2 className="text-base font-black text-zinc-900">1. Dados do Aluno (Filho)</h2>
-                <p className="text-3xs text-zinc-500">Informações de quem vai treinar</p>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              {/* Nome Completo */}
-              <div className="space-y-1">
-                <label className="text-3xs font-black uppercase tracking-wider text-zinc-600">
-                  Nome Completo do Aluno *
-                </label>
-                <input
-                  type="text"
-                  value={nomeAluno}
-                  onChange={(e) => setNomeAluno(e.target.value)}
-                  placeholder="Ex: LUCAS HENRIQUE SILVA"
-                  className="w-full h-11 px-3.5 rounded-xl border border-zinc-300 text-xs font-semibold uppercase text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Data de Nascimento */}
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between">
-                    <label className="text-3xs font-black uppercase tracking-wider text-zinc-600">
-                      Data de Nascimento *
-                    </label>
-                    {idadeCalculada !== null && (
-                      <span className="text-3xs font-extrabold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-md">
-                        {idadeCalculada} anos
-                      </span>
-                    )}
-                  </div>
-                  <input
-                    type="date"
-                    value={dataNascAluno}
-                    onChange={(e) => setDataNascAluno(e.target.value)}
-                    className="w-full h-11 px-3.5 rounded-xl border border-zinc-300 text-xs font-semibold text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                  />
-                </div>
-
-                {/* Sexo */}
-                <div className="space-y-1">
-                  <label className="text-3xs font-black uppercase tracking-wider text-zinc-600">
-                    Sexo *
-                  </label>
-                  <div className="grid grid-cols-2 gap-2 h-11">
-                    <button
-                      type="button"
-                      onClick={() => setSexoAluno("M")}
-                      className={`rounded-xl text-xs font-bold border transition-all flex items-center justify-center cursor-pointer ${
-                        sexoAluno === "M"
-                          ? "bg-sky-600 text-white border-sky-600 shadow-2xs"
-                          : "bg-zinc-50 text-zinc-600 border-zinc-200 hover:bg-zinc-100"
-                      }`}
-                    >
-                      Masculino (M)
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setSexoAluno("F")}
-                      className={`rounded-xl text-xs font-bold border transition-all flex items-center justify-center cursor-pointer ${
-                        sexoAluno === "F"
-                          ? "bg-pink-600 text-white border-pink-600 shadow-2xs"
-                          : "bg-zinc-50 text-zinc-600 border-zinc-200 hover:bg-zinc-100"
-                      }`}
-                    >
-                      Feminino (F)
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* CPF do Aluno */}
-                <div className="space-y-1">
-                  <label className="text-3xs font-black uppercase tracking-wider text-zinc-600">
-                    CPF do Aluno (opcional)
-                  </label>
-                  <input
-                    type="text"
-                    value={cpfAluno}
-                    onChange={(e) => setCpfAluno(formatarCpf(e.target.value))}
-                    placeholder="000.000.000-00"
-                    maxLength={14}
-                    className="w-full h-11 px-3.5 rounded-xl border border-zinc-300 text-xs font-semibold text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                  />
-                </div>
-
-                {/* Turma de Interesse */}
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between">
-                    <label className="text-3xs font-black uppercase tracking-wider text-zinc-600">
-                      Turma de Interesse *
-                    </label>
-                    {turmaSugerida && (
-                      <span className="text-3xs font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-md flex items-center gap-1">
-                        <Sparkles className="w-3 h-3 text-emerald-600" />
-                        Sugerida por idade
-                      </span>
-                    )}
-                  </div>
-                  <select
-                    value={turmaId}
-                    onChange={(e) => setTurmaId(e.target.value)}
-                    className="w-full h-11 px-3.5 rounded-xl border border-zinc-300 text-xs font-bold text-zinc-900 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                  >
-                    {turmas.length === 0 ? (
-                      <option value="">Nenhuma turma cadastrada</option>
-                    ) : (
-                      turmas.map((t) => (
-                        <option key={t.id} value={t.id}>
-                          Turma {t.identificador} ({t.idadeMinima} a {t.idadeMaxima} anos) — {t.diasResumo}
-                        </option>
-                      ))
-                    )}
-                  </select>
-                </div>
-              </div>
-
-              {/* Detalhe do Horário da Turma Selecionada */}
-              {turmaSelecionada && (
-                <div className="p-3 rounded-xl bg-sky-50 border border-sky-100 text-xs flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-sky-900">
-                    <Clock className="w-4 h-4 text-sky-600 shrink-0" />
-                    <span>
-                      Dias: <strong>{turmaSelecionada.diasResumo}</strong>
-                    </span>
-                  </div>
-                  <strong className="text-sky-800">{turmaSelecionada.horarioResumo}</strong>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* SEÇÃO 2: DADOS DO RESPONSÁVEL */}
-          <div className="bg-white rounded-3xl p-6 sm:p-7 shadow-xs border border-zinc-200 space-y-5">
+          {/* 1. DADOS DO RESPONSÁVEL (PRIMEIRA COISA DO FORMULÁRIO) */}
+          <div className="bg-white rounded-3xl p-6 sm:p-7 shadow-xs border-2 border-emerald-200 space-y-5">
             <div className="flex items-center gap-2.5 border-b border-zinc-100 pb-3">
               <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center">
                 <Heart className="w-4 h-4" />
               </div>
               <div>
-                <h2 className="text-base font-black text-zinc-900">2. Dados do Responsável</h2>
-                <p className="text-3xs text-zinc-500">Contato para confirmação e avisos dos treinos</p>
+                <h2 className="text-base font-black text-zinc-900">1. Dados do Responsável (Pai / Mãe)</h2>
+                <p className="text-3xs text-zinc-500">Informações para contato e confirmação da vaga</p>
               </div>
             </div>
 
@@ -604,73 +551,312 @@ export default function PaginaCadastroResponsavel({
                   value={nomeResponsavel}
                   onChange={(e) => setNomeResponsavel(e.target.value)}
                   placeholder="Ex: MARIA APARECIDA DA SILVA"
-                  className="w-full h-11 px-3.5 rounded-xl border border-zinc-300 text-xs font-semibold text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                  className="w-full h-11 px-3.5 rounded-xl border border-zinc-300 text-xs font-semibold uppercase text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Parentesco */}
+                {/* Telefone / WhatsApp */}
                 <div className="space-y-1">
                   <label className="text-3xs font-black uppercase tracking-wider text-zinc-600">
-                    Parentesco *
-                  </label>
-                  <select
-                    value={parentesco}
-                    onChange={(e) => setParentesco(e.target.value)}
-                    className="w-full h-11 px-3.5 rounded-xl border border-zinc-300 text-xs font-bold text-zinc-900 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                  >
-                    <option value="Mãe">Mãe</option>
-                    <option value="Pai">Pai</option>
-                    <option value="Avó / Avô">Avó / Avô</option>
-                    <option value="Tio / Tia">Tio / Tia</option>
-                    <option value="Responsável Legal">Outro Responsável Legal</option>
-                  </select>
-                </div>
-
-                {/* WhatsApp */}
-                <div className="space-y-1">
-                  <label className="text-3xs font-black uppercase tracking-wider text-zinc-600">
-                    WhatsApp para Contato *
+                    Telefone / WhatsApp *
                   </label>
                   <div className="relative">
                     <Phone className="w-4 h-4 text-zinc-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                     <input
                       type="text"
-                      value={whatsapp}
-                      onChange={(e) => setWhatsapp(formatarTelefone(e.target.value))}
+                      value={whatsappResponsavel}
+                      onChange={(e) => setWhatsappResponsavel(formatarTelefone(e.target.value))}
                       placeholder="(63) 99999-9999"
                       maxLength={15}
                       className="w-full h-11 pl-10 pr-3.5 rounded-xl border border-zinc-300 text-xs font-semibold text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                     />
                   </div>
                 </div>
-              </div>
 
-              {/* Observações Opcionais */}
-              <div className="space-y-1">
-                <label className="text-3xs font-black uppercase tracking-wider text-zinc-600">
-                  Observações de saúde ou gerais (opcional):
-                </label>
-                <textarea
-                  value={observacoes}
-                  onChange={(e) => setObservacoes(e.target.value)}
-                  placeholder="Alguma alergia, restrição física ou informação importante para o professor saber?"
-                  rows={2}
-                  className="w-full p-3 rounded-xl border border-zinc-300 text-xs text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                />
+                {/* CPF do Responsável */}
+                <div className="space-y-1">
+                  <label className="text-3xs font-black uppercase tracking-wider text-zinc-600">
+                    CPF do Responsável *
+                  </label>
+                  <input
+                    type="text"
+                    value={cpfResponsavel}
+                    onChange={(e) => setCpfResponsavel(formatarCpf(e.target.value))}
+                    placeholder="000.000.000-00"
+                    maxLength={14}
+                    className="w-full h-11 px-3.5 rounded-xl border border-zinc-300 text-xs font-semibold text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                  />
+                </div>
               </div>
             </div>
           </div>
 
+          {/* 2. ADICIONAR FILHOS (ALUNOS) */}
+          <div className="bg-white rounded-3xl p-6 sm:p-7 shadow-xs border border-zinc-200 space-y-5">
+            <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-sky-100 text-sky-800 flex items-center justify-center">
+                  <User className="w-4 h-4" />
+                </div>
+                <div>
+                  <h2 className="text-base font-black text-zinc-900">2. Adicionar Filho(s)</h2>
+                  <p className="text-3xs text-zinc-500">Cadastre um ou mais filhos para este núcleo</p>
+                </div>
+              </div>
+              <span className="text-3xs font-extrabold text-sky-700 bg-sky-50 px-2.5 py-1 rounded-full border border-sky-100">
+                {filhos.length} {filhos.length === 1 ? "filho na lista" : "filhos na lista"}
+              </span>
+            </div>
+
+            {erroFilho && (
+              <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-rose-500 shrink-0" />
+                <span>{erroFilho}</span>
+              </div>
+            )}
+
+            {/* Campos do Filho */}
+            <div className="space-y-4 p-4 rounded-2xl bg-zinc-50/70 border border-zinc-200">
+              {/* Nome do Filho */}
+              <div className="space-y-1">
+                <label className="text-3xs font-black uppercase tracking-wider text-zinc-600">
+                  Nome Completo do Aluno (Filho) *
+                </label>
+                <input
+                  type="text"
+                  value={nomeFilho}
+                  onChange={(e) => setNomeFilho(e.target.value)}
+                  placeholder="Ex: LUCAS HENRIQUE SILVA"
+                  className="w-full h-11 px-3.5 rounded-xl border border-zinc-300 text-xs font-semibold uppercase text-zinc-900 bg-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Data de Nascimento */}
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <label className="text-3xs font-black uppercase tracking-wider text-zinc-600">
+                      Data de Nascimento *
+                    </label>
+                    {idadeFilhoCalculada !== null && (
+                      <span className="text-3xs font-extrabold text-sky-800 bg-sky-100 px-2 py-0.5 rounded-md">
+                        {idadeFilhoCalculada} anos
+                      </span>
+                    )}
+                  </div>
+                  <input
+                    type="date"
+                    value={dataNascFilho}
+                    onChange={(e) => setDataNascFilho(e.target.value)}
+                    className="w-full h-11 px-3.5 rounded-xl border border-zinc-300 text-xs font-semibold text-zinc-900 bg-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  />
+                </div>
+
+                {/* Sexo */}
+                <div className="space-y-1">
+                  <label className="text-3xs font-black uppercase tracking-wider text-zinc-600">
+                    Sexo *
+                  </label>
+                  <div className="grid grid-cols-2 gap-2 h-11">
+                    <button
+                      type="button"
+                      onClick={() => setSexoFilho("M")}
+                      className={`rounded-xl text-xs font-bold border transition-all flex items-center justify-center cursor-pointer ${
+                        sexoFilho === "M"
+                          ? "bg-sky-600 text-white border-sky-600 shadow-2xs"
+                          : "bg-white text-zinc-600 border-zinc-200 hover:bg-zinc-100"
+                      }`}
+                    >
+                      Masculino (M)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSexoFilho("F")}
+                      className={`rounded-xl text-xs font-bold border transition-all flex items-center justify-center cursor-pointer ${
+                        sexoFilho === "F"
+                          ? "bg-pink-600 text-white border-pink-600 shadow-2xs"
+                          : "bg-white text-zinc-600 border-zinc-200 hover:bg-zinc-100"
+                      }`}
+                    >
+                      Feminino (F)
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* CPF do Filho (opcional) */}
+              <div className="space-y-1">
+                <label className="text-3xs font-black uppercase tracking-wider text-zinc-600">
+                  CPF do Filho (opcional)
+                </label>
+                <input
+                  type="text"
+                  value={cpfFilho}
+                  onChange={(e) => setCpfFilho(formatarCpf(e.target.value))}
+                  placeholder="000.000.000-00"
+                  maxLength={14}
+                  className="w-full h-11 px-3.5 rounded-xl border border-zinc-300 text-xs font-semibold text-zinc-900 bg-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+                />
+              </div>
+
+              {/* Turno Preferido */}
+              <div className="space-y-1.5 pt-1">
+                <label className="text-3xs font-black uppercase tracking-wider text-zinc-600 block">
+                  Turno em que o aluno pode participar *
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setTurnoFilho("Manhã")}
+                    className={`p-2.5 rounded-xl text-xs font-bold border transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                      turnoFilho === "Manhã"
+                        ? "bg-amber-500 text-white border-amber-500 shadow-2xs"
+                        : "bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-100"
+                    }`}
+                  >
+                    <Sunrise className="w-4 h-4" />
+                    <span>Manhã</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTurnoFilho("Tarde")}
+                    className={`p-2.5 rounded-xl text-xs font-bold border transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                      turnoFilho === "Tarde"
+                        ? "bg-sky-600 text-white border-sky-600 shadow-2xs"
+                        : "bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-100"
+                    }`}
+                  >
+                    <Sun className="w-4 h-4" />
+                    <span>Tarde</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTurnoFilho("Noite")}
+                    className={`p-2.5 rounded-xl text-xs font-bold border transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                      turnoFilho === "Noite"
+                        ? "bg-indigo-600 text-white border-indigo-600 shadow-2xs"
+                        : "bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-100"
+                    }`}
+                  >
+                    <Moon className="w-4 h-4" />
+                    <span>Noite</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Dias da Semana que vai para o Núcleo */}
+              <div className="space-y-1.5 pt-1">
+                <label className="text-3xs font-black uppercase tracking-wider text-zinc-600 block">
+                  Quais dias da semana o aluno pode ir? (Selecione todos que puder) *
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {DIAS_DISPONIVEIS.map((dia) => {
+                    const ativo = diasFilho.includes(dia);
+                    return (
+                      <button
+                        key={dia}
+                        type="button"
+                        onClick={() => toggleDia(dia)}
+                        className={`p-2 rounded-xl text-3xs sm:text-xs font-bold border transition-all flex items-center justify-between cursor-pointer ${
+                          ativo
+                            ? "bg-emerald-50 border-emerald-500 text-emerald-950 font-black ring-1 ring-emerald-300"
+                            : "bg-white border-zinc-200 text-zinc-600 hover:bg-zinc-100"
+                        }`}
+                      >
+                        <span>{dia.replace("-feira", "")}</span>
+                        {ativo && <Check className="w-3.5 h-3.5 text-emerald-600" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Observação / Saúde */}
+              <div className="space-y-1 pt-1">
+                <label className="text-3xs font-black uppercase tracking-wider text-zinc-600">
+                  Alguma observação de saúde ou detalhe? (opcional)
+                </label>
+                <input
+                  type="text"
+                  value={obsFilho}
+                  onChange={(e) => setObsFilho(e.target.value)}
+                  placeholder="Ex: Alergia, asma ou restrição física leve"
+                  className="w-full h-10 px-3.5 rounded-xl border border-zinc-300 text-xs text-zinc-900 bg-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+                />
+              </div>
+
+              {/* Botão de Adicionar à Lista */}
+              <button
+                type="button"
+                onClick={handleAdicionarFilho}
+                className="w-full py-3 bg-sky-600 hover:bg-sky-700 text-white rounded-xl font-black text-xs flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer"
+              >
+                <Plus className="w-4 h-4 stroke-[3]" />
+                <span>Adicionar Este Filho à Lista</span>
+              </button>
+            </div>
+
+            {/* Lista dos Filhos Já Adicionados */}
+            {filhos.length > 0 && (
+              <div className="space-y-3 pt-2">
+                <h3 className="text-xs font-black uppercase tracking-wider text-zinc-700 flex items-center gap-1.5">
+                  <Users className="w-4 h-4 text-sky-600" />
+                  <span>Filhos Prontos para Inscrição ({filhos.length}):</span>
+                </h3>
+                <div className="space-y-2">
+                  {filhos.map((f, index) => (
+                    <div
+                      key={f.idTemp}
+                      className="p-3.5 rounded-2xl border border-zinc-200 bg-white flex items-center justify-between gap-3 shadow-2xs"
+                    >
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="w-5 h-5 rounded-full bg-sky-100 text-sky-800 text-3xs font-black flex items-center justify-center">
+                            {index + 1}
+                          </span>
+                          <strong className="text-xs sm:text-sm font-black text-zinc-900">
+                            {f.nomeCompleto}
+                          </strong>
+                          <span
+                            className={`text-3xs px-2 py-0.5 rounded-md font-black ${
+                              f.sexo === "M" ? "bg-sky-100 text-sky-800" : "bg-pink-100 text-pink-800"
+                            }`}
+                          >
+                            {f.sexo}
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-3xs text-zinc-500">
+                          <span>Nasc: {f.dataNascimento} ({f.idade !== null ? `${f.idade} anos` : "S/D"})</span>
+                          <span>• Turno: <strong>{f.turno}</strong></span>
+                          <span className="text-emerald-700 font-bold">• Dias: {f.diasSemana.map(d => d.replace("-feira", "")).join(", ")}</span>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => handleRemoverFilho(f.idTemp)}
+                        className="p-2 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-xl transition-all cursor-pointer"
+                        title="Remover filho da lista"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Erro Inline */}
-          {erroForm && (
+          {erroEnvio && (
             <div className="p-3.5 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-2xl flex items-center gap-2.5">
               <AlertCircle className="w-4 h-4 text-rose-500 shrink-0" />
-              <span>{erroForm}</span>
+              <span>{erroEnvio}</span>
             </div>
           )}
 
-          {/* Botão de Envio */}
+          {/* Botão de Envio Principal */}
           <button
             type="submit"
             disabled={enviando}
@@ -684,7 +870,9 @@ export default function PaginaCadastroResponsavel({
             ) : (
               <>
                 <Send className="w-4 h-4" />
-                <span>Concluir Inscrição do Aluno</span>
+                <span>
+                  Finalizar Inscrição {filhos.length > 0 ? `(${filhos.length} ${filhos.length === 1 ? "filho" : "filhos"})` : ""}
+                </span>
               </>
             )}
           </button>
