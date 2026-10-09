@@ -1,0 +1,9 @@
+# Tasklist: Conferência e Distribuição de Beneficiários nos Núcleos
+
+- [x] **Tarefa 1: Estrutura de Banco de Dados de Coleta (`respostas_conferencia_beneficiarios`)** — Criar tabela dedicada no Supabase para armazenar as respostas dos professores com RLS aberto para anon, garantindo total isolamento das tabelas oficiais de produção.
+- [x] **Tarefa 2: API de Consulta e Coleta (`/api/conferencia-beneficiarios/[nucleoId]` e POST)** — Criar rota de API no Next.js para carregar dados do núcleo, turmas existentes e alunos para consulta, além de salvar respostas enviadas sem alterar tabelas oficiais.
+- [x] **Tarefa 3: Estrutura Base da Página do Professor (`/conferencia-beneficiarios/[nucleoId]`)** — Construir esqueleto da interface mobile-first com identificação do núcleo, cabeçalho e alternância automática entre Cenário A (com alunos) e Cenário B (sem alunos).
+- [x] **Tarefa 4: Módulo Cenário A (Conferência de Quantidade e Alocação Inteligente por Idade)** — Implementar no formulário a conferência do número de alunos, distribuição na grade de turmas e o painel inteligente de sugestão e alocação de alunos por faixa etária ao clicar no horário.
+- [x] **Tarefa 5: Módulo Cenário B (Informar Total e Cadastro Rápido de Alunos)** — Implementar para os núcleos sem alunos o fluxo de informar total, distribuição na grade de turmas e formulário de cadastro rápido de novos alunos.
+- [x] **Tarefa 6: Painel Administrativo e Gerador de Links (`/conferencia-beneficiarios/respostas`)** — Criar tela com autenticação por senha para gerar os 20 links individuais com botão de copiar para WhatsApp e visualização das respostas enviadas.
+- [ ] **Tarefa 7: Validação TypeScript, Testes e Deploy em Produção** — Executar checagem estática de tipos (`tsc --noEmit`), commit, push para o repositório remoto e validação do deploy no Vercel.
