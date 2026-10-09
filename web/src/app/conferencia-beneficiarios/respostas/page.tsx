@@ -6,6 +6,7 @@ import {
   School,
   Users,
   CheckCircle2,
+  Calendar,
   Clock,
   AlertCircle,
   Loader2,
@@ -52,13 +53,34 @@ interface NucleoItem {
       nomeCompleto: string;
       cpf?: string;
       dataNascimento: string;
+      idade?: number | null;
       sexo: string;
       turmaSugeridaId?: string;
+      diasParticipacao?: Array<{
+        dia: string;
+        turno: string;
+      }>;
+      responsavel?: {
+        nomeCompleto?: string;
+        cpf?: string;
+        whatsapp?: string;
+      };
+      cadastradoEm?: string;
     }>;
     observacoes: string | null;
     created_at: string;
   } | null;
 }
+
+const ORDEM_DIAS_SEMANA = [
+  "Segunda-feira",
+  "Terça-feira",
+  "Quarta-feira",
+  "Quinta-feira",
+  "Sexta-feira",
+  "Sábado",
+  "Domingo",
+];
 
 const SENHA_CORRETA = "Conferencia123#";
 const BASE_URL = "https://beneficiarios-andorinha.vercel.app";
@@ -712,36 +734,158 @@ export default function RespostasConferenciaBeneficiariosPage() {
                   </div>
                 )}
 
-                {/* Alunos Novos Cadastrados (Cenário B) */}
+                {/* Alunos Cadastrados pelos Pais / Professor */}
                 {detalhesNucleo.resposta.novos_alunos_cadastrados &&
-                  detalhesNucleo.resposta.novos_alunos_cadastrados.length > 0 && (
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <h4 className="font-black text-zinc-900">
-                          Alunos Cadastrados no Núcleo (
-                          {detalhesNucleo.resposta.novos_alunos_cadastrados.length}):
-                        </h4>
-                      </div>
-                      <div className="max-h-60 overflow-y-auto space-y-1.5 border border-zinc-200 rounded-xl p-2 bg-zinc-50">
-                        {detalhesNucleo.resposta.novos_alunos_cadastrados.map((a, i) => (
-                          <div
-                            key={a.idTemp || i}
-                            className="bg-white p-2.5 rounded-lg border border-zinc-200 text-3xs flex items-center justify-between"
-                          >
-                            <div>
-                              <p className="font-black text-zinc-900 text-xs">
-                                {i + 1}. {a.nomeCompleto}
-                              </p>
-                              <p className="text-zinc-500">
-                                Nasc: {a.dataNascimento} • Sexo: {a.sexo}{" "}
-                                {a.cpf ? `• CPF: ${a.cpf}` : ""}
-                              </p>
+                  detalhesNucleo.resposta.novos_alunos_cadastrados.length > 0 && (() => {
+                    const alunos = detalhesNucleo.resposta.novos_alunos_cadastrados;
+                    
+                    // Calcular consolidação de dias e turnos
+                    const contagemPorDia: Record<string, Record<string, number>> = {};
+                    const totalPorDia: Record<string, number> = {};
+
+                    alunos.forEach((a) => {
+                      if (Array.isArray(a.diasParticipacao)) {
+                        a.diasParticipacao.forEach((dp) => {
+                          const dia = dp.dia || "Não informado";
+                          const turno = dp.turno || "Não sei";
+                          if (!contagemPorDia[dia]) contagemPorDia[dia] = {};
+                          contagemPorDia[dia][turno] = (contagemPorDia[dia][turno] || 0) + 1;
+                          totalPorDia[dia] = (totalPorDia[dia] || 0) + 1;
+                        });
+                      }
+                    });
+
+                    const diasComAlunos = ORDEM_DIAS_SEMANA.filter((d) => contagemPorDia[d]);
+
+                    return (
+                      <div className="space-y-4">
+                        {/* 1. Painel Consolidado de Distribuição de Dias e Turnos */}
+                        {diasComAlunos.length > 0 && (
+                          <div className="bg-sky-50/70 border border-sky-200 rounded-2xl p-4 space-y-3">
+                            <div className="flex items-center justify-between">
+                              <h4 className="font-black text-sky-950 text-xs flex items-center gap-1.5">
+                                <Calendar className="w-4 h-4 text-sky-600" />
+                                Distribuição Geral de Dias e Turnos ({alunos.length} alunos)
+                              </h4>
+                              <span className="text-3xs font-extrabold uppercase px-2 py-0.5 rounded-full bg-sky-200/80 text-sky-800">
+                                Consolidado
+                              </span>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+                              {diasComAlunos.map((dia) => {
+                                const turnos = contagemPorDia[dia];
+                                const total = totalPorDia[dia];
+                                return (
+                                  <div
+                                    key={dia}
+                                    className="bg-white p-2.5 rounded-xl border border-sky-100 shadow-2xs space-y-1.5"
+                                  >
+                                    <div className="flex items-center justify-between">
+                                      <span className="font-extrabold text-xs text-zinc-900">{dia}</span>
+                                      <span className="text-3xs font-black px-1.5 py-0.5 rounded-md bg-sky-100 text-sky-800">
+                                        {total} aluno(s)
+                                      </span>
+                                    </div>
+                                    <div className="flex flex-wrap gap-1">
+                                      {Object.entries(turnos).map(([turno, qtd]) => (
+                                        <span
+                                          key={turno}
+                                          className="text-3xs font-medium px-2 py-0.5 rounded bg-zinc-100 text-zinc-700"
+                                        >
+                                          {turno}: <strong className="font-bold text-zinc-900">{qtd}</strong>
+                                        </span>
+                                      ))}
+                                    </div>
+                                  </div>
+                                );
+                              })}
                             </div>
                           </div>
-                        ))}
+                        )}
+
+                        {/* 2. Lista Detalhada de Cada Aluno Cadastrado */}
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <h4 className="font-black text-zinc-900 text-xs">
+                              Alunos Cadastrados no Núcleo ({alunos.length}):
+                            </h4>
+                          </div>
+
+                          <div className="max-h-80 overflow-y-auto space-y-2.5 border border-zinc-200 rounded-2xl p-3 bg-zinc-50">
+                            {alunos.map((a, i) => (
+                              <div
+                                key={a.idTemp || i}
+                                className="bg-white p-3.5 rounded-xl border border-zinc-200 shadow-2xs space-y-2"
+                              >
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-zinc-100 pb-2">
+                                  <div>
+                                    <p className="font-black text-zinc-900 text-sm">
+                                      {i + 1}. {a.nomeCompleto}
+                                    </p>
+                                    <p className="text-3xs text-zinc-500 font-medium mt-0.5">
+                                      Nasc: {a.dataNascimento} {a.idade ? `(${a.idade} anos)` : ""} • Sexo:{" "}
+                                      {a.sexo === "M" ? "Masculino" : a.sexo === "F" ? "Feminino" : a.sexo}{" "}
+                                      {a.cpf ? `• CPF: ${a.cpf}` : ""}
+                                    </p>
+                                  </div>
+                                  {a.cadastradoEm && (
+                                    <span className="text-3xs text-zinc-400 font-medium">
+                                      {new Date(a.cadastradoEm).toLocaleString("pt-BR")}
+                                    </span>
+                                  )}
+                                </div>
+
+                                {/* Dados do Responsável */}
+                                {a.responsavel && (
+                                  <div className="bg-zinc-50 p-2 rounded-lg border border-zinc-200/80 text-3xs flex flex-wrap items-center gap-x-3 gap-y-1 text-zinc-600">
+                                    <span>
+                                      <strong>Responsável:</strong> {a.responsavel.nomeCompleto || "Não informado"}
+                                    </span>
+                                    {a.responsavel.whatsapp && (
+                                      <span>
+                                        <strong>WhatsApp:</strong> {a.responsavel.whatsapp}
+                                      </span>
+                                    )}
+                                    {a.responsavel.cpf && (
+                                      <span>
+                                        <strong>CPF:</strong> {a.responsavel.cpf}
+                                      </span>
+                                    )}
+                                  </div>
+                                )}
+
+                                {/* Dias e Turnos de Participação */}
+                                <div className="space-y-1 pt-0.5">
+                                  <span className="text-3xs uppercase font-extrabold text-zinc-400 tracking-wider">
+                                    Dias e turnos que frequenta:
+                                  </span>
+                                  {Array.isArray(a.diasParticipacao) && a.diasParticipacao.length > 0 ? (
+                                    <div className="flex flex-wrap gap-1.5 pt-0.5">
+                                      {a.diasParticipacao.map((dp, idx) => (
+                                        <span
+                                          key={idx}
+                                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-3xs font-bold bg-sky-50 text-sky-900 border border-sky-200/80"
+                                        >
+                                          <Clock className="w-3 h-3 text-sky-600" />
+                                          <span>{dp.dia}</span>
+                                          <span className="text-sky-600 font-extrabold">({dp.turno})</span>
+                                        </span>
+                                      ))}
+                                    </div>
+                                  ) : (
+                                    <p className="text-3xs italic text-zinc-400">
+                                      Dias e turnos não informados
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    );
+                  })()}
 
                 {/* Observações */}
                 {detalhesNucleo.resposta.observacoes && (

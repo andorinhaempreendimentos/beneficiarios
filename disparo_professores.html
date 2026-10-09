@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Envio de Mensagens — Professores e Responsáveis</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+  </style>
+</head>
+<body class="bg-zinc-100 text-zinc-800 min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+
+  <div class="max-w-6xl mx-auto">
+    <!-- Header -->
+    <header class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-zinc-200/80 mb-8">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-100 text-amber-800 mb-2">
+            Núcleos Sem Alunos Cadastrados
+          </span>
+          <h1 class="text-2xl sm:text-3xl font-extrabold text-zinc-900 tracking-tight">
+            Envio WhatsApp — Professores e Pais
+          </h1>
+          <p class="text-sm text-zinc-500 mt-1">
+            6 núcleos que confirmaram ter grupo com pais. Mensagens separadas: 1º contato e recado do grupo com vídeo de apoio.
+          </p>
+        </div>
+        <div class="flex items-center gap-3 bg-zinc-50 px-4 py-3 rounded-xl border border-zinc-200">
+          <div class="text-right">
+            <div class="text-xs text-zinc-400 font-semibold uppercase">Progresso</div>
+            <div id="progresso-texto" class="text-sm font-extrabold text-zinc-800">0 de 6 contatados</div>
+          </div>
+          <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 font-black flex items-center justify-center text-sm" id="progresso-pct">
+            0%
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Cards dos Professores -->
+    <div class="space-y-6" id="professores-container"></div>
+  </div>
+
+  <!-- Toast de Notificação -->
+  <div id="toast" class="fixed bottom-6 right-6 bg-zinc-900 text-white px-5 py-3 rounded-xl shadow-2xl text-sm font-medium opacity-0 pointer-events-none transition-all duration-300 transform translate-y-2 z-50 flex items-center gap-2">
+    <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+    <span id="toast-text">Copiado com sucesso!</span>
+  </div>
+
+  <script>
+    const VIDEO_URL = "https://www.youtube.com/shorts/dSu1nHAg4i8";
+
+    const professores = [
+      {
+        id: "felipe-alves",
+        nome: "Felipe Alves",
+        telefoneExibicao: "+55 63 8419-4155",
+        telefoneWa: "5563984194155",
+        telefoneWaAlt: "556384194155",
+        nucleo: "Quadra Esportiva Praça 208 Sul",
+        nucleoId: "407360e1-f4d1-4a4a-90b8-2f579353e124",
+        linkResponsavel: "https://beneficiarios-andorinha.vercel.app/cadastro-alunos/407360e1-f4d1-4a4a-90b8-2f579353e124/responsavel"
+      },
+      {
+        id: "ramon",
+        nome: "Ramon",
+        telefoneExibicao: "+55 63 9110-4399",
+        telefoneWa: "5563991104399",
+        telefoneWaAlt: "556391104399",
+        nucleo: "Núcleo Lago Sul",
+        nucleoId: "eaa7dfd2-e5c6-4691-9471-a03eca53011e",
+        linkResponsavel: "https://beneficiarios-andorinha.vercel.app/cadastro-alunos/eaa7dfd2-e5c6-4691-9471-a03eca53011e/responsavel"
+      },
+      {
+        id: "cirilo",
+        nome: "Cirilo",
+        telefoneExibicao: "+55 63 9221-3601",
+        telefoneWa: "5563992213601",
+        telefoneWaAlt: "556392213601",
+        nucleo: "Núcleo Capadócia",
+        nucleoId: "f30e0b29-e128-4989-ae53-1c9c7f068f4d",
+        linkResponsavel: "https://beneficiarios-andorinha.vercel.app/cadastro-alunos/f30e0b29-e128-4989-ae53-1c9c7f068f4d/responsavel"
+      },
+      {
+        id: "luiz-carlos",
+        nome: "Luiz Carlos",
+        telefoneExibicao: "+55 63 9225-3977",
+        telefoneWa: "5563992253977",
+        telefoneWaAlt: "556392253977",
+        nucleo: "Núcleo Buritirana",
+        nucleoId: "959772b0-1603-4d52-aa49-433b57999b4f",
+        linkResponsavel: "https://beneficiarios-andorinha.vercel.app/cadastro-alunos/959772b0-1603-4d52-aa49-433b57999b4f/responsavel"
+      },
+      {
+        id: "jorge-martins",
+        nome: "Jorge Martins",
+        telefoneExibicao: "+55 63 9247-0421",
+        telefoneWa: "5563992470421",
+        telefoneWaAlt: "556392470421",
+        nucleo: "Núcleo Aureny III",
+        nucleoId: "c6eb015d-de1c-44c7-af33-3ed4d08be7e0",
+        linkResponsavel: "https://beneficiarios-andorinha.vercel.app/cadastro-alunos/c6eb015d-de1c-44c7-af33-3ed4d08be7e0/responsavel"
+      },
+      {
+        id: "professor-wiltom",
+        nome: "Professor Wiltom",
+        telefoneExibicao: "+55 63 9258-2916",
+        telefoneWa: "5563992582916",
+        telefoneWaAlt: "556392582916",
+        nucleo: "Escolinha do Sol Nascente II",
+        nucleoId: "e5305f61-fa4e-4377-9b86-62a7ebceb78e",
+        linkResponsavel: "https://beneficiarios-andorinha.vercel.app/cadastro-alunos/e5305f61-fa4e-4377-9b86-62a7ebceb78e/responsavel"
+      }
+    ];
+
+    function gerarMensagem1Contato(prof) {
+      return `Oi, professor *${prof.nome}* , tudo bem? 
+
+Aqui é o *Jônathas* , responsável pela organização do sistema das *Escolinhas de Futebol.*
+
+Estamos realizando a conferência e atualização cadastral dos alunos e vi que o seu núcleo *(${prof.nucleo})* ainda não possui alunos registrados no sistema.
+
+Como você confirmou que possui o grupo de WhatsApp com os pais, vou te enviar em seguida o link do formulário e um modelo de texto pronto com vídeo explicativo para você encaminhar no grupo dos responsáveis, tudo bem?`;
+    }
+
+    function gerarMensagem2Pais(prof) {
+      return `*Olá, pais e responsáveis do núcleo ${prof.nucleo}!*
+
+Estamos realizando a conferência e atualização cadastral dos alunos do projeto esportivo.
+
+Por favor, acessem o link abaixo para preencher os dados do seu filho(a):
+
+👉 ${prof.linkResponsavel}
+
+Caso tenham alguma *dúvida* sobre o preenchimento, assistam a este vídeo rápido com o passo a passo:
+
+🎥 ${VIDEO_URL}
+
+*O preenchimento é rápido e muito importante para garantir a participação nas atividades. Contamos com a colaboração de todos!*`;
+    }
+
+    function showToast(text) {
+      const toast = document.getElementById('toast');
+      const toastText = document.getElementById('toast-text');
+      toastText.innerText = text;
+      toast.classList.remove('opacity-0', 'translate-y-2', 'pointer-events-none');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'translate-y-2', 'pointer-events-none');
+      }, 2500);
+    }
+
+    function copiarTexto(texto, label) {
+      navigator.clipboard.writeText(texto).then(() => {
+        showToast(label ? `${label} copiado!` : 'Copiado para a área de transferência!');
+      }).catch(() => {
+        const textarea = document.createElement('textarea');
+        textarea.value = texto;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        showToast(label ? `${label} copiado!` : 'Copiado para a área de transferência!');
+      });
+    }
+
+    function toggleStatus(id, tipo) {
+      const key = `status_${tipo}_${id}`;
+      const current = localStorage.getItem(key) === 'true';
+      localStorage.setItem(key, (!current).toString());
+      renderCards();
+    }
+
+    function renderCards() {
+      const container = document.getElementById('professores-container');
+      container.innerHTML = '';
+
+      let totalMsg1 = 0;
+      let totalMsg2 = 0;
+
+      professores.forEach((prof, index) => {
+        const enviadoMsg1 = localStorage.getItem(`status_msg1_${prof.id}`) === 'true';
+        const enviadoMsg2 = localStorage.getItem(`status_msg2_${prof.id}`) === 'true';
+
+        if (enviadoMsg1) totalMsg1++;
+        if (enviadoMsg2) totalMsg2++;
+
+        const totalEtapas = (enviadoMsg1 ? 1 : 0) + (enviadoMsg2 ? 1 : 0);
+        const completo = totalEtapas === 2;
+        const emAndamento = totalEtapas === 1;
+
+        const msg1 = gerarMensagem1Contato(prof);
+        const msg2 = gerarMensagem2Pais(prof);
+
+        const urlWaMsg1 = `https://api.whatsapp.com/send?phone=${prof.telefoneWa}&text=${encodeURIComponent(msg1)}`;
+        const urlWaMsg2 = `https://api.whatsapp.com/send?phone=${prof.telefoneWa}&text=${encodeURIComponent(msg2)}`;
+
+        const card = document.createElement('div');
+        card.className = `bg-white rounded-2xl p-6 sm:p-7 shadow-sm border transition-all ${
+          completo 
+            ? 'border-emerald-400 bg-emerald-50/20' 
+            : emAndamento 
+              ? 'border-blue-300 bg-blue-50/10' 
+              : 'border-zinc-200 hover:border-zinc-300'
+        }`;
+
+        card.innerHTML = `
+          <!-- Topo do Card -->
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-5 border-b border-zinc-100">
+            <div class="flex items-center gap-3 flex-wrap">
+              <span class="w-7 h-7 rounded-full bg-zinc-900 text-white flex items-center justify-center font-black text-xs">
+                ${index + 1}
+              </span>
+              <h2 class="text-xl font-bold text-zinc-900">${prof.nome}</h2>
+              <span class="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
+                ${prof.nucleo}
+              </span>
+
+              <!-- Badge Geral -->
+              ${
+                completo
+                  ? `<span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 flex items-center gap-1">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                      Concluído (2/2)
+                     </span>`
+                  : emAndamento
+                    ? `<span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-blue-800 flex items-center gap-1">
+                        Em andamento (1/2)
+                       </span>`
+                    : `<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-zinc-100 text-zinc-600">
+                        Pendente (0/2)
+                       </span>`
+              }
+            </div>
+
+            <div class="flex items-center gap-3 flex-wrap">
+              <div class="flex items-center gap-1.5 text-sm font-semibold text-zinc-700 bg-zinc-50 px-3 py-1.5 rounded-lg border border-zinc-200">
+                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                <span>${prof.telefoneExibicao}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Grid das 2 Mensagens -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+            
+            <!-- MENSAGEM 1: Primeiro Contato com o Professor -->
+            <div class="bg-zinc-50 rounded-xl p-5 border ${enviadoMsg1 ? 'border-blue-300 bg-blue-50/20' : 'border-zinc-200'} flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="inline-flex items-center gap-1.5 text-xs font-bold ${enviadoMsg1 ? 'text-blue-900' : 'text-zinc-700'} uppercase tracking-wider">
+                    <span class="w-2.5 h-2.5 rounded-full ${enviadoMsg1 ? 'bg-blue-600' : 'bg-zinc-400'}"></span>
+                    1. Primeiro Contato com o Professor
+                  </span>
+                  <button onclick="copiarTexto(\`${msg1.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`, 'Mensagem 1')" class="text-xs text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                    Copiar
+                  </button>
+                </div>
+                <p class="text-xs text-zinc-500 mb-3">
+                  Apresente-se e avise que vai encaminhar o link e o modelo pronto.
+                </p>
+                <div class="text-xs text-zinc-700 whitespace-pre-line font-mono bg-white p-3.5 rounded-lg border border-zinc-200 max-h-48 overflow-y-auto">
+${msg1}
+                </div>
+              </div>
+
+              <div class="mt-4 pt-3 border-t border-zinc-200/80 flex flex-col gap-2">
+                <a href="${urlWaMsg1}" target="_blank" class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm transition-all">
+                  <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.669-.699c.969.539 1.761.79 2.791.79 3.181 0 5.767-2.586 5.767-5.766.001-3.18-2.585-5.766-5.767-5.766zm9.969 5.766c0 5.503-4.477 9.969-9.969 9.969-1.748 0-3.385-.45-4.819-1.239l-4.712 1.234 1.258-4.596c-.896-1.488-1.408-3.23-1.408-5.098 0-5.503 4.477-9.969 9.969-9.969 5.492 0 9.969 4.466 9.969 9.969z"/></svg>
+                  <span>Abrir WhatsApp (Enviar 1º Contato)</span>
+                </a>
+
+                <!-- Checkbox Mensagem 1 -->
+                <label class="flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold cursor-pointer select-none transition-all ${
+                  enviadoMsg1 ? 'bg-blue-100 text-blue-900 border border-blue-200' : 'bg-white text-zinc-600 border border-zinc-200 hover:bg-zinc-100'
+                }">
+                  <input type="checkbox" onchange="toggleStatus('${prof.id}', 'msg1')" ${enviadoMsg1 ? 'checked' : ''} class="w-4 h-4 text-blue-600 rounded border-zinc-300 focus:ring-blue-500">
+                  <span>${enviadoMsg1 ? '✓ 1º Contato enviado' : 'Marcar 1º contato como enviado'}</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- MENSAGEM 2: Para o Professor Encaminhar aos Pais -->
+            <div class="bg-zinc-50 rounded-xl p-5 border ${enviadoMsg2 ? 'border-emerald-300 bg-emerald-50/20' : 'border-zinc-200'} flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="inline-flex items-center gap-1.5 text-xs font-bold ${enviadoMsg2 ? 'text-emerald-900' : 'text-zinc-700'} uppercase tracking-wider">
+                    <span class="w-2.5 h-2.5 rounded-full ${enviadoMsg2 ? 'bg-emerald-500' : 'bg-zinc-400'}"></span>
+                    2. Mensagem para o Grupo dos Pais
+                  </span>
+                  <button onclick="copiarTexto(\`${msg2.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`, 'Mensagem dos Pais')" class="text-xs text-emerald-700 hover:text-emerald-900 font-semibold flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                    Copiar
+                  </button>
+                </div>
+                <p class="text-xs text-zinc-500 mb-3">
+                  Contém o link do formulário e o vídeo explicativo do YouTube.
+                </p>
+                <div class="text-xs text-zinc-700 whitespace-pre-line font-mono bg-white p-3.5 rounded-lg border border-zinc-200 max-h-48 overflow-y-auto">
+${msg2}
+                </div>
+              </div>
+
+              <div class="mt-4 pt-3 border-t border-zinc-200/80 flex flex-col gap-2">
+                <a href="${urlWaMsg2}" target="_blank" class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm transition-all">
+                  <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.669-.699c.969.539 1.761.79 2.791.79 3.181 0 5.767-2.586 5.767-5.766.001-3.18-2.585-5.766-5.767-5.766zm9.969 5.766c0 5.503-4.477 9.969-9.969 9.969-1.748 0-3.385-.45-4.819-1.239l-4.712 1.234 1.258-4.596c-.896-1.488-1.408-3.23-1.408-5.098 0-5.503 4.477-9.969 9.969-9.969 5.492 0 9.969 4.466 9.969 9.969z"/></svg>
+                  <span>Abrir WhatsApp (Enviar Mensagem dos Pais)</span>
+                </a>
+
+                <div class="flex gap-2">
+                  <button onclick="copiarTexto(\`${prof.linkResponsavel}\`, 'Link do formulário')" class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-zinc-200/70 hover:bg-zinc-200 text-zinc-700 font-semibold text-[11px] transition-all">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                    <span>Copiar Link</span>
+                  </button>
+                  <button onclick="copiarTexto('${VIDEO_URL}', 'Link do Vídeo')" class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-zinc-200/70 hover:bg-zinc-200 text-zinc-700 font-semibold text-[11px] transition-all">
+                    <svg class="w-3.5 h-3.5 text-red-600" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+                    <span>Copiar Vídeo</span>
+                  </button>
+                </div>
+
+                <!-- Checkbox Mensagem 2 -->
+                <label class="flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold cursor-pointer select-none transition-all ${
+                  enviadoMsg2 ? 'bg-emerald-100 text-emerald-900 border border-emerald-200' : 'bg-white text-zinc-600 border border-zinc-200 hover:bg-zinc-100'
+                }">
+                  <input type="checkbox" onchange="toggleStatus('${prof.id}', 'msg2')" ${enviadoMsg2 ? 'checked' : ''} class="w-4 h-4 text-emerald-600 rounded border-zinc-300 focus:ring-emerald-500">
+                  <span>${enviadoMsg2 ? '✓ Mensagem dos pais enviada' : 'Marcar mensagem dos pais como enviada'}</span>
+                </label>
+              </div>
+            </div>
+
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+
+      // Atualizar progresso geral (12 envios no total: 6 msg1 + 6 msg2)
+      const totalGeral = professores.length * 2;
+      const totalFeito = totalMsg1 + totalMsg2;
+      const pct = Math.round((totalFeito / totalGeral) * 100);
+
+      document.getElementById('progresso-texto').innerText = `${totalFeito} de ${totalGeral} envios feitos (1º contato: ${totalMsg1}/6 | Pais: ${totalMsg2}/6)`;
+      document.getElementById('progresso-pct').innerText = `${pct}%`;
+    }
+
+    renderCards();
+  </script>
+</body>
+</html>
