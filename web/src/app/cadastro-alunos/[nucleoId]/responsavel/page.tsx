@@ -16,6 +16,9 @@ import {
   Trash2,
   Copy,
   Check,
+  Calendar,
+  ChevronDown,
+  X,
 } from "lucide-react";
 
 type TurnoOpcao = "Manhã" | "Tarde" | "Noite" | "Não sei";
@@ -133,6 +136,7 @@ export default function PaginaCadastroResponsavel({
   // Dias e turnos específicos de cada dia para este aluno
   // Ex: { "Segunda-feira": "Manhã", "Quarta-feira": "Não sei", "Não sei informar os dias da semana": "Manhã" }
   const [diasTurnos, setDiasTurnos] = useState<Record<string, TurnoOpcao | null>>({});
+  const [abrirDataPicker, setAbrirDataPicker] = useState(false);
 
   const [erroAluno, setErroAluno] = useState<string | null>(null);
   const [erroEnvio, setErroEnvio] = useState<string | null>(null);
@@ -261,6 +265,7 @@ export default function PaginaCadastroResponsavel({
     setMesNascAluno("");
     setAnoNascAluno("");
     setDiasTurnos({});
+    setAbrirDataPicker(false);
   }
 
   // Remover aluno da lista
@@ -424,6 +429,7 @@ export default function PaginaCadastroResponsavel({
     setMesNascAluno("");
     setAnoNascAluno("");
     setDiasTurnos({});
+    setAbrirDataPicker(false);
     setSucesso(false);
     setSucessoDados(null);
   }
@@ -707,8 +713,8 @@ export default function PaginaCadastroResponsavel({
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Data de Nascimento com 3 seletores */}
-                <div className="space-y-1">
+                {/* Data de Nascimento Unificada com Dropdown Customizado */}
+                <div className="space-y-1 relative">
                   <div className="flex items-center justify-between">
                     <label className="text-3xs font-black uppercase tracking-wider text-zinc-600">
                       Data de Nascimento *
@@ -719,49 +725,142 @@ export default function PaginaCadastroResponsavel({
                       </span>
                     )}
                   </div>
-                  <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
-                    {/* Dia */}
-                    <select
-                      value={diaNascAluno}
-                      onChange={(e) => setDiaNascAluno(e.target.value)}
-                      className="h-11 px-2 rounded-xl border border-zinc-300 text-xs font-semibold text-zinc-900 bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 cursor-pointer"
-                    >
-                      <option value="">Dia</option>
-                      {DIAS_DO_MES.map((d) => (
-                        <option key={d} value={d}>
-                          {d}
-                        </option>
-                      ))}
-                    </select>
 
-                    {/* Mês */}
-                    <select
-                      value={mesNascAluno}
-                      onChange={(e) => setMesNascAluno(e.target.value)}
-                      className="h-11 px-2 rounded-xl border border-zinc-300 text-xs font-semibold text-zinc-900 bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 cursor-pointer"
-                    >
-                      <option value="">Mês</option>
-                      {MESES_DO_ANO.map((m) => (
-                        <option key={m.valor} value={m.valor}>
-                          {m.rotulo}
-                        </option>
-                      ))}
-                    </select>
+                  {/* Campo Unificado Estilizado */}
+                  <button
+                    type="button"
+                    onClick={() => setAbrirDataPicker((prev) => !prev)}
+                    className={`w-full h-11 px-3.5 rounded-xl border flex items-center justify-between text-xs transition-all cursor-pointer ${
+                      abrirDataPicker
+                        ? "border-sky-500 ring-2 ring-sky-500/20 bg-white"
+                        : diaNascAluno && mesNascAluno && anoNascAluno
+                        ? "border-zinc-300 bg-white text-zinc-900 font-bold"
+                        : "border-zinc-300 bg-white text-zinc-400"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 truncate">
+                      <Calendar className="w-4 h-4 text-sky-600 shrink-0" />
+                      <span className="truncate">
+                        {diaNascAluno && mesNascAluno && anoNascAluno
+                          ? `${diaNascAluno}/${mesNascAluno}/${anoNascAluno}`
+                          : "Escolha o dia, mês e ano"}
+                      </span>
+                    </div>
+                    <ChevronDown
+                      className={`w-4 h-4 text-zinc-400 transition-transform shrink-0 ${
+                        abrirDataPicker ? "rotate-180 text-sky-600" : ""
+                      }`}
+                    />
+                  </button>
 
-                    {/* Ano: 2026 para trás */}
-                    <select
-                      value={anoNascAluno}
-                      onChange={(e) => setAnoNascAluno(e.target.value)}
-                      className="h-11 px-2 rounded-xl border border-zinc-300 text-xs font-semibold text-zinc-900 bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 cursor-pointer"
-                    >
-                      <option value="">Ano</option>
-                      {ANOS_NASCIMENTO.map((a) => (
-                        <option key={a} value={a}>
-                          {a}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                  {/* Popover Dropdown Customizado sem Seletores Nativos */}
+                  {abrirDataPicker && (
+                    <div className="absolute top-full left-0 right-0 sm:right-auto sm:w-[340px] mt-1.5 p-3.5 bg-white rounded-2xl border-2 border-sky-300 shadow-2xl z-30 space-y-3 animate-fadeIn">
+                      <div className="flex items-center justify-between pb-2 border-b border-zinc-100">
+                        <span className="text-3xs font-black uppercase tracking-wider text-zinc-500">
+                          Selecione a data:
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setAbrirDataPicker(false)}
+                          className="text-zinc-400 hover:text-zinc-700 p-1 rounded-lg"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+
+                      <div className="grid grid-cols-3 gap-2">
+                        {/* Coluna DIA */}
+                        <div className="space-y-1">
+                          <span className="text-3xs font-black uppercase text-zinc-500 text-center block">
+                            Dia
+                          </span>
+                          <div className="h-44 overflow-y-auto space-y-1 p-1 border border-zinc-100 rounded-xl bg-zinc-50/60">
+                            {DIAS_DO_MES.map((d) => (
+                              <button
+                                key={d}
+                                type="button"
+                                onClick={() => setDiaNascAluno(d)}
+                                className={`w-full py-1.5 rounded-lg text-xs font-bold transition-all ${
+                                  diaNascAluno === d
+                                    ? "bg-sky-600 text-white shadow-2xs font-black"
+                                    : "text-zinc-700 hover:bg-zinc-200"
+                                }`}
+                              >
+                                {d}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Coluna MÊS */}
+                        <div className="space-y-1">
+                          <span className="text-3xs font-black uppercase text-zinc-500 text-center block">
+                            Mês
+                          </span>
+                          <div className="h-44 overflow-y-auto space-y-1 p-1 border border-zinc-100 rounded-xl bg-zinc-50/60">
+                            {MESES_DO_ANO.map((m) => (
+                              <button
+                                key={m.valor}
+                                type="button"
+                                onClick={() => setMesNascAluno(m.valor)}
+                                className={`w-full py-1.5 px-0.5 rounded-lg text-xs font-bold transition-all text-center truncate ${
+                                  mesNascAluno === m.valor
+                                    ? "bg-sky-600 text-white shadow-2xs font-black"
+                                    : "text-zinc-700 hover:bg-zinc-200"
+                                }`}
+                              >
+                                {m.rotulo.split(" - ")[1]}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Coluna ANO (2026 para trás) */}
+                        <div className="space-y-1">
+                          <span className="text-3xs font-black uppercase text-zinc-500 text-center block">
+                            Ano
+                          </span>
+                          <div className="h-44 overflow-y-auto space-y-1 p-1 border border-zinc-100 rounded-xl bg-zinc-50/60">
+                            {ANOS_NASCIMENTO.map((a) => (
+                              <button
+                                key={a}
+                                type="button"
+                                onClick={() => setAnoNascAluno(a)}
+                                className={`w-full py-1.5 rounded-lg text-xs font-bold transition-all ${
+                                  anoNascAluno === a
+                                    ? "bg-sky-600 text-white shadow-2xs font-black"
+                                    : "text-zinc-700 hover:bg-zinc-200"
+                                }`}
+                              >
+                                {a}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Rodapé com Botão Confirmar */}
+                      <div className="pt-2 border-t border-zinc-100 flex items-center justify-between gap-2">
+                        <div className="text-3xs text-zinc-600 truncate">
+                          {diaNascAluno && mesNascAluno && anoNascAluno ? (
+                            <span className="font-bold text-sky-800">
+                              {diaNascAluno}/{mesNascAluno}/{anoNascAluno} ({idadeAlunoCalculada} anos)
+                            </span>
+                          ) : (
+                            <span className="text-zinc-400">Selecione dia, mês e ano</span>
+                          )}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setAbrirDataPicker(false)}
+                          className="px-3.5 py-1.5 bg-sky-600 hover:bg-sky-700 text-white rounded-lg text-xs font-black shadow-2xs cursor-pointer"
+                        >
+                          Confirmar
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Sexo */}
