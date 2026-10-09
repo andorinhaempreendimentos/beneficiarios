@@ -4,11 +4,9 @@ import { use, useEffect, useState, useMemo } from "react";
 import {
   User,
   Heart,
-  Calendar,
   Phone,
   AlertCircle,
   CheckCircle2,
-  Clock,
   MapPin,
   ShieldCheck,
   Send,
@@ -18,44 +16,23 @@ import {
   Trash2,
   Copy,
   Check,
-  Sun,
-  Sunrise,
-  Moon,
 } from "lucide-react";
 
-interface HorarioTurma {
-  id: string;
-  diaSemanaNumero: number;
-  diaSemanaNome: string;
-  horaInicio: string;
-  horaFim: string;
+interface DiaParticipacao {
+  dia: string;
+  turno: "Manhã" | "Tarde" | "Noite";
 }
 
-interface Turma {
-  id: string;
-  nome: string;
-  identificador: string;
-  idadeMinima: number;
-  idadeMaxima: number;
-  vagasTotais: number;
-  horarios: HorarioTurma[];
-  diasResumo: string;
-  horarioResumo: string;
-}
-
-interface FilhoItem {
+interface AlunoItem {
   idTemp: string;
   nomeCompleto: string;
   dataNascimento: string;
   idade: number | null;
   sexo: "M" | "F";
-  cpf: string;
-  diasSemana: string[];
-  turno: "Manhã" | "Tarde" | "Noite";
-  observacoes: string;
+  diasParticipacao: DiaParticipacao[];
 }
 
-const DIAS_DISPONIVEIS = [
+const DIAS_SEMANA = [
   "Segunda-feira",
   "Terça-feira",
   "Quarta-feira",
@@ -110,29 +87,32 @@ export default function PaginaCadastroResponsavel({
   const [nucleo, setNucleo] = useState<{ id: string; identificacao: string; nomeLocal: string } | null>(null);
   const [professorNome, setProfessorNome] = useState("");
   const [modalidadeNome, setModalidadeNome] = useState("");
-  const [turmas, setTurmas] = useState<Turma[]>([]);
 
   // 1. DADOS DO RESPONSÁVEL (PRIMEIRA COISA DO FORMULÁRIO)
   const [nomeResponsavel, setNomeResponsavel] = useState("");
   const [whatsappResponsavel, setWhatsappResponsavel] = useState("");
   const [cpfResponsavel, setCpfResponsavel] = useState("");
 
-  // 2. LISTA DE FILHOS CADASTRADOS
-  const [filhos, setFilhos] = useState<FilhoItem[]>([]);
+  // 2. LISTA DE ALUNOS (FILHOS) JÁ ADICIONADOS
+  const [alunos, setAlunos] = useState<AlunoItem[]>([]);
 
-  // 3. CAMPOS DO FORMULÁRIO PARA ADICIONAR UM FILHO
-  const [nomeFilho, setNomeFilho] = useState("");
-  const [dataNascFilho, setDataNascFilho] = useState("");
-  const [sexoFilho, setSexoFilho] = useState<"M" | "F">("M");
-  const [cpfFilho, setCpfFilho] = useState("");
-  const [diasFilho, setDiasFilho] = useState<string[]>(["Segunda-feira", "Quarta-feira"]);
-  const [turnoFilho, setTurnoFilho] = useState<"Manhã" | "Tarde" | "Noite">("Tarde");
-  const [obsFilho, setObsFilho] = useState("");
-  const [erroFilho, setErroFilho] = useState<string | null>(null);
+  // 3. CAMPOS DO ALUNO EM DIGITAÇÃO
+  const [nomeAluno, setNomeAluno] = useState("");
+  const [dataNascAluno, setDataNascAluno] = useState("");
+  const [sexoAluno, setSexoAluno] = useState<"M" | "F">("M");
 
-  // Estado de envio e tela de sucesso
+  // Dias e turnos específicos de cada dia para este aluno
+  // Ex: { "Segunda-feira": "Manhã", "Quarta-feira": "Manhã", "Sexta-feira": "Tarde" }
+  const [diasTurnos, setDiasTurnos] = useState<Record<string, "Manhã" | "Tarde" | "Noite">>({
+    "Segunda-feira": "Manhã",
+    "Quarta-feira": "Manhã",
+  });
+
+  const [erroAluno, setErroAluno] = useState<string | null>(null);
   const [erroEnvio, setErroEnvio] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
+
+  // Tela de Sucesso
   const [sucesso, setSucesso] = useState(false);
   const [sucessoDados, setSucessoDados] = useState<any>(null);
   const [copiadoComprovante, setCopiadoComprovante] = useState(false);
@@ -154,7 +134,6 @@ export default function PaginaCadastroResponsavel({
         setNucleo(data.nucleo);
         setProfessorNome(data.professor?.nome || "");
         setModalidadeNome(data.modalidade || "Futebol");
-        setTurmas(data.turmas || []);
       } catch (err: any) {
         console.error("Erro ao carregar dados:", err);
         setErroCarregamento(err.message || "Erro desconhecido ao carregar página.");
@@ -168,70 +147,84 @@ export default function PaginaCadastroResponsavel({
     }
   }, [nucleoId]);
 
-  // Idade calculada do filho em digitação
-  const idadeFilhoCalculada = useMemo(() => {
-    return calcularIdade(dataNascFilho);
-  }, [dataNascFilho]);
+  // Idade calculada do aluno em digitação
+  const idadeAlunoCalculada = useMemo(() => {
+    return calcularIdade(dataNascAluno);
+  }, [dataNascAluno]);
 
-  // Alternar dia da semana
+  // Alternar se o aluno participa neste dia da semana
   function toggleDia(dia: string) {
-    setDiasFilho((prev) => {
-      if (prev.includes(dia)) {
-        if (prev.length === 1) return prev; // manter pelo menos 1 dia
-        return prev.filter((d) => d !== dia);
+    setDiasTurnos((prev) => {
+      const copy = { ...prev };
+      if (copy[dia]) {
+        delete copy[dia];
       } else {
-        return [...prev, dia];
+        copy[dia] = "Manhã"; // Turno padrão ao marcar
       }
+      return copy;
     });
   }
 
-  // Adicionar filho à lista
-  function handleAdicionarFilho() {
-    setErroFilho(null);
+  // Definir turno de um dia específico
+  function setTurnoDoDia(dia: string, turno: "Manhã" | "Tarde" | "Noite") {
+    setDiasTurnos((prev) => ({
+      ...prev,
+      [dia]: turno,
+    }));
+  }
 
-    const nomeLimpo = nomeFilho.trim().toUpperCase();
+  // Adicionar aluno à lista
+  function handleAdicionarAluno() {
+    setErroAluno(null);
+
+    const nomeLimpo = nomeAluno.trim().toUpperCase();
     if (!nomeLimpo) {
-      setErroFilho("Por favor, informe o nome completo do filho.");
+      setErroAluno("Por favor, informe o nome completo do aluno.");
       return;
     }
 
-    if (!dataNascFilho) {
-      setErroFilho("Informe a data de nascimento do aluno.");
+    if (!dataNascAluno) {
+      setErroAluno("Informe a data de nascimento do aluno.");
       return;
     }
 
-    if (diasFilho.length === 0) {
-      setErroFilho("Selecione pelo menos um dia da semana que o aluno pode participar.");
+    const diasKeys = Object.keys(diasTurnos);
+    if (diasKeys.length === 0) {
+      setErroAluno("Selecione pelo menos um dia em que o aluno vai para o núcleo.");
       return;
     }
 
-    const novoFilho: FilhoItem = {
-      idTemp: `filho_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+    const diasParticipacao: DiaParticipacao[] = diasKeys.map((dia) => ({
+      dia,
+      turno: diasTurnos[dia],
+    }));
+
+    const novoAluno: AlunoItem = {
+      idTemp: `aluno_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
       nomeCompleto: nomeLimpo,
-      dataNascimento: dataNascFilho,
-      idade: idadeFilhoCalculada,
-      sexo: sexoFilho,
-      cpf: cpfFilho ? formatarCpf(cpfFilho) : "",
-      diasSemana: diasFilho,
-      turno: turnoFilho,
-      observacoes: obsFilho.trim(),
+      dataNascimento: dataNascAluno,
+      idade: idadeAlunoCalculada,
+      sexo: sexoAluno,
+      diasParticipacao,
     };
 
-    setFilhos((prev) => [...prev, novoFilho]);
+    setAlunos((prev) => [...prev, novoAluno]);
 
-    // Limpar campos do filho
-    setNomeFilho("");
-    setDataNascFilho("");
-    setCpfFilho("");
-    setObsFilho("");
+    // Limpar campos do aluno para permitir adicionar o próximo
+    setNomeAluno("");
+    setDataNascAluno("");
+    setDiasTurnos({
+      "Segunda-feira": "Manhã",
+      "Quarta-feira": "Manhã",
+    });
   }
 
-  // Remover filho da lista
-  function handleRemoverFilho(idTemp: string) {
-    setFilhos((prev) => prev.filter((f) => f.idTemp !== idTemp));
+  // Remover aluno da lista
+  function handleRemoverAluno(idTemp: string) {
+    setAlunos((prev) => prev.filter((a) => a.idTemp !== idTemp));
   }
 
-  // Enviar inscrição completa
+  // Enviar informações completas
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setErroEnvio(null);
@@ -244,7 +237,7 @@ export default function PaginaCadastroResponsavel({
 
     const whatsLimpo = whatsappResponsavel.replace(/\D/g, "");
     if (whatsLimpo.length < 10) {
-      setErroEnvio("Por favor, informe um WhatsApp válido com DDD.");
+      setErroEnvio("Por favor, informe um WhatsApp válido com DDD para contato.");
       return;
     }
 
@@ -254,26 +247,28 @@ export default function PaginaCadastroResponsavel({
       return;
     }
 
-    // Se o usuário digitou dados de um filho mas esqueceu de clicar em 'Adicionar Filho', adicionar automaticamente
-    let listaFinalFilhos = [...filhos];
-    if (listaFinalFilhos.length === 0 && nomeFilho.trim() && dataNascFilho) {
-      const autoFilho: FilhoItem = {
-        idTemp: `filho_${Date.now()}`,
-        nomeCompleto: nomeFilho.trim().toUpperCase(),
-        dataNascimento: dataNascFilho,
-        idade: idadeFilhoCalculada,
-        sexo: sexoFilho,
-        cpf: cpfFilho ? formatarCpf(cpfFilho) : "",
-        diasSemana: diasFilho,
-        turno: turnoFilho,
-        observacoes: obsFilho.trim(),
-      };
-      listaFinalFilhos.push(autoFilho);
-      setFilhos(listaFinalFilhos);
+    // Se o pai preencheu um aluno e não clicou em "Adicionar", incluir automaticamente
+    let listaFinalAlunos = [...alunos];
+    if (listaFinalAlunos.length === 0 && nomeAluno.trim() && dataNascAluno) {
+      const diasKeys = Object.keys(diasTurnos);
+      if (diasKeys.length > 0) {
+        listaFinalAlunos.push({
+          idTemp: `aluno_${Date.now()}`,
+          nomeCompleto: nomeAluno.trim().toUpperCase(),
+          dataNascimento: dataNascAluno,
+          idade: idadeAlunoCalculada,
+          sexo: sexoAluno,
+          diasParticipacao: diasKeys.map((dia) => ({
+            dia,
+            turno: diasTurnos[dia],
+          })),
+        });
+        setAlunos(listaFinalAlunos);
+      }
     }
 
-    if (listaFinalFilhos.length === 0) {
-      setErroEnvio("Adicione pelo menos um filho na lista antes de enviar a inscrição.");
+    if (listaFinalAlunos.length === 0) {
+      setErroEnvio("Adicione pelo menos um aluno na lista antes de enviar as informações.");
       return;
     }
 
@@ -288,7 +283,7 @@ export default function PaginaCadastroResponsavel({
           whatsapp: whatsappResponsavel,
           cpf: formatarCpf(cpfResponsavel),
         },
-        filhos: listaFinalFilhos,
+        filhos: listaFinalAlunos,
       };
 
       const res = await fetch("/api/cadastro-alunos/responsavel", {
@@ -299,7 +294,7 @@ export default function PaginaCadastroResponsavel({
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || "Erro ao realizar inscrição.");
+        throw new Error(data.error || "Erro ao enviar informações.");
       }
 
       const protocolo = `EA-${Math.floor(100000 + Math.random() * 900000)}`;
@@ -310,13 +305,13 @@ export default function PaginaCadastroResponsavel({
           whatsapp: whatsappResponsavel,
           cpf: formatarCpf(cpfResponsavel),
         },
-        filhos: listaFinalFilhos,
+        alunos: listaFinalAlunos,
         protocolo,
       });
       setSucesso(true);
     } catch (err: any) {
       console.error("Erro ao enviar:", err);
-      setErroEnvio(err.message || "Falha ao enviar inscrição. Tente novamente.");
+      setErroEnvio(err.message || "Falha ao enviar informações. Tente novamente.");
     } finally {
       setEnviando(false);
     }
@@ -326,21 +321,24 @@ export default function PaginaCadastroResponsavel({
   function handleCopiarComprovante() {
     if (!sucessoDados || !nucleo) return;
 
-    let texto = `📋 *COMPROVANTE DE PRÉ-INSCRIÇÃO • ESCOLINHA ESPORTIVA*\n\n` +
+    let texto = `📋 *INFORMAÇÕES DE PARTICIPAÇÃO • ESCOLINHA ESPORTIVA*\n\n` +
       `*Núcleo:* ${nucleo.identificacao}\n` +
       `*Responsável:* ${sucessoDados.responsavel.nomeCompleto}\n` +
       `*CPF Responsável:* ${sucessoDados.responsavel.cpf}\n` +
       `*WhatsApp:* ${sucessoDados.responsavel.whatsapp}\n` +
       `*Protocolo:* ${sucessoDados.protocolo}\n\n` +
-      `*FILHOS INSCRITOS (${sucessoDados.filhos.length}):*\n`;
+      `*ALUNOS CADASTRADOS (${sucessoDados.alunos.length}):*\n`;
 
-    sucessoDados.filhos.forEach((f: FilhoItem, idx: number) => {
-      texto += `${idx + 1}. *${f.nomeCompleto}* (${f.idade ? `${f.idade} anos` : f.dataNascimento})\n` +
-        `   • Turno: ${f.turno}\n` +
-        `   • Dias: ${f.diasSemana.join(", ")}\n`;
+    sucessoDados.alunos.forEach((a: AlunoItem, idx: number) => {
+      const rotina = a.diasParticipacao
+        .map((dp) => `${dp.dia.replace("-feira", "")} (${dp.turno})`)
+        .join(", ");
+
+      texto += `${idx + 1}. *${a.nomeCompleto}* (${a.idade !== null ? `${a.idade} anos` : a.dataNascimento})\n` +
+        `   • Rotina: ${rotina}\n`;
     });
 
-    texto += `\nA coordenação entrará em contato para confirmar a turma e data de início dos treinos.`;
+    texto += `\nInformações registradas com sucesso para conferência do professor.`;
 
     navigator.clipboard.writeText(texto);
     setCopiadoComprovante(true);
@@ -352,11 +350,9 @@ export default function PaginaCadastroResponsavel({
     setNomeResponsavel("");
     setWhatsappResponsavel("");
     setCpfResponsavel("");
-    setFilhos([]);
-    setNomeFilho("");
-    setDataNascFilho("");
-    setCpfFilho("");
-    setObsFilho("");
+    setAlunos([]);
+    setNomeAluno("");
+    setDataNascAluno("");
     setSucesso(false);
     setSucessoDados(null);
   }
@@ -366,7 +362,7 @@ export default function PaginaCadastroResponsavel({
     return (
       <div className="min-h-screen bg-zinc-50 flex flex-col items-center justify-center p-4">
         <Loader2 className="w-10 h-10 text-emerald-600 animate-spin mb-3" />
-        <p className="text-sm font-bold text-zinc-600">Carregando informações da escolinha...</p>
+        <p className="text-sm font-bold text-zinc-600">Carregando informações do núcleo...</p>
       </div>
     );
   }
@@ -397,17 +393,17 @@ export default function PaginaCadastroResponsavel({
 
           <div className="space-y-1.5">
             <span className="text-3xs uppercase tracking-wider font-black text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
-              Inscrição Recebida!
+              Informações Recebidas!
             </span>
             <h1 className="text-xl sm:text-2xl font-black text-zinc-900">
-              Matrícula em Processamento
+              Cadastro Registrado com Sucesso
             </h1>
             <p className="text-xs text-zinc-600">
-              Recebemos os dados da sua família com sucesso! Nossa equipe entrará em contato via WhatsApp para confirmar a turma e horários definitivos.
+              Recebemos as informações dos alunos e seus horários de frequência para o núcleo <strong>{nucleo.identificacao}</strong>.
             </p>
           </div>
 
-          {/* Cartão de Resumo da Inscrição */}
+          {/* Cartão de Resumo */}
           <div className="p-4 sm:p-5 rounded-2xl bg-zinc-50 border border-zinc-200 text-left space-y-3.5">
             <div className="flex justify-between items-center text-xs border-b border-zinc-200/60 pb-2">
               <span className="text-zinc-500 font-medium">Protocolo:</span>
@@ -432,23 +428,30 @@ export default function PaginaCadastroResponsavel({
               </div>
             </div>
 
-            {/* Lista dos Filhos Cadastrados */}
+            {/* Lista dos Alunos */}
             <div className="space-y-2 pt-1">
               <span className="text-3xs font-black uppercase tracking-wider text-zinc-500 block">
-                Filhos Inscritos ({sucessoDados.filhos.length}):
+                Alunos ({sucessoDados.alunos.length}):
               </span>
               <div className="space-y-2">
-                {sucessoDados.filhos.map((f: FilhoItem, idx: number) => (
-                  <div key={f.idTemp} className="p-3 bg-white rounded-xl border border-zinc-200 text-xs space-y-1">
+                {sucessoDados.alunos.map((a: AlunoItem, idx: number) => (
+                  <div key={a.idTemp} className="p-3 bg-white rounded-xl border border-zinc-200 text-xs space-y-1.5">
                     <div className="flex items-center justify-between font-black text-zinc-900">
-                      <span>{idx + 1}. {f.nomeCompleto}</span>
+                      <span>{idx + 1}. {a.nomeCompleto}</span>
                       <span className="text-3xs px-2 py-0.5 bg-emerald-50 text-emerald-800 font-extrabold rounded-md">
-                        {f.idade !== null ? `${f.idade} anos` : "S/D"}
+                        {a.idade !== null ? `${a.idade} anos` : "S/D"}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between text-3xs text-zinc-500">
-                      <span>Turno: <strong>{f.turno}</strong></span>
-                      <span>Dias: {f.diasSemana.join(", ")}</span>
+
+                    <div className="flex flex-wrap gap-1.5 pt-0.5">
+                      {a.diasParticipacao.map((dp) => (
+                        <span
+                          key={dp.dia}
+                          className="text-3xs px-2 py-0.5 rounded bg-zinc-100 text-zinc-700 font-bold"
+                        >
+                          {dp.dia.replace("-feira", "")}: <strong>{dp.turno}</strong>
+                        </span>
+                      ))}
                     </div>
                   </div>
                 ))}
@@ -482,7 +485,7 @@ export default function PaginaCadastroResponsavel({
           <div className="p-3.5 bg-zinc-50 border border-zinc-200 rounded-2xl text-3xs text-zinc-600 font-medium flex items-center gap-2.5 text-left">
             <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0" />
             <span>
-              Suas informações estão salvas. No primeiro dia de treino, compareça com documento do aluno e do responsável para confirmação com o professor {professorNome || "da escolinha"}.
+              Suas informações foram salvas com segurança para a organização das turmas pelo professor {professorNome || "responsável"}.
             </span>
           </div>
 
@@ -491,7 +494,7 @@ export default function PaginaCadastroResponsavel({
             onClick={handleNovoCadastro}
             className="w-full py-3.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-800 font-black text-xs rounded-xl transition-all cursor-pointer"
           >
-            Fazer Nova Inscrição
+            Enviar Mais Informações
           </button>
         </div>
       </div>
@@ -505,7 +508,7 @@ export default function PaginaCadastroResponsavel({
         <div className="bg-white rounded-3xl p-6 sm:p-7 shadow-xs border border-zinc-200 space-y-3">
           <div>
             <span className="text-3xs uppercase tracking-wider font-black text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
-              Escolinha Esportiva • Inscrição de Alunos
+              Escolinha Esportiva • Cadastro de Frequência
             </span>
             <h1 className="text-xl sm:text-2xl font-black text-zinc-900 mt-2">
               {nucleo.identificacao}
@@ -518,12 +521,12 @@ export default function PaginaCadastroResponsavel({
           {nucleo.nomeLocal && (
             <div className="flex items-center gap-1.5 text-3xs text-zinc-500">
               <MapPin className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
-              <span>Local de Treino: {nucleo.nomeLocal}</span>
+              <span>Local: {nucleo.nomeLocal}</span>
             </div>
           )}
 
           <p className="text-xs text-zinc-500 pt-2 border-t border-zinc-100">
-            Preencha seus dados de responsável e adicione seus filhos para participar das aulas gratuitas.
+            Preencha seus dados de responsável e indique quais dias e turnos seu filho frequenta o núcleo.
           </p>
         </div>
 
@@ -536,7 +539,7 @@ export default function PaginaCadastroResponsavel({
               </div>
               <div>
                 <h2 className="text-base font-black text-zinc-900">1. Dados do Responsável (Pai / Mãe)</h2>
-                <p className="text-3xs text-zinc-500">Informações para contato e confirmação da vaga</p>
+                <p className="text-3xs text-zinc-500">Identificação para contato oficial</p>
               </div>
             </div>
 
@@ -592,7 +595,7 @@ export default function PaginaCadastroResponsavel({
             </div>
           </div>
 
-          {/* 2. ADICIONAR FILHOS (ALUNOS) */}
+          {/* 2. DADOS DO ALUNO E PARTICIPAÇÃO */}
           <div className="bg-white rounded-3xl p-6 sm:p-7 shadow-xs border border-zinc-200 space-y-5">
             <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
               <div className="flex items-center gap-2.5">
@@ -600,33 +603,33 @@ export default function PaginaCadastroResponsavel({
                   <User className="w-4 h-4" />
                 </div>
                 <div>
-                  <h2 className="text-base font-black text-zinc-900">2. Adicionar Filho(s)</h2>
-                  <p className="text-3xs text-zinc-500">Cadastre um ou mais filhos para este núcleo</p>
+                  <h2 className="text-base font-black text-zinc-900">2. Dados do Aluno (Filho)</h2>
+                  <p className="text-3xs text-zinc-500">Informe os dias e turnos em que frequenta</p>
                 </div>
               </div>
               <span className="text-3xs font-extrabold text-sky-700 bg-sky-50 px-2.5 py-1 rounded-full border border-sky-100">
-                {filhos.length} {filhos.length === 1 ? "filho na lista" : "filhos na lista"}
+                {alunos.length} {alunos.length === 1 ? "aluno na lista" : "alunos na lista"}
               </span>
             </div>
 
-            {erroFilho && (
+            {erroAluno && (
               <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl flex items-center gap-2">
                 <AlertCircle className="w-4 h-4 text-rose-500 shrink-0" />
-                <span>{erroFilho}</span>
+                <span>{erroAluno}</span>
               </div>
             )}
 
-            {/* Campos do Filho */}
+            {/* Campos do Aluno */}
             <div className="space-y-4 p-4 rounded-2xl bg-zinc-50/70 border border-zinc-200">
-              {/* Nome do Filho */}
+              {/* Nome Completo do Aluno */}
               <div className="space-y-1">
                 <label className="text-3xs font-black uppercase tracking-wider text-zinc-600">
-                  Nome Completo do Aluno (Filho) *
+                  Nome Completo do Aluno *
                 </label>
                 <input
                   type="text"
-                  value={nomeFilho}
-                  onChange={(e) => setNomeFilho(e.target.value)}
+                  value={nomeAluno}
+                  onChange={(e) => setNomeAluno(e.target.value)}
                   placeholder="Ex: LUCAS HENRIQUE SILVA"
                   className="w-full h-11 px-3.5 rounded-xl border border-zinc-300 text-xs font-semibold uppercase text-zinc-900 bg-white focus:outline-none focus:ring-2 focus:ring-sky-500"
                 />
@@ -639,16 +642,16 @@ export default function PaginaCadastroResponsavel({
                     <label className="text-3xs font-black uppercase tracking-wider text-zinc-600">
                       Data de Nascimento *
                     </label>
-                    {idadeFilhoCalculada !== null && (
+                    {idadeAlunoCalculada !== null && (
                       <span className="text-3xs font-extrabold text-sky-800 bg-sky-100 px-2 py-0.5 rounded-md">
-                        {idadeFilhoCalculada} anos
+                        {idadeAlunoCalculada} anos
                       </span>
                     )}
                   </div>
                   <input
                     type="date"
-                    value={dataNascFilho}
-                    onChange={(e) => setDataNascFilho(e.target.value)}
+                    value={dataNascAluno}
+                    onChange={(e) => setDataNascAluno(e.target.value)}
                     className="w-full h-11 px-3.5 rounded-xl border border-zinc-300 text-xs font-semibold text-zinc-900 bg-white focus:outline-none focus:ring-2 focus:ring-sky-500"
                   />
                 </div>
@@ -661,9 +664,9 @@ export default function PaginaCadastroResponsavel({
                   <div className="grid grid-cols-2 gap-2 h-11">
                     <button
                       type="button"
-                      onClick={() => setSexoFilho("M")}
+                      onClick={() => setSexoAluno("M")}
                       className={`rounded-xl text-xs font-bold border transition-all flex items-center justify-center cursor-pointer ${
-                        sexoFilho === "M"
+                        sexoAluno === "M"
                           ? "bg-sky-600 text-white border-sky-600 shadow-2xs"
                           : "bg-white text-zinc-600 border-zinc-200 hover:bg-zinc-100"
                       }`}
@@ -672,9 +675,9 @@ export default function PaginaCadastroResponsavel({
                     </button>
                     <button
                       type="button"
-                      onClick={() => setSexoFilho("F")}
+                      onClick={() => setSexoAluno("F")}
                       className={`rounded-xl text-xs font-bold border transition-all flex items-center justify-center cursor-pointer ${
-                        sexoFilho === "F"
+                        sexoAluno === "F"
                           ? "bg-pink-600 text-white border-pink-600 shadow-2xs"
                           : "bg-white text-zinc-600 border-zinc-200 hover:bg-zinc-100"
                       }`}
@@ -685,129 +688,110 @@ export default function PaginaCadastroResponsavel({
                 </div>
               </div>
 
-              {/* CPF do Filho (opcional) */}
-              <div className="space-y-1">
-                <label className="text-3xs font-black uppercase tracking-wider text-zinc-600">
-                  CPF do Filho (opcional)
-                </label>
-                <input
-                  type="text"
-                  value={cpfFilho}
-                  onChange={(e) => setCpfFilho(formatarCpf(e.target.value))}
-                  placeholder="000.000.000-00"
-                  maxLength={14}
-                  className="w-full h-11 px-3.5 rounded-xl border border-zinc-300 text-xs font-semibold text-zinc-900 bg-white focus:outline-none focus:ring-2 focus:ring-sky-500"
-                />
-              </div>
-
-              {/* Turno Preferido */}
-              <div className="space-y-1.5 pt-1">
-                <label className="text-3xs font-black uppercase tracking-wider text-zinc-600 block">
-                  Turno em que o aluno pode participar *
-                </label>
-                <div className="grid grid-cols-3 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setTurnoFilho("Manhã")}
-                    className={`p-2.5 rounded-xl text-xs font-bold border transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                      turnoFilho === "Manhã"
-                        ? "bg-amber-500 text-white border-amber-500 shadow-2xs"
-                        : "bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-100"
-                    }`}
-                  >
-                    <Sunrise className="w-4 h-4" />
-                    <span>Manhã</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setTurnoFilho("Tarde")}
-                    className={`p-2.5 rounded-xl text-xs font-bold border transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                      turnoFilho === "Tarde"
-                        ? "bg-sky-600 text-white border-sky-600 shadow-2xs"
-                        : "bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-100"
-                    }`}
-                  >
-                    <Sun className="w-4 h-4" />
-                    <span>Tarde</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setTurnoFilho("Noite")}
-                    className={`p-2.5 rounded-xl text-xs font-bold border transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                      turnoFilho === "Noite"
-                        ? "bg-indigo-600 text-white border-indigo-600 shadow-2xs"
-                        : "bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-100"
-                    }`}
-                  >
-                    <Moon className="w-4 h-4" />
-                    <span>Noite</span>
-                  </button>
+              {/* PARTICIPAÇÃO POR DIA E TURNO ESPECÍFICO */}
+              <div className="space-y-2 pt-2 border-t border-zinc-200/60">
+                <div>
+                  <label className="text-3xs font-black uppercase tracking-wider text-zinc-700 block">
+                    Dias e turnos que o aluno frequenta no núcleo:
+                  </label>
+                  <p className="text-3xs text-zinc-500 mt-0.5">
+                    Marque os dias em que ele vai e defina se normalmente vai de manhã, à tarde ou à noite em cada dia:
+                  </p>
                 </div>
-              </div>
 
-              {/* Dias da Semana que vai para o Núcleo */}
-              <div className="space-y-1.5 pt-1">
-                <label className="text-3xs font-black uppercase tracking-wider text-zinc-600 block">
-                  Quais dias da semana o aluno pode ir? (Selecione todos que puder) *
-                </label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                  {DIAS_DISPONIVEIS.map((dia) => {
-                    const ativo = diasFilho.includes(dia);
+                <div className="space-y-2.5">
+                  {DIAS_SEMANA.map((dia) => {
+                    const estaMarcado = Boolean(diasTurnos[dia]);
+                    const turnoAtual = diasTurnos[dia] || "Manhã";
+
                     return (
-                      <button
+                      <div
                         key={dia}
-                        type="button"
-                        onClick={() => toggleDia(dia)}
-                        className={`p-2 rounded-xl text-3xs sm:text-xs font-bold border transition-all flex items-center justify-between cursor-pointer ${
-                          ativo
-                            ? "bg-emerald-50 border-emerald-500 text-emerald-950 font-black ring-1 ring-emerald-300"
-                            : "bg-white border-zinc-200 text-zinc-600 hover:bg-zinc-100"
+                        className={`p-3 rounded-2xl border-2 transition-all ${
+                          estaMarcado
+                            ? "border-emerald-400 bg-white shadow-xs"
+                            : "border-zinc-200 bg-white/70 hover:border-zinc-300"
                         }`}
                       >
-                        <span>{dia.replace("-feira", "")}</span>
-                        {ativo && <Check className="w-3.5 h-3.5 text-emerald-600" />}
-                      </button>
+                        <div className="flex items-center justify-between">
+                          <button
+                            type="button"
+                            onClick={() => toggleDia(dia)}
+                            className="flex items-center gap-2.5 cursor-pointer text-left flex-1"
+                          >
+                            <div
+                              className={`w-5 h-5 rounded-lg border-2 flex items-center justify-center transition-all ${
+                                estaMarcado
+                                  ? "bg-emerald-600 border-emerald-600 text-white"
+                                  : "border-zinc-300 bg-white"
+                              }`}
+                            >
+                              {estaMarcado && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                            </div>
+                            <span className={`text-xs font-black ${estaMarcado ? "text-zinc-900" : "text-zinc-600"}`}>
+                              {dia}
+                            </span>
+                          </button>
+
+                          {estaMarcado && (
+                            <span className="text-3xs font-extrabold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                              {turnoAtual}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Seletor de Turno específico deste dia */}
+                        {estaMarcado && (
+                          <div className="mt-2.5 pt-2 border-t border-zinc-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <span className="text-3xs font-bold text-zinc-500">
+                              Turno na {dia.replace("-feira", "")}:
+                            </span>
+                            <div className="grid grid-cols-3 gap-1.5 w-full sm:w-auto">
+                              {TURNOS.map((t) => (
+                                <button
+                                  key={t}
+                                  type="button"
+                                  onClick={() => setTurnoDoDia(dia, t)}
+                                  className={`px-3 py-1.5 rounded-lg text-3xs font-black transition-all cursor-pointer ${
+                                    turnoAtual === t
+                                      ? "bg-emerald-600 text-white shadow-2xs"
+                                      : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
+                                  }`}
+                                >
+                                  {t}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     );
                   })}
                 </div>
               </div>
 
-              {/* Observação / Saúde */}
-              <div className="space-y-1 pt-1">
-                <label className="text-3xs font-black uppercase tracking-wider text-zinc-600">
-                  Alguma observação de saúde ou detalhe? (opcional)
-                </label>
-                <input
-                  type="text"
-                  value={obsFilho}
-                  onChange={(e) => setObsFilho(e.target.value)}
-                  placeholder="Ex: Alergia, asma ou restrição física leve"
-                  className="w-full h-10 px-3.5 rounded-xl border border-zinc-300 text-xs text-zinc-900 bg-white focus:outline-none focus:ring-2 focus:ring-sky-500"
-                />
-              </div>
-
               {/* Botão de Adicionar à Lista */}
               <button
                 type="button"
-                onClick={handleAdicionarFilho}
+                onClick={handleAdicionarAluno}
                 className="w-full py-3 bg-sky-600 hover:bg-sky-700 text-white rounded-xl font-black text-xs flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer"
               >
                 <Plus className="w-4 h-4 stroke-[3]" />
-                <span>Adicionar Este Filho à Lista</span>
+                <span>Adicionar Este Aluno à Lista</span>
               </button>
             </div>
 
-            {/* Lista dos Filhos Já Adicionados */}
-            {filhos.length > 0 && (
+            {/* Lista dos Alunos Já Adicionados */}
+            {alunos.length > 0 && (
               <div className="space-y-3 pt-2">
                 <h3 className="text-xs font-black uppercase tracking-wider text-zinc-700 flex items-center gap-1.5">
                   <Users className="w-4 h-4 text-sky-600" />
-                  <span>Filhos Prontos para Inscrição ({filhos.length}):</span>
+                  <span>Alunos Prontos para Envio ({alunos.length}):</span>
                 </h3>
                 <div className="space-y-2">
-                  {filhos.map((f, index) => (
+                  {alunos.map((a, index) => (
                     <div
-                      key={f.idTemp}
+                      key={a.idTemp}
                       className="p-3.5 rounded-2xl border border-zinc-200 bg-white flex items-center justify-between gap-3 shadow-2xs"
                     >
                       <div className="space-y-1">
@@ -816,28 +800,36 @@ export default function PaginaCadastroResponsavel({
                             {index + 1}
                           </span>
                           <strong className="text-xs sm:text-sm font-black text-zinc-900">
-                            {f.nomeCompleto}
+                            {a.nomeCompleto}
                           </strong>
                           <span
                             className={`text-3xs px-2 py-0.5 rounded-md font-black ${
-                              f.sexo === "M" ? "bg-sky-100 text-sky-800" : "bg-pink-100 text-pink-800"
+                              a.sexo === "M" ? "bg-sky-100 text-sky-800" : "bg-pink-100 text-pink-800"
                             }`}
                           >
-                            {f.sexo}
+                            {a.sexo}
+                          </span>
+                          <span className="text-3xs text-zinc-400 font-medium">
+                            ({a.idade !== null ? `${a.idade} anos` : a.dataNascimento})
                           </span>
                         </div>
-                        <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-3xs text-zinc-500">
-                          <span>Nasc: {f.dataNascimento} ({f.idade !== null ? `${f.idade} anos` : "S/D"})</span>
-                          <span>• Turno: <strong>{f.turno}</strong></span>
-                          <span className="text-emerald-700 font-bold">• Dias: {f.diasSemana.map(d => d.replace("-feira", "")).join(", ")}</span>
+                        <div className="flex flex-wrap gap-1.5 pt-0.5">
+                          {a.diasParticipacao.map((dp) => (
+                            <span
+                              key={dp.dia}
+                              className="text-3xs px-2 py-0.5 rounded bg-zinc-100 text-zinc-700 font-bold"
+                            >
+                              {dp.dia.replace("-feira", "")}: <strong>{dp.turno}</strong>
+                            </span>
+                          ))}
                         </div>
                       </div>
 
                       <button
                         type="button"
-                        onClick={() => handleRemoverFilho(f.idTemp)}
+                        onClick={() => handleRemoverAluno(a.idTemp)}
                         className="p-2 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-xl transition-all cursor-pointer"
-                        title="Remover filho da lista"
+                        title="Remover aluno da lista"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -856,7 +848,7 @@ export default function PaginaCadastroResponsavel({
             </div>
           )}
 
-          {/* Botão de Envio Principal */}
+          {/* Botão de Envio Principal: "Enviar informações" */}
           <button
             type="submit"
             disabled={enviando}
@@ -865,13 +857,13 @@ export default function PaginaCadastroResponsavel({
             {enviando ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Enviando Inscrição...</span>
+                <span>Enviando informações...</span>
               </>
             ) : (
               <>
                 <Send className="w-4 h-4" />
                 <span>
-                  Finalizar Inscrição {filhos.length > 0 ? `(${filhos.length} ${filhos.length === 1 ? "filho" : "filhos"})` : ""}
+                  Enviar informações {alunos.length > 0 ? `(${alunos.length} ${alunos.length === 1 ? "aluno" : "alunos"})` : ""}
                 </span>
               </>
             )}

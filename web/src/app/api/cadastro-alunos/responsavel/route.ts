@@ -12,7 +12,7 @@ function getSupabaseClient() {
   return createClient(url, key);
 }
 
-// POST: Recebe a inscrição enviada pelo responsável (com 1 ou mais filhos)
+// POST: Recebe a inscrição enviada pelo responsável com dados do responsável primeiro e alunos simplificados
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -21,7 +21,6 @@ export async function POST(req: Request) {
       nucleoNome,
       responsavel,
       filhos,
-      aluno, // fallback caso venha no formato antigo
     } = body;
 
     // 1. Identificação do núcleo
@@ -32,7 +31,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // 2. Validações do responsável
+    // 2. Validações do responsável (Nome, Telefone e CPF)
     if (!responsavel || !responsavel.nomeCompleto || !responsavel.nomeCompleto.trim()) {
       return NextResponse.json(
         { error: "Por favor, informe o nome completo do responsável." },
@@ -52,21 +51,21 @@ export async function POST(req: Request) {
       );
     }
 
-    // 3. Normalizar lista de filhos
-    const listaFilhosRaw = Array.isArray(filhos) && filhos.length > 0 ? filhos : aluno ? [aluno] : [];
-    if (listaFilhosRaw.length === 0) {
+    // 3. Normalizar lista de alunos (filhos)
+    const listaFilhos = Array.isArray(filhos) ? filhos : [];
+    if (listaFilhos.length === 0) {
       return NextResponse.json(
-        { error: "Adicione pelo menos um filho antes de enviar a inscrição." },
+        { error: "Adicione pelo menos um aluno antes de enviar." },
         { status: 400 }
       );
     }
 
-    // Validar cada filho
-    for (let i = 0; i < listaFilhosRaw.length; i++) {
-      const f = listaFilhosRaw[i];
+    // Validar cada aluno
+    for (let i = 0; i < listaFilhos.length; i++) {
+      const f = listaFilhos[i];
       if (!f.nomeCompleto || !f.nomeCompleto.trim()) {
         return NextResponse.json(
-          { error: `Informe o nome completo do filho #${i + 1}.` },
+          { error: `Informe o nome completo do aluno #${i + 1}.` },
           { status: 400 }
         );
       }
@@ -82,28 +81,29 @@ export async function POST(req: Request) {
           { status: 400 }
         );
       }
+      if (!Array.isArray(f.diasParticipacao) || f.diasParticipacao.length === 0) {
+        return NextResponse.json(
+          { error: `Selecione pelo menos um dia de participação para ${f.nomeCompleto}.` },
+          { status: 400 }
+        );
+      }
     }
 
     const agora = new Date().toISOString();
 
-    const novosAlunosParaSalvar = listaFilhosRaw.map((f: any, idx: number) => ({
+    const novosAlunosParaSalvar = listaFilhos.map((f: any, idx: number) => ({
       idTemp: f.idTemp || `resp_${Date.now()}_${idx}_${Math.random().toString(36).substring(2, 6)}`,
       nomeCompleto: f.nomeCompleto.trim().toUpperCase(),
       dataNascimento: f.dataNascimento,
       idade: f.idade !== undefined ? f.idade : null,
       sexo: f.sexo,
-      cpf: f.cpf ? String(f.cpf).trim() : null,
-      diasSemana: Array.isArray(f.diasSemana) ? f.diasSemana : [],
-      turno: f.turno || "Tarde",
-      turmaId: f.turmaId || null,
-      turmaNome: f.turmaNome || null,
+      diasParticipacao: f.diasParticipacao, // [{ dia: "Segunda-feira", turno: "Tarde" }]
       origem: "responsavel",
       responsavel: {
         nomeCompleto: responsavel.nomeCompleto.trim(),
         cpf: responsavel.cpf.trim(),
         whatsapp: responsavel.whatsapp.trim(),
       },
-      observacoes: f.observacoes ? String(f.observacoes).trim() : null,
       cadastradoEm: agora,
     }));
 
@@ -157,18 +157,14 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       success: true,
-      totalFilhos: novosAlunosParaSalvar.length,
-      filhos: novosAlunosParaSalvar.map((f: any) => ({
-        nomeCompleto: f.nomeCompleto,
-        diasSemana: f.diasSemana,
-        turno: f.turno,
-      })),
-      message: `Inscrição de ${novosAlunosParaSalvar.length} ${novosAlunosParaSalvar.length === 1 ? "aluno" : "alunos"} realizada com sucesso!`,
+      totalAlunos: novosAlunosParaSalvar.length,
+      alunos: novosAlunosParaSalvar,
+      message: `Informações de ${novosAlunosParaSalvar.length} ${novosAlunosParaSalvar.length === 1 ? "aluno enviadas" : "alunos enviadas"} com sucesso!`,
     });
   } catch (error: any) {
     console.error("[cadastro-alunos/responsavel POST]", error);
     return NextResponse.json(
-      { error: error.message || "Erro ao salvar inscrição do responsável." },
+      { error: error.message || "Erro ao salvar informações." },
       { status: 500 }
     );
   }
