@@ -755,10 +755,10 @@ export default function PaginaCadastroResponsavel({
 
                   {/* Popover Dropdown Customizado sem Seletores Nativos */}
                   {abrirDataPicker && (
-                    <div className="absolute top-full left-0 right-0 sm:right-auto sm:w-[340px] mt-1.5 p-3.5 bg-white rounded-2xl border-2 border-sky-300 shadow-2xl z-30 space-y-3 animate-fadeIn">
+                    <div className="absolute top-full left-0 right-0 sm:right-auto sm:w-[360px] mt-1.5 p-3.5 bg-white rounded-2xl border-2 border-sky-300 shadow-2xl z-30 space-y-3 animate-fadeIn">
                       <div className="flex items-center justify-between pb-2 border-b border-zinc-100">
                         <span className="text-3xs font-black uppercase tracking-wider text-zinc-500">
-                          Selecione a data:
+                          Selecione a data de nascimento:
                         </span>
                         <button
                           type="button"
@@ -769,22 +769,22 @@ export default function PaginaCadastroResponsavel({
                         </button>
                       </div>
 
-                      <div className="grid grid-cols-3 gap-2">
-                        {/* Coluna DIA */}
-                        <div className="space-y-1">
-                          <span className="text-3xs font-black uppercase text-zinc-500 text-center block">
+                      <div className="grid grid-cols-12 gap-2">
+                        {/* Coluna DIA: Mais estreita com fonte destacada */}
+                        <div className="col-span-3 space-y-1">
+                          <span className="text-3xs font-black uppercase text-zinc-600 text-center block">
                             Dia
                           </span>
-                          <div className="h-44 overflow-y-auto space-y-1 p-1 border border-zinc-100 rounded-xl bg-zinc-50/60">
+                          <div className="h-48 overflow-y-auto space-y-1 p-1 border-2 border-zinc-200/90 rounded-xl bg-zinc-50/70 shadow-2xs">
                             {DIAS_DO_MES.map((d) => (
                               <button
                                 key={d}
                                 type="button"
                                 onClick={() => setDiaNascAluno(d)}
-                                className={`w-full py-1.5 rounded-lg text-xs font-bold transition-all ${
+                                className={`w-full py-1.5 rounded-lg text-sm font-black transition-all ${
                                   diaNascAluno === d
-                                    ? "bg-sky-600 text-white shadow-2xs font-black"
-                                    : "text-zinc-700 hover:bg-zinc-200"
+                                    ? "bg-sky-600 text-white shadow-2xs"
+                                    : "text-zinc-800 hover:bg-zinc-200"
                                 }`}
                               >
                                 {d}
@@ -793,21 +793,21 @@ export default function PaginaCadastroResponsavel({
                           </div>
                         </div>
 
-                        {/* Coluna MÊS */}
-                        <div className="space-y-1">
-                          <span className="text-3xs font-black uppercase text-zinc-500 text-center block">
+                        {/* Coluna MÊS: Mais larga com fonte aumentada */}
+                        <div className="col-span-5 space-y-1">
+                          <span className="text-3xs font-black uppercase text-zinc-600 text-center block">
                             Mês
                           </span>
-                          <div className="h-44 overflow-y-auto space-y-1 p-1 border border-zinc-100 rounded-xl bg-zinc-50/60">
+                          <div className="h-48 overflow-y-auto space-y-1 p-1 border-2 border-zinc-200/90 rounded-xl bg-zinc-50/70 shadow-2xs">
                             {MESES_DO_ANO.map((m) => (
                               <button
                                 key={m.valor}
                                 type="button"
                                 onClick={() => setMesNascAluno(m.valor)}
-                                className={`w-full py-1.5 px-0.5 rounded-lg text-xs font-bold transition-all text-center truncate ${
+                                className={`w-full py-1.5 px-1 rounded-lg text-xs sm:text-sm font-bold transition-all text-center truncate ${
                                   mesNascAluno === m.valor
                                     ? "bg-sky-600 text-white shadow-2xs font-black"
-                                    : "text-zinc-700 hover:bg-zinc-200"
+                                    : "text-zinc-800 hover:bg-zinc-200"
                                 }`}
                               >
                                 {m.rotulo.split(" - ")[1]}
@@ -816,21 +816,21 @@ export default function PaginaCadastroResponsavel({
                           </div>
                         </div>
 
-                        {/* Coluna ANO (2026 para trás) */}
-                        <div className="space-y-1">
-                          <span className="text-3xs font-black uppercase text-zinc-500 text-center block">
+                        {/* Coluna ANO: Proporcional com fonte aumentada */}
+                        <div className="col-span-4 space-y-1">
+                          <span className="text-3xs font-black uppercase text-zinc-600 text-center block">
                             Ano
                           </span>
-                          <div className="h-44 overflow-y-auto space-y-1 p-1 border border-zinc-100 rounded-xl bg-zinc-50/60">
+                          <div className="h-48 overflow-y-auto space-y-1 p-1 border-2 border-zinc-200/90 rounded-xl bg-zinc-50/70 shadow-2xs">
                             {ANOS_NASCIMENTO.map((a) => (
                               <button
                                 key={a}
                                 type="button"
                                 onClick={() => setAnoNascAluno(a)}
-                                className={`w-full py-1.5 rounded-lg text-xs font-bold transition-all ${
+                                className={`w-full py-1.5 rounded-lg text-xs sm:text-sm font-bold transition-all ${
                                   anoNascAluno === a
                                     ? "bg-sky-600 text-white shadow-2xs font-black"
-                                    : "text-zinc-700 hover:bg-zinc-200"
+                                    : "text-zinc-800 hover:bg-zinc-200"
                                 }`}
                               >
                                 {a}
