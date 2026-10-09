@@ -46,6 +46,25 @@ const DIAS_SEMANA = [
 const TURNOS: TurnoOpcao[] = ["Manhã", "Tarde", "Noite", "Não sei"];
 const DIA_NAO_SEI = "Não sei informar os dias da semana";
 
+const DIAS_DO_MES = Array.from({ length: 31 }, (_, i) => String(i + 1).padStart(2, "0"));
+
+const MESES_DO_ANO = [
+  { valor: "01", rotulo: "01 - Janeiro" },
+  { valor: "02", rotulo: "02 - Fevereiro" },
+  { valor: "03", rotulo: "03 - Março" },
+  { valor: "04", rotulo: "04 - Abril" },
+  { valor: "05", rotulo: "05 - Maio" },
+  { valor: "06", rotulo: "06 - Junho" },
+  { valor: "07", rotulo: "07 - Julho" },
+  { valor: "08", rotulo: "08 - Agosto" },
+  { valor: "09", rotulo: "09 - Setembro" },
+  { valor: "10", rotulo: "10 - Outubro" },
+  { valor: "11", rotulo: "11 - Novembro" },
+  { valor: "12", rotulo: "12 - Dezembro" },
+];
+
+const ANOS_NASCIMENTO = Array.from({ length: 47 }, (_, i) => String(2026 - i));
+
 function calcularIdade(dataNasc: string): number | null {
   if (!dataNasc) return null;
   const nasc = new Date(dataNasc);
@@ -101,8 +120,15 @@ export default function PaginaCadastroResponsavel({
 
   // 3. CAMPOS DO ALUNO EM DIGITAÇÃO
   const [nomeAluno, setNomeAluno] = useState("");
-  const [dataNascAluno, setDataNascAluno] = useState("");
+  const [diaNascAluno, setDiaNascAluno] = useState("");
+  const [mesNascAluno, setMesNascAluno] = useState("");
+  const [anoNascAluno, setAnoNascAluno] = useState("");
   const [sexoAluno, setSexoAluno] = useState<"M" | "F">("M");
+
+  const dataNascAluno = useMemo(() => {
+    if (!diaNascAluno || !mesNascAluno || !anoNascAluno) return "";
+    return `${anoNascAluno}-${mesNascAluno.padStart(2, "0")}-${diaNascAluno.padStart(2, "0")}`;
+  }, [diaNascAluno, mesNascAluno, anoNascAluno]);
 
   // Dias e turnos específicos de cada dia para este aluno
   // Ex: { "Segunda-feira": "Manhã", "Quarta-feira": "Não sei", "Não sei informar os dias da semana": "Manhã" }
@@ -195,8 +221,8 @@ export default function PaginaCadastroResponsavel({
       return;
     }
 
-    if (!dataNascAluno) {
-      setErroAluno("Informe a data de nascimento do aluno.");
+    if (!diaNascAluno || !mesNascAluno || !anoNascAluno) {
+      setErroAluno("Por favor, selecione o dia, mês e ano de nascimento do aluno.");
       return;
     }
 
@@ -231,7 +257,9 @@ export default function PaginaCadastroResponsavel({
 
     // Limpar campos do aluno para permitir adicionar o próximo
     setNomeAluno("");
-    setDataNascAluno("");
+    setDiaNascAluno("");
+    setMesNascAluno("");
+    setAnoNascAluno("");
     setDiasTurnos({});
   }
 
@@ -263,34 +291,52 @@ export default function PaginaCadastroResponsavel({
       return;
     }
 
-    // Se o pai preencheu um aluno e não clicou em "Adicionar", incluir automaticamente
+    // Se o responsável preencheu dados de um aluno no formulário (mesmo sem ter clicado em "Adicionar"), salvar e incluir
     let listaFinalAlunos = [...alunos];
-    if (listaFinalAlunos.length === 0 && nomeAluno.trim() && dataNascAluno) {
-      const diasKeys = Object.keys(diasTurnos);
-      if (diasKeys.length > 0) {
-        const diaSemTurno = diasKeys.find((dia) => !diasTurnos[dia]);
-        if (diaSemTurno) {
-          setErroEnvio(`Selecione o turno (ou marque 'Não sei') para: ${diaSemTurno}.`);
-          return;
-        }
+    const temDadosDigitados =
+      Boolean(nomeAluno.trim()) ||
+      Boolean(diaNascAluno || mesNascAluno || anoNascAluno) ||
+      Object.keys(diasTurnos).length > 0;
 
-        listaFinalAlunos.push({
-          idTemp: `aluno_${Date.now()}`,
-          nomeCompleto: nomeAluno.trim().toUpperCase(),
-          dataNascimento: dataNascAluno,
-          idade: idadeAlunoCalculada,
-          sexo: sexoAluno,
-          diasParticipacao: diasKeys.map((dia) => ({
-            dia,
-            turno: diasTurnos[dia] as TurnoOpcao,
-          })),
-        });
-        setAlunos(listaFinalAlunos);
+    if (temDadosDigitados) {
+      const nomeLimpo = nomeAluno.trim().toUpperCase();
+      if (!nomeLimpo) {
+        setErroEnvio("Por favor, preencha o nome completo do aluno.");
+        return;
       }
+
+      if (!diaNascAluno || !mesNascAluno || !anoNascAluno) {
+        setErroEnvio("Por favor, selecione o dia, mês e ano de nascimento do aluno.");
+        return;
+      }
+
+      const diasKeys = Object.keys(diasTurnos);
+      if (diasKeys.length === 0) {
+        setErroEnvio("Selecione os dias em que o aluno vai para o núcleo ou marque 'Não sei informar os dias da semana'.");
+        return;
+      }
+
+      const diaSemTurno = diasKeys.find((dia) => !diasTurnos[dia]);
+      if (diaSemTurno) {
+        setErroEnvio(`Selecione o turno (ou marque 'Não sei') para: ${diaSemTurno}.`);
+        return;
+      }
+
+      listaFinalAlunos.push({
+        idTemp: `aluno_${Date.now()}`,
+        nomeCompleto: nomeLimpo,
+        dataNascimento: dataNascAluno,
+        idade: idadeAlunoCalculada,
+        sexo: sexoAluno,
+        diasParticipacao: diasKeys.map((dia) => ({
+          dia,
+          turno: diasTurnos[dia] as TurnoOpcao,
+        })),
+      });
     }
 
     if (listaFinalAlunos.length === 0) {
-      setErroEnvio("Adicione pelo menos um aluno na lista antes de enviar as informações.");
+      setErroEnvio("Por favor, preencha os dados do aluno antes de enviar as informações.");
       return;
     }
 
@@ -374,7 +420,10 @@ export default function PaginaCadastroResponsavel({
     setCpfResponsavel("");
     setAlunos([]);
     setNomeAluno("");
-    setDataNascAluno("");
+    setDiaNascAluno("");
+    setMesNascAluno("");
+    setAnoNascAluno("");
+    setDiasTurnos({});
     setSucesso(false);
     setSucessoDados(null);
   }
@@ -658,7 +707,7 @@ export default function PaginaCadastroResponsavel({
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Data de Nascimento */}
+                {/* Data de Nascimento com 3 seletores */}
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
                     <label className="text-3xs font-black uppercase tracking-wider text-zinc-600">
@@ -670,12 +719,49 @@ export default function PaginaCadastroResponsavel({
                       </span>
                     )}
                   </div>
-                  <input
-                    type="date"
-                    value={dataNascAluno}
-                    onChange={(e) => setDataNascAluno(e.target.value)}
-                    className="w-full h-11 px-3.5 rounded-xl border border-zinc-300 text-xs font-semibold text-zinc-900 bg-white focus:outline-none focus:ring-2 focus:ring-sky-500"
-                  />
+                  <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
+                    {/* Dia */}
+                    <select
+                      value={diaNascAluno}
+                      onChange={(e) => setDiaNascAluno(e.target.value)}
+                      className="h-11 px-2 rounded-xl border border-zinc-300 text-xs font-semibold text-zinc-900 bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 cursor-pointer"
+                    >
+                      <option value="">Dia</option>
+                      {DIAS_DO_MES.map((d) => (
+                        <option key={d} value={d}>
+                          {d}
+                        </option>
+                      ))}
+                    </select>
+
+                    {/* Mês */}
+                    <select
+                      value={mesNascAluno}
+                      onChange={(e) => setMesNascAluno(e.target.value)}
+                      className="h-11 px-2 rounded-xl border border-zinc-300 text-xs font-semibold text-zinc-900 bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 cursor-pointer"
+                    >
+                      <option value="">Mês</option>
+                      {MESES_DO_ANO.map((m) => (
+                        <option key={m.valor} value={m.valor}>
+                          {m.rotulo}
+                        </option>
+                      ))}
+                    </select>
+
+                    {/* Ano: 2026 para trás */}
+                    <select
+                      value={anoNascAluno}
+                      onChange={(e) => setAnoNascAluno(e.target.value)}
+                      className="h-11 px-2 rounded-xl border border-zinc-300 text-xs font-semibold text-zinc-900 bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 cursor-pointer"
+                    >
+                      <option value="">Ano</option>
+                      {ANOS_NASCIMENTO.map((a) => (
+                        <option key={a} value={a}>
+                          {a}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
 
                 {/* Sexo */}
