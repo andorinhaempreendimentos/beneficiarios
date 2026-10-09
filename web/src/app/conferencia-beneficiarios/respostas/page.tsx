@@ -172,9 +172,15 @@ export default function RespostasConferenciaBeneficiariosPage() {
 
   // Copiar link individual
   const copiarLinkIndividual = (nucleo: NucleoItem) => {
-    const url = `${BASE_URL}/conferencia-beneficiarios/${nucleo.id}`;
+    const isSemAlunos = !nucleo.temAlunosPreExistentes;
+    const url = isSemAlunos
+      ? `${BASE_URL}/cadastro-alunos/${nucleo.id}`
+      : `${BASE_URL}/conferencia-beneficiarios/${nucleo.id}`;
     const primeiroNome = nucleo.professorNome?.trim().split(" ")[0] || "Professor";
-    const texto = `Olá Professor(a) ${primeiroNome}!\n\nSegue o link exclusivo para a conferência e alocação dos alunos do núcleo *${nucleo.identificacao}*:\n\n${url}\n\nPor favor, acerte as quantidades e distribua os alunos nas turmas oficiais. Obrigado!`;
+    
+    const texto = isSemAlunos
+      ? `Olá Professor(a) ${primeiroNome}!\n\nSegue o link exclusivo para o cadastro dos alunos do núcleo *${nucleo.identificacao}*:\n\n${url}\n\nPor favor, acesse para registrar os alunos informando nome, data de nascimento e turma. Obrigado!`
+      : `Olá Professor(a) ${primeiroNome}!\n\nSegue o link exclusivo para a conferência e alocação dos alunos do núcleo *${nucleo.identificacao}*:\n\n${url}\n\nPor favor, confira as quantidades e distribua os alunos nas turmas oficiais. Obrigado!`;
 
     navigator.clipboard.writeText(texto);
     setCopiadoId(nucleo.id);
@@ -207,13 +213,16 @@ export default function RespostasConferenciaBeneficiariosPage() {
       return;
     }
 
-    let texto = `📋 *LINKS DE CONFERÊNCIA DE BENEFICIÁRIOS - ESCOLINHAS*\n\n`;
+    let texto = `📋 *LINKS DE CONFERÊNCIA E CADASTRO DE ALUNOS*\n\n`;
 
     nucleosFiltrados.forEach((n, idx) => {
-      const url = `${BASE_URL}/conferencia-beneficiarios/${n.id}`;
+      const url = !n.temAlunosPreExistentes
+        ? `${BASE_URL}/cadastro-alunos/${n.id}`
+        : `${BASE_URL}/conferencia-beneficiarios/${n.id}`;
       const primeiroNome = n.professorNome?.trim().split(" ")[0] || "Professor";
+      const tipo = !n.temAlunosPreExistentes ? "Cadastro" : "Conferência";
 
-      texto += `${idx + 1}. *${n.identificacao}* (${primeiroNome})\n${url}\n\n`;
+      texto += `${idx + 1}. *${n.identificacao}* (${primeiroNome}) [${tipo}]\n${url}\n\n`;
     });
 
     navigator.clipboard.writeText(texto);
@@ -516,7 +525,7 @@ export default function RespostasConferenciaBeneficiariosPage() {
                         >
                           {n.temAlunosPreExistentes
                             ? `Cenário A (${n.totalAlunosSistema} alunos)`
-                            : "Cenário B (Sem alunos)"}
+                            : "Cadastro de Alunos (0 alunos)"}
                         </span>
                         <h3 className="text-base font-black text-zinc-900 mt-1">
                           {n.identificacao}
@@ -590,7 +599,7 @@ export default function RespostasConferenciaBeneficiariosPage() {
                       </button>
 
                       <Link
-                        href={`/conferencia-beneficiarios/${n.id}`}
+                        href={!n.temAlunosPreExistentes ? `/cadastro-alunos/${n.id}` : `/conferencia-beneficiarios/${n.id}`}
                         target="_blank"
                         className="h-9 px-3 rounded-xl border border-zinc-300 hover:bg-zinc-50 text-zinc-700 text-xs font-bold flex items-center justify-center gap-1.5 transition-all"
                       >
