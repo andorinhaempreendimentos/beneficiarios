@@ -12,6 +12,7 @@ const PUBLIC_PATHS = [
   "/r",
   "/conferencia-professores",
   "/conferencia-beneficiarios",
+  "/cadastro-alunos",
 ];
 
 function isPublic(pathname: string): boolean {
