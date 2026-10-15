@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   Box,
   BookOpen,
@@ -25,6 +25,7 @@ import {
   Menu,
   MessageSquare,
   Package,
+  Search,
   Settings,
   ShieldCheck,
   AlertCircle,
@@ -41,6 +42,22 @@ import { Logo } from "@/components/ui/Logo";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useDicionario } from "@/components/providers/DictionaryProvider";
 
+interface SearchableNavItem {
+  href: string;
+  label: string;
+  group: string;
+  icon: React.ElementType;
+  keywords?: string[];
+}
+
+function normalizeText(text: string) {
+  return text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+}
+
 export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
@@ -49,12 +66,96 @@ export function Sidebar() {
   const isCoordenador = Boolean((user as any)?.isCoordenador);
   const isFuncionario = !isCoordenador && (user?.isProfessor || user?.tipo === "funcionario" || pathname.startsWith("/professor"));
 
-
   if (isFuncionario) {
     return null;
   }
   const [open, setOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const { config } = useTheme();
+
+  const searchableItems = useMemo<SearchableNavItem[]>(() => {
+    if (isCoordenador) {
+      return [
+        { href: "/coordenador", label: "Meu Painel", group: "Painel", icon: UserCog, keywords: ["inicio", "dashboard"] },
+        { href: "/coordenador/nucleos", label: t("local", "Núcleo", true), group: "Operacional", icon: Building2, keywords: ["locais", "polos", "unidades", "sedes"] },
+        { href: "/coordenador/turmas", label: t("turma", "Turma", true), group: "Operacional", icon: GraduationCap, keywords: ["classes", "salas", "grupos"] },
+        { href: "/coordenador/supervisoes", label: "Supervisões", group: "Gestão", icon: ClipboardCheck, keywords: ["visitas", "acompanhamento", "vistorias"] },
+        { href: "/coordenador/pendencias-gerais", label: "Pendências", group: "Gestão", icon: AlertCircle, keywords: ["alertas", "avisos", "problemas"] },
+        { href: "/coordenador/estoque", label: "Estoque", group: "Patrimônio", icon: Package, keywords: ["materiais", "itens", "patrimonio", "equipamentos"] },
+        { href: "/pesquisas", label: "Pesquisas", group: "Pesquisas", icon: ClipboardList, keywords: ["questionarios", "formularios", "surveys"] },
+        { href: "/conferencia-professores/respostas", label: "Conf. Horários", group: "Gestão", icon: CalendarCheck, keywords: ["ponto", "horarios", "frequencia", "professores"] },
+        { href: "/conferencia-beneficiarios/respostas", label: "Conf. Beneficiários", group: "Gestão", icon: Users, keywords: ["alunos", "presenca", "frequencia", "beneficiarios"] },
+      ];
+    }
+
+    const turmaSingular = t("turma", "Turma");
+    const turmaPlural = t("turma", "Turma", true);
+    const beneficiarioSingular = t("beneficiario", "Beneficiário");
+    const beneficiarioPlural = t("beneficiario", "Beneficiário", true);
+
+    return [
+      { href: "/", label: "Painel", group: "Geral", icon: LayoutDashboard, keywords: ["dashboard", "inicio", "estatisticas"] },
+
+      // Projeto
+      { href: "/objetos", label: t("objeto", "Objeto", true), group: "Projeto", icon: FolderKanban, keywords: ["projetos", "contratos", "metas"] },
+      { href: "/concedentes", label: "Concedentes", group: "Projeto", icon: Landmark, keywords: ["parceiros", "financiadores", "orgaos"] },
+      { href: "/organizacoes", label: t("organizacao", "Organização", true), group: "Projeto", icon: Building2, keywords: ["instituicoes", "entidades", "ongs"] },
+
+      // Operacional
+      { href: "/nucleos", label: t("local", "Núcleo", true), group: "Operacional", icon: Building2, keywords: ["locais", "polos", "unidades", "sedes"] },
+      { href: "/turmas", label: `Todas as ${turmaPlural.toLowerCase()}`, group: `Operacional > ${turmaPlural}`, icon: GraduationCap, keywords: ["turmas", "classes", "salas", "listar"] },
+      { href: "/turmas/novo", label: `Nova ${turmaSingular.toLowerCase()}`, group: `Operacional > ${turmaPlural}`, icon: GraduationCap, keywords: ["cadastrar", "criar", "adicionar", "turma"] },
+      { href: "/faixas-etarias", label: "Faixas Etárias", group: `Operacional > ${turmaPlural}`, icon: GraduationCap, keywords: ["idade", "grupos", "etarias"] },
+      { href: "/atividades", label: t("atividade", "Atividade", true), group: "Operacional", icon: Dumbbell, keywords: ["oficinas", "modalidades", "esportes"] },
+      { href: "/atividades-complementares", label: "Especiais", group: "Operacional", icon: CalendarCheck, keywords: ["complementares", "eventos", "atividades especiais"] },
+      { href: "/aulas", label: "Aulas", group: "Operacional", icon: BookOpen, keywords: ["frequencia", "chamada", "planejamento", "licoes"] },
+
+      // Beneficiários
+      { href: "/beneficiarios", label: beneficiarioPlural, group: "Beneficiários", icon: Users, keywords: ["alunos", "atendidos", "participantes", "listar"] },
+      { href: "/inscricoes", label: "Inscrições", group: "Beneficiários", icon: ClipboardList, keywords: ["matriculas", "candidatos", "pedidos", "solicitacoes"] },
+      { href: "/beneficiarios/novo", label: `Novo ${beneficiarioSingular.toLowerCase()}`, group: "Beneficiários", icon: UserPlus, keywords: ["cadastrar", "criar", "matricular", "adicionar"] },
+
+      // Pessoal
+      { href: "/funcionarios", label: "Funcionários", group: "Pessoal", icon: UsersRound, keywords: ["colaboradores", "equipe", "professores", "rh"] },
+      { href: "/funcionarios/funcoes", label: "Funções", group: "Pessoal", icon: ShieldCheck, keywords: ["cargos", "papeis", "permissoes"] },
+      { href: "/coordenadores", label: "Coordenadores", group: "Pessoal", icon: UserCog, keywords: ["supervisores", "lideres", "gestores"] },
+
+      // Patrimônio
+      { href: "/equipamentos", label: "Equipamentos", group: "Patrimônio", icon: Box, keywords: ["bens", "materiais", "patrimonio", "itens"] },
+      { href: "/estoque", label: "Estoque", group: "Patrimônio", icon: Package, keywords: ["almoxarifado", "suprimentos", "produtos", "saldo"] },
+
+      // Gestão
+      { href: "/supervisoes", label: "Supervisões", group: "Gestão", icon: ClipboardCheck, keywords: ["visitas", "acompanhamento", "auditoria"] },
+      { href: "/pendencias-gerais", label: "Pendências", group: "Gestão", icon: AlertCircle, keywords: ["alertas", "problemas", "inconsistencias", "erros"] },
+      { href: "/relatorios", label: "Relatórios", group: "Gestão", icon: FileBarChart, keywords: ["prestacao", "contas", "dados", "estatisticas", "exportar", "frequencia"] },
+      { href: "/conferencia-professores/respostas", label: "Conf. Horários", group: "Gestão", icon: CalendarCheck, keywords: ["ponto", "horarios", "frequencia", "professores"] },
+      { href: "/conferencia-beneficiarios/respostas", label: "Conf. Beneficiários", group: "Gestão", icon: Users, keywords: ["alunos", "presenca", "chamada", "beneficiarios"] },
+
+      // Pesquisas
+      { href: "/pesquisas", label: "Pesquisas", group: "Pesquisas", icon: ClipboardList, keywords: ["formularios", "questionarios", "surveys"] },
+      { href: "/pesquisas/fluxos", label: "Fluxos", group: "Pesquisas", icon: GitFork, keywords: ["etapas", "processos"] },
+      { href: "/pesquisas/relatorios", label: "Relatórios", group: "Pesquisas", icon: FileBarChart, keywords: ["resultados", "graficos", "respostas"] },
+      { href: "/pesquisas/territorial", label: "Territorial", group: "Pesquisas", icon: MapPin, keywords: ["mapa", "geografia", "regiao"] },
+      { href: "/pesquisas/objetos", label: "Objetos", group: "Pesquisas", icon: FolderKanban, keywords: ["projetos", "vinculos"] },
+
+      // Sistema
+      { href: "/usuarios", label: "Usuários", group: "Sistema", icon: ShieldCheck, keywords: ["acessos", "contas", "logins", "senhas"] },
+      { href: "/configuracoes/whatsapp", label: "WhatsApp", group: "Sistema", icon: MessageSquare, keywords: ["mensagens", "notificacoes", "zap"] },
+      { href: "/configuracoes", label: "Configurações", group: "Sistema", icon: Settings, keywords: ["ajustes", "sistema", "parametros", "tema"] },
+    ];
+  }, [isCoordenador, t]);
+
+  const filteredNavItems = useMemo(() => {
+    const query = normalizeText(searchQuery);
+    if (!query) return [];
+    return searchableItems.filter((item) => {
+      const matchLabel = normalizeText(item.label).includes(query);
+      const matchGroup = normalizeText(item.group).includes(query);
+      const matchHref = normalizeText(item.href).includes(query);
+      const matchKeywords = item.keywords?.some((kw) => normalizeText(kw).includes(query));
+      return matchLabel || matchGroup || matchHref || matchKeywords;
+    });
+  }, [searchQuery, searchableItems]);
 
   // grupos de seção — accordion: apenas um aberto por vez
   const projetoAtivo = ["/objetos", "/concedentes", "/organizacoes"].some((p) => pathname.startsWith(p));
@@ -220,8 +321,89 @@ export function Sidebar() {
           )}
         </div>
 
+        {/* Campo de Pesquisa */}
+        <div className="border-b border-zinc-200 dark:border-zinc-800 px-3 py-2.5">
+          <div className="relative flex items-center">
+            <Search className="pointer-events-none absolute left-2.5 h-4 w-4 text-zinc-400" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Escape") {
+                  setSearchQuery("");
+                }
+              }}
+              placeholder="Pesquisar item ou subitem..."
+              className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/60 pl-8 pr-7 py-1.5 text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:border-sky-500 focus:bg-white dark:focus:bg-zinc-800 focus:outline-none focus:ring-1 focus:ring-sky-500 transition-all"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                className="absolute right-2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 p-0.5 rounded"
+                aria-label="Limpar pesquisa"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
+          </div>
+        </div>
+
         <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-4">
-          {isFuncionario ? (
+          {searchQuery.trim() ? (
+            <div className="space-y-1">
+              <div className="px-2 pb-1 text-[11px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+                {filteredNavItems.length === 1
+                  ? "1 resultado encontrado"
+                  : `${filteredNavItems.length} resultados encontrados`}
+              </div>
+
+              {filteredNavItems.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-8 px-3 text-center text-zinc-400 dark:text-zinc-500">
+                  <AlertCircle className="h-6 w-6 mb-2 stroke-1 opacity-60 text-zinc-400" />
+                  <p className="text-xs font-medium text-zinc-600 dark:text-zinc-400">
+                    Nenhum item encontrado
+                  </p>
+                  <p className="text-[11px] mt-0.5 text-zinc-400 dark:text-zinc-500">
+                    Tente buscar por outro termo
+                  </p>
+                </div>
+              ) : (
+                filteredNavItems.map((item) => {
+                  const active =
+                    item.href === "/"
+                      ? pathname === "/"
+                      : pathname === item.href || pathname.startsWith(item.href + "/");
+                  const ItemIcon = item.icon;
+                  return (
+                    <Link
+                      key={item.href + item.label}
+                      href={item.href}
+                      onClick={() => {
+                        setSearchQuery("");
+                        setOpen(false);
+                      }}
+                      className={cn(
+                        "group flex flex-col gap-0.5 rounded-lg px-3 py-2 text-sm transition-all",
+                        active
+                          ? "bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 font-bold"
+                          : "text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800/80 hover:text-zinc-900 dark:hover:text-zinc-100"
+                      )}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <ItemIcon className="h-4 w-4 shrink-0 text-zinc-500 group-hover:text-sky-600 dark:text-zinc-400 dark:group-hover:text-sky-400 transition-colors" />
+                        <span className="truncate flex-1 font-medium">{item.label}</span>
+                      </div>
+                      <span className="text-[10px] text-zinc-400 dark:text-zinc-500 pl-6.5 truncate">
+                        {item.group}
+                      </span>
+                    </Link>
+                  );
+                })
+              )}
+            </div>
+          ) : isFuncionario ? (
             <>
               {navLink("/professor", "Área do Professor", CalendarCheck)}
               {navLink("/professor/ponto", "Meu Ponto", Clock)}
