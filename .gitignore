@@ -1,16 +1,95 @@
-node_modules
-.next
+# ==========================================
+# 1. Dependências e Módulos
+# ==========================================
+node_modules/
+*/node_modules/
+/.pnp
+.pnp.*
+
+# ==========================================
+# 2. Builds, Saídas e Caches
+# ==========================================
+.next/
+*/.next/
+out/
+build/
+dist/
+*/dist/
+.turbo/
+.vercel/
+*/.vercel/
+*.tsbuildinfo
+next-env.d.ts
+
+# ==========================================
+# 3. Segredos, Credenciais e Ambiente
+# ==========================================
 .env
-.env.local
+.env*.local
 .env.production
-data/auth_info
-dist
+.env.development
+*.env
+data/auth_info/
+*.pem
+*.key
+*.cert
+
+# ==========================================
+# 4. Tráfego de Rede e Capturas de Debug (HAR)
+# ==========================================
+*.har
+
+# ==========================================
+# 5. Logs, Saídas de Diagnóstico e Rascunhos
+# ==========================================
 *.log
-.serena/
-.claude/
-web/.claude/
-supabase/.temp/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*_output.txt
+docx_text.txt
+
+# ==========================================
+# 6. Tipos de Arquivo Ignorados (HTML, MD, Mídias, Compactados)
+# ==========================================
+*.html
+*.md
+*.zip
+*.tar.gz
+*.rar
+*.mp4
+
+# ==========================================
+# 7. Dados Brutos, Documentos Pessoais e Backups (LGPD)
+# ==========================================
 backup/
 backups/
 scratch/
 informacoes/
+dadosiniciais/
+modelos de documentos/
+relatorio geral de presta*/
+
+# ==========================================
+# 8. Bancos e Ferramentas de Backend
+# ==========================================
+supabase/.temp/
+
+# ==========================================
+# 9. Ferramentas Locais de IA e Editores
+# ==========================================
+.serena/
+.claude/
+*/.claude/
+.rtk/
+.vscode/
+.idea/
+
+# ==========================================
+# 10. Sistema Operacional
+# ==========================================
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
