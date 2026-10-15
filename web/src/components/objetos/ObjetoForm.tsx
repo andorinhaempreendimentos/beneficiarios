@@ -11,8 +11,8 @@ import {
   type ConcedenteApi,
   type ObjetoCargoPrevistoApi,
 } from "@/lib/api/services";
-import { Plus, Trash2, Building2, Edit2 } from "lucide-react";
-import { ModalConcedenteForm } from "@/components/concedentes/ModalConcedenteForm";
+import Link from "next/link";
+import { Plus, Trash2, ExternalLink } from "lucide-react";
 
 const objetoSchema = z.object({
   nome: z.string().min(2, "Nome deve ter no mínimo 2 caracteres"),
@@ -34,10 +34,6 @@ export function ObjetoForm({ objeto: o, backHref }: ObjetoFormProps) {
   const [modalidadeParceria, setModalidadeParceria] = useState<string>(o?.modalidadeParceria ?? "termo_colaboracao");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
-  // Modal de Concedente
-  const [modalConcedenteAberto, setModalConcedenteAberto] = useState(false);
-  const [concedenteParaEditar, setConcedenteParaEditar] = useState<ConcedenteApi | null>(null);
-
   // Quadro dinâmico de cargos previstos
   const [cargos, setCargos] = useState<Partial<ObjetoCargoPrevistoApi>[]>(
     o?.cargosPrevistos && o.cargosPrevistos.length > 0
@@ -56,27 +52,7 @@ export function ObjetoForm({ objeto: o, backHref }: ObjetoFormProps) {
         setConcedenteId(res.data[0].id);
       }
     });
-  }, [concedenteId, o?.id]);
-
-  function handleAbrirNovoConcedente() {
-    setConcedenteParaEditar(null);
-    setModalConcedenteAberto(true);
-  }
-
-  function handleAbrirEditarConcedente() {
-    const encontrado = concedentes.find((c) => c.id === concedenteId);
-    if (encontrado) {
-      setConcedenteParaEditar(encontrado);
-      setModalConcedenteAberto(true);
-    }
-  }
-
-  function handleConcedenteSalvo(novoConcedente: ConcedenteApi) {
-    concedentesApi.list({ limit: 100 }).then((res) => {
-      setConcedentes(res.data);
-      setConcedenteId(novoConcedente.id);
-    });
-  }
+  }, [o?.id]);
 
   function handleAddCargo() {
     setCargos((prev) => [
@@ -233,28 +209,16 @@ export function ObjetoForm({ objeto: o, backHref }: ObjetoFormProps) {
                   </option>
                 ))}
               </Select>
-              <div className="flex items-center gap-2 shrink-0">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={handleAbrirNovoConcedente}
-                  title="Cadastrar Novo Órgão Concedente"
-                >
-                  <Plus className="h-4 w-4 mr-1 text-sky-600" /> Novo Concedente
-                </Button>
-                {concedenteId && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={handleAbrirEditarConcedente}
-                    title="Editar Órgão Concedente Selecionado"
-                  >
-                    <Edit2 className="h-4 w-4 text-zinc-600 mr-1" /> Editar
-                  </Button>
-                )}
-              </div>
+              <Link
+                href="/concedentes"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs font-semibold text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 transition-colors shrink-0 shadow-2xs"
+                title="Abrir área de Órgãos Concedentes em nova aba"
+              >
+                <ExternalLink className="h-3.5 w-3.5 text-zinc-500" />
+                Ver Concedentes
+              </Link>
             </div>
           </Field>
           <Field label="Nº do Processo Administrativo">
@@ -468,13 +432,6 @@ export function ObjetoForm({ objeto: o, backHref }: ObjetoFormProps) {
           {loading ? "Salvando..." : o ? "Salvar Alterações" : "Cadastrar Objeto"}
         </Button>
       </div>
-
-      <ModalConcedenteForm
-        isOpen={modalConcedenteAberto}
-        onClose={() => setModalConcedenteAberto(false)}
-        onSuccess={handleConcedenteSalvo}
-        concedenteParaEditar={concedenteParaEditar}
-      />
     </form>
   );
 }
