@@ -241,6 +241,15 @@ export type TipoDuracao = "pontual" | "periodo";
 
 export type StatusObjeto = "ativo" | "encerrado" | "planejado";
 
+export interface ObjetoMeta {
+  id: string;
+  objetoId: string;
+  entidadeId: string;
+  titulo: string;
+  unidade: string;
+  valorEsperado: number;
+}
+
 export interface Objeto {
   id: string;
   nome: string;
@@ -258,6 +267,7 @@ export interface Objeto {
   termoSessao?: string;
   termoResponsavel?: string;
   termoParticipante?: string;
+  metas?: ObjetoMeta[];
   criadoEm: string;
 }
 

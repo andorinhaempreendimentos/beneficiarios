@@ -89,6 +89,97 @@ export default async function DetalhesObjetoPage({ params }: { params: Promise<{
           </CardBody>
         </Card>
       )}
+
+      {/* Metas Pactuadas */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <h3 className="text-sm font-medium text-zinc-700">Metas Pactuadas no Plano de Trabalho</h3>
+          <span className="text-xs text-zinc-500">{o.metas?.length ?? 0} meta(s) pactuada(s)</span>
+        </CardHeader>
+        <CardBody className="p-0">
+          {o.metas && o.metas.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-zinc-50 text-xs font-semibold uppercase text-zinc-500">
+                  <tr>
+                    <th className="px-4 py-2.5">Dimensão / Entidade</th>
+                    <th className="px-4 py-2.5">Indicador / Descrição</th>
+                    <th className="px-4 py-2.5">Unidade de Medida</th>
+                    <th className="px-4 py-2.5 text-right">Meta Prevista</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-200">
+                  {o.metas.map((m) => (
+                    <tr key={m.id} className="hover:bg-zinc-50/50">
+                      <td className="px-4 py-2.5 text-xs font-medium text-zinc-600">
+                        {m.entidadeId === "participantes" ? "Beneficiários / Alunos" :
+                         m.entidadeId === "locais" ? "Locais / Núcleos / Polos" :
+                         m.entidadeId === "sessoes" ? "Sessões / Aulas / Treinos" :
+                         m.entidadeId === "turmas" ? "Turmas / Grupos Formados" :
+                         m.entidadeId === "frequencia" ? "Frequência e Assiduidade" :
+                         m.entidadeId === "vulnerabilidade" ? "Perfil Social / Vulnerabilidade" :
+                         m.entidadeId === "eventos" ? "Eventos / Ações Coletivas" :
+                         m.entidadeId === "reunioes" ? "Reuniões com Famílias" :
+                         m.entidadeId}
+                      </td>
+                      <td className="px-4 py-2.5 text-sm text-zinc-800 font-medium">
+                        {m.titulo}
+                      </td>
+                      <td className="px-4 py-2.5 text-xs text-zinc-500">
+                        {m.unidade}
+                      </td>
+                      <td className="px-4 py-2.5 text-sm font-semibold text-zinc-900 text-right">
+                        {m.valorEsperado.toLocaleString("pt-BR")}
+                        {m.unidade.includes("%") && !String(m.valorEsperado).includes("%") ? "%" : ""}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="p-4 text-xs text-zinc-500">
+              Nenhuma meta pactuada cadastrada para este objeto.
+            </div>
+          )}
+        </CardBody>
+      </Card>
+
+      {/* Cargos e Equipe Prevista */}
+      {o.cargosPrevistos && o.cargosPrevistos.length > 0 && (
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <h3 className="text-sm font-medium text-zinc-700">Equipe e Cargos Previstos</h3>
+            <span className="text-xs text-zinc-500">{o.cargosPrevistos.length} cargo(s)</span>
+          </CardHeader>
+          <CardBody className="p-0">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-zinc-50 text-xs font-semibold uppercase text-zinc-500">
+                  <tr>
+                    <th className="px-4 py-2.5">Função / Cargo</th>
+                    <th className="px-4 py-2.5 text-center">Vagas</th>
+                    <th className="px-4 py-2.5">Remuneração Mensal</th>
+                    <th className="px-4 py-2.5">Carga Horária</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-200">
+                  {o.cargosPrevistos.map((c) => (
+                    <tr key={c.id} className="hover:bg-zinc-50/50">
+                      <td className="px-4 py-2.5 text-sm font-medium text-zinc-800">{c.cargoNome}</td>
+                      <td className="px-4 py-2.5 text-xs text-center font-semibold text-zinc-700">{c.quantidadePrevista}</td>
+                      <td className="px-4 py-2.5 text-xs text-zinc-600">
+                        {c.remuneracaoMensal ? `R$ ${c.remuneracaoMensal.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}` : "—"}
+                      </td>
+                      <td className="px-4 py-2.5 text-xs text-zinc-500">{c.cargaHorariaSemanal ?? "—"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardBody>
+        </Card>
+      )}
     </div>
   );
 }

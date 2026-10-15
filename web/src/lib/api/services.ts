@@ -137,6 +137,15 @@ export interface ObjetoCargoPrevistoApi {
   cargaHorariaSemanal?: string;
 }
 
+export interface ObjetoMetaApi {
+  id: string;
+  objetoId: string;
+  entidadeId: string;
+  titulo: string;
+  unidade: string;
+  valorEsperado: number;
+}
+
 export interface ObjetoApi {
   id: string;
   nome: string;
@@ -179,6 +188,7 @@ export interface ObjetoApi {
   metaEventosAno: number;
   metaReunioesAno: number;
   cargosPrevistos?: ObjetoCargoPrevistoApi[];
+  metas?: ObjetoMetaApi[];
   criadoEm: string;
 }
 
@@ -487,6 +497,14 @@ function mapObjeto(r: any): ObjetoApi {
       remuneracaoMensal: c.remuneracao_mensal ? Number(c.remuneracao_mensal) : undefined,
       cargaHorariaSemanal: c.carga_horaria_semanal ?? undefined,
     })) : undefined,
+    metas: Array.isArray(r.objeto_metas) ? r.objeto_metas.map((m: any) => ({
+      id: m.id,
+      objetoId: m.objeto_id,
+      entidadeId: m.entidade_id,
+      titulo: m.titulo,
+      unidade: m.unidade,
+      valorEsperado: Number(m.valor_esperado ?? 0),
+    })) : undefined,
     termoGrupo: r.termo_grupo ?? undefined,
     termoSessao: r.termo_sessao ?? undefined,
     termoResponsavel: r.termo_responsavel ?? undefined,
@@ -781,7 +799,7 @@ export const objetosApi = {
   async list(p?: QP): Promise<Paginated<ObjetoApi>> {
     const sb = await getSupabase();
     const { page, limit, from, to } = paginar(num(p?.page), num(p?.limit));
-    let q = sb.from('objetos').select('*, concedentes(*), objeto_cargos_previstos(*)', { count: 'exact' }).is('deleted_at', null);
+    let q = sb.from('objetos').select('*, concedentes(*), objeto_cargos_previstos(*), objeto_metas(*)', { count: 'exact' }).is('deleted_at', null);
     if (p?.busca) q = q.ilike('nome', `%${p.busca}%`);
     if (p?.status) q = q.eq('status', String(p.status));
     if (p?.concedenteId) q = q.eq('concedente_id', String(p.concedenteId));
@@ -792,29 +810,36 @@ export const objetosApi = {
   },
   async get(id: string): Promise<ObjetoApi> {
     const sb = await getSupabase();
-    const { data, error } = await sb.from('objetos').select('*, concedentes(*), objeto_cargos_previstos(*)').eq('id', id).single();
+    const { data, error } = await sb.from('objetos').select('*, concedentes(*), objeto_cargos_previstos(*), objeto_metas(*)').eq('id', id).single();
     if (error) throw error;
     return mapObjeto(data);
   },
   async create(body: Record<string, unknown>): Promise<ObjetoApi> {
     const sb = createClient();
-    const { data, error } = await sb.from('objetos').insert(toObjetoRow(body)).select('*, concedentes(*), objeto_cargos_previstos(*)').single();
+    const { data, error } = await sb.from('objetos').insert(toObjetoRow(body)).select('*, concedentes(*), objeto_cargos_previstos(*), objeto_metas(*)').single();
     if (error) throw error;
     if (Array.isArray(body.cargosPrevistos) && data?.id) {
       await objetosApi.syncCargos(data.id, body.cargosPrevistos as Partial<ObjetoCargoPrevistoApi>[]);
+    }
+    if (Array.isArray(body.metas) && data?.id) {
+      await objetosApi.syncMetas(data.id, body.metas as Partial<ObjetoMetaApi>[]);
+    }
+    if (data?.id) {
       return objetosApi.get(data.id);
     }
     return mapObjeto(data);
   },
   async update(id: string, body: Record<string, unknown>): Promise<ObjetoApi> {
     const sb = createClient();
-    const { data, error } = await sb.from('objetos').update(toObjetoRow(body)).eq('id', id).select('*, concedentes(*), objeto_cargos_previstos(*)').single();
+    const { data, error } = await sb.from('objetos').update(toObjetoRow(body)).eq('id', id).select('*, concedentes(*), objeto_cargos_previstos(*), objeto_metas(*)').single();
     if (error) throw error;
     if (Array.isArray(body.cargosPrevistos)) {
       await objetosApi.syncCargos(id, body.cargosPrevistos as Partial<ObjetoCargoPrevistoApi>[]);
-      return objetosApi.get(id);
     }
-    return mapObjeto(data);
+    if (Array.isArray(body.metas)) {
+      await objetosApi.syncMetas(id, body.metas as Partial<ObjetoMetaApi>[]);
+    }
+    return objetosApi.get(id);
   },
   async syncCargos(objetoId: string, cargos: Partial<ObjetoCargoPrevistoApi>[]): Promise<void> {
     const sb = createClient();
@@ -831,6 +856,36 @@ export const objetosApi = {
       if (error) throw error;
     }
   },
+  async syncMetas(objetoId: string, metas: Partial<ObjetoMetaApi>[]): Promise<void> {
+    const sb = createClient();
+    await sb.from('objeto_metas').delete().eq('objeto_id', objetoId);
+    if (metas.length > 0) {
+      const inserts = metas.map((m) => ({
+        objeto_id: objetoId,
+        entidade_id: String(m.entidadeId ?? 'outros'),
+        titulo: String(m.titulo ?? ''),
+        unidade: String(m.unidade ?? 'Quantidade (Unidades)'),
+        valor_esperado: Number(m.valorEsperado ?? 0),
+      }));
+      const { error } = await sb.from('objeto_metas').insert(inserts);
+      if (error) throw error;
+    }
+    // Sincroniza ponte de compatibilidade com colunas legadas da tabela objetos
+    const legacyUpdates: Database['public']['Tables']['objetos']['Update'] = {};
+    for (const m of metas) {
+      const v = Number(m.valorEsperado ?? 0);
+      if (m.entidadeId === 'participantes') legacyUpdates.meta_beneficiarios = v;
+      if (m.entidadeId === 'locais') legacyUpdates.meta_nucleos = v;
+      if (m.entidadeId === 'sessoes') legacyUpdates.meta_aulas_ano = v;
+      if (m.entidadeId === 'frequencia') legacyUpdates.meta_frequencia_minima = v;
+      if (m.entidadeId === 'vulnerabilidade') legacyUpdates.meta_vulnerabilidade_minima = v;
+      if (m.entidadeId === 'eventos') legacyUpdates.meta_eventos_ano = v;
+      if (m.entidadeId === 'reunioes') legacyUpdates.meta_reunioes_ano = v;
+    }
+    if (Object.keys(legacyUpdates).length > 0) {
+      await sb.from('objetos').update(legacyUpdates).eq('id', objetoId);
+    }
+  },
   async remove(id: string): Promise<void> {
     const sb = createClient();
     const { error } = await sb.from('objetos').update({ deleted_at: new Date().toISOString() }).eq('id', id);
@@ -839,6 +894,12 @@ export const objetosApi = {
 };
 
 function toObjetoRow(b: Record<string, unknown>): Database['public']['Tables']['objetos']['Insert'] {
+  const metasArr = Array.isArray(b.metas) ? (b.metas as Partial<ObjetoMetaApi>[]) : [];
+  const findMetaVal = (entidadeId: string, fallback: number) => {
+    const item = metasArr.find((m) => m.entidadeId === entidadeId);
+    return item && item.valorEsperado !== undefined ? Number(item.valorEsperado) : fallback;
+  };
+
   return {
     nome: String(b.nome ?? ''),
     descricao: (b.descricao as string | null | undefined) ?? null,
@@ -858,13 +919,13 @@ function toObjetoRow(b: Record<string, unknown>): Database['public']['Tables']['
     conta_bancaria_banco: (b.contaBancariaBanco as string | null | undefined) || null,
     conta_bancaria_agencia: (b.contaBancariaAgencia as string | null | undefined) || null,
     conta_bancaria_conta: (b.contaBancariaConta as string | null | undefined) || null,
-    meta_beneficiarios: Number(b.metaBeneficiarios ?? 0),
-    meta_nucleos: Number(b.metaNucleos ?? 0),
-    meta_aulas_ano: Number(b.metaAulasAno ?? 0),
-    meta_frequencia_minima: Number(b.metaFrequenciaMinima ?? 75),
-    meta_vulnerabilidade_minima: Number(b.metaVulnerabilidadeMinima ?? 70),
-    meta_eventos_ano: Number(b.metaEventosAno ?? 0),
-    meta_reunioes_ano: Number(b.metaReunioesAno ?? 0),
+    meta_beneficiarios: b.metaBeneficiarios !== undefined ? Number(b.metaBeneficiarios) : findMetaVal('participantes', 0),
+    meta_nucleos: b.metaNucleos !== undefined ? Number(b.metaNucleos) : findMetaVal('locais', 0),
+    meta_aulas_ano: b.metaAulasAno !== undefined ? Number(b.metaAulasAno) : findMetaVal('sessoes', 0),
+    meta_frequencia_minima: b.metaFrequenciaMinima !== undefined ? Number(b.metaFrequenciaMinima) : findMetaVal('frequencia', 75),
+    meta_vulnerabilidade_minima: b.metaVulnerabilidadeMinima !== undefined ? Number(b.metaVulnerabilidadeMinima) : findMetaVal('vulnerabilidade', 70),
+    meta_eventos_ano: b.metaEventosAno !== undefined ? Number(b.metaEventosAno) : findMetaVal('eventos', 0),
+    meta_reunioes_ano: b.metaReunioesAno !== undefined ? Number(b.metaReunioesAno) : findMetaVal('reunioes', 0),
     termo_grupo: (b.termoGrupo as string | null | undefined) ?? 'Grupo',
     termo_sessao: (b.termoSessao as string | null | undefined) ?? 'Sessão',
     termo_responsavel: (b.termoResponsavel as string | null | undefined) ?? 'Professor',

@@ -755,15 +755,36 @@ export const prestacaoContasApi = {
       };
     };
 
-    const metaFreq = Number(objeto.metaFrequenciaMinima || 0);
-    const metaVuln = Number(objeto.metaVulnerabilidadeMinima || 0);
+    // Resolução de Metas Dinâmicas com Fallback para Colunas Legadas
+    const getMetaValue = (entidadeId: string, fallback: number) => {
+      const encontrada = objeto.metas?.find((m) => m.entidadeId === entidadeId);
+      return encontrada ? Number(encontrada.valorEsperado) : fallback;
+    };
+
+    const getMetaTitulo = (entidadeId: string, fallback: string) => {
+      const encontrada = objeto.metas?.find((m) => m.entidadeId === entidadeId);
+      return encontrada?.titulo || fallback;
+    };
+
+    const getMetaUnidade = (entidadeId: string, fallback: string) => {
+      const encontrada = objeto.metas?.find((m) => m.entidadeId === entidadeId);
+      return encontrada?.unidade || fallback;
+    };
+
+    const metaNucleosVal = getMetaValue('locais', objeto.metaNucleos || 0);
+    const metaBeneficiariosVal = getMetaValue('participantes', objeto.metaBeneficiarios || 0);
+    const metaAulasVal = getMetaValue('sessoes', objeto.metaAulasAno || 0);
+    const metaFreq = getMetaValue('frequencia', Number(objeto.metaFrequenciaMinima || 0));
+    const metaVuln = getMetaValue('vulnerabilidade', Number(objeto.metaVulnerabilidadeMinima || 0));
+    const metaEventosVal = getMetaValue('eventos', objeto.metaEventosAno || 0);
+    const metaReunioesVal = getMetaValue('reunioes', objeto.metaReunioesAno || 0);
 
     const cumprimentoMetas: IndicadorMetaExecucao[] = [
-      calcMeta(objeto.metaNucleos || 0, nucleos.filter((n: any) => n.em_funcionamento).length, 'Núcleos Esportivos em Funcionamento', 'Núcleos'),
-      calcMeta(objeto.metaBeneficiarios || 0, totalCadastrados, 'Beneficiários Atendidos / Matriculados', 'Beneficiários'),
-      calcMeta(objeto.metaAulasAno || 0, aulasRealizadasTotal, 'Aulas e Atividades Esportivas Realizadas', 'Aulas'),
+      calcMeta(metaNucleosVal, nucleos.filter((n: any) => n.em_funcionamento).length, getMetaTitulo('locais', 'Núcleos Esportivos em Funcionamento'), getMetaUnidade('locais', 'Núcleos')),
+      calcMeta(metaBeneficiariosVal, totalCadastrados, getMetaTitulo('participantes', 'Beneficiários Atendidos / Matriculados'), getMetaUnidade('participantes', 'Beneficiários')),
+      calcMeta(metaAulasVal, aulasRealizadasTotal, getMetaTitulo('sessoes', 'Aulas e Atividades Esportivas Realizadas'), getMetaUnidade('sessoes', 'Aulas')),
       {
-        meta: 'Frequência Média de Participação',
+        meta: getMetaTitulo('frequencia', 'Frequência Média de Participação'),
         indicador: 'Frequência Média Global',
         unidade: '%',
         previsto: metaFreq,
@@ -772,7 +793,7 @@ export const prestacaoContasApi = {
         situacao: frequenciaMediaGeral === 0 ? 'Pendente' : frequenciaMediaGeral >= metaFreq ? 'Cumprida' : 'Parcial',
       },
       {
-        meta: 'Inclusão Social e Vulnerabilidade',
+        meta: getMetaTitulo('vulnerabilidade', 'Inclusão Social e Vulnerabilidade'),
         indicador: 'Beneficiários de Rede Pública / Baixa Renda',
         unidade: '%',
         previsto: metaVuln,
@@ -780,9 +801,18 @@ export const prestacaoContasApi = {
         percentualExecucao: metaVuln > 0 ? Math.round((percentualVulnerabilidade / metaVuln) * 100) : 0,
         situacao: percentualVulnerabilidade === 0 ? 'Pendente' : percentualVulnerabilidade >= metaVuln ? 'Cumprida' : 'Parcial',
       },
-      calcMeta(objeto.metaEventosAno || 0, eventosRealizados, 'Eventos Esportivos e Festivais Comunitários', 'Eventos'),
-      calcMeta(objeto.metaReunioesAno || 0, reunioesRealizadas, 'Reuniões com Famílias e Responsáveis', 'Reuniões'),
+      calcMeta(metaEventosVal, eventosRealizados, getMetaTitulo('eventos', 'Eventos Esportivos e Festivais Comunitários'), getMetaUnidade('eventos', 'Eventos')),
+      calcMeta(metaReunioesVal, reunioesRealizadas, getMetaTitulo('reunioes', 'Reuniões com Famílias e Responsáveis'), getMetaUnidade('reunioes', 'Reuniões')),
     ];
+
+    // Adiciona quaisquer metas adicionais cadastradas no plano dinâmico
+    const entidadesPadrao = new Set(['locais', 'participantes', 'sessoes', 'frequencia', 'vulnerabilidade', 'eventos', 'reunioes']);
+    const metasExtras = (objeto.metas || []).filter((m) => !entidadesPadrao.has(m.entidadeId));
+    for (const extra of metasExtras) {
+      let realizadoExtra = 0;
+      if (extra.entidadeId === 'turmas') realizadoExtra = turmas.length;
+      cumprimentoMetas.push(calcMeta(extra.valorEsperado, realizadoExtra, extra.titulo || 'Meta Adicional', extra.unidade));
+    }
 
     // Registro Fotográfico
     const fotos: FotoComprovacaoItem[] = [];
@@ -844,9 +874,9 @@ export const prestacaoContasApi = {
         tipoPeriodo,
       },
       resumoIndicadores: {
-        nucleos: { previsto: objeto.metaNucleos || 0, realizado: nucleos.filter((n: any) => n.em_funcionamento).length },
-        beneficiarios: { previsto: objeto.metaBeneficiarios || 0, realizado: totalCadastrados },
-        turmas: { previsto: (objeto.metaNucleos || 0) * 4, realizado: turmas.length },
+        nucleos: { previsto: metaNucleosVal, realizado: nucleos.filter((n: any) => n.em_funcionamento).length },
+        beneficiarios: { previsto: metaBeneficiariosVal, realizado: totalCadastrados },
+        turmas: { previsto: (metaNucleosVal || 0) * 4, realizado: turmas.length },
         professores: {
           previsto: cargosPrevistos.find((c) => c.cargoNome.toLowerCase().includes('instrutor') || c.cargoNome.toLowerCase().includes('professor'))?.quantidadePrevista || 0,
           realizado: funcionarios.filter(
@@ -856,8 +886,8 @@ export const prestacaoContasApi = {
               f.professor_responsavel
           ).length,
         },
-        aulas: { previsto: objeto.metaAulasAno || 0, realizado: aulasRealizadasTotal },
-        supervisoes: { previsto: (objeto.metaNucleos || 0) * 2, realizado: supervisoes.filter((s: any) => s.status === 'finalizada').length },
+        aulas: { previsto: metaAulasVal, realizado: aulasRealizadasTotal },
+        supervisoes: { previsto: (metaNucleosVal || 0) * 2, realizado: supervisoes.filter((s: any) => s.status === 'finalizada').length },
       },
       execucaoPorNucleo,
       beneficiarios: {
@@ -882,7 +912,7 @@ export const prestacaoContasApi = {
       frequencia: {
         porNucleo: frequenciaPorNucleo,
         frequenciaMediaGeral,
-        metaMinima: Number(objeto.metaFrequenciaMinima || 75),
+        metaMinima: Number(metaFreq || 75),
       },
       atividadesRealizadas,
       supervisoes: visitasSupervisao,

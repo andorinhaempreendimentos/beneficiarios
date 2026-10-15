@@ -1918,6 +1918,47 @@ export type Database = {
           },
         ]
       }
+      objeto_metas: {
+        Row: {
+          created_at: string
+          entidade_id: string
+          id: string
+          objeto_id: string
+          titulo: string
+          unidade: string
+          updated_at: string
+          valor_esperado: number
+        }
+        Insert: {
+          created_at?: string
+          entidade_id: string
+          id?: string
+          objeto_id: string
+          titulo: string
+          unidade: string
+          updated_at?: string
+          valor_esperado?: number
+        }
+        Update: {
+          created_at?: string
+          entidade_id?: string
+          id?: string
+          objeto_id?: string
+          titulo?: string
+          unidade?: string
+          updated_at?: string
+          valor_esperado?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "objeto_metas_objeto_id_fkey"
+            columns: ["objeto_id"]
+            isOneToOne: false
+            referencedRelation: "objetos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       objetos: {
         Row: {
           codigo_objeto: string | null
