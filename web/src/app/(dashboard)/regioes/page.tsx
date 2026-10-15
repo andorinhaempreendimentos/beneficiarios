@@ -183,13 +183,15 @@ export default function RegioesPage() {
         </div>
       </div>
 
-      {/* Listagem em Cards com Tabela de Gestão */}
-      <Card>
-        {loading ? (
+      {/* Listagem de Regiões em Cards */}
+      {loading ? (
+        <Card>
           <div className="py-16 text-center text-sm text-zinc-500">
             Carregando regiões...
           </div>
-        ) : regioes.length === 0 ? (
+        </Card>
+      ) : regioes.length === 0 ? (
+        <Card>
           <div className="py-16 text-center">
             <MapPin className="mx-auto h-10 w-10 text-zinc-300 dark:text-zinc-600 mb-3" />
             <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
@@ -207,56 +209,64 @@ export default function RegioesPage() {
               </Button>
             )}
           </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="border-b border-zinc-200 dark:border-zinc-800 text-xs font-semibold text-zinc-500 uppercase tracking-wider bg-zinc-50/75 dark:bg-zinc-900/50">
-                <tr>
-                  <th className="px-5 py-3.5">Região</th>
-                  <th className="px-5 py-3.5">Projeto / Objeto</th>
-                  <th className="px-5 py-3.5">Núcleos Pertencentes</th>
-                  <th className="px-5 py-3.5 text-center">Total de Núcleos</th>
-                  {canManage && <th className="px-5 py-3.5 text-right">Ações</th>}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
-                {regioes.map((regiao) => (
-                  <tr
-                    key={regiao.id}
-                    className="hover:bg-zinc-50/60 dark:hover:bg-zinc-800/40 transition-colors"
-                  >
-                    <td className="px-5 py-4">
-                      <div className="flex items-center gap-2.5">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-50 text-sky-600 dark:bg-sky-950/60 dark:text-sky-400 shrink-0">
-                          <MapPin className="h-4 w-4" />
+        </Card>
+      ) : (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+            {regioes.map((regiao) => {
+              const count = regiao.totalNucleos ?? regiao.nucleos?.length ?? 0;
+              return (
+                <div
+                  key={regiao.id}
+                  className="flex flex-col justify-between rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 shadow-xs hover:border-zinc-300 dark:hover:border-zinc-700 hover:shadow-sm transition-all"
+                >
+                  {/* Cabeçalho do Card: Nome e Quantidade de Núcleos */}
+                  <div>
+                    <div className="flex items-start justify-between gap-3 mb-3">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-50 text-sky-600 dark:bg-sky-950/60 dark:text-sky-400 shrink-0">
+                          <MapPin className="h-5 w-5" />
                         </div>
-                        <div>
-                          <div className="font-semibold text-zinc-900 dark:text-zinc-100">
+                        <div className="min-w-0">
+                          <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-100 leading-tight truncate">
                             {regiao.nome}
-                          </div>
+                          </h3>
                           {regiao.descricao && (
-                            <div className="text-xs text-zinc-500 line-clamp-1 max-w-xs">
+                            <p className="text-xs text-zinc-500 line-clamp-1 mt-0.5">
                               {regiao.descricao}
-                            </div>
+                            </p>
                           )}
                         </div>
                       </div>
-                    </td>
 
-                    <td className="px-5 py-4">
-                      <span className="inline-flex items-center gap-1.5 text-xs text-zinc-600 dark:text-zinc-400">
-                        <FolderKanban className="h-3.5 w-3.5 text-zinc-400" />
-                        {regiao.objeto?.nome || "Projeto"}
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 border border-sky-200/80 dark:border-sky-800/80 px-2.5 py-1 text-xs font-semibold shrink-0">
+                        <Building2 className="h-3.5 w-3.5" />
+                        {count} {count === 1 ? "núcleo" : "núcleos"}
                       </span>
-                    </td>
+                    </div>
 
-                    <td className="px-5 py-4">
+                    {/* Projeto Vinculado */}
+                    <div className="mb-4 flex items-center gap-2 rounded-lg bg-zinc-50 dark:bg-zinc-800/60 px-3 py-2 text-xs text-zinc-700 dark:text-zinc-300 border border-zinc-100 dark:border-zinc-800">
+                      <FolderKanban className="h-4 w-4 text-zinc-400 shrink-0" />
+                      <span className="font-medium text-zinc-500 dark:text-zinc-400">Projeto:</span>
+                      <span className="font-semibold text-zinc-900 dark:text-zinc-100 truncate">
+                        {regiao.objeto?.nome || "Sem projeto vinculado"}
+                      </span>
+                    </div>
+
+                    {/* Núcleos Pertencentes */}
+                    <div className="space-y-2 mb-4">
+                      <div className="flex items-center justify-between text-xs text-zinc-500 font-medium">
+                        <span>Núcleos pertencentes</span>
+                        <span>({count})</span>
+                      </div>
+
                       {regiao.nucleos && regiao.nucleos.length > 0 ? (
-                        <div className="flex flex-wrap gap-1.5 max-w-md">
+                        <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto pr-1">
                           {regiao.nucleos.map((n) => (
                             <span
                               key={n.id}
-                              className="inline-flex items-center gap-1 rounded-md bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 text-xs font-medium text-zinc-700 dark:text-zinc-300"
+                              className="inline-flex items-center gap-1 rounded-md bg-zinc-100 dark:bg-zinc-800 px-2.5 py-1 text-xs font-medium text-zinc-800 dark:text-zinc-200 border border-zinc-200/60 dark:border-zinc-700/60"
                             >
                               <Building2 className="h-3 w-3 text-zinc-400" />
                               {n.identificacao}
@@ -264,58 +274,58 @@ export default function RegioesPage() {
                           ))}
                         </div>
                       ) : (
-                        <span className="text-xs text-zinc-400 italic">Nenhum núcleo alocado</span>
-                      )}
-                    </td>
-
-                    <td className="px-5 py-4 text-center">
-                      <span className="inline-flex items-center justify-center rounded-full bg-sky-100 text-sky-800 dark:bg-sky-950/60 dark:text-sky-300 px-2.5 py-0.5 text-xs font-semibold">
-                        {regiao.totalNucleos ?? regiao.nucleos?.length ?? 0}
-                      </span>
-                    </td>
-
-                    {canManage && (
-                      <td className="px-5 py-4 text-right">
-                        <div className="flex items-center justify-end gap-1.5">
-                          <button
-                            type="button"
-                            onClick={() => handleAbrirEdicao(regiao)}
-                            className="inline-flex items-center gap-1 rounded-lg border border-zinc-200 dark:border-zinc-700 px-2.5 py-1.5 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer transition-colors"
-                            title="Editar região e alocar núcleos"
-                          >
-                            <Pencil className="h-3.5 w-3.5" />
-                            Editar / Alocar
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setExcluindoId(regiao.id)}
-                            className="inline-flex items-center justify-center rounded-lg p-1.5 text-zinc-400 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/40 dark:hover:text-rose-400 cursor-pointer transition-colors"
-                            title="Excluir região"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
+                        <div className="rounded-lg border border-dashed border-zinc-200 dark:border-zinc-800 p-3 text-center text-xs text-zinc-400 italic">
+                          Nenhum núcleo alocado a esta região
                         </div>
-                      </td>
-                    )}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+                      )}
+                    </div>
+                  </div>
 
-        {total > PER_PAGE && (
-          <div className="p-4 border-t border-zinc-200 dark:border-zinc-800">
-            <Pagination
-              currentPage={pagina}
-              totalPages={Math.ceil(total / PER_PAGE)}
-              totalItems={total}
-              itemsPerPage={PER_PAGE}
-              onPageChange={setPagina}
-            />
+                  {/* Rodapé: Botões de Ação */}
+                  <div className="pt-3 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between gap-2 mt-auto">
+                    {canManage ? (
+                      <>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleAbrirEdicao(regiao)}
+                          className="flex-1 gap-1.5 text-xs font-semibold"
+                        >
+                          <Pencil className="h-3.5 w-3.5 text-zinc-500" />
+                          Editar / Alocar
+                        </Button>
+                        <button
+                          type="button"
+                          onClick={() => setExcluindoId(regiao.id)}
+                          className="inline-flex items-center justify-center rounded-lg p-2 text-zinc-400 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/40 dark:hover:text-rose-400 cursor-pointer transition-colors border border-transparent hover:border-rose-200 dark:hover:border-rose-800"
+                          title="Excluir região"
+                          aria-label="Excluir região"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </>
+                    ) : (
+                      <span className="text-xs text-zinc-400 italic py-1">Somente visualização</span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
           </div>
-        )}
-      </Card>
+
+          {total > PER_PAGE && (
+            <div className="pt-2">
+              <Pagination
+                currentPage={pagina}
+                totalPages={Math.ceil(total / PER_PAGE)}
+                totalItems={total}
+                itemsPerPage={PER_PAGE}
+                onPageChange={setPagina}
+              />
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Modal de Formulário (Criação/Edição e Alocação em Lote) */}
       <ModalRegiaoForm

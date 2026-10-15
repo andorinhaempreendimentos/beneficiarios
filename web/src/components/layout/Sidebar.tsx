@@ -100,9 +100,9 @@ export function Sidebar() {
       { href: "/objetos", label: t("objeto", "Objeto", true), group: "Projeto", icon: FolderKanban, keywords: ["projetos", "contratos", "metas"] },
       { href: "/concedentes", label: "Concedentes", group: "Projeto", icon: Landmark, keywords: ["parceiros", "financiadores", "orgaos"] },
       { href: "/organizacoes", label: t("organizacao", "Organização", true), group: "Projeto", icon: Building2, keywords: ["instituicoes", "entidades", "ongs"] },
-      { href: "/regioes", label: "Regiões", group: "Projeto", icon: MapPin, keywords: ["regiao", "regioes", "polos", "territorio", "zonas"] },
 
       // Operacional
+      { href: "/regioes", label: "Regiões", group: "Operacional", icon: MapPin, keywords: ["regiao", "regioes", "polos", "territorio", "zonas"] },
       { href: "/nucleos", label: t("local", "Núcleo", true), group: "Operacional", icon: Building2, keywords: ["locais", "polos", "unidades", "sedes"] },
       { href: "/turmas", label: `Todas as ${turmaPlural.toLowerCase()}`, group: `Operacional > ${turmaPlural}`, icon: GraduationCap, keywords: ["turmas", "classes", "salas", "listar"] },
       { href: "/turmas/novo", label: `Nova ${turmaSingular.toLowerCase()}`, group: `Operacional > ${turmaPlural}`, icon: GraduationCap, keywords: ["cadastrar", "criar", "adicionar", "turma"] },
@@ -159,8 +159,8 @@ export function Sidebar() {
   }, [searchQuery, searchableItems]);
 
   // grupos de seção — accordion: apenas um aberto por vez
-  const projetoAtivo = ["/objetos", "/concedentes", "/organizacoes", "/regioes"].some((p) => pathname.startsWith(p));
-  const operacionalAtivo = ["/nucleos", "/turmas", "/faixas-etarias", "/categoria-turmas", "/atividades", "/atividades-complementares", "/aulas"].some((p) => pathname.startsWith(p));
+  const projetoAtivo = ["/objetos", "/concedentes", "/organizacoes"].some((p) => pathname.startsWith(p));
+  const operacionalAtivo = ["/regioes", "/nucleos", "/turmas", "/faixas-etarias", "/categoria-turmas", "/atividades", "/atividades-complementares", "/aulas"].some((p) => pathname.startsWith(p));
   const turmasAtivo = pathname.startsWith("/turmas") || pathname.startsWith("/faixas-etarias") || pathname.startsWith("/categoria-turmas");
   const beneficiariosGrupoAtivo = pathname.startsWith("/beneficiarios") || pathname.startsWith("/inscricoes");
   const rhAtivo = ["/funcionarios", "/coordenadores", "/professor"].some((p) => pathname.startsWith(p));
@@ -432,11 +432,11 @@ export function Sidebar() {
                 {navLink("/objetos", t("objeto", "Objeto", true), FolderKanban)}
                 {navLink("/concedentes", "Concedentes", Landmark)}
                 {navLink("/organizacoes", t("organizacao", "Organização", true), Building2)}
-                {navLink("/regioes", "Regiões", MapPin)}
               </SectionGroup>
 
               {/* Operacional */}
               <SectionGroup label="Operacional" aberto={activeGroup === "operacional"} setAberto={() => toggleGroup("operacional")} ativo={operacionalAtivo} Icon={Layers}>
+                {navLink("/regioes", "Regiões", MapPin)}
                 {navLink("/nucleos", t("local", "Núcleo", true), Building2)}
 
                 {/* Turmas sub-dropdown */}
