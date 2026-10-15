@@ -100,6 +100,7 @@ export function Sidebar() {
       { href: "/objetos", label: t("objeto", "Objeto", true), group: "Projeto", icon: FolderKanban, keywords: ["projetos", "contratos", "metas"] },
       { href: "/concedentes", label: "Concedentes", group: "Projeto", icon: Landmark, keywords: ["parceiros", "financiadores", "orgaos"] },
       { href: "/organizacoes", label: t("organizacao", "Organização", true), group: "Projeto", icon: Building2, keywords: ["instituicoes", "entidades", "ongs"] },
+      { href: "/regioes", label: "Regiões", group: "Projeto", icon: MapPin, keywords: ["regiao", "regioes", "polos", "territorio", "zonas"] },
 
       // Operacional
       { href: "/nucleos", label: t("local", "Núcleo", true), group: "Operacional", icon: Building2, keywords: ["locais", "polos", "unidades", "sedes"] },
@@ -158,7 +159,7 @@ export function Sidebar() {
   }, [searchQuery, searchableItems]);
 
   // grupos de seção — accordion: apenas um aberto por vez
-  const projetoAtivo = ["/objetos", "/concedentes", "/organizacoes"].some((p) => pathname.startsWith(p));
+  const projetoAtivo = ["/objetos", "/concedentes", "/organizacoes", "/regioes"].some((p) => pathname.startsWith(p));
   const operacionalAtivo = ["/nucleos", "/turmas", "/faixas-etarias", "/categoria-turmas", "/atividades", "/atividades-complementares", "/aulas"].some((p) => pathname.startsWith(p));
   const turmasAtivo = pathname.startsWith("/turmas") || pathname.startsWith("/faixas-etarias") || pathname.startsWith("/categoria-turmas");
   const beneficiariosGrupoAtivo = pathname.startsWith("/beneficiarios") || pathname.startsWith("/inscricoes");
@@ -431,6 +432,7 @@ export function Sidebar() {
                 {navLink("/objetos", t("objeto", "Objeto", true), FolderKanban)}
                 {navLink("/concedentes", "Concedentes", Landmark)}
                 {navLink("/organizacoes", t("organizacao", "Organização", true), Building2)}
+                {navLink("/regioes", "Regiões", MapPin)}
               </SectionGroup>
 
               {/* Operacional */}

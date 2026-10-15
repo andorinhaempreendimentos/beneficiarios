@@ -7,6 +7,7 @@ export type AcaoPermissao = "visualizar" | "criar" | "editar" | "excluir";
 export type ModuloSistema =
   | "objetos"
   | "organizacoes"
+  | "regioes"
   | "nucleos"
   | "turmas"
   | "inscricoes"
@@ -104,11 +105,22 @@ export interface Funcionario {
   jornada: DiaJornada[];
 }
 
+export interface Regiao {
+  id: string;
+  nome: string;
+  descricao?: string;
+  objetoId: string;
+  totalNucleos?: number;
+  criadoEm?: string;
+  atualizadoEm?: string;
+}
+
 export interface Nucleo {
   id: string;
   identificacao: string;
   nomeLocal?: string;
   regiao?: string;
+  regiaoId?: string;
   cep?: string;
   endereco?: string;
   numero?: string;

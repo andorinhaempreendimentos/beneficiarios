@@ -195,11 +195,35 @@ export interface OrganizacaoApi {
   criadoEm: string;
 }
 
+export interface RegiaoApi {
+  id: string;
+  nome: string;
+  descricao?: string;
+  objetoId: string;
+  objeto?: {
+    id: string;
+    nome: string;
+  };
+  totalNucleos?: number;
+  nucleos?: {
+    id: string;
+    identificacao: string;
+  }[];
+  criadoEm?: string;
+  atualizadoEm?: string;
+}
+
 export interface NucleoApi {
   id: string;
   identificacao: string;
   nomeLocal?: string;
   regiao?: string;
+  regiaoId?: string;
+  regiaoNome?: string;
+  regiaoObj?: {
+    id: string;
+    nome: string;
+  };
   cep?: string;
   endereco?: string;
   numero?: string;
@@ -473,9 +497,14 @@ function mapOrganizacao(r: any): OrganizacaoApi {
 }
 
 function mapNucleo(r: any): NucleoApi {
+  const regiaoObj = r.regioes ? { id: r.regioes.id, nome: r.regioes.nome } : undefined;
   return {
     id: r.id, identificacao: r.identificacao, nomeLocal: r.nome_local ?? undefined,
-    regiao: r.regiao ?? undefined, cep: r.cep ?? undefined, endereco: r.endereco ?? undefined,
+    regiao: r.regioes?.nome ?? r.regiao ?? undefined,
+    regiaoId: r.regiao_id ?? undefined,
+    regiaoNome: r.regioes?.nome ?? r.regiao ?? undefined,
+    regiaoObj,
+    cep: r.cep ?? undefined, endereco: r.endereco ?? undefined,
     numero: r.numero ?? undefined, cidade: r.cidade ?? undefined, estado: r.estado ?? undefined, bairro: r.bairro ?? undefined,
     complemento: r.complemento ?? undefined, latitude: r.latitude ?? undefined,
     longitude: r.longitude ?? undefined, nomeResponsavel: r.nome_responsavel ?? undefined,
@@ -892,9 +921,12 @@ export const nucleosApi = {
   async list(p?: QP): Promise<Paginated<NucleoApi>> {
     const sb = await getSupabase();
     const { page, limit, from, to } = paginar(num(p?.page), num(p?.limit));
-    let q = sb.from('nucleos').select('*, organizacoes(id, nome, objeto_id), nucleo_atividades(atividade_id)', { count: 'exact' }).is('deleted_at', null);
+    let q = (sb.from('nucleos' as any) as any)
+      .select('*, organizacoes(id, nome, objeto_id), regioes(id, nome), nucleo_atividades(atividade_id)', { count: 'exact' })
+      .is('deleted_at', null);
     if (p?.busca) q = q.ilike('identificacao', `%${p.busca}%`);
     if (p?.organizacaoId) q = q.eq('organizacao_id', p.organizacaoId as string);
+    if (p?.regiaoId) q = q.eq('regiao_id', p.regiaoId as string);
     if (p?.cidade) q = q.ilike('cidade', `%${p.cidade}%`);
     if (bool(p?.emFuncionamento) !== undefined) q = q.eq('em_funcionamento', bool(p?.emFuncionamento)!);
     if (bool(p?.disponivelPreInscricao) !== undefined) q = q.eq('disponivel_pre_inscricao', bool(p?.disponivelPreInscricao)!);
@@ -918,7 +950,10 @@ export const nucleosApi = {
   },
   async get(id: string): Promise<NucleoApi> {
     const sb = await getSupabase();
-    const { data, error } = await sb.from('nucleos').select('*, nucleo_atividades(atividade_id)').eq('id', id).single();
+    const { data, error } = await (sb.from('nucleos' as any) as any)
+      .select('*, organizacoes(id, nome, objeto_id), regioes(id, nome), nucleo_atividades(atividade_id)')
+      .eq('id', id)
+      .single();
     if (error) throw error;
     return mapNucleo(data);
   },
@@ -972,11 +1007,146 @@ export const nucleosApi = {
   },
 };
 
+export const regioesApi = {
+  async list(p?: QP): Promise<Paginated<RegiaoApi>> {
+    const sb = await getSupabase();
+    const { page, limit, from, to } = paginar(num(p?.page), num(p?.limit));
+    let q = (sb.from('regioes' as any) as any)
+      .select('*, objetos(id, nome), nucleos(id, identificacao, deleted_at)', { count: 'exact' })
+      .is('deleted_at', null);
+
+    if (p?.busca) q = q.ilike('nome', `%${p.busca}%`);
+    if (p?.objetoId) q = q.eq('objeto_id', p.objetoId as string);
+
+    const { data, count, error } = await q.order('nome', { ascending: true }).range(from, to);
+    if (error) throw error;
+
+    const items: RegiaoApi[] = (data ?? []).map((r: any) => {
+      const activeNucleos = (r.nucleos ?? []).filter((n: any) => !n.deleted_at);
+      return {
+        id: r.id,
+        nome: r.nome,
+        descricao: r.descricao ?? undefined,
+        objetoId: r.objeto_id,
+        objeto: r.objetos ? { id: r.objetos.id, nome: r.objetos.nome } : undefined,
+        totalNucleos: activeNucleos.length,
+        nucleos: activeNucleos.map((n: any) => ({ id: n.id, identificacao: n.identificacao })),
+        criadoEm: r.created_at,
+        atualizadoEm: r.updated_at,
+      };
+    });
+
+    return { data: items, total: count ?? 0, page, limit };
+  },
+
+  async get(id: string): Promise<RegiaoApi> {
+    const sb = await getSupabase();
+    const { data, error } = await (sb.from('regioes' as any) as any)
+      .select('*, objetos(id, nome), nucleos(id, identificacao, deleted_at)')
+      .eq('id', id)
+      .single();
+    if (error) throw error;
+    const activeNucleos = (data.nucleos ?? []).filter((n: any) => !n.deleted_at);
+    return {
+      id: data.id,
+      nome: data.nome,
+      descricao: data.descricao ?? undefined,
+      objetoId: data.objeto_id,
+      objeto: data.objetos ? { id: data.objetos.id, nome: data.objetos.nome } : undefined,
+      totalNucleos: activeNucleos.length,
+      nucleos: activeNucleos.map((n: any) => ({ id: n.id, identificacao: n.identificacao })),
+      criadoEm: data.created_at,
+      atualizadoEm: data.updated_at,
+    };
+  },
+
+  async create(body: { nome: string; descricao?: string; objetoId: string; nucleoIds?: string[] }): Promise<RegiaoApi> {
+    const sb = createClient();
+    const { data, error } = await (sb.from('regioes' as any) as any)
+      .insert({
+        nome: body.nome.trim(),
+        descricao: body.descricao?.trim() || null,
+        objeto_id: body.objetoId,
+      })
+      .select('*, objetos(id, nome)')
+      .single();
+    if (error) throw error;
+
+    if (body.nucleoIds && body.nucleoIds.length > 0) {
+      await (sb.from('nucleos' as any) as any)
+        .update({ regiao_id: data.id, regiao: data.nome })
+        .in('id', body.nucleoIds);
+    }
+
+    return {
+      id: data.id,
+      nome: data.nome,
+      descricao: data.descricao ?? undefined,
+      objetoId: data.objeto_id,
+      objeto: data.objetos ? { id: data.objetos.id, nome: data.objetos.nome } : undefined,
+      totalNucleos: body.nucleoIds?.length ?? 0,
+      criadoEm: data.created_at,
+    };
+  },
+
+  async update(id: string, body: { nome?: string; descricao?: string; objetoId?: string; nucleoIds?: string[] }): Promise<RegiaoApi> {
+    const sb = createClient();
+    const updateData: Record<string, any> = { updated_at: new Date().toISOString() };
+    if (body.nome !== undefined) updateData.nome = body.nome.trim();
+    if (body.descricao !== undefined) updateData.descricao = body.descricao?.trim() || null;
+    if (body.objetoId !== undefined) updateData.objeto_id = body.objetoId;
+
+    const { data, error } = await (sb.from('regioes' as any) as any)
+      .update(updateData)
+      .eq('id', id)
+      .select('*, objetos(id, nome)')
+      .single();
+    if (error) throw error;
+
+    if (body.nucleoIds !== undefined) {
+      // Desvincula núcleos que estavam nesta região e foram desmarcados
+      if (body.nucleoIds.length > 0) {
+        await (sb.from('nucleos' as any) as any)
+          .update({ regiao_id: null, regiao: null })
+          .eq('regiao_id', id)
+          .not('id', 'in', `(${body.nucleoIds.map((x) => `"${x}"`).join(',')})`);
+
+        await (sb.from('nucleos' as any) as any)
+          .update({ regiao_id: id, regiao: data.nome })
+          .in('id', body.nucleoIds);
+      } else {
+        await (sb.from('nucleos' as any) as any)
+          .update({ regiao_id: null, regiao: null })
+          .eq('regiao_id', id);
+      }
+    } else if (body.nome !== undefined) {
+      await (sb.from('nucleos' as any) as any)
+        .update({ regiao: data.nome })
+        .eq('regiao_id', id);
+    }
+
+    return this.get(id);
+  },
+
+  async remove(id: string): Promise<void> {
+    const sb = createClient();
+    await (sb.from('nucleos' as any) as any)
+      .update({ regiao_id: null, regiao: null })
+      .eq('regiao_id', id);
+
+    const { error } = await (sb.from('regioes' as any) as any)
+      .update({ deleted_at: new Date().toISOString() })
+      .eq('id', id);
+    if (error) throw error;
+  },
+};
+
 function toNucleoRow(b: Record<string, unknown>): Database['public']['Tables']['nucleos']['Insert'] {
   return {
     identificacao: b.identificacao as string,
     nome_local: b.nomeLocal as string | null | undefined,
     regiao: b.regiao as string | null | undefined,
+    regiao_id: uuidOrNull(b.regiaoId) as any,
     cep: b.cep as string | null | undefined,
     endereco: b.endereco as string | null | undefined,
     numero: b.numero as string | null | undefined,

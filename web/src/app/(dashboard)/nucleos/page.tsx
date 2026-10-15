@@ -26,11 +26,13 @@ import {
   organizacoesApi,
   objetosApi,
   atividadesApi,
+  regioesApi,
   type Paginated,
   type NucleoApi,
   type OrganizacaoApi,
   type ObjetoApi,
   type AtividadeApi,
+  type RegiaoApi,
 } from "@/lib/api/services";
 import { formatarData } from "@/lib/utils";
 
@@ -44,6 +46,7 @@ const EMPTY = {
   busca: "",
   objetoId: "",
   organizacaoId: "",
+  regiaoId: "",
   cidade: "",
   atividadeId: "",
   emFuncionamento: "",
@@ -73,10 +76,12 @@ export default function NucleosPage() {
   const { data: objetosRes } = useQuery<Paginated<ObjetoApi>>(() => objetosApi.list({ limit: 100 }), []);
   const { data: organizacoesRes } = useQuery<Paginated<OrganizacaoApi>>(() => organizacoesApi.list({ limit: 100 }), []);
   const { data: atividadesRes } = useQuery<Paginated<AtividadeApi>>(() => atividadesApi.list({ limit: 100 }), []);
+  const { data: regioesRes } = useQuery<Paginated<RegiaoApi>>(() => regioesApi.list({ limit: 100 }), []);
 
   const objetos = objetosRes?.data ?? [];
   const organizacoes = organizacoesRes?.data ?? [];
   const atividades = atividadesRes?.data ?? [];
+  const regioes = regioesRes?.data ?? [];
 
   const { data: pageData, loading, refetch } = useQuery<Paginated<NucleoApi>>(
     () => {
@@ -205,6 +210,18 @@ export default function NucleosPage() {
           </Select>
         </Field>
 
+        <Field label="Região">
+          <Select
+            value={filtros.regiaoId}
+            onChange={(e) => setCampo("regiaoId", e.target.value)}
+          >
+            <option value="">Todas as regiões</option>
+            {regioes.map((reg) => (
+              <option key={reg.id} value={reg.id}>{reg.nome}</option>
+            ))}
+          </Select>
+        </Field>
+
         <Field label="Cidade">
           <Input
             placeholder="Filtrar por cidade..."
@@ -278,8 +295,14 @@ export default function NucleosPage() {
                           </label>
                         )}
 
-                        {/* Topo: Status badge alinhado à direita */}
-                        <div className="flex items-center justify-end min-h-[26px]">
+                        {/* Topo: Região e Status badge */}
+                        <div className="flex items-center justify-between min-h-[26px]">
+                          {(nucleo.regiaoNome || nucleo.regiao) ? (
+                            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-sky-700 bg-sky-50 dark:bg-sky-950/60 dark:text-sky-300 px-2 py-0.5 rounded-md">
+                              <MapPin className="h-3 w-3" />
+                              {nucleo.regiaoNome || nucleo.regiao}
+                            </span>
+                          ) : <span />}
                           <StatusNucleoBadge nucleoId={nucleo.id} emFuncionamento={nucleo.emFuncionamento} />
                         </div>
 
@@ -344,6 +367,7 @@ export default function NucleosPage() {
                         </th>
                       )}
                       <th className="px-5 py-3">{t("local", "Núcleo")}</th>
+                      <th className="px-5 py-3">Região</th>
                       <th className="px-5 py-3">Cidade / Bairro</th>
                       <th className="px-5 py-3">{t("organizacao", "Organização")}</th>
                       <th className="px-5 py-3">Status</th>
@@ -354,7 +378,7 @@ export default function NucleosPage() {
                   <tbody>
                     {resultado.length === 0 ? (
                       <tr>
-                        <td colSpan={isCoordenador ? 6 : 7} className="px-5 py-8 text-center text-sm text-zinc-400">
+                        <td colSpan={isCoordenador ? 7 : 8} className="px-5 py-8 text-center text-sm text-zinc-400">
                           Nenhum {t("local", "Núcleo").toLowerCase()} encontrado para os filtros selecionados.
                         </td>
                       </tr>
@@ -381,6 +405,16 @@ export default function NucleosPage() {
                                   {nucleo.nomeLocal && <span className="text-xs text-zinc-400">{nucleo.nomeLocal}</span>}
                                 </div>
                               </div>
+                            </td>
+                            <td className="px-5 py-3">
+                              {nucleo.regiaoNome || nucleo.regiao ? (
+                                <span className="inline-flex items-center gap-1 rounded-md bg-sky-50 dark:bg-sky-950/60 px-2 py-0.5 text-xs font-semibold text-sky-700 dark:text-sky-300">
+                                  <MapPin className="h-3 w-3" />
+                                  {nucleo.regiaoNome || nucleo.regiao}
+                                </span>
+                              ) : (
+                                <span className="text-xs text-zinc-400">—</span>
+                              )}
                             </td>
                             <td className="px-5 py-3 text-zinc-600">
                               <div className="flex items-center gap-1.5 text-xs text-zinc-600">

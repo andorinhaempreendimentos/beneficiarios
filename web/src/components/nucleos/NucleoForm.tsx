@@ -6,7 +6,7 @@ import { useAuth } from "@/components/providers/AuthProvider";
 import { MapPin } from "lucide-react";
 import { z } from "zod";
 import { Button, Field, FormSection, Input, LinkButton, Select, Switch } from "@/components/ui";
-import { nucleosApi, type NucleoApi, type OrganizacaoApi, type AtividadeApi } from "@/lib/api/services";
+import { nucleosApi, regioesApi, type NucleoApi, type OrganizacaoApi, type AtividadeApi, type RegiaoApi } from "@/lib/api/services";
 import { obterCoordenadasEndereco } from "@/lib/geocoding";
 
 const UFS_BRASIL = [
@@ -55,13 +55,15 @@ interface NucleoFormProps {
   nucleo?: NucleoApi;
   organizacoes?: OrganizacaoApi[];
   atividades?: AtividadeApi[];
+  regioes?: RegiaoApi[];
   backHref: string;
 }
 
-export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], backHref }: NucleoFormProps) {
+export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], regioes: regioesIniciais = [], backHref }: NucleoFormProps) {
   const { user } = useAuth();
   const router = useRouter();
   const isCoordenador = Boolean((user as any)?.isCoordenador);
+  const canChangeRegiao = Boolean(user && user.tipo !== "funcionario" && !user.isProfessor && !user.isCoordenador);
 
   useEffect(() => {
     if (isCoordenador) {
@@ -77,9 +79,25 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], back
   const [tipoRestricaoChamada, setTipoRestricaoChamada] = useState<'data' | 'horario'>(n?.tipoRestricaoChamada ?? 'data');
   const [permitirChamadaRetroativa, setPermitirChamadaRetroativa] = useState(n?.permitirChamadaRetroativa ?? false);
   const [organizacaoId, setOrganizacaoId] = useState(n?.organizacaoId ?? (organizacoes[0]?.id || ""));
+  const [regiaoId, setRegiaoId] = useState(n?.regiaoId ?? "");
+  const [regioesList, setRegioesList] = useState<RegiaoApi[]>(regioesIniciais);
   const [atividadeIds, setAtividadeIds] = useState<string[]>(
     n?.atividadeIds ?? atividades.map((a) => a.id)
   );
+
+  // Carrega regiões compatíveis com o Objeto da Organização
+  useEffect(() => {
+    const org = organizacoes.find((o) => o.id === organizacaoId);
+    const objId = org?.objetoId;
+    regioesApi
+      .list({ objetoId: objId || undefined, limit: 100 })
+      .then((res) => {
+        setRegioesList(res.data ?? []);
+      })
+      .catch((err) => {
+        console.error("Erro ao carregar regiões para o núcleo:", err);
+      });
+  }, [organizacaoId, organizacoes]);
 
   const [cep, setCep] = useState(n?.cep ?? "");
   const [endereco, setEndereco] = useState(n?.endereco ?? "");
@@ -125,10 +143,12 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], back
       return;
     }
 
+    const regiaoEscolhida = regioesList.find((r) => r.id === regiaoId);
     const data = {
       identificacao: formData.get("identificacao") as string,
       nomeLocal: (formData.get("nomeLocal") as string) || null,
-      regiao: (formData.get("regiao") as string) || null,
+      regiaoId: regiaoId || null,
+      regiao: regiaoEscolhida?.nome || (regiaoId ? null : (formData.get("regiao") as string) || null),
       nomeResponsavel: (formData.get("nomeResponsavel") as string) || null,
       telefoneContato: (formData.get("telefoneContato") as string) || null,
       cep: (formData.get("cep") as string) || null,
@@ -225,7 +245,29 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], back
             <Input name="nomeLocal" defaultValue={n?.nomeLocal} placeholder="Ex: Escola Municipal..." />
           </Field>
           <Field label="Região">
-            <Input name="regiao" defaultValue={n?.regiao} />
+            {canChangeRegiao ? (
+              <select
+                name="regiaoId"
+                value={regiaoId}
+                onChange={(e) => setRegiaoId(e.target.value)}
+                className="w-full appearance-none rounded-lg border border-zinc-300 bg-white px-3 py-2 pr-9 text-sm text-zinc-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100"
+              >
+                <option value="">Sem região associada</option>
+                {regioesList.map((reg) => (
+                  <option key={reg.id} value={reg.id}>
+                    {reg.nome}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <div className="flex items-center gap-2 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-600">
+                <MapPin className="h-4 w-4 text-zinc-400" />
+                <span>{n?.regiaoNome || n?.regiao || "Sem região associada"}</span>
+                <span className="ml-auto text-[10px] text-zinc-400 italic">
+                  Apenas gestores podem alterar
+                </span>
+              </div>
+            )}
           </Field>
           <Field label="Nome do responsável">
             <Input name="nomeResponsavel" defaultValue={n?.nomeResponsavel} />
