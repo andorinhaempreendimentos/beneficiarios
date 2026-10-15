@@ -3,10 +3,11 @@
 import { useMemo, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { Globe, MapPin, Filter, Building, Compass, RotateCcw, Moon, Sun, Bell } from "lucide-react";
+import { Globe, MapPin, Filter, Building, Compass, RotateCcw, Moon, Sun, Bell, FolderKanban } from "lucide-react";
 import { useLocationFilter } from "@/components/providers/LocationFilterProvider";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { useAuth } from "@/components/providers/AuthProvider";
+import { useDicionario } from "@/components/providers/DictionaryProvider";
 import { useQuery } from "@/lib/hooks/useQuery";
 import { nucleosApi, execucoesAulaApi, pendenciasGeraisApi, type Paginated, type NucleoApi } from "@/lib/api/services";
 import { normalizarNucleoLocalizacao } from "@/lib/location";
@@ -38,6 +39,8 @@ export function TopLocationBar({ nucleos: nucleosProp }: TopLocationBarProps = {
     return null;
   }
   const {
+    objetoId,
+    setObjetoId,
     estado,
     cidade,
     organizacaoId,
@@ -49,13 +52,27 @@ export function TopLocationBar({ nucleos: nucleosProp }: TopLocationBarProps = {
     limparFiltros,
   } = useLocationFilter();
 
+  const { objetosDisponiveis, t } = useDicionario();
+  const userObjetoId = (user as any)?.objetoId as string | undefined;
+
+  // Se o usuário logado estiver vinculado a um objeto específico, fixa ele automaticamente
+  useEffect(() => {
+    if (userObjetoId && objetoId !== userObjetoId) {
+      setObjetoId(userObjetoId);
+    }
+  }, [userObjetoId, objetoId, setObjetoId]);
+
   const { data: nucleosData } = useQuery<Paginated<NucleoApi>>(() => nucleosApi.list({ limit: 200 }), []);
   const rawNucleos = nucleosProp ?? nucleosData?.data ?? [];
 
-  // Mapear núcleos com estado e cidade centralizados
+  // Mapear núcleos com estado e cidade centralizados, filtrando pelo objeto ativo
   const nucleosMapeados = useMemo(() => {
-    return rawNucleos.map(normalizarNucleoLocalizacao);
-  }, [rawNucleos]);
+    const activeObjId = userObjetoId || (objetoId !== "Todos" ? objetoId : null);
+    const lista = activeObjId
+      ? rawNucleos.filter((n) => !n.organizacao?.objetoId || n.organizacao.objetoId === activeObjId)
+      : rawNucleos;
+    return lista.map(normalizarNucleoLocalizacao);
+  }, [rawNucleos, userObjetoId, objetoId]);
 
   // Lista única de Estados disponíveis
   const estadosDisponiveis = useMemo(() => {
@@ -136,6 +153,7 @@ export function TopLocationBar({ nucleos: nucleosProp }: TopLocationBarProps = {
   }, [nucleoId, nucleosMapeados, setNucleoId]);
 
   const countFiltrosAtivos = [
+    objetoId !== "Todos" && !userObjetoId,
     estado !== "Todos",
     cidade !== "Todas",
     organizacaoId !== "Todas",
@@ -171,6 +189,29 @@ export function TopLocationBar({ nucleos: nucleosProp }: TopLocationBarProps = {
       </div>
 
       <div className="flex flex-wrap items-center gap-1.5">
+        {/* Seletor Objeto / Projeto */}
+        <div className="flex items-center gap-1 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/80 px-2 py-1 text-xs font-semibold text-zinc-800 dark:text-zinc-200 shadow-2xs">
+          <FolderKanban className="h-3 w-3 text-sky-600 dark:text-sky-400 shrink-0" />
+          <select
+            value={userObjetoId || objetoId}
+            onChange={(e) => setObjetoId(e.target.value)}
+            disabled={Boolean(userObjetoId)}
+            className="bg-transparent text-xs font-semibold text-zinc-900 dark:text-zinc-100 focus:outline-hidden cursor-pointer max-w-[180px] truncate disabled:opacity-80 disabled:cursor-not-allowed"
+            title={userObjetoId ? "Acesso vinculado exclusivamente a este projeto" : `Filtrar por ${t("objeto", "Objeto", false)}`}
+          >
+            {!userObjetoId && (
+              <option value="Todos" className="dark:bg-zinc-900">
+                {t("objeto", "Objeto", false)}: Todos
+              </option>
+            )}
+            {objetosDisponiveis.map((obj) => (
+              <option key={obj.id} value={obj.id} title={obj.nome} className="dark:bg-zinc-900">
+                {obj.nome}
+              </option>
+            ))}
+          </select>
+        </div>
+
         {/* Seletor Estado */}
         <div className="flex items-center gap-1 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/80 px-2 py-1 text-xs font-semibold text-zinc-800 dark:text-zinc-200 shadow-2xs">
           <MapPin className="h-3 w-3 text-sky-600 dark:text-sky-400 shrink-0" />

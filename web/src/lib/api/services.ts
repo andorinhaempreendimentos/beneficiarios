@@ -150,6 +150,10 @@ export interface ObjetoApi {
   dataInicio?: string;
   dataTermino?: string;
   status: string;
+  termoGrupo?: string;
+  termoSessao?: string;
+  termoResponsavel?: string;
+  termoParticipante?: string;
   concedenteId?: string;
   concedente?: {
     id: string;
@@ -416,6 +420,7 @@ export interface UsuarioApi {
   ativo: boolean;
   perfilId: string;
   entidadeId?: string;
+  objetoId?: string;
   criadoEm: string;
 }
 
@@ -482,6 +487,10 @@ function mapObjeto(r: any): ObjetoApi {
       remuneracaoMensal: c.remuneracao_mensal ? Number(c.remuneracao_mensal) : undefined,
       cargaHorariaSemanal: c.carga_horaria_semanal ?? undefined,
     })) : undefined,
+    termoGrupo: r.termo_grupo ?? undefined,
+    termoSessao: r.termo_sessao ?? undefined,
+    termoResponsavel: r.termo_responsavel ?? undefined,
+    termoParticipante: r.termo_participante ?? undefined,
     criadoEm: r.created_at,
   };
 }
@@ -708,7 +717,7 @@ function mapInscricao(r: any): InscricaoApi {
 function mapUsuario(r: any): UsuarioApi {
   return {
     id: r.id, email: r.email, nomeCompleto: r.nome_completo, tipo: r.tipo, isProfessor: r.is_professor ?? false, ativo: r.ativo,
-    perfilId: r.perfil_id, entidadeId: r.entidade_id ?? undefined, criadoEm: r.created_at,
+    perfilId: r.perfil_id, entidadeId: r.entidade_id ?? undefined, objetoId: r.objeto_id ?? undefined, criadoEm: r.created_at,
   };
 }
 
@@ -856,6 +865,10 @@ function toObjetoRow(b: Record<string, unknown>): Database['public']['Tables']['
     meta_vulnerabilidade_minima: Number(b.metaVulnerabilidadeMinima ?? 70),
     meta_eventos_ano: Number(b.metaEventosAno ?? 0),
     meta_reunioes_ano: Number(b.metaReunioesAno ?? 0),
+    termo_grupo: (b.termoGrupo as string | null | undefined) ?? 'Grupo',
+    termo_sessao: (b.termoSessao as string | null | undefined) ?? 'Sessão',
+    termo_responsavel: (b.termoResponsavel as string | null | undefined) ?? 'Professor',
+    termo_participante: (b.termoParticipante as string | null | undefined) ?? 'Beneficiário',
   };
 }
 
@@ -2079,6 +2092,10 @@ export const usuariosApi = {
     };
     const { data, error } = await (sb.rpc as any)('admin_criar_usuario', payload);
     if (error) throw error;
+    if (body.objetoId) {
+      await sb.from('usuarios').update({ objeto_id: body.objetoId as string }).eq('id', data.id);
+      data.objeto_id = body.objetoId;
+    }
     return mapUsuario(data);
   },
   async update(id: string, body: Record<string, unknown>): Promise<UsuarioApi> {
@@ -2095,6 +2112,10 @@ export const usuariosApi = {
     };
     const { data, error } = await (sb.rpc as any)('admin_atualizar_usuario', payload);
     if (error) throw error;
+    if (body.objetoId !== undefined) {
+      await sb.from('usuarios').update({ objeto_id: (body.objetoId as string | null) || null }).eq('id', id);
+      data.objeto_id = body.objetoId || null;
+    }
     return mapUsuario(data);
   },
   async remove(id: string): Promise<void> {

@@ -1947,6 +1947,10 @@ export type Database = {
           numero_processo_adm: string | null
           status: string
           termo_de_fomento: string | null
+          termo_grupo: string | null
+          termo_participante: string | null
+          termo_responsavel: string | null
+          termo_sessao: string | null
           tipo_duracao: Database["public"]["Enums"]["tipo_duracao_atividade"]
           updated_at: string
         }
@@ -1978,6 +1982,10 @@ export type Database = {
           numero_processo_adm?: string | null
           status?: string
           termo_de_fomento?: string | null
+          termo_grupo?: string | null
+          termo_participante?: string | null
+          termo_responsavel?: string | null
+          termo_sessao?: string | null
           tipo_duracao?: Database["public"]["Enums"]["tipo_duracao_atividade"]
           updated_at?: string
         }
@@ -2009,6 +2017,10 @@ export type Database = {
           numero_processo_adm?: string | null
           status?: string
           termo_de_fomento?: string | null
+          termo_grupo?: string | null
+          termo_participante?: string | null
+          termo_responsavel?: string | null
+          termo_sessao?: string | null
           tipo_duracao?: Database["public"]["Enums"]["tipo_duracao_atividade"]
           updated_at?: string
         }
@@ -3018,6 +3030,7 @@ export type Database = {
           id: string
           is_professor: boolean | null
           nome_completo: string
+          objeto_id: string | null
           perfil_id: string
           tipo: Database["public"]["Enums"]["tipo_usuario"]
           updated_at: string
@@ -3031,6 +3044,7 @@ export type Database = {
           id: string
           is_professor?: boolean | null
           nome_completo: string
+          objeto_id?: string | null
           perfil_id: string
           tipo?: Database["public"]["Enums"]["tipo_usuario"]
           updated_at?: string
@@ -3044,11 +3058,19 @@ export type Database = {
           id?: string
           is_professor?: boolean | null
           nome_completo?: string
+          objeto_id?: string | null
           perfil_id?: string
           tipo?: Database["public"]["Enums"]["tipo_usuario"]
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "usuarios_objeto_id_fkey"
+            columns: ["objeto_id"]
+            isOneToOne: false
+            referencedRelation: "objetos"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "usuarios_perfil_id_fkey"
             columns: ["perfil_id"]

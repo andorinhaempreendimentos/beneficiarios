@@ -37,6 +37,7 @@ export interface Usuario {
   nome: string;
   email: string;
   perfilId: string;
+  objetoId?: string;
   status: StatusUsuario;
   fotoUrl?: string;
   criadoEm: string;
@@ -253,6 +254,10 @@ export interface Objeto {
   dataInicio?: string;
   dataTermino?: string;
   status: StatusObjeto;
+  termoGrupo?: string;
+  termoSessao?: string;
+  termoResponsavel?: string;
+  termoParticipante?: string;
   criadoEm: string;
 }
 

@@ -3,10 +3,12 @@
 import { createContext, useContext, useEffect, useState, useMemo, useCallback } from "react";
 
 interface LocationFilterContextValue {
+  objetoId: string; // "Todos" ou ID do objeto
   estado: string; // "Todos" ou UF (ex: "TO")
   cidade: string; // "Todas" ou nome da cidade (ex: "Palmas")
   organizacaoId: string; // "Todas" ou ID da organização
   nucleoId: string; // "Todos" ou ID do núcleo
+  setObjetoId: (id: string) => void;
   setEstado: (uf: string) => void;
   setCidade: (cidade: string) => void;
   setOrganizacaoId: (id: string) => void;
@@ -14,16 +16,19 @@ interface LocationFilterContextValue {
   limparFiltros: () => void;
 }
 
+const STORAGE_OBJETO_KEY = "andorinha_filtro_objeto";
 const STORAGE_ESTADO_KEY = "andorinha_filtro_estado";
 const STORAGE_CIDADE_KEY = "andorinha_filtro_cidade";
 const STORAGE_ORGANIZACAO_KEY = "andorinha_filtro_organizacao";
 const STORAGE_NUCLEO_KEY = "andorinha_filtro_nucleo";
 
 const LocationFilterContext = createContext<LocationFilterContextValue>({
+  objetoId: "Todos",
   estado: "Todos",
   cidade: "Todas",
   organizacaoId: "Todas",
   nucleoId: "Todos",
+  setObjetoId: () => {},
   setEstado: () => {},
   setCidade: () => {},
   setOrganizacaoId: () => {},
@@ -32,6 +37,7 @@ const LocationFilterContext = createContext<LocationFilterContextValue>({
 });
 
 export function LocationFilterProvider({ children }: { children: React.ReactNode }) {
+  const [objetoId, setObjetoIdState] = useState<string>("Todos");
   const [estado, setEstadoState] = useState<string>("Todos");
   const [cidade, setCidadeState] = useState<string>("Todas");
   const [organizacaoId, setOrganizacaoIdState] = useState<string>("Todas");
@@ -39,17 +45,33 @@ export function LocationFilterProvider({ children }: { children: React.ReactNode
 
   useEffect(() => {
     try {
+      const savedObjeto = localStorage.getItem(STORAGE_OBJETO_KEY);
       const savedEstado = localStorage.getItem(STORAGE_ESTADO_KEY);
       const savedCidade = localStorage.getItem(STORAGE_CIDADE_KEY);
       const savedOrg = localStorage.getItem(STORAGE_ORGANIZACAO_KEY);
       const savedNucleo = localStorage.getItem(STORAGE_NUCLEO_KEY);
 
+      if (savedObjeto) setObjetoIdState(savedObjeto);
       if (savedEstado) setEstadoState(savedEstado);
       if (savedCidade) setCidadeState(savedCidade);
       if (savedOrg) setOrganizacaoIdState(savedOrg);
       if (savedNucleo) setNucleoIdState(savedNucleo);
     } catch {
       // fallback silencioso
+    }
+  }, []);
+
+  // Setter encadeado de Objeto (nível macro): reseta organizacaoId e nucleoId
+  const setObjetoId = useCallback((id: string) => {
+    setObjetoIdState(id);
+    setOrganizacaoIdState("Todas");
+    setNucleoIdState("Todos");
+    try {
+      localStorage.setItem(STORAGE_OBJETO_KEY, id);
+      localStorage.setItem(STORAGE_ORGANIZACAO_KEY, "Todas");
+      localStorage.setItem(STORAGE_NUCLEO_KEY, "Todos");
+    } catch {
+      // fallback
     }
   }, []);
 
@@ -106,11 +128,13 @@ export function LocationFilterProvider({ children }: { children: React.ReactNode
   }, []);
 
   const limparFiltros = useCallback(() => {
+    setObjetoIdState("Todos");
     setEstadoState("Todos");
     setCidadeState("Todas");
     setOrganizacaoIdState("Todas");
     setNucleoIdState("Todos");
     try {
+      localStorage.removeItem(STORAGE_OBJETO_KEY);
       localStorage.removeItem(STORAGE_ESTADO_KEY);
       localStorage.removeItem(STORAGE_CIDADE_KEY);
       localStorage.removeItem(STORAGE_ORGANIZACAO_KEY);
@@ -122,17 +146,19 @@ export function LocationFilterProvider({ children }: { children: React.ReactNode
 
   const value = useMemo(
     () => ({
+      objetoId,
       estado,
       cidade,
       organizacaoId,
       nucleoId,
+      setObjetoId,
       setEstado,
       setCidade,
       setOrganizacaoId,
       setNucleoId,
       limparFiltros,
     }),
-    [estado, cidade, organizacaoId, nucleoId, setEstado, setCidade, setOrganizacaoId, setNucleoId, limparFiltros]
+    [objetoId, estado, cidade, organizacaoId, nucleoId, setObjetoId, setEstado, setCidade, setOrganizacaoId, setNucleoId, limparFiltros]
   );
 
   return (

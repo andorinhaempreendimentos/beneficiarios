@@ -131,6 +131,10 @@ export function ObjetoForm({ objeto: o, backHref }: ObjetoFormProps) {
       dataTermino: tipoDuracao === "periodo" ? ((formData.get("dataTermino") as string) || null) : null,
       status: (formData.get("status") as string) || "ativo",
       cargosPrevistos: cargos.filter((c) => c.cargoNome && c.cargoNome.trim() !== ""),
+      termoGrupo: (formData.get("termoGrupo") as string)?.trim() || "Grupo",
+      termoSessao: (formData.get("termoSessao") as string)?.trim() || "Sessão",
+      termoResponsavel: (formData.get("termoResponsavel") as string)?.trim() || "Professor",
+      termoParticipante: (formData.get("termoParticipante") as string)?.trim() || "Beneficiário",
     };
 
     const parsed = objetoSchema.safeParse({
@@ -417,6 +421,43 @@ export function ObjetoForm({ objeto: o, backHref }: ObjetoFormProps) {
             </Field>
           </div>
         )}
+      </FormSection>
+
+      {/* 6. Vocabulário e Terminologia do Projeto */}
+      <FormSection title="6. Vocabulário e Terminologia do Projeto">
+        <p className="text-xs text-zinc-500 mb-4">
+          Defina como as entidades serão chamadas na interface do sistema (menus, tabelas, cabeçalhos e relatórios) quando este projeto estiver ativo.
+        </p>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <Field label="Termo para Turma / Grupo" required>
+            <Input
+              name="termoGrupo"
+              defaultValue={o?.termoGrupo ?? "Grupo"}
+              placeholder="Ex: Turma, Grupo, Equipe, Pelotão"
+            />
+          </Field>
+          <Field label="Termo para Aula / Treino / Sessão" required>
+            <Input
+              name="termoSessao"
+              defaultValue={o?.termoSessao ?? "Sessão"}
+              placeholder="Ex: Treino, Aula, Oficina, Encontro, Sessão"
+            />
+          </Field>
+          <Field label="Termo para Professor / Instrutor" required>
+            <Input
+              name="termoResponsavel"
+              defaultValue={o?.termoResponsavel ?? "Professor"}
+              placeholder="Ex: Professor, Instrutor, Educador, Treinador"
+            />
+          </Field>
+          <Field label="Termo para Aluno / Beneficiário" required>
+            <Input
+              name="termoParticipante"
+              defaultValue={o?.termoParticipante ?? "Beneficiário"}
+              placeholder="Ex: Aluno, Atleta, Beneficiário, Educando, Participante"
+            />
+          </Field>
+        </div>
       </FormSection>
 
       <div className="flex justify-end gap-2">

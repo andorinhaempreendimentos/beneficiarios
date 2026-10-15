@@ -84,12 +84,13 @@ export function Sidebar() {
         { href: "/coordenador/estoque", label: "Estoque", group: "Patrimônio", icon: Package, keywords: ["materiais", "itens", "patrimonio", "equipamentos"] },
         { href: "/pesquisas", label: "Pesquisas", group: "Pesquisas", icon: ClipboardList, keywords: ["questionarios", "formularios", "surveys"] },
         { href: "/conferencia-professores/respostas", label: "Conf. Horários", group: "Gestão", icon: CalendarCheck, keywords: ["ponto", "horarios", "frequencia", "professores"] },
-        { href: "/conferencia-beneficiarios/respostas", label: "Conf. Beneficiários", group: "Gestão", icon: Users, keywords: ["alunos", "presenca", "frequencia", "beneficiarios"] },
+        { href: "/conferencia-beneficiarios/respostas", label: `Conf. ${t("beneficiario", "Beneficiário", true)}`, group: "Gestão", icon: Users, keywords: ["alunos", "presenca", "frequencia", "beneficiarios"] },
       ];
     }
 
     const turmaSingular = t("turma", "Turma");
     const turmaPlural = t("turma", "Turma", true);
+    const sessaoPlural = t("sessao", "Aula", true);
     const beneficiarioSingular = t("beneficiario", "Beneficiário");
     const beneficiarioPlural = t("beneficiario", "Beneficiário", true);
 
@@ -109,12 +110,12 @@ export function Sidebar() {
       { href: "/faixas-etarias", label: "Faixas Etárias", group: `Operacional > ${turmaPlural}`, icon: GraduationCap, keywords: ["idade", "grupos", "etarias"] },
       { href: "/atividades", label: t("atividade", "Atividade", true), group: "Operacional", icon: Dumbbell, keywords: ["oficinas", "modalidades", "esportes"] },
       { href: "/atividades-complementares", label: "Especiais", group: "Operacional", icon: CalendarCheck, keywords: ["complementares", "eventos", "atividades especiais"] },
-      { href: "/aulas", label: "Aulas", group: "Operacional", icon: BookOpen, keywords: ["frequencia", "chamada", "planejamento", "licoes"] },
+      { href: "/aulas", label: sessaoPlural, group: "Operacional", icon: BookOpen, keywords: ["frequencia", "chamada", "planejamento", "licoes", "treinos", "aulas", "sessoes"] },
 
       // Beneficiários
-      { href: "/beneficiarios", label: beneficiarioPlural, group: "Beneficiários", icon: Users, keywords: ["alunos", "atendidos", "participantes", "listar"] },
-      { href: "/inscricoes", label: "Inscrições", group: "Beneficiários", icon: ClipboardList, keywords: ["matriculas", "candidatos", "pedidos", "solicitacoes"] },
-      { href: "/beneficiarios/novo", label: `Novo ${beneficiarioSingular.toLowerCase()}`, group: "Beneficiários", icon: UserPlus, keywords: ["cadastrar", "criar", "matricular", "adicionar"] },
+      { href: "/beneficiarios", label: beneficiarioPlural, group: beneficiarioPlural, icon: Users, keywords: ["alunos", "atendidos", "participantes", "listar"] },
+      { href: "/inscricoes", label: "Inscrições", group: beneficiarioPlural, icon: ClipboardList, keywords: ["matriculas", "candidatos", "pedidos", "solicitacoes"] },
+      { href: "/beneficiarios/novo", label: `Novo ${beneficiarioSingular.toLowerCase()}`, group: beneficiarioPlural, icon: UserPlus, keywords: ["cadastrar", "criar", "matricular", "adicionar"] },
 
       // Pessoal
       { href: "/funcionarios", label: "Funcionários", group: "Pessoal", icon: UsersRound, keywords: ["colaboradores", "equipe", "professores", "rh"] },
@@ -130,7 +131,7 @@ export function Sidebar() {
       { href: "/pendencias-gerais", label: "Pendências", group: "Gestão", icon: AlertCircle, keywords: ["alertas", "problemas", "inconsistencias", "erros"] },
       { href: "/relatorios", label: "Relatórios", group: "Gestão", icon: FileBarChart, keywords: ["prestacao", "contas", "dados", "estatisticas", "exportar", "frequencia"] },
       { href: "/conferencia-professores/respostas", label: "Conf. Horários", group: "Gestão", icon: CalendarCheck, keywords: ["ponto", "horarios", "frequencia", "professores"] },
-      { href: "/conferencia-beneficiarios/respostas", label: "Conf. Beneficiários", group: "Gestão", icon: Users, keywords: ["alunos", "presenca", "chamada", "beneficiarios"] },
+      { href: "/conferencia-beneficiarios/respostas", label: `Conf. ${beneficiarioPlural}`, group: "Gestão", icon: Users, keywords: ["alunos", "presenca", "chamada", "beneficiarios"] },
 
       // Pesquisas
       { href: "/pesquisas", label: "Pesquisas", group: "Pesquisas", icon: ClipboardList, keywords: ["formularios", "questionarios", "surveys"] },
@@ -406,10 +407,10 @@ export function Sidebar() {
             </div>
           ) : isFuncionario ? (
             <>
-              {navLink("/professor", "Área do Professor", CalendarCheck)}
+              {navLink("/professor", `Área do ${t("professor", "Professor")}`, CalendarCheck)}
               {navLink("/professor/ponto", "Meu Ponto", Clock)}
-              {navLink("/turmas", "Minhas Turmas", GraduationCap)}
-              {navLink("/beneficiarios", "Beneficiários", Users)}
+              {navLink("/turmas", `Minhas ${t("turma", "Turma", true)}`, GraduationCap)}
+              {navLink("/beneficiarios", t("beneficiario", "Beneficiário", true), Users)}
             </>
           ) : isCoordenador ? (
             <>
@@ -421,7 +422,7 @@ export function Sidebar() {
               {navLink("/coordenador/estoque", "Estoque", Package)}
               {navLink("/pesquisas", "Pesquisas", ClipboardList)}
               {navLink("/conferencia-professores/respostas", "Conf. Horários", CalendarCheck)}
-              {navLink("/conferencia-beneficiarios/respostas", "Conf. Beneficiários", Users)}
+              {navLink("/conferencia-beneficiarios/respostas", `Conf. ${t("beneficiario", "Beneficiário", true)}`, Users)}
             </>
           ) : (
             <>
@@ -464,11 +465,11 @@ export function Sidebar() {
 
                 {navLink("/atividades", t("atividade", "Atividade", true), Dumbbell)}
                 {navLink("/atividades-complementares", "Especiais", CalendarCheck)}
-                {navLink("/aulas", "Aulas", BookOpen)}
+                {navLink("/aulas", t("sessao", "Aula", true), BookOpen)}
               </SectionGroup>
 
               {/* Beneficiários */}
-              <SectionGroup label="Beneficiários" aberto={activeGroup === "beneficiarios"} setAberto={() => toggleGroup("beneficiarios")} ativo={beneficiariosGrupoAtivo} Icon={Users}>
+              <SectionGroup label={t("beneficiario", "Beneficiário", true)} aberto={activeGroup === "beneficiarios"} setAberto={() => toggleGroup("beneficiarios")} ativo={beneficiariosGrupoAtivo} Icon={Users}>
                 <Link
                   href="/beneficiarios"
                   onClick={() => setOpen(false)}
@@ -529,7 +530,7 @@ export function Sidebar() {
                 {navLink("/pendencias-gerais", "Pendências", AlertCircle)}
                 {navLink("/relatorios", "Relatórios", FileBarChart)}
                 {navLink("/conferencia-professores/respostas", "Conf. Horários", CalendarCheck)}
-                {navLink("/conferencia-beneficiarios/respostas", "Conf. Beneficiários", Users)}
+                {navLink("/conferencia-beneficiarios/respostas", `Conf. ${t("beneficiario", "Beneficiário", true)}`, Users)}
               </SectionGroup>
 
               {/* Pesquisas */}
