@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Plus, Building2, MapPin, UserCheck, Phone, Mail, Edit2, Trash2 } from "lucide-react";
+import { Plus, Building2, MapPin, UserCheck, Phone, Mail, Edit2, Trash2, Search } from "lucide-react";
 import {
   Badge,
   Button,
@@ -84,20 +84,31 @@ export default function ConcedentesPage() {
         }
       />
 
-      <FilterBar onFilter={() => { setPagina(1); refetch(); }} onClear={() => { setBusca(""); setEsferaFiltro(""); setPagina(1); }}>
-        <Field label="Buscar por nome, responsável ou cidade">
-          <Input
-            value={busca}
-            onChange={(e) => setBusca(e.target.value)}
-            placeholder="Ex: SEJUVES, Esportes, Palmas..."
-          />
+      <FilterBar
+        onFilter={() => { setPagina(1); refetch(); }}
+        onClear={() => { setBusca(""); setEsferaFiltro(""); setPagina(1); }}
+        gridClassName="grid grid-cols-1 gap-4 sm:grid-cols-12"
+      >
+        <Field label="Buscar por nome, responsável, CNPJ ou cidade" className="sm:col-span-8">
+          <div className="relative">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 pointer-events-none" />
+            <Input
+              value={busca}
+              onChange={(e) => { setBusca(e.target.value); setPagina(1); }}
+              placeholder="Ex: SEJUVES, Esportes, Palmas, Secretário, 00.000..."
+              className="pl-10"
+            />
+          </div>
         </Field>
-        <Field label="Esfera Administrativa">
-          <Select value={esferaFiltro} onChange={(e) => setEsferaFiltro(e.target.value)}>
+        <Field label="Esfera Administrativa" className="sm:col-span-4">
+          <Select
+            value={esferaFiltro}
+            onChange={(e) => { setEsferaFiltro(e.target.value); setPagina(1); }}
+          >
             <option value="">Todas as esferas</option>
-            <option value="municipal">Municipal</option>
-            <option value="estadual">Estadual</option>
-            <option value="federal">Federal</option>
+            <option value="municipal">Municipal (Prefeituras)</option>
+            <option value="estadual">Estadual (Governos Estaduais)</option>
+            <option value="federal">Federal (Ministérios / União)</option>
           </Select>
         </Field>
       </FilterBar>

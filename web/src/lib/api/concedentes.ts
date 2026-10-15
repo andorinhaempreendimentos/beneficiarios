@@ -86,7 +86,12 @@ export const concedentesApi = {
     const { page, limit, from, to } = paginar(num(p?.page), num(p?.limit));
     let q = sb.from('concedentes').select('*', { count: 'exact' }).is('deleted_at', null);
 
-    if (p?.busca) q = q.ilike('nome', `%${p.busca}%`);
+    if (p?.busca) {
+      const b = String(p.busca).trim();
+      if (b) {
+        q = q.or(`nome.ilike.%${b}%,responsavel_nome.ilike.%${b}%,cidade.ilike.%${b}%,cnpj.ilike.%${b}%`);
+      }
+    }
     if (p?.esfera) q = q.eq('esfera', String(p.esfera));
 
     const { data, count, error } = await q.order('nome', { ascending: true }).range(from, to);

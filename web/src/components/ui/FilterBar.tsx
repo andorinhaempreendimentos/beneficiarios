@@ -8,9 +8,10 @@ interface FilterBarProps {
   children: ReactNode;
   onFilter?: () => void;
   onClear?: () => void;
+  gridClassName?: string;
 }
 
-export function FilterBar({ children, onFilter, onClear }: FilterBarProps) {
+export function FilterBar({ children, onFilter, onClear, gridClassName }: FilterBarProps) {
   const [visible, setVisible] = useState(true);
 
   return (
@@ -38,7 +39,7 @@ export function FilterBar({ children, onFilter, onClear }: FilterBarProps) {
 
       {visible && (
         <div className="mt-4 border-t border-zinc-100 pt-4">
-          <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+          <div className={gridClassName || "grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6"}>
             {children}
           </div>
         </div>
