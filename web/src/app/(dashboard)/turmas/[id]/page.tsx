@@ -1,8 +1,6 @@
 import { notFound } from "next/navigation";
-import { Badge, Card, CardBody, CardHeader, LinkButton, PageHeader } from "@/components/ui";
-import { GestaoMatriculasRoster } from "@/components/turmas/GestaoMatriculasRoster";
 import { turmasApi, nucleosApi, atividadesApi, beneficiariosApi } from "@/lib/api/services";
-import { formatarData, formatarNomeGrupo } from "@/lib/utils";
+import { DetalhesTurmaView } from "@/components/turmas/DetalhesTurmaView";
 
 export default async function DetalhesTurmaPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -17,125 +15,17 @@ export default async function DetalhesTurmaPage({ params }: { params: Promise<{ 
     beneficiariosApi.list({ limit: 500 }).catch(() => ({ data: [], total: 0, page: 1, limit: 500 })),
   ]);
 
-  const termoGrupo = atividade?.termoGrupo || "Grupo";
-  const termoResponsavel = atividade?.termoResponsavel || "Responsável";
-  const termoParticipante = atividade?.termoParticipante || "Beneficiário";
-  const nomeAdaptado = formatarNomeGrupo(t.nome, termoGrupo);
-
-  const usoInterno = t.tipo === "operacional" || (atividade?.usoInterno ?? false);
-  const matriculados = matriculadosRes.data;
-  const qtdOcupadas = matriculadosRes.total;
-  const vagasLivres = Math.max(0, t.vagasTotais - qtdOcupadas);
   const outrasTurmas = todasTurmasRes.data.filter((item) => item.id !== t.id);
 
   return (
-    <div className="flex flex-col gap-6">
-      <PageHeader
-        title={nomeAdaptado}
-        description={t.dataInicio ? `Início: ${formatarData(t.dataInicio)}` : "Sem data de início"}
-        actions={
-          <div className="flex items-center gap-2">
-            {!usoInterno && (
-              <>
-                <LinkButton href={`/turmas/${t.id}/inscricoes`} variant="outline">Inscrições</LinkButton>
-                <LinkButton href={`/turmas/${t.id}/presenca`} variant="outline">Lista de presença</LinkButton>
-              </>
-            )}
-            <LinkButton href={`/turmas/${t.id}/editar`} variant="outline">Editar</LinkButton>
-          </div>
-        }
-      />
-
-      <Card>
-        <CardHeader>
-          <h3 className="text-sm font-medium text-zinc-700">Informações gerais</h3>
-        </CardHeader>
-        <CardBody className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2 lg:grid-cols-3">
-          <div>
-            <p className="text-zinc-500">Núcleo</p>
-            <p className="text-zinc-800">{nucleo?.identificacao ?? "—"}</p>
-          </div>
-          <div>
-            <p className="text-zinc-500">Atividade</p>
-            <p className="text-zinc-800">
-              {atividade?.nome ?? "—"}
-              {usoInterno && <span className="ml-2 text-xs text-zinc-400">(uso interno)</span>}
-            </p>
-          </div>
-          <div>
-            <p className="text-zinc-500">Tipo</p>
-            <Badge tone={t.tipo === "operacional" ? "zinc" : "sky"}>
-              {t.tipo === "operacional" ? "Operacional" : "Regular"}
-            </Badge>
-          </div>
-          {t.tipo !== "operacional" && (t.idadeMinima != null || t.idadeMaxima != null) && (
-            <div>
-              <p className="text-zinc-500">Idade Permitida</p>
-              <p className="text-zinc-800">
-                {t.idadeMinima} a {t.idadeMaxima} anos
-              </p>
-            </div>
-          )}
-          <div>
-            <p className="text-zinc-500">Exclusiva</p>
-            <Badge tone={t.exclusiva ? "amber" : "zinc"}>{t.exclusiva ? "Sim" : "Não"}</Badge>
-          </div>
-        </CardBody>
-      </Card>
-
-      {!usoInterno && (
-        <>
-          <Card>
-            <CardHeader>
-              <h3 className="text-sm font-medium text-zinc-700">Vagas e {termoResponsavel.toLowerCase()}(is)</h3>
-            </CardHeader>
-            <CardBody className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2 lg:grid-cols-3">
-              <div>
-                <p className="text-zinc-500">Vagas totais</p>
-                <p className="text-zinc-800">{t.vagasTotais}</p>
-              </div>
-              <div>
-                <p className="text-zinc-500">{termoParticipante}s matriculados</p>
-                <p className="text-zinc-800">{qtdOcupadas}</p>
-              </div>
-              <div>
-                <p className="text-zinc-500">Vagas disponíveis</p>
-                <Badge tone={vagasLivres > 0 ? "green" : "red"}>{vagasLivres}</Badge>
-              </div>
-              <div>
-                <p className="text-zinc-500">{termoResponsavel}(is)</p>
-                <p className="text-zinc-800">
-                  {(t.responsaveisNomes && t.responsaveisNomes.length > 0)
-                    ? t.responsaveisNomes.join(", ")
-                    : (t.responsaveis ?? []).join(", ") || "-"}
-                </p>
-              </div>
-            </CardBody>
-          </Card>
-
-          <GestaoMatriculasRoster
-            turmaAtual={t}
-            matriculadosIniciais={matriculados}
-            outrasTurmas={outrasTurmas}
-            todosBeneficiarios={todosBeneficiariosRes.data}
-          />
-        </>
-      )}
-
-      {usoInterno && (
-        <Card>
-          <CardHeader>
-            <h3 className="text-sm font-medium text-zinc-700">{termoResponsavel}(is)</h3>
-          </CardHeader>
-          <CardBody className="text-sm">
-            <p className="text-zinc-800">
-              {(t.responsaveisNomes && t.responsaveisNomes.length > 0)
-                ? t.responsaveisNomes.join(", ")
-                : (t.responsaveis ?? []).join(", ") || "-"}
-            </p>
-          </CardBody>
-        </Card>
-      )}
-    </div>
+    <DetalhesTurmaView
+      turma={t}
+      nucleo={nucleo}
+      atividade={atividade}
+      matriculados={matriculadosRes.data}
+      qtdOcupadas={matriculadosRes.total}
+      outrasTurmas={outrasTurmas}
+      todosBeneficiarios={todosBeneficiariosRes.data}
+    />
   );
 }

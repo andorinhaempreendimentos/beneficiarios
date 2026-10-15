@@ -18,6 +18,7 @@ import type { Anexo, Beneficiario, PerguntaParQ, VinculoTurma } from "@/lib/type
 import { beneficiariosApi, turmasApi, type NucleoApi, type TurmaApi } from "@/lib/api/services";
 import { validarCpf, validarCep, validarEmail } from "@/lib/mascaras";
 import { normalizarStatusBeneficiario, STATUS_BENEFICIARIO_OPCOES } from "@/lib/status";
+import { useDicionario } from "@/components/providers/DictionaryProvider";
 
 const PERGUNTAS_PARQ = [
   "Algum médico já disse que você possui um problema de coração e recomendou que você só praticasse atividade física supervisionado?",
@@ -48,6 +49,13 @@ interface BeneficiarioFormProps {
 }
 
 export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], backHref }: BeneficiarioFormProps) {
+  const { t } = useDicionario();
+  const termoBeneficiario = t("termoBeneficiario", "Beneficiário");
+  const termoTurma = t("termoTurma", "Turma");
+  const termoTurmas = t("termoTurmas", "Turmas");
+  const termoLocal = t("termoLocal", "Núcleo");
+  const termoResponsavel = t("termoResponsavel", "Responsável");
+
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
@@ -192,7 +200,7 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
 
       window.location.href = backHref;
     } catch (err: any) {
-      setErro(err.message || "Erro ao salvar beneficiário.");
+      setErro(err.message || `Erro ao salvar ${termoBeneficiario.toLowerCase()}.`);
     } finally {
       setLoading(false);
     }
@@ -221,7 +229,7 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
           {erro}
         </div>
       )}
-      <FormSection title="1. Identificação do Beneficiário">
+      <FormSection title={`1. Identificação do ${termoBeneficiario}`}>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <Field label="Foto" className="lg:col-span-3 sm:max-w-xs">
             {b?.fotoUrl ? (
@@ -290,13 +298,13 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
               </Select>
             </Field>
           )}
-          <Field label="Núcleo Esportivo (Polo)" required>
+          <Field label={`${termoLocal} (Polo)`} required>
             <Select
               name="nucleoId"
               value={nucleoId}
               onChange={(e) => setNucleoId(e.target.value)}
             >
-              <option value="">Selecione o Núcleo Esportivo</option>
+              <option value="">Selecione o {termoLocal}</option>
               {nucleos.map((n) => (
                 <option key={n.id} value={n.id}>{n.identificacao}</option>
               ))}
@@ -312,28 +320,28 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
         </div>
       </FormSection>
 
-      <FormSection title="2. Atribuição de Turmas Esportivas" defaultOpen={true}>
+      <FormSection title={`2. Atribuição de ${termoTurmas}`} defaultOpen={true}>
         <div className="flex flex-col gap-4">
           <p className="text-xs text-zinc-500">
-            Selecione as turmas nas quais o beneficiário estará matriculado. Ao escolher uma turma, o núcleo esportivo correspondente é associado automaticamente.
+            Selecione as {termoTurmas.toLowerCase()} nas quais o {termoBeneficiario.toLowerCase()} estará matriculado. Ao escolher uma {termoTurma.toLowerCase()}, o {termoLocal.toLowerCase()} correspondente é associado automaticamente.
           </p>
 
           {vinculos.length === 0 ? (
             <div className="rounded-xl border border-dashed border-zinc-300 p-4 text-center text-xs text-zinc-500">
-              Nenhuma turma atribuída a este beneficiário.
+              Nenhuma {termoTurma.toLowerCase()} atribuída a este {termoBeneficiario.toLowerCase()}.
             </div>
           ) : (
             vinculos.map((v, index) => {
-              const turmaAtual = turmas.find((t) => t.id === v.turmaId);
+              const turmaAtual = turmas.find((turmaItem) => turmaItem.id === v.turmaId);
 
               // Filtrar turmas pelo Núcleo selecionado no formulário (se houver)
               const turmasFiltradas = nucleoId
-                ? turmas.filter((t) => t.nucleoId === nucleoId)
+                ? turmas.filter((turmaItem) => turmaItem.nucleoId === nucleoId)
                 : turmas;
 
               return (
                 <div key={index} className="grid grid-cols-1 gap-4 rounded-xl border border-zinc-200 bg-zinc-50/70 p-4 sm:grid-cols-3 items-end">
-                  <Field label="Turma Esportiva" required>
+                  <Field label={termoTurma} required>
                     <Select
                       value={v.turmaId}
                       onChange={(e) => {
@@ -341,18 +349,18 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
                         setVinculos((prev) =>
                           prev.map((item, i) => (i === index ? { ...item, turmaId: newId } : item))
                         );
-                        const selectedT = turmas.find((t) => t.id === newId);
+                        const selectedT = turmas.find((turmaItem) => turmaItem.id === newId);
                         if (selectedT?.nucleoId) {
                           setNucleoId(selectedT.nucleoId);
                         }
                       }}
                     >
-                      <option value="">Selecione a Turma</option>
-                      {turmasFiltradas.map((t) => {
-                        const n = nucleos.find((n) => n.id === t.nucleoId);
+                      <option value="">Selecione a {termoTurma}</option>
+                      {turmasFiltradas.map((turmaItem) => {
+                        const n = nucleos.find((nucleoItem) => nucleoItem.id === turmaItem.nucleoId);
                         return (
-                          <option key={t.id} value={t.id}>
-                            {t.nome} {n ? `(${n.identificacao})` : ""} — {t.vagasTotais || 0} vagas
+                          <option key={turmaItem.id} value={turmaItem.id}>
+                            {turmaItem.nome} {n ? `(${n.identificacao})` : ""} — {turmaItem.vagasTotais || 0} vagas
                           </option>
                         );
                       })}
@@ -376,7 +384,7 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
 
                   <div className="flex items-center gap-2">
                     <Button type="button" variant="danger" size="sm" onClick={() => removerTurma(index)} className="w-full sm:w-auto cursor-pointer">
-                      <Trash2 className="h-4 w-4" /> Remover Turma
+                      <Trash2 className="h-4 w-4" /> Remover {termoTurma}
                     </Button>
                   </div>
                 </div>
@@ -385,7 +393,7 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
           )}
 
           <Button type="button" variant="outline" size="sm" className="self-start cursor-pointer" onClick={adicionarTurma}>
-            <Plus className="h-4 w-4" /> Adicionar Turma ao Beneficiário
+            <Plus className="h-4 w-4" /> Adicionar {termoTurma} ao {termoBeneficiario}
           </Button>
         </div>
       </FormSection>
@@ -492,7 +500,7 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
         </div>
       </FormSection>
 
-      <FormSection title="3. Endereço do Beneficiário" defaultOpen={false}>
+      <FormSection title={`3. Endereço do ${termoBeneficiario}`} defaultOpen={false}>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <Field label="CEP" required>
             <Input
@@ -541,7 +549,7 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
         </div>
       </FormSection>
 
-      <FormSection title="4. Documentação do Beneficiário" defaultOpen={false}>
+      <FormSection title={`4. Documentação do ${termoBeneficiario}`} defaultOpen={false}>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <Field label="RG">
             <Input name="rg" defaultValue={b?.rg} />
@@ -584,18 +592,18 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
         </div>
       </FormSection>
 
-      <FormSection title="5. Documentação do Responsável" defaultOpen={false}>
+      <FormSection title={`5. Documentação do ${termoResponsavel}`} defaultOpen={false}>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Field label="Nome do responsável">
+          <Field label={`Nome do ${termoResponsavel.toLowerCase()}`}>
             <Input name="nomeResponsavel" defaultValue={b?.nomeResponsavel} />
           </Field>
-          <Field label="Email do responsável">
+          <Field label={`Email do ${termoResponsavel.toLowerCase()}`}>
             <Input type="email" name="emailResponsavel" defaultValue={b?.emailResponsavel} />
           </Field>
-          <Field label="RG do responsável">
+          <Field label={`RG do ${termoResponsavel.toLowerCase()}`}>
             <Input name="rgResponsavel" defaultValue={b?.rgResponsavel} />
           </Field>
-          <Field label="CPF do responsável">
+          <Field label={`CPF do ${termoResponsavel.toLowerCase()}`}>
             <Input name="cpfResponsavel" mask="cpf" defaultValue={b?.cpfResponsavel} placeholder="000.000.000-00" />
           </Field>
         </div>
@@ -676,7 +684,7 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
           <Field label="Turma">
             <Input name="turmaEscolar" defaultValue={b?.turmaEscolar} />
           </Field>
-          <Field label="Código do Atleta">
+          <Field label={`Código do ${termoBeneficiario}`}>
             <Input name="codigoAtleta" defaultValue={b?.codigoAtleta} />
           </Field>
         </div>
@@ -709,7 +717,7 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
         <LinkButton href={backHref} variant="outline">
           Voltar
         </LinkButton>
-        <Button type="submit">{b ? "Salvar" : "Cadastrar Aluno"}</Button>
+        <Button type="submit">{b ? "Salvar" : `Cadastrar ${termoBeneficiario}`}</Button>
       </div>
     </form>
   );

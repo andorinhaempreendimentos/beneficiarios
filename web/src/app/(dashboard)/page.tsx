@@ -22,6 +22,7 @@ import {
 import { formatarData } from "@/lib/utils";
 import { statusBeneficiarioTone, statusBeneficiarioLabel, normalizarStatusBeneficiario } from "@/lib/status";
 import { useLocationFilter } from "@/components/providers/LocationFilterProvider";
+import { useDicionario } from "@/components/providers/DictionaryProvider";
 import { ModalLinksInscricao } from "@/components/inscricoes/ModalLinksInscricao";
 import { normalizarNucleoLocalizacao } from "@/lib/location";
 import { MapaPolos } from "@/components/dashboard/MapaPolos";
@@ -34,6 +35,7 @@ const VAZIO: DashboardResumo = {
 
 export default function DashboardPage() {
   const { estado, cidade, organizacaoId, nucleoId } = useLocationFilter();
+  const { t } = useDicionario();
   const [modalLinksOpen, setModalLinksOpen] = useState(false);
 
   const { data, loading } = useQuery<DashboardResumo>(() => dashboardApi.resumo(), []);
@@ -174,7 +176,7 @@ export default function DashboardPage() {
               <span className="flex h-5 w-5 items-center justify-center rounded-md bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
                 <Package className="h-3 w-3" />
               </span>
-              <h3 className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">Objetos</h3>
+              <h3 className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">{t("objeto", "Objeto", true)}</h3>
             </div>
             <Link href="/objetos" className="text-[11px] font-medium text-sky-600 hover:text-sky-700 dark:text-sky-400 hover:underline">
               Ver todos
@@ -196,7 +198,7 @@ export default function DashboardPage() {
               className="flex h-7 items-center justify-center gap-1.5 rounded-lg border border-sky-200 bg-sky-50/70 px-2.5 text-xs font-medium text-sky-700 hover:bg-sky-100 dark:border-sky-800/80 dark:bg-sky-950/40 dark:text-sky-300 dark:hover:bg-sky-900/60 transition-colors"
             >
               <Plus className="h-3 w-3" />
-              <span>Novo objeto</span>
+              <span>{`Novo ${t("objeto", "Objeto").toLowerCase()}`}</span>
             </Link>
           </div>
         </div>
@@ -208,7 +210,7 @@ export default function DashboardPage() {
               <span className="flex h-5 w-5 items-center justify-center rounded-md bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300">
                 <Building2 className="h-3 w-3" />
               </span>
-              <h3 className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">Organizações</h3>
+              <h3 className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">{t("organizacao", "Organização", true)}</h3>
             </div>
             <Link href="/organizacoes" className="text-[11px] font-medium text-sky-600 hover:text-sky-700 dark:text-sky-400 hover:underline">
               Ver todas
@@ -230,7 +232,7 @@ export default function DashboardPage() {
               className="flex h-7 items-center justify-center gap-1.5 rounded-lg border border-sky-200 bg-sky-50/70 px-2.5 text-xs font-medium text-sky-700 hover:bg-sky-100 dark:border-sky-800/80 dark:bg-sky-950/40 dark:text-sky-300 dark:hover:bg-sky-900/60 transition-colors"
             >
               <Plus className="h-3 w-3" />
-              <span>Nova organização</span>
+              <span>{`Nova ${t("organizacao", "Organização").toLowerCase()}`}</span>
             </Link>
           </div>
         </div>
@@ -242,7 +244,7 @@ export default function DashboardPage() {
               <span className="flex h-5 w-5 items-center justify-center rounded-md bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
                 <MapPin className="h-3 w-3" />
               </span>
-              <h3 className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">Núcleos</h3>
+              <h3 className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">{t("local", "Núcleo", true)}</h3>
             </div>
             <Link href="/nucleos" className="text-[11px] font-medium text-sky-600 hover:text-sky-700 dark:text-sky-400 hover:underline">
               Ver todos
@@ -255,7 +257,7 @@ export default function DashboardPage() {
                 <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300">{r.nucleosAtivos}</span>
               </div>
               <div className="flex items-center justify-between rounded-lg bg-zinc-100/80 px-2.5 py-1.5 border border-zinc-200/50 dark:bg-zinc-800/50 dark:border-zinc-700/50">
-                <span className="text-[11px] font-medium text-zinc-600 dark:text-zinc-400">Total núcleos</span>
+                <span className="text-[11px] font-medium text-zinc-600 dark:text-zinc-400">Total {t("local", "núcleo", true).toLowerCase()}</span>
                 <span className="text-xs font-bold text-zinc-800 dark:text-zinc-200">{r.totalNucleos}</span>
               </div>
             </div>
@@ -264,7 +266,7 @@ export default function DashboardPage() {
               className="flex h-7 items-center justify-center gap-1.5 rounded-lg border border-sky-200 bg-sky-50/70 px-2.5 text-xs font-medium text-sky-700 hover:bg-sky-100 dark:border-sky-800/80 dark:bg-sky-950/40 dark:text-sky-300 dark:hover:bg-sky-900/60 transition-colors"
             >
               <Plus className="h-3 w-3" />
-              <span>Novo núcleo</span>
+              <span>{`Novo ${t("local", "Núcleo").toLowerCase()}`}</span>
             </Link>
           </div>
         </div>
@@ -276,16 +278,16 @@ export default function DashboardPage() {
               <span className="flex h-5 w-5 items-center justify-center rounded-md bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300">
                 <UsersRound className="h-3 w-3" />
               </span>
-              <h3 className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">Turmas e Vagas</h3>
+              <h3 className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">{t("turma", "Turma", true)} e Vagas</h3>
             </div>
             <Link href="/turmas" className="text-[11px] font-medium text-sky-600 hover:text-sky-700 dark:text-sky-400 hover:underline">
-              Ver turmas
+              Ver {t("turma", "Turma", true).toLowerCase()}
             </Link>
           </div>
           <div className="flex flex-1 flex-col justify-between gap-3 p-3">
             <div className="grid grid-cols-3 gap-1.5">
               <div className="flex items-center justify-between rounded-lg bg-zinc-100/80 px-2 py-1.5 border border-zinc-200/50 dark:bg-zinc-800/50 dark:border-zinc-700/50">
-                <span className="text-[11px] font-medium text-zinc-600 dark:text-zinc-400 truncate">Turmas</span>
+                <span className="text-[11px] font-medium text-zinc-600 dark:text-zinc-400 truncate">{t("turma", "Turma", true)}</span>
                 <span className="text-xs font-bold text-zinc-800 dark:text-zinc-200 shrink-0 ml-1">{r.totalTurmas}</span>
               </div>
               <div className="flex items-center justify-between rounded-lg bg-emerald-50/80 px-2 py-1.5 border border-emerald-200/40 dark:bg-emerald-950/30 dark:border-emerald-900/40">
@@ -302,7 +304,7 @@ export default function DashboardPage() {
               className="flex h-7 items-center justify-center gap-1.5 rounded-lg border border-sky-200 bg-sky-50/70 px-2.5 text-xs font-medium text-sky-700 hover:bg-sky-100 dark:border-sky-800/80 dark:bg-sky-950/40 dark:text-sky-300 dark:hover:bg-sky-900/60 transition-colors"
             >
               <Plus className="h-3 w-3" />
-              <span>Nova turma</span>
+              <span>{`Nova ${t("turma", "Turma").toLowerCase()}`}</span>
             </Link>
           </div>
         </div>
@@ -314,7 +316,7 @@ export default function DashboardPage() {
               <span className="flex h-5 w-5 items-center justify-center rounded-md bg-teal-100 text-teal-700 dark:bg-teal-950 dark:text-teal-300">
                 <Users className="h-3 w-3" />
               </span>
-              <h3 className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">Beneficiários</h3>
+              <h3 className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">{t("beneficiario", "Beneficiário", true)}</h3>
             </div>
             <Link href="/beneficiarios" className="text-[11px] font-medium text-sky-600 hover:text-sky-700 dark:text-sky-400 hover:underline">
               Ver todos
@@ -337,7 +339,7 @@ export default function DashboardPage() {
                 className="flex h-7 items-center justify-center gap-1 rounded-lg border border-sky-200 bg-sky-50/70 px-2 text-[11px] font-medium text-sky-700 hover:bg-sky-100 dark:border-sky-800/80 dark:bg-sky-950/40 dark:text-sky-300 dark:hover:bg-sky-900/60 transition-colors"
               >
                 <UserPlus className="h-3 w-3" />
-                <span>Novo</span>
+                <span>{`Novo ${t("beneficiario", "Beneficiário").toLowerCase()}`}</span>
               </Link>
               <button
                 type="button"
@@ -390,7 +392,9 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <h3 className="text-sm font-medium text-zinc-700 dark:text-zinc-200">Beneficiários por modalidade</h3>
+            <h3 className="text-sm font-medium text-zinc-700 dark:text-zinc-200">
+              {t("beneficiario", "Beneficiário", true)} por {t("atividade", "modalidade").toLowerCase()}
+            </h3>
           </CardHeader>
           <CardBody className="flex flex-col gap-2">
             {r.distribuicaoPorModalidade.map((m) => {
@@ -413,12 +417,16 @@ export default function DashboardPage() {
         {/* Top núcleos */}
         <Card>
           <CardHeader className="flex items-center justify-between">
-            <h3 className="text-sm font-medium text-zinc-700 dark:text-zinc-200">Top núcleos por beneficiários ativos</h3>
+            <h3 className="text-sm font-medium text-zinc-700 dark:text-zinc-200">
+              Top {t("local", "núcleos", true).toLowerCase()} por {t("beneficiario", "beneficiários", true).toLowerCase()} ativos
+            </h3>
             <Link href="/nucleos" className="text-xs text-sky-600 dark:text-sky-400 hover:underline">Ver todos</Link>
           </CardHeader>
           <CardBody className="flex flex-col gap-2">
             {r.topNucleos.length === 0 ? (
-              <p className="text-xs text-zinc-400 dark:text-zinc-500 py-4 text-center">Nenhum núcleo para a localização selecionada.</p>
+              <p className="text-xs text-zinc-400 dark:text-zinc-500 py-4 text-center">
+                Nenhum {t("local", "núcleo").toLowerCase()} para a localização selecionada.
+              </p>
             ) : (
               r.topNucleos.map((n, i) => {
                 const pct = r.beneficiariosAtivos > 0 ? Math.round((n.beneficiariosAtivos / r.beneficiariosAtivos) * 100) : 0;
@@ -445,7 +453,9 @@ export default function DashboardPage() {
       {/* Cadastros recentes */}
       <Card>
         <CardHeader className="flex items-center justify-between">
-          <h3 className="text-sm font-medium text-zinc-700 dark:text-zinc-200">Cadastros recentes</h3>
+          <h3 className="text-sm font-medium text-zinc-700 dark:text-zinc-200">
+            Cadastros recentes de {t("beneficiario", "beneficiários", true).toLowerCase()}
+          </h3>
           <Link href="/beneficiarios" className="text-sm text-sky-600 dark:text-sky-400 hover:underline">Ver todos</Link>
         </CardHeader>
         <div className="overflow-x-auto">
@@ -453,7 +463,7 @@ export default function DashboardPage() {
             <thead>
               <tr className="border-b border-zinc-200 dark:border-zinc-800 text-left text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
                 <th className="px-5 py-3">Nome</th>
-                <th className="px-5 py-3">Núcleo</th>
+                <th className="px-5 py-3">{t("local", "Núcleo")}</th>
                 <th className="px-5 py-3">Status</th>
                 <th className="px-5 py-3">Data Cadastro</th>
               </tr>

@@ -16,6 +16,7 @@ import {
   type FuncionarioApi,
 } from "@/lib/api/services";
 import { useToast } from "@/components/providers/ToastProvider";
+import { useDicionario } from "@/components/providers/DictionaryProvider";
 
 const OPCOES_IDADE = Array.from({ length: 27 }, (_, i) => i + 4); // 4 a 30 anos
 
@@ -124,11 +125,15 @@ export function GrupoForm({
     );
   }, [nucleoSelecionado, atividades]);
 
+  const { t: tDict } = useDicionario();
   const atividadeSelecionada = atividades.find((a) => a.id === atividadeId);
-  const termoGrupo = atividadeSelecionada?.termoGrupo || "Grupo";
-  const termoSessao = atividadeSelecionada?.termoSessao || "Sessão";
-  const termoResponsavel = atividadeSelecionada?.termoResponsavel || "Responsável";
-  const termoParticipante = atividadeSelecionada?.termoParticipante || "Aluno";
+  const termoGrupo = tDict("turma", "Grupo", false, atividadeSelecionada);
+  const termoSessao = tDict("sessao", "Sessão", false, atividadeSelecionada);
+  const termoResponsavel = tDict("instrutor", "Responsável", false, atividadeSelecionada);
+  const termoParticipante = tDict("beneficiario", "Aluno", false, atividadeSelecionada);
+  const termoParticipantePlural = tDict("beneficiario", "Alunos", true, atividadeSelecionada);
+  const termoLocal = tDict("local", "Núcleo");
+  const termoAtividade = tDict("atividade", "Atividade");
 
   // Identificadores (A, B, C...) já ocupados por grupos dentro do mesmo núcleo
   const identificadoresOcupados = useMemo(() => {
@@ -157,12 +162,12 @@ export function GrupoForm({
 
   // Gerador estável do nome oficial: [Núcleo] - Grupo [Letra]
   const nomeOficial = useMemo(() => {
-    const nNome = nucleoSelecionado?.identificacao || "Núcleo";
+    const nNome = nucleoSelecionado?.identificacao || termoLocal;
     if (tipo === "operacional") {
       return `${nNome} - Planejamento`;
     }
     return `${nNome} - Grupo ${identificador || "A"}`;
-  }, [nucleoSelecionado, tipo, identificador]);
+  }, [nucleoSelecionado, termoLocal, tipo, identificador]);
 
   // Detecção de nome legado fora do padrão oficial
   const isNomeLegado = useMemo(() => {
@@ -182,13 +187,13 @@ export function GrupoForm({
 
   // Prévia visual adaptada pelo termo da atividade
   const nomeAdaptadoPreview = useMemo(() => {
-    const nNome = nucleoSelecionado?.identificacao || "Núcleo";
+    const nNome = nucleoSelecionado?.identificacao || termoLocal;
     if (tipo === "operacional") return null;
     if (termoGrupo && termoGrupo !== "Grupo") {
       return `${nNome} - ${termoGrupo} ${identificador || "A"}`;
     }
     return null;
-  }, [nucleoSelecionado, tipo, termoGrupo, identificador]);
+  }, [nucleoSelecionado, termoLocal, tipo, termoGrupo, identificador]);
 
   // Atualiza estado interno de nome
   useEffect(() => {
@@ -354,14 +359,14 @@ export function GrupoForm({
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label={`Tipo do ${termoGrupo}`} required>
             <Select value={tipo} onChange={(e) => setTipo(e.target.value as "regular" | "operacional")}>
-              <option value="regular">Regular (com {termoParticipante.toLowerCase()}s)</option>
+              <option value="regular">Regular (com {termoParticipantePlural.toLowerCase()})</option>
               <option value="operacional">Operacional (Planejamento / Reunião interna)</option>
             </Select>
           </Field>
 
-          <Field label="Núcleo" required error={fieldErrors.nucleoId}>
+          <Field label={termoLocal} required error={fieldErrors.nucleoId}>
             <Select name="nucleoId" value={nucleoId} onChange={(e) => handleNucleoChange(e.target.value)}>
-              <option value="" disabled>Selecione o núcleo</option>
+              <option value="" disabled>Selecione o {termoLocal.toLowerCase()}</option>
               {nucleos.map((n) => (
                 <option key={n.id} value={n.id}>{n.identificacao}</option>
               ))}
@@ -369,8 +374,8 @@ export function GrupoForm({
           </Field>
 
           <Field
-            label="Atividade Principal (Opcional)"
-            hint="A grade semanal de sessões poderá incluir múltiplas atividades"
+            label={`${termoAtividade} Principal (Opcional)`}
+            hint={`A grade semanal de ${termoSessao.toLowerCase()}s poderá incluir múltiplas ${termoAtividade.toLowerCase()}s`}
             error={fieldErrors.atividadeId}
           >
             <Select
@@ -379,7 +384,7 @@ export function GrupoForm({
               onChange={(e) => setAtividadeId(e.target.value)}
               disabled={!nucleoId}
             >
-              <option value="">{nucleoId ? "Nenhuma / Múltiplas atividades na grade" : "Selecione primeiro o núcleo"}</option>
+              <option value="">{nucleoId ? `Nenhuma / Múltiplas ${termoAtividade.toLowerCase()}s na grade` : `Selecione primeiro o ${termoLocal.toLowerCase()}`}</option>
               {atividadesParaTurma.map((a) => (
                 <option key={a.id} value={a.id}>
                   {a.nome} ({a.termoGrupo || "Grupo"} • {a.termoSessao || "Treino"}) {!a.disponivelPreInscricao ? "[Interno]" : ""}
@@ -431,10 +436,10 @@ export function GrupoForm({
                 required
                 hint={
                   !nucleoId
-                    ? "Selecione primeiro o núcleo para verificar as letras disponíveis"
+                    ? `Selecione primeiro o ${termoLocal.toLowerCase()} para verificar as letras disponíveis`
                     : identificadoresOcupados.size > 0
-                    ? `Letras já em uso neste núcleo: ${Array.from(identificadoresOcupados).sort().join(", ")}`
-                    : "Identificador estável do grupo (Grupo A, B, C...)"
+                    ? `Letras já em uso neste ${termoLocal.toLowerCase()}: ${Array.from(identificadoresOcupados).sort().join(", ")}`
+                    : `Identificador estável do ${termoGrupo.toLowerCase()} (${termoGrupo} A, B, C...)`
                 }
               >
                 <Select
@@ -462,7 +467,7 @@ export function GrupoForm({
               label={`Nome do ${termoGrupo}`}
               required
               error={fieldErrors.nome}
-              hint="Nome estruturado e imutável gerado automaticamente pelo Núcleo e Identificador"
+              hint={`Nome estruturado e imutável gerado automaticamente pelo ${termoLocal} e Identificador`}
             >
               <div className="flex flex-col gap-2">
                 <div className="relative">
@@ -585,7 +590,7 @@ export function GrupoForm({
           </div>
         ) : (
           <div className="rounded-xl border border-zinc-200 bg-zinc-50/50 p-3 text-xs text-zinc-500 mb-2">
-            Grupo do tipo <strong>Operacional</strong> não possui {termoParticipante.toLowerCase()}s nem controle de vagas.
+            Grupo do tipo <strong>Operacional</strong> não possui {termoParticipantePlural.toLowerCase()} nem controle de vagas.
           </div>
         )}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 mt-4">
@@ -614,7 +619,7 @@ export function GrupoForm({
             </span>
             {conflitosAgenda.map((c, idx) => (
               <p key={idx}>
-                O profissional <strong>{c.professorNome}</strong> já possui compromisso no grupo{" "}
+                O profissional <strong>{c.professorNome}</strong> já possui compromisso no(a) {termoGrupo.toLowerCase()}{" "}
                 <strong>{c.turmaConflitoNome}</strong> em <strong>{c.dia}</strong> das{" "}
                 <strong>{c.outroInicio}h às {c.outroFim}h</strong>.
               </p>
@@ -641,7 +646,7 @@ export function GrupoForm({
           <Switch
             checked={exclusiva}
             onChange={setExclusiva}
-            label={`${termoGrupo} exclusivo (${termoParticipante.toLowerCase()} não pode acumular outros ${termoGrupo.toLowerCase()}s)`}
+            label={`${termoGrupo} exclusivo (${termoParticipante.toLowerCase()} não pode acumular outros(as) ${tDict("turma", "grupos", true, atividadeSelecionada).toLowerCase()})`}
           />
         </div>
       </FormSection>

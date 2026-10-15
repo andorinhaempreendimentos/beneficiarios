@@ -1,5 +1,4 @@
-import { PageHeader } from "@/components/ui";
-import { GrupoForm } from "@/components/turmas/GrupoForm";
+import { NovoGrupoView } from "@/components/turmas/NovoGrupoView";
 import { nucleosApi, atividadesApi, funcionariosApi } from "@/lib/api/services";
 
 export default async function NovaTurmaPage() {
@@ -10,14 +9,10 @@ export default async function NovaTurmaPage() {
   ]);
 
   return (
-    <div className="flex flex-col gap-6">
-      <PageHeader title="Novo grupo" description="Cadastro de grupo vinculado a núcleo e grade de sessões" />
-      <GrupoForm
-        nucleos={nucleosRes.data}
-        atividades={atividadesRes.data}
-        funcionarios={funcionariosRes.data}
-        backHref="/turmas"
-      />
-    </div>
+    <NovoGrupoView
+      nucleos={nucleosRes.data}
+      atividades={atividadesRes.data}
+      funcionarios={funcionariosRes.data}
+    />
   );
 }

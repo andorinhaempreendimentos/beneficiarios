@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { UserMinus, ArrowRightLeft, UserPlus, AlertCircle, CheckCircle2 } from "lucide-react";
+import { UserMinus, ArrowRightLeft, UserPlus } from "lucide-react";
 import { Badge, Button, Card, CardBody, CardHeader, Select } from "@/components/ui";
 import { useToast } from "@/components/providers/ToastProvider";
-import { turmasApi, beneficiariosApi, type TurmaApi, type BeneficiarioApi } from "@/lib/api/services";
+import { useDicionario } from "@/components/providers/DictionaryProvider";
+import { turmasApi, type TurmaApi, type BeneficiarioApi } from "@/lib/api/services";
 import { calcularIdade } from "@/lib/utils";
 
 interface GestaoMatriculasRosterProps {
@@ -22,6 +23,12 @@ export function GestaoMatriculasRoster({
   todosBeneficiarios,
 }: GestaoMatriculasRosterProps) {
   const { toast } = useToast();
+  const { t } = useDicionario();
+
+  const termoParticipante = t("beneficiario", "Aluno", false, turmaAtual.atividade);
+  const termoParticipantePlural = t("beneficiario", "Alunos", true, turmaAtual.atividade);
+  const termoGrupo = t("turma", "Turma", false, turmaAtual.atividade);
+
   const [matriculados, setMatriculados] = useState<BeneficiarioApi[]>(matriculadosIniciais);
 
   // Estados de Modais
@@ -45,25 +52,25 @@ export function GestaoMatriculasRoster({
       await turmasApi.matricular(turmaAtual.id, beneficiarioParaAdicionar);
       const aluno = todosBeneficiarios.find((b) => b.id === beneficiarioParaAdicionar);
       if (aluno) setMatriculados((prev) => [...prev, aluno]);
-      toast.success("Beneficiário matriculado com sucesso na turma!");
+      toast.success(`${termoParticipante} matriculado(a) com sucesso no(a) ${termoGrupo.toLowerCase()}!`);
       setModalAdicionar(false);
       setBeneficiarioParaAdicionar("");
     } catch (err: any) {
-      toast.error(err.message || "Erro ao matricular aluno.");
+      toast.error(err.message || `Erro ao matricular ${termoParticipante.toLowerCase()}.`);
     } finally {
       setLoading(false);
     }
   }
 
   async function handleRemover(beneficiarioId: string) {
-    if (!confirm("Tem certeza que deseja remover este aluno da turma?")) return;
+    if (!confirm(`Tem certeza que deseja remover este(a) ${termoParticipante.toLowerCase()} do(a) ${termoGrupo.toLowerCase()}?`)) return;
     setLoading(true);
     try {
       await turmasApi.desmatricular(turmaAtual.id, beneficiarioId);
       setMatriculados((prev) => prev.filter((b) => b.id !== beneficiarioId));
-      toast.success("Aluno removido da turma com sucesso.");
+      toast.success(`${termoParticipante} removido(a) do(a) ${termoGrupo.toLowerCase()} com sucesso.`);
     } catch (err: any) {
-      toast.error(err.message || "Erro ao remover aluno.");
+      toast.error(err.message || `Erro ao remover ${termoParticipante.toLowerCase()}.`);
     } finally {
       setLoading(false);
     }
@@ -75,11 +82,11 @@ export function GestaoMatriculasRoster({
     try {
       await turmasApi.migrar(modalMigrar.id, turmaAtual.id, turmaDestinoId);
       setMatriculados((prev) => prev.filter((b) => b.id !== modalMigrar.id));
-      toast.success("Aluno transferido para a nova turma com sucesso!");
+      toast.success(`${termoParticipante} transferido(a) para o(a) novo(a) ${termoGrupo.toLowerCase()} com sucesso!`);
       setModalMigrar(null);
       setTurmaDestinoId("");
     } catch (err: any) {
-      toast.error(err.message || "Erro ao transferir aluno.");
+      toast.error(err.message || `Erro ao transferir ${termoParticipante.toLowerCase()}.`);
     } finally {
       setLoading(false);
     }
@@ -89,13 +96,17 @@ export function GestaoMatriculasRoster({
     <Card>
       <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h3 className="text-base font-bold text-zinc-900">Alunos Matriculados ({matriculados.length})</h3>
-          <p className="text-xs text-zinc-500">Gestão ativa de roster da turma (Adicionar, Remover e Transferir)</p>
+          <h3 className="text-base font-bold text-zinc-900">
+            {termoParticipantePlural} Matriculados ({matriculados.length})
+          </h3>
+          <p className="text-xs text-zinc-500">
+            Gestão ativa de roster de {termoGrupo.toLowerCase()} (Adicionar, Remover e Transferir)
+          </p>
         </div>
 
         <Button onClick={() => setModalAdicionar(true)} size="sm">
           <UserPlus className="h-4 w-4" />
-          Adicionar Aluno
+          Adicionar {termoParticipante}
         </Button>
       </CardHeader>
 
@@ -115,7 +126,7 @@ export function GestaoMatriculasRoster({
               {matriculados.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="py-8 text-center text-zinc-400">
-                    Nenhum aluno matriculado nesta turma até o momento.
+                    Nenhum(a) {termoParticipante.toLowerCase()} matriculado(a) neste(a) {termoGrupo.toLowerCase()} até o momento.
                   </td>
                 </tr>
               ) : (
@@ -145,37 +156,38 @@ export function GestaoMatriculasRoster({
                           )}
                         </div>
                       </td>
-                    <td className="px-4 py-3 text-zinc-600">{aluno.celular || "—"}</td>
-                    <td className="px-4 py-3">
-                      <Badge tone="green">Matriculado</Badge>
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setModalMigrar(aluno)}
-                          title="Transferir / Migrar para outra turma"
-                        >
-                          <ArrowRightLeft className="h-3.5 w-3.5" />
-                          <span>Migrar</span>
-                        </Button>
+                      <td className="px-4 py-3 text-zinc-600">{aluno.celular || "—"}</td>
+                      <td className="px-4 py-3">
+                        <Badge tone="green">Matriculado</Badge>
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setModalMigrar(aluno)}
+                            title={`Transferir / Migrar para outro(a) ${termoGrupo.toLowerCase()}`}
+                          >
+                            <ArrowRightLeft className="h-3.5 w-3.5" />
+                            <span>Migrar</span>
+                          </Button>
 
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleRemover(aluno.id)}
-                          className="text-red-600 border-red-200 hover:bg-red-50"
-                          title="Remover aluno da turma"
-                        >
-                          <UserMinus className="h-3.5 w-3.5" />
-                          <span>Remover</span>
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              }))}
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleRemover(aluno.id)}
+                            className="text-red-600 border-red-200 hover:bg-red-50"
+                            title={`Remover ${termoParticipante.toLowerCase()} do(a) ${termoGrupo.toLowerCase()}`}
+                          >
+                            <UserMinus className="h-3.5 w-3.5" />
+                            <span>Remover</span>
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
             </tbody>
           </table>
         </div>
@@ -185,15 +197,19 @@ export function GestaoMatriculasRoster({
       {modalAdicionar && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
           <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl border border-zinc-200">
-            <h3 className="text-base font-bold text-zinc-900 mb-1">Matricular Aluno na Turma</h3>
-            <p className="text-xs text-zinc-500 mb-4">Selecione um beneficiário já cadastrado para vincular a esta turma.</p>
+            <h3 className="text-base font-bold text-zinc-900 mb-1">
+              Matricular {termoParticipante} no(a) {termoGrupo}
+            </h3>
+            <p className="text-xs text-zinc-500 mb-4">
+              Selecione um(a) {termoParticipante.toLowerCase()} já cadastrado(a) para vincular a este(a) {termoGrupo.toLowerCase()}.
+            </p>
 
             <div className="flex flex-col gap-4">
               <Select
                 value={beneficiarioParaAdicionar}
                 onChange={(e) => setBeneficiarioParaAdicionar(e.target.value)}
               >
-                <option value="">Selecione o beneficiário...</option>
+                <option value="">Selecione o(a) {termoParticipante.toLowerCase()}...</option>
                 {disponiveisParaAdicionar.map((b) => (
                   <option key={b.id} value={b.id}>
                     {b.nomeCompleto} ({b.matricula})
@@ -218,9 +234,11 @@ export function GestaoMatriculasRoster({
       {modalMigrar && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
           <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl border border-zinc-200">
-            <h3 className="text-base font-bold text-zinc-900 mb-1">Transferir Aluno de Turma</h3>
+            <h3 className="text-base font-bold text-zinc-900 mb-1">
+              Transferir {termoParticipante} de {termoGrupo}
+            </h3>
             <p className="text-xs text-zinc-500 mb-4">
-              Transfira <strong className="text-zinc-800">{modalMigrar.nomeCompleto}</strong> para outra turma.
+              Transfira <strong className="text-zinc-800">{modalMigrar.nomeCompleto}</strong> para outro(a) {termoGrupo.toLowerCase()}.
             </p>
 
             <div className="flex flex-col gap-4">
@@ -228,10 +246,10 @@ export function GestaoMatriculasRoster({
                 value={turmaDestinoId}
                 onChange={(e) => setTurmaDestinoId(e.target.value)}
               >
-                <option value="">Selecione a turma de destino...</option>
-                {outrasTurmas.map((t) => (
-                  <option key={t.id} value={t.id}>
-                    {t.nome} ({t.vagasTotais} vagas)
+                <option value="">Selecione o(a) {termoGrupo.toLowerCase()} de destino...</option>
+                {outrasTurmas.map((turmaDest) => (
+                  <option key={turmaDest.id} value={turmaDest.id}>
+                    {turmaDest.nome} ({turmaDest.vagasTotais} vagas)
                   </option>
                 ))}
               </Select>

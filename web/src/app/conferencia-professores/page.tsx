@@ -20,6 +20,7 @@ import {
   ChevronDown,
   Search,
 } from "lucide-react";
+import { useDicionario } from "@/components/providers/DictionaryProvider";
 
 interface Nucleo {
   id: string;
@@ -335,6 +336,17 @@ function AgeSelect({
 }
 
 export default function ConferenciaProfessoresPage() {
+  const { t } = useDicionario();
+  const termoProfessor = t("termoResponsavel", "Professor");
+  const termoProfessores = t("termoResponsaveis", "Professores");
+  const termoParticipantes = t("termoBeneficiarios", "Alunos");
+  const termoTurma = t("termoGrupo", "Turma");
+  const termoTurmas = t("termoGrupos", "Turmas");
+  const termoNucleo = t("termoLocal", "Núcleo");
+  const termoAula = t("termoSessao", "Aula");
+  const termoAulas = t("termoSessoes", "Aulas");
+  const termoModalidade = t("termoAtividade", "Modalidade");
+
   const [loadingDados, setLoadingDados] = useState(true);
   const [nucleos, setNucleos] = useState<Nucleo[]>([]);
   const [professores, setProfessores] = useState<Professor[]>([]);
@@ -692,12 +704,12 @@ export default function ConferenciaProfessoresPage() {
                 Escolinhas de Inclusão e Cidadania
               </p>
               <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white leading-tight">
-                Conferência de Aulas dos Professores
+                Conferência de {termoAulas} dos {termoProfessores}
               </h1>
             </div>
           </div>
           <p className="text-xs sm:text-sm text-sky-100 mt-2">
-            Confira diretamente os dias, horários e faixas etárias de cada aula que você aplica no seu núcleo.
+            Confira diretamente os dias, horários e faixas etárias de cada {termoAula.toLowerCase()} que você aplica no seu {termoNucleo.toLowerCase()}.
           </p>
         </div>
       </header>
@@ -709,9 +721,9 @@ export default function ConferenciaProfessoresPage() {
             <div className="flex items-center justify-between text-xs font-bold text-zinc-600 mb-2">
               <span>Passo {passo} de 3</span>
               <span>
-                {passo === 1 && "Núcleo e Nome"}
-                {passo === 2 && "Dias de aula"}
-                {passo === 3 && "Horários e idades das aulas"}
+                {passo === 1 && `${termoNucleo} e Nome`}
+                {passo === 2 && `Dias de ${termoAula.toLowerCase()}`}
+                {passo === 3 && `Horários e idades das ${termoAulas.toLowerCase()}`}
               </span>
             </div>
             <div className="w-full bg-zinc-100 h-2.5 rounded-full overflow-hidden">
@@ -741,22 +753,22 @@ export default function ConferenciaProfessoresPage() {
               Respostas Registradas!
             </h2>
             <p className="text-zinc-600 text-sm max-w-md mx-auto mb-6">
-              Muito obrigado, Professor(a) <strong>{professorNomeFinal}</strong>! As informações das aulas do seu núcleo (
+              Muito obrigado, {termoProfessor}(a) <strong>{professorNomeFinal}</strong>! As informações das {termoAulas.toLowerCase()} do seu {termoNucleo.toLowerCase()} (
               <strong>{nucleoNomeFinal}</strong>) foram salvas com sucesso.
             </p>
 
             <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-4 text-left text-xs sm:text-sm text-zinc-700 space-y-2 mb-6">
               <p>
-                <strong>Esporte:</strong> {modalidadeFinal}
+                <strong>{termoModalidade}:</strong> {modalidadeFinal}
               </p>
               <p>
-                <strong>Dias de aula:</strong>{" "}
+                <strong>Dias de {termoAula.toLowerCase()}:</strong>{" "}
                 {diasSelecionados
                   .map((d) => DIAS_SEMANA_LISTA.find((item) => item.id === d)?.nome)
                   .join(", ")}
               </p>
               <p>
-                <strong>Total de aulas na semana:</strong> {totalAulasSemana} aulas
+                <strong>Total de {termoAulas.toLowerCase()} na semana:</strong> {totalAulasSemana} {termoAulas.toLowerCase()}
               </p>
             </div>
 
@@ -774,7 +786,7 @@ export default function ConferenciaProfessoresPage() {
               }}
               className="px-6 py-3 bg-sky-600 hover:bg-sky-700 text-white rounded-xl font-bold text-sm transition-all shadow-sm"
             >
-              Preencher Novamente / Outro Professor
+              Preencher Novamente / Outro {termoProfessor}
             </button>
           </div>
         ) : (
@@ -789,17 +801,17 @@ export default function ConferenciaProfessoresPage() {
                     <span className="w-8 h-8 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center text-sm font-black shrink-0">
                       1
                     </span>
-                    Núcleo e Nome
+                    {termoNucleo} e Nome
                   </h2>
                   <p className="text-xs sm:text-sm text-zinc-500 mt-1">
-                    Selecione seu núcleo, confirme seu nome e qual atividade você leciona.
+                    Selecione seu {termoNucleo.toLowerCase()}, confirme seu nome e qual atividade você leciona.
                   </p>
                 </div>
 
                 {/* Núcleo com Dropdown CSS elegante */}
                 <div>
                   <label className="block text-base sm:text-lg font-bold text-zinc-900 mb-2">
-                    Qual é o núcleo onde você dá aulas? <span className="text-rose-500">*</span>
+                    Qual é o {termoNucleo.toLowerCase()} onde você dá {termoAulas.toLowerCase()}? <span className="text-rose-500">*</span>
                   </label>
                   <CustomSelect
                     value={nucleoSelecionadoId}
@@ -811,7 +823,7 @@ export default function ConferenciaProfessoresPage() {
                       setTrocarProfessor(false);
                       setMostrarListaProfessores(false);
                     }}
-                    placeholder="-- Toque para selecionar seu núcleo --"
+                    placeholder={`-- Toque para selecionar seu ${termoNucleo.toLowerCase()} --`}
                     options={nucleos.map((n) => {
                       const jaPreenchido = nucleosPreenchidosIds.includes(n.id);
                       return {
@@ -839,7 +851,7 @@ export default function ConferenciaProfessoresPage() {
                         <div className="space-y-3 bg-zinc-50 border-2 border-zinc-200 rounded-2xl p-4 sm:p-5 animate-fadeIn">
                           <div className="flex items-center justify-between">
                             <p className="text-xs sm:text-sm font-bold text-zinc-700">
-                              Selecione seu nome na lista de professores:
+                              Selecione seu nome na lista de {termoProfessores.toLowerCase()}:
                             </p>
                             <button
                               type="button"
@@ -942,7 +954,7 @@ export default function ConferenciaProfessoresPage() {
                                 Corrija o seu nome abaixo:
                               </h3>
                               <p className="text-xs sm:text-sm text-amber-900/80 mt-0.5">
-                                O nome vinculado a este núcleo é <strong>{professorSugerido?.nome_completo}</strong>. Altere o texto no campo e clique em <strong>Confirmar Correção</strong>.
+                                O nome vinculado a este {termoNucleo.toLowerCase()} é <strong>{professorSugerido?.nome_completo}</strong>. Altere o texto no campo e clique em <strong>Confirmar Correção</strong>.
                               </p>
                             </div>
                           </div>
@@ -1009,7 +1021,7 @@ export default function ConferenciaProfessoresPage() {
                               onClick={() => setMostrarListaProfessores(true)}
                               className="text-xs font-bold text-amber-900 hover:text-amber-950 underline cursor-pointer"
                             >
-                              Ou escolher outro professor já cadastrado na lista →
+                              Ou escolher outro {termoProfessor.toLowerCase()} já cadastrado na lista →
                             </button>
                           </div>
                         </div>
@@ -1021,7 +1033,7 @@ export default function ConferenciaProfessoresPage() {
                           {professorSugerido.nome_completo}
                         </div>
                         <p className="text-xs text-zinc-500 mt-0.5">
-                          Professor vinculado a este núcleo
+                          {termoProfessor} vinculado a este {termoNucleo.toLowerCase()}
                         </p>
 
                         <div className="grid grid-cols-2 gap-3 mt-4">
@@ -1229,10 +1241,10 @@ export default function ConferenciaProfessoresPage() {
                     <span className="w-7 h-7 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center text-sm font-black">
                       3
                     </span>
-                    Aulas e horários de cada dia
+                    {termoAulas} e horários de cada dia
                   </h2>
                   <p className="text-xs text-zinc-500 mt-1">
-                    Para cada dia selecionado, informe os horários e a idade dos alunos. Toque em <strong>+ Adicionar aula</strong> para incluir mais turmas no dia.
+                    Para cada dia selecionado, informe os horários e a idade dos {termoParticipantes.toLowerCase()}. Toque em <strong>+ Adicionar {termoAula.toLowerCase()}</strong> para incluir mais {termoTurmas.toLowerCase()} no dia.
                   </p>
                 </div>
 
@@ -1263,7 +1275,7 @@ export default function ConferenciaProfessoresPage() {
                               <span className="text-2xs text-emerald-800 bg-emerald-100 border border-emerald-200 px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1">
                                 <Check className="w-3 h-3 stroke-[3]" />
                                 <span>
-                                  Confirmado ({aulas.length} {aulas.length === 1 ? "aula" : "aulas"})
+                                  Confirmado ({aulas.length} {aulas.length === 1 ? termoAula.toLowerCase() : termoAulas.toLowerCase()})
                                 </span>
                               </span>
                             </div>
@@ -1286,7 +1298,7 @@ export default function ConferenciaProfessoresPage() {
                                 className="text-xs bg-white border border-emerald-200 text-zinc-800 px-3 py-1.5 rounded-xl font-medium shadow-2xs flex items-center gap-2"
                               >
                                 <span className="font-extrabold text-emerald-700">
-                                  {aIdx + 1}ª Aula:
+                                  {aIdx + 1}ª {termoAula}:
                                 </span>
                                 <span className="font-bold text-zinc-900">
                                   {aula.inicio} às {aula.fim}
@@ -1327,7 +1339,7 @@ export default function ConferenciaProfessoresPage() {
                           <div className="flex items-center gap-2 text-xs text-zinc-500 font-medium py-1">
                             <Lock className="w-4 h-4 text-zinc-400 shrink-0" />
                             <span>
-                              Bloqueado até você confirmar as aulas de{" "}
+                              Bloqueado até você confirmar as {termoAulas.toLowerCase()} de{" "}
                               <strong className="text-zinc-700 font-bold">
                                 {diaAnteriorObj?.nome || "dias anteriores"}
                               </strong>
@@ -1392,7 +1404,7 @@ export default function ConferenciaProfessoresPage() {
                                 {/* HEADER SEPARADO DA AULA COM FUNDO DESTACADO */}
                                 <div className="bg-zinc-100/90 px-3.5 py-2.5 rounded-t-2xl border-b border-zinc-200/80 flex items-center justify-between">
                                   <span className="text-xs sm:text-sm font-black text-zinc-900">
-                                    {index + 1}ª Aula ({diaObj?.nome}{horarioTexto})
+                                    {index + 1}ª {termoAula} ({diaObj?.nome}{horarioTexto})
                                   </span>
 
                                   {aulas.length > 1 && (
@@ -1400,7 +1412,7 @@ export default function ConferenciaProfessoresPage() {
                                       type="button"
                                       onClick={() => removerAulaDoDia(diaId, aula.id)}
                                       className="px-2 py-1 text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-colors flex items-center gap-1 text-xs font-bold"
-                                      title="Remover esta aula"
+                                      title={`Remover esta ${termoAula.toLowerCase()}`}
                                     >
                                       <Trash2 className="w-3.5 h-3.5" />
                                       <span>Excluir</span>
@@ -1414,7 +1426,7 @@ export default function ConferenciaProfessoresPage() {
                                     {/* Horário com TimeSelect */}
                                     <div className="bg-zinc-50/90 rounded-xl p-2.5 border border-zinc-200/70">
                                       <span className="text-2xs uppercase font-extrabold tracking-wider text-zinc-500 block mb-1.5">
-                                        Horário da aula
+                                        Horário da {termoAula.toLowerCase()}
                                       </span>
                                       <div className="flex items-center gap-2">
                                         <TimeSelect
@@ -1440,7 +1452,7 @@ export default function ConferenciaProfessoresPage() {
                                     {/* Idades com AgeSelect */}
                                     <div className="bg-zinc-50/90 rounded-xl p-2.5 border border-zinc-200/70">
                                       <span className="text-2xs uppercase font-extrabold tracking-wider text-zinc-500 block mb-1.5">
-                                        Idade dos alunos
+                                        Idade dos {termoParticipantes.toLowerCase()}
                                       </span>
                                       <div className="flex items-center gap-2">
                                         <span className="text-zinc-500 text-xs shrink-0 font-bold">
@@ -1495,11 +1507,11 @@ export default function ConferenciaProfessoresPage() {
                             className="w-full sm:w-auto px-4 py-2 bg-sky-600 hover:bg-sky-700 disabled:bg-zinc-200 disabled:text-zinc-400 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-2xs"
                           >
                             <Plus className="w-3.5 h-3.5 stroke-[3]" />
-                            <span>Adicionar outra aula na {diaObj?.nome}</span>
+                            <span>Adicionar outra {termoAula.toLowerCase()} na {diaObj?.nome}</span>
                           </button>
                           {!podeAdd && (
                             <span className="text-3xs text-amber-700 font-medium">
-                              * Preencha e confira o horário da aula anterior para liberar nova aula.
+                              * Preencha e confira o horário da {termoAula.toLowerCase()} anterior para liberar nova {termoAula.toLowerCase()}.
                             </span>
                           )}
                         </div>
@@ -1514,7 +1526,7 @@ export default function ConferenciaProfessoresPage() {
                           ) : (
                             <span className="text-2xs text-emerald-700 font-medium flex items-center gap-1.5">
                               <CheckCircle2 className="w-3.5 h-3.5 shrink-0 text-emerald-600" />
-                              Aulas deste dia preenchidas corretamente.
+                              {termoAulas} deste dia preenchidas corretamente.
                             </span>
                           )}
 

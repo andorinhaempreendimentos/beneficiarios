@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
-import { PageHeader } from "@/components/ui";
-import { BeneficiarioForm } from "@/components/beneficiarios/BeneficiarioForm";
+import { EditarBeneficiarioView } from "@/components/beneficiarios/EditarBeneficiarioView";
 import { beneficiariosApi, nucleosApi, turmasApi } from "@/lib/api/services";
 
 export const dynamic = 'force-dynamic';
@@ -17,14 +16,11 @@ export default async function EditarBeneficiarioPage({ params }: { params: Promi
   if (!beneficiario) notFound();
 
   return (
-    <div className="flex flex-col gap-6">
-      <PageHeader title="Editar Beneficiário" description={beneficiario.nomeCompleto} />
-      <BeneficiarioForm
-        beneficiario={beneficiario as any}
-        nucleos={nucleosRes.data}
-        turmas={turmasRes.data}
-        backHref={`/beneficiarios/${id}`}
-      />
-    </div>
+    <EditarBeneficiarioView
+      beneficiario={beneficiario as any}
+      nucleos={nucleosRes.data}
+      turmas={turmasRes.data}
+      id={id}
+    />
   );
 }

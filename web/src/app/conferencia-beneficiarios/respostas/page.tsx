@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
+import { useDicionario } from "@/components/providers/DictionaryProvider";
 import {
   School,
   Users,
@@ -86,6 +87,16 @@ const SENHA_CORRETA = "Conferencia123#";
 const BASE_URL = "https://beneficiarios-andorinha.vercel.app";
 
 export default function RespostasConferenciaBeneficiariosPage() {
+  const { t } = useDicionario();
+  const termoBeneficiario = t("termoBeneficiario", "Beneficiário");
+  const termoBeneficiarios = t("termoBeneficiarios", "Beneficiários");
+  const termoTurma = t("termoTurma", "Turma");
+  const termoTurmas = t("termoTurmas", "Turmas");
+  const termoLocal = t("termoLocal", "Núcleo");
+  const termoLocais = t("termoLocais", "Núcleos");
+  const termoProfessor = t("termoProfessor", "Professor");
+  const termoProfessores = t("termoProfessores", "Professores");
+
   // Autenticação
   const [autenticado, setAutenticado] = useState<boolean>(false);
   const [senhaInput, setSenhaInput] = useState<string>("");
@@ -198,11 +209,11 @@ export default function RespostasConferenciaBeneficiariosPage() {
     const url = isSemAlunos
       ? `${BASE_URL}/cadastro-alunos/${nucleo.id}`
       : `${BASE_URL}/conferencia-beneficiarios/${nucleo.id}`;
-    const primeiroNome = nucleo.professorNome?.trim().split(" ")[0] || "Professor";
+    const primeiroNome = nucleo.professorNome?.trim().split(" ")[0] || termoProfessor;
     
     const texto = isSemAlunos
-      ? `Olá Professor(a) ${primeiroNome}!\n\nSegue o link exclusivo para o cadastro dos alunos do núcleo *${nucleo.identificacao}*:\n\n${url}\n\nPor favor, acesse para registrar os alunos informando nome, data de nascimento e turma. Obrigado!`
-      : `Olá Professor(a) ${primeiroNome}!\n\nSegue o link exclusivo para a conferência e alocação dos alunos do núcleo *${nucleo.identificacao}*:\n\n${url}\n\nPor favor, confira as quantidades e distribua os alunos nas turmas oficiais. Obrigado!`;
+      ? `Olá ${termoProfessor}(a) ${primeiroNome}!\n\nSegue o link exclusivo para o cadastro dos ${termoBeneficiarios.toLowerCase()} do ${termoLocal.toLowerCase()} *${nucleo.identificacao}*:\n\n${url}\n\nPor favor, acesse para registrar os ${termoBeneficiarios.toLowerCase()} informando nome, data de nascimento e ${termoTurma.toLowerCase()}. Obrigado!`
+      : `Olá ${termoProfessor}(a) ${primeiroNome}!\n\nSegue o link exclusivo para a conferência e alocação dos ${termoBeneficiarios.toLowerCase()} do ${termoLocal.toLowerCase()} *${nucleo.identificacao}*:\n\n${url}\n\nPor favor, confira as quantidades e distribua os ${termoBeneficiarios.toLowerCase()} nas ${termoTurmas.toLowerCase()} oficiais. Obrigado!`;
 
     navigator.clipboard.writeText(texto);
     setCopiadoId(nucleo.id);
@@ -231,17 +242,17 @@ export default function RespostasConferenciaBeneficiariosPage() {
   // Copiar links dos núcleos atualmente filtrados na tela
   const copiarLinksFiltrados = () => {
     if (nucleosFiltrados.length === 0) {
-      alert("Nenhum núcleo filtrado para copiar.");
+      alert(`Nenhum ${termoLocal.toLowerCase()} filtrado para copiar.`);
       return;
     }
 
-    let texto = `📋 *LINKS DE CONFERÊNCIA E CADASTRO DE ALUNOS*\n\n`;
+    let texto = `📋 *LINKS DE CONFERÊNCIA E CADASTRO DE ${termoBeneficiarios.toUpperCase()}*\n\n`;
 
     nucleosFiltrados.forEach((n, idx) => {
       const url = !n.temAlunosPreExistentes
         ? `${BASE_URL}/cadastro-alunos/${n.id}`
         : `${BASE_URL}/conferencia-beneficiarios/${n.id}`;
-      const primeiroNome = n.professorNome?.trim().split(" ")[0] || "Professor";
+      const primeiroNome = n.professorNome?.trim().split(" ")[0] || termoProfessor;
       const tipo = !n.temAlunosPreExistentes ? "Cadastro" : "Conferência";
 
       texto += `${idx + 1}. *${n.identificacao}* (${primeiroNome}) [${tipo}]\n${url}\n\n`;
@@ -292,7 +303,7 @@ export default function RespostasConferenciaBeneficiariosPage() {
               Acesso Coordenador
             </span>
             <h1 className="text-xl sm:text-2xl font-black text-zinc-900 mt-2">
-              Painel de Beneficiários
+              Painel de {termoBeneficiarios}
             </h1>
             <p className="text-xs text-zinc-500 mt-1">
               Digite a senha de administrador para gerenciar links e visualizar respostas.
@@ -353,11 +364,11 @@ export default function RespostasConferenciaBeneficiariosPage() {
                   Administração
                 </span>
                 <span className="text-3xs text-sky-200 font-semibold">
-                  20 Núcleos Cadastrados
+                  {stats.total} {termoLocais} Cadastrados
                 </span>
               </div>
               <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white mt-0.5">
-                Conferência de Beneficiários e Turmas
+                Conferência de {termoBeneficiarios} e {termoTurmas}
               </h1>
             </div>
           </div>
@@ -411,7 +422,7 @@ export default function RespostasConferenciaBeneficiariosPage() {
           <div className="bg-white border border-zinc-200 rounded-2xl p-4 shadow-2xs">
             <div className="flex items-center justify-between text-zinc-500">
               <span className="text-3xs uppercase font-extrabold tracking-wider">
-                Total de Núcleos
+                Total de {termoLocais}
               </span>
               <School className="w-4 h-4 text-zinc-400" />
             </div>
@@ -448,13 +459,13 @@ export default function RespostasConferenciaBeneficiariosPage() {
               <Clock className="w-4 h-4 text-amber-500" />
             </div>
             <p className="text-2xl font-black text-amber-700 mt-2">{stats.pendentes}</p>
-            <p className="text-3xs text-zinc-500 mt-0.5">Aguardando professores</p>
+            <p className="text-3xs text-zinc-500 mt-0.5">Aguardando {termoProfessores.toLowerCase()}</p>
           </div>
 
           <div className="bg-white border border-zinc-200 rounded-2xl p-4 shadow-2xs">
             <div className="flex items-center justify-between text-sky-700">
               <span className="text-3xs uppercase font-extrabold tracking-wider">
-                Alunos Auditados
+                {termoBeneficiarios} Auditados
               </span>
               <Users className="w-4 h-4 text-sky-500" />
             </div>
@@ -471,7 +482,7 @@ export default function RespostasConferenciaBeneficiariosPage() {
             <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              placeholder="Buscar por núcleo ou professor..."
+              placeholder={`Buscar por ${termoLocal.toLowerCase()} ou ${termoProfessor.toLowerCase()}...`}
               value={busca}
               onChange={(e) => setBusca(e.target.value)}
               className="w-full h-10 pl-9 pr-3 rounded-xl border border-zinc-200 bg-zinc-50 text-xs focus:ring-2 focus:ring-sky-500 focus:outline-none"
@@ -508,7 +519,7 @@ export default function RespostasConferenciaBeneficiariosPage() {
         {loading ? (
           <div className="bg-white rounded-3xl p-12 text-center border border-zinc-200 shadow-2xs">
             <Loader2 className="w-8 h-8 text-sky-600 animate-spin mx-auto mb-2" />
-            <p className="text-xs font-bold text-zinc-600">Carregando dados dos núcleos...</p>
+            <p className="text-xs font-bold text-zinc-600">Carregando dados dos {termoLocais.toLowerCase()}...</p>
           </div>
         ) : erro ? (
           <div className="bg-white rounded-3xl p-8 text-center border border-rose-200 shadow-2xs space-y-2">
@@ -518,7 +529,7 @@ export default function RespostasConferenciaBeneficiariosPage() {
         ) : nucleosFiltrados.length === 0 ? (
           <div className="bg-white rounded-3xl p-12 text-center border border-zinc-200 shadow-2xs space-y-2 text-zinc-400">
             <Search className="w-8 h-8 mx-auto text-zinc-300" />
-            <p className="text-xs font-bold text-zinc-600">Nenhum núcleo encontrado.</p>
+            <p className="text-xs font-bold text-zinc-600">Nenhum {termoLocal.toLowerCase()} encontrado.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -546,8 +557,8 @@ export default function RespostasConferenciaBeneficiariosPage() {
                           }`}
                         >
                           {n.temAlunosPreExistentes
-                            ? `Cenário A (${n.totalAlunosSistema} alunos)`
-                            : "Cadastro de Alunos (0 alunos)"}
+                            ? `Cenário A (${n.totalAlunosSistema} ${termoBeneficiarios.toLowerCase()})`
+                            : `Cadastro de ${termoBeneficiarios} (0 ${termoBeneficiarios.toLowerCase()})`}
                         </span>
                         <h3 className="text-base font-black text-zinc-900 mt-1">
                           {n.identificacao}
@@ -572,7 +583,7 @@ export default function RespostasConferenciaBeneficiariosPage() {
                     {n.resposta ? (
                       <div className="bg-emerald-50/60 border border-emerald-200 rounded-xl p-3 text-xs space-y-1.5">
                         <div className="flex items-center justify-between text-emerald-900 font-bold">
-                          <span>Alunos Informados:</span>
+                          <span>{termoBeneficiarios} Informados:</span>
                           <span className="text-sm font-black">
                             {n.resposta.total_alunos_informado}
                           </span>
@@ -580,7 +591,7 @@ export default function RespostasConferenciaBeneficiariosPage() {
                         {n.resposta.novos_alunos_cadastrados &&
                           n.resposta.novos_alunos_cadastrados.length > 0 && (
                             <p className="text-3xs text-emerald-800">
-                              Cadastrados: <strong>{n.resposta.novos_alunos_cadastrados.length} novos alunos</strong>
+                              Cadastrados: <strong>{n.resposta.novos_alunos_cadastrados.length} novos {termoBeneficiarios.toLowerCase()}</strong>
                             </p>
                           )}
                         <p className="text-3xs text-zinc-400">
@@ -590,7 +601,7 @@ export default function RespostasConferenciaBeneficiariosPage() {
                     ) : (
                       <div className="bg-zinc-50 border border-zinc-200 rounded-xl p-3 text-3xs text-zinc-500 flex items-center gap-2">
                         <Clock className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
-                        <span>Aguardando preenchimento pelo professor</span>
+                        <span>Aguardando preenchimento pelo(a) {termoProfessor.toLowerCase()}</span>
                       </div>
                     )}
                   </div>

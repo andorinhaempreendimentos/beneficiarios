@@ -25,10 +25,11 @@ import {
   PageHeader,
 } from "@/components/ui";
 import { DonutChart } from "@/components/charts/DonutChart";
-import { calcularIdade, formatarData } from "@/lib/utils";
+import { calcularIdade, formatarData, formatarNomeGrupo } from "@/lib/utils";
 import { GradeNucleoWidget } from "@/components/polo/GradeNucleoWidget";
 import { normalizarStatusBeneficiario } from "@/lib/status";
 import { useAuth } from "@/components/providers/AuthProvider";
+import { useDicionario } from "@/components/providers/DictionaryProvider";
 import type { NucleoApi, TurmaApi, BeneficiarioApi } from "@/lib/api/services";
 
 interface DetalhesNucleoViewProps {
@@ -47,7 +48,16 @@ export function DetalhesNucleoView({
   categorias
 }: DetalhesNucleoViewProps) {
   const { user } = useAuth();
+  const { t } = useDicionario();
   const isCoordenador = Boolean((user as any)?.isCoordenador);
+
+  const termoLocal = t("local", "Núcleo");
+  const termoBeneficiario = t("beneficiario", "Beneficiário");
+  const termoBeneficiarios = t("beneficiario", "Beneficiários", true);
+  const termoTurma = t("turma", "Turma");
+  const termoTurmas = t("turma", "Turmas", true);
+  const termoProfessor = t("instrutor", "Professor");
+  const termoProfessores = t("instrutor", "Professores", true);
 
   const statusNormalizados = beneficiarios.map((b) => normalizarStatusBeneficiario(b.status));
   const beneficiariosAtivos = statusNormalizados.filter((s) => s === "ativo").length;
@@ -78,7 +88,7 @@ export function DetalhesNucleoView({
           {/* Card 1: Beneficiários */}
           <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 shadow-xs flex flex-col justify-between">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Beneficiários</span>
+              <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">{termoBeneficiarios}</span>
               <div className="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400">
                 <Users2 className="h-5 w-5" />
               </div>
@@ -96,7 +106,7 @@ export function DetalhesNucleoView({
           {/* Card 2: Professores */}
           <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 shadow-xs flex flex-col justify-between">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Professores</span>
+              <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">{termoProfessores}</span>
               <div className="p-2 rounded-xl bg-violet-50 dark:bg-violet-950/50 text-violet-600 dark:text-violet-400">
                 <GraduationCap className="h-5 w-5" />
               </div>
@@ -113,12 +123,12 @@ export function DetalhesNucleoView({
                     </p>
                   )}
                   {professoresDoNucleo.length === 1 && (
-                    <p className="text-xs text-zinc-500">Professor responsável</p>
+                    <p className="text-xs text-zinc-500">{termoProfessor} responsável</p>
                   )}
                 </div>
               ) : (
                 <div>
-                  <p className="text-sm font-semibold text-zinc-400 italic">Nenhum professor alocado</p>
+                  <p className="text-sm font-semibold text-zinc-400 italic">Nenhum {termoProfessor.toLowerCase()} alocado</p>
                   <p className="text-xs text-zinc-400 mt-0.5">Aguardando designação</p>
                 </div>
               )}
@@ -128,7 +138,7 @@ export function DetalhesNucleoView({
           {/* Card 3: Turmas e Vagas */}
           <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 shadow-xs flex flex-col justify-between">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Turmas</span>
+              <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">{termoTurmas}</span>
               <div className="p-2 rounded-xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400">
                 <CalendarClock className="h-5 w-5" />
               </div>
@@ -169,10 +179,10 @@ export function DetalhesNucleoView({
               </span>
             </div>
             <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100">
-              Pronto para vistoriar este núcleo?
+              Pronto para vistoriar este {termoLocal.toLowerCase()}?
             </h3>
             <p className="text-sm text-zinc-600 dark:text-zinc-400">
-              Registre a presença do professor, assiduidade dos beneficiários e avaliação física dos materiais.
+              Registre a presença do {termoProfessor.toLowerCase()}, assiduidade dos {termoBeneficiarios.toLowerCase()} e avaliação física dos materiais.
             </p>
           </div>
           <Link
@@ -180,7 +190,7 @@ export function DetalhesNucleoView({
             className="inline-flex items-center gap-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white px-5 py-3 text-sm font-bold shadow-md hover:shadow-lg transition-all cursor-pointer shrink-0"
           >
             <ClipboardCheck className="h-5 w-5" />
-            <span>Iniciar uma supervisão neste núcleo</span>
+            <span>Iniciar uma supervisão neste {termoLocal.toLowerCase()}</span>
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
@@ -191,8 +201,8 @@ export function DetalhesNucleoView({
         {/* Resumo de Turmas (somente leitura para o Coordenador) */}
         <Card>
           <CardHeader className="flex items-center justify-between">
-            <h3 className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Turmas do Núcleo</h3>
-            <span className="text-xs text-zinc-500">{turmas.length} turmas cadastradas</span>
+            <h3 className="text-sm font-medium text-zinc-700 dark:text-zinc-300">{termoTurmas} do {termoLocal}</h3>
+            <span className="text-xs text-zinc-500">{turmas.length} {termoTurmas.toLowerCase()} cadastradas</span>
           </CardHeader>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -200,7 +210,7 @@ export function DetalhesNucleoView({
                 <tr className="border-b border-zinc-200 dark:border-zinc-800 text-left text-xs font-medium uppercase tracking-wide text-zinc-500">
                   <th className="px-5 py-3">ID</th>
                   <th className="px-5 py-3">Nome</th>
-                  <th className="px-5 py-3">Professores / Responsáveis</th>
+                  <th className="px-5 py-3">{termoProfessores} / Responsáveis</th>
                   <th className="px-5 py-3">Vagas</th>
                   <th className="px-5 py-3">Início</th>
                 </tr>
@@ -209,7 +219,9 @@ export function DetalhesNucleoView({
                 {turmas.map((turma) => (
                   <tr key={turma.id} className="border-b border-zinc-100 dark:border-zinc-800 last:border-0 hover:bg-zinc-50/50 dark:hover:bg-zinc-800/30">
                     <td className="px-5 py-3 text-zinc-500">{turma.id.substring(0, 8)}</td>
-                    <td className="px-5 py-3 font-medium text-zinc-900 dark:text-zinc-100">{turma.nome}</td>
+                    <td className="px-5 py-3 font-medium text-zinc-900 dark:text-zinc-100">
+                      {formatarNomeGrupo(turma.nome, t("turma", "Grupo", false, turma.atividade))}
+                    </td>
                     <td className="px-5 py-3 text-zinc-600 dark:text-zinc-300 font-medium">
                       {(turma.responsaveisNomes && turma.responsaveisNomes.length > 0)
                         ? turma.responsaveisNomes.join(", ")
@@ -236,7 +248,7 @@ export function DetalhesNucleoView({
               <Package className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">Estoque do Núcleo</p>
+              <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">Estoque do {termoLocal}</p>
               <p className="text-xs text-zinc-400">Materiais e uniformes</p>
             </div>
           </Link>
@@ -275,13 +287,13 @@ export function DetalhesNucleoView({
       <PageHeader
         title={nucleo.identificacao}
         description={nucleo.nomeLocal}
-        actions={<LinkButton href={`/nucleos/${nucleo.id}/editar`} variant="outline">Editar núcleo</LinkButton>}
+        actions={<LinkButton href={`/nucleos/${nucleo.id}/editar`} variant="outline">Editar {termoLocal.toLowerCase()}</LinkButton>}
       />
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Card>
           <CardHeader>
-            <h3 className="text-sm font-medium text-zinc-700">Detalhes do Núcleo</h3>
+            <h3 className="text-sm font-medium text-zinc-700">Detalhes do {termoLocal}</h3>
           </CardHeader>
           <CardBody className="flex flex-col gap-3 text-sm">
             <div className="flex items-start gap-2 text-zinc-600">
@@ -292,7 +304,7 @@ export function DetalhesNucleoView({
             </div>
             <div className="flex items-center gap-2 text-zinc-600">
               <Users2 className="h-4 w-4 text-zinc-400" />
-              <span>{totalBeneficiarios} beneficiários cadastrados</span>
+              <span>{totalBeneficiarios} {termoBeneficiarios.toLowerCase()} cadastrados</span>
             </div>
             <p className="rounded-lg bg-zinc-50 px-3 py-2 text-xs text-zinc-500">
               Precisa de ajuda? Contate o suporte pelo canal interno de atendimento.
@@ -302,7 +314,7 @@ export function DetalhesNucleoView({
 
         <Card>
           <CardHeader>
-            <h3 className="text-sm font-medium text-zinc-700">Beneficiários</h3>
+            <h3 className="text-sm font-medium text-zinc-700">{termoBeneficiarios}</h3>
           </CardHeader>
           <CardBody className="flex justify-center">
             <DonutChart
@@ -325,11 +337,11 @@ export function DetalhesNucleoView({
 
       <Card>
         <CardHeader className="flex items-center justify-between">
-          <h3 className="text-sm font-medium text-zinc-700">Turmas</h3>
+          <h3 className="text-sm font-medium text-zinc-700">{termoTurmas}</h3>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm">Listar turmas</Button>
+            <Button variant="outline" size="sm">Listar {termoTurmas.toLowerCase()}</Button>
             <Button size="sm">
-              <Plus className="h-4 w-4" /> Cadastrar turma
+              <Plus className="h-4 w-4" /> Cadastrar {termoTurma.toLowerCase()}
             </Button>
           </div>
         </CardHeader>
@@ -339,10 +351,10 @@ export function DetalhesNucleoView({
               <tr className="border-b border-zinc-200 text-left text-xs font-medium uppercase tracking-wide text-zinc-500">
                 <th className="px-5 py-3">ID</th>
                 <th className="px-5 py-3">Nome</th>
-                <th className="px-5 py-3">Responsáveis</th>
+                <th className="px-5 py-3">{termoProfessores} / Responsáveis</th>
                 <th className="px-5 py-3">Horário</th>
                 <th className="px-5 py-3">Dias</th>
-                <th className="px-5 py-3">Beneficiários</th>
+                <th className="px-5 py-3">{termoBeneficiarios}</th>
                 <th className="px-5 py-3">Início</th>
                 <th className="px-5 py-3">Duração</th>
                 <th className="px-5 py-3 text-right">Ações</th>
@@ -352,7 +364,9 @@ export function DetalhesNucleoView({
               {turmas.map((turma) => (
                 <tr key={turma.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
                   <td className="px-5 py-3 text-zinc-500">{turma.id.substring(0, 8)}</td>
-                  <td className="px-5 py-3 font-medium text-zinc-900">{turma.nome}</td>
+                  <td className="px-5 py-3 font-medium text-zinc-900">
+                    {formatarNomeGrupo(turma.nome, t("turma", "Grupo", false, turma.atividade))}
+                  </td>
                   <td className="px-5 py-3 text-zinc-600 font-medium">
                     {(turma.responsaveisNomes && turma.responsaveisNomes.length > 0)
                       ? turma.responsaveisNomes.join(", ")
@@ -377,17 +391,17 @@ export function DetalhesNucleoView({
 
       <Card>
         <CardHeader className="flex items-center justify-between">
-          <h3 className="text-sm font-medium text-zinc-700">Beneficiários</h3>
+          <h3 className="text-sm font-medium text-zinc-700">{termoBeneficiarios}</h3>
           <div className="flex items-center gap-2">
             <div className="relative w-64">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
-              <Input placeholder="Buscar ficha por CPF" className="pl-9" />
+              <Input placeholder={`Buscar ficha de ${termoBeneficiario.toLowerCase()} por CPF`} className="pl-9" />
             </div>
             <Link href={`/nucleos/${nucleo.id}/beneficiarios`}>
               <Button variant="outline" size="sm">Ver todos</Button>
             </Link>
             <Link href="/beneficiarios/novo">
-              <Button size="sm"><Plus className="h-4 w-4" /> Cadastrar</Button>
+              <Button size="sm"><Plus className="h-4 w-4" /> Cadastrar {termoBeneficiario.toLowerCase()}</Button>
             </Link>
           </div>
         </CardHeader>
@@ -425,7 +439,7 @@ export function DetalhesNucleoView({
             <Package className="h-5 w-5" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-zinc-800">Estoque</p>
+            <p className="text-sm font-semibold text-zinc-800">Estoque do {termoLocal}</p>
             <p className="text-xs text-zinc-400">Materiais disponíveis</p>
           </div>
         </Link>

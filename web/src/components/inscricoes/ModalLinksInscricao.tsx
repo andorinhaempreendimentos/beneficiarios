@@ -4,6 +4,7 @@ import { useState } from "react";
 import { X, Copy, Check, ExternalLink, Search, Link2, Building2, Activity, Users, User, FilterX } from "lucide-react";
 import { Button } from "@/components/ui";
 import { useToast } from "@/components/providers/ToastProvider";
+import { useDicionario } from "@/components/providers/DictionaryProvider";
 import type { NucleoApi, AtividadeApi, TurmaApi, OrganizacaoApi, ObjetoApi } from "@/lib/api/services";
 
 interface ModalLinksInscricaoProps {
@@ -26,6 +27,19 @@ export function ModalLinksInscricao({
   objetos = [],
 }: ModalLinksInscricaoProps) {
   const { toast } = useToast();
+  const { t } = useDicionario();
+  const termoBeneficiario = t("termoBeneficiario", "Beneficiário");
+  const termoTurma = t("termoTurma", "Turma");
+  const termoTurmas = t("termoTurmas", "Turmas");
+  const termoLocal = t("termoLocal", "Núcleo");
+  const termoLocais = t("termoLocais", "Núcleos");
+  const termoAtividade = t("termoAtividade", "Atividade");
+  const termoAtividades = t("termoAtividades", "Atividades");
+  const termoObjeto = t("termoObjeto", "Objeto");
+  const termoObjetos = t("termoObjetos", "Objetos");
+  const termoOrganizacao = t("termoOrganizacao", "Organização");
+  const termoOrganizacoes = t("termoOrganizacoes", "Organizações");
+
   const [busca, setBusca] = useState("");
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [buscaExecutada, setBuscaExecutada] = useState(false);
@@ -320,7 +334,7 @@ export function ModalLinksInscricao({
             {/* Objeto */}
             {objetos.length > 0 && (
               <div className="flex flex-col gap-1">
-                <label className={`${labelBase} ${labelEnabledCls}`}>Objeto</label>
+                <label className={`${labelBase} ${labelEnabledCls}`}>{termoObjeto}</label>
                 <select
                   value={selectedObjetoId}
                   onChange={(e) => {
@@ -333,7 +347,7 @@ export function ModalLinksInscricao({
                   }}
                   className={`${selectBase} ${selectEnabledCls}`}
                 >
-                  <option value="">Todos os Objetos</option>
+                  <option value="">Todos os {termoObjetos}</option>
                   {objetos.map((ob) => (
                     <option key={ob.id} value={ob.id}>{ob.nome}</option>
                   ))}
@@ -344,7 +358,7 @@ export function ModalLinksInscricao({
             {/* Organização */}
             {organizacoes.length > 0 && (
               <div className="flex flex-col gap-1">
-                <label className={`${labelBase} ${orgDisabled ? labelDisabledCls : labelEnabledCls}`}>Organização</label>
+                <label className={`${labelBase} ${orgDisabled ? labelDisabledCls : labelEnabledCls}`}>{termoOrganizacao}</label>
                 <select
                   value={selectedOrganizacaoId}
                   disabled={orgDisabled}
@@ -358,9 +372,9 @@ export function ModalLinksInscricao({
                   className={`${selectBase} ${orgDisabled ? selectDisabledCls : selectEnabledCls}`}
                 >
                   {orgDisabled
-                    ? <option value="">Selecione um Objeto primeiro</option>
+                    ? <option value="">Selecione um(a) {termoObjeto} primeiro</option>
                     : <>
-                        <option value="">Todas as Organizações</option>
+                        <option value="">Todas as {termoOrganizacoes}</option>
                         {organizacoesFiltradasDropdown.map((org) => (
                           <option key={org.id} value={org.id}>{org.nome}</option>
                         ))}
@@ -372,7 +386,7 @@ export function ModalLinksInscricao({
 
             {/* Núcleo */}
             <div className="flex flex-col gap-1">
-              <label className={`${labelBase} ${nucleoDisabled ? labelDisabledCls : labelEnabledCls}`}>Núcleo</label>
+              <label className={`${labelBase} ${nucleoDisabled ? labelDisabledCls : labelEnabledCls}`}>{termoLocal}</label>
               <select
                 value={selectedNucleoId}
                 disabled={nucleoDisabled}
@@ -386,10 +400,10 @@ export function ModalLinksInscricao({
               >
                 {nucleoDisabled
                   ? <option value="">
-                      {organizacoes.length > 0 ? "Selecione uma Organização primeiro" : "Selecione um Objeto primeiro"}
+                      {organizacoes.length > 0 ? `Selecione uma ${termoOrganizacao} primeiro` : `Selecione um ${termoObjeto} primeiro`}
                     </option>
                   : <>
-                      <option value="">Todos os Núcleos ({nucleosFiltradosDropdown.length})</option>
+                      <option value="">Todos os {termoLocais} ({nucleosFiltradosDropdown.length})</option>
                       {nucleosFiltradosDropdown.map((n) => (
                         <option key={n.id} value={n.id}>{n.identificacao}</option>
                       ))}
@@ -400,7 +414,7 @@ export function ModalLinksInscricao({
 
             {/* Atividade */}
             <div className="flex flex-col gap-1">
-              <label className={`${labelBase} ${atividadeDisabled ? labelDisabledCls : labelEnabledCls}`}>Atividade</label>
+              <label className={`${labelBase} ${atividadeDisabled ? labelDisabledCls : labelEnabledCls}`}>{termoAtividade}</label>
               <select
                 value={selectedAtividadeId}
                 disabled={atividadeDisabled}
@@ -412,9 +426,9 @@ export function ModalLinksInscricao({
                 className={`${selectBase} ${atividadeDisabled ? selectDisabledCls : selectEnabledCls}`}
               >
                 {atividadeDisabled
-                  ? <option value="">Selecione um Núcleo primeiro</option>
+                  ? <option value="">Selecione um(a) {termoLocal} primeiro</option>
                   : <>
-                      <option value="">Todas as Atividades ({atividadesFiltradasDropdown.length})</option>
+                      <option value="">Todas as {termoAtividades} ({atividadesFiltradasDropdown.length})</option>
                       {atividadesFiltradasDropdown.map((a) => (
                         <option key={a.id} value={a.id}>{a.nome}</option>
                       ))}
@@ -425,7 +439,7 @@ export function ModalLinksInscricao({
 
             {/* Turma */}
             <div className="flex flex-col gap-1">
-              <label className={`${labelBase} ${turmaDisabled ? labelDisabledCls : labelEnabledCls}`}>Turma</label>
+              <label className={`${labelBase} ${turmaDisabled ? labelDisabledCls : labelEnabledCls}`}>{termoTurma}</label>
               <select
                 value={selectedTurmaId}
                 disabled={turmaDisabled}
@@ -433,9 +447,9 @@ export function ModalLinksInscricao({
                 className={`${selectBase} ${turmaDisabled ? selectDisabledCls : selectEnabledCls}`}
               >
                 {turmaDisabled
-                  ? <option value="">Selecione uma Atividade primeiro</option>
+                  ? <option value="">Selecione uma {termoAtividade} primeiro</option>
                   : <>
-                      <option value="">Todas as Turmas ({turmasFiltradasDropdown.length})</option>
+                      <option value="">Todas as {termoTurmas} ({turmasFiltradasDropdown.length})</option>
                       {turmasFiltradasDropdown.map((t) => (
                         <option key={t.id} value={t.id}>{t.nome}</option>
                       ))}
@@ -499,10 +513,10 @@ export function ModalLinksInscricao({
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center gap-2 pb-1 border-b border-amber-200 text-xs font-extrabold uppercase tracking-wider text-amber-700">
                     <Building2 className="h-4 w-4" />
-                    <span>Cadastro no Núcleo — sem turma ({listNucleos.length})</span>
+                    <span>Cadastro no {termoLocal} — sem {termoTurma.toLowerCase()} ({listNucleos.length})</span>
                   </div>
                   <p className="text-[11px] text-zinc-400 -mt-1">
-                    O aluno entra na lista do núcleo. O professor atribui a turma depois.
+                    O {termoBeneficiario.toLowerCase()} entra na lista do {termoLocal.toLowerCase()}. O professor atribui a {termoTurma.toLowerCase()} depois.
                   </p>
                   <div className="flex flex-col gap-3">
                     {listNucleos.map((n) => {
@@ -552,7 +566,7 @@ export function ModalLinksInscricao({
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center gap-2 pb-1 border-b border-zinc-200 text-xs font-extrabold uppercase tracking-wider text-sky-700">
                     <Users className="h-4 w-4" />
-                    <span>Turmas ({listTurmas.length})</span>
+                    <span>{termoTurmas} ({listTurmas.length})</span>
                   </div>
                   <div className="flex flex-col gap-3">
                     {listTurmas.map((t) => {
@@ -644,7 +658,7 @@ export function ModalLinksInscricao({
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center gap-2 pb-1 border-b border-zinc-200 text-xs font-extrabold uppercase tracking-wider text-sky-700">
                     <Building2 className="h-4 w-4" />
-                    <span>Núcleos ({listNucleos.length})</span>
+                    <span>{termoLocais} ({listNucleos.length})</span>
                   </div>
                   <div className="flex flex-col gap-3">
                     {listNucleos.map((n) => {
@@ -714,7 +728,7 @@ export function ModalLinksInscricao({
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center gap-2 pb-1 border-b border-zinc-200 text-xs font-extrabold uppercase tracking-wider text-sky-700">
                     <Activity className="h-4 w-4" />
-                    <span>Atividades ({listAtividades.length})</span>
+                    <span>{termoAtividades} ({listAtividades.length})</span>
                   </div>
                   <div className="flex flex-col gap-3">
                     {listAtividades.map((a) => {

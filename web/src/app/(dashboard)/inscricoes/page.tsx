@@ -37,6 +37,7 @@ import { ModalLinksInscricao } from "@/components/inscricoes/ModalLinksInscricao
 import { StatusInscricaoBadge } from "@/components/inscricoes/StatusInscricaoBadge";
 
 import { useLocationFilter } from "@/components/providers/LocationFilterProvider";
+import { useDicionario } from "@/components/providers/DictionaryProvider";
 
 const PER_PAGE = 20;
 
@@ -55,6 +56,12 @@ const FILTROS: { value: Filtro; label: string }[] = [
 
 export default function InscricoesPage() {
   const { toast } = useToast();
+  const { t } = useDicionario();
+  const termoBeneficiario = t("termoBeneficiario", "Beneficiário");
+  const termoTurma = t("termoTurma", "Turma");
+  const termoLocal = t("termoLocal", "Núcleo");
+  const termoAtividade = t("termoAtividade", "Atividade");
+
   const { estado, cidade, organizacaoId, nucleoId } = useLocationFilter();
   const [filtro, setFiltro] = useState<Filtro>("todas");
   const [pagina, setPagina] = useState(1);
@@ -282,7 +289,7 @@ export default function InscricoesPage() {
                   <div className="col-span-full px-5 py-10 text-center text-sm text-zinc-400">Nenhuma inscrição encontrada</div>
                 ) : (
                   lista.map((i) => {
-                    const turma = turmas.find((t) => t.id === i.turmaId) ?? i.turma;
+                    const turma = turmas.find((turmaItem) => turmaItem.id === i.turmaId) ?? i.turma;
                     const nucleo = rawNucleos.find((n) => n.id === (turma?.nucleoId || (i as any).nucleoId));
                     const atividade = rawAtividades.find((a) => a.id === (turma?.atividadeId || (i as any).atividadeId));
                     const isSelected = selectedIds.includes(i.id);
@@ -341,7 +348,7 @@ export default function InscricoesPage() {
                             {nucleoNome && (
                               <div className="flex items-center gap-1.5 text-zinc-600">
                                 <span className="shrink-0 rounded-md bg-violet-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-violet-700">
-                                  Núcleo
+                                  {termoLocal}
                                 </span>
                                 <span className="font-medium truncate text-zinc-800">{nucleoNome}</span>
                               </div>
@@ -349,7 +356,7 @@ export default function InscricoesPage() {
                             {atividadeNome && (
                               <div className="flex items-center gap-1.5 text-zinc-600">
                                 <span className="shrink-0 rounded-md bg-emerald-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-emerald-700">
-                                  Atividade
+                                  {termoAtividade}
                                 </span>
                                 <span className="font-medium truncate text-zinc-800">{atividadeNome}</span>
                               </div>
@@ -357,7 +364,7 @@ export default function InscricoesPage() {
                             {turmaNome && (
                               <div className="flex items-center gap-1.5 text-zinc-600">
                                 <span className="shrink-0 rounded-md bg-sky-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-sky-700">
-                                  Turma
+                                  {termoTurma}
                                 </span>
                                 <Link
                                   href={`/turmas/${i.turmaId}/inscricoes`}
@@ -408,8 +415,8 @@ export default function InscricoesPage() {
                           className="h-4 w-4 rounded border-zinc-300 text-sky-600 focus:ring-sky-500 cursor-pointer"
                         />
                       </th>
-                      <th className="px-5 py-3">Beneficiário</th>
-                      <th className="px-5 py-3">Turma</th>
+                      <th className="px-5 py-3">{termoBeneficiario}</th>
+                      <th className="px-5 py-3">{termoTurma}</th>
                       <th className="px-5 py-3">Data</th>
                       <th className="px-5 py-3">Status</th>
                       <th className="px-5 py-3 text-right">Ações</th>
@@ -417,7 +424,7 @@ export default function InscricoesPage() {
                   </thead>
                   <tbody>
                     {lista.map((i) => {
-                      const turma = turmas.find((t) => t.id === i.turmaId) ?? i.turma;
+                      const turma = turmas.find((turmaItem) => turmaItem.id === i.turmaId) ?? i.turma;
                       const isSelected = selectedIds.includes(i.id);
                       return (
                         <tr key={i.id} className={`border-b border-zinc-50 last:border-0 hover:bg-zinc-50/60 transition-colors ${isSelected ? "bg-sky-50/30" : ""}`}>

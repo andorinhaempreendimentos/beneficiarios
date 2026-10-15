@@ -415,7 +415,7 @@ export function MapaPolos({ nucleos, atividades = [], className = "" }: MapaPolo
                   <PieChart>
                     <Pie
                       data={[
-                        { name: "Matriculados", value: nucleoSelecionado.totalMatriculados || 0 },
+                        { name: t("beneficiario", "Matriculados", true), value: nucleoSelecionado.totalMatriculados || 0 },
                         { name: "Vagas Livres", value: Math.max(0, nucleoSelecionado.vagasLivres || (nucleoSelecionado.totalVagas === 0 ? 1 : 0)) },
                       ]}
                       innerRadius={16}
@@ -441,7 +441,7 @@ export function MapaPolos({ nucleos, atividades = [], className = "" }: MapaPolo
                   <span>{nucleoSelecionado.taxaOcupacao}% de ocupação</span>
                 </div>
                 <p className="text-zinc-600 dark:text-zinc-400">
-                  <strong>{nucleoSelecionado.totalMatriculados}</strong> matriculados / <strong>{nucleoSelecionado.totalVagas}</strong> vagas
+                  <strong>{nucleoSelecionado.totalMatriculados}</strong> {t("beneficiario", "matriculados", true).toLowerCase()} / <strong>{nucleoSelecionado.totalVagas}</strong> vagas
                 </p>
                 <p className="text-zinc-500 dark:text-zinc-400 text-[11px]">
                   {nucleoSelecionado.vagasLivres} vagas disponíveis

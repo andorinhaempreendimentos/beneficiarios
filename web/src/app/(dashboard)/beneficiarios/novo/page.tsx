@@ -1,6 +1,8 @@
-import { PageHeader } from "@/components/ui";
-import { BeneficiarioForm } from "@/components/beneficiarios/BeneficiarioForm";
+import { NovoBeneficiarioView } from "@/components/beneficiarios/NovoBeneficiarioView";
 import { nucleosApi, turmasApi } from "@/lib/api/services";
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function NovoBeneficiarioPage() {
   const [nucleosRes, turmasRes] = await Promise.all([
@@ -9,13 +11,9 @@ export default async function NovoBeneficiarioPage() {
   ]);
 
   return (
-    <div className="flex flex-col gap-6">
-      <PageHeader title="Novo Beneficiário" description="Cadastro de beneficiário (aluno/atleta)" />
-      <BeneficiarioForm
-        nucleos={nucleosRes.data}
-        turmas={turmasRes.data}
-        backHref="/beneficiarios"
-      />
-    </div>
+    <NovoBeneficiarioView
+      nucleos={nucleosRes.data}
+      turmas={turmasRes.data}
+    />
   );
 }

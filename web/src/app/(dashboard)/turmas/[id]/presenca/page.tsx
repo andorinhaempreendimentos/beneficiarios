@@ -35,6 +35,7 @@ import type { ExecucaoSessaoApi, BeneficiarioPresencaApi } from "@/lib/types/exe
 import type { StatusPresenca } from "@/lib/types";
 import { useQuery } from "@/lib/hooks/useQuery";
 import { formatStorageUrl } from "@/lib/storage";
+import { useDicionario } from "@/components/providers/DictionaryProvider";
 
 const DIA_ABREV: Record<string, number> = {
   Dom: 0,
@@ -122,11 +123,18 @@ export default function PresencaTurmaPage({ params }: { params: Promise<{ id: st
   const beneficiarios = beneficiariosRes ?? [];
   const sessoesExecutadas = useMemo(() => sessoesExecutadasRes ?? [], [sessoesExecutadasRes]);
 
-  // Termos dinâmicos baseados na atividade vinculada ao grupo/turma
-  const termoSessao = turma?.atividade?.termoSessao || "Sessão";
-  const termoResponsavel = turma?.atividade?.termoResponsavel || "Responsável";
-  const termoParticipante = turma?.atividade?.termoParticipante || "Participante";
-  const termoGrupo = turma?.atividade?.termoGrupo || "Grupo";
+  const { t } = useDicionario();
+
+  // Termos dinâmicos baseados na hierarquia: Atividade -> Dicionário Contextual/Global
+  const termoSessao = turma?.atividade?.termoSessao || t("termoSessao", "Sessão");
+  const termoSessoes = turma?.atividade?.termoSessao
+    ? (turma.atividade.termoSessao.toLowerCase().endsWith("ão")
+        ? turma.atividade.termoSessao.slice(0, -2) + "ões"
+        : `${turma.atividade.termoSessao}s`)
+    : t("termoSessoes", "Sessões");
+  const termoResponsavel = turma?.atividade?.termoResponsavel || t("termoResponsavel", "Responsável");
+  const termoParticipante = turma?.atividade?.termoParticipante || t("termoParticipante", "Participante");
+  const termoGrupo = turma?.atividade?.termoGrupo || t("termoGrupo", "Turma");
 
   // Dias configurados na turma
   const diasTurma = useMemo(() => {
@@ -385,7 +393,7 @@ export default function PresencaTurmaPage({ params }: { params: Promise<{ id: st
             <div className="pt-3 border-t border-zinc-100 flex flex-col gap-2">
               <span className="text-[11px] font-bold text-zinc-500 uppercase flex items-center gap-1.5">
                 <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-                {termoSessao}ões Realizadas ({sessoesExecutadas.length}):
+                {termoSessoes} Realizadas ({sessoesExecutadas.length}):
               </span>
               <div className="flex flex-wrap gap-2">
                 {sessoesExecutadas.map((s) => {

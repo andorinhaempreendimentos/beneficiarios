@@ -24,6 +24,7 @@ import {
   KeyRound,
   LogOut,
 } from "lucide-react";
+import { useDicionario } from "@/components/providers/DictionaryProvider";
 
 interface RespostaConferencia {
   id: string;
@@ -66,6 +67,17 @@ const ORDEM_DIAS_SEMANA = [
 const SENHA_CORRETA = "Conferencia123#";
 
 export default function RespostasConferenciaStandalonePage() {
+  const { t } = useDicionario();
+  const termoProfessor = t("termoResponsavel", "Professor");
+  const termoProfessores = t("termoResponsaveis", "Professores");
+  const termoTurma = t("termoGrupo", "Turma");
+  const termoTurmas = t("termoGrupos", "Turmas");
+  const termoNucleo = t("termoLocal", "Núcleo");
+  const termoNucleos = t("termoLocais", "Núcleos");
+  const termoAula = t("termoSessao", "Aula");
+  const termoAulas = t("termoSessoes", "Aulas");
+  const termoModalidade = t("termoAtividade", "Modalidade");
+
   // Controle de autenticação por senha simples
   const [autenticado, setAutenticado] = useState<boolean>(false);
   const [senhaInput, setSenhaInput] = useState<string>("");
@@ -234,11 +246,11 @@ export default function RespostasConferenciaStandalonePage() {
   const formatarTextoRespostas = (lista: RespostaConferencia[]): string => {
     return lista
       .map((r) => {
-        let texto = `*CONFERÊNCIA DE PROFESSORES*\n`;
-        texto += `📍 Núcleo: ${r.nucleo_nome}\n`;
-        texto += `👤 Professor: ${r.professor_nome}\n`;
-        texto += `⚽ Modalidade: ${r.modalidade_nome}\n`;
-        texto += `📅 Total de Aulas: ${r.qtd_turmas || 0} na semana\n`;
+        let texto = `*CONFERÊNCIA DE ${termoProfessores.toUpperCase()}*\n`;
+        texto += `📍 ${termoNucleo}: ${r.nucleo_nome}\n`;
+        texto += `👤 ${termoProfessor}: ${r.professor_nome}\n`;
+        texto += `⚽ ${termoModalidade}: ${r.modalidade_nome}\n`;
+        texto += `📅 Total de ${termoAulas}: ${r.qtd_turmas || 0} na semana\n`;
         texto += `⏱️ Carga Horária: ${calcularHorasSemana(r.dados_turmas)} por semana\n`;
 
         const aulasPorDia = r.dados_turmas?.aulas_por_dia;
@@ -251,7 +263,7 @@ export default function RespostasConferenciaStandalonePage() {
             texto += `• ${dia}:\n`;
             if (Array.isArray(aulas)) {
               aulas.forEach((a) => {
-                texto += `   - ${a.aula_numero}ª Aula: ${a.horario_inicio} às ${a.horario_fim} (${a.idade_minima} a ${a.idade_maxima} anos)\n`;
+                texto += `   - ${a.aula_numero}ª ${termoAula}: ${a.horario_inicio} às ${a.horario_fim} (${a.idade_minima} a ${a.idade_maxima} anos)\n`;
               });
             }
           });
@@ -339,7 +351,7 @@ export default function RespostasConferenciaStandalonePage() {
               Acesso à Conferência
             </h1>
             <p className="text-xs text-zinc-500">
-              Digite a senha de acesso para visualizar e gerenciar as respostas dos professores.
+              Digite a senha de acesso para visualizar e gerenciar as respostas dos {termoProfessores.toLowerCase()}.
             </p>
           </div>
 
@@ -384,7 +396,7 @@ export default function RespostasConferenciaStandalonePage() {
               href="/conferencia-professores"
               className="text-xs font-semibold text-sky-600 hover:underline"
             >
-              Ir para o formulário do professor →
+              Ir para o formulário do {termoProfessor.toLowerCase()} →
             </Link>
           </div>
         </div>
@@ -406,7 +418,7 @@ export default function RespostasConferenciaStandalonePage() {
             </div>
             <div>
               <h1 className="text-base sm:text-lg font-black text-zinc-900 leading-tight">
-                Conferência de Professores
+                Conferência de {termoProfessores}
               </h1>
               <span className="text-3xs uppercase font-extrabold text-sky-700 tracking-wider">
                 Painel de Respostas
@@ -443,10 +455,10 @@ export default function RespostasConferenciaStandalonePage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h2 className="text-xl font-extrabold text-zinc-900">
-              Turmas e Horários Confirmados
+              {termoTurmas} e Horários Confirmados
             </h2>
             <p className="text-xs text-zinc-500 mt-0.5">
-              Grade semanal organizada de <strong>Domingo a Sábado</strong>. Copie dados formatados ou apague registros para liberar o núcleo.
+              Grade semanal organizada de <strong>Domingo a Sábado</strong>. Copie dados formatados ou apague registros para liberar o {termoNucleo.toLowerCase()}.
             </p>
           </div>
 
@@ -477,7 +489,7 @@ export default function RespostasConferenciaStandalonePage() {
               <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
-                placeholder="Buscar por núcleo ou professor..."
+                placeholder={`Buscar por ${termoNucleo.toLowerCase()} ou ${termoProfessor.toLowerCase()}...`}
                 value={busca}
                 onChange={(e) => setBusca(e.target.value)}
                 className="w-full h-10 pl-9 pr-3 rounded-xl border border-zinc-200 text-xs focus:ring-2 focus:ring-sky-500 bg-zinc-50/50 text-zinc-900"
@@ -551,7 +563,7 @@ export default function RespostasConferenciaStandalonePage() {
             <p className="text-xs text-zinc-400">
               {busca || filtroModalidade !== "todos"
                 ? "Tente ajustar os filtros de busca."
-                : "Nenhum professor enviou a conferência de turmas ainda."}
+                : `Nenhum ${termoProfessor.toLowerCase()} enviou a conferência de ${termoTurmas.toLowerCase()} ainda.`}
             </p>
           </div>
         ) : (
@@ -570,7 +582,7 @@ export default function RespostasConferenciaStandalonePage() {
                 />
                 <span>Selecionar todas ({respostasFiltradas.length})</span>
               </label>
-              <span>Total: {respostasFiltradas.length} núcleos</span>
+              <span>Total: {respostasFiltradas.length} {termoNucleos.toLowerCase()}</span>
             </div>
 
             {/* Cards de cada resposta */}
@@ -607,7 +619,7 @@ export default function RespostasConferenciaStandalonePage() {
                             {r.modalidade_nome}
                           </span>
                           <span className="px-2.5 py-0.5 rounded-full text-3xs font-extrabold bg-emerald-100 text-emerald-800">
-                            {r.qtd_turmas || 0} aulas na semana
+                            {r.qtd_turmas || 0} {termoAulas.toLowerCase()} na semana
                           </span>
                           <span className="px-2.5 py-0.5 rounded-full text-3xs font-extrabold bg-purple-100 text-purple-800 flex items-center gap-1">
                             <Clock className="w-3 h-3 text-purple-700" />
@@ -617,7 +629,7 @@ export default function RespostasConferenciaStandalonePage() {
 
                         <div className="text-xs text-zinc-600 flex flex-wrap items-center gap-x-3 gap-y-1">
                           <span>
-                            <strong>Professor:</strong> {r.professor_nome}
+                            <strong>{termoProfessor}:</strong> {r.professor_nome}
                           </span>
                           <span className="text-zinc-300">•</span>
                           <span>
@@ -676,7 +688,7 @@ export default function RespostasConferenciaStandalonePage() {
                           Grade Semanal (Domingo a Sábado)
                         </h4>
                         <span className="text-3xs text-zinc-500 font-bold">
-                          Total: {r.qtd_turmas || 0} aulas • {calcularHorasSemana(r.dados_turmas)} na semana
+                          Total: {r.qtd_turmas || 0} {termoAulas.toLowerCase()} • {calcularHorasSemana(r.dados_turmas)} na semana
                         </span>
                       </div>
 
@@ -692,7 +704,7 @@ export default function RespostasConferenciaStandalonePage() {
                                 <div className="bg-sky-600 text-white px-3 py-1.5 flex items-center justify-between">
                                   <span className="font-extrabold text-xs">{diaNome}</span>
                                   <span className="text-3xs bg-sky-700 px-2 py-0.5 rounded-full font-bold">
-                                    {Array.isArray(aulas) ? aulas.length : 0} aula(s)
+                                    {Array.isArray(aulas) ? aulas.length : 0} {Array.isArray(aulas) && aulas.length === 1 ? termoAula.toLowerCase() : termoAulas.toLowerCase()}
                                   </span>
                                 </div>
 
@@ -702,7 +714,7 @@ export default function RespostasConferenciaStandalonePage() {
                                       <div key={a.aula_numero} className="pt-1.5 first:pt-0 space-y-0.5">
                                         <div className="flex items-center justify-between text-2xs">
                                           <span className="font-black text-sky-800 bg-sky-50 px-1 py-0.5 rounded">
-                                            {a.aula_numero}ª Aula
+                                            {a.aula_numero}ª {termoAula}
                                           </span>
                                           <span className="font-bold text-zinc-900 flex items-center gap-1">
                                             <Clock className="w-3 h-3 text-zinc-400" />
@@ -724,7 +736,7 @@ export default function RespostasConferenciaStandalonePage() {
                         </div>
                       ) : (
                         <p className="text-xs text-zinc-400 italic">
-                          Nenhuma informação detalhada de aulas encontrada no registro.
+                          Nenhuma informação detalhada de {termoAulas.toLowerCase()} encontrada no registro.
                         </p>
                       )}
 
@@ -732,7 +744,7 @@ export default function RespostasConferenciaStandalonePage() {
                         <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-900 flex items-start gap-2">
                           <MessageSquare className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                           <div>
-                            <strong>Recado do professor:</strong>
+                            <strong>Recado do {termoProfessor.toLowerCase()}:</strong>
                             <p className="text-xs text-amber-800 mt-0.5">{r.observacoes}</p>
                           </div>
                         </div>

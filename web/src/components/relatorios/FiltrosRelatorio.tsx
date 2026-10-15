@@ -5,6 +5,7 @@ import { objetosApi, nucleosApi, atividadesApi, turmasApi } from "@/lib/api/serv
 import { useQuery } from "@/lib/hooks/useQuery";
 import { STATUS_BENEFICIARIO_OPCOES } from "@/lib/status";
 import { Filter, RotateCcw } from "lucide-react";
+import { useDicionario } from "@/components/providers/DictionaryProvider";
 
 export interface FiltrosState {
   objetoId?: string;
@@ -22,6 +23,15 @@ interface FiltrosRelatorioProps {
 }
 
 export function FiltrosRelatorio({ filtros, onChange }: FiltrosRelatorioProps) {
+  const { t } = useDicionario();
+  const termoObjeto = t("termoObjeto", "Objeto");
+  const termoObjetos = t("termoObjetos", "Projetos");
+  const termoLocal = t("termoLocal", "Núcleo");
+  const termoLocais = t("termoLocais", "Núcleos");
+  const termoTurma = t("termoGrupo", "Turma");
+  const termoTurmas = t("termoGrupos", "Turmas");
+  const termoBeneficiario = t("termoBeneficiario", "Aluno");
+
   const { data: objetosRes } = useQuery(() => objetosApi.list({ limit: 50 }), []);
   const { data: nucleosRes } = useQuery(() => nucleosApi.list({ limit: 100 }), []);
   const { data: atividadesRes } = useQuery(() => atividadesApi.list({ limit: 100 }), []);
@@ -37,7 +47,7 @@ export function FiltrosRelatorio({ filtros, onChange }: FiltrosRelatorioProps) {
   }
 
   const turmasFiltradas = filtros.nucleoId
-    ? turmas.filter((t) => t.nucleoId === filtros.nucleoId)
+    ? turmas.filter((turmaItem) => turmaItem.nucleoId === filtros.nucleoId)
     : turmas;
 
   const temFiltroAtivo =
@@ -86,14 +96,14 @@ export function FiltrosRelatorio({ filtros, onChange }: FiltrosRelatorioProps) {
           {/* 1. Objeto / Parceria */}
           <div>
             <label className="text-[11px] font-semibold text-zinc-700 block mb-1">
-              Objeto / Parceria
+              {termoObjeto} / Parceria
             </label>
             <Select
               value={filtros.objetoId || ""}
               onChange={(e) => set("objetoId", e.target.value)}
               className="text-xs h-9"
             >
-              <option value="">Todos os Projetos</option>
+              <option value="">Todos os {termoObjetos}</option>
               {objetos.map((o) => (
                 <option key={o.id} value={o.id}>
                   {o.nome} {o.termoDeFomento ? `(${o.termoDeFomento})` : ""}
@@ -105,14 +115,14 @@ export function FiltrosRelatorio({ filtros, onChange }: FiltrosRelatorioProps) {
           {/* 2. Núcleo */}
           <div>
             <label className="text-[11px] font-semibold text-zinc-700 block mb-1">
-              Núcleo
+              {termoLocal}
             </label>
             <Select
               value={filtros.nucleoId}
               onChange={(e) => set("nucleoId", e.target.value)}
               className="text-xs h-9"
             >
-              <option value="">Todos os Núcleos</option>
+              <option value="">Todos os {termoLocais}</option>
               {nucleos.map((n) => (
                 <option key={n.id} value={n.id}>
                   {n.identificacao}
@@ -124,17 +134,17 @@ export function FiltrosRelatorio({ filtros, onChange }: FiltrosRelatorioProps) {
           {/* 3. Turma */}
           <div>
             <label className="text-[11px] font-semibold text-zinc-700 block mb-1">
-              Turma
+              {termoTurma}
             </label>
             <Select
               value={filtros.turmaId}
               onChange={(e) => set("turmaId", e.target.value)}
               className="text-xs h-9"
             >
-              <option value="">Todas as Turmas</option>
-              {turmasFiltradas.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.nome}
+              <option value="">Todas as {termoTurmas}</option>
+              {turmasFiltradas.map((turmaItem) => (
+                <option key={turmaItem.id} value={turmaItem.id}>
+                  {turmaItem.nome}
                 </option>
               ))}
             </Select>
@@ -143,7 +153,7 @@ export function FiltrosRelatorio({ filtros, onChange }: FiltrosRelatorioProps) {
           {/* 4. Status */}
           <div>
             <label className="text-[11px] font-semibold text-zinc-700 block mb-1">
-              Status do Aluno
+              Status do {termoBeneficiario}
             </label>
             <Select
               value={filtros.status}

@@ -23,6 +23,7 @@ import {
 } from "@/lib/status";
 import { formatarData } from "@/lib/utils";
 import type { FiltrosState } from "./FiltrosRelatorio";
+import { useDicionario } from "@/components/providers/DictionaryProvider";
 import {
   AlertTriangle,
   CheckCircle2,
@@ -61,6 +62,18 @@ interface MatriculaItem {
 }
 
 export function TabelaPresenca({ filtros }: Props) {
+  const { t } = useDicionario();
+  const termoObjeto = t("termoObjeto", "Objeto");
+  const termoLocal = t("termoLocal", "Núcleo");
+  const termoLocais = t("termoLocais", "Núcleos");
+  const termoTurma = t("termoGrupo", "Turma");
+  const termoTurmas = t("termoGrupos", "Turmas");
+  const termoBeneficiario = t("termoBeneficiario", "Aluno");
+  const termoBeneficiarios = t("termoBeneficiarios", "Alunos");
+  const termoResponsavel = t("termoResponsavel", "Professor");
+  const termoAula = t("termoSessao", "Aula");
+  const termoAulas = t("termoSessoes", "Aulas");
+
   // ── 1. CARREGAMENTO DE DADOS ──────────────────────────────────────────────
   const { data: bRes, loading: loadingBeneficiarios } = useQuery(
     () => beneficiariosApi.list({ limit: 500 }),
@@ -225,29 +238,29 @@ export function TabelaPresenca({ filtros }: Props) {
       // Descobrir turmas reais do beneficiário
       const matriculasDoAluno = matriculas.filter((m) => m.beneficiarioId === b.id);
       const turmasDoAluno = matriculasDoAluno.length > 0
-        ? turmas.filter((t) => matriculasDoAluno.some((m) => m.turmaId === t.id))
-        : turmas.filter((t) => t.nucleoId === b.nucleoId).slice(0, 1);
+        ? turmas.filter((turmaItem) => matriculasDoAluno.some((m) => m.turmaId === turmaItem.id))
+        : turmas.filter((turmaItem) => turmaItem.nucleoId === b.nucleoId).slice(0, 1);
 
       // Se filtrou por turma específica e o aluno não pertence a ela, ignorar
-      if (filtros.turmaId && !turmasDoAluno.some((t) => t.id === filtros.turmaId)) {
+      if (filtros.turmaId && !turmasDoAluno.some((turmaItem) => turmaItem.id === filtros.turmaId)) {
         continue;
       }
 
       // Se o aluno não tiver nenhuma turma, ainda assim renderizar com informações do núcleo
       const turmasParaIterar = turmasDoAluno.length > 0 ? turmasDoAluno : [null];
 
-      for (const t of turmasParaIterar) {
-        if (filtros.turmaId && t && t.id !== filtros.turmaId) continue;
+      for (const turmaItem of turmasParaIterar) {
+        if (filtros.turmaId && turmaItem && turmaItem.id !== filtros.turmaId) continue;
 
-        const nucleo = nucleos.find((n) => n.id === (t?.nucleoId || b.nucleoId)) || null;
-        const professor = t?.responsaveis?.[0]
-          ? funcionarios.find((f) => f.id === t.responsaveis[0]) || null
-          : t?.responsaveisNomes?.[0]
-          ? ({ nomeCompleto: t.responsaveisNomes[0] } as any)
+        const nucleo = nucleos.find((n) => n.id === (turmaItem?.nucleoId || b.nucleoId)) || null;
+        const professor = turmaItem?.responsaveis?.[0]
+          ? funcionarios.find((f) => f.id === turmaItem.responsaveis[0]) || null
+          : turmaItem?.responsaveisNomes?.[0]
+          ? ({ nomeCompleto: turmaItem.responsaveisNomes[0] } as any)
           : null;
 
         // Aulas realizadas desta turma no período
-        const aulasDaTurma = t ? execucoesAula.filter((e) => e.turmaId === t.id) : [];
+        const aulasDaTurma = turmaItem ? execucoesAula.filter((e) => e.turmaId === turmaItem.id) : [];
 
         // Regra de Ouro 2: Detectar sessões previstas na grade que venceram sem registro
         const diasSemanaTurma = new Set<number>();
@@ -256,7 +269,7 @@ export function TabelaPresenca({ filtros }: Props) {
           dom: 0, seg: 1, ter: 2, qua: 3, qui: 4, sex: 5, sab: 6,
           Domingo: 0, Segunda: 1, Terça: 2, Quarta: 3, Quinta: 4, Sexta: 5, Sábado: 6,
         };
-        for (const s of (t?.slots || [])) {
+        for (const s of (turmaItem?.slots || [])) {
           if (typeof s.diaSemana === "number") diasSemanaTurma.add(s.diaSemana);
           else if (typeof s.dia_semana === "number") diasSemanaTurma.add(s.dia_semana);
           else if (typeof s.dia === "string" && DIA_NUM_MAP[s.dia] !== undefined) {
@@ -265,7 +278,7 @@ export function TabelaPresenca({ filtros }: Props) {
         }
 
         const sessoesPrevistasNaoRegistradas: string[] = [];
-        if (t && diasSemanaTurma.size > 0 && filtros.dataInicio) {
+        if (turmaItem && diasSemanaTurma.size > 0 && filtros.dataInicio) {
           const hoje = new Date();
           const hojeStr = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, "0")}-${String(hoje.getDate()).padStart(2, "0")}`;
           const fimStr = filtros.dataFim && filtros.dataFim < hojeStr ? filtros.dataFim : hojeStr;
@@ -281,8 +294,8 @@ export function TabelaPresenca({ filtros }: Props) {
             while (curD <= fimD) {
               const curIso = `${curD.getFullYear()}-${String(curD.getMonth() + 1).padStart(2, "0")}-${String(curD.getDate()).padStart(2, "0")}`;
               const dentroCiclo =
-                (!t.dataInicio || curIso >= t.dataInicio.slice(0, 10)) &&
-                (!t.dataFim || curIso <= t.dataFim.slice(0, 10));
+                (!turmaItem.dataInicio || curIso >= turmaItem.dataInicio.slice(0, 10)) &&
+                (!turmaItem.dataFim || curIso <= turmaItem.dataFim.slice(0, 10));
 
               if (dentroCiclo && diasSemanaTurma.has(curD.getDay())) {
                 if (curIso < hojeStr && !datasExecutadas.has(curIso)) {
@@ -336,7 +349,7 @@ export function TabelaPresenca({ filtros }: Props) {
 
         list.push({
           beneficiario: b,
-          turma: t,
+          turma: turmaItem,
           nucleo,
           professor,
           totalAulasTurma,
@@ -395,17 +408,17 @@ export function TabelaPresenca({ filtros }: Props) {
   // Exportar CSV
   function handleExportarCsv() {
     const headers = [
-      "Beneficiário",
+      termoBeneficiario,
       "CPF",
-      "Turma",
-      "Núcleo",
-      "Professor",
-      "Aulas Realizadas",
+      termoTurma,
+      termoLocal,
+      termoResponsavel,
+      `${termoAulas} Realizadas`,
       "Presenças",
       "Faltas",
       "Faltas Justificadas",
       "% Frequência",
-      "Meta Objeto",
+      `Meta ${termoObjeto}`,
       "Situação",
     ];
 
@@ -442,7 +455,7 @@ export function TabelaPresenca({ filtros }: Props) {
         <Card className="border-sky-200 bg-sky-50/50">
           <CardBody className="p-4 flex flex-col justify-between">
             <div className="flex items-center justify-between text-xs font-semibold text-sky-800">
-              <span>Meta do Objeto</span>
+              <span>Meta do {termoObjeto}</span>
               <Layers className="h-4 w-4 text-sky-600" />
             </div>
             <div className="mt-2 flex items-baseline gap-1.5">
@@ -476,7 +489,7 @@ export function TabelaPresenca({ filtros }: Props) {
         <Card className="border-zinc-200 bg-white">
           <CardBody className="p-4 flex flex-col justify-between">
             <div className="flex items-center justify-between text-xs font-semibold text-zinc-700">
-              <span>Aulas Realizadas</span>
+              <span>{termoAulas} Realizadas</span>
               <Calendar className="h-4 w-4 text-zinc-500" />
             </div>
             <div className="mt-2 flex items-baseline gap-1.5">
@@ -493,15 +506,15 @@ export function TabelaPresenca({ filtros }: Props) {
         <Card className={`border-amber-200 ${kpis.abaixoDaMetaCount > 0 ? "bg-amber-50/60" : "bg-white"}`}>
           <CardBody className="p-4 flex flex-col justify-between">
             <div className="flex items-center justify-between text-xs font-semibold text-amber-900">
-              <span>Abaixo da Meta (&lt;{kpis.metaObjeto}%)</span>
+              <span>{termoBeneficiarios} Abaixo da Meta (&lt;{kpis.metaObjeto}%)</span>
               <AlertTriangle className="h-4 w-4 text-amber-600" />
             </div>
             <div className="mt-2 flex items-baseline gap-1.5">
               <span className="text-2xl font-bold text-amber-950">{kpis.abaixoDaMetaCount}</span>
-              <span className="text-[11px] text-amber-800 font-medium">alunos</span>
+              <span className="text-[11px] text-amber-800 font-medium">{termoBeneficiarios.toLowerCase()}</span>
             </div>
             <p className="text-[11px] text-amber-700 mt-1">
-              {kpis.abaixoDaMetaCount > 0 ? "Risco de evasão / descumprimento" : "Nenhum aluno em risco"}
+              {kpis.abaixoDaMetaCount > 0 ? `Risco de evasão / descumprimento` : `Nenhum ${termoBeneficiario.toLowerCase()} em risco`}
             </p>
           </CardBody>
         </Card>
@@ -557,7 +570,7 @@ export function TabelaPresenca({ filtros }: Props) {
             <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-zinc-400" />
             <input
               type="text"
-              placeholder="Buscar aluno ou CPF..."
+              placeholder={`Buscar ${termoBeneficiario.toLowerCase()} ou CPF...`}
               value={busca}
               onChange={(e) => setBusca(e.target.value)}
               className="pl-8 pr-3 py-1.5 text-xs rounded-lg border border-zinc-200 bg-white focus:outline-none focus:ring-1 focus:ring-sky-500 w-48 sm:w-56"
@@ -586,10 +599,10 @@ export function TabelaPresenca({ filtros }: Props) {
               <h3 className="text-sm font-bold text-zinc-800">
                 {modoVisualizacao === "resumo" ? "Assiduidade e Frequência Individual" : "Diário de Classe com Frequência por Data"}
               </h3>
-              <Badge tone="sky">Meta do Objeto: {metaFrequenciaMinima}%</Badge>
+              <Badge tone="sky">Meta do {termoObjeto}: {metaFrequenciaMinima}%</Badge>
             </div>
             <span className="text-xs text-zinc-500">
-              {linhasCalculadas.length} aluno(s) listado(s)
+              {linhasCalculadas.length} {termoBeneficiarios.toLowerCase()} listado(s)
             </span>
           </div>
         </CardHeader>
@@ -597,22 +610,22 @@ export function TabelaPresenca({ filtros }: Props) {
         <div className="overflow-x-auto">
           {loadingBeneficiarios || loadingAulas ? (
             <div className="p-12 text-center text-xs text-zinc-400 animate-pulse">
-              Compilando chamadas e frequências das turmas...
+              Compilando chamadas e frequências das {termoTurmas.toLowerCase()}...
             </div>
           ) : linhasCalculadas.length === 0 ? (
             <div className="p-12 text-center text-xs text-zinc-400">
-              Nenhum aluno encontrado com os filtros selecionados.
+              Nenhum {termoBeneficiario.toLowerCase()} encontrado com os filtros selecionados.
             </div>
           ) : modoVisualizacao === "resumo" ? (
             /* ── VISÃO 1: RESUMO ANALÍTICO ──────────────────────────────────── */
             <table className="w-full text-xs text-left">
               <thead className="border-b border-zinc-200 bg-zinc-50 text-zinc-600 font-semibold uppercase tracking-wider">
                 <tr>
-                  <th className="px-4 py-3">Beneficiário</th>
-                  <th className="px-4 py-3">Turma Real</th>
-                  <th className="px-4 py-3">Núcleo</th>
-                  <th className="px-4 py-3">Professor</th>
-                  <th className="px-3 py-3 text-center">Aulas</th>
+                  <th className="px-4 py-3">{termoBeneficiario}</th>
+                  <th className="px-4 py-3">{termoTurma} Real</th>
+                  <th className="px-4 py-3">{termoLocal}</th>
+                  <th className="px-4 py-3">{termoResponsavel}</th>
+                  <th className="px-3 py-3 text-center">{termoAulas}</th>
                   <th className="px-3 py-3 text-center text-emerald-700">Presenças</th>
                   <th className="px-3 py-3 text-center text-rose-700">Faltas</th>
                   <th className="px-3 py-3 text-center text-amber-700">Justif.</th>
@@ -652,15 +665,15 @@ export function TabelaPresenca({ filtros }: Props) {
                             <div
                               className={`h-full ${
                                 linha.frequenciaPercent >= metaFrequenciaMinima
-                                  ? "bg-emerald-500"
-                                  : "bg-amber-500"
+                                    ? "bg-emerald-500"
+                                    : "bg-amber-500"
                               }`}
                               style={{ width: `${Math.min(100, linha.frequenciaPercent)}%` }}
                             />
                           </div>
                         </div>
                       ) : (
-                        <span className="text-zinc-400 italic text-[11px]">Sem aulas no período</span>
+                        <span className="text-zinc-400 italic text-[11px]">Sem {termoAulas.toLowerCase()} no período</span>
                       )}
                     </td>
                     <td className="px-4 py-3 text-center">
@@ -683,13 +696,13 @@ export function TabelaPresenca({ filtros }: Props) {
             <table className="w-full text-xs text-left">
               <thead className="border-b border-zinc-200 bg-zinc-50 text-zinc-600 font-semibold uppercase tracking-wider">
                 <tr>
-                  <th className="px-4 py-3 sticky left-0 bg-zinc-50 z-10 shadow-2xs">Beneficiário</th>
-                  <th className="px-3 py-3">Turma</th>
+                  <th className="px-4 py-3 sticky left-0 bg-zinc-50 z-10 shadow-2xs">{termoBeneficiario}</th>
+                  <th className="px-3 py-3">{termoTurma}</th>
                   <th className="px-3 py-3 text-center font-bold">Freq.</th>
                   {aulasUnicas.map((a) => (
                     <th key={a.id} className="px-2 py-3 text-center min-w-[48px]">
                       <div className="font-mono text-[10px]">{formatarData(a.data).substring(0, 5)}</div>
-                      <div className="text-[9px] text-zinc-400 font-normal">aula</div>
+                      <div className="text-[9px] text-zinc-400 font-normal">{termoAula.toLowerCase()}</div>
                     </th>
                   ))}
                 </tr>

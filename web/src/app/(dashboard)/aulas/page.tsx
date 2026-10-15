@@ -22,6 +22,7 @@ import {
   Select,
   PageHeader,
 } from "@/components/ui";
+import { useDicionario } from "@/components/providers/DictionaryProvider";
 import { useQuery } from "@/lib/hooks/useQuery";
 import {
   execucoesAulaApi,
@@ -81,12 +82,18 @@ function calcDuracao(inicio?: string, fim?: string): string {
 const EMPTY = { turmaId: "", professorId: "", status: "", data: "" };
 
 export default function AulasAdminPage() {
+  const { t } = useDicionario();
+  const termoEncontro = t("termoSessao", "Aula");
+  const termoEncontros = t("termoSessoes", "Aulas");
+  const termoTurma = t("termoTurma", "Turma");
+  const termoProfessor = t("termoProfessor", "Professor");
+
   const [filtros, setFiltros] = useState(EMPTY);
   const [ativos, setAtivos] = useState(EMPTY);
 
   useEffect(() => {
-    const t = setTimeout(() => setAtivos(filtros), 300);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => setAtivos(filtros), 300);
+    return () => clearTimeout(timer);
   }, [filtros]);
 
   const queryParams = useMemo(() => {
@@ -148,14 +155,14 @@ export default function AulasAdminPage() {
   return (
     <div className="flex flex-col gap-6 pb-12">
       <PageHeader
-        title="Aulas"
-        description="Painel de acompanhamento de todas as execuções de aula do sistema"
+        title={termoEncontros}
+        description={`Painel de acompanhamento de todas as execuções de ${termoEncontro.toLowerCase()} do sistema`}
       />
 
       {/* CARDS DE ESTATÍSTICAS */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div className="rounded-xl border border-zinc-200 bg-white p-4 flex flex-col gap-1">
-          <span className="text-[10px] uppercase font-bold text-zinc-400 tracking-wider">Total de Aulas</span>
+          <span className="text-[10px] uppercase font-bold text-zinc-400 tracking-wider">Total de {termoEncontros}</span>
           <span className="text-2xl font-black text-zinc-900">{stats.total}</span>
         </div>
         <div className="rounded-xl border border-sky-200 bg-sky-50/50 p-4 flex flex-col gap-1">
@@ -180,13 +187,13 @@ export default function AulasAdminPage() {
 
       {/* FILTROS */}
       <FilterBar onClear={limpar}>
-        <Field label="Turma">
+        <Field label={termoTurma}>
           <Select value={filtros.turmaId} onChange={(e) => setFiltros((f) => ({ ...f, turmaId: e.target.value }))}>
             <option value="">Todas</option>
-            {turmas.map((t) => <option key={t.id} value={t.id}>{t.nome}</option>)}
+            {turmas.map((turmaItem) => <option key={turmaItem.id} value={turmaItem.id}>{turmaItem.nome}</option>)}
           </Select>
         </Field>
-        <Field label="Professor">
+        <Field label={termoProfessor}>
           <Select value={filtros.professorId} onChange={(e) => setFiltros((f) => ({ ...f, professorId: e.target.value }))}>
             <option value="">Todos</option>
             {funcionarios.map((f) => <option key={f.id} value={f.id}>{f.nomeCompleto}</option>)}
@@ -220,8 +227,8 @@ export default function AulasAdminPage() {
               <thead>
                 <tr className="border-b border-zinc-200 text-left text-xs font-medium uppercase tracking-wide text-zinc-500 bg-zinc-50/50">
                   <th className="px-4 py-3">Data</th>
-                  <th className="px-4 py-3">Turma</th>
-                  <th className="px-4 py-3">Professor</th>
+                  <th className="px-4 py-3">{termoTurma}</th>
+                  <th className="px-4 py-3">{termoProfessor}</th>
                   <th className="px-4 py-3 text-center">Horário</th>
                   <th className="px-4 py-3 text-center">Duração</th>
                   <th className="px-4 py-3 text-center">Status</th>
@@ -233,7 +240,7 @@ export default function AulasAdminPage() {
                 {resultado.length === 0 ? (
                   <tr>
                     <td colSpan={8} className="px-5 py-8 text-center text-sm text-zinc-400">
-                      Nenhuma aula encontrada.
+                      Nenhum(a) {termoEncontro.toLowerCase()} encontrado(a).
                     </td>
                   </tr>
                 ) : (

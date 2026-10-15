@@ -30,6 +30,7 @@ import {
   type QP,
 } from "@/lib/api/services";
 import { useLocationFilter } from "@/components/providers/LocationFilterProvider";
+import { useDicionario } from "@/components/providers/DictionaryProvider";
 import { formatarNomeGrupo } from "@/lib/utils";
 
 const PER_PAGE = 15;
@@ -40,6 +41,7 @@ type FiltrosForm = typeof EMPTY;
 
 export default function TurmasPage() {
   const { toast } = useToast();
+  const { t } = useDicionario();
   const { estado, cidade, organizacaoId, nucleoId } = useLocationFilter();
   const [pagina, setPagina] = useState(1);
   const [filtros, setFiltros] = useState<FiltrosForm>(EMPTY);
@@ -72,11 +74,11 @@ export default function TurmasPage() {
           await turmasApi.create(copia);
         })
       );
-      toast.success(`${selectedIds.length} turma(s) duplicada(s) com sucesso`);
+      toast.success(`${selectedIds.length} ${t("turma", "turma", selectedIds.length > 1).toLowerCase()} duplicada(s) com sucesso`);
       refetch();
       setSelectedIds([]);
     } catch (err: any) {
-      toast.error("Erro ao duplicar turmas: " + (err?.message || "Erro desconhecido"));
+      toast.error(`Erro ao duplicar ${t("turma", "turmas", true).toLowerCase()}: ` + (err?.message || "Erro desconhecido"));
     } finally {
       setProcessando(false);
     }
@@ -93,7 +95,7 @@ export default function TurmasPage() {
           await turmasApi.update(t.id, { vagasTotais: novasVagas });
         })
       );
-      toast.success(`Vagas ajustadas com sucesso em ${selectedIds.length} turma(s)`);
+      toast.success(`Vagas ajustadas com sucesso em ${selectedIds.length} ${t("turma", "turma", selectedIds.length > 1).toLowerCase()}`);
       setModalVagas(false);
       setAjusteVagas(0);
       refetch();
@@ -206,7 +208,7 @@ export default function TurmasPage() {
       setPagina(1);
       refetch();
     } catch (err: any) {
-      alert("Erro ao excluir turma: " + (err?.message || "Ocorreu um erro."));
+      alert(`Erro ao excluir ${t("turma", "turma").toLowerCase()}: ` + (err?.message || "Ocorreu um erro."));
     } finally {
       setExcluindo(false);
     }
@@ -231,12 +233,12 @@ export default function TurmasPage() {
   return (
     <div className="flex flex-col gap-6 pb-12">
       <PageHeader
-        title="Turmas"
-        description="Turmas vinculadas aos núcleos e atividades com gestão de vagas e matriculados"
+        title={t("turma", "Turma", true)}
+        description={`${t("turma", "Turmas", true)} vinculadas aos ${t("local", "núcleos", true).toLowerCase()} e ${t("atividade", "atividades", true).toLowerCase()} com gestão de vagas e ${t("beneficiario", "matriculados", true).toLowerCase()}`}
         actions={
           <div className="flex items-center gap-3">
             <ViewToggle mode={viewMode} onChange={setViewMode} />
-            <LinkButton href="/turmas/novo">Nova turma</LinkButton>
+            <LinkButton href="/turmas/novo">{`Nova ${t("turma", "Turma").toLowerCase()}`}</LinkButton>
           </div>
         }
       />
@@ -244,12 +246,12 @@ export default function TurmasPage() {
       <FilterBar onFilter={aplicar} onClear={limpar}>
         <Field label="Busca" className="xl:col-span-2">
           <Input
-            placeholder="Nome da turma"
+            placeholder={`Nome da ${t("turma", "turma").toLowerCase()}`}
             value={filtros.busca}
             onChange={(e) => setFiltros((f) => ({ ...f, busca: e.target.value }))}
           />
         </Field>
-        <Field label="Núcleo" className="xl:col-span-2">
+        <Field label={t("local", "Núcleo")} className="xl:col-span-2">
           <Select
             value={filtros.nucleoId}
             onChange={(e) => setFiltros((f) => ({ ...f, nucleoId: e.target.value }))}
@@ -262,7 +264,7 @@ export default function TurmasPage() {
             ))}
           </Select>
         </Field>
-        <Field label="Atividade" className="xl:col-span-1">
+        <Field label={t("atividade", "Atividade")} className="xl:col-span-1">
           <Select
             value={filtros.atividadeId}
             onChange={(e) => setFiltros((f) => ({ ...f, atividadeId: e.target.value }))}
@@ -318,7 +320,7 @@ export default function TurmasPage() {
           </div>
         </Field>
 
-        <Field label="Dias com Aula" className="sm:col-span-2 lg:col-span-2 xl:col-span-3">
+        <Field label={`Dias com ${t("sessao", "Aula")}`} className="sm:col-span-2 lg:col-span-2 xl:col-span-3">
           <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
             {DIAS_SEMANA.map((dia) => {
               const ativo = filtros.diasSemana.includes(dia);
@@ -377,24 +379,24 @@ export default function TurmasPage() {
               <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {resultado.length === 0 ? (
                   <div className="col-span-full px-5 py-8 text-center text-sm text-zinc-400">
-                    Nenhuma turma encontrada.
+                    Nenhuma {t("turma", "turma").toLowerCase()} encontrada.
                   </div>
                 ) : (
-                  resultadoPaginado.map((t) => {
-                    const nucleo = nucleos.find((n) => n.id === t.nucleoId);
-                    const atividade = atividades.find((a) => a.id === t.atividadeId) || t.atividade;
-                    const termoGrupo = atividade?.termoGrupo || "Grupo";
-                    const nomeAdaptado = formatarNomeGrupo(t.nome, termoGrupo);
-                    const isSelected = selectedIds.includes(t.id);
-                    const matriculadosCount = t.vagasOcupadas ?? 0;
-                    const vagasTotais = t.vagasTotais || 0;
+                  resultadoPaginado.map((tTurma) => {
+                    const nucleo = nucleos.find((n) => n.id === tTurma.nucleoId);
+                    const atividade = atividades.find((a) => a.id === tTurma.atividadeId) || tTurma.atividade;
+                    const termoGrupo = t("turma", "Grupo", false, atividade);
+                    const nomeAdaptado = formatarNomeGrupo(tTurma.nome, termoGrupo);
+                    const isSelected = selectedIds.includes(tTurma.id);
+                    const matriculadosCount = tTurma.vagasOcupadas ?? 0;
+                    const vagasTotais = tTurma.vagasTotais || 0;
                     const vagasOcupadasPct = vagasTotais > 0 ? Math.min(100, Math.round((matriculadosCount / vagasTotais) * 100)) : 0;
 
                     return (
                       <div
-                        key={t.id}
+                        key={tTurma.id}
                         className={`group relative overflow-hidden rounded-2xl border transition-all flex flex-col gap-3.5 p-4 ${
-                          (t.tipo === "operacional" || t.atividade?.usoInterno) ? "justify-start" : "justify-between"
+                          (tTurma.tipo === "operacional" || tTurma.atividade?.usoInterno) ? "justify-start" : "justify-between"
                         } ${
                           isSelected
                             ? "border-sky-500 bg-sky-50/30 ring-2 ring-sky-500/20 shadow-xs"
@@ -412,7 +414,7 @@ export default function TurmasPage() {
                           <input
                             type="checkbox"
                             checked={isSelected}
-                            onChange={() => toggleSelectOne(t.id)}
+                            onChange={() => toggleSelectOne(tTurma.id)}
                             className="sr-only"
                           />
                           <Check className={`h-4 w-4 stroke-[3] transition-transform ${isSelected ? "scale-100 text-white" : "scale-85 text-zinc-400 opacity-60 group-hover:opacity-100"}`} />
@@ -425,22 +427,22 @@ export default function TurmasPage() {
                               <span className="rounded-md bg-sky-100 px-1.5 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-sky-800">
                                 {termoGrupo}
                               </span>
-                              {t.exclusiva && (
+                              {tTurma.exclusiva && (
                                 <span className="rounded-md bg-amber-100 px-1.5 py-0.5 text-[9px] font-bold uppercase text-amber-800">
                                   Exclusiva
                                 </span>
                               )}
-                              {(t.tipo === "operacional" || t.atividade?.usoInterno) && (
+                              {(tTurma.tipo === "operacional" || tTurma.atividade?.usoInterno) && (
                                 <span className="rounded-md bg-zinc-100 px-1.5 py-0.5 text-[9px] font-bold uppercase text-zinc-500">
-                                  {t.tipo === "operacional" ? "Operacional" : "Uso Interno"}
+                                  {tTurma.tipo === "operacional" ? "Operacional" : "Uso Interno"}
                                 </span>
                               )}
                             </div>
-                            <Link href={`/turmas/${t.id}`} className="font-bold text-zinc-900 text-sm hover:text-sky-600">
+                            <Link href={`/turmas/${tTurma.id}`} className="font-bold text-zinc-900 text-sm hover:text-sky-600">
                               {nomeAdaptado}
                             </Link>
                           </div>
-                          {t.tipo !== "operacional" && !t.atividade?.usoInterno && (
+                          {tTurma.tipo !== "operacional" && !tTurma.atividade?.usoInterno && (
                             <span className="shrink-0 whitespace-nowrap rounded-xl bg-sky-50 border border-sky-200 px-2.5 py-1 text-xs font-extrabold text-sky-700 shadow-2xs">
                               {vagasTotais} vagas
                             </span>
@@ -453,7 +455,7 @@ export default function TurmasPage() {
                             {nucleo?.identificacao && (
                               <div className="flex items-center gap-1.5 text-zinc-600">
                                 <span className="shrink-0 rounded-md bg-violet-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-violet-700">
-                                  Núcleo
+                                  {t("local", "Núcleo")}
                                 </span>
                                 <span className="font-medium truncate text-zinc-800">{nucleo.identificacao}</span>
                               </div>
@@ -461,22 +463,22 @@ export default function TurmasPage() {
                             {atividade?.nome && (
                               <div className="flex items-center gap-1.5 text-zinc-600">
                                 <span className="shrink-0 rounded-md bg-emerald-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-emerald-700">
-                                  Atividade
+                                  {t("atividade", "Atividade")}
                                 </span>
                                 <span className="font-medium truncate text-zinc-800">{atividade.nome}</span>
                               </div>
                             )}
-                            {t.tipo !== "operacional" && !t.atividade?.usoInterno && (t.idadeMinima != null && t.idadeMaxima != null) && (
+                            {tTurma.tipo !== "operacional" && !tTurma.atividade?.usoInterno && (tTurma.idadeMinima != null && tTurma.idadeMaxima != null) && (
                               <div className="flex items-center gap-1.5 text-zinc-600">
                                 <span className="shrink-0 rounded-md bg-sky-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-sky-700">
                                   Idade
                                 </span>
-                                <span className="font-medium text-zinc-800">{t.idadeMinima} a {t.idadeMaxima} anos</span>
+                                <span className="font-medium text-zinc-800">{tTurma.idadeMinima} a {tTurma.idadeMaxima} anos</span>
                               </div>
                             )}
-                            {t.tipo !== "operacional" && !t.atividade?.usoInterno && (t.slots ?? []).length > 0 && (() => {
+                            {tTurma.tipo !== "operacional" && !tTurma.atividade?.usoInterno && (tTurma.slots ?? []).length > 0 && (() => {
                               const ORDEM = ["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"];
-                              const dias = [...new Set((t.slots ?? []).map((s: any) => s.dia))].sort(
+                              const dias = [...new Set((tTurma.slots ?? []).map((s: any) => s.dia))].sort(
                                 (a, b) => ORDEM.indexOf(a as string) - ORDEM.indexOf(b as string)
                               );
                               return (
@@ -498,12 +500,12 @@ export default function TurmasPage() {
                         </div>
 
                         {/* Indicadores de Ocupação — apenas para turmas de alunos */}
-                        {t.tipo !== "operacional" && !t.atividade?.usoInterno && (
+                        {tTurma.tipo !== "operacional" && !tTurma.atividade?.usoInterno && (
                           <div className="flex flex-col gap-1.5 border-t border-zinc-100 pt-2 text-xs">
                             <div className="flex items-center justify-between text-zinc-600">
                               <span className="flex items-center gap-1 font-semibold text-zinc-800">
                                 <Users className="h-3.5 w-3.5 text-sky-600" />
-                                <span>{matriculadosCount} de {vagasTotais} alunos</span>
+                                <span>{matriculadosCount} de {vagasTotais} {t("beneficiario", "alunos", true, atividade).toLowerCase()}</span>
                               </span>
                               <span className="font-bold text-sky-700">{vagasOcupadasPct}% ocupado</span>
                             </div>
@@ -519,7 +521,7 @@ export default function TurmasPage() {
                         {/* Botões de Ação: Editar e Excluir (somente se não tiver dependentes) */}
                         <div className="flex items-center justify-end gap-2 border-t border-zinc-100/60 pt-2.5">
                           <Link
-                            href={`/turmas/${t.id}/editar`}
+                            href={`/turmas/${tTurma.id}/editar`}
                             className="inline-flex items-center gap-1 rounded-lg border border-sky-200 bg-sky-50 px-3 py-1.5 text-xs font-semibold text-sky-700 hover:bg-sky-100 transition-colors shadow-2xs"
                           >
                             Editar
@@ -528,7 +530,7 @@ export default function TurmasPage() {
                           {matriculadosCount === 0 && (
                             <button
                               type="button"
-                              onClick={() => setTurmaParaExcluir(t)}
+                              onClick={() => setTurmaParaExcluir(tTurma)}
                               className="inline-flex items-center gap-1 rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100 transition-colors shadow-2xs cursor-pointer"
                             >
                               <Trash2 className="h-3.5 w-3.5" />
@@ -554,62 +556,62 @@ export default function TurmasPage() {
                           className="h-4 w-4 rounded border-zinc-300 text-sky-600 focus:ring-sky-500 cursor-pointer"
                         />
                       </th>
-                      <th className="px-5 py-3">Turma</th>
-                      <th className="px-5 py-3">Núcleo</th>
-                      <th className="px-5 py-3">Atividade</th>
+                      <th className="px-5 py-3">{t("turma", "Turma")}</th>
+                      <th className="px-5 py-3">{t("local", "Núcleo")}</th>
+                      <th className="px-5 py-3">{t("atividade", "Atividade")}</th>
                       <th className="px-5 py-3">Idade</th>
-                      <th className="px-5 py-3 text-center">Matriculados / Vagas</th>
+                      <th className="px-5 py-3 text-center">{t("beneficiario", "Matriculados", true)} / Vagas</th>
                       <th className="px-5 py-3">Exclusiva</th>
                       <th className="px-5 py-3 text-right">Ações</th>
                     </tr>
                   </thead>
                   <tbody>
                     {resultado.length === 0 ? (
-                      <tr><td colSpan={8} className="px-5 py-8 text-center text-sm text-zinc-400">Nenhuma turma encontrada.</td></tr>
-                    ) : resultadoPaginado.map((t) => {
-                      const nucleo = nucleos.find((n) => n.id === t.nucleoId);
-                      const atividade = atividades.find((a) => a.id === t.atividadeId);
-                      const isSelected = selectedIds.includes(t.id);
-                      const matriculadosCount = t.vagasOcupadas ?? 0;
+                      <tr><td colSpan={8} className="px-5 py-8 text-center text-sm text-zinc-400">Nenhuma {t("turma", "turma").toLowerCase()} encontrada.</td></tr>
+                    ) : resultadoPaginado.map((turmaItem) => {
+                      const nucleo = nucleos.find((n) => n.id === turmaItem.nucleoId);
+                      const atividade = atividades.find((a) => a.id === turmaItem.atividadeId);
+                      const isSelected = selectedIds.includes(turmaItem.id);
+                      const matriculadosCount = turmaItem.vagasOcupadas ?? 0;
 
                       return (
-                        <tr key={t.id} className={`border-b border-zinc-100 last:border-0 hover:bg-zinc-50 ${isSelected ? "bg-sky-50/30" : ""}`}>
+                        <tr key={turmaItem.id} className={`border-b border-zinc-100 last:border-0 hover:bg-zinc-50 ${isSelected ? "bg-sky-50/30" : ""}`}>
                           <td className="px-4 py-3">
                             <input
                               type="checkbox"
                               checked={isSelected}
-                              onChange={() => toggleSelectOne(t.id)}
+                              onChange={() => toggleSelectOne(turmaItem.id)}
                               className="h-4 w-4 rounded border-zinc-300 text-sky-600 focus:ring-sky-500 cursor-pointer"
                             />
                           </td>
                           <td className="px-5 py-3 font-medium text-zinc-900">
-                            <Link href={`/turmas/${t.id}`} className="hover:text-sky-600">
-                              {formatarNomeGrupo(t.nome, atividade?.termoGrupo || t.atividade?.termoGrupo)}
+                            <Link href={`/turmas/${turmaItem.id}`} className="hover:text-sky-600">
+                              {formatarNomeGrupo(turmaItem.nome, t("turma", "Grupo", false, atividade || turmaItem.atividade))}
                             </Link>
                           </td>
                           <td className="px-5 py-3 text-zinc-600">{nucleo?.identificacao ?? "—"}</td>
                           <td className="px-5 py-3 text-zinc-600">{atividade?.nome ?? "—"}</td>
                           <td className="px-5 py-3">
-                            {t.idadeMinima != null && t.idadeMaxima != null ? (
-                              <Badge tone="sky">{t.idadeMinima} a {t.idadeMaxima} anos</Badge>
+                            {turmaItem.idadeMinima != null && turmaItem.idadeMaxima != null ? (
+                              <Badge tone="sky">{turmaItem.idadeMinima} a {turmaItem.idadeMaxima} anos</Badge>
                             ) : (
                               <span className="text-zinc-400">—</span>
                             )}
                           </td>
                           <td className="px-5 py-3 text-center font-semibold text-sky-700">
-                            {(t.tipo === "operacional" || t.atividade?.usoInterno) ? (
+                            {(turmaItem.tipo === "operacional" || turmaItem.atividade?.usoInterno) ? (
                               <span className="text-zinc-400">—</span>
                             ) : (
-                              <>{matriculadosCount} / {t.vagasTotais || 0}</>
+                              <>{matriculadosCount} / {turmaItem.vagasTotais || 0}</>
                             )}
                           </td>
                           <td className="px-5 py-3">
-                            <Badge tone={t.exclusiva ? "amber" : "zinc"}>{t.exclusiva ? "Sim" : "Não"}</Badge>
+                            <Badge tone={turmaItem.exclusiva ? "amber" : "zinc"}>{turmaItem.exclusiva ? "Sim" : "Não"}</Badge>
                           </td>
                           <td className="px-5 py-3 text-right">
                             <div className="flex items-center justify-end gap-2">
                               <Link
-                                href={`/turmas/${t.id}/editar`}
+                                href={`/turmas/${turmaItem.id}/editar`}
                                 className="text-xs font-semibold text-sky-600 hover:underline"
                               >
                                 Editar
@@ -619,7 +621,7 @@ export default function TurmasPage() {
                                   <span className="text-zinc-300">|</span>
                                   <button
                                     type="button"
-                                    onClick={() => setTurmaParaExcluir(t)}
+                                    onClick={() => setTurmaParaExcluir(turmaItem)}
                                     className="text-xs font-medium text-red-600 hover:underline cursor-pointer"
                                   >
                                     Excluir
@@ -649,13 +651,13 @@ export default function TurmasPage() {
                 <Trash2 className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-zinc-900">Excluir Turma</h3>
-                <p className="text-xs text-zinc-500">Esta ação moverá a turma para a lixeira.</p>
+                <h3 className="text-base font-bold text-zinc-900">Excluir {t("turma", "Turma")}</h3>
+                <p className="text-xs text-zinc-500">Esta ação moverá a {t("turma", "turma").toLowerCase()} para a lixeira.</p>
               </div>
             </div>
 
             <p className="text-sm text-zinc-600">
-              Tem certeza que deseja excluir a turma <strong>{turmaParaExcluir.nome}</strong>?
+              Tem certeza que deseja excluir a {t("turma", "turma").toLowerCase()} <strong>{turmaParaExcluir.nome}</strong>?
             </p>
 
             <div className="flex items-center justify-end gap-3 pt-2">
@@ -709,7 +711,7 @@ export default function TurmasPage() {
 
         <button
           type="button"
-          onClick={() => alert(`Exportando ${selectedIds.length} turma(s)...`)}
+          onClick={() => alert(`Exportando ${selectedIds.length} ${t("turma", "turma", selectedIds.length > 1).toLowerCase()}...`)}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-zinc-200 transition-colors cursor-pointer whitespace-nowrap shrink-0"
         >
           <Download className="h-3.5 w-3.5" />
@@ -722,7 +724,7 @@ export default function TurmasPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs">
           <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
             <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-2">
-              Ajustar Vagas em {selectedIds.length} Turma(s)
+              Ajustar Vagas em {selectedIds.length} {t("turma", "Turma", selectedIds.length > 1)}
             </h3>
             <p className="text-xs text-zinc-500 mb-4">
               Digite a quantidade de vagas a somar ou subtrair (ex: 5 para adicionar 5 vagas, -2 para remover 2 vagas).

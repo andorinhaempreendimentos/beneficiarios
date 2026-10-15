@@ -14,7 +14,9 @@ import {
 } from "lucide-react";
 import { Card, PageHeader, Badge, LinkButton, Pagination } from "@/components/ui";
 import { useQuery } from "@/lib/hooks/useQuery";
+import { useDicionario } from "@/components/providers/DictionaryProvider";
 import { coordenadoresApi } from "@/lib/api/coordenadores";
+import { formatarNomeGrupo } from "@/lib/utils";
 import {
   turmasApi,
   type TurmaApi,
@@ -25,6 +27,7 @@ import {
 const PER_PAGE = 15;
 
 export default function CoordenadorTurmasPage() {
+  const { t } = useDicionario();
   const [nucleoSelecionadoId, setNucleoSelecionadoId] = useState<string>("todos");
   const [busca, setBusca] = useState<string>("");
   const [pagina, setPagina] = useState(1);
@@ -65,7 +68,9 @@ export default function CoordenadorTurmasPage() {
   if (loadingNucleos) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <div className="text-sm text-zinc-400">Carregando turmas dos núcleos…</div>
+        <div className="text-sm text-zinc-400">
+          Carregando {t("turma", "turmas", true).toLowerCase()} dos {t("local", "núcleos", true).toLowerCase()}…
+        </div>
       </div>
     );
   }
@@ -84,10 +89,10 @@ export default function CoordenadorTurmasPage() {
             </Link>
           </div>
           <h1 className="text-2xl font-bold text-zinc-900">
-            Turmas dos Meus Núcleos
+            {t("turma", "Turmas", true)} dos Meus {t("local", "Núcleos", true)}
           </h1>
           <p className="text-sm text-zinc-500 mt-0.5">
-            Acompanhamento das turmas esportivas, horários e professores responsáveis
+            Acompanhamento dos(as) {t("turma", "turmas", true).toLowerCase()}, horários e {t("instrutor", "professores", true).toLowerCase()} responsáveis
           </p>
         </div>
       </div>
@@ -104,7 +109,7 @@ export default function CoordenadorTurmasPage() {
               }}
               className="rounded-xl border border-zinc-300 bg-white px-3 py-1.5 text-xs font-semibold text-zinc-800 focus:outline-none focus:ring-2 focus:ring-sky-500"
             >
-              <option value="todos">Todos os núcleos ({meusNucleos.length})</option>
+              <option value="todos">Todos os {t("local", "núcleos", true).toLowerCase()} ({meusNucleos.length})</option>
               {meusNucleos.map((n) => (
                 <option key={n.id} value={n.id}>
                   📍 {n.identificacao}
@@ -115,7 +120,7 @@ export default function CoordenadorTurmasPage() {
 
           <input
             type="text"
-            placeholder="Buscar por nome da turma..."
+            placeholder={`Buscar por nome do(a) ${t("turma", "turma").toLowerCase()}...`}
             value={busca}
             onChange={(e) => {
               setBusca(e.target.value);
@@ -126,67 +131,69 @@ export default function CoordenadorTurmasPage() {
         </div>
 
         <span className="text-xs text-zinc-400 self-center">
-          {total} {total === 1 ? "turma encontrada" : "turmas encontradas"}
+          {total} {total === 1 ? `${t("turma", "turma").toLowerCase()} encontrada` : `${t("turma", "turmas", true).toLowerCase()} encontradas`}
         </span>
       </div>
 
       {/* Tabela de Turmas */}
       <Card>
         {loadingTurmas ? (
-          <div className="px-5 py-12 text-center text-sm text-zinc-400">Carregando turmas…</div>
+          <div className="px-5 py-12 text-center text-sm text-zinc-400">
+            Carregando {t("turma", "turmas", true).toLowerCase()}…
+          </div>
         ) : turmas.length === 0 ? (
           <div className="px-5 py-16 text-center text-sm text-zinc-400">
-            Nenhuma turma encontrada para o filtro selecionado.
+            Nenhum(a) {t("turma", "turma").toLowerCase()} encontrado(a) para o filtro selecionado.
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-xs text-left">
               <thead className="bg-zinc-50 text-zinc-600 font-semibold uppercase tracking-wider border-b border-zinc-100">
                 <tr>
-                  <th className="px-5 py-3">Turma</th>
-                  <th className="px-4 py-3">Núcleo</th>
-                  <th className="px-4 py-3">Professor Responsável</th>
+                  <th className="px-5 py-3">{t("turma", "Turma")}</th>
+                  <th className="px-4 py-3">{t("local", "Núcleo")}</th>
+                  <th className="px-4 py-3">{t("instrutor", "Professor")} Responsável</th>
                   <th className="px-4 py-3 text-center">Idade</th>
-                  <th className="px-4 py-3 text-center">Alunos / Capacidade</th>
+                  <th className="px-4 py-3 text-center">{t("beneficiario", "Alunos", true)} / Capacidade</th>
                   <th className="px-4 py-3">Dias / Horários</th>
                   <th className="px-5 py-3 text-right">Ação</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100">
-                {turmas.map((t) => {
+                {turmas.map((turmaItem) => {
                   const profNome =
-                    (t as any).turma_responsaveis?.[0]?.funcionarios?.nome_completo ||
-                    (t as any).turma_responsaveis?.[0]?.nome ||
+                    (turmaItem as any).turma_responsaveis?.[0]?.funcionarios?.nome_completo ||
+                    (turmaItem as any).turma_responsaveis?.[0]?.nome ||
                     "—";
 
-                  const horarios = (t as any).turma_horarios ?? [];
+                  const horarios = (turmaItem as any).turma_horarios ?? [];
                   const horariosFormatados = horarios.length > 0
                     ? horarios.map((h: any) => `${h.dia_semana || h.dia}: ${h.hora_inicio || h.inicio}`).slice(0, 2).join(", ")
                     : "—";
 
                   return (
-                    <tr key={t.id} className="hover:bg-zinc-50/70 transition-colors">
+                    <tr key={turmaItem.id} className="hover:bg-zinc-50/70 transition-colors">
                       <td className="px-5 py-3.5 font-bold text-zinc-900">
-                        <Link href={`/turmas/${t.id}`} className="hover:text-sky-600 transition-colors">
-                          {t.nome}
+                        <Link href={`/turmas/${turmaItem.id}`} className="hover:text-sky-600 transition-colors">
+                          {formatarNomeGrupo(turmaItem.nome, t("turma", "Grupo", false, turmaItem.atividade))}
                         </Link>
                       </td>
                       <td className="px-4 py-3.5 font-medium text-zinc-700">
-                        {t.nucleo?.identificacao || "Núcleo"}
+                        {turmaItem.nucleo?.identificacao || t("local", "Núcleo")}
                       </td>
                       <td className="px-4 py-3.5 text-zinc-800">
                         {profNome}
                       </td>
                       <td className="px-4 py-3.5 text-center text-zinc-600">
-                        {t.idadeMinima != null && t.idadeMaxima != null ? `${t.idadeMinima} a ${t.idadeMaxima} anos` : "—"}
+                        {turmaItem.idadeMinima != null && turmaItem.idadeMaxima != null ? `${turmaItem.idadeMinima} a ${turmaItem.idadeMaxima} anos` : "—"}
                       </td>
                       <td className="px-4 py-3.5 text-center">
                         <span className="font-bold text-zinc-900">
-                          {t.vagasOcupadas ?? 0}
+                          {turmaItem.vagasOcupadas ?? 0}
                         </span>
-                        {t.vagasTotais != null && (
+                        {turmaItem.vagasTotais != null && (
                           <span className="text-zinc-400 text-[11px] ml-1">
-                            / {t.vagasTotais}
+                            / {turmaItem.vagasTotais}
                           </span>
                         )}
                       </td>
@@ -196,13 +203,13 @@ export default function CoordenadorTurmasPage() {
                       <td className="px-5 py-3.5 text-right">
                         <div className="flex items-center justify-end gap-2">
                           <Link
-                            href={`/turmas/${t.id}/presenca`}
+                            href={`/turmas/${turmaItem.id}/presenca`}
                             className="rounded-lg bg-emerald-50 px-2 py-1 text-xs font-semibold text-emerald-700 hover:bg-emerald-100 transition-colors inline-flex items-center gap-1"
                           >
                             <ClipboardList className="h-3 w-3" /> Frequência
                           </Link>
                           <Link
-                            href={`/turmas/${t.id}`}
+                            href={`/turmas/${turmaItem.id}`}
                             className="rounded-lg bg-sky-50 px-2.5 py-1 text-xs font-semibold text-sky-700 hover:bg-sky-100 transition-colors inline-flex items-center gap-1"
                           >
                             Ver detalhes <ArrowRight className="h-3 w-3" />

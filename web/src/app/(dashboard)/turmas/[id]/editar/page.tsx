@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
-import { PageHeader } from "@/components/ui";
-import { GrupoForm } from "@/components/turmas/GrupoForm";
+import { EditarGrupoView } from "@/components/turmas/EditarGrupoView";
 import { turmasApi, nucleosApi, atividadesApi, funcionariosApi } from "@/lib/api/services";
 
 export default async function EditarTurmaPage({ params }: { params: Promise<{ id: string }> }) {
@@ -15,15 +14,11 @@ export default async function EditarTurmaPage({ params }: { params: Promise<{ id
   ]);
 
   return (
-    <div className="flex flex-col gap-6">
-      <PageHeader title="Editar grupo" description={t.nome} />
-      <GrupoForm
-        turma={t}
-        nucleos={nucleosRes.data}
-        atividades={atividadesRes.data}
-        funcionarios={funcionariosRes.data}
-        backHref={`/turmas/${t.id}`}
-      />
-    </div>
+    <EditarGrupoView
+      turma={t}
+      nucleos={nucleosRes.data}
+      atividades={atividadesRes.data}
+      funcionarios={funcionariosRes.data}
+    />
   );
 }

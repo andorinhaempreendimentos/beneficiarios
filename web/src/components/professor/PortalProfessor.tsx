@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { Badge, Button, Card, Field, Input, PageHeader, Select, Textarea } from "@/components/ui";
 import { useToast } from "@/components/providers/ToastProvider";
+import { useDicionario } from "@/components/providers/DictionaryProvider";
 import { turmasApi, professoresApi, type FuncionarioApi, type TurmaApi, type NucleoApi, type BeneficiarioApi } from "@/lib/api/services";
 import { useEffect } from "react";
 import { getDataHojeBrasil } from "@/lib/dateUtils";
@@ -30,6 +31,15 @@ interface PortalProfessorProps {
 
 export function PortalProfessor({ professor, turmas, nucleos }: PortalProfessorProps) {
   const { toast } = useToast();
+  const { t } = useDicionario();
+  const termoProfessor = t("termoProfessor", "Professor");
+  const termoBeneficiario = t("termoBeneficiario", "Aluno");
+  const termoBeneficiarios = t("termoBeneficiarios", "Alunos");
+  const termoTurma = t("termoTurma", "Turma");
+  const termoTurmas = t("termoTurmas", "Turmas");
+  const termoLocal = t("termoLocal", "Núcleo");
+  const termoEncontro = t("termoSessao", "Aula");
+
   const [abaAtiva, setAbaAtiva] = useState<"ponto" | "chamada" | "confirmacao">("ponto");
 
   // Estado do Ponto
@@ -49,7 +59,7 @@ export function PortalProfessor({ professor, turmas, nucleos }: PortalProfessorP
   const [enviadoConfirmacao, setEnviadoConfirmacao] = useState(false);
   const [salvando, setSalvando] = useState(false);
 
-  const turmaAtual = turmas.find((t) => t.id === turmaSelecionadaId);
+  const turmaAtual = turmas.find((turmaItem) => turmaItem.id === turmaSelecionadaId);
   const nucleoAtual = nucleos.find((n) => n.id === professor.nucleoId) || nucleos[0];
 
   // Carregar beneficiários da turma selecionada
@@ -160,7 +170,7 @@ export function PortalProfessor({ professor, turmas, nucleos }: PortalProfessorP
             </div>
             <div>
               <span className="inline-block rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-medium text-sky-100 backdrop-blur-md">
-                Portal Exclusivo do Professor
+                Portal Exclusivo do {termoProfessor}
               </span>
               <h1 className="text-xl font-bold mt-0.5">{professor.nomeCompleto}</h1>
               <p className="text-xs text-sky-100 flex items-center gap-1.5 mt-1">
@@ -336,9 +346,9 @@ export function PortalProfessor({ professor, turmas, nucleos }: PortalProfessorP
             <div>
               <h3 className="text-base font-bold text-zinc-900 flex items-center gap-2">
                 <Users className="h-5 w-5 text-sky-600" />
-                <span>Chamada de Frequência dos Alunos</span>
+                <span>Chamada de Frequência dos {termoBeneficiarios}</span>
               </h3>
-              <p className="text-xs text-zinc-500 mt-0.5">Marque a presença dos beneficiários inscritos na aula de hoje</p>
+              <p className="text-xs text-zinc-500 mt-0.5">Marque a presença dos {termoBeneficiarios.toLowerCase()} inscritos na {termoEncontro.toLowerCase()} de hoje</p>
             </div>
 
             <div className="w-full sm:w-64">
@@ -346,8 +356,8 @@ export function PortalProfessor({ professor, turmas, nucleos }: PortalProfessorP
                 value={turmaSelecionadaId}
                 onChange={(e) => setTurmaSelecionadaId(e.target.value)}
               >
-                {turmas.map((t) => (
-                  <option key={t.id} value={t.id}>{t.nome}</option>
+                {turmas.map((turmaItem) => (
+                  <option key={turmaItem.id} value={turmaItem.id}>{turmaItem.nome}</option>
                 ))}
               </Select>
             </div>
@@ -355,9 +365,9 @@ export function PortalProfessor({ professor, turmas, nucleos }: PortalProfessorP
 
           <div className="divide-y divide-zinc-100">
             {carregandoAlunos ? (
-              <div className="py-8 text-center text-sm text-zinc-500">Carregando lista de alunos da turma...</div>
+              <div className="py-8 text-center text-sm text-zinc-500">Carregando lista de {termoBeneficiarios.toLowerCase()} da {termoTurma.toLowerCase()}...</div>
             ) : alunos.length === 0 ? (
-              <div className="py-8 text-center text-sm text-zinc-500">Nenhum aluno matriculado nesta turma.</div>
+              <div className="py-8 text-center text-sm text-zinc-500">Nenhum {termoBeneficiario.toLowerCase()} matriculado nesta {termoTurma.toLowerCase()}.</div>
             ) : (
               alunos.map((aluno) => {
                 const status = presencas[aluno.id] || "presente";
@@ -418,7 +428,7 @@ export function PortalProfessor({ professor, turmas, nucleos }: PortalProfessorP
           </h3>
 
           <form onSubmit={handleEnviarConfirmacao} className="flex flex-col gap-4">
-            <Field label="Descrição da Aula / Treino Executado" required>
+            <Field label={`Descrição da ${termoEncontro} Executada`} required>
               <Input
                 placeholder="Ex: Treino de fundamentos de passe e condução de bola"
                 value={atividadeExecutada}
@@ -426,7 +436,7 @@ export function PortalProfessor({ professor, turmas, nucleos }: PortalProfessorP
               />
             </Field>
 
-            <Field label="Foto de Comprovação da Aula (Upload ou Câmera)">
+            <Field label={`Foto de Comprovação da ${termoEncontro} (Upload ou Câmera)`}>
               <div className="relative flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-zinc-300 p-6 text-center hover:bg-zinc-50 transition-colors cursor-pointer">
                 <input
                   type="file"
@@ -438,7 +448,7 @@ export function PortalProfessor({ professor, turmas, nucleos }: PortalProfessorP
                 />
                 <Camera className="h-8 w-8 text-zinc-400 mb-2" />
                 <span className="text-sm font-semibold text-zinc-700">
-                  {fotoFile ? fotoFile.name : "Anexar Foto da Aula"}
+                  {fotoFile ? fotoFile.name : `Anexar Foto da ${termoEncontro}`}
                 </span>
                 <span className="text-xs text-zinc-400 mt-0.5">
                   {fotoFile ? "Arquivo selecionado. Clique para alterar." : "Selecione uma imagem ou tire uma foto com a câmera do celular"}
@@ -448,7 +458,7 @@ export function PortalProfessor({ professor, turmas, nucleos }: PortalProfessorP
 
             <Field label="Observações de Campo / Ocorrências">
               <Textarea
-                placeholder="Informe se houve alguma intercorrência, material danificado ou observação sobre os alunos..."
+                placeholder={`Informe se houve alguma intercorrência, material danificado ou observação sobre os ${termoBeneficiarios.toLowerCase()}...`}
                 value={observacoesAula}
                 onChange={(e) => setObservacoesAula(e.target.value)}
                 rows={3}

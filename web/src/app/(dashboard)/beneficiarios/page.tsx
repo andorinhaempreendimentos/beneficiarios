@@ -33,6 +33,7 @@ import {
   TIPO_MATRICULA_OPCOES,
 } from "@/lib/status";
 import { calcularIdade } from "@/lib/utils";
+import { useDicionario } from "@/components/providers/DictionaryProvider";
 
 import { StatusBeneficiarioBadge } from "@/components/beneficiarios/StatusBeneficiarioBadge";
 
@@ -43,6 +44,14 @@ const EMPTY = { nome: "", matricula: "", cpf: "", status: "", atividadeId: "", t
 
 export default function BeneficiariosPage() {
   const { toast } = useToast();
+  const { t } = useDicionario();
+  const termoBeneficiario = t("beneficiario", "Beneficiário");
+  const termoBeneficiarios = t("beneficiario", "Beneficiários", true);
+  const termoTurma = t("turma", "Turma");
+  const termoTurmas = t("turma", "Turmas", true);
+  const termoLocal = t("local", "Núcleo");
+  const termoAtividade = t("atividade", "Atividade");
+
   const { estado, cidade, organizacaoId, nucleoId } = useLocationFilter();
   const [filtros, setFiltros] = useState(EMPTY);
   const [ativos, setAtivos] = useState(EMPTY);
@@ -124,7 +133,7 @@ export default function BeneficiariosPage() {
     setProcessando(true);
     try {
       await Promise.all(selectedIds.map((id) => beneficiariosApi.update(id, { status: novoStatus })));
-      toast.success(`Status de ${selectedIds.length} beneficiário(s) alterado para "${novoStatus}"`);
+      toast.success(`Status de ${selectedIds.length} ${termoBeneficiarios.toLowerCase()} alterado para "${novoStatus}"`);
       setModalStatus(false);
       setNovoStatus("");
       refetch();
@@ -142,13 +151,13 @@ export default function BeneficiariosPage() {
     setProcessando(true);
     try {
       await Promise.all(selectedIds.map((id) => turmasApi.matricular(turmaDestinoId, id)));
-      toast.success(`${selectedIds.length} beneficiário(s) matricularam-se na nova turma com sucesso`);
+      toast.success(`${selectedIds.length} ${termoBeneficiarios.toLowerCase()} matricularam-se no(a) novo(a) ${termoTurma.toLowerCase()} com sucesso`);
       setModalTransferir(false);
       setTurmaDestinoId("");
       refetch();
       setSelectedIds([]);
     } catch (err: any) {
-      toast.error("Erro ao transferir beneficiários: " + (err?.message || "Erro desconhecido"));
+      toast.error(`Erro ao transferir ${termoBeneficiarios.toLowerCase()}: ` + (err?.message || "Erro desconhecido"));
     } finally {
       setProcessando(false);
     }
@@ -170,7 +179,7 @@ export default function BeneficiariosPage() {
       setPagina(1);
       setAtivos({ ...filtros });
     } catch (err: any) {
-      alert("Erro ao excluir beneficiário: " + (err?.message || "Ocorreu um erro."));
+      alert(`Erro ao excluir ${termoBeneficiario.toLowerCase()}: ` + (err?.message || "Ocorreu um erro."));
     } finally {
       setExcluindo(false);
     }
@@ -197,12 +206,12 @@ export default function BeneficiariosPage() {
   return (
     <div className="flex flex-col gap-6 pb-12">
       <PageHeader
-        title="Beneficiários"
-        description="Listagem geral de todos os beneficiários do sistema"
+        title={termoBeneficiarios}
+        description={`Listagem geral de todos os ${termoBeneficiarios.toLowerCase()} do sistema`}
         actions={
           <div className="flex items-center gap-3">
             <ViewToggle mode={viewMode} onChange={setViewMode} />
-            <LinkButton href="/beneficiarios/novo">Novo Beneficiário</LinkButton>
+            <LinkButton href="/beneficiarios/novo">Novo(a) {termoBeneficiario}</LinkButton>
           </div>
         }
       />
@@ -233,7 +242,7 @@ export default function BeneficiariosPage() {
             ))}
           </Select>
         </Field>
-        <Field label="Atividade">
+        <Field label={termoAtividade}>
           <Select value={filtros.atividadeId} onChange={(e) => setFiltros((f) => ({ ...f, atividadeId: e.target.value }))}>
             <option value="">Todas</option>
             {atividades.map((a) => <option key={a.id} value={a.id}>{a.nome}</option>)}
@@ -247,7 +256,7 @@ export default function BeneficiariosPage() {
             ))}
           </Select>
         </Field>
-        <Field label="Núcleo">
+        <Field label={termoLocal}>
           <Select value={filtros.nucleoId} onChange={(e) => setFiltros((f) => ({ ...f, nucleoId: e.target.value }))}>
             <option value="">Todos</option>
             {nucleos.map((n) => <option key={n.id} value={n.id}>{n.identificacao}</option>)}
@@ -273,7 +282,7 @@ export default function BeneficiariosPage() {
               <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {resultado.length === 0 ? (
                   <div className="col-span-full px-5 py-8 text-center text-sm text-zinc-400">
-                    Nenhum beneficiário encontrado.
+                    Nenhum(a) {termoBeneficiario.toLowerCase()} encontrado(a).
                   </div>
                 ) : (
                   resultado.map((b) => {
@@ -324,30 +333,30 @@ export default function BeneficiariosPage() {
                       {/* Vínculos: Núcleo, Atividade e Turma */}
                       <div className="flex flex-col gap-1.5 border-t border-zinc-100 pt-2 text-xs">
                         {b.turmasInfo && b.turmasInfo.length > 0 ? (
-                          b.turmasInfo.map((t, idx) => (
+                          b.turmasInfo.map((turmaInfoItem, idx) => (
                             <div key={idx} className="flex flex-col gap-1 rounded-lg bg-zinc-50/80 p-2 border border-zinc-100">
-                              {t.nucleoNome && (
+                              {turmaInfoItem.nucleoNome && (
                                 <div className="flex items-center gap-1.5 text-zinc-600">
                                   <span className="shrink-0 rounded-md bg-violet-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-violet-700">
-                                    Núcleo
+                                    {termoLocal}
                                   </span>
-                                  <span className="font-medium truncate text-zinc-800">{t.nucleoNome}</span>
+                                  <span className="font-medium truncate text-zinc-800">{turmaInfoItem.nucleoNome}</span>
                                 </div>
                               )}
-                              {t.atividadeNome && (
+                              {turmaInfoItem.atividadeNome && (
                                 <div className="flex items-center gap-1.5 text-zinc-600">
                                   <span className="shrink-0 rounded-md bg-emerald-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-emerald-700">
-                                    Atividade
+                                    {termoAtividade}
                                   </span>
-                                  <span className="font-medium truncate text-zinc-800">{t.atividadeNome}</span>
+                                  <span className="font-medium truncate text-zinc-800">{turmaInfoItem.atividadeNome}</span>
                                 </div>
                               )}
-                              {t.turmaNome && (
+                              {turmaInfoItem.turmaNome && (
                                 <div className="flex items-center gap-1.5 text-zinc-600">
                                   <span className="shrink-0 rounded-md bg-sky-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-sky-700">
-                                    Turma
+                                    {termoTurma}
                                   </span>
-                                  <span className="font-medium truncate text-zinc-800">{t.turmaNome}</span>
+                                  <span className="font-medium truncate text-zinc-800">{turmaInfoItem.turmaNome}</span>
                                 </div>
                               )}
                             </div>
@@ -355,7 +364,7 @@ export default function BeneficiariosPage() {
                         ) : b.nucleoNome ? (
                           <div className="flex items-center gap-1.5 rounded-lg bg-zinc-50/80 p-2 border border-zinc-100">
                             <span className="shrink-0 rounded-md bg-violet-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-violet-700">
-                              Núcleo
+                              {termoLocal}
                             </span>
                             <span className="font-medium truncate text-zinc-800">{b.nucleoNome}</span>
                           </div>
@@ -399,13 +408,13 @@ export default function BeneficiariosPage() {
                       <th className="px-5 py-3">Matrícula</th>
                       <th className="px-5 py-3">Status</th>
                       <th className="px-5 py-3">Nome</th>
-                      <th className="px-5 py-3">Vínculos (Núcleo / Turma)</th>
+                      <th className="px-5 py-3">Vínculos ({termoLocal} / {termoTurma})</th>
                       <th className="px-5 py-3 text-right">Ações</th>
                     </tr>
                   </thead>
                   <tbody>
                     {resultado.length === 0 ? (
-                      <tr><td colSpan={6} className="px-5 py-8 text-center text-sm text-zinc-400">Nenhum beneficiário encontrado.</td></tr>
+                      <tr><td colSpan={6} className="px-5 py-8 text-center text-sm text-zinc-400">Nenhum(a) {termoBeneficiario.toLowerCase()} encontrado(a).</td></tr>
                     ) : resultado.map((b) => (
                       <tr
                         key={b.id}
@@ -437,9 +446,9 @@ export default function BeneficiariosPage() {
                         <td className="px-5 py-3 text-xs">
                           {b.turmasInfo && b.turmasInfo.length > 0 ? (
                             <div className="flex flex-wrap gap-1">
-                              {b.turmasInfo.map((t, idx) => (
+                              {b.turmasInfo.map((ti, idx) => (
                                 <span key={idx} className="rounded-md bg-zinc-100 px-2 py-0.5 text-[11px] font-medium text-zinc-700">
-                                  {[t.nucleoNome, t.atividadeNome, t.turmaNome].filter(Boolean).join(" · ")}
+                                  {[ti.nucleoNome, ti.atividadeNome, ti.turmaNome].filter(Boolean).join(" · ")}
                                 </span>
                               ))}
                             </div>
@@ -488,13 +497,13 @@ export default function BeneficiariosPage() {
                 <Trash2 className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-zinc-900">Excluir Beneficiário</h3>
-                <p className="text-xs text-zinc-500">Esta ação moverá o beneficiário para a lixeira.</p>
+                <h3 className="text-base font-bold text-zinc-900">Excluir {termoBeneficiario}</h3>
+                <p className="text-xs text-zinc-500">Esta ação moverá o(a) {termoBeneficiario.toLowerCase()} para a lixeira.</p>
               </div>
             </div>
 
             <p className="text-sm text-zinc-600">
-              Tem certeza que deseja excluir o beneficiário <strong>{beneficiarioParaExcluir.nomeCompleto}</strong> (Matrícula: {beneficiarioParaExcluir.matricula})?
+              Tem certeza que deseja excluir o(a) {termoBeneficiario.toLowerCase()} <strong>{beneficiarioParaExcluir.nomeCompleto}</strong> (Matrícula: {beneficiarioParaExcluir.matricula})?
             </p>
 
             <div className="flex items-center justify-end gap-3 pt-2">
@@ -543,12 +552,12 @@ export default function BeneficiariosPage() {
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-500 text-xs font-semibold text-white transition-all shadow-xs disabled:opacity-50 cursor-pointer whitespace-nowrap shrink-0"
         >
           <ArrowRightLeft className="h-3.5 w-3.5" />
-          <span>Transferir Turma</span>
+          <span>Transferir {termoTurma}</span>
         </button>
 
         <button
           type="button"
-          onClick={() => alert(`Exportando ${selectedIds.length} beneficiário(s)...`)}
+          onClick={() => alert(`Exportando ${selectedIds.length} ${termoBeneficiarios.toLowerCase()}...`)}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-zinc-200 transition-colors cursor-pointer whitespace-nowrap shrink-0"
         >
           <Download className="h-3.5 w-3.5" />
@@ -561,10 +570,10 @@ export default function BeneficiariosPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs">
           <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
             <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-2">
-              Alterar Status de {selectedIds.length} Beneficiário(s)
+              Alterar Status de {selectedIds.length} {termoBeneficiarios}
             </h3>
             <p className="text-xs text-zinc-500 mb-4">
-              Selecione o novo status que será aplicado a todos os beneficiários selecionados.
+              Selecione o novo status que será aplicado a todos os {termoBeneficiarios.toLowerCase()} selecionados.
             </p>
             <select
               value={novoStatus}
@@ -602,20 +611,20 @@ export default function BeneficiariosPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs">
           <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
             <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-2">
-              Transferir {selectedIds.length} Beneficiário(s)
+              Transferir {selectedIds.length} {termoBeneficiarios}
             </h3>
             <p className="text-xs text-zinc-500 mb-4">
-              Selecione a turma de destino para a qual os beneficiários serão matriculados.
+              Selecione o(a) {termoTurma.toLowerCase()} de destino para o(a) qual os {termoBeneficiarios.toLowerCase()} serão matriculados.
             </p>
             <select
               value={turmaDestinoId}
               onChange={(e) => setTurmaDestinoId(e.target.value)}
               className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-transparent p-3 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-hidden focus:ring-2 focus:ring-violet-500 cursor-pointer"
             >
-              <option value="" className="dark:bg-zinc-900">Selecione a turma de destino...</option>
-              {turmasDisponiveis.map((t) => (
-                <option key={t.id} value={t.id} className="dark:bg-zinc-900">
-                  {t.nome} {t.nucleo?.identificacao ? `(${t.nucleo.identificacao})` : ""}
+              <option value="" className="dark:bg-zinc-900">Selecione o(a) {termoTurma.toLowerCase()} de destino...</option>
+              {turmasDisponiveis.map((turmaDest) => (
+                <option key={turmaDest.id} value={turmaDest.id} className="dark:bg-zinc-900">
+                  {turmaDest.nome} {turmaDest.nucleo?.identificacao ? `(${turmaDest.nucleo.identificacao})` : ""}
                 </option>
               ))}
             </select>
