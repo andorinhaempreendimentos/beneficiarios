@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { nucleosApi, turmasApi, beneficiariosApi, categoriaTurmasApi } from "@/lib/api/services";
+import { nucleosApi, turmasApi, beneficiariosApi, categoriaTurmasApi, funcionariosApi } from "@/lib/api/services";
 import { DetalhesNucleoView } from "@/components/nucleos/DetalhesNucleoView";
 
 export default async function DetalhesNucleoPage({ params }: { params: Promise<{ id: string }> }) {
@@ -7,10 +7,11 @@ export default async function DetalhesNucleoPage({ params }: { params: Promise<{
   const nucleo = await nucleosApi.get(id).catch(() => null);
   if (!nucleo) notFound();
 
-  const [turmasRes, beneficiariosRes, categoriasRes] = await Promise.all([
+  const [turmasRes, beneficiariosRes, categoriasRes, funcionariosRes] = await Promise.all([
     turmasApi.list({ nucleoId: nucleo.id, limit: 100 }).catch(() => ({ data: [] })),
     beneficiariosApi.list({ nucleoId: nucleo.id, limit: 100 }).catch(() => ({ data: [], total: 0 })),
     categoriaTurmasApi.list({ limit: 50 }).catch(() => ({ data: [] })),
+    funcionariosApi.list({ limit: 1000, status: "ativo" }).catch(() => ({ data: [] })),
   ]);
 
   return (
@@ -20,6 +21,7 @@ export default async function DetalhesNucleoPage({ params }: { params: Promise<{
       beneficiarios={beneficiariosRes.data}
       totalBeneficiarios={beneficiariosRes.total}
       categorias={categoriasRes.data}
+      funcionarios={funcionariosRes.data}
     />
   );
 }
