@@ -317,6 +317,10 @@ export interface HorarioTurmaApi {
   horaFim?: string;
   duracaoHoras?: number;
   duracaoMinutos?: number;
+  grupoId?: string | null;
+  grupoNome?: string;
+  turmaId?: string | null;
+  turmaNome?: string;
   nucleoId?: string;
   nucleoNome?: string;
   atividadeId?: string;
@@ -662,6 +666,10 @@ function mapTurma(r: any): TurmaApi {
       horaFim: th.hora_fim || undefined,
       duracaoHoras,
       duracaoMinutos: duracaoHoras * 60,
+      grupoId: th.grupo_id || r.id || undefined,
+      grupoNome: th.grupos?.nome || r.nome || undefined,
+      turmaId: th.grupo_id || r.id || undefined,
+      turmaNome: th.grupos?.nome || r.nome || undefined,
       nucleoId: th.nucleo_id || r.nucleo_id || undefined,
       nucleoNome: th.nucleos?.identificacao || r.nucleos?.identificacao || undefined,
       atividadeId: th.atividade_id || r.atividade_id || undefined,
@@ -1511,8 +1519,11 @@ export const gruposApi = {
   },
   async setHorarios(turmaId: string, slots: any[]): Promise<void> {
     const sb = createClient();
-    const { error: delErr } = await sb.from('grupo_horarios').delete().eq('grupo_id', turmaId);
-    if (delErr) throw delErr;
+    // Em vez de deletar fisicamente da quadra/núcleo, desvincula a turma tornando os blocos anteriores vagos
+    await (sb.from('grupo_horarios' as any) as any)
+      .update({ grupo_id: null })
+      .eq('grupo_id', turmaId);
+
     if (!slots || slots.length === 0) return;
 
     // Buscar nucleo_id do grupo para herança padrão
@@ -1523,13 +1534,16 @@ export const gruposApi = {
       Dom: 0, Seg: 1, Ter: 2, Qua: 3, Qui: 4, Sex: 5, Sáb: 6
     };
 
-    const rows = slots.map((s) => {
+    const slotsComId = slots.filter((s) => Boolean(s.id));
+    const slotsSemId = slots.filter((s) => !s.id);
+
+    // Atualiza blocos existentes para alocar esta turma
+    for (const s of slotsComId) {
       const tipoRecorrencia = s.tipoRecorrencia || 'semanal';
       let diaSemana = s.dia ? KEY_TO_DIA[s.dia] : undefined;
       if (diaSemana === undefined && (tipoRecorrencia === 'semanal' || tipoRecorrencia === 'mensal_dia_semana')) {
         diaSemana = 1;
       }
-
       const inicioStr = typeof s.horaInicio === 'string' && s.horaInicio.includes(':')
         ? s.horaInicio
         : `${String(s.inicio ?? 8).padStart(2, '0')}:00:00`;
@@ -1537,25 +1551,61 @@ export const gruposApi = {
         ? s.horaFim
         : `${String(s.fim ?? 9).padStart(2, '0')}:00:00`;
 
-      return {
-        grupo_id: turmaId,
-        dia_semana: (tipoRecorrencia === 'pontual' || tipoRecorrencia === 'mensal_dia_fixo') ? (diaSemana ?? null) : (diaSemana ?? 1),
-        hora_inicio: inicioStr.length === 5 ? `${inicioStr}:00` : inicioStr,
-        hora_fim: fimStr.length === 5 ? `${fimStr}:00` : fimStr,
-        nucleo_id: s.nucleoId || nucleoPadraoId,
-        atividade_id: s.atividadeId || null,
-        responsavel_id: s.responsavelId || null,
-        tipo_recorrencia: tipoRecorrencia,
-        dia_mes: tipoRecorrencia === 'mensal_dia_fixo' ? (Number(s.diaMes) || 1) : null,
-        ordem_semana_mes: tipoRecorrencia === 'mensal_dia_semana' ? (Number(s.ordemSemanaMes) || 1) : null,
-        ajuste_fim_de_semana: s.ajusteFimDeSemana || 'manter',
-        data_especifica: tipoRecorrencia === 'pontual' ? (s.dataEspecifica || null) : null,
-        grupos_adicionais_ids: Array.isArray(s.gruposAdicionaisIds) ? s.gruposAdicionaisIds : [],
-      };
-    });
+      await (sb.from('grupo_horarios' as any) as any)
+        .update({
+          grupo_id: turmaId,
+          dia_semana: (tipoRecorrencia === 'pontual' || tipoRecorrencia === 'mensal_dia_fixo') ? (diaSemana ?? null) : (diaSemana ?? 1),
+          hora_inicio: inicioStr.length === 5 ? `${inicioStr}:00` : inicioStr,
+          hora_fim: fimStr.length === 5 ? `${fimStr}:00` : fimStr,
+          nucleo_id: s.nucleoId || nucleoPadraoId,
+          atividade_id: s.atividadeId || null,
+          responsavel_id: s.responsavelId || null,
+          tipo_recorrencia: tipoRecorrencia,
+          dia_mes: tipoRecorrencia === 'mensal_dia_fixo' ? (Number(s.diaMes) || 1) : null,
+          ordem_semana_mes: tipoRecorrencia === 'mensal_dia_semana' ? (Number(s.ordemSemanaMes) || 1) : null,
+          ajuste_fim_de_semana: s.ajusteFimDeSemana || 'manter',
+          data_especifica: tipoRecorrencia === 'pontual' ? (s.dataEspecifica || null) : null,
+          grupos_adicionais_ids: Array.isArray(s.gruposAdicionaisIds) ? s.gruposAdicionaisIds : [],
+        })
+        .eq('id', s.id);
+    }
 
-    const { error } = await sb.from('grupo_horarios' as any).insert(rows as any);
-    if (error) throw error;
+    // Insere novos blocos criados diretamente na turma
+    if (slotsSemId.length > 0) {
+      const rows = slotsSemId.map((s) => {
+        const tipoRecorrencia = s.tipoRecorrencia || 'semanal';
+        let diaSemana = s.dia ? KEY_TO_DIA[s.dia] : undefined;
+        if (diaSemana === undefined && (tipoRecorrencia === 'semanal' || tipoRecorrencia === 'mensal_dia_semana')) {
+          diaSemana = 1;
+        }
+
+        const inicioStr = typeof s.horaInicio === 'string' && s.horaInicio.includes(':')
+          ? s.horaInicio
+          : `${String(s.inicio ?? 8).padStart(2, '0')}:00:00`;
+        const fimStr = typeof s.horaFim === 'string' && s.horaFim.includes(':')
+          ? s.horaFim
+          : `${String(s.fim ?? 9).padStart(2, '0')}:00:00`;
+
+        return {
+          grupo_id: turmaId,
+          dia_semana: (tipoRecorrencia === 'pontual' || tipoRecorrencia === 'mensal_dia_fixo') ? (diaSemana ?? null) : (diaSemana ?? 1),
+          hora_inicio: inicioStr.length === 5 ? `${inicioStr}:00` : inicioStr,
+          hora_fim: fimStr.length === 5 ? `${fimStr}:00` : fimStr,
+          nucleo_id: s.nucleoId || nucleoPadraoId,
+          atividade_id: s.atividadeId || null,
+          responsavel_id: s.responsavelId || null,
+          tipo_recorrencia: tipoRecorrencia,
+          dia_mes: tipoRecorrencia === 'mensal_dia_fixo' ? (Number(s.diaMes) || 1) : null,
+          ordem_semana_mes: tipoRecorrencia === 'mensal_dia_semana' ? (Number(s.ordemSemanaMes) || 1) : null,
+          ajuste_fim_de_semana: s.ajusteFimDeSemana || 'manter',
+          data_especifica: tipoRecorrencia === 'pontual' ? (s.dataEspecifica || null) : null,
+          grupos_adicionais_ids: Array.isArray(s.gruposAdicionaisIds) ? s.gruposAdicionaisIds : [],
+        };
+      });
+
+      const { error } = await sb.from('grupo_horarios' as any).insert(rows as any);
+      if (error) throw error;
+    }
   },
   async matricular(turmaId: string, beneficiarioId: string): Promise<void> {
     const sb = createClient();
@@ -1608,13 +1658,148 @@ export const gruposApi = {
 
 export const turmasApi = gruposApi;
 export const grupoHorariosApi = {
-  async list(grupoId?: string): Promise<any[]> {
+  async list(params?: { nucleoId?: string; grupoId?: string; responsavelId?: string } | string): Promise<HorarioTurmaApi[]> {
     const sb = await getSupabase();
-    let q = sb.from('grupo_horarios').select('*, nucleos(*), atividades(*), funcionarios(*)');
-    if (grupoId) q = q.eq('grupo_id', grupoId);
+    let q = sb.from('grupo_horarios').select('*, nucleos(*), atividades(*), funcionarios(*), grupos(id, nome)');
+    
+    if (typeof params === 'string') {
+      q = q.eq('grupo_id', params);
+    } else if (params) {
+      if (params.nucleoId) q = q.eq('nucleo_id', params.nucleoId);
+      if (params.grupoId) q = q.eq('grupo_id', params.grupoId);
+      if (params.responsavelId) q = q.eq('responsavel_id', params.responsavelId);
+    }
+
     const { data, error } = await q;
     if (error) throw error;
-    return data ?? [];
+
+    return (data ?? []).map((th: any) => {
+      const inicioHour = parseInt(String(th.hora_inicio || '').split(':')[0], 10);
+      const fimHour = parseInt(String(th.hora_fim || '').split(':')[0], 10);
+      const duracaoHoras = (!isNaN(fimHour) && !isNaN(inicioHour) && fimHour > inicioHour) ? (fimHour - inicioHour) : 1;
+      return {
+        id: th.id,
+        dia: th.dia_semana != null ? (DIA_KEY_MAP[th.dia_semana] || 'Seg') : 'Seg',
+        diaSemana: th.dia_semana ?? undefined,
+        dia_semana: th.dia_semana ?? undefined,
+        inicio: isNaN(inicioHour) ? 8 : inicioHour,
+        fim: isNaN(fimHour) ? 10 : fimHour,
+        horaInicio: th.hora_inicio || undefined,
+        horaFim: th.hora_fim || undefined,
+        duracaoHoras,
+        duracaoMinutos: duracaoHoras * 60,
+        grupoId: th.grupo_id || null,
+        grupoNome: th.grupos?.nome || undefined,
+        turmaId: th.grupo_id || null,
+        turmaNome: th.grupos?.nome || undefined,
+        nucleoId: th.nucleo_id || undefined,
+        nucleoNome: th.nucleos?.identificacao || undefined,
+        atividadeId: th.atividade_id || undefined,
+        atividadeNome: th.atividades?.nome || undefined,
+        atividade: th.atividades ? mapAtividade(th.atividades) : undefined,
+        responsavelId: th.responsavel_id || undefined,
+        responsavelNome: th.funcionarios?.nome_completo || undefined,
+        tipoRecorrencia: (th.tipo_recorrencia as TipoRecorrencia) || 'semanal',
+        diaMes: th.dia_mes ?? undefined,
+        ordemSemanaMes: th.ordem_semana_mes ?? undefined,
+        ajusteFimDeSemana: (th.ajuste_fim_de_semana as AjusteFimDeSemana) || 'manter',
+        dataEspecifica: th.data_especifica || undefined,
+        gruposAdicionaisIds: Array.isArray(th.grupos_adicionais_ids) ? th.grupos_adicionais_ids : [],
+      };
+    });
+  },
+  async create(body: Partial<HorarioTurmaApi>): Promise<any> {
+    const sb = createClient();
+    const KEY_TO_DIA: Record<string, number> = {
+      Dom: 0, Seg: 1, Ter: 2, Qua: 3, Qui: 4, Sex: 5, Sáb: 6
+    };
+    const tipo = body.tipoRecorrencia || 'semanal';
+    const row = {
+      nucleo_id: body.nucleoId,
+      grupo_id: body.grupoId || body.turmaId || null,
+      atividade_id: body.atividadeId || null,
+      responsavel_id: body.responsavelId || null,
+      dia_semana: body.dia ? KEY_TO_DIA[body.dia] ?? 1 : 1,
+      hora_inicio: body.horaInicio || `${String(body.inicio || 8).padStart(2, '0')}:00:00`,
+      hora_fim: body.horaFim || `${String(body.fim || 9).padStart(2, '0')}:00:00`,
+      tipo_recorrencia: tipo,
+      dia_mes: tipo === 'mensal_dia_fixo' ? Number(body.diaMes) : null,
+      ordem_semana_mes: tipo === 'mensal_dia_semana' ? Number(body.ordemSemanaMes) : null,
+      ajuste_fim_de_semana: body.ajusteFimDeSemana || 'manter',
+      data_especifica: tipo === 'pontual' ? (body.dataEspecifica || null) : null,
+      grupos_adicionais_ids: Array.isArray(body.gruposAdicionaisIds) ? body.gruposAdicionaisIds : [],
+    };
+    const { data, error } = await sb.from('grupo_horarios' as any).insert(row as any).select().single();
+    if (error) throw error;
+    return data;
+  },
+  async update(id: string, body: Partial<HorarioTurmaApi>): Promise<any> {
+    const sb = createClient();
+    const KEY_TO_DIA: Record<string, number> = {
+      Dom: 0, Seg: 1, Ter: 2, Qua: 3, Qui: 4, Sex: 5, Sáb: 6
+    };
+    const row: any = {};
+    if (body.nucleoId !== undefined) row.nucleo_id = body.nucleoId;
+    if (body.grupoId !== undefined) row.grupo_id = body.grupoId;
+    if (body.turmaId !== undefined) row.grupo_id = body.turmaId;
+    if (body.atividadeId !== undefined) row.atividade_id = body.atividadeId;
+    if (body.responsavelId !== undefined) row.responsavel_id = body.responsavelId;
+    if (body.dia !== undefined) row.dia_semana = KEY_TO_DIA[body.dia] ?? 1;
+    if (body.horaInicio !== undefined) row.hora_inicio = body.horaInicio;
+    if (body.horaFim !== undefined) row.hora_fim = body.horaFim;
+    if (body.tipoRecorrencia !== undefined) row.tipo_recorrencia = body.tipoRecorrencia;
+    if (body.diaMes !== undefined) row.dia_mes = body.diaMes;
+    if (body.ordemSemanaMes !== undefined) row.ordem_semana_mes = body.ordemSemanaMes;
+    if (body.ajusteFimDeSemana !== undefined) row.ajuste_fim_de_semana = body.ajusteFimDeSemana;
+    if (body.dataEspecifica !== undefined) row.data_especifica = body.dataEspecifica;
+    if (body.gruposAdicionaisIds !== undefined) row.grupos_adicionais_ids = body.gruposAdicionaisIds;
+
+    const { data, error } = await sb.from('grupo_horarios' as any).update(row).eq('id', id).select().single();
+    if (error) throw error;
+    return data;
+  },
+  async remove(id: string): Promise<void> {
+    const sb = createClient();
+    const { error } = await sb.from('grupo_horarios').delete().eq('id', id);
+    if (error) throw error;
+  },
+  async alocarTurma(blocoId: string, turmaId: string | null): Promise<void> {
+    const sb = createClient();
+    const { error } = await sb.from('grupo_horarios' as any).update({ grupo_id: turmaId }).eq('id', blocoId);
+    if (error) throw error;
+  },
+  async setHorariosDoNucleo(nucleoId: string, blocos: any[]): Promise<void> {
+    const sb = createClient();
+    const { error: delErr } = await sb.from('grupo_horarios').delete().eq('nucleo_id', nucleoId);
+    if (delErr) throw delErr;
+    if (!blocos || blocos.length === 0) return;
+    const KEY_TO_DIA: Record<string, number> = {
+      Dom: 0, Seg: 1, Ter: 2, Qua: 3, Qui: 4, Sex: 5, Sáb: 6
+    };
+    const rows = blocos.map((s) => {
+      const tipo = s.tipoRecorrencia || 'semanal';
+      let diaSemana = s.dia ? KEY_TO_DIA[s.dia] : undefined;
+      if (diaSemana === undefined && (tipo === 'semanal' || tipo === 'mensal_dia_semana')) {
+        diaSemana = 1;
+      }
+      return {
+        nucleo_id: nucleoId,
+        grupo_id: s.grupoId || s.turmaId || null,
+        atividade_id: s.atividadeId || null,
+        responsavel_id: s.responsavelId || null,
+        dia_semana: (tipo === 'pontual' || tipo === 'mensal_dia_fixo') ? (diaSemana ?? null) : (diaSemana ?? 1),
+        hora_inicio: s.horaInicio || `${String(s.inicio || 8).padStart(2, '0')}:00:00`,
+        hora_fim: s.horaFim || `${String(s.fim || 9).padStart(2, '0')}:00:00`,
+        tipo_recorrencia: tipo,
+        dia_mes: tipo === 'mensal_dia_fixo' ? Number(s.diaMes) : null,
+        ordem_semana_mes: tipo === 'mensal_dia_semana' ? Number(s.ordemSemanaMes) : null,
+        ajuste_fim_de_semana: s.ajusteFimDeSemana || 'manter',
+        data_especifica: tipo === 'pontual' ? (s.dataEspecifica || null) : null,
+        grupos_adicionais_ids: Array.isArray(s.gruposAdicionaisIds) ? s.gruposAdicionaisIds : [],
+      };
+    });
+    const { error } = await sb.from('grupo_horarios' as any).insert(rows as any);
+    if (error) throw error;
   }
 };
 export const turmaHorariosApi = grupoHorariosApi;

@@ -35,7 +35,7 @@ import {
   LinkButton,
 } from "@/components/ui";
 import { calcularIdade, formatarData, formatarNomeGrupo } from "@/lib/utils";
-import { GradeNucleoWidget } from "@/components/polo/GradeNucleoWidget";
+import { GradeNucleoManager } from "./GradeNucleoManager";
 import { normalizarStatusBeneficiario } from "@/lib/status";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useDicionario } from "@/components/providers/DictionaryProvider";
@@ -777,7 +777,12 @@ export function DetalhesNucleoView({
               </span>
             </div>
             
-            <GradeNucleoWidget turmas={turmas} categorias={categorias} />
+            <GradeNucleoManager
+              nucleo={nucleo}
+              turmas={turmas}
+              funcionarios={funcionarios}
+              categorias={categorias}
+            />
           </div>
         </section>
       )}

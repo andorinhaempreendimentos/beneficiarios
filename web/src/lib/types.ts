@@ -165,7 +165,7 @@ export type AjusteFimDeSemana = "manter" | "proximo_util" | "anterior_util";
 
 export interface GrupoHorario {
   id: string;
-  grupoId: string;
+  grupoId?: string | null;
   diaSemana?: number | null;
   horaInicio: string;
   horaFim: string;

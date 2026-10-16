@@ -8,6 +8,7 @@ import {
   gruposApi,
   turmasApi,
   funcionariosApi,
+  grupoHorariosApi,
   FUNCAO_PROFESSOR_ID,
   type GrupoApi,
   type TurmaApi,
@@ -15,6 +16,8 @@ import {
   type AtividadeApi,
   type FuncionarioApi,
 } from "@/lib/api/services";
+import { validarChoques, type RegraBlocoHorario, type ConflitoAgendamento } from "@/lib/agendamento";
+import { Sparkles } from "lucide-react";
 import { useToast } from "@/components/providers/ToastProvider";
 import { useDicionario } from "@/components/providers/DictionaryProvider";
 
@@ -117,6 +120,48 @@ export function GrupoForm({
       setNucleoId(defaultNucleoId);
     }
   }, [defaultNucleoId, nucleoId]);
+
+  const [blocosDoNucleo, setBlocosDoNucleo] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (!nucleoId) {
+      setBlocosDoNucleo([]);
+      return;
+    }
+    grupoHorariosApi
+      .list({ nucleoId })
+      .then((res) => setBlocosDoNucleo(res))
+      .catch(() => setBlocosDoNucleo([]));
+  }, [nucleoId]);
+
+  const blocosVagosNucleo = useMemo(() => {
+    return blocosDoNucleo.filter((b) => !b.grupoId || b.grupoId === t?.id);
+  }, [blocosDoNucleo, t?.id]);
+
+  function toggleBlocoDoNucleo(bloco: any) {
+    const jaSelecionado = slots.some(
+      (s) =>
+        (s.id && s.id === bloco.id) ||
+        (s.dia === bloco.dia && s.inicio === bloco.inicio && s.fim === bloco.fim)
+    );
+    if (jaSelecionado) {
+      setSlots(
+        slots.filter(
+          (s) =>
+            (s.id ? s.id !== bloco.id : !(s.dia === bloco.dia && s.inicio === bloco.inicio && s.fim === bloco.fim))
+        )
+      );
+    } else {
+      const novoSlot = {
+        ...bloco,
+        grupoId: t?.id || null,
+        grupoNome: nome || t?.nome,
+        turmaId: t?.id || null,
+        turmaNome: nome || t?.nome,
+      };
+      setSlots([...slots, novoSlot]);
+    }
+  }
 
   const nucleoSelecionado = nucleos.find((n) => n.id === nucleoId);
 
@@ -223,61 +268,60 @@ export function GrupoForm({
     return f.professorResponsavel || f.funcaoId === FUNCAO_PROFESSOR_ID;
   });
 
-  // Conflitos de horário
-  const conflitosAgenda = useMemo(() => {
-    if (responsaveisIds.length === 0 || slots.length === 0) return [];
-    const conflitos: {
-      professorNome: string;
-      turmaConflitoNome: string;
-      dia: string;
-      inicio: number;
-      fim: number;
-      outroInicio: number;
-      outroFim: number;
-    }[] = [];
+  // Análise preventiva de conflitos (Tarefa 4.1)
+  const conflitosDetectados: ConflitoAgendamento[] = useMemo(() => {
+    if (slots.length === 0) return [];
+
+    const KEY_TO_NUM: Record<string, number> = {
+      Dom: 0, Seg: 1, Ter: 2, Qua: 3, Qui: 4, Sex: 5, Sáb: 6,
+    };
+
+    const regrasMeusSlots: RegraBlocoHorario[] = slots.map((s) => ({
+      id: s.id,
+      grupoId: t?.id || "nova_turma",
+      grupoNome: nome || t?.nome || "Esta Turma",
+      nucleoId: s.nucleoId || nucleoId,
+      nucleoNome: nucleoSelecionado?.identificacao,
+      responsavelId: s.responsavelId || (responsaveisIds[0] ?? undefined),
+      responsavelNome: listaFuncionarios.find((f) => f.id === (s.responsavelId || responsaveisIds[0]))?.nomeCompleto,
+      horaInicio: s.horaInicio || `${String(s.inicio || 8).padStart(2, "0")}:00:00`,
+      horaFim: s.horaFim || `${String(s.fim || 9).padStart(2, "0")}:00:00`,
+      tipoRecorrencia: s.tipoRecorrencia || "semanal",
+      diaSemana: s.dia ? KEY_TO_NUM[s.dia] ?? 1 : 1,
+      diaMes: s.diaMes,
+      ordemSemanaMes: s.ordemSemanaMes,
+      ajusteFimDeSemana: s.ajusteFimDeSemana,
+      dataEspecifica: s.dataEspecifica,
+      gruposAdicionaisIds: s.gruposAdicionaisIds,
+    }));
 
     const outrasTurmas = todasTurmas.filter((item) => item.id !== t?.id);
+    const regrasOutrasTurmas: RegraBlocoHorario[] = outrasTurmas.flatMap((outra) =>
+      (outra.slots ?? []).map((os: any) => ({
+        id: os.id,
+        grupoId: outra.id,
+        grupoNome: outra.nome,
+        nucleoId: os.nucleoId || outra.nucleoId,
+        nucleoNome: nucleos.find((n) => n.id === (os.nucleoId || outra.nucleoId))?.identificacao,
+        responsavelId: os.responsavelId || (outra.responsaveis?.[0] ?? undefined),
+        responsavelNome: listaFuncionarios.find((f) => f.id === (os.responsavelId || outra.responsaveis?.[0]))?.nomeCompleto,
+        horaInicio: os.horaInicio || `${String(os.inicio || 8).padStart(2, "0")}:00:00`,
+        horaFim: os.horaFim || `${String(os.fim || 9).padStart(2, "0")}:00:00`,
+        tipoRecorrencia: os.tipoRecorrencia || "semanal",
+        diaSemana: os.dia ? (typeof os.dia === "number" ? os.dia : KEY_TO_NUM[os.dia] ?? 1) : 1,
+        diaMes: os.diaMes,
+        ordemSemanaMes: os.ordemSemanaMes,
+        ajusteFimDeSemana: os.ajusteFimDeSemana,
+        dataEspecifica: os.dataEspecifica,
+        gruposAdicionaisIds: os.gruposAdicionaisIds,
+      }))
+    );
 
-    responsaveisIds.forEach((fId) => {
-      const func = listaFuncionarios.find((f) => f.id === fId);
-      const profNome = func?.nomeCompleto || "Professor";
-
-      const turmasDoProfessor = outrasTurmas.filter((outra) =>
-        (outra.responsaveis ?? []).includes(fId)
-      );
-
-      turmasDoProfessor.forEach((outra) => {
-        (outra.slots ?? []).forEach((outroSlot) => {
-          slots.forEach((meuSlot) => {
-            if (meuSlot.dia === outroSlot.dia) {
-              const ehParceria =
-                (meuSlot.gruposAdicionaisIds ?? []).includes(outra.id) ||
-                (outroSlot.gruposAdicionaisIds ?? []).includes(t?.id || "");
-
-              const sobreposicao =
-                !ehParceria &&
-                Math.max(meuSlot.inicio, outroSlot.inicio) <
-                Math.min(meuSlot.fim, outroSlot.fim);
-
-              if (sobreposicao) {
-                conflitos.push({
-                  professorNome: profNome,
-                  turmaConflitoNome: outra.nome,
-                  dia: meuSlot.dia,
-                  inicio: meuSlot.inicio,
-                  fim: meuSlot.fim,
-                  outroInicio: outroSlot.inicio,
-                  outroFim: outroSlot.fim,
-                });
-              }
-            }
-          });
-        });
-      });
-    });
-
-    return conflitos;
-  }, [responsaveisIds, slots, todasTurmas, listaFuncionarios, t?.id]);
+    const conflitos = validarChoques([...regrasMeusSlots, ...regrasOutrasTurmas]);
+    return conflitos.filter(
+      (c) => c.blocoA.grupoId === (t?.id || "nova_turma") || c.blocoB.grupoId === (t?.id || "nova_turma")
+    );
+  }, [slots, t?.id, nome, nucleoId, nucleoSelecionado, responsaveisIds, listaFuncionarios, todasTurmas, nucleos]);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -292,9 +336,9 @@ export function GrupoForm({
       return;
     }
 
-    if (conflitosAgenda.length > 0) {
-      const c = conflitosAgenda[0];
-      const msg = `Conflito de agenda: o profissional ${c.professorNome} já possui sessão na "${c.turmaConflitoNome}" (${c.dia} das ${c.outroInicio}h às ${c.outroFim}h).`;
+    if (conflitosDetectados.length > 0) {
+      const c = conflitosDetectados[0];
+      const msg = `Conflito de agendamento: ${c.mensagem}`;
       setErro(msg);
       toast.error(msg);
       setLoading(false);
@@ -625,18 +669,69 @@ export function GrupoForm({
           </div>
         )}
 
-        {conflitosAgenda.length > 0 && (
+        {conflitosDetectados.length > 0 && (
           <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-4 text-xs text-red-800 flex flex-col gap-1.5">
             <span className="font-bold flex items-center gap-1.5 text-sm text-red-900">
-              ⚠️ Choque de horário detectado para o mesmo profissional
+              ⚠️ Choque de agendamento detectado
             </span>
-            {conflitosAgenda.map((c, idx) => (
-              <p key={idx}>
-                O profissional <strong>{c.professorNome}</strong> já possui compromisso no(a) {termoGrupo.toLowerCase()}{" "}
-                <strong>{c.turmaConflitoNome}</strong> em <strong>{c.dia}</strong> das{" "}
-                <strong>{c.outroInicio}h às {c.outroFim}h</strong>.
+            {conflitosDetectados.map((c, idx) => (
+              <p key={idx} className="leading-relaxed">
+                <strong className="text-red-950 uppercase text-[10px] mr-1 px-1.5 py-0.5 bg-red-100 rounded">
+                  {c.tipo === "choque_instrutor" ? "Instrutor" : "Espaço Físico"}
+                </strong>
+                {c.mensagem}
               </p>
             ))}
+          </div>
+        )}
+
+        {/* Seleção rápida de blocos de horário disponíveis no núcleo */}
+        {blocosVagosNucleo.length > 0 && (
+          <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50/60 p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-bold text-amber-950 flex items-center gap-1.5">
+                <Sparkles className="w-4 h-4 text-amber-600" />
+                Blocos de Horário Planejados no {termoLocal} (Disponíveis):
+              </span>
+              <span className="text-[11px] font-semibold text-amber-800">
+                {blocosVagosNucleo.length} bloco(s) livre(s) na instalação
+              </span>
+            </div>
+            <p className="text-[11px] text-amber-900/80 mb-3">
+              Clique em um dos horários já existentes no núcleo para vincular diretamente a esta turma:
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {blocosVagosNucleo.map((bloco) => {
+                const isSelected = slots.some(
+                  (s) =>
+                    (s.id && s.id === bloco.id) ||
+                    (s.dia === bloco.dia && s.inicio === bloco.inicio && s.fim === bloco.fim)
+                );
+                return (
+                  <button
+                    key={bloco.id || `${bloco.dia}-${bloco.inicio}`}
+                    type="button"
+                    onClick={() => toggleBlocoDoNucleo(bloco)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                      isSelected
+                        ? "bg-amber-600 text-white shadow-xs ring-2 ring-amber-400"
+                        : "bg-white text-zinc-700 border border-amber-200 hover:bg-amber-100/60"
+                    }`}
+                  >
+                    <span>{isSelected ? "✓" : "+"}</span>
+                    <span>{bloco.dia}</span>
+                    <span className="font-normal opacity-90 font-mono">
+                      {bloco.horaInicio ? bloco.horaInicio.slice(0, 5) : `${bloco.inicio}:00`} - {bloco.horaFim ? bloco.horaFim.slice(0, 5) : `${bloco.fim}:00`}
+                    </span>
+                    {bloco.atividadeNome && (
+                      <span className="text-[10px] px-1.5 py-0.2 rounded bg-black/10 font-medium">
+                        {bloco.atividadeNome}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         )}
 

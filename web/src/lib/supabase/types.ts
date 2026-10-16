@@ -1291,7 +1291,7 @@ export type Database = {
           atividade_id: string | null
           created_at: string
           dia_semana: number | null
-          grupo_id: string
+          grupo_id: string | null
           hora_fim: string
           hora_inicio: string
           id: string
@@ -1309,7 +1309,7 @@ export type Database = {
           atividade_id?: string | null
           created_at?: string
           dia_semana?: number | null
-          grupo_id: string
+          grupo_id?: string | null
           hora_fim: string
           hora_inicio: string
           id?: string
@@ -1327,7 +1327,7 @@ export type Database = {
           atividade_id?: string | null
           created_at?: string
           dia_semana?: number | null
-          grupo_id?: string
+          grupo_id?: string | null
           hora_fim?: string
           hora_inicio?: string
           id?: string

@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui";
-import { Plus, X, Calendar, Clock, Users, Copy, Trash2, Edit3, Repeat, CalendarDays } from "lucide-react";
+import { Plus, X, Calendar, Clock, Users, Copy, Trash2, Edit3, Repeat, CalendarDays, UserCheck, Sparkles, AlertCircle } from "lucide-react";
 import type { AtividadeApi, FuncionarioApi, NucleoApi } from "@/lib/api/services";
 
 export const DIAS_OPCOES = [
@@ -24,12 +24,17 @@ export interface BlocoHorarioAula {
   id?: string;
   dia: string;
   diaSemana?: number;
+  dia_semana?: number;
   inicio: number;
   fim: number;
   horaInicio?: string;
   horaFim?: string;
   duracaoHoras?: number;
   duracaoMinutos?: number;
+  grupoId?: string | null;
+  grupoNome?: string;
+  turmaId?: string | null;
+  turmaNome?: string;
   nucleoId?: string;
   nucleoNome?: string;
   atividadeId?: string;
@@ -49,6 +54,7 @@ export interface BlocoHorarioAula {
 export type SlotAula = BlocoHorarioAula; // Alias de compatibilidade retroativa
 
 export interface GradeSemanalProps {
+  modo?: "nucleo" | "turma";
   atividade?: AtividadeApi;
   atividadeNome?: string;
   atividadesLocais?: AtividadeApi[];
@@ -60,6 +66,8 @@ export interface GradeSemanalProps {
   turmaAtualId?: string;
   slots?: BlocoHorarioAula[];
   onChange?: (slots: BlocoHorarioAula[]) => void;
+  onAlocarTurma?: (blocoId: string, turmaId: string | null) => Promise<void>;
+  onCriarTurmaRapida?: (nome: string, atividadeId?: string) => Promise<{ id: string; nome: string }>;
 }
 
 function formatHora(h: number) {
@@ -68,6 +76,7 @@ function formatHora(h: number) {
 
 // Modal de adicionar/criar bloco de horário
 interface ModalBlocoProps {
+  modo?: "nucleo" | "turma";
   atividadeAtual?: AtividadeApi;
   atividadeNome: string;
   atividadesLocais?: AtividadeApi[];
@@ -81,11 +90,13 @@ interface ModalBlocoProps {
   initialDia?: string;
   initialInicio?: number;
   initialFim?: number;
-  onConfirm: (bloco: BlocoHorarioAula) => void;
+  onConfirm: (blocos: BlocoHorarioAula[]) => void;
   onClose: () => void;
+  onCriarTurmaRapida?: (nome: string, atividadeId?: string) => Promise<{ id: string; nome: string }>;
 }
 
 function ModalBloco({
+  modo = "turma",
   atividadeAtual,
   atividadeNome,
   atividadesLocais = [],
@@ -101,31 +112,49 @@ function ModalBloco({
   initialFim,
   onConfirm,
   onClose,
+  onCriarTurmaRapida,
 }: ModalBlocoProps) {
   // Aba de recorrência: "semanal" | "mensal" | "pontual"
   const [recorrenciaTab, setRecorrenciaTab] = useState<"semanal" | "mensal" | "pontual">("semanal");
   
   // Campos de tempo
-  const [dia, setDia] = useState(initialDia || diasVisiveis[0] || "Seg");
+  const [diaBase, setDiaBase] = useState(initialDia || diasVisiveis[0] || "Seg");
   const [inicio, setInicio] = useState(initialInicio ?? 8);
   const [fim, setFim] = useState(initialFim ?? 9);
 
+  // Repetição Semanal (múltiplos dias)
+  const [diasSemanaSelecionados, setDiasSemanaSelecionados] = useState<string[]>([
+    initialDia || diasVisiveis[0] || "Seg",
+  ]);
+
   // Recorrência mensal
-  const [modalidadeMensal, setModalidadeMensal] = useState<"dia_fixo" | "dia_semana">("dia_fixo");
+  const [modalidadeMensal, setModalidadeMensal] = useState<"dia_fixo" | "dia_semana">("dia_semana");
   const [diaMes, setDiaMes] = useState<number>(10);
-  const [ordemSemanaMes, setOrdemSemanaMes] = useState<number>(1);
+  const [repetirSegundoDiaFixo, setRepetirSegundoDiaFixo] = useState(false);
+  const [segundoDiaMes, setSegundoDiaMes] = useState<number>(25);
+  const [ordensSemanaSelecionadas, setOrdensSemanaSelecionadas] = useState<number[]>([1]);
   const [ajusteFimDeSemana, setAjusteFimDeSemana] = useState<AjusteFimDeSemana>("manter");
 
-  // Recorrência pontual
+  // Recorrência pontual (com datas adicionais)
   const [dataEspecifica, setDataEspecifica] = useState<string>(() => {
     const hoje = new Date();
     return hoje.toISOString().split("T")[0];
   });
+  const [datasExtras, setDatasExtras] = useState<string[]>([]);
+  const [novaDataExtra, setNovaDataExtra] = useState<string>("");
 
   // Metadados do bloco
   const [selectedAtividadeId, setSelectedAtividadeId] = useState(atividadeAtual?.id || "");
   const [selectedResponsavelId, setSelectedResponsavelId] = useState("");
   const [selectedNucleoId, setSelectedNucleoId] = useState(nucleoPadraoId || "");
+
+  // Alocação de Turma (especialmente no modo Núcleo)
+  const [tipoAlocacao, setTipoAlocacao] = useState<"vago" | "existente" | "nova">(
+    modo === "nucleo" ? "vago" : (turmaAtualId ? "existente" : "vago")
+  );
+  const [turmaSelecionadaId, setTurmaSelecionadaId] = useState<string>(turmaAtualId || "");
+  const [novoNomeTurma, setNovoNomeTurma] = useState<string>("");
+  const [criandoTurma, setCriandoTurma] = useState(false);
 
   // Enturmação conjunta
   const [selectedGruposAdicionais, setSelectedGruposAdicionais] = useState<string[]>([]);
@@ -134,39 +163,75 @@ function ModalBloco({
   const isControleInterno = atvSelecionada ? !atvSelecionada.disponivelPreInscricao : false;
   const nomeExibicao = atvSelecionada?.nome || atividadeNome;
 
-  // Turmas elegíveis para parceria (exclui a turma titular)
+  // Turmas elegíveis para parceria
   const turmasParceirasPossiveis = useMemo(() => {
-    return turmasDisponiveis.filter((t) => t.id !== turmaAtualId);
-  }, [turmasDisponiveis, turmaAtualId]);
+    return turmasDisponiveis.filter((t) => t.id !== turmaAtualId && t.id !== turmaSelecionadaId);
+  }, [turmasDisponiveis, turmaAtualId, turmaSelecionadaId]);
 
-  function handleConfirm() {
+  function toggleDiaSemana(d: string) {
+    setDiasSemanaSelecionados((prev) => {
+      if (prev.includes(d)) {
+        if (prev.length === 1) return prev; // Mantém ao menos 1
+        return prev.filter((item) => item !== d);
+      }
+      return [...prev, d];
+    });
+  }
+
+  function toggleOrdemSemana(ordem: number) {
+    setOrdensSemanaSelecionadas((prev) => {
+      if (prev.includes(ordem)) {
+        if (prev.length === 1) return prev;
+        return prev.filter((item) => item !== ordem);
+      }
+      return [...prev, ordem];
+    });
+  }
+
+  const totalBlocos = useMemo(() => {
+    if (recorrenciaTab === "semanal") return diasSemanaSelecionados.length;
+    if (recorrenciaTab === "mensal") {
+      if (modalidadeMensal === "dia_semana") return ordensSemanaSelecionadas.length;
+      return repetirSegundoDiaFixo ? 2 : 1;
+    }
+    if (recorrenciaTab === "pontual") return 1 + datasExtras.length;
+    return 1;
+  }, [recorrenciaTab, diasSemanaSelecionados, modalidadeMensal, ordensSemanaSelecionadas, repetirSegundoDiaFixo, datasExtras]);
+
+  async function handleConfirm() {
     if (fim <= inicio) return;
     const duracaoHoras = fim - inicio;
     const respSelecionado = funcionarios.find((f) => f.id === selectedResponsavelId);
     const nucleoObj = nucleos.find((n) => n.id === selectedNucleoId);
     const nucleoFinalNome = nucleoObj?.identificacao || nucleoPadraoNome;
 
-    let finalTipoRecorrencia: TipoRecorrencia = "semanal";
-    let finalDia = dia;
+    let finalTurmaId: string | null = null;
+    let finalTurmaNome: string | undefined = undefined;
 
-    if (recorrenciaTab === "mensal") {
-      finalTipoRecorrencia = modalidadeMensal === "dia_fixo" ? "mensal_dia_fixo" : "mensal_dia_semana";
-    } else if (recorrenciaTab === "pontual") {
-      finalTipoRecorrencia = "pontual";
-      if (dataEspecifica) {
-        const [ano, m, d] = dataEspecifica.split("-").map(Number);
-        const dt = new Date(ano, m - 1, d);
-        const diaSemanaNum = dt.getDay();
-        finalDia = DIAS_OPCOES[diaSemanaNum]?.key || "Seg";
+    if (tipoAlocacao === "existente" && turmaSelecionadaId) {
+      finalTurmaId = turmaSelecionadaId;
+      const tObj = turmasDisponiveis.find((t) => t.id === turmaSelecionadaId);
+      finalTurmaNome = tObj?.nome;
+    } else if (tipoAlocacao === "nova" && novoNomeTurma.trim() && onCriarTurmaRapida) {
+      try {
+        setCriandoTurma(true);
+        const criada = await onCriarTurmaRapida(novoNomeTurma.trim(), atvSelecionada?.id);
+        finalTurmaId = criada.id;
+        finalTurmaNome = criada.nome;
+      } catch {
+        finalTurmaId = null;
+      } finally {
+        setCriandoTurma(false);
       }
+    } else if (modo === "turma" && turmaAtualId) {
+      finalTurmaId = turmaAtualId;
     }
 
     const nomesAdicionais = turmasParceirasPossiveis
       .filter((t) => selectedGruposAdicionais.includes(t.id))
       .map((t) => t.nome);
 
-    onConfirm({
-      dia: finalDia,
+    const baseBloco: Partial<BlocoHorarioAula> = {
       inicio,
       fim,
       horaInicio: `${String(inicio).padStart(2, "0")}:00:00`,
@@ -180,14 +245,70 @@ function ModalBloco({
       responsavelId: respSelecionado?.id,
       responsavelNome: respSelecionado?.nomeCompleto,
       isControleInterno,
-      tipoRecorrencia: finalTipoRecorrencia,
-      diaMes: finalTipoRecorrencia === "mensal_dia_fixo" ? diaMes : undefined,
-      ordemSemanaMes: finalTipoRecorrencia === "mensal_dia_semana" ? ordemSemanaMes : undefined,
-      ajusteFimDeSemana: finalTipoRecorrencia === "mensal_dia_fixo" ? ajusteFimDeSemana : "manter",
-      dataEspecifica: finalTipoRecorrencia === "pontual" ? dataEspecifica : undefined,
+      grupoId: finalTurmaId,
+      grupoNome: finalTurmaNome,
+      turmaId: finalTurmaId,
+      turmaNome: finalTurmaNome,
       gruposAdicionaisIds: selectedGruposAdicionais,
       gruposAdicionaisNomes: nomesAdicionais,
-    });
+    };
+
+    const blocosGerados: BlocoHorarioAula[] = [];
+
+    if (recorrenciaTab === "semanal") {
+      for (const d of diasSemanaSelecionados) {
+        blocosGerados.push({
+          ...(baseBloco as BlocoHorarioAula),
+          dia: d,
+          tipoRecorrencia: "semanal",
+        });
+      }
+    } else if (recorrenciaTab === "mensal") {
+      if (modalidadeMensal === "dia_fixo") {
+        blocosGerados.push({
+          ...(baseBloco as BlocoHorarioAula),
+          dia: diaBase,
+          tipoRecorrencia: "mensal_dia_fixo",
+          diaMes,
+          ajusteFimDeSemana,
+        });
+        if (repetirSegundoDiaFixo && segundoDiaMes) {
+          blocosGerados.push({
+            ...(baseBloco as BlocoHorarioAula),
+            dia: diaBase,
+            tipoRecorrencia: "mensal_dia_fixo",
+            diaMes: segundoDiaMes,
+            ajusteFimDeSemana,
+          });
+        }
+      } else {
+        for (const ord of ordensSemanaSelecionadas) {
+          blocosGerados.push({
+            ...(baseBloco as BlocoHorarioAula),
+            dia: diaBase,
+            tipoRecorrencia: "mensal_dia_semana",
+            ordemSemanaMes: ord,
+          });
+        }
+      }
+    } else if (recorrenciaTab === "pontual") {
+      const todasDatas = [dataEspecifica, ...datasExtras].filter(Boolean);
+      for (const dtStr of todasDatas) {
+        const [ano, m, d] = dtStr.split("-").map(Number);
+        const dt = new Date(ano, m - 1, d);
+        const diaSemanaNum = dt.getDay();
+        const diaCalculado = DIAS_OPCOES[diaSemanaNum]?.key || "Seg";
+
+        blocosGerados.push({
+          ...(baseBloco as BlocoHorarioAula),
+          dia: diaCalculado,
+          tipoRecorrencia: "pontual",
+          dataEspecifica: dtStr,
+        });
+      }
+    }
+
+    onConfirm(blocosGerados);
     onClose();
   }
 
@@ -207,16 +328,16 @@ function ModalBloco({
           <div>
             <h3 className="text-sm font-bold text-zinc-900 flex items-center gap-2">
               <Clock size={16} className="text-sky-600" />
-              <span>Adicionar Bloco de Horário</span>
+              <span>Adicionar Bloco de Horário {modo === "nucleo" ? "no Núcleo" : ""}</span>
             </h3>
-            <p className="text-xs text-zinc-500">Defina o planejamento temporal, instrutor e enturmação conjunta</p>
+            <p className="text-xs text-zinc-500">Defina o planejamento físico, instrutor, repetições e turma alocada</p>
           </div>
           <button type="button" onClick={onClose} className="rounded-lg p-1 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600">
             <X size={16} />
           </button>
         </div>
 
-        {/* Abas de Recorrência Temporal */}
+        {/* Abas de Padrão de Agendamento */}
         <div className="mb-4">
           <label className="mb-1.5 block text-xs font-semibold text-zinc-700">Padrão de Agendamento</label>
           <div className="grid grid-cols-3 gap-1 rounded-xl bg-zinc-100 p-1">
@@ -260,44 +381,77 @@ function ModalBloco({
         </div>
 
         <div className="flex flex-col gap-4">
-          {/* Se for Semanal */}
+          {/* Seletor Semanal com Pergunta de Repetição e Atalhos */}
           {recorrenciaTab === "semanal" && (
-            <div>
-              <label className="mb-1.5 block text-xs font-semibold text-zinc-700">Dia da semana</label>
-              <div className="flex flex-wrap gap-1.5">
-                {DIAS_OPCOES.filter((d) => diasVisiveis.includes(d.key)).map((d) => (
-                  <button
-                    key={d.key}
-                    type="button"
-                    onClick={() => setDia(d.key)}
-                    className={[
-                      "rounded-lg px-3 py-1.5 text-xs font-medium transition-colors",
-                      dia === d.key
-                        ? "bg-sky-600 text-white shadow-sm"
-                        : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200",
-                    ].join(" ")}
-                  >
-                    {d.label}
-                  </button>
-                ))}
+            <div className="rounded-xl border border-sky-100 bg-sky-50/50 p-3.5 flex flex-col gap-2.5">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold text-sky-950 flex items-center gap-1.5">
+                  <Repeat size={14} className="text-sky-600" />
+                  <span>Repetir em outros dias da semana?</span>
+                </label>
+                {diasSemanaSelecionados.length > 1 && (
+                  <span className="text-[10px] font-extrabold text-sky-700 bg-sky-100 px-2 py-0.5 rounded-full">
+                    {diasSemanaSelecionados.length} dias selecionados
+                  </span>
+                )}
               </div>
+
+              {/* Atalhos Rápidos */}
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="text-[10.5px] text-zinc-500 font-medium">Atalhos rápidos:</span>
+                <button
+                  type="button"
+                  onClick={() => setDiasSemanaSelecionados(["Ter", "Qui"])}
+                  className="text-[10.5px] font-semibold px-2 py-0.5 rounded-md bg-white border border-sky-200 text-sky-700 hover:bg-sky-50 transition-colors"
+                >
+                  Terça e Quinta
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDiasSemanaSelecionados(["Seg", "Qua", "Sex"])}
+                  className="text-[10.5px] font-semibold px-2 py-0.5 rounded-md bg-white border border-sky-200 text-sky-700 hover:bg-sky-50 transition-colors"
+                >
+                  Seg, Qua e Sex
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDiasSemanaSelecionados(["Seg", "Ter", "Qua", "Qui", "Sex"])}
+                  className="text-[10.5px] font-semibold px-2 py-0.5 rounded-md bg-white border border-sky-200 text-sky-700 hover:bg-sky-50 transition-colors"
+                >
+                  Segunda a Sexta
+                </button>
+              </div>
+
+              {/* Botões dos 7 dias da semana */}
+              <div className="grid grid-cols-7 gap-1 pt-1">
+                {DIAS_OPCOES.map((d) => {
+                  const ativo = diasSemanaSelecionados.includes(d.key);
+                  return (
+                    <button
+                      key={d.key}
+                      type="button"
+                      onClick={() => toggleDiaSemana(d.key)}
+                      className={`py-2 rounded-lg text-xs font-bold transition-all text-center ${
+                        ativo
+                          ? "bg-sky-600 text-white shadow-xs"
+                          : "bg-white text-zinc-600 border border-zinc-200 hover:bg-zinc-50"
+                      }`}
+                    >
+                      {d.key}
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="text-[11px] text-zinc-500">
+                Gera um bloco de horário idêntico para cada dia selecionado com 1 clique.
+              </p>
             </div>
           )}
 
-          {/* Se for Mensal */}
+          {/* Seletor Mensal */}
           {recorrenciaTab === "mensal" && (
             <div className="rounded-xl border border-zinc-200 bg-zinc-50/70 p-3.5 flex flex-col gap-3">
               <div className="flex gap-4 text-xs font-medium">
-                <label className="flex items-center gap-1.5 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="modalidadeMensal"
-                    checked={modalidadeMensal === "dia_fixo"}
-                    onChange={() => setModalidadeMensal("dia_fixo")}
-                    className="text-sky-600"
-                  />
-                  <span>Dia fixo do mês</span>
-                </label>
                 <label className="flex items-center gap-1.5 cursor-pointer">
                   <input
                     type="radio"
@@ -306,57 +460,27 @@ function ModalBloco({
                     onChange={() => setModalidadeMensal("dia_semana")}
                     className="text-sky-600"
                   />
-                  <span>Dia da semana no mês</span>
+                  <span>Por dia da semana (ex: 1º e 3º sábado)</span>
+                </label>
+                <label className="flex items-center gap-1.5 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="modalidadeMensal"
+                    checked={modalidadeMensal === "dia_fixo"}
+                    onChange={() => setModalidadeMensal("dia_fixo")}
+                    className="text-sky-600"
+                  />
+                  <span>Por dia fixo do mês</span>
                 </label>
               </div>
 
-              {modalidadeMensal === "dia_fixo" ? (
-                <div className="grid grid-cols-2 gap-3 pt-1">
-                  <div>
-                    <label className="mb-1 block text-xs font-semibold text-zinc-700">Dia do mês (1 a 31)</label>
-                    <input
-                      type="number"
-                      min={1}
-                      max={31}
-                      value={diaMes}
-                      onChange={(e) => setDiaMes(Math.max(1, Math.min(31, Number(e.target.value))))}
-                      className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-medium text-zinc-800 focus:border-sky-500 focus:outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="mb-1 block text-xs font-semibold text-zinc-700">Se cair em fim de semana</label>
-                    <select
-                      value={ajusteFimDeSemana}
-                      onChange={(e) => setAjusteFimDeSemana(e.target.value as AjusteFimDeSemana)}
-                      className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-medium text-zinc-800 focus:border-sky-500 focus:outline-none"
-                    >
-                      <option value="manter">Manter no dia</option>
-                      <option value="proximo_util">Postergar p/ próx. útil</option>
-                      <option value="anterior_util">Antecipar p/ anterior útil</option>
-                    </select>
-                  </div>
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 gap-3 pt-1">
-                  <div>
-                    <label className="mb-1 block text-xs font-semibold text-zinc-700">Semana do mês</label>
-                    <select
-                      value={ordemSemanaMes}
-                      onChange={(e) => setOrdemSemanaMes(Number(e.target.value))}
-                      className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-medium text-zinc-800 focus:border-sky-500 focus:outline-none"
-                    >
-                      <option value={1}>1ª semana do mês</option>
-                      <option value={2}>2ª semana do mês</option>
-                      <option value={3}>3ª semana do mês</option>
-                      <option value={4}>4ª semana do mês</option>
-                      <option value={-1}>Última semana do mês</option>
-                    </select>
-                  </div>
+              {modalidadeMensal === "dia_semana" ? (
+                <div className="flex flex-col gap-3 pt-1">
                   <div>
                     <label className="mb-1 block text-xs font-semibold text-zinc-700">Dia da semana</label>
                     <select
-                      value={dia}
-                      onChange={(e) => setDia(e.target.value)}
+                      value={diaBase}
+                      onChange={(e) => setDiaBase(e.target.value)}
                       className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-medium text-zinc-800 focus:border-sky-500 focus:outline-none"
                     >
                       {DIAS_OPCOES.map((d) => (
@@ -364,15 +488,122 @@ function ModalBloco({
                       ))}
                     </select>
                   </div>
+
+                  <div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <label className="text-xs font-semibold text-zinc-700">
+                        Semanas do mês em que acontece (Repetição):
+                      </label>
+                      {ordensSemanaSelecionadas.length > 1 && (
+                        <span className="text-[10px] font-bold text-purple-700 bg-purple-100 px-2 py-0.5 rounded-full">
+                          {ordensSemanaSelecionadas.length} semanas
+                        </span>
+                      )}
+                    </div>
+                    <div className="grid grid-cols-5 gap-1.5">
+                      {[
+                        { val: 1, label: "1ª sem" },
+                        { val: 2, label: "2ª sem" },
+                        { val: 3, label: "3ª sem" },
+                        { val: 4, label: "4ª sem" },
+                        { val: -1, label: "Última" },
+                      ].map((item) => {
+                        const sel = ordensSemanaSelecionadas.includes(item.val);
+                        return (
+                          <button
+                            key={item.val}
+                            type="button"
+                            onClick={() => toggleOrdemSemana(item.val)}
+                            className={`py-1.5 px-1 rounded-lg text-xs font-bold transition-all text-center ${
+                              sel
+                                ? "bg-purple-600 text-white shadow-xs"
+                                : "bg-white text-zinc-600 border border-zinc-200 hover:bg-zinc-50"
+                            }`}
+                          >
+                            {item.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <div className="mt-2 flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setOrdensSemanaSelecionadas([1, 3])}
+                        className="text-[10.5px] text-purple-700 bg-purple-50 hover:bg-purple-100 px-2 py-0.5 rounded-md border border-purple-200 font-semibold"
+                      >
+                        Atalho: Quinzenal (1ª e 3ª)
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setOrdensSemanaSelecionadas([2, 4])}
+                        className="text-[10.5px] text-purple-700 bg-purple-50 hover:bg-purple-100 px-2 py-0.5 rounded-md border border-purple-200 font-semibold"
+                      >
+                        Atalho: Quinzenal (2ª e 4ª)
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-3 pt-1">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="mb-1 block text-xs font-semibold text-zinc-700">Dia principal do mês</label>
+                      <input
+                        type="number"
+                        min={1}
+                        max={31}
+                        value={diaMes}
+                        onChange={(e) => setDiaMes(Math.max(1, Math.min(31, Number(e.target.value))))}
+                        className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-medium text-zinc-800"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-1 block text-xs font-semibold text-zinc-700">Fim de semana</label>
+                      <select
+                        value={ajusteFimDeSemana}
+                        onChange={(e) => setAjusteFimDeSemana(e.target.value as AjusteFimDeSemana)}
+                        className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-medium text-zinc-800"
+                      >
+                        <option value="manter">Manter no dia</option>
+                        <option value="proximo_util">Próximo dia útil</option>
+                        <option value="anterior_util">Anterior dia útil</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="pt-1">
+                    <label className="flex items-center gap-2 cursor-pointer text-xs font-medium text-zinc-700">
+                      <input
+                        type="checkbox"
+                        checked={repetirSegundoDiaFixo}
+                        onChange={(e) => setRepetirSegundoDiaFixo(e.target.checked)}
+                        className="rounded text-sky-600"
+                      />
+                      <span>Repetir em um segundo dia fixo (quinzenal)</span>
+                    </label>
+                    {repetirSegundoDiaFixo && (
+                      <div className="mt-2 w-1/2">
+                        <label className="mb-1 block text-xs font-semibold text-zinc-700">Segundo dia do mês</label>
+                        <input
+                          type="number"
+                          min={1}
+                          max={31}
+                          value={segundoDiaMes}
+                          onChange={(e) => setSegundoDiaMes(Math.max(1, Math.min(31, Number(e.target.value))))}
+                          className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-medium text-zinc-800"
+                        />
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
           )}
 
-          {/* Se for Pontual */}
+          {/* Seletor Pontual */}
           {recorrenciaTab === "pontual" && (
-            <div className="rounded-xl border border-zinc-200 bg-zinc-50/70 p-3.5">
-              <label className="mb-1.5 block text-xs font-semibold text-zinc-700">Data específica do evento / aula</label>
+            <div className="rounded-xl border border-zinc-200 bg-zinc-50/70 p-3.5 flex flex-col gap-2.5">
+              <label className="block text-xs font-semibold text-zinc-700">Data principal do evento / clínica</label>
               <input
                 type="date"
                 value={dataEspecifica}
@@ -382,15 +613,56 @@ function ModalBloco({
                     const [ano, m, d] = e.target.value.split("-").map(Number);
                     const dt = new Date(ano, m - 1, d);
                     const diaKey = DIAS_OPCOES[dt.getDay()]?.key;
-                    if (diaKey) setDia(diaKey);
+                    if (diaKey) setDiaBase(diaKey);
                   }
                 }}
                 className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-medium text-zinc-800 focus:border-sky-500 focus:outline-none"
               />
-              <p className="mt-1 text-[11px] text-zinc-500">
-                O bloco será posicionado na coluna de{" "}
-                <strong>{DIAS_OPCOES.find((d) => d.key === dia)?.label}</strong> para planejamento visual.
-              </p>
+
+              {datasExtras.length > 0 && (
+                <div className="mt-1 flex flex-col gap-1">
+                  <span className="text-[11px] font-semibold text-zinc-600">Datas adicionais deste evento:</span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {datasExtras.map((dExtra, idx) => (
+                      <span
+                        key={idx}
+                        className="inline-flex items-center gap-1.5 rounded-lg bg-sky-100 px-2.5 py-1 text-xs font-medium text-sky-800"
+                      >
+                        📅 {dExtra}
+                        <button
+                          type="button"
+                          onClick={() => setDatasExtras((prev) => prev.filter((_, i) => i !== idx))}
+                          className="text-sky-600 hover:text-sky-900 font-bold"
+                        >
+                          ×
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="flex items-center gap-2 pt-1">
+                <input
+                  type="date"
+                  value={novaDataExtra}
+                  onChange={(e) => setNovaDataExtra(e.target.value)}
+                  className="rounded-lg border border-zinc-200 bg-white px-2.5 py-1 text-xs text-zinc-700 focus:outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (novaDataExtra && !datasExtras.includes(novaDataExtra) && novaDataExtra !== dataEspecifica) {
+                      setDatasExtras((prev) => [...prev, novaDataExtra]);
+                      setNovaDataExtra("");
+                    }
+                  }}
+                  disabled={!novaDataExtra}
+                  className="rounded-lg bg-zinc-200 hover:bg-zinc-300 px-2.5 py-1 text-xs font-semibold text-zinc-700 disabled:opacity-50"
+                >
+                  + Adicionar data extra
+                </button>
+              </div>
             </div>
           )}
 
@@ -431,10 +703,10 @@ function ModalBloco({
             </div>
           )}
 
-          {/* Atividade e Responsável */}
+          {/* Atividade e Instrutor */}
           {atividadesLocais.length > 0 && (
             <div>
-              <label className="mb-1.5 block text-xs font-semibold text-zinc-700">Atividade do Bloco</label>
+              <label className="mb-1.5 block text-xs font-semibold text-zinc-700">Atividade / Modalidade</label>
               <select
                 value={selectedAtividadeId}
                 onChange={(e) => setSelectedAtividadeId(e.target.value)}
@@ -451,7 +723,7 @@ function ModalBloco({
 
           {funcionarios.length > 0 && (
             <div>
-              <label className="mb-1.5 block text-xs font-semibold text-zinc-700">Instrutor / Responsável Escalado</label>
+              <label className="mb-1.5 block text-xs font-semibold text-zinc-700">Instrutor Responsável Escalado</label>
               <select
                 value={selectedResponsavelId}
                 onChange={(e) => setSelectedResponsavelId(e.target.value)}
@@ -467,35 +739,90 @@ function ModalBloco({
             </div>
           )}
 
-          {nucleos.length > 0 && (
-            <div>
-              <label className="mb-1.5 block text-xs font-semibold text-zinc-700">Espaço / Núcleo de Realização</label>
-              <select
-                value={selectedNucleoId}
-                onChange={(e) => setSelectedNucleoId(e.target.value)}
-                className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-medium text-zinc-800 focus:border-sky-500 focus:outline-none"
-              >
-                <option value={nucleoPadraoId || ""}>
-                  {nucleoPadraoNome ? `${nucleoPadraoNome} (Padrão do Grupo)` : "Núcleo padrão do grupo"}
-                </option>
-                {nucleos
-                  .filter((n) => n.id !== nucleoPadraoId)
-                  .map((n) => (
-                    <option key={n.id} value={n.id}>
-                      {n.identificacao}
+          {/* Alocação de Turma (Visão do Núcleo) */}
+          <div className="rounded-xl border border-zinc-200 bg-zinc-50/70 p-3.5 flex flex-col gap-2.5">
+            <span className="text-xs font-bold text-zinc-900 flex items-center gap-1.5">
+              <UserCheck size={14} className="text-emerald-600" />
+              Alocação da Turma Titular
+            </span>
+
+            <div className="flex flex-wrap gap-3 text-xs">
+              <label className="flex items-center gap-1.5 cursor-pointer">
+                <input
+                  type="radio"
+                  name="tipoAlocacao"
+                  checked={tipoAlocacao === "vago"}
+                  onChange={() => setTipoAlocacao("vago")}
+                  className="text-sky-600"
+                />
+                <span className="font-medium text-amber-700">Horário Vago (Disponível)</span>
+              </label>
+
+              {turmasDisponiveis.length > 0 && (
+                <label className="flex items-center gap-1.5 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="tipoAlocacao"
+                    checked={tipoAlocacao === "existente"}
+                    onChange={() => setTipoAlocacao("existente")}
+                    className="text-sky-600"
+                  />
+                  <span>Vincular Turma Existente</span>
+                </label>
+              )}
+
+              {onCriarTurmaRapida && (
+                <label className="flex items-center gap-1.5 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="tipoAlocacao"
+                    checked={tipoAlocacao === "nova"}
+                    onChange={() => setTipoAlocacao("nova")}
+                    className="text-sky-600"
+                  />
+                  <span>+ Criar Nova Turma</span>
+                </label>
+              )}
+            </div>
+
+            {tipoAlocacao === "existente" && (
+              <div className="pt-1">
+                <select
+                  value={turmaSelecionadaId}
+                  onChange={(e) => setTurmaSelecionadaId(e.target.value)}
+                  className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-medium text-zinc-800"
+                >
+                  <option value="">Selecione a turma para ocupar este bloco</option>
+                  {turmasDisponiveis.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.nome}
                     </option>
                   ))}
-              </select>
-            </div>
-          )}
+                </select>
+              </div>
+            )}
+
+            {tipoAlocacao === "nova" && (
+              <div className="pt-1 flex flex-col gap-1.5">
+                <label className="text-[11px] font-semibold text-zinc-600">Nome da nova turma:</label>
+                <input
+                  type="text"
+                  placeholder="Ex: Futebol Sub-11 Manhã"
+                  value={novoNomeTurma}
+                  onChange={(e) => setNovoNomeTurma(e.target.value)}
+                  className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-medium text-zinc-800"
+                />
+              </div>
+            )}
+          </div>
 
           {/* Enturmação Conjunta / Turmas Parceiras */}
           {turmasParceirasPossiveis.length > 0 && (
             <div className="rounded-xl border border-indigo-100 bg-indigo-50/40 p-3.5">
-              <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center justify-between mb-1.5">
                 <span className="text-xs font-bold text-indigo-950 flex items-center gap-1.5">
                   <Users size={14} className="text-indigo-600" />
-                  Enturmação Conjunta (Aulão / Clínicas Integradas)
+                  Enturmação Conjunta (Aulões / Festivais Integrados)
                 </span>
                 {selectedGruposAdicionais.length > 0 && (
                   <span className="text-[10px] font-extrabold text-indigo-700 bg-indigo-100 px-2 py-0.5 rounded-full">
@@ -503,10 +830,10 @@ function ModalBloco({
                   </span>
                 )}
               </div>
-              <p className="text-[11px] text-zinc-500 mb-2.5">
-                Vincule turmas parceiras para realizarem a atividade juntas neste mesmo bloco de horário:
+              <p className="text-[11px] text-zinc-500 mb-2">
+                Selecione outras turmas que participarão juntas deste mesmo bloco:
               </p>
-              <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto p-1 bg-white rounded-lg border border-indigo-100">
+              <div className="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto p-1 bg-white rounded-lg border border-indigo-100">
                 {turmasParceirasPossiveis.map((t) => {
                   const selected = selectedGruposAdicionais.includes(t.id);
                   return (
@@ -530,7 +857,7 @@ function ModalBloco({
           )}
 
           {fim <= inicio && (
-            <p className="text-xs text-red-500">Horário de fim deve ser estritamente posterior ao início.</p>
+            <p className="text-xs text-red-500 font-semibold">Horário de término deve ser após o início.</p>
           )}
         </div>
 
@@ -542,8 +869,12 @@ function ModalBloco({
           >
             Cancelar
           </button>
-          <Button type="button" size="sm" onClick={handleConfirm} disabled={fim <= inicio}>
-            Confirmar Bloco
+          <Button type="button" size="sm" onClick={handleConfirm} disabled={fim <= inicio || criandoTurma}>
+            {criandoTurma
+              ? "Criando turma..."
+              : totalBlocos > 1
+              ? `Confirmar ${totalBlocos} Blocos de Horário`
+              : "Confirmar Bloco de Horário"}
           </Button>
         </div>
       </div>
@@ -565,6 +896,7 @@ interface ModalOpcoesBlocoProps {
   onTrocarAtividade: (novaAtividade: AtividadeApi) => void;
   onTrocarResponsavel?: (novoResponsavel: FuncionarioApi | null) => void;
   onTrocarNucleo?: (novoNucleo: NucleoApi | null) => void;
+  onAlocarTurma?: (turmaId: string | null) => void;
   onAtualizarTurmasParceiras?: (turmasIds: string[]) => void;
   onDeletar: () => void;
   onClose: () => void;
@@ -583,22 +915,24 @@ function ModalOpcoesBloco({
   onTrocarAtividade,
   onTrocarResponsavel,
   onTrocarNucleo,
+  onAlocarTurma,
   onAtualizarTurmasParceiras,
   onDeletar,
   onClose,
 }: ModalOpcoesBlocoProps) {
-  const [aba, setAba] = useState<"opcoes" | "duplicar" | "editar">("opcoes");
+  const [aba, setAba] = useState<"opcoes" | "duplicar" | "editar" | "turma">("opcoes");
   const [diaDestino, setDiaDestino] = useState(slot.dia);
   const [novaAtividadeId, setNovaAtividadeId] = useState(slot.atividadeId || "");
   const [novoResponsavelId, setNovoResponsavelId] = useState(slot.responsavelId || "");
   const [novoNucleoId, setNovoNucleoId] = useState(slot.nucleoId || nucleoPadraoId || "");
+  const [turmaAlocadaId, setTurmaAlocadaId] = useState<string>(slot.grupoId || slot.turmaId || "");
   const [parceirasIds, setParceirasIds] = useState<string[]>(slot.gruposAdicionaisIds || []);
 
   const duracao = slot.duracaoHoras || (slot.fim - slot.inicio);
 
   const turmasParceirasPossiveis = useMemo(() => {
-    return turmasDisponiveis.filter((t) => t.id !== turmaAtualId);
-  }, [turmasDisponiveis, turmaAtualId]);
+    return turmasDisponiveis.filter((t) => t.id !== turmaAlocadaId);
+  }, [turmasDisponiveis, turmaAlocadaId]);
 
   function toggleParceira(id: string) {
     setParceirasIds((prev) =>
@@ -614,11 +948,21 @@ function ModalOpcoesBloco({
       >
         <div className="mb-4 flex items-center justify-between border-b border-zinc-100 pb-3">
           <div>
-            <h3 className="text-sm font-extrabold text-zinc-900 flex items-center gap-1.5">
-              <span>{slot.isControleInterno ? "🔒" : "📌"}</span>
-              <span>{slot.atividadeNome || "Bloco de Horário"}</span>
-            </h3>
-            <p className="text-xs text-zinc-500 font-medium">
+            <div className="flex items-center gap-1.5">
+              <h3 className="text-sm font-extrabold text-zinc-900">
+                {slot.atividadeNome || "Bloco de Horário"}
+              </h3>
+              {slot.grupoId ? (
+                <span className="rounded bg-sky-100 text-sky-800 text-[10px] font-bold px-1.5 py-0.2">
+                  {slot.grupoNome || "Turma Alocada"}
+                </span>
+              ) : (
+                <span className="rounded bg-amber-100 text-amber-800 text-[10px] font-bold px-1.5 py-0.2">
+                  ⚡ Vago
+                </span>
+              )}
+            </div>
+            <p className="text-xs text-zinc-500 font-medium mt-0.5">
               {DIAS_OPCOES.find((d) => d.key === slot.dia)?.label} ({formatHora(slot.inicio)} às {formatHora(slot.fim)} • {duracao}h)
             </p>
             <div className="mt-1 flex flex-wrap gap-1 text-[11px] text-zinc-600">
@@ -631,11 +975,6 @@ function ModalOpcoesBloco({
               )}
               {slot.nucleoNome && <span className="rounded bg-zinc-100 px-1.5 py-0.5">📍 {slot.nucleoNome}</span>}
               {slot.responsavelNome && <span className="rounded bg-sky-50 text-sky-700 px-1.5 py-0.5">👤 {slot.responsavelNome}</span>}
-              {slot.gruposAdicionaisIds && slot.gruposAdicionaisIds.length > 0 && (
-                <span className="rounded bg-indigo-50 text-indigo-700 px-1.5 py-0.5 font-bold">
-                  👥 +{slot.gruposAdicionaisIds.length} turma(s) parceira(s)
-                </span>
-              )}
             </div>
           </div>
           <button type="button" onClick={onClose} className="rounded-full p-1 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600">
@@ -645,6 +984,26 @@ function ModalOpcoesBloco({
 
         {aba === "opcoes" && (
           <div className="flex flex-col gap-2.5">
+            {onAlocarTurma && (
+              <button
+                type="button"
+                onClick={() => setAba("turma")}
+                className="flex items-center justify-between w-full p-3.5 rounded-2xl border border-zinc-200 bg-white hover:bg-emerald-50/60 hover:border-emerald-300 text-left transition-all text-xs font-bold text-zinc-800"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="p-2 rounded-xl bg-emerald-100 text-emerald-700 font-bold"><UserCheck size={16} /></span>
+                  <div>
+                    <span className="block text-zinc-900">
+                      {slot.grupoId ? "Trocar / Desalocar Turma" : "Alocar Turma neste Bloco"}
+                    </span>
+                    <span className="text-[11px] font-normal text-zinc-500">
+                      {slot.grupoId ? `Atualmente: ${slot.grupoNome || "Turma vinculada"}` : "Bloco livre no núcleo"}
+                    </span>
+                  </div>
+                </div>
+              </button>
+            )}
+
             <button
               type="button"
               onClick={() => setAba("duplicar")}
@@ -682,10 +1041,50 @@ function ModalOpcoesBloco({
                 <span className="p-2 rounded-xl bg-red-100 text-red-700 font-bold"><Trash2 size={16} /></span>
                 <div>
                   <span className="block text-red-900">Excluir Bloco</span>
-                  <span className="text-[11px] font-normal text-red-600">Remover este horário da grade</span>
+                  <span className="text-[11px] font-normal text-red-600">Remover este horário da grade do núcleo</span>
                 </div>
               </div>
             </button>
+          </div>
+        )}
+
+        {aba === "turma" && (
+          <div className="flex flex-col gap-4">
+            <div>
+              <label className="text-xs font-bold text-zinc-800 block mb-1">Selecione a turma titular:</label>
+              <select
+                value={turmaAlocadaId}
+                onChange={(e) => setTurmaAlocadaId(e.target.value)}
+                className="w-full rounded-xl border border-zinc-200 bg-white px-3.5 py-2.5 text-xs font-medium text-zinc-800 focus:border-sky-500 focus:outline-none"
+              >
+                <option value="">Deixar Vago / Sem turma alocada</option>
+                {turmasDisponiveis.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex justify-end gap-2 pt-2 border-t border-zinc-100">
+              <button
+                type="button"
+                onClick={() => setAba("opcoes")}
+                className="rounded-xl border border-zinc-200 px-3.5 py-2 text-xs font-semibold text-zinc-600 hover:bg-zinc-50"
+              >
+                Voltar
+              </button>
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => {
+                  onAlocarTurma?.(turmaAlocadaId || null);
+                  onClose();
+                }}
+              >
+                Salvar Alocação
+              </Button>
+            </div>
           </div>
         )}
 
@@ -775,7 +1174,7 @@ function ModalOpcoesBloco({
                   className="w-full rounded-xl border border-zinc-200 bg-white px-3.5 py-2.5 text-xs font-medium text-zinc-800 focus:border-sky-500 focus:outline-none"
                 >
                   <option value={nucleoPadraoId || ""}>
-                    {nucleoPadraoNome ? `${nucleoPadraoNome} (Padrão do Grupo)` : "Núcleo padrão do grupo"}
+                    {nucleoPadraoNome ? `${nucleoPadraoNome} (Padrão)` : "Núcleo padrão"}
                   </option>
                   {nucleos
                     .filter((n) => n.id !== nucleoPadraoId)
@@ -790,7 +1189,7 @@ function ModalOpcoesBloco({
 
             {turmasParceirasPossiveis.length > 0 && (
               <div>
-                <label className="text-xs font-bold text-zinc-800 block mb-1">Turmas Parceiras Integradas:</label>
+                <label className="text-xs font-bold text-zinc-800 block mb-1">Turmas Parceiras Integradas (Aulão):</label>
                 <div className="flex flex-wrap gap-1 max-h-32 overflow-y-auto p-1.5 bg-zinc-50 rounded-lg border border-zinc-200">
                   {turmasParceirasPossiveis.map((t) => {
                     const sel = parceirasIds.includes(t.id);
@@ -847,6 +1246,7 @@ function ModalOpcoesBloco({
 }
 
 export function GradeSemanal({
+  modo = "turma",
   atividade,
   atividadeNome = "Aula",
   atividadesLocais = [],
@@ -858,6 +1258,8 @@ export function GradeSemanal({
   turmaAtualId,
   slots = [],
   onChange,
+  onAlocarTurma,
+  onCriarTurmaRapida,
 }: GradeSemanalProps) {
   const [items, setItems] = useState<BlocoHorarioAula[]>(slots);
   const [diasVisiveis, setDiasVisiveis] = useState<Set<string>>(() => {
@@ -887,7 +1289,7 @@ export function GradeSemanal({
     }
   }, [slots]);
 
-  // Faixa dinâmica: 1 hora antes da aula mais cedo até 1 hora depois da aula mais tarde
+  // Faixa dinâmica de horários
   const horasVisiveis = useMemo(() => {
     if (items.length === 0) {
       return Array.from({ length: 13 }, (_, i) => i + 7);
@@ -968,11 +1370,15 @@ export function GradeSemanal({
     setDragHover(null);
   }
 
-  function addSlotFromModal(bloco: BlocoHorarioAula) {
-    const filtered = items.filter(
-      (s) => s.dia !== bloco.dia || s.fim <= bloco.inicio || s.inicio >= bloco.fim
-    );
-    notify([...filtered, bloco]);
+  function addSlotsFromModal(novosBlocos: BlocoHorarioAula[]) {
+    let updated = [...items];
+    for (const bloco of novosBlocos) {
+      updated = updated.filter(
+        (s) => s.dia !== bloco.dia || s.fim <= bloco.inicio || s.inicio >= bloco.fim
+      );
+      updated.push(bloco);
+    }
+    notify(updated);
     setSlotDraft(null);
   }
 
@@ -986,6 +1392,12 @@ export function GradeSemanal({
   const totalCargaHoraria = useMemo(() => {
     return items.reduce((acc, s) => acc + (s.duracaoHoras || (s.fim - s.inicio)), 0);
   }, [items]);
+
+  const totalOcupados = useMemo(() => {
+    return items.filter((s) => Boolean(s.grupoId || s.turmaId)).length;
+  }, [items]);
+
+  const totalVagos = items.length - totalOcupados;
 
   return (
     <div className="flex flex-col gap-3">
@@ -1029,9 +1441,22 @@ export function GradeSemanal({
           <div className="flex items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-xs font-semibold text-zinc-700 ring-1 ring-zinc-200">
             <span>Total:</span>
             <span className="font-extrabold text-sky-700">{totalCargaHoraria}h</span>
-            <span className="text-[10px] font-normal text-zinc-400">({items.length} {items.length === 1 ? "bloco" : "blocos"})</span>
+            <span className="text-[10px] font-normal text-zinc-400">
+              ({items.length} {items.length === 1 ? "bloco" : "blocos"})
+            </span>
           </div>
         </div>
+
+        {modo === "nucleo" && items.length > 0 && (
+          <div className="flex items-center gap-2 self-end">
+            <span className="rounded-lg bg-emerald-50 border border-emerald-200 px-2.5 py-1 text-xs font-semibold text-emerald-800">
+              {totalOcupados} ocupado(s)
+            </span>
+            <span className="rounded-lg bg-amber-50 border border-amber-200 px-2.5 py-1 text-xs font-semibold text-amber-800">
+              {totalVagos} vago(s)
+            </span>
+          </div>
+        )}
 
         <div className="ml-auto self-end">
           <Button
@@ -1078,6 +1503,8 @@ export function GradeSemanal({
                     const isStart = isSlotStart(key, hora);
                     const highlight = isDragHighlight(key, hora);
 
+                    const isVago = !slot?.grupoId && !slot?.turmaId;
+
                     return (
                       <div
                         key={hora}
@@ -1096,7 +1523,9 @@ export function GradeSemanal({
                               setSlotSelecionadoOpcoes(slot);
                             }}
                             className={`absolute inset-x-0.5 z-10 flex flex-col justify-between rounded-lg border p-1.5 text-[11px] font-semibold leading-tight shadow-sm cursor-pointer hover:opacity-95 overflow-hidden transition-all ${
-                              slot.isControleInterno
+                              isVago
+                                ? "bg-amber-500/90 border-amber-600 text-white"
+                                : slot.isControleInterno
                                 ? "bg-amber-600 border-amber-700 text-white"
                                 : "bg-sky-600 border-sky-700 text-white"
                             }`}
@@ -1105,12 +1534,18 @@ export function GradeSemanal({
                             <div className="flex flex-col gap-0.5">
                               <div className="flex items-center justify-between gap-1">
                                 <div className="truncate flex items-center gap-1 font-bold">
-                                  {slot.isControleInterno && <span>🔒</span>}
-                                  <span>{slot.atividadeNome || atividadeNome}</span>
+                                  {isVago && <span>⚡</span>}
+                                  <span>{slot.grupoNome || (isVago ? "Horário Vago" : slot.atividadeNome || atividadeNome)}</span>
                                 </div>
                                 <span className="shrink-0 rounded bg-black/25 px-1 py-0.2 text-[9px] font-black uppercase tracking-tight">
                                   {slot.duracaoHoras || (slot.fim - slot.inicio)}h
                                 </span>
+                              </div>
+
+                              {/* Atividade e Professor */}
+                              <div className="truncate opacity-95 text-[9.5px] font-medium flex items-center gap-1">
+                                <span>{slot.atividadeNome || "Atividade"}</span>
+                                {slot.responsavelNome && <span>• 👤 {slot.responsavelNome}</span>}
                               </div>
 
                               {/* Recorrência especial */}
@@ -1126,17 +1561,6 @@ export function GradeSemanal({
                               {slot.gruposAdicionaisIds && slot.gruposAdicionaisIds.length > 0 && (
                                 <div className="truncate bg-indigo-950/40 text-indigo-100 rounded px-1 py-0.2 text-[8.5px] font-bold w-fit">
                                   👥 +{slot.gruposAdicionaisIds.length} parceira(s)
-                                </div>
-                              )}
-
-                              {slot.nucleoNome && (
-                                <div className="truncate opacity-95 text-[9.5px] font-medium flex items-center gap-0.5">
-                                  <span>📍 {slot.nucleoNome}</span>
-                                </div>
-                              )}
-                              {slot.responsavelNome && (
-                                <div className="truncate opacity-95 text-[9.5px] font-medium flex items-center gap-0.5">
-                                  <span>👤 {slot.responsavelNome}</span>
                                 </div>
                               )}
                             </div>
@@ -1158,6 +1582,7 @@ export function GradeSemanal({
       {/* Modal de Criação / Arrasto */}
       {modalAberto && (
         <ModalBloco
+          modo={modo}
           atividadeAtual={atividade}
           atividadeNome={atividadeNome}
           atividadesLocais={atividadesLocais}
@@ -1171,11 +1596,12 @@ export function GradeSemanal({
           initialDia={slotDraft?.dia}
           initialInicio={slotDraft?.inicio}
           initialFim={slotDraft?.fim}
-          onConfirm={addSlotFromModal}
+          onConfirm={addSlotsFromModal}
           onClose={() => {
             setModalAberto(false);
             setSlotDraft(null);
           }}
+          onCriarTurmaRapida={onCriarTurmaRapida}
         />
       )}
 
@@ -1229,6 +1655,24 @@ export function GradeSemanal({
             notify(items.map((s) => (s === slotSelecionadoOpcoes ? atualizado : s)));
             setSlotSelecionadoOpcoes(null);
           }}
+          onAlocarTurma={
+            onAlocarTurma
+              ? async (turmaId) => {
+                  const tObj = turmasDisponiveis.find((t) => t.id === turmaId);
+                  const atualizado: BlocoHorarioAula = {
+                    ...slotSelecionadoOpcoes,
+                    grupoId: turmaId,
+                    grupoNome: tObj?.nome,
+                    turmaId: turmaId,
+                    turmaNome: tObj?.nome,
+                  };
+                  if (slotSelecionadoOpcoes.id) {
+                    await onAlocarTurma(slotSelecionadoOpcoes.id, turmaId);
+                  }
+                  notify(items.map((s) => (s === slotSelecionadoOpcoes ? atualizado : s)));
+                }
+              : undefined
+          }
           onAtualizarTurmasParceiras={(turmasIds) => {
             const nomes = turmasDisponiveis.filter((t) => turmasIds.includes(t.id)).map((t) => t.nome);
             const atualizado: BlocoHorarioAula = {
