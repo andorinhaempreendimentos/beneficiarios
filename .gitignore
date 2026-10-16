@@ -55,6 +55,7 @@ docx_text.txt
 # ==========================================
 *.html
 *.md
+!planos_de_implementacao/agendamento_planejamento_temporal/**/*.md
 *.zip
 *.tar.gz
 *.rar

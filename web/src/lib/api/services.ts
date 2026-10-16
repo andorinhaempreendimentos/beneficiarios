@@ -303,6 +303,39 @@ export interface AtividadeApi {
   termoParticipante?: string;
 }
 
+export type TipoRecorrencia = "semanal" | "mensal_dia_fixo" | "mensal_dia_semana" | "pontual";
+export type AjusteFimDeSemana = "manter" | "proximo_util" | "anterior_util";
+
+export interface HorarioTurmaApi {
+  id?: string;
+  dia: string;
+  diaSemana?: number;
+  dia_semana?: number;
+  inicio: number;
+  fim: number;
+  horaInicio?: string;
+  horaFim?: string;
+  duracaoHoras?: number;
+  duracaoMinutos?: number;
+  nucleoId?: string;
+  nucleoNome?: string;
+  atividadeId?: string;
+  atividadeNome?: string;
+  atividade?: AtividadeApi;
+  responsavelId?: string;
+  responsavelNome?: string;
+  isControleInterno?: boolean;
+  tipoRecorrencia?: TipoRecorrencia;
+  diaMes?: number;
+  ordemSemanaMes?: number;
+  ajusteFimDeSemana?: AjusteFimDeSemana;
+  dataEspecifica?: string;
+  gruposAdicionaisIds?: string[];
+  gruposAdicionaisNomes?: string[];
+}
+
+export type BlocoHorarioApi = HorarioTurmaApi;
+
 export interface TurmaApi {
   id: string;
   nome: string;
@@ -329,7 +362,7 @@ export interface TurmaApi {
   criadoEm: string;
   nucleo?: NucleoApi;
   atividade?: AtividadeApi;
-  slots?: any[];
+  slots?: HorarioTurmaApi[];
 }
 
 export type GrupoApi = TurmaApi;
@@ -620,17 +653,28 @@ function mapTurma(r: any): TurmaApi {
     const duracaoHoras = (!isNaN(fimHour) && !isNaN(inicioHour) && fimHour > inicioHour) ? (fimHour - inicioHour) : 1;
     return {
       id: th.id,
-      dia: DIA_KEY_MAP[th.dia_semana] || 'Seg',
+      dia: th.dia_semana != null ? (DIA_KEY_MAP[th.dia_semana] || 'Seg') : 'Seg',
+      diaSemana: th.dia_semana ?? undefined,
+      dia_semana: th.dia_semana ?? undefined,
       inicio: isNaN(inicioHour) ? 8 : inicioHour,
       fim: isNaN(fimHour) ? 10 : fimHour,
+      horaInicio: th.hora_inicio || undefined,
+      horaFim: th.hora_fim || undefined,
       duracaoHoras,
       duracaoMinutos: duracaoHoras * 60,
       nucleoId: th.nucleo_id || r.nucleo_id || undefined,
       nucleoNome: th.nucleos?.identificacao || r.nucleos?.identificacao || undefined,
       atividadeId: th.atividade_id || r.atividade_id || undefined,
       atividadeNome: th.atividades?.nome || r.atividades?.nome || undefined,
+      atividade: th.atividades ? mapAtividade(th.atividades) : undefined,
       responsavelId: th.responsavel_id || undefined,
       responsavelNome: th.funcionarios?.nome_completo || undefined,
+      tipoRecorrencia: (th.tipo_recorrencia as TipoRecorrencia) || 'semanal',
+      diaMes: th.dia_mes ?? undefined,
+      ordemSemanaMes: th.ordem_semana_mes ?? undefined,
+      ajusteFimDeSemana: (th.ajuste_fim_de_semana as AjusteFimDeSemana) || 'manter',
+      dataEspecifica: th.data_especifica || undefined,
+      gruposAdicionaisIds: Array.isArray(th.grupos_adicionais_ids) ? th.grupos_adicionais_ids : [],
     };
   });
 
@@ -1479,15 +1523,36 @@ export const gruposApi = {
       Dom: 0, Seg: 1, Ter: 2, Qua: 3, Qui: 4, Sex: 5, Sáb: 6
     };
 
-    const rows = slots.map((s) => ({
-      grupo_id: turmaId,
-      dia_semana: KEY_TO_DIA[s.dia] ?? 1,
-      hora_inicio: `${String(s.inicio).padStart(2, '0')}:00:00`,
-      hora_fim: `${String(s.fim).padStart(2, '0')}:00:00`,
-      nucleo_id: s.nucleoId || nucleoPadraoId,
-      atividade_id: s.atividadeId || null,
-      responsavel_id: s.responsavelId || null,
-    }));
+    const rows = slots.map((s) => {
+      const tipoRecorrencia = s.tipoRecorrencia || 'semanal';
+      let diaSemana = s.dia ? KEY_TO_DIA[s.dia] : undefined;
+      if (diaSemana === undefined && (tipoRecorrencia === 'semanal' || tipoRecorrencia === 'mensal_dia_semana')) {
+        diaSemana = 1;
+      }
+
+      const inicioStr = typeof s.horaInicio === 'string' && s.horaInicio.includes(':')
+        ? s.horaInicio
+        : `${String(s.inicio ?? 8).padStart(2, '0')}:00:00`;
+      const fimStr = typeof s.horaFim === 'string' && s.horaFim.includes(':')
+        ? s.horaFim
+        : `${String(s.fim ?? 9).padStart(2, '0')}:00:00`;
+
+      return {
+        grupo_id: turmaId,
+        dia_semana: (tipoRecorrencia === 'pontual' || tipoRecorrencia === 'mensal_dia_fixo') ? (diaSemana ?? null) : (diaSemana ?? 1),
+        hora_inicio: inicioStr.length === 5 ? `${inicioStr}:00` : inicioStr,
+        hora_fim: fimStr.length === 5 ? `${fimStr}:00` : fimStr,
+        nucleo_id: s.nucleoId || nucleoPadraoId,
+        atividade_id: s.atividadeId || null,
+        responsavel_id: s.responsavelId || null,
+        tipo_recorrencia: tipoRecorrencia,
+        dia_mes: tipoRecorrencia === 'mensal_dia_fixo' ? (Number(s.diaMes) || 1) : null,
+        ordem_semana_mes: tipoRecorrencia === 'mensal_dia_semana' ? (Number(s.ordemSemanaMes) || 1) : null,
+        ajuste_fim_de_semana: s.ajusteFimDeSemana || 'manter',
+        data_especifica: tipoRecorrencia === 'pontual' ? (s.dataEspecifica || null) : null,
+        grupos_adicionais_ids: Array.isArray(s.gruposAdicionaisIds) ? s.gruposAdicionaisIds : [],
+      };
+    });
 
     const { error } = await sb.from('grupo_horarios' as any).insert(rows as any);
     if (error) throw error;

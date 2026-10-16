@@ -160,16 +160,25 @@ export interface Grupo {
 
 export type Turma = Grupo;
 
+export type TipoRecorrencia = "semanal" | "mensal_dia_fixo" | "mensal_dia_semana" | "pontual";
+export type AjusteFimDeSemana = "manter" | "proximo_util" | "anterior_util";
+
 export interface GrupoHorario {
   id: string;
   grupoId: string;
-  diaSemana: number;
+  diaSemana?: number | null;
   horaInicio: string;
   horaFim: string;
   duracaoMinutos?: number;
   atividadeId?: string;
   responsavelId?: string;
   nucleoId?: string;
+  tipoRecorrencia?: TipoRecorrencia;
+  diaMes?: number | null;
+  ordemSemanaMes?: number | null;
+  ajusteFimDeSemana?: AjusteFimDeSemana;
+  dataEspecifica?: string | null;
+  gruposAdicionaisIds?: string[];
 }
 
 export type TurmaHorario = GrupoHorario;

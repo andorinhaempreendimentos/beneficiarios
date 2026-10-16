@@ -250,7 +250,12 @@ export function GrupoForm({
         (outra.slots ?? []).forEach((outroSlot) => {
           slots.forEach((meuSlot) => {
             if (meuSlot.dia === outroSlot.dia) {
+              const ehParceria =
+                (meuSlot.gruposAdicionaisIds ?? []).includes(outra.id) ||
+                (outroSlot.gruposAdicionaisIds ?? []).includes(t?.id || "");
+
               const sobreposicao =
+                !ehParceria &&
                 Math.max(meuSlot.inicio, outroSlot.inicio) <
                 Math.min(meuSlot.fim, outroSlot.fim);
 
@@ -636,7 +641,7 @@ export function GrupoForm({
         )}
 
         <div className="mt-6">
-          <p className="mb-3 text-sm font-medium text-zinc-700">Grade semanal ({termoSessao.toLowerCase()}s)</p>
+          <p className="mb-3 text-sm font-medium text-zinc-700">Grade de agendamento (blocos de horário)</p>
           <GradeSemanal
             atividade={atividadeSelecionada}
             atividadeNome={atividadeSelecionada?.nome}
@@ -645,6 +650,8 @@ export function GrupoForm({
             nucleos={nucleos}
             nucleoPadraoId={nucleoId}
             nucleoPadraoNome={nucleoSelecionado?.identificacao}
+            turmasDisponiveis={todasTurmas}
+            turmaAtualId={t?.id}
             slots={slots}
             onChange={setSlots}
           />

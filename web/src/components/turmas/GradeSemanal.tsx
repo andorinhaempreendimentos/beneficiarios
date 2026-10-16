@@ -2,10 +2,10 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui";
-import { Plus, X } from "lucide-react";
+import { Plus, X, Calendar, Clock, Users, Copy, Trash2, Edit3, Repeat, CalendarDays } from "lucide-react";
 import type { AtividadeApi, FuncionarioApi, NucleoApi } from "@/lib/api/services";
 
-const DIAS_OPCOES = [
+export const DIAS_OPCOES = [
   { key: "Dom", label: "Domingo" },
   { key: "Seg", label: "Segunda" },
   { key: "Ter", label: "Terça" },
@@ -15,13 +15,19 @@ const DIAS_OPCOES = [
   { key: "Sáb", label: "Sábado" },
 ];
 
-const TODAS_HORAS = Array.from({ length: 18 }, (_, i) => i + 6); // 06h–23h
+export const TODAS_HORAS = Array.from({ length: 18 }, (_, i) => i + 6); // 06h–23h
 
-export interface SlotAula {
+export type TipoRecorrencia = "semanal" | "mensal_dia_fixo" | "mensal_dia_semana" | "pontual";
+export type AjusteFimDeSemana = "manter" | "proximo_util" | "anterior_util";
+
+export interface BlocoHorarioAula {
   id?: string;
   dia: string;
+  diaSemana?: number;
   inicio: number;
   fim: number;
+  horaInicio?: string;
+  horaFim?: string;
   duracaoHoras?: number;
   duracaoMinutos?: number;
   nucleoId?: string;
@@ -31,9 +37,18 @@ export interface SlotAula {
   responsavelId?: string;
   responsavelNome?: string;
   isControleInterno?: boolean;
+  tipoRecorrencia?: TipoRecorrencia;
+  diaMes?: number;
+  ordemSemanaMes?: number;
+  ajusteFimDeSemana?: AjusteFimDeSemana;
+  dataEspecifica?: string;
+  gruposAdicionaisIds?: string[];
+  gruposAdicionaisNomes?: string[];
 }
 
-interface GradeSemanalProps {
+export type SlotAula = BlocoHorarioAula; // Alias de compatibilidade retroativa
+
+export interface GradeSemanalProps {
   atividade?: AtividadeApi;
   atividadeNome?: string;
   atividadesLocais?: AtividadeApi[];
@@ -41,16 +56,18 @@ interface GradeSemanalProps {
   nucleos?: NucleoApi[];
   nucleoPadraoId?: string;
   nucleoPadraoNome?: string;
-  slots?: SlotAula[];
-  onChange?: (slots: SlotAula[]) => void;
+  turmasDisponiveis?: { id: string; nome: string; nucleoId?: string }[];
+  turmaAtualId?: string;
+  slots?: BlocoHorarioAula[];
+  onChange?: (slots: BlocoHorarioAula[]) => void;
 }
 
 function formatHora(h: number) {
   return `${String(h).padStart(2, "0")}:00`;
 }
 
-// Modal de adicionar/criar slot por clique ou arrasto
-interface ModalSlotProps {
+// Modal de adicionar/criar bloco de horário
+interface ModalBlocoProps {
   atividadeAtual?: AtividadeApi;
   atividadeNome: string;
   atividadesLocais?: AtividadeApi[];
@@ -58,15 +75,17 @@ interface ModalSlotProps {
   nucleos?: NucleoApi[];
   nucleoPadraoId?: string;
   nucleoPadraoNome?: string;
+  turmasDisponiveis?: { id: string; nome: string; nucleoId?: string }[];
+  turmaAtualId?: string;
   diasVisiveis: string[];
   initialDia?: string;
   initialInicio?: number;
   initialFim?: number;
-  onConfirm: (slot: SlotAula) => void;
+  onConfirm: (bloco: BlocoHorarioAula) => void;
   onClose: () => void;
 }
 
-function ModalSlot({
+function ModalBloco({
   atividadeAtual,
   atividadeNome,
   atividadesLocais = [],
@@ -74,24 +93,51 @@ function ModalSlot({
   nucleos = [],
   nucleoPadraoId,
   nucleoPadraoNome,
+  turmasDisponiveis = [],
+  turmaAtualId,
   diasVisiveis,
   initialDia,
   initialInicio,
   initialFim,
   onConfirm,
   onClose,
-}: ModalSlotProps) {
+}: ModalBlocoProps) {
+  // Aba de recorrência: "semanal" | "mensal" | "pontual"
+  const [recorrenciaTab, setRecorrenciaTab] = useState<"semanal" | "mensal" | "pontual">("semanal");
+  
+  // Campos de tempo
   const [dia, setDia] = useState(initialDia || diasVisiveis[0] || "Seg");
   const [inicio, setInicio] = useState(initialInicio ?? 8);
   const [fim, setFim] = useState(initialFim ?? 9);
 
+  // Recorrência mensal
+  const [modalidadeMensal, setModalidadeMensal] = useState<"dia_fixo" | "dia_semana">("dia_fixo");
+  const [diaMes, setDiaMes] = useState<number>(10);
+  const [ordemSemanaMes, setOrdemSemanaMes] = useState<number>(1);
+  const [ajusteFimDeSemana, setAjusteFimDeSemana] = useState<AjusteFimDeSemana>("manter");
+
+  // Recorrência pontual
+  const [dataEspecifica, setDataEspecifica] = useState<string>(() => {
+    const hoje = new Date();
+    return hoje.toISOString().split("T")[0];
+  });
+
+  // Metadados do bloco
   const [selectedAtividadeId, setSelectedAtividadeId] = useState(atividadeAtual?.id || "");
   const [selectedResponsavelId, setSelectedResponsavelId] = useState("");
   const [selectedNucleoId, setSelectedNucleoId] = useState(nucleoPadraoId || "");
 
+  // Enturmação conjunta
+  const [selectedGruposAdicionais, setSelectedGruposAdicionais] = useState<string[]>([]);
+
   const atvSelecionada = atividadesLocais.find((a) => a.id === selectedAtividadeId) || atividadeAtual;
   const isControleInterno = atvSelecionada ? !atvSelecionada.disponivelPreInscricao : false;
   const nomeExibicao = atvSelecionada?.nome || atividadeNome;
+
+  // Turmas elegíveis para parceria (exclui a turma titular)
+  const turmasParceirasPossiveis = useMemo(() => {
+    return turmasDisponiveis.filter((t) => t.id !== turmaAtualId);
+  }, [turmasDisponiveis, turmaAtualId]);
 
   function handleConfirm() {
     if (fim <= inicio) return;
@@ -99,10 +145,32 @@ function ModalSlot({
     const respSelecionado = funcionarios.find((f) => f.id === selectedResponsavelId);
     const nucleoObj = nucleos.find((n) => n.id === selectedNucleoId);
     const nucleoFinalNome = nucleoObj?.identificacao || nucleoPadraoNome;
+
+    let finalTipoRecorrencia: TipoRecorrencia = "semanal";
+    let finalDia = dia;
+
+    if (recorrenciaTab === "mensal") {
+      finalTipoRecorrencia = modalidadeMensal === "dia_fixo" ? "mensal_dia_fixo" : "mensal_dia_semana";
+    } else if (recorrenciaTab === "pontual") {
+      finalTipoRecorrencia = "pontual";
+      if (dataEspecifica) {
+        const [ano, m, d] = dataEspecifica.split("-").map(Number);
+        const dt = new Date(ano, m - 1, d);
+        const diaSemanaNum = dt.getDay();
+        finalDia = DIAS_OPCOES[diaSemanaNum]?.key || "Seg";
+      }
+    }
+
+    const nomesAdicionais = turmasParceirasPossiveis
+      .filter((t) => selectedGruposAdicionais.includes(t.id))
+      .map((t) => t.nome);
+
     onConfirm({
-      dia,
+      dia: finalDia,
       inicio,
       fim,
+      horaInicio: `${String(inicio).padStart(2, "0")}:00:00`,
+      horaFim: `${String(fim).padStart(2, "0")}:00:00`,
       duracaoHoras,
       duracaoMinutos: duracaoHoras * 60,
       nucleoId: selectedNucleoId || nucleoPadraoId,
@@ -112,83 +180,221 @@ function ModalSlot({
       responsavelId: respSelecionado?.id,
       responsavelNome: respSelecionado?.nomeCompleto,
       isControleInterno,
+      tipoRecorrencia: finalTipoRecorrencia,
+      diaMes: finalTipoRecorrencia === "mensal_dia_fixo" ? diaMes : undefined,
+      ordemSemanaMes: finalTipoRecorrencia === "mensal_dia_semana" ? ordemSemanaMes : undefined,
+      ajusteFimDeSemana: finalTipoRecorrencia === "mensal_dia_fixo" ? ajusteFimDeSemana : "manter",
+      dataEspecifica: finalTipoRecorrencia === "pontual" ? dataEspecifica : undefined,
+      gruposAdicionaisIds: selectedGruposAdicionais,
+      gruposAdicionaisNomes: nomesAdicionais,
     });
     onClose();
   }
 
+  function toggleGrupoAdicional(id: string) {
+    setSelectedGruposAdicionais((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+  }
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs" onClick={onClose}>
       <div
-        className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl"
+        className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="mb-5 flex items-center justify-between border-b border-zinc-100 pb-3">
+        <div className="mb-4 flex items-center justify-between border-b border-zinc-100 pb-3">
           <div>
-            <h3 className="text-sm font-bold text-zinc-900">Adicionar Sessão / Horário</h3>
-            <p className="text-xs text-zinc-500">Defina o tipo de atividade e o responsável pela sessão</p>
+            <h3 className="text-sm font-bold text-zinc-900 flex items-center gap-2">
+              <Clock size={16} className="text-sky-600" />
+              <span>Adicionar Bloco de Horário</span>
+            </h3>
+            <p className="text-xs text-zinc-500">Defina o planejamento temporal, instrutor e enturmação conjunta</p>
           </div>
           <button type="button" onClick={onClose} className="rounded-lg p-1 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600">
             <X size={16} />
           </button>
         </div>
 
-        <div className="flex flex-col gap-4">
-          {atividadesLocais.length > 0 && (
-            <div>
-              <label className="mb-1.5 block text-xs font-semibold text-zinc-700">Atividade da Sessão</label>
-              <select
-                value={selectedAtividadeId}
-                onChange={(e) => setSelectedAtividadeId(e.target.value)}
-                className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-medium text-zinc-800 focus:border-sky-500 focus:outline-none"
-              >
-                {atividadesLocais.map((a) => (
-                  <option key={a.id} value={a.id}>
-                    {a.nome} ({a.termoGrupo || "Grupo"} • {a.termoSessao || "Treino"}) {!a.disponivelPreInscricao ? "[Interno]" : ""}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          {funcionarios.length > 0 && (
-            <div>
-              <label className="mb-1.5 block text-xs font-semibold text-zinc-700">Responsável / Professor</label>
-              <select
-                value={selectedResponsavelId}
-                onChange={(e) => setSelectedResponsavelId(e.target.value)}
-                className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-medium text-zinc-800 focus:border-sky-500 focus:outline-none"
-              >
-                <option value="">Selecione o responsável (opcional)</option>
-                {funcionarios.map((f) => (
-                  <option key={f.id} value={f.id}>
-                    {f.nomeCompleto} {f.funcao ? `(${f.funcao})` : ""}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          <div>
-            <label className="mb-1.5 block text-xs font-semibold text-zinc-700">Dia da semana</label>
-            <div className="flex flex-wrap gap-1.5">
-              {DIAS_OPCOES.filter((d) => diasVisiveis.includes(d.key)).map((d) => (
-                <button
-                  key={d.key}
-                  type="button"
-                  onClick={() => setDia(d.key)}
-                  className={[
-                    "rounded-lg px-3 py-1.5 text-xs font-medium transition-colors",
-                    dia === d.key
-                      ? "bg-sky-600 text-white shadow-sm"
-                      : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200",
-                  ].join(" ")}
-                >
-                  {d.label}
-                </button>
-              ))}
-            </div>
+        {/* Abas de Recorrência Temporal */}
+        <div className="mb-4">
+          <label className="mb-1.5 block text-xs font-semibold text-zinc-700">Padrão de Agendamento</label>
+          <div className="grid grid-cols-3 gap-1 rounded-xl bg-zinc-100 p-1">
+            <button
+              type="button"
+              onClick={() => setRecorrenciaTab("semanal")}
+              className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-xs font-bold transition-all ${
+                recorrenciaTab === "semanal"
+                  ? "bg-white text-sky-700 shadow-xs"
+                  : "text-zinc-600 hover:text-zinc-900"
+              }`}
+            >
+              <Repeat size={13} />
+              <span>Semanal</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setRecorrenciaTab("mensal")}
+              className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-xs font-bold transition-all ${
+                recorrenciaTab === "mensal"
+                  ? "bg-white text-sky-700 shadow-xs"
+                  : "text-zinc-600 hover:text-zinc-900"
+              }`}
+            >
+              <CalendarDays size={13} />
+              <span>Mensal</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setRecorrenciaTab("pontual")}
+              className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-xs font-bold transition-all ${
+                recorrenciaTab === "pontual"
+                  ? "bg-white text-sky-700 shadow-xs"
+                  : "text-zinc-600 hover:text-zinc-900"
+              }`}
+            >
+              <Calendar size={13} />
+              <span>Dia Único</span>
+            </button>
           </div>
+        </div>
 
+        <div className="flex flex-col gap-4">
+          {/* Se for Semanal */}
+          {recorrenciaTab === "semanal" && (
+            <div>
+              <label className="mb-1.5 block text-xs font-semibold text-zinc-700">Dia da semana</label>
+              <div className="flex flex-wrap gap-1.5">
+                {DIAS_OPCOES.filter((d) => diasVisiveis.includes(d.key)).map((d) => (
+                  <button
+                    key={d.key}
+                    type="button"
+                    onClick={() => setDia(d.key)}
+                    className={[
+                      "rounded-lg px-3 py-1.5 text-xs font-medium transition-colors",
+                      dia === d.key
+                        ? "bg-sky-600 text-white shadow-sm"
+                        : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200",
+                    ].join(" ")}
+                  >
+                    {d.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Se for Mensal */}
+          {recorrenciaTab === "mensal" && (
+            <div className="rounded-xl border border-zinc-200 bg-zinc-50/70 p-3.5 flex flex-col gap-3">
+              <div className="flex gap-4 text-xs font-medium">
+                <label className="flex items-center gap-1.5 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="modalidadeMensal"
+                    checked={modalidadeMensal === "dia_fixo"}
+                    onChange={() => setModalidadeMensal("dia_fixo")}
+                    className="text-sky-600"
+                  />
+                  <span>Dia fixo do mês</span>
+                </label>
+                <label className="flex items-center gap-1.5 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="modalidadeMensal"
+                    checked={modalidadeMensal === "dia_semana"}
+                    onChange={() => setModalidadeMensal("dia_semana")}
+                    className="text-sky-600"
+                  />
+                  <span>Dia da semana no mês</span>
+                </label>
+              </div>
+
+              {modalidadeMensal === "dia_fixo" ? (
+                <div className="grid grid-cols-2 gap-3 pt-1">
+                  <div>
+                    <label className="mb-1 block text-xs font-semibold text-zinc-700">Dia do mês (1 a 31)</label>
+                    <input
+                      type="number"
+                      min={1}
+                      max={31}
+                      value={diaMes}
+                      onChange={(e) => setDiaMes(Math.max(1, Math.min(31, Number(e.target.value))))}
+                      className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-medium text-zinc-800 focus:border-sky-500 focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-xs font-semibold text-zinc-700">Se cair em fim de semana</label>
+                    <select
+                      value={ajusteFimDeSemana}
+                      onChange={(e) => setAjusteFimDeSemana(e.target.value as AjusteFimDeSemana)}
+                      className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-medium text-zinc-800 focus:border-sky-500 focus:outline-none"
+                    >
+                      <option value="manter">Manter no dia</option>
+                      <option value="proximo_util">Postergar p/ próx. útil</option>
+                      <option value="anterior_util">Antecipar p/ anterior útil</option>
+                    </select>
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-3 pt-1">
+                  <div>
+                    <label className="mb-1 block text-xs font-semibold text-zinc-700">Semana do mês</label>
+                    <select
+                      value={ordemSemanaMes}
+                      onChange={(e) => setOrdemSemanaMes(Number(e.target.value))}
+                      className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-medium text-zinc-800 focus:border-sky-500 focus:outline-none"
+                    >
+                      <option value={1}>1ª semana do mês</option>
+                      <option value={2}>2ª semana do mês</option>
+                      <option value={3}>3ª semana do mês</option>
+                      <option value={4}>4ª semana do mês</option>
+                      <option value={-1}>Última semana do mês</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-xs font-semibold text-zinc-700">Dia da semana</label>
+                    <select
+                      value={dia}
+                      onChange={(e) => setDia(e.target.value)}
+                      className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-medium text-zinc-800 focus:border-sky-500 focus:outline-none"
+                    >
+                      {DIAS_OPCOES.map((d) => (
+                        <option key={d.key} value={d.key}>{d.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Se for Pontual */}
+          {recorrenciaTab === "pontual" && (
+            <div className="rounded-xl border border-zinc-200 bg-zinc-50/70 p-3.5">
+              <label className="mb-1.5 block text-xs font-semibold text-zinc-700">Data específica do evento / aula</label>
+              <input
+                type="date"
+                value={dataEspecifica}
+                onChange={(e) => {
+                  setDataEspecifica(e.target.value);
+                  if (e.target.value) {
+                    const [ano, m, d] = e.target.value.split("-").map(Number);
+                    const dt = new Date(ano, m - 1, d);
+                    const diaKey = DIAS_OPCOES[dt.getDay()]?.key;
+                    if (diaKey) setDia(diaKey);
+                  }
+                }}
+                className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-medium text-zinc-800 focus:border-sky-500 focus:outline-none"
+              />
+              <p className="mt-1 text-[11px] text-zinc-500">
+                O bloco será posicionado na coluna de{" "}
+                <strong>{DIAS_OPCOES.find((d) => d.key === dia)?.label}</strong> para planejamento visual.
+              </p>
+            </div>
+          )}
+
+          {/* Horário Início e Fim */}
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="mb-1.5 block text-xs font-semibold text-zinc-700">Início</label>
@@ -218,16 +424,52 @@ function ModalSlot({
 
           {fim > inicio && (
             <div className="rounded-xl bg-sky-50 border border-sky-200/80 p-2.5 text-xs text-sky-900 flex items-center justify-between">
-              <span>Horário: <strong>{formatHora(inicio)} às {formatHora(fim)}</strong></span>
+              <span>Janela: <strong>{formatHora(inicio)} às {formatHora(fim)}</strong></span>
               <span className="font-bold text-sky-700 bg-white border border-sky-200 px-2 py-0.5 rounded-md">
                 Duração: {fim - inicio}h
               </span>
             </div>
           )}
 
+          {/* Atividade e Responsável */}
+          {atividadesLocais.length > 0 && (
+            <div>
+              <label className="mb-1.5 block text-xs font-semibold text-zinc-700">Atividade do Bloco</label>
+              <select
+                value={selectedAtividadeId}
+                onChange={(e) => setSelectedAtividadeId(e.target.value)}
+                className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-medium text-zinc-800 focus:border-sky-500 focus:outline-none"
+              >
+                {atividadesLocais.map((a) => (
+                  <option key={a.id} value={a.id}>
+                    {a.nome} ({a.termoGrupo || "Grupo"} • {a.termoSessao || "Treino"}) {!a.disponivelPreInscricao ? "[Interno]" : ""}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {funcionarios.length > 0 && (
+            <div>
+              <label className="mb-1.5 block text-xs font-semibold text-zinc-700">Instrutor / Responsável Escalado</label>
+              <select
+                value={selectedResponsavelId}
+                onChange={(e) => setSelectedResponsavelId(e.target.value)}
+                className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-medium text-zinc-800 focus:border-sky-500 focus:outline-none"
+              >
+                <option value="">Selecione o profissional de campo (opcional)</option>
+                {funcionarios.map((f) => (
+                  <option key={f.id} value={f.id}>
+                    {f.nomeCompleto} {f.funcao ? `(${f.funcao})` : ""}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
           {nucleos.length > 0 && (
             <div>
-              <label className="mb-1.5 block text-xs font-semibold text-zinc-700">Espaço / Núcleo da Sessão</label>
+              <label className="mb-1.5 block text-xs font-semibold text-zinc-700">Espaço / Núcleo de Realização</label>
               <select
                 value={selectedNucleoId}
                 onChange={(e) => setSelectedNucleoId(e.target.value)}
@@ -247,12 +489,52 @@ function ModalSlot({
             </div>
           )}
 
+          {/* Enturmação Conjunta / Turmas Parceiras */}
+          {turmasParceirasPossiveis.length > 0 && (
+            <div className="rounded-xl border border-indigo-100 bg-indigo-50/40 p-3.5">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-bold text-indigo-950 flex items-center gap-1.5">
+                  <Users size={14} className="text-indigo-600" />
+                  Enturmação Conjunta (Aulão / Clínicas Integradas)
+                </span>
+                {selectedGruposAdicionais.length > 0 && (
+                  <span className="text-[10px] font-extrabold text-indigo-700 bg-indigo-100 px-2 py-0.5 rounded-full">
+                    {selectedGruposAdicionais.length} parceira(s)
+                  </span>
+                )}
+              </div>
+              <p className="text-[11px] text-zinc-500 mb-2.5">
+                Vincule turmas parceiras para realizarem a atividade juntas neste mesmo bloco de horário:
+              </p>
+              <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto p-1 bg-white rounded-lg border border-indigo-100">
+                {turmasParceirasPossiveis.map((t) => {
+                  const selected = selectedGruposAdicionais.includes(t.id);
+                  return (
+                    <button
+                      key={t.id}
+                      type="button"
+                      onClick={() => toggleGrupoAdicional(t.id)}
+                      className={`text-xs px-2.5 py-1 rounded-md border transition-all text-left ${
+                        selected
+                          ? "bg-indigo-600 text-white border-indigo-600 font-semibold shadow-xs"
+                          : "bg-zinc-50 text-zinc-700 border-zinc-200 hover:bg-zinc-100"
+                      }`}
+                    >
+                      {selected ? "✓ " : "+ "}
+                      {t.nome}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {fim <= inicio && (
-            <p className="text-xs text-red-500">Horário de fim deve ser após o início.</p>
+            <p className="text-xs text-red-500">Horário de fim deve ser estritamente posterior ao início.</p>
           )}
         </div>
 
-        <div className="mt-6 flex justify-end gap-2">
+        <div className="mt-6 flex justify-end gap-2 border-t border-zinc-100 pt-4">
           <button
             type="button"
             onClick={onClose}
@@ -261,7 +543,7 @@ function ModalSlot({
             Cancelar
           </button>
           <Button type="button" size="sm" onClick={handleConfirm} disabled={fim <= inicio}>
-            Adicionar à Grade
+            Confirmar Bloco
           </Button>
         </div>
       </div>
@@ -269,62 +551,91 @@ function ModalSlot({
   );
 }
 
-// Modal de opções do slot existente (Duplicar, Trocar Atividade, Deletar)
-interface ModalOpcoesSlotProps {
-  slot: SlotAula;
+// Modal de opções do bloco de horário existente
+interface ModalOpcoesBlocoProps {
+  slot: BlocoHorarioAula;
   atividadesLocais?: AtividadeApi[];
   funcionarios?: FuncionarioApi[];
   nucleos?: NucleoApi[];
   nucleoPadraoId?: string;
   nucleoPadraoNome?: string;
+  turmasDisponiveis?: { id: string; nome: string; nucleoId?: string }[];
+  turmaAtualId?: string;
   onDuplicar: (diaDestino: string) => void;
   onTrocarAtividade: (novaAtividade: AtividadeApi) => void;
   onTrocarResponsavel?: (novoResponsavel: FuncionarioApi | null) => void;
   onTrocarNucleo?: (novoNucleo: NucleoApi | null) => void;
+  onAtualizarTurmasParceiras?: (turmasIds: string[]) => void;
   onDeletar: () => void;
   onClose: () => void;
 }
 
-function ModalOpcoesSlot({
+function ModalOpcoesBloco({
   slot,
   atividadesLocais = [],
   funcionarios = [],
   nucleos = [],
   nucleoPadraoId,
   nucleoPadraoNome,
+  turmasDisponiveis = [],
+  turmaAtualId,
   onDuplicar,
   onTrocarAtividade,
   onTrocarResponsavel,
   onTrocarNucleo,
+  onAtualizarTurmasParceiras,
   onDeletar,
   onClose,
-}: ModalOpcoesSlotProps) {
-  const [aba, setAba] = useState<"opcoes" | "duplicar" | "trocar">("opcoes");
+}: ModalOpcoesBlocoProps) {
+  const [aba, setAba] = useState<"opcoes" | "duplicar" | "editar">("opcoes");
   const [diaDestino, setDiaDestino] = useState(slot.dia);
   const [novaAtividadeId, setNovaAtividadeId] = useState(slot.atividadeId || "");
   const [novoResponsavelId, setNovoResponsavelId] = useState(slot.responsavelId || "");
   const [novoNucleoId, setNovoNucleoId] = useState(slot.nucleoId || nucleoPadraoId || "");
+  const [parceirasIds, setParceirasIds] = useState<string[]>(slot.gruposAdicionaisIds || []);
 
   const duracao = slot.duracaoHoras || (slot.fim - slot.inicio);
+
+  const turmasParceirasPossiveis = useMemo(() => {
+    return turmasDisponiveis.filter((t) => t.id !== turmaAtualId);
+  }, [turmasDisponiveis, turmaAtualId]);
+
+  function toggleParceira(id: string) {
+    setParceirasIds((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs" onClick={onClose}>
       <div
-        className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl border border-zinc-100 animate-in fade-in zoom-in-95"
+        className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl border border-zinc-100 max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-4 flex items-center justify-between border-b border-zinc-100 pb-3">
           <div>
             <h3 className="text-sm font-extrabold text-zinc-900 flex items-center gap-1.5">
               <span>{slot.isControleInterno ? "🔒" : "📌"}</span>
-              <span>{slot.atividadeNome || "Sessão"}</span>
+              <span>{slot.atividadeNome || "Bloco de Horário"}</span>
             </h3>
             <p className="text-xs text-zinc-500 font-medium">
               {DIAS_OPCOES.find((d) => d.key === slot.dia)?.label} ({formatHora(slot.inicio)} às {formatHora(slot.fim)} • {duracao}h)
             </p>
             <div className="mt-1 flex flex-wrap gap-1 text-[11px] text-zinc-600">
+              {slot.tipoRecorrencia && slot.tipoRecorrencia !== "semanal" && (
+                <span className="rounded bg-purple-50 text-purple-700 px-1.5 py-0.5 font-bold">
+                  {slot.tipoRecorrencia === "pontual" && `📅 Pontual: ${slot.dataEspecifica}`}
+                  {slot.tipoRecorrencia === "mensal_dia_fixo" && `🗓️ Mensal: Todo dia ${slot.diaMes}`}
+                  {slot.tipoRecorrencia === "mensal_dia_semana" && `🗓️ Mensal: ${slot.ordemSemanaMes}ª semana`}
+                </span>
+              )}
               {slot.nucleoNome && <span className="rounded bg-zinc-100 px-1.5 py-0.5">📍 {slot.nucleoNome}</span>}
               {slot.responsavelNome && <span className="rounded bg-sky-50 text-sky-700 px-1.5 py-0.5">👤 {slot.responsavelNome}</span>}
+              {slot.gruposAdicionaisIds && slot.gruposAdicionaisIds.length > 0 && (
+                <span className="rounded bg-indigo-50 text-indigo-700 px-1.5 py-0.5 font-bold">
+                  👥 +{slot.gruposAdicionaisIds.length} turma(s) parceira(s)
+                </span>
+              )}
             </div>
           </div>
           <button type="button" onClick={onClose} className="rounded-full p-1 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600">
@@ -337,12 +648,12 @@ function ModalOpcoesSlot({
             <button
               type="button"
               onClick={() => setAba("duplicar")}
-              className="flex items-center justify-between w-full p-3.5 rounded-2xl border border-zinc-200 bg-white hover:bg-sky-50/60 hover:border-sky-300 text-left transition-all text-xs font-bold text-zinc-800 active:scale-98"
+              className="flex items-center justify-between w-full p-3.5 rounded-2xl border border-zinc-200 bg-white hover:bg-sky-50/60 hover:border-sky-300 text-left transition-all text-xs font-bold text-zinc-800"
             >
               <div className="flex items-center gap-3">
-                <span className="p-2 rounded-xl bg-sky-100 text-sky-700 font-bold">📋</span>
+                <span className="p-2 rounded-xl bg-sky-100 text-sky-700 font-bold"><Copy size={16} /></span>
                 <div>
-                  <span className="block text-zinc-900">Duplicar Slot</span>
+                  <span className="block text-zinc-900">Duplicar Bloco</span>
                   <span className="text-[11px] font-normal text-zinc-500">Copiar para outro dia da semana</span>
                 </div>
               </div>
@@ -350,14 +661,14 @@ function ModalOpcoesSlot({
 
             <button
               type="button"
-              onClick={() => setAba("trocar")}
-              className="flex items-center justify-between w-full p-3.5 rounded-2xl border border-zinc-200 bg-white hover:bg-amber-50/60 hover:border-amber-300 text-left transition-all text-xs font-bold text-zinc-800 active:scale-98"
+              onClick={() => setAba("editar")}
+              className="flex items-center justify-between w-full p-3.5 rounded-2xl border border-zinc-200 bg-white hover:bg-amber-50/60 hover:border-amber-300 text-left transition-all text-xs font-bold text-zinc-800"
             >
               <div className="flex items-center gap-3">
-                <span className="p-2 rounded-xl bg-amber-100 text-amber-700 font-bold">🔄</span>
+                <span className="p-2 rounded-xl bg-amber-100 text-amber-700 font-bold"><Edit3 size={16} /></span>
                 <div>
                   <span className="block text-zinc-900">Editar Detalhes</span>
-                  <span className="text-[11px] font-normal text-zinc-500">Alterar atividade, responsável ou núcleo</span>
+                  <span className="text-[11px] font-normal text-zinc-500">Alterar atividade, responsável ou parceiras</span>
                 </div>
               </div>
             </button>
@@ -365,12 +676,12 @@ function ModalOpcoesSlot({
             <button
               type="button"
               onClick={onDeletar}
-              className="flex items-center justify-between w-full p-3.5 rounded-2xl border border-red-200 bg-red-50/50 hover:bg-red-100/60 text-left transition-all text-xs font-bold text-red-700 active:scale-98"
+              className="flex items-center justify-between w-full p-3.5 rounded-2xl border border-red-200 bg-red-50/50 hover:bg-red-100/60 text-left transition-all text-xs font-bold text-red-700"
             >
               <div className="flex items-center gap-3">
-                <span className="p-2 rounded-xl bg-red-100 text-red-700 font-bold">🗑️</span>
+                <span className="p-2 rounded-xl bg-red-100 text-red-700 font-bold"><Trash2 size={16} /></span>
                 <div>
-                  <span className="block text-red-900">Excluir Slot</span>
+                  <span className="block text-red-900">Excluir Bloco</span>
                   <span className="text-[11px] font-normal text-red-600">Remover este horário da grade</span>
                 </div>
               </div>
@@ -420,10 +731,10 @@ function ModalOpcoesSlot({
           </div>
         )}
 
-        {aba === "trocar" && (
+        {aba === "editar" && (
           <div className="flex flex-col gap-4">
             <div>
-              <label className="text-xs font-bold text-zinc-800 block mb-1">Atividade da sessão:</label>
+              <label className="text-xs font-bold text-zinc-800 block mb-1">Atividade do bloco:</label>
               <select
                 value={novaAtividadeId}
                 onChange={(e) => setNovaAtividadeId(e.target.value)}
@@ -439,7 +750,7 @@ function ModalOpcoesSlot({
 
             {funcionarios.length > 0 && (
               <div>
-                <label className="text-xs font-bold text-zinc-800 block mb-1">Responsável / Professor:</label>
+                <label className="text-xs font-bold text-zinc-800 block mb-1">Instrutor / Responsável:</label>
                 <select
                   value={novoResponsavelId}
                   onChange={(e) => setNovoResponsavelId(e.target.value)}
@@ -457,7 +768,7 @@ function ModalOpcoesSlot({
 
             {nucleos.length > 0 && (
               <div>
-                <label className="text-xs font-bold text-zinc-800 block mb-1">Espaço / Núcleo da Sessão:</label>
+                <label className="text-xs font-bold text-zinc-800 block mb-1">Espaço / Núcleo:</label>
                 <select
                   value={novoNucleoId}
                   onChange={(e) => setNovoNucleoId(e.target.value)}
@@ -474,6 +785,32 @@ function ModalOpcoesSlot({
                       </option>
                     ))}
                 </select>
+              </div>
+            )}
+
+            {turmasParceirasPossiveis.length > 0 && (
+              <div>
+                <label className="text-xs font-bold text-zinc-800 block mb-1">Turmas Parceiras Integradas:</label>
+                <div className="flex flex-wrap gap-1 max-h-32 overflow-y-auto p-1.5 bg-zinc-50 rounded-lg border border-zinc-200">
+                  {turmasParceirasPossiveis.map((t) => {
+                    const sel = parceirasIds.includes(t.id);
+                    return (
+                      <button
+                        key={t.id}
+                        type="button"
+                        onClick={() => toggleParceira(t.id)}
+                        className={`text-[11px] px-2 py-0.5 rounded border transition-all ${
+                          sel
+                            ? "bg-indigo-600 text-white border-indigo-600 font-semibold"
+                            : "bg-white text-zinc-600 border-zinc-200 hover:bg-zinc-100"
+                        }`}
+                      >
+                        {sel ? "✓ " : "+ "}
+                        {t.nome}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             )}
 
@@ -495,6 +832,7 @@ function ModalOpcoesSlot({
                   if (novaAtv) onTrocarAtividade(novaAtv);
                   if (onTrocarResponsavel) onTrocarResponsavel(novoResp);
                   if (onTrocarNucleo) onTrocarNucleo(novoNuc);
+                  if (onAtualizarTurmasParceiras) onAtualizarTurmasParceiras(parceirasIds);
                   onClose();
                 }}
               >
@@ -516,10 +854,12 @@ export function GradeSemanal({
   nucleos = [],
   nucleoPadraoId,
   nucleoPadraoNome,
+  turmasDisponiveis = [],
+  turmaAtualId,
   slots = [],
   onChange,
 }: GradeSemanalProps) {
-  const [items, setItems] = useState<SlotAula[]>(slots);
+  const [items, setItems] = useState<BlocoHorarioAula[]>(slots);
   const [diasVisiveis, setDiasVisiveis] = useState<Set<string>>(() => {
     const base = new Set(["Seg", "Ter", "Qua", "Qui", "Sex"]);
     slots.forEach((s) => {
@@ -531,7 +871,7 @@ export function GradeSemanal({
   const [dragHover, setDragHover] = useState<number | null>(null);
   const [modalAberto, setModalAberto] = useState(false);
   const [slotDraft, setSlotDraft] = useState<{ dia: string; inicio: number; fim: number } | null>(null);
-  const [slotSelecionadoOpcoes, setSlotSelecionadoOpcoes] = useState<SlotAula | null>(null);
+  const [slotSelecionadoOpcoes, setSlotSelecionadoOpcoes] = useState<BlocoHorarioAula | null>(null);
 
   // Sincroniza se slots forem atualizados externamente
   useEffect(() => {
@@ -550,7 +890,6 @@ export function GradeSemanal({
   // Faixa dinâmica: 1 hora antes da aula mais cedo até 1 hora depois da aula mais tarde
   const horasVisiveis = useMemo(() => {
     if (items.length === 0) {
-      // Sem slots cadastrados: faixa padrão enxuta das 07:00 às 19:00
       return Array.from({ length: 13 }, (_, i) => i + 7);
     }
     const maisCedo = Math.min(...items.map((s) => s.inicio));
@@ -565,9 +904,8 @@ export function GradeSemanal({
 
   const diasColuna = DIAS_OPCOES.filter((d) => diasVisiveis.has(d.key));
 
-  function notify(next: SlotAula[]) {
+  function notify(next: BlocoHorarioAula[]) {
     setItems(next);
-    // Garante que o dia do novo slot esteja visível nas colunas
     setDiasVisiveis((prev) => {
       let changed = false;
       const nextSet = new Set(prev);
@@ -630,11 +968,11 @@ export function GradeSemanal({
     setDragHover(null);
   }
 
-  function addSlotFromModal(slot: SlotAula) {
+  function addSlotFromModal(bloco: BlocoHorarioAula) {
     const filtered = items.filter(
-      (s) => s.dia !== slot.dia || s.fim <= slot.inicio || s.inicio >= slot.fim
+      (s) => s.dia !== bloco.dia || s.fim <= bloco.inicio || s.inicio >= bloco.fim
     );
-    notify([...filtered, slot]);
+    notify([...filtered, bloco]);
     setSlotDraft(null);
   }
 
@@ -654,7 +992,7 @@ export function GradeSemanal({
       {/* Controles acima da grade */}
       <div className="flex flex-wrap items-start gap-4 rounded-xl border border-zinc-200 bg-zinc-50 p-4">
         <div className="flex flex-col gap-1.5">
-          <span className="text-[11px] font-semibold uppercase tracking-wide text-zinc-400">Dias</span>
+          <span className="text-[11px] font-semibold uppercase tracking-wide text-zinc-400">Dias Visíveis</span>
           <div className="flex flex-wrap gap-1">
             {DIAS_OPCOES.map((d) => (
               <button
@@ -681,7 +1019,7 @@ export function GradeSemanal({
               <span>{formatHora(horasVisiveis[0])}</span>
               <span className="text-zinc-400">às</span>
               <span>{formatHora(horasVisiveis[horasVisiveis.length - 1] + 1)}</span>
-              <span className="ml-1 text-[10px] font-normal text-zinc-400">(dinâmico: 1h antes/depois)</span>
+              <span className="ml-1 text-[10px] font-normal text-zinc-400">(faixa dinâmica)</span>
             </div>
           </div>
         )}
@@ -691,7 +1029,7 @@ export function GradeSemanal({
           <div className="flex items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-xs font-semibold text-zinc-700 ring-1 ring-zinc-200">
             <span>Total:</span>
             <span className="font-extrabold text-sky-700">{totalCargaHoraria}h</span>
-            <span className="text-[10px] font-normal text-zinc-400">({items.length} {items.length === 1 ? "sessão" : "sessões"})</span>
+            <span className="text-[10px] font-normal text-zinc-400">({items.length} {items.length === 1 ? "bloco" : "blocos"})</span>
           </div>
         </div>
 
@@ -702,21 +1040,22 @@ export function GradeSemanal({
             variant="outline"
             onClick={() => setModalAberto(true)}
             disabled={diasColuna.length === 0 || horasVisiveis.length === 0}
+            className="flex items-center gap-1.5"
           >
             <Plus size={14} />
-            Adicionar slot
+            Adicionar bloco de horário
           </Button>
         </div>
       </div>
 
-      {/* Grade */}
+      {/* Grade de Blocos de Horário */}
       {diasColuna.length === 0 || horasVisiveis.length === 0 ? (
         <div className="rounded-xl border border-dashed border-zinc-200 bg-zinc-50 py-8 text-center text-sm text-zinc-400">
-          Selecione ao menos um dia da semana.
+          Selecione ao menos um dia da semana para visualizar e adicionar blocos de horário.
         </div>
       ) : (
         <div className="overflow-x-auto rounded-xl border border-zinc-200 bg-white select-none">
-          <div className="flex" style={{ minWidth: `${56 + diasColuna.length * 80}px` }}>
+          <div className="flex" style={{ minWidth: `${56 + diasColuna.length * 90}px` }}>
             <div className="flex flex-col">
               <div className="h-10 w-14 border-b border-zinc-100" />
               {horasVisiveis.map((h) => (
@@ -756,7 +1095,7 @@ export function GradeSemanal({
                               e.stopPropagation();
                               setSlotSelecionadoOpcoes(slot);
                             }}
-                            className={`absolute inset-x-0.5 z-10 flex flex-col justify-between rounded-md border p-1.5 text-[11px] font-semibold leading-tight shadow-sm cursor-pointer hover:opacity-95 overflow-hidden transition-all ${
+                            className={`absolute inset-x-0.5 z-10 flex flex-col justify-between rounded-lg border p-1.5 text-[11px] font-semibold leading-tight shadow-sm cursor-pointer hover:opacity-95 overflow-hidden transition-all ${
                               slot.isControleInterno
                                 ? "bg-amber-600 border-amber-700 text-white"
                                 : "bg-sky-600 border-sky-700 text-white"
@@ -773,6 +1112,23 @@ export function GradeSemanal({
                                   {slot.duracaoHoras || (slot.fim - slot.inicio)}h
                                 </span>
                               </div>
+
+                              {/* Recorrência especial */}
+                              {slot.tipoRecorrencia && slot.tipoRecorrencia !== "semanal" && (
+                                <div className="truncate bg-black/20 text-white rounded px-1 py-0.2 text-[8.5px] font-bold w-fit">
+                                  {slot.tipoRecorrencia === "pontual" && `📅 Pontual: ${slot.dataEspecifica}`}
+                                  {slot.tipoRecorrencia === "mensal_dia_fixo" && `🗓️ Todo dia ${slot.diaMes}`}
+                                  {slot.tipoRecorrencia === "mensal_dia_semana" && `🗓️ ${slot.ordemSemanaMes}ª semana`}
+                                </div>
+                              )}
+
+                              {/* Turmas Parceiras */}
+                              {slot.gruposAdicionaisIds && slot.gruposAdicionaisIds.length > 0 && (
+                                <div className="truncate bg-indigo-950/40 text-indigo-100 rounded px-1 py-0.2 text-[8.5px] font-bold w-fit">
+                                  👥 +{slot.gruposAdicionaisIds.length} parceira(s)
+                                </div>
+                              )}
+
                               {slot.nucleoNome && (
                                 <div className="truncate opacity-95 text-[9.5px] font-medium flex items-center gap-0.5">
                                   <span>📍 {slot.nucleoNome}</span>
@@ -801,7 +1157,7 @@ export function GradeSemanal({
 
       {/* Modal de Criação / Arrasto */}
       {modalAberto && (
-        <ModalSlot
+        <ModalBloco
           atividadeAtual={atividade}
           atividadeNome={atividadeNome}
           atividadesLocais={atividadesLocais}
@@ -809,6 +1165,8 @@ export function GradeSemanal({
           nucleos={nucleos}
           nucleoPadraoId={nucleoPadraoId}
           nucleoPadraoNome={nucleoPadraoNome}
+          turmasDisponiveis={turmasDisponiveis}
+          turmaAtualId={turmaAtualId}
           diasVisiveis={[...diasVisiveis]}
           initialDia={slotDraft?.dia}
           initialInicio={slotDraft?.inicio}
@@ -821,17 +1179,19 @@ export function GradeSemanal({
         />
       )}
 
-      {/* Modal de Opções do Slot Existente (Duplicar, Trocar Atividade, Excluir) */}
+      {/* Modal de Opções do Bloco Existente */}
       {slotSelecionadoOpcoes && (
-        <ModalOpcoesSlot
+        <ModalOpcoesBloco
           slot={slotSelecionadoOpcoes}
           atividadesLocais={atividadesLocais}
           funcionarios={funcionarios}
           nucleos={nucleos}
           nucleoPadraoId={nucleoPadraoId}
           nucleoPadraoNome={nucleoPadraoNome}
+          turmasDisponiveis={turmasDisponiveis}
+          turmaAtualId={turmaAtualId}
           onDuplicar={(diaDestino) => {
-            const copia: SlotAula = {
+            const copia: BlocoHorarioAula = {
               ...slotSelecionadoOpcoes,
               dia: diaDestino,
             };
@@ -842,7 +1202,7 @@ export function GradeSemanal({
             setSlotSelecionadoOpcoes(null);
           }}
           onTrocarAtividade={(novaAtv) => {
-            const atualizado: SlotAula = {
+            const atualizado: BlocoHorarioAula = {
               ...slotSelecionadoOpcoes,
               atividadeId: novaAtv.id,
               atividadeNome: novaAtv.nome,
@@ -852,7 +1212,7 @@ export function GradeSemanal({
             setSlotSelecionadoOpcoes(null);
           }}
           onTrocarResponsavel={(novoResp) => {
-            const atualizado: SlotAula = {
+            const atualizado: BlocoHorarioAula = {
               ...slotSelecionadoOpcoes,
               responsavelId: novoResp ? novoResp.id : undefined,
               responsavelNome: novoResp ? novoResp.nomeCompleto : undefined,
@@ -861,10 +1221,20 @@ export function GradeSemanal({
             setSlotSelecionadoOpcoes(null);
           }}
           onTrocarNucleo={(novoNuc) => {
-            const atualizado: SlotAula = {
+            const atualizado: BlocoHorarioAula = {
               ...slotSelecionadoOpcoes,
               nucleoId: novoNuc ? novoNuc.id : nucleoPadraoId,
               nucleoNome: novoNuc ? novoNuc.identificacao : nucleoPadraoNome,
+            };
+            notify(items.map((s) => (s === slotSelecionadoOpcoes ? atualizado : s)));
+            setSlotSelecionadoOpcoes(null);
+          }}
+          onAtualizarTurmasParceiras={(turmasIds) => {
+            const nomes = turmasDisponiveis.filter((t) => turmasIds.includes(t.id)).map((t) => t.nome);
+            const atualizado: BlocoHorarioAula = {
+              ...slotSelecionadoOpcoes,
+              gruposAdicionaisIds: turmasIds,
+              gruposAdicionaisNomes: nomes,
             };
             notify(items.map((s) => (s === slotSelecionadoOpcoes ? atualizado : s)));
             setSlotSelecionadoOpcoes(null);

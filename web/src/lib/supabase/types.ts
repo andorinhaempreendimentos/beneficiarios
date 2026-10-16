@@ -1290,7 +1290,7 @@ export type Database = {
         Row: {
           atividade_id: string | null
           created_at: string
-          dia_semana: number
+          dia_semana: number | null
           grupo_id: string
           hora_fim: string
           hora_inicio: string
@@ -1298,11 +1298,17 @@ export type Database = {
           nucleo_id: string | null
           responsavel_id: string | null
           updated_at: string
+          tipo_recorrencia: "semanal" | "mensal_dia_fixo" | "mensal_dia_semana" | "pontual"
+          dia_mes: number | null
+          ordem_semana_mes: number | null
+          ajuste_fim_de_semana: "manter" | "proximo_util" | "anterior_util" | null
+          data_especifica: string | null
+          grupos_adicionais_ids: string[] | null
         }
         Insert: {
           atividade_id?: string | null
           created_at?: string
-          dia_semana: number
+          dia_semana?: number | null
           grupo_id: string
           hora_fim: string
           hora_inicio: string
@@ -1310,11 +1316,17 @@ export type Database = {
           nucleo_id?: string | null
           responsavel_id?: string | null
           updated_at?: string
+          tipo_recorrencia?: "semanal" | "mensal_dia_fixo" | "mensal_dia_semana" | "pontual"
+          dia_mes?: number | null
+          ordem_semana_mes?: number | null
+          ajuste_fim_de_semana?: "manter" | "proximo_util" | "anterior_util" | null
+          data_especifica?: string | null
+          grupos_adicionais_ids?: string[] | null
         }
         Update: {
           atividade_id?: string | null
           created_at?: string
-          dia_semana?: number
+          dia_semana?: number | null
           grupo_id?: string
           hora_fim?: string
           hora_inicio?: string
@@ -1322,6 +1334,12 @@ export type Database = {
           nucleo_id?: string | null
           responsavel_id?: string | null
           updated_at?: string
+          tipo_recorrencia?: "semanal" | "mensal_dia_fixo" | "mensal_dia_semana" | "pontual"
+          dia_mes?: number | null
+          ordem_semana_mes?: number | null
+          ajuste_fim_de_semana?: "manter" | "proximo_util" | "anterior_util" | null
+          data_especifica?: string | null
+          grupos_adicionais_ids?: string[] | null
         }
         Relationships: [
           {
