@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { 
   ClipboardList, 
   MapPin, 
@@ -73,7 +74,9 @@ export function DetalhesNucleoView({
   const termoProfessores = t("instrutor", "Professores", true);
 
   // Estados de navegação e filtros
-  const [activeTab, setActiveTab] = useState<TabType>("turmas");
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get("tab") as TabType | null;
+  const [activeTab, setActiveTab] = useState<TabType>(tabParam || "turmas");
   const [viewMode, setViewMode] = useState<"cards" | "table">("cards");
   const [buscaTurma, setBuscaTurma] = useState("");
   const [buscaBeneficiario, setBuscaBeneficiario] = useState("");
@@ -263,6 +266,19 @@ export function DetalhesNucleoView({
 
           {/* Botões de Ação do Topo */}
           <div className="flex flex-wrap sm:flex-nowrap items-center gap-2.5 shrink-0 self-start lg:self-center">
+            <button
+              type="button"
+              onClick={() => setActiveTab("grade")}
+              className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-bold shadow-2xs transition-all cursor-pointer ${
+                activeTab === "grade"
+                  ? "border-sky-600 bg-sky-600 text-white shadow-xs"
+                  : "border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/50 hover:bg-sky-100 text-sky-700 dark:text-sky-300"
+              }`}
+            >
+              <Clock className="w-4 h-4" />
+              Grade de Horários
+            </button>
+
             {!isCoordenador && (
               <Link
                 href={`/nucleos/${nucleo.id}/editar`}
@@ -275,10 +291,10 @@ export function DetalhesNucleoView({
 
             <Link
               href={`/relatorios/frequencia?nucleoId=${nucleo.id}`}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/50 hover:bg-sky-100 text-sky-700 dark:text-sky-300 text-sm font-semibold shadow-2xs transition-all"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-zinc-50 text-zinc-700 dark:text-zinc-300 text-sm font-semibold shadow-2xs transition-all"
             >
               <FileText className="w-4 h-4" />
-              Pauta de Frequência
+              Pauta
             </Link>
 
             {isCoordenador ? (
@@ -443,6 +459,30 @@ export function DetalhesNucleoView({
       {/* ========================================================================= */}
       {activeTab === "turmas" && (
         <section className="space-y-4">
+          {/* Banner de Direcionamento para a Grade do Núcleo */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 rounded-2xl bg-sky-50/80 dark:bg-sky-950/40 border border-sky-100 dark:border-sky-900/60 text-xs">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 rounded-xl bg-sky-600 text-white font-bold shrink-0 shadow-2xs">
+                <Clock className="w-4 h-4" />
+              </div>
+              <div>
+                <span className="font-bold text-sky-950 dark:text-sky-200 block text-sm">
+                  Grade de Horários Centrada no {termoLocal}
+                </span>
+                <span className="text-sky-800/80 dark:text-sky-300/80">
+                  Os horários e a capacidade física da quadra pertencem a este núcleo. Monte a grade aqui e crie ou aloque as turmas diretamente nos blocos.
+                </span>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setActiveTab("grade")}
+              className="px-3.5 py-2 rounded-xl bg-sky-600 text-white font-bold text-xs shadow-xs hover:bg-sky-500 transition-all cursor-pointer shrink-0 flex items-center gap-1.5"
+            >
+              <Clock className="w-3.5 h-3.5" />
+              Abrir Grade de Horários &rarr;
+            </button>
+          </div>
           
           {/* Barra de Busca e Alternância de Visualização */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white dark:bg-zinc-900 p-3.5 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-2xs">

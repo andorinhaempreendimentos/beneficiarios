@@ -75,7 +75,7 @@ function formatHora(h: number) {
 }
 
 // Modal de adicionar/criar bloco de horário
-interface ModalBlocoProps {
+export interface ModalBlocoProps {
   modo?: "nucleo" | "turma";
   atividadeAtual?: AtividadeApi;
   atividadeNome: string;
@@ -90,12 +90,13 @@ interface ModalBlocoProps {
   initialDia?: string;
   initialInicio?: number;
   initialFim?: number;
+  initialResponsavelId?: string;
   onConfirm: (blocos: BlocoHorarioAula[]) => void;
   onClose: () => void;
   onCriarTurmaRapida?: (nome: string, atividadeId?: string) => Promise<{ id: string; nome: string }>;
 }
 
-function ModalBloco({
+export function ModalBloco({
   modo = "turma",
   atividadeAtual,
   atividadeNome,
@@ -110,6 +111,7 @@ function ModalBloco({
   initialDia,
   initialInicio,
   initialFim,
+  initialResponsavelId,
   onConfirm,
   onClose,
   onCriarTurmaRapida,
@@ -128,7 +130,7 @@ function ModalBloco({
   ]);
 
   // Recorrência mensal
-  const [modalidadeMensal, setModalidadeMensal] = useState<"dia_fixo" | "dia_semana">("dia_semana");
+  const [modalidadeMensal, setModalidadeMensal] = useState<"dia_semana" | "dia_fixo">("dia_semana");
   const [diaMes, setDiaMes] = useState<number>(10);
   const [repetirSegundoDiaFixo, setRepetirSegundoDiaFixo] = useState(false);
   const [segundoDiaMes, setSegundoDiaMes] = useState<number>(25);
@@ -145,7 +147,7 @@ function ModalBloco({
 
   // Metadados do bloco
   const [selectedAtividadeId, setSelectedAtividadeId] = useState(atividadeAtual?.id || "");
-  const [selectedResponsavelId, setSelectedResponsavelId] = useState("");
+  const [selectedResponsavelId, setSelectedResponsavelId] = useState(initialResponsavelId || "");
   const [selectedNucleoId, setSelectedNucleoId] = useState(nucleoPadraoId || "");
 
   // Alocação de Turma (especialmente no modo Núcleo)

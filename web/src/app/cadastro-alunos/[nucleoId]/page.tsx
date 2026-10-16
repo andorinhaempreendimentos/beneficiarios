@@ -50,6 +50,9 @@ interface AlunoCadastrado {
   turmaId: string;
   turmaNome: string;
   turmaIdentificador: string;
+  origem?: string;
+  responsavel?: { nomeCompleto?: string; cpf?: string; whatsapp?: string };
+  diasParticipacao?: Array<{ dia: string; turno: string }>;
 }
 
 function calcularIdade(dataNasc: string): number | null {
@@ -630,9 +633,16 @@ export default function PaginaCadastroAlunos({
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-3xs text-zinc-500">
                       <span>Nasc: {a.dataNascimento} ({a.idade !== null ? `${a.idade} anos` : "S/D"})</span>
                       {a.cpf && <span>• CPF: {a.cpf}</span>}
-                      <span className="font-bold text-sky-700">
-                        • Turma {a.turmaIdentificador}
-                      </span>
+                      {a.turmaIdentificador && (
+                        <span className="font-bold text-sky-700">
+                          • Turma {a.turmaIdentificador}
+                        </span>
+                      )}
+                      {a.responsavel?.nomeCompleto && (
+                        <span className="text-emerald-700 font-semibold">
+                          • Resp: {a.responsavel.nomeCompleto} {a.responsavel.whatsapp ? `(${a.responsavel.whatsapp})` : ""}
+                        </span>
+                      )}
                     </div>
                   </div>
 

@@ -137,18 +137,91 @@ export async function GET(
       };
     });
 
-    // 5. Verificar se já existe cadastro de alunos salvo para este núcleo
-    const { data: respostaExistente } = await supabase
+    // 5. Buscar todas as submissões deste núcleo (professores e responsáveis) e agregar todos os alunos
+    const { data: respostasExistentes } = await supabase
       .from("respostas_conferencia_beneficiarios")
       .select("*")
-      .eq("nucleo_id", nucleo.id)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+      .or(`nucleo_id.eq.${nucleo.id},nucleo_nome.eq."${nucleo.identificacao}"`)
+      .order("created_at", { ascending: false });
 
-    const alunosJaSalvos = Array.isArray(respostaExistente?.novos_alunos_cadastrados)
-      ? respostaExistente.novos_alunos_cadastrados
-      : [];
+    // Função auxiliar para calcular idade caso não venha calculada
+    function calcularIdadeAluno(dataNasc?: string | null): number | null {
+      if (!dataNasc) return null;
+      const nasc = new Date(dataNasc);
+      if (isNaN(nasc.getTime())) return null;
+      const hoje = new Date();
+      let idade = hoje.getFullYear() - nasc.getFullYear();
+      const m = hoje.getMonth() - nasc.getMonth();
+      if (m < 0 || (m === 0 && hoje.getDate() < nasc.getDate())) {
+        idade--;
+      }
+      return idade >= 0 ? idade : null;
+    }
+
+    const alunosAgregados: any[] = [];
+    const chavesVistas = new Set<string>();
+
+    (respostasExistentes || []).forEach((resp) => {
+      const listaAlunos = Array.isArray(resp.novos_alunos_cadastrados)
+        ? resp.novos_alunos_cadastrados
+        : [];
+
+      listaAlunos.forEach((a: any) => {
+        const nomeLimpo = (a.nomeCompleto || a.nome || "").trim().toUpperCase();
+        if (!nomeLimpo) return;
+
+        const dataNasc = a.dataNascimento ? String(a.dataNascimento).substring(0, 10) : "";
+        const chave = `${nomeLimpo}_${dataNasc}`;
+
+        if (!chavesVistas.has(chave)) {
+          chavesVistas.add(chave);
+
+          const idade =
+            a.idade !== undefined && a.idade !== null
+              ? a.idade
+              : calcularIdadeAluno(dataNasc);
+
+          // Se o aluno veio do formulário de responsáveis sem turmaId pré-definida,
+          // sugere a melhor turma com base na idade
+          let turmaId = a.turmaId || "";
+          let turmaNome = a.turmaNome || "";
+          let turmaIdentificador = a.turmaIdentificador || "";
+
+          if (!turmaId && turmasFormatadas.length > 0) {
+            const sugerida =
+              (idade !== null
+                ? turmasFormatadas.find(
+                    (t) => idade >= t.idadeMinima && idade <= t.idadeMaxima
+                  )
+                : null) || turmasFormatadas[0];
+
+            if (sugerida) {
+              turmaId = sugerida.id;
+              turmaNome = sugerida.nome;
+              turmaIdentificador = sugerida.identificador;
+            }
+          }
+
+          alunosAgregados.push({
+            ...a,
+            idTemp: a.idTemp || `agregado_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+            nomeCompleto: nomeLimpo,
+            dataNascimento: dataNasc,
+            idade,
+            sexo: a.sexo || "M",
+            cpf: a.cpf || "",
+            turmaId,
+            turmaNome,
+            turmaIdentificador,
+          });
+        }
+      });
+    });
+
+    const respostaRecente =
+      respostasExistentes && respostasExistentes.length > 0
+        ? respostasExistentes[0]
+        : null;
 
     return NextResponse.json({
       nucleo: {
@@ -161,8 +234,9 @@ export async function GET(
       },
       modalidade: modalidadeNome,
       turmas: turmasFormatadas,
-      alunosJaSalvos,
-      respostaExistente: respostaExistente || null,
+      alunosJaSalvos: alunosAgregados,
+      respostaExistente: respostaRecente || null,
+      totalAlunosCadastrados: alunosAgregados.length,
     });
   } catch (error: any) {
     console.error("[cadastro-alunos/[nucleoId] GET]", error);
