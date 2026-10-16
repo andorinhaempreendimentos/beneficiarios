@@ -14,15 +14,21 @@ function getSupabaseClient() {
   return createClient(url, key);
 }
 
+function isSenhaValida(s: string | null | undefined): boolean {
+  if (!s) return false;
+  const limpa = s.trim();
+  return limpa === "Datalake123#" || limpa === "Datalake123";
+}
+
 function validarSenha(req: Request): boolean {
   // 1. Header customizado
   const headerSenha = req.headers.get("x-datalake-senha");
-  if (headerSenha === SENHA_CORRETA) return true;
+  if (isSenhaValida(headerSenha)) return true;
 
   // 2. Query string
   const url = new URL(req.url);
   const querySenha = url.searchParams.get("senha");
-  if (querySenha === SENHA_CORRETA) return true;
+  if (isSenhaValida(querySenha)) return true;
 
   return false;
 }
@@ -142,7 +148,7 @@ export async function POST(req: Request) {
     const body = await req.json().catch(() => ({}));
     const senha = body?.senha;
 
-    if (senha !== SENHA_CORRETA) {
+    if (!isSenhaValida(senha)) {
       return NextResponse.json(
         { error: "Senha de acesso incorreta." },
         { status: 401 }

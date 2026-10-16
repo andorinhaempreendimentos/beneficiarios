@@ -85,7 +85,7 @@ export default function DatalakePage() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const salvo = sessionStorage.getItem("datalake_auth_token");
-      if (salvo === SENHA_LOCAL) {
+      if (salvo === "Datalake123#" || salvo === "Datalake123") {
         setAutenticado(true);
       } else {
         setLoading(false);
@@ -132,11 +132,12 @@ export default function DatalakePage() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (senhaInput.trim() === SENHA_LOCAL) {
-      sessionStorage.setItem("datalake_auth_token", SENHA_LOCAL);
+    const limpa = senhaInput.trim();
+    if (limpa === "Datalake123#" || limpa === "Datalake123") {
+      sessionStorage.setItem("datalake_auth_token", limpa);
       setErroSenha(null);
       setAutenticado(true);
-      carregarDados(SENHA_LOCAL);
+      carregarDados(limpa);
     } else {
       setErroSenha("Senha incorreta. Tente novamente.");
     }
