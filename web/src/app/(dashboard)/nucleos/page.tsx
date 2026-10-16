@@ -388,20 +388,21 @@ export default function NucleosPage() {
                     return (
                       <div
                         key={nucleo.id}
-                        className={`group relative rounded-2xl border transition-all flex flex-col justify-between min-h-[175px] gap-3 p-4 pb-3.5 ${
+                        className={`group relative rounded-2xl border transition-all flex flex-col justify-between min-h-[180px] gap-3 p-4 pb-3.5 ${
                           isSelected
                             ? "border-sky-500 bg-sky-50/30 ring-2 ring-sky-500/20 shadow-xs"
                             : "border-zinc-200 bg-white hover:border-zinc-300 hover:shadow-xs"
                         }`}
                       >
-                        {/* Checkbox Elegante no Canto Superior Esquerdo (Apenas Admin) */}
+                        {/* Checkbox em Cunha Perfeita no Vértice Superior Esquerdo (Apenas Admin) */}
                         {!isCoordenador && (
                           <label
-                            className={`absolute top-0 left-0 z-10 flex h-8 w-9 items-center justify-center rounded-br-xl border-r border-b transition-all cursor-pointer ${
+                            className={`absolute -top-px -left-px z-10 flex h-8 w-9 items-center justify-center rounded-tl-2xl rounded-br-xl border-r border-b transition-all cursor-pointer ${
                               isSelected
                                 ? "bg-sky-600 border-sky-600 text-white shadow-2xs"
-                                : "bg-zinc-100/90 border-zinc-200/80 text-zinc-400 group-hover:bg-zinc-200/80 group-hover:border-zinc-300"
+                                : "bg-zinc-100/90 border-zinc-200/80 text-zinc-400 group-hover:bg-zinc-200/90 group-hover:border-zinc-300"
                             }`}
+                            title="Selecionar este núcleo"
                           >
                             <input
                               type="checkbox"
@@ -413,30 +414,33 @@ export default function NucleosPage() {
                           </label>
                         )}
 
-                        {/* Topo: Região e Status badge */}
-                        <div className="flex items-center justify-between min-h-[26px]">
-                          {(nucleo.regiaoNome || nucleo.regiao) ? (
-                            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-sky-700 bg-sky-50 dark:bg-sky-950/60 dark:text-sky-300 px-2 py-0.5 rounded-md">
-                              <MapPin className="h-3 w-3" />
-                              {nucleo.regiaoNome || nucleo.regiao}
-                            </span>
-                          ) : <span />}
+                        {/* Topo: Status badge alinhado à direita (sem colisão com o checkbox) */}
+                        <div className="flex items-center justify-end min-h-[26px]">
                           <StatusNucleoBadge nucleoId={nucleo.id} emFuncionamento={nucleo.emFuncionamento} />
                         </div>
 
-                        {/* Título e Subtítulo com largura total alinhados à esquerda */}
+                        {/* Título e Subtítulo com Região Integrada */}
                         <div className="flex flex-col gap-1 -mt-1">
                           <Link
                             href={`/nucleos/${nucleo.id}`}
-                            className="font-bold text-zinc-900 text-sm leading-snug hover:text-sky-600 transition-colors"
+                            className="font-bold text-zinc-900 text-sm leading-snug hover:text-sky-600 transition-colors line-clamp-1"
+                            title={nucleo.identificacao}
                           >
                             {nucleo.identificacao}
                           </Link>
-                          {nucleo.nomeLocal && (
-                            <span className="text-xs text-zinc-400 leading-tight">
-                              {nucleo.nomeLocal}
-                            </span>
-                          )}
+                          <div className="flex items-center gap-2 flex-wrap">
+                            {nucleo.nomeLocal && (
+                              <span className="text-xs text-zinc-400 leading-tight">
+                                {nucleo.nomeLocal}
+                              </span>
+                            )}
+                            {(nucleo.regiaoNome || nucleo.regiao) && (
+                              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-sky-700 bg-sky-50 dark:bg-sky-950/60 dark:text-sky-300 px-2 py-0.5 rounded-md border border-sky-100 dark:border-sky-900/50">
+                                <MapPin className="h-2.5 w-2.5" />
+                                {nucleo.regiaoNome || nucleo.regiao}
+                              </span>
+                            )}
+                          </div>
                         </div>
 
                         {/* Localização */}
@@ -445,24 +449,19 @@ export default function NucleosPage() {
                           <span className="truncate">{[nucleo.bairro, nucleo.cidade].filter(Boolean).join(" · ") || "—"}</span>
                         </div>
 
-                        {/* Rodapé: Organização e Ações */}
+                        {/* Rodapé: Organização e Ações (Sem botão Acessar redundante) */}
                         <div className="flex items-center justify-between text-xs text-zinc-500 border-t border-zinc-100/60 pt-2.5 mt-auto shrink-0">
-                          <span className="truncate max-w-[65%] font-medium text-zinc-600" title={nucleo.organizacao?.nome || ""}>
+                          <span className="truncate max-w-[75%] font-medium text-zinc-600" title={nucleo.organizacao?.nome || ""}>
                             {nucleo.organizacao?.nome || "—"}
                           </span>
-                          <div className="flex items-center gap-2 shrink-0">
-                            <Link href={`/nucleos/${nucleo.id}`} className="text-xs font-semibold text-sky-600 hover:text-sky-700 transition-colors py-0.5">
-                              Acessar
+                          {!isCoordenador && (
+                            <Link
+                              href={`/nucleos/${nucleo.id}/editar`}
+                              className="text-xs font-semibold text-zinc-600 hover:text-sky-600 transition-colors py-0.5 px-1.5 rounded-md hover:bg-zinc-50"
+                            >
+                              Editar
                             </Link>
-                            {!isCoordenador && (
-                              <>
-                                <span className="text-zinc-200">|</span>
-                                <Link href={`/nucleos/${nucleo.id}/editar`} className="text-xs text-zinc-500 hover:text-zinc-700 transition-colors py-0.5">
-                                  Editar
-                                </Link>
-                              </>
-                            )}
-                          </div>
+                          )}
                         </div>
                       </div>
                     );
