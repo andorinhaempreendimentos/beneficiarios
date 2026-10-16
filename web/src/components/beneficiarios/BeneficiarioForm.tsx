@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { z } from "zod";
-import { Plus, Trash2, User, ArrowUpRight } from "lucide-react";
+import { Plus, Trash2, User, AlertCircle, HeartPulse, ShieldCheck, Shirt, School, Home, Users } from "lucide-react";
 import {
   Button,
   Field,
@@ -33,6 +33,10 @@ const PERGUNTAS_PARQ = [
   "Está gestante ou suspeita estar gestante?",
 ];
 
+const OPCOES_TAMANHO_UNIFORME = [
+  "8", "10", "12", "14", "16", "PP", "P", "M", "G", "GG", "EGG"
+];
+
 const beneficiarioSchema = z.object({
   nomeCompleto: z.string().min(3, "Nome deve ter pelo menos 3 caracteres."),
   dataNascimento: z.string().min(1, "Data de nascimento é obrigatória."),
@@ -59,8 +63,54 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+
+  // 1. Atleta & Uniforme
   const [sexo, setSexo] = useState(b?.sexo || "Masculino");
   const [pcd, setPcd] = useState(b?.pcd ?? false);
+  const [tamanhoUniforme, setTamanhoUniforme] = useState(b?.tamanhoUniforme || "12");
+  const [uniformeEntregue, setUniformeEntregue] = useState(b?.uniformeEntregue ?? false);
+
+  // 2. Endereço
+  const [cep, setCep] = useState(b?.cep ?? "");
+  const [logradouro, setLogradouro] = useState(b?.logradouro ?? "");
+  const [bairro, setBairro] = useState(b?.bairro ?? "");
+  const [cidade, setCidade] = useState(b?.cidade ?? "Palmas");
+  const [estado, setEstado] = useState(b?.estado ?? "TO");
+  const [buscandoCep, setBuscandoCep] = useState(false);
+
+  // 3. Família & Responsável
+  const [moraCom, setMoraCom] = useState(b?.moraCom || "Pais");
+
+  // 4. Saúde & PAR-Q
+  const [peso, setPeso] = useState<string>(
+    b?.anamneseDados?.peso != null ? String(b.anamneseDados.peso) : ""
+  );
+  const [altura, setAltura] = useState<string>(
+    b?.anamneseDados?.altura != null ? String(b.anamneseDados.altura) : ""
+  );
+  const [tipoSanguineo, setTipoSanguineo] = useState<string>(
+    (b?.anamneseDados?.tipoSanguineo as string) || ""
+  );
+  const [acompanhamentoUbs, setAcompanhamentoUbs] = useState(
+    b?.anamneseDados?.acompanhamentoUbs === true ? "Sim" : "Não"
+  );
+  const [autorizacaoImagem, setAutorizacaoImagem] = useState(
+    b?.anamneseDados?.autorizacaoImagem === false ? "Não" : "Sim"
+  );
+
+  const [parQ, setParQ] = useState<PerguntaParQ[]>(() => {
+    if (b?.parQ?.length) return b.parQ;
+    if (b?.anamneseDados?.parq?.length) return b.anamneseDados.parq;
+    return PERGUNTAS_PARQ.map((p) => ({ pergunta: p, resposta: "Não" }));
+  });
+  const algumaRespostaSim = parQ.some((p) => p.resposta === "Sim");
+
+  // Cálculo de IMC dinâmico
+  const pNum = parseFloat(peso);
+  const aNum = parseFloat(altura);
+  const imcCalculado = pNum > 0 && aNum > 0 ? (pNum / (aNum * aNum)).toFixed(1) : null;
+
+  // 5. Vínculos e Turmas
   const [vinculos, setVinculos] = useState<VinculoTurma[]>(() => {
     if (b?.turmas && b.turmas.length > 0) return b.turmas;
     if ((b as any)?.gruposInfo && (b as any).gruposInfo.length > 0) {
@@ -80,24 +130,12 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
     return [];
   });
   const [anexos, setAnexos] = useState<Anexo[]>(b?.anexos ?? []);
-  const [parQ, setParQ] = useState<PerguntaParQ[]>(
-    b?.parQ?.length ? b.parQ : PERGUNTAS_PARQ.map((p) => ({ pergunta: p }))
-  );
-  const algumaRespostaSim = parQ.some((p) => p.resposta === "Sim");
-
-  const [cep, setCep] = useState(b?.cep ?? "");
-  const [logradouro, setLogradouro] = useState(b?.logradouro ?? "");
-  const [bairro, setBairro] = useState(b?.bairro ?? "");
-  const [cidade, setCidade] = useState(b?.cidade ?? "");
-  const [estado, setEstado] = useState(b?.estado ?? "");
-  const [buscandoCep, setBuscandoCep] = useState(false);
 
   const initialNucleoId = b?.nucleoId ||
     (b as any)?.gruposInfo?.[0]?.nucleoId ||
     (b as any)?.turmasInfo?.[0]?.nucleoId ||
     (b as any)?.turmas?.[0]?.nucleoId ||
     "";
-
   const [nucleoId, setNucleoId] = useState(initialNucleoId);
 
   async function handleCepBlur() {
@@ -120,48 +158,119 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
     setErro(null);
 
     const formData = new FormData(e.currentTarget);
-    const cpf = String(formData.get("cpf") || "");
-    const cep = String(formData.get("cep") || "");
-    const email = String(formData.get("email") || "");
+    const cpf = String(formData.get("cpf") || "").trim();
+    const cepVal = String(formData.get("cep") || "").trim();
+    const email = String(formData.get("email") || "").trim();
+    const cpfResp = String(formData.get("cpfResponsavel") || "").trim();
 
     if (cpf && !validarCpf(cpf)) {
-      setErro("CPF inválido. Por favor, verifique o número digitado.");
+      setErro("CPF do aluno inválido. Por favor, verifique os 11 dígitos.");
+      setLoading(false);
+      return;
+    }
+
+    if (cpfResp && !validarCpf(cpfResp)) {
+      setErro("CPF do responsável inválido. Por favor, verifique os 11 dígitos.");
       setLoading(false);
       return;
     }
 
     if (email && !validarEmail(email)) {
-      setErro("Endereço de e-mail inválido. Utilize o formato termo1@termo2.termo3.");
+      setErro("Endereço de e-mail inválido. Utilize o formato nome@dominio.com.");
       setLoading(false);
       return;
     }
 
-    if (cep && !validarCep(cep)) {
+    if (cepVal && !validarCep(cepVal)) {
       setErro("CEP inválido. Deve conter exatamente 8 dígitos.");
       setLoading(false);
       return;
     }
 
+    // Estrutura flexível da Anamnese (Modelo 1 + Modelo 2)
+    const anamneseDados = {
+      peso: pNum > 0 ? pNum : null,
+      altura: aNum > 0 ? aNum : null,
+      imc: imcCalculado ? parseFloat(imcCalculado) : null,
+      tipoSanguineo: tipoSanguineo || null,
+      acompanhamentoUbs: acompanhamentoUbs === "Sim",
+      nomeCamisa: String(formData.get("nomeCamisa") || "").trim() || null,
+      numeroCamisa: formData.get("numeroCamisa") ? Number(formData.get("numeroCamisa")) : null,
+      autorizacaoImagem: autorizacaoImagem === "Sim",
+      parentescoResponsavel: String(formData.get("parentescoResponsavel") || "").trim() || null,
+      contatoEmergencia: {
+        nome: String(formData.get("emergenciaNome") || "").trim() || null,
+        parentesco: String(formData.get("emergenciaParentesco") || "").trim() || null,
+        telefone: String(formData.get("emergenciaTelefone") || "").trim() || null,
+      },
+      parq: parQ,
+    };
+
+    // Payload completo mapeado para as 58 colunas do Supabase + JSONB
     const data: Record<string, unknown> = {
-      nomeCompleto: formData.get("nomeCompleto"),
-      nomeSocial: formData.get("nomeSocial"),
-      dataNascimento: formData.get("dataNascimento"),
-      sexo: formData.get("sexo"),
-      cpf,
-      rg: formData.get("rg"),
-      orgaoEmissor: formData.get("orgaoEmissor"),
-      celular: formData.get("celular"),
-      telefoneRecado: formData.get("telefoneRecado"),
-      cep,
-      logradouro: formData.get("logradouro"),
-      numero: formData.get("numero"),
-      bairro: formData.get("bairro"),
-      cidade: formData.get("cidade"),
-      estado: formData.get("estado"),
+      // 1. Dados Básicos do Aluno
+      nomeCompleto: String(formData.get("nomeCompleto") || "").trim(),
+      nomeSocial: String(formData.get("nomeSocial") || "").trim() || null,
+      dataNascimento: String(formData.get("dataNascimento") || "").trim(),
+      sexo,
+      raca: String(formData.get("raca") || "").trim() || null,
+      cpf: cpf || null,
+      rg: String(formData.get("rg") || "").trim() || null,
+      orgaoExpedidor: String(formData.get("orgaoExpedidor") || "").trim() || null,
+      ufExpedidor: String(formData.get("ufExpedidor") || "").trim() || null,
+      numeroNis: String(formData.get("numeroNis") || "").trim() || null,
       pcd,
-      tipoPcd: formData.get("tipoPcd") || null,
+      tipoPcd: pcd ? String(formData.get("tipoPcd") || "").trim() || null : null,
+
+      // Uniforme
+      tamanhoUniforme,
+      uniformeEntregue,
+
+      // 2. Endereço e Contatos
+      cep: cepVal || null,
+      logradouro: logradouro || null,
+      numero: String(formData.get("numero") || "").trim() || null,
+      complemento: String(formData.get("complemento") || "").trim() || null,
+      bairro: bairro || null,
+      cidade: cidade || "Palmas",
+      estado: estado || "TO",
+      celular: String(formData.get("celular") || "").trim() || null,
+      telefoneResidencial: String(formData.get("telefoneResidencial") || "").trim() || null,
+      email: email || null,
+
+      // 3. Família e Responsável
+      nomeResponsavel: String(formData.get("nomeResponsavel") || "").trim() || null,
+      cpfResponsavel: cpfResp || null,
+      rgResponsavel: String(formData.get("rgResponsavel") || "").trim() || null,
+      celularResponsavel: String(formData.get("celularResponsavel") || "").trim() || null,
+      emailResponsavel: String(formData.get("emailResponsavel") || "").trim() || null,
+      nomeMae: String(formData.get("nomeMae") || "").trim() || null,
+      nomePai: String(formData.get("nomePai") || "").trim() || null,
+      moraCom,
+      pessoasEmCasa: String(formData.get("pessoasEmCasa") || "").trim() || null,
+      situacaoMoradia: String(formData.get("situacaoMoradia") || "").trim() || null,
+      beneficioSocioassistencial: String(formData.get("beneficioSocioassistencial") || "").trim() || null,
+      ocupacaoAtual: String(formData.get("ocupacaoAtual") || "").trim() || null,
+
+      // 4. Vida Escolar
+      redeEnsino: String(formData.get("redeEnsino") || "").trim() || null,
+      nomeEscola: String(formData.get("nomeEscola") || "").trim() || null,
+      turnoEscolar: String(formData.get("turnoEscolar") || "").trim() || null,
+      segmentoEscolar: String(formData.get("segmentoEscolar") || "").trim() || null,
+      serie: String(formData.get("serie") || "").trim() || null,
+      turmaEscolar: String(formData.get("turmaEscolar") || "").trim() || null,
+      codigoAtleta: String(formData.get("codigoAtleta") || "").trim() || null,
+      nivelEscolaridade: String(formData.get("nivelEscolaridade") || "").trim() || null,
+
+      // 5. Saúde e Observações
+      comorbidades: String(formData.get("comorbidades") || "").trim() || null,
+      razoesInscricao: String(formData.get("razoesInscricao") || "").trim() || null,
+      observacoes: String(formData.get("observacoes") || "").trim() || null,
+
+      // 6. Núcleo, Status e Anamnese JSONB
       nucleoId: String(formData.get("nucleoId") || "").trim() || null,
       status: normalizarStatusBeneficiario(formData.get("status") as string | null),
+      anamneseDados,
     };
 
     const validation = beneficiarioSchema.safeParse(data);
@@ -182,7 +291,6 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
       if (benSavedId) {
         await beneficiariosApi.update(benSavedId, data);
       } else {
-        // Cadastro pelo painel é sempre origem interna; a inscrição pública grava 'online'.
         const created = await beneficiariosApi.create({ ...data, tipoMatricula: "interna" });
         benSavedId = created.id;
       }
@@ -225,54 +333,87 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
       {erro && (
-        <div className="rounded-lg bg-red-50 p-4 text-sm text-red-700">
-          {erro}
+        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 flex items-center gap-2">
+          <AlertCircle className="h-5 w-5 flex-shrink-0 text-red-600" />
+          <span>{erro}</span>
         </div>
       )}
-      <FormSection title={`1. Identificação do ${termoBeneficiario}`}>
+
+      {/* ─────────────────────────────────────────────────────────────
+          SEÇÃO 1: IDENTIFICAÇÃO DO ALUNO & UNIFORME
+      ───────────────────────────────────────────────────────────── */}
+      <FormSection title={`1. Identificação do(a) ${termoBeneficiario} & Uniforme`} defaultOpen={true}>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <Field label="Foto" className="lg:col-span-3 sm:max-w-xs">
+          <Field label="Foto do Perfil" className="lg:col-span-3 sm:max-w-xs">
             {b?.fotoUrl ? (
-              <div className="flex h-24 w-24 items-center justify-center rounded-full bg-zinc-100">
+              <div className="flex h-24 w-24 items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-800">
                 <User className="h-10 w-10 text-zinc-400" />
               </div>
             ) : (
-              <FileUpload label="Enviar foto de perfil" />
+              <FileUpload label="Enviar foto do beneficiário (3x4)" />
             )}
           </Field>
-          <Field label="Nome completo" required error={fieldErrors.nomeCompleto}>
-            <Input name="nomeCompleto" defaultValue={b?.nomeCompleto} />
+
+          <Field label="Nome Completo *" required error={fieldErrors.nomeCompleto}>
+            <Input name="nomeCompleto" defaultValue={b?.nomeCompleto} placeholder="Nome civil completo" />
           </Field>
-          <Field label="Nome social">
-            <Input name="nomeSocial" defaultValue={b?.nomeSocial} />
+
+          <Field label="Nome Social / Apelido">
+            <Input name="nomeSocial" defaultValue={b?.nomeSocial} placeholder="Como prefere ser chamado" />
           </Field>
-          <Field label="Data de Nasc." required error={fieldErrors.dataNascimento}>
+
+          <Field label="Data de Nascimento *" required error={fieldErrors.dataNascimento}>
             <Input type="date" name="dataNascimento" defaultValue={b?.dataNascimento} />
           </Field>
-          <Field label="Raça">
-            <Select name="raca" defaultValue={b?.raca ?? ""}>
-              <option value="">Selecione</option>
-              <option>Preta</option>
-              <option>Parda</option>
-              <option>Branca</option>
-              <option>Amarela</option>
-              <option>Indígena</option>
-              <option>Outras</option>
-            </Select>
-          </Field>
-          <Field label="Sexo" required error={fieldErrors.sexo}>
+
+          <Field label="Sexo *" required error={fieldErrors.sexo}>
             <RadioGroup
               name="sexo"
-              options={["Masculino", "Feminino", "Não Informar"]}
+              options={["Masculino", "Feminino", "Outro", "Não Informar"]}
               defaultValue={b?.sexo || "Masculino"}
               value={sexo}
               onChange={(v) => setSexo(v as any)}
             />
           </Field>
-          <Field label="Data de cadastro" required>
-            <Input type="date" name="dataCadastro" defaultValue={b?.dataCadastro} />
+
+          <Field label="Raça / Cor">
+            <Select name="raca" defaultValue={b?.raca ?? ""}>
+              <option value="">Selecione...</option>
+              <option value="Branca">Branca</option>
+              <option value="Preta">Preta</option>
+              <option value="Parda">Parda</option>
+              <option value="Indígena">Indígena</option>
+              <option value="Amarela">Amarela</option>
+              <option value="Outras">Outras</option>
+            </Select>
           </Field>
-          <Field label="PCD" required>
+
+          <Field label="CPF do Aluno">
+            <Input name="cpf" mask="cpf" defaultValue={b?.cpf} placeholder="000.000.000-00" />
+          </Field>
+
+          <Field label="RG ou Certidão de Nascimento">
+            <Input name="rg" defaultValue={b?.rg} placeholder="Número do documento" />
+          </Field>
+
+          <Field label="Órgão Expedidor">
+            <Select name="orgaoExpedidor" defaultValue={b?.orgaoExpedidor ?? "SSP"}>
+              <option value="">Selecione</option>
+              {["SSP", "DETRAN", "DIC", "IFP", "CBM", "PC", "PM", "OUTROS"].map((o) => (
+                <option key={o} value={o}>{o}</option>
+              ))}
+            </Select>
+          </Field>
+
+          <Field label="UF Expedidor">
+            <Input name="ufExpedidor" defaultValue={b?.ufExpedidor ?? "TO"} maxLength={2} placeholder="TO" />
+          </Field>
+
+          <Field label="Número do NIS (CadÚnico)">
+            <Input name="numeroNis" mask="numeros" defaultValue={b?.numeroNis} placeholder="Número NIS" />
+          </Field>
+
+          <Field label="PCD (Pessoa com Deficiência) *" required>
             <RadioGroup
               name="pcd"
               options={["Sim", "Não"]}
@@ -280,25 +421,484 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
               onChange={(v) => setPcd(v === "Sim")}
             />
           </Field>
+
           {pcd && (
-            <Field label="Tipo de PCD">
+            <Field label="Tipo de PCD / Laudo">
               <Select name="tipoPcd" defaultValue={b?.tipoPcd ?? ""}>
                 <option value="">Selecione</option>
+                <option>Deficiência Física</option>
                 <option>Deficiência Visual</option>
                 <option>Deficiência Auditiva</option>
-                <option>Deficiência Física</option>
-                <option>Deficiência Mental/Intelectual</option>
-                <option>Deficiência Múltipla</option>
-                <option>Surdocegueira</option>
-                <option>Autismo (Leve)</option>
-                <option>Autismo (Moderado)</option>
-                <option>Autismo (Severo)</option>
+                <option>Deficiência Intelectual</option>
+                <option>Autismo (TEA)</option>
                 <option>Síndrome de Down</option>
+                <option>Deficiência Múltipla</option>
                 <option>Outros</option>
               </Select>
             </Field>
           )}
-          <Field label={`${termoLocal} (Polo)`} required>
+        </div>
+
+        {/* Grade de Uniforme (Consolidação Modelo 2) */}
+        <div className="mt-4 rounded-xl border border-zinc-200 bg-zinc-50/70 p-4 dark:border-zinc-800 dark:bg-zinc-900/50">
+          <div className="mb-3 flex items-center justify-between">
+            <div className="flex items-center gap-2 text-xs font-semibold text-zinc-900 dark:text-zinc-100 uppercase tracking-wide">
+              <Shirt className="h-4 w-4 text-blue-600" />
+              <span>Especificações do Uniforme / Kit Esportivo</span>
+            </div>
+            <label className="flex items-center gap-1.5 text-xs text-zinc-700 dark:text-zinc-300 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={uniformeEntregue}
+                onChange={(e) => setUniformeEntregue(e.target.checked)}
+                className="rounded border-zinc-300 text-blue-600 focus:ring-blue-500"
+              />
+              Uniforme já entregue
+            </label>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <Field label="Tamanho da Camisa">
+              <Select
+                value={tamanhoUniforme}
+                onChange={(e) => setTamanhoUniforme(e.target.value)}
+              >
+                {OPCOES_TAMANHO_UNIFORME.map((t) => (
+                  <option key={t} value={t}>{t} {["8","10","12","14","16"].includes(t) ? "(Infantojuvenil)" : "(Adulto)"}</option>
+                ))}
+              </Select>
+            </Field>
+
+            <Field label="Nome Estampado na Camisa">
+              <Input
+                name="nomeCamisa"
+                defaultValue={(b?.anamneseDados?.nomeCamisa as string) || ""}
+                placeholder="Ex: PIETRO"
+              />
+            </Field>
+
+            <Field label="Número Preferencial da Camisa">
+              <Input
+                name="numeroCamisa"
+                type="number"
+                defaultValue={(b?.anamneseDados?.numeroCamisa as number) || ""}
+                placeholder="Ex: 10"
+              />
+            </Field>
+          </div>
+        </div>
+      </FormSection>
+
+      {/* ─────────────────────────────────────────────────────────────
+          SEÇÃO 2: ENDEREÇO & CONTATOS
+      ───────────────────────────────────────────────────────────── */}
+      <FormSection title={`2. Endereço Residencial & Contatos`} defaultOpen={false}>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <Field label="CEP" required>
+            <Input
+              name="cep"
+              mask="cep"
+              value={cep}
+              onChange={(e) => setCep(e.target.value)}
+              onBlur={handleCepBlur}
+              placeholder="00000-000"
+            />
+            {buscandoCep && <span className="text-xs text-blue-600">Buscando endereço...</span>}
+          </Field>
+
+          <Field label="Logradouro (Rua, Av., Alameda) *" required className="lg:col-span-2">
+            <Input
+              name="logradouro"
+              value={logradouro}
+              onChange={(e) => setLogradouro(e.target.value)}
+              placeholder="Ex: Rua 12, Qd 19"
+            />
+          </Field>
+
+          <Field label="Número *" required>
+            <Input name="numero" defaultValue={b?.numero} placeholder="Ex: Lt 22 / SN" />
+          </Field>
+
+          <Field label="Complemento">
+            <Input name="complemento" defaultValue={b?.complemento} placeholder="Casa, Apto, Bloco" />
+          </Field>
+
+          <Field label="Bairro *" required>
+            <Input
+              name="bairro"
+              value={bairro}
+              onChange={(e) => setBairro(e.target.value)}
+              placeholder="Ex: Sol Nascente"
+            />
+          </Field>
+
+          <Field label="Cidade *" required>
+            <Input
+              name="cidade"
+              value={cidade}
+              onChange={(e) => setCidade(e.target.value)}
+            />
+          </Field>
+
+          <Field label="Estado (UF) *" required>
+            <Input
+              name="estado"
+              value={estado}
+              onChange={(e) => setEstado(e.target.value)}
+            />
+          </Field>
+
+          <Field label="WhatsApp / Celular Principal *" required>
+            <Input name="celular" mask="telefone" defaultValue={b?.celular} placeholder="(63) 99999-9999" />
+          </Field>
+
+          <Field label="Telefone Fixo / Residencial">
+            <Input name="telefoneResidencial" mask="telefone" defaultValue={b?.telefoneResidencial} placeholder="(63) 3215-0000" />
+          </Field>
+
+          <Field label="E-mail de Contato">
+            <Input type="email" name="email" defaultValue={b?.email} placeholder="contato@exemplo.com" />
+          </Field>
+        </div>
+      </FormSection>
+
+      {/* ─────────────────────────────────────────────────────────────
+          SEÇÃO 3: FAMÍLIA, RESPONSÁVEL & DADOS SOCIAIS
+      ───────────────────────────────────────────────────────────── */}
+      <FormSection title={`3. Família, ${termoResponsavel} Legal & Perfil Social`} defaultOpen={false}>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <Field label={`Nome do(a) ${termoResponsavel} Legal`} className="sm:col-span-2">
+            <Input name="nomeResponsavel" defaultValue={b?.nomeResponsavel} placeholder="Nome do pai, mãe ou tutor legal" />
+          </Field>
+
+          <Field label="Parentesco do Responsável">
+            <Select
+              name="parentescoResponsavel"
+              defaultValue={(b?.anamneseDados?.parentescoResponsavel as string) || "Mãe"}
+            >
+              <option value="Mãe">Mãe</option>
+              <option value="Pai">Pai</option>
+              <option value="Avó/Avô">Avó / Avô</option>
+              <option value="Tio/Tia">Tio / Tia</option>
+              <option value="Outro">Outro Tutor Legal</option>
+            </Select>
+          </Field>
+
+          <Field label={`CPF do ${termoResponsavel}`}>
+            <Input name="cpfResponsavel" mask="cpf" defaultValue={b?.cpfResponsavel} placeholder="000.000.000-00" />
+          </Field>
+
+          <Field label={`RG do ${termoResponsavel}`}>
+            <Input name="rgResponsavel" defaultValue={b?.rgResponsavel} placeholder="Número do RG" />
+          </Field>
+
+          <Field label={`WhatsApp / Celular do ${termoResponsavel}`}>
+            <Input
+              name="celularResponsavel"
+              mask="telefone"
+              defaultValue={b?.celularResponsavel}
+              placeholder="(63) 99999-9999"
+            />
+          </Field>
+
+          <Field label={`E-mail do ${termoResponsavel}`}>
+            <Input type="email" name="emailResponsavel" defaultValue={b?.emailResponsavel} placeholder="responsavel@email.com" />
+          </Field>
+
+          <Field label="Nome da Mãe">
+            <Input name="nomeMae" defaultValue={b?.nomeMae} placeholder="Nome completo da mãe" />
+          </Field>
+
+          <Field label="Nome do Pai">
+            <Input name="nomePai" defaultValue={b?.nomePai} placeholder="Nome completo do pai" />
+          </Field>
+
+          <Field label="Com quem o aluno mora?">
+            <RadioGroup
+              name="moraCom"
+              options={["Pais", "Pai", "Mãe", "Avós", "Outros"]}
+              value={moraCom}
+              onChange={(v) => setMoraCom(v)}
+            />
+          </Field>
+
+          <Field label="Nº de Pessoas no Domicílio">
+            <Select name="pessoasEmCasa" defaultValue={b?.pessoasEmCasa ?? ""}>
+              <option value="">Selecione...</option>
+              <option value="1">1 pessoa (apenas o aluno)</option>
+              <option value="2">2 pessoas</option>
+              <option value="3">3 pessoas</option>
+              <option value="4">4 pessoas</option>
+              <option value="5 ou mais">5 pessoas ou mais</option>
+            </Select>
+          </Field>
+
+          <Field label="Situação da Moradia">
+            <Select name="situacaoMoradia" defaultValue={b?.situacaoMoradia ?? ""}>
+              <option value="">Selecione...</option>
+              <option value="Própria quitada">Própria quitada</option>
+              <option value="Própria financiada">Própria financiada</option>
+              <option value="Alugada">Alugada</option>
+              <option value="Cedida por parentes">Cedida por parentes</option>
+              <option value="Outra">Outra</option>
+            </Select>
+          </Field>
+
+          <Field label="Benefício Socioassistencial">
+            <Select name="beneficioSocioassistencial" defaultValue={b?.beneficioSocioassistencial ?? ""}>
+              <option value="">Nenhum</option>
+              <option value="Bolsa Família">Bolsa Família</option>
+              <option value="BPC">BPC (Benefício de Prestação Continuada)</option>
+              <option value="Aluguel social">Aluguel Social</option>
+              <option value="Outro">Outro Benefício</option>
+            </Select>
+          </Field>
+
+          <Field label="Ocupação / Trabalho do Responsável">
+            <Input name="ocupacaoAtual" defaultValue={b?.ocupacaoAtual} placeholder="Ex: Autônomo, Comércio, etc." />
+          </Field>
+        </div>
+
+        {/* Contato Secundário de Emergência (Modelo 1 + Modelo 2) */}
+        <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50/60 p-4 dark:border-amber-900/40 dark:bg-amber-950/20">
+          <div className="mb-3 text-xs font-semibold text-amber-800 dark:text-amber-300 uppercase tracking-wide flex items-center gap-1.5">
+            <AlertCircle className="h-4 w-4" />
+            <span>Contato de Emergência Secundário (além do responsável)</span>
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <Field label="Nome do Contato">
+              <Input
+                name="emergenciaNome"
+                defaultValue={(b?.anamneseDados?.contatoEmergencia?.nome as string) || ""}
+                placeholder="Ex: Maria (Tia / Vizinha)"
+              />
+            </Field>
+            <Field label="Grau de Parentesco">
+              <Input
+                name="emergenciaParentesco"
+                defaultValue={(b?.anamneseDados?.contatoEmergencia?.parentesco as string) || ""}
+                placeholder="Ex: Avó, Tia, Padrinho"
+              />
+            </Field>
+            <Field label="Telefone de Emergência">
+              <Input
+                name="emergenciaTelefone"
+                mask="telefone"
+                defaultValue={(b?.anamneseDados?.contatoEmergencia?.telefone as string) || ""}
+                placeholder="(63) 99999-9999"
+              />
+            </Field>
+          </div>
+        </div>
+      </FormSection>
+
+      {/* ─────────────────────────────────────────────────────────────
+          SEÇÃO 4: VIDA ESCOLAR
+      ───────────────────────────────────────────────────────────── */}
+      <FormSection title="4. Vida Escolar do Aluno" defaultOpen={false}>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <Field label="Rede de Ensino">
+            <Select name="redeEnsino" defaultValue={b?.redeEnsino ?? "Municipal"}>
+              <option value="Municipal">Municipal</option>
+              <option value="Estadual">Estadual</option>
+              <option value="Particular">Particular</option>
+              <option value="Federal">Federal</option>
+              <option value="Não estuda">Não estuda</option>
+            </Select>
+          </Field>
+
+          <Field label="Nome da Escola" className="sm:col-span-2">
+            <Input name="nomeEscola" defaultValue={b?.nomeEscola} placeholder="Ex: Escola Municipal Jorge Amado" />
+          </Field>
+
+          <Field label="Turno Escolar">
+            <Select name="turnoEscolar" defaultValue={b?.turno ?? "Vespertino"}>
+              <option value="Matutino">Matutino (Manhã)</option>
+              <option value="Vespertino">Vespertino (Tarde)</option>
+              <option value="Integral">Integral</option>
+              <option value="Noturno">Noturno</option>
+            </Select>
+          </Field>
+
+          <Field label="Nível / Segmento de Escolaridade">
+            <Select name="segmentoEscolar" defaultValue={b?.segmentoEscolar ?? "Fundamental I/II"}>
+              <option value="Educação Infantil">Educação Infantil</option>
+              <option value="Fundamental I/II">Ensino Fundamental (1º ao 9º)</option>
+              <option value="Ensino Médio">Ensino Médio</option>
+              <option value="EJA">EJA</option>
+            </Select>
+          </Field>
+
+          <Field label="Série / Ano">
+            <Input name="serie" defaultValue={b?.serie} placeholder="Ex: 7º ano" />
+          </Field>
+
+          <Field label="Turma Escolar">
+            <Input name="turmaEscolar" defaultValue={b?.turmaEscolar} placeholder="Ex: Turma B" />
+          </Field>
+
+          <Field label={`Código / Inscrição do ${termoBeneficiario}`}>
+            <Input name="codigoAtleta" defaultValue={b?.codigoAtleta} placeholder="Registro interno do atleta" />
+          </Field>
+        </div>
+      </FormSection>
+
+      {/* ─────────────────────────────────────────────────────────────
+          SEÇÃO 5: SAÚDE, ANAMNESE MÉDICA & PAR-Q
+      ───────────────────────────────────────────────────────────── */}
+      <FormSection title="5. Saúde, Anamnese Médica & PAR-Q (Prontidão Física)" defaultOpen={false}>
+        {/* Biometria */}
+        <div className="rounded-xl border border-blue-200 bg-blue-50/50 p-4 dark:border-blue-900/40 dark:bg-blue-950/20 mb-4">
+          <div className="mb-3 text-xs font-semibold text-blue-900 dark:text-blue-300 uppercase tracking-wide flex items-center gap-1.5">
+            <HeartPulse className="h-4 w-4" />
+            <span>Dados Biométricos & Triagem Médica</span>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+            <Field label="Peso (kg)">
+              <Input
+                name="peso"
+                type="number"
+                step="0.1"
+                value={peso}
+                onChange={(e) => setPeso(e.target.value)}
+                placeholder="Ex: 48"
+              />
+            </Field>
+
+            <Field label="Altura (m)">
+              <Input
+                name="altura"
+                type="number"
+                step="0.01"
+                value={altura}
+                onChange={(e) => setAltura(e.target.value)}
+                placeholder="Ex: 1.52"
+              />
+            </Field>
+
+            <Field label="Tipo Sanguíneo">
+              <Select
+                name="tipoSanguineo"
+                value={tipoSanguineo}
+                onChange={(e) => setTipoSanguineo(e.target.value)}
+              >
+                <option value="">Não sei informar</option>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+              </Select>
+            </Field>
+
+            <Field label="IMC Calculado">
+              <div className="flex h-10 items-center rounded-lg border border-zinc-200 bg-white px-3 text-sm font-semibold text-blue-600 dark:border-zinc-800 dark:bg-zinc-900">
+                {imcCalculado ? `${imcCalculado} kg/m²` : "—"}
+              </div>
+            </Field>
+          </div>
+
+          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <Field label="Acompanhado por Posto de Saúde / UBS?">
+              <RadioGroup
+                name="acompanhamentoUbs"
+                options={["Sim", "Não"]}
+                value={acompanhamentoUbs}
+                onChange={(v) => setAcompanhamentoUbs(v)}
+              />
+            </Field>
+
+            <Field label="Comorbidades / Alergias Conhecidas">
+              <Input
+                name="comorbidades"
+                defaultValue={b?.comorbidades}
+                placeholder="Ex: Rinite, Bronquite, Alergia a picada de abelha"
+              />
+            </Field>
+          </div>
+        </div>
+
+        {/* Questionário PAR-Q */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between border-b border-zinc-200 pb-2 dark:border-zinc-800">
+            <div className="text-xs font-semibold uppercase tracking-wider text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5">
+              <span>📋</span> Questionário Oficial de Prontidão para Atividade Física (PAR-Q)
+            </div>
+            <span
+              className={`text-xs px-2.5 py-0.5 rounded-full font-semibold ${
+                algumaRespostaSim
+                  ? "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300"
+                  : "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
+              }`}
+            >
+              {algumaRespostaSim ? "Atenção: Requer Avaliação Médica" : "Apto sem restrições"}
+            </span>
+          </div>
+
+          <div className="divide-y divide-zinc-100 dark:divide-zinc-800 rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+            {parQ.map((item, index) => (
+              <div key={index} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3">
+                <p className="text-xs text-zinc-700 dark:text-zinc-300 flex-1">
+                  <span className="font-semibold text-zinc-900 dark:text-zinc-100 mr-1">{index + 1}.</span>
+                  {item.pergunta}
+                </p>
+                <div className="flex-shrink-0">
+                  <RadioGroup
+                    name={`parq-${index}`}
+                    options={["Não", "Sim"]}
+                    value={item.resposta || "Não"}
+                    onChange={(v) =>
+                      setParQ((prev) =>
+                        prev.map((p, i) => (i === index ? { ...p, resposta: v as "Sim" | "Não" } : p))
+                      )
+                    }
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {algumaRespostaSim && (
+            <div className="mt-4 rounded-xl border border-amber-300 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-950/30">
+              <Field
+                label="Atestado Médico / Liberação para Treinos"
+                hint="Obrigatório devido à marcação de resposta 'Sim' em um ou mais itens do PAR-Q"
+              >
+                <FileUpload label="Enviar atestado médico escaneado ou foto legível" />
+              </Field>
+            </div>
+          )}
+        </div>
+      </FormSection>
+
+      {/* ─────────────────────────────────────────────────────────────
+          SEÇÃO 6: TERMOS, USO DE IMAGEM & ATRIBUIÇÃO DE TURMAS
+      ───────────────────────────────────────────────────────────── */}
+      <FormSection title={`6. Termos, Uso de Imagem & Atribuição de ${termoTurmas}`} defaultOpen={true}>
+        {/* Autorização de Imagem (Destaque Modelo 2) */}
+        <div className="rounded-xl border border-zinc-200 bg-zinc-50/70 p-4 dark:border-zinc-800 dark:bg-zinc-900/50 mb-4">
+          <div className="mb-2 text-xs font-semibold text-zinc-900 dark:text-zinc-100 uppercase tracking-wide flex items-center gap-1.5">
+            <ShieldCheck className="h-4 w-4 text-emerald-600" />
+            <span>Autorização de Uso de Imagem e Voz (ECA / Lei 8.069)</span>
+          </div>
+          <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-3">
+            Autorização do responsável legal para captação e veiculação de fotografias e vídeos em treinos, jogos e eventos para fins exclusivos de divulgação institucional do projeto.
+          </p>
+          <RadioGroup
+            name="autorizacaoImagem"
+            options={["Sim", "Não"]}
+            value={autorizacaoImagem}
+            onChange={(v) => setAutorizacaoImagem(v)}
+          />
+        </div>
+
+        {/* Núcleo e Status */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 mb-4">
+          <Field label={`${termoLocal} (Polo de Treinamento) *`} required>
             <Select
               name="nucleoId"
               value={nucleoId}
@@ -310,7 +910,8 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
               ))}
             </Select>
           </Field>
-          <Field label="Status">
+
+          <Field label="Status da Matrícula no Sistema">
             <Select name="status" defaultValue={normalizarStatusBeneficiario(b?.status)}>
               {STATUS_BENEFICIARIO_OPCOES.map((o) => (
                 <option key={o.value} value={o.value}>{o.label}</option>
@@ -318,29 +919,30 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
             </Select>
           </Field>
         </div>
-      </FormSection>
 
-      <FormSection title={`2. Atribuição de ${termoTurmas}`} defaultOpen={true}>
-        <div className="flex flex-col gap-4">
-          <p className="text-xs text-zinc-500">
-            Selecione as {termoTurmas.toLowerCase()} nas quais o {termoBeneficiario.toLowerCase()} estará matriculado. Ao escolher uma {termoTurma.toLowerCase()}, o {termoLocal.toLowerCase()} correspondente é associado automaticamente.
-          </p>
+        {/* Atribuição de Turmas */}
+        <div className="flex flex-col gap-4 rounded-xl border border-zinc-200 p-4 dark:border-zinc-800">
+          <div className="flex items-center justify-between">
+            <h4 className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 uppercase tracking-wide">
+              Matrícula em {termoTurmas}
+            </h4>
+            <Button type="button" variant="outline" size="sm" onClick={adicionarTurma} className="cursor-pointer">
+              <Plus className="h-4 w-4" /> Adicionar {termoTurma}
+            </Button>
+          </div>
 
           {vinculos.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-zinc-300 p-4 text-center text-xs text-zinc-500">
+            <div className="rounded-lg border border-dashed border-zinc-300 p-4 text-center text-xs text-zinc-500 dark:border-zinc-700">
               Nenhuma {termoTurma.toLowerCase()} atribuída a este {termoBeneficiario.toLowerCase()}.
             </div>
           ) : (
             vinculos.map((v, index) => {
-              const turmaAtual = turmas.find((turmaItem) => turmaItem.id === v.turmaId);
-
-              // Filtrar turmas pelo Núcleo selecionado no formulário (se houver)
               const turmasFiltradas = nucleoId
-                ? turmas.filter((turmaItem) => turmaItem.nucleoId === nucleoId)
+                ? turmas.filter((tItem) => tItem.nucleoId === nucleoId)
                 : turmas;
 
               return (
-                <div key={index} className="grid grid-cols-1 gap-4 rounded-xl border border-zinc-200 bg-zinc-50/70 p-4 sm:grid-cols-3 items-end">
+                <div key={index} className="grid grid-cols-1 gap-4 rounded-lg border border-zinc-200 bg-zinc-50/70 p-4 sm:grid-cols-3 items-end dark:border-zinc-800 dark:bg-zinc-900/40">
                   <Field label={termoTurma} required>
                     <Select
                       value={v.turmaId}
@@ -349,18 +951,18 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
                         setVinculos((prev) =>
                           prev.map((item, i) => (i === index ? { ...item, turmaId: newId } : item))
                         );
-                        const selectedT = turmas.find((turmaItem) => turmaItem.id === newId);
+                        const selectedT = turmas.find((tItem) => tItem.id === newId);
                         if (selectedT?.nucleoId) {
                           setNucleoId(selectedT.nucleoId);
                         }
                       }}
                     >
                       <option value="">Selecione a {termoTurma}</option>
-                      {turmasFiltradas.map((turmaItem) => {
-                        const n = nucleos.find((nucleoItem) => nucleoItem.id === turmaItem.nucleoId);
+                      {turmasFiltradas.map((tItem) => {
+                        const n = nucleos.find((nItem) => nItem.id === tItem.nucleoId);
                         return (
-                          <option key={turmaItem.id} value={turmaItem.id}>
-                            {turmaItem.nome} {n ? `(${n.identificacao})` : ""} — {turmaItem.vagasTotais || 0} vagas
+                          <option key={tItem.id} value={tItem.id}>
+                            {tItem.nome} {n ? `(${n.identificacao})` : ""} — {tItem.vagasTotais || 0} vagas
                           </option>
                         );
                       })}
@@ -384,340 +986,62 @@ export function BeneficiarioForm({ beneficiario: b, nucleos = [], turmas = [], b
 
                   <div className="flex items-center gap-2">
                     <Button type="button" variant="danger" size="sm" onClick={() => removerTurma(index)} className="w-full sm:w-auto cursor-pointer">
-                      <Trash2 className="h-4 w-4" /> Remover {termoTurma}
+                      <Trash2 className="h-4 w-4" /> Remover
                     </Button>
                   </div>
                 </div>
               );
             })
           )}
-
-          <Button type="button" variant="outline" size="sm" className="self-start cursor-pointer" onClick={adicionarTurma}>
-            <Plus className="h-4 w-4" /> Adicionar {termoTurma} ao {termoBeneficiario}
-          </Button>
         </div>
-      </FormSection>
 
-      <FormSection title="6. Perfil Socioeconômico" defaultOpen={false}>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <Field label="Comorbidades">
-            <Select name="comorbidades" defaultValue={b?.comorbidades ?? ""}>
-              <option value="">Selecione</option>
-              <option>Hipertensão</option>
-              <option>Diabete</option>
-              <option>Doença cardíaca</option>
-              <option>Doença renal crônica</option>
-              <option>Doença pulmonar crônica</option>
-              <option>Obesidade mórbida</option>
-              <option>Nenhuma das anteriores</option>
-            </Select>
+        {/* Observações Gerais */}
+        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <Field label="Razões para Inscrição no Projeto">
+            <Textarea name="razoesInscricao" defaultValue={b?.razoesInscricao} placeholder="Ex: Iniciação esportiva, recomendação escolar" />
           </Field>
-          <Field label="Nível de escolaridade">
-            <Select name="nivelEscolaridade" defaultValue={b?.nivelEscolaridade ?? ""}>
-              <option value="">Selecione</option>
-              <option>Sem educação formal</option>
-              <option>Pré-escola</option>
-              <option>Ensino Fundamental</option>
-              <option>Ensino Médio</option>
-              <option>EJA</option>
-              <option>Ensino Técnico</option>
-              <option>Ensino Superior</option>
-              <option>Pós-graduação</option>
-            </Select>
-          </Field>
-          <Field label="Ocupação atual">
-            <Select name="ocupacaoAtual" defaultValue={b?.ocupacaoAtual ?? ""}>
-              <option value="">Selecione</option>
-              <option>Aposentado/pensionista</option>
-              <option>Autônomo</option>
-              <option>Desempregado</option>
-              <option>Empregado</option>
-              <option>Estudante</option>
-              <option>Trabalho doméstico não remunerado</option>
-              <option>Outro</option>
-            </Select>
+          <Field label="Observações Administrativas Gerais">
+            <Textarea name="observacoes" defaultValue={b?.observacoes} placeholder="Anotações internas sobre o aluno ou a família" />
           </Field>
         </div>
 
-        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <Field label="Situação da moradia">
-            <Select name="situacaoMoradia" defaultValue={b?.situacaoMoradia ?? ""}>
-              <option value="">Selecione</option>
-              <option>Própria quitada</option>
-              <option>Própria financiada</option>
-              <option>Alugada</option>
-              <option>Cedida por parentes/amigos</option>
-              <option>Outra</option>
-            </Select>
-          </Field>
-          <Field label="Benefício socioassistencial">
-            <Select name="beneficioSocioassistencial" defaultValue={b?.beneficioSocioassistencial ?? ""}>
-              <option value="">Não</option>
-              <option>Bolsa Família</option>
-              <option>Aluguel social</option>
-              <option>Auxílio-reclusão</option>
-              <option>BPC</option>
-              <option>Minha casa minha vida</option>
-              <option>Benefício incapacidade temporária</option>
-              <option>Auxílio-acidente</option>
-              <option>Salário-família</option>
-              <option>Outro</option>
-            </Select>
-          </Field>
-          <Field label="Nº de pessoas em casa">
-            <Select name="pessoasEmCasa" defaultValue="">
-              <option value="">Selecione</option>
-              <option>2 pessoas</option>
-              <option>3 pessoas</option>
-              <option>4 pessoas</option>
-              <option>4 pessoas ou mais</option>
-              <option>Sozinho</option>
-            </Select>
-          </Field>
-        </div>
-
-        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <Field label="Telefone residencial">
-            <Input name="telefoneResidencial" mask="telefone" defaultValue={b?.telefoneResidencial} />
-          </Field>
-          <Field label="Celular" required>
-            <Input name="celular" mask="telefone" defaultValue={b?.celular} />
-          </Field>
-          <Field label="Email">
-            <Input type="email" name="email" defaultValue={b?.email} />
-          </Field>
-        </div>
-
-        <div className="mt-4">
-          <Field label="Razões para inscrição">
-            <Textarea name="razoesInscricao" />
-          </Field>
-        </div>
-        <div className="mt-4">
-          <Field label="Observações">
-            <Textarea name="observacoes" />
-          </Field>
-        </div>
-      </FormSection>
-
-      <FormSection title={`3. Endereço do ${termoBeneficiario}`} defaultOpen={false}>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <Field label="CEP" required>
-            <Input
-              name="cep"
-              mask="cep"
-              value={cep}
-              onChange={(e) => setCep(e.target.value)}
-              onBlur={handleCepBlur}
-              placeholder="00000-000"
-            />
-          </Field>
-          <Field label="Logradouro" required className="lg:col-span-2">
-            <Input
-              name="logradouro"
-              value={logradouro}
-              onChange={(e) => setLogradouro(e.target.value)}
-            />
-          </Field>
-          <Field label="Número" required>
-            <Input name="numero" defaultValue={b?.numero} />
-          </Field>
-          <Field label="Complemento">
-            <Input name="complemento" defaultValue={b?.complemento} />
-          </Field>
-          <Field label="Bairro" required>
-            <Input
-              name="bairro"
-              value={bairro}
-              onChange={(e) => setBairro(e.target.value)}
-            />
-          </Field>
-          <Field label="Cidade" required>
-            <Input
-              name="cidade"
-              value={cidade}
-              onChange={(e) => setCidade(e.target.value)}
-            />
-          </Field>
-          <Field label="Estado" required>
-            <Input
-              name="estado"
-              value={estado}
-              onChange={(e) => setEstado(e.target.value)}
-            />
-          </Field>
-        </div>
-      </FormSection>
-
-      <FormSection title={`4. Documentação do ${termoBeneficiario}`} defaultOpen={false}>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <Field label="RG">
-            <Input name="rg" defaultValue={b?.rg} />
-          </Field>
-          <Field label="Órgão Expedidor">
-            <Select name="orgaoExpedidor" defaultValue="">
-              <option value="">Selecione</option>
-              {["DETRAN", "DIC", "IFP", "MM", "PMERJ", "MA", "ME", "CBM", "IPF", "MT", "CREA", "CRM", "SSP", "CRA", "OAB", "OUTROS"].map((o) => (
-                <option key={o}>{o}</option>
-              ))}
-            </Select>
-          </Field>
-          <Field label="UF">
-            <Input name="ufExpedidor" />
-          </Field>
-          <Field label="Nome do Pai">
-            <Input name="nomePai" />
-          </Field>
-          <Field label="Nome da Mãe">
-            <Input name="nomeMae" />
-          </Field>
-          <Field label="CPF">
-            <Input name="cpf" mask="cpf" defaultValue={b?.cpf} placeholder="000.000.000-00" />
-          </Field>
-          <Field label="Número do NIS">
-            <Input name="numeroNis" mask="numeros" defaultValue={b?.numeroNis} />
-          </Field>
-        </div>
-
-        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <Field label="Mora com">
-            <RadioGroup name="moraCom" options={["Pais", "Pai", "Mãe", "Avós", "Parentes", "Outros"]} />
-          </Field>
-          <Field label="Tamanho do uniforme">
-            <RadioGroup name="tamanhoUniforme" options={["PP", "P", "M", "G", "GG", "XG"]} />
-          </Field>
-          <Field label="Uniforme Entregue?">
-            <RadioGroup name="uniformeEntregue" options={["Sim", "Não"]} />
-          </Field>
-        </div>
-      </FormSection>
-
-      <FormSection title={`5. Documentação do ${termoResponsavel}`} defaultOpen={false}>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Field label={`Nome do ${termoResponsavel.toLowerCase()}`}>
-            <Input name="nomeResponsavel" defaultValue={b?.nomeResponsavel} />
-          </Field>
-          <Field label={`Email do ${termoResponsavel.toLowerCase()}`}>
-            <Input type="email" name="emailResponsavel" defaultValue={b?.emailResponsavel} />
-          </Field>
-          <Field label={`RG do ${termoResponsavel.toLowerCase()}`}>
-            <Input name="rgResponsavel" defaultValue={b?.rgResponsavel} />
-          </Field>
-          <Field label={`CPF do ${termoResponsavel.toLowerCase()}`}>
-            <Input name="cpfResponsavel" mask="cpf" defaultValue={b?.cpfResponsavel} placeholder="000.000.000-00" />
-          </Field>
-        </div>
-      </FormSection>
-
-      <FormSection title="7. PAR-Q (Questionário de Prontidão para Atividade Física)" defaultOpen={false}>
-        <div className="flex flex-col divide-y divide-zinc-100">
-          {parQ.map((item, index) => (
-            <div key={index} className="flex items-center justify-between gap-4 py-3">
-              <p className="text-sm text-zinc-700">{index + 1}. {item.pergunta}</p>
-              <RadioGroup
-                name={`parq-${index}`}
-                options={["Sim", "Não"]}
-                value={item.resposta}
-                onChange={(v) =>
-                  setParQ((prev) =>
-                    prev.map((p, i) => (i === index ? { ...p, resposta: v as "Sim" | "Não" } : p))
-                  )
-                }
-              />
-            </div>
-          ))}
-        </div>
-        {algumaRespostaSim && (
-          <div className="mt-4">
-            <Field label="Atestado Médico" hint="Obrigatório devido a resposta 'Sim' no PAR-Q">
-              <FileUpload label="Enviar atestado médico" />
-            </Field>
+        {/* Anexos de Documentos */}
+        <div className="mt-4 flex flex-col gap-3 border-t border-zinc-200 pt-4 dark:border-zinc-800">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 uppercase tracking-wide">
+              Documentos & Comprovantes Físicos Escaneados
+            </span>
+            <Button type="button" variant="outline" size="sm" onClick={adicionarAnexo}>
+              <Plus className="h-4 w-4" /> Novo anexo
+            </Button>
           </div>
-        )}
-      </FormSection>
 
-      <FormSection title="7. Rede de Ensino" defaultOpen={false}>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <Field label="Rede de ensino">
-            <Select name="redeEnsino" defaultValue={b?.redeEnsino ?? ""}>
-              <option value="">Selecione</option>
-              <option>Estadual</option>
-              <option>Particular</option>
-              <option>Municipal</option>
-              <option>Filantrópica</option>
-              <option>Federal</option>
-              <option>Militar</option>
-              <option>Não estuda</option>
-            </Select>
-          </Field>
-          <Field label="Nome da escola">
-            <Select name="nomeEscola" defaultValue="">
-              <option value="">Selecione a escola</option>
-            </Select>
-          </Field>
-          <Field label="Turno">
-            <Select name="turno" defaultValue={b?.turno ?? ""}>
-              <option value="">Selecione</option>
-              <option>Manhã</option>
-              <option>Tarde</option>
-              <option>Noite</option>
-              <option>Integral</option>
-            </Select>
-          </Field>
-          <Field label="Segmento">
-            <Select name="segmento" defaultValue="">
-              <option value="">Selecione</option>
-              <option>Educação Infantil</option>
-              <option>Fundamental I/II</option>
-              <option>Ensino Médio</option>
-              <option>Ensino Superior</option>
-              <option>Projeto Estratégico</option>
-              <option>Autonomia</option>
-              <option>Realfa</option>
-              <option>NSN</option>
-              <option>PCD</option>
-            </Select>
-          </Field>
-          <Field label="Série">
-            <Input name="serie" defaultValue={b?.serie} />
-          </Field>
-          <Field label="Turma">
-            <Input name="turmaEscolar" defaultValue={b?.turmaEscolar} />
-          </Field>
-          <Field label={`Código do ${termoBeneficiario}`}>
-            <Input name="codigoAtleta" defaultValue={b?.codigoAtleta} />
-          </Field>
-        </div>
-      </FormSection>
-
-      <FormSection title="8. Gerenciar Anexos" defaultOpen={false}>
-        <div className="flex flex-col gap-4">
           {anexos.map((anexo, index) => (
-            <div key={anexo.id} className="grid grid-cols-1 gap-4 rounded-lg border border-zinc-200 p-4 sm:grid-cols-3">
-              <Field label="Descrição do Anexo">
-                <Input defaultValue={anexo.descricao} placeholder="Ex: Comprovante de residência" />
+            <div key={anexo.id} className="grid grid-cols-1 gap-4 rounded-lg border border-zinc-200 p-3 sm:grid-cols-3 items-end dark:border-zinc-800">
+              <Field label="Descrição do Documento">
+                <Input defaultValue={anexo.descricao} placeholder="Ex: Certidão de Nascimento / Comprovante" />
               </Field>
-              <Field label="Documento" required>
+              <Field label="Arquivo" required>
                 <FileUpload />
               </Field>
-              <div className="flex items-end">
+              <div>
                 <Button type="button" variant="danger" size="sm" onClick={() => removerAnexo(index)}>
-                  <Trash2 className="h-4 w-4" /> Remover anexo
+                  <Trash2 className="h-4 w-4" /> Remover
                 </Button>
               </div>
             </div>
           ))}
-          <Button type="button" variant="outline" size="sm" className="self-start" onClick={adicionarAnexo}>
-            <Plus className="h-4 w-4" /> Novo anexo
-          </Button>
         </div>
       </FormSection>
 
-      <div className="flex justify-end gap-2">
+      {/* Botões de Ação */}
+      <div className="flex justify-end gap-3 pt-2">
         <LinkButton href={backHref} variant="outline">
           Voltar
         </LinkButton>
-        <Button type="submit">{b ? "Salvar" : `Cadastrar ${termoBeneficiario}`}</Button>
+        <Button type="submit" disabled={loading} className="px-6 font-semibold">
+          {loading ? "Salvando..." : b ? "Salvar Alterações" : `Cadastrar ${termoBeneficiario}`}
+        </Button>
       </div>
     </form>
   );

@@ -395,6 +395,40 @@ export interface BeneficiarioApi {
   cpf?: string;
   fotoUrl?: string;
   criadoEm: string;
+  nomeMae?: string;
+  nomePai?: string;
+  nomeResponsavel?: string;
+  cpfResponsavel?: string;
+  rgResponsavel?: string;
+  celularResponsavel?: string;
+  emailResponsavel?: string;
+  moraCom?: string;
+  tamanhoUniforme?: string;
+  uniformeEntregue?: boolean;
+  redeEnsino?: string;
+  nomeEscola?: string;
+  turnoEscolar?: string;
+  segmentoEscolar?: string;
+  serie?: string;
+  turmaEscolar?: string;
+  codigoAtleta?: string;
+  comorbidades?: string;
+  nivelEscolaridade?: string;
+  ocupacaoAtual?: string;
+  situacaoMoradia?: string;
+  beneficioSocioassistencial?: string;
+  telefoneResidencial?: string;
+  pessoasEmCasa?: string;
+  razoesInscricao?: string;
+  observacoes?: string;
+  complemento?: string;
+  rg?: string;
+  orgaoExpedidor?: string;
+  ufExpedidor?: string;
+  numeroNis?: string;
+  raca?: string;
+  email?: string;
+  anamneseDados?: Record<string, any>;
   gruposInfo?: Array<{
     grupoId?: string;
     turmaId?: string;
@@ -769,6 +803,40 @@ function mapBeneficiario(r: any): BeneficiarioApi {
     numero: r.numero ?? undefined, bairro: r.bairro ?? undefined, cidade: r.cidade ?? undefined,
     estado: r.estado ?? undefined, cpf: r.cpf ?? undefined, fotoUrl: r.foto_url ?? undefined,
     criadoEm: r.created_at,
+    nomeMae: r.nome_mae ?? undefined,
+    nomePai: r.nome_pai ?? undefined,
+    nomeResponsavel: r.nome_responsavel ?? undefined,
+    cpfResponsavel: r.cpf_responsavel ?? undefined,
+    rgResponsavel: r.rg_responsavel ?? undefined,
+    celularResponsavel: r.celular_responsavel ?? undefined,
+    emailResponsavel: r.email_responsavel ?? undefined,
+    moraCom: r.mora_com ?? undefined,
+    tamanhoUniforme: r.tamanho_uniforme ?? undefined,
+    uniformeEntregue: r.uniforme_entregue ?? false,
+    redeEnsino: r.rede_ensino ?? undefined,
+    nomeEscola: r.nome_escola ?? undefined,
+    turnoEscolar: r.turno_escolar ?? undefined,
+    segmentoEscolar: r.segmento_escolar ?? undefined,
+    serie: r.serie ?? undefined,
+    turmaEscolar: r.turma_escolar ?? undefined,
+    codigoAtleta: r.codigo_atleta ?? undefined,
+    comorbidades: r.comorbidades ?? undefined,
+    nivelEscolaridade: r.nivel_escolaridade ?? undefined,
+    ocupacaoAtual: r.ocupacao_atual ?? undefined,
+    situacaoMoradia: r.situacao_moradia ?? undefined,
+    beneficioSocioassistencial: r.beneficio_socioassistencial ?? undefined,
+    telefoneResidencial: r.telefone_residencial ?? undefined,
+    pessoasEmCasa: r.pessoas_em_casa ?? undefined,
+    razoesInscricao: r.razoes_inscricao ?? undefined,
+    observacoes: r.observacoes ?? undefined,
+    complemento: r.complemento ?? undefined,
+    rg: r.rg ?? undefined,
+    orgaoExpedidor: r.orgao_expedidor ?? undefined,
+    ufExpedidor: r.uf_expedidor ?? undefined,
+    numeroNis: r.numero_nis ?? undefined,
+    raca: r.raca ?? undefined,
+    email: r.email ?? undefined,
+    anamneseDados: r.anamnese_dados ?? undefined,
     turmasInfo: turmasInfo.length > 0 ? turmasInfo : undefined,
   };
 }
@@ -1957,23 +2025,58 @@ function toBeneficiarioRow(b: Record<string, unknown>): Database['public']['Tabl
   return {
     matricula: (b.matricula as string) || String(Math.floor(100000 + Math.random() * 900000)),
     nome_completo: b.nomeCompleto as string,
-    nome_social: b.nomeSocial as string | null | undefined,
+    nome_social: (b.nomeSocial as string) || null,
     data_nascimento: b.dataNascimento as string,
     sexo: parseSexoDb(b.sexo),
-    pcd: b.pcd as boolean | undefined,
-    tipo_pcd: b.tipoPcd as string | null | undefined,
+    pcd: b.pcd != null ? (b.pcd === true || b.pcd === 'true' || b.pcd === 'Sim') : false,
+    tipo_pcd: (b.tipoPcd as string) || null,
     nucleo_id: uuidOrNull(b.nucleoId),
-    status: b.status as string | undefined,
-    tipo_matricula: b.tipoMatricula as string | undefined,
-    celular: b.celular as string,
-    cep: b.cep as string | null | undefined,
-    logradouro: b.logradouro as string | null | undefined,
-    numero: b.numero as string | null | undefined,
-    bairro: b.bairro as string | null | undefined,
-    cidade: b.cidade as string | null | undefined,
-    estado: b.estado as string | null | undefined,
-    cpf: b.cpf as string | null | undefined,
-    foto_url: b.fotoUrl as string | null | undefined,
+    status: (b.status as string) || 'ativo',
+    tipo_matricula: (b.tipoMatricula as string) || 'interna',
+    celular: (b.celular as string) || null,
+    celular_responsavel: (b.celularResponsavel as string) || null,
+    cep: (b.cep as string) || null,
+    logradouro: (b.logradouro as string) || null,
+    numero: (b.numero as string) || null,
+    complemento: (b.complemento as string) || null,
+    bairro: (b.bairro as string) || null,
+    cidade: (b.cidade as string) || null,
+    estado: (b.estado as string) || null,
+    cpf: (b.cpf as string) || null,
+    rg: (b.rg as string) || null,
+    orgao_expedidor: ((b.orgaoExpedidor || b.orgaoEmissor) as string) || null,
+    uf_expedidor: (b.ufExpedidor as string) || null,
+    numero_nis: (b.numeroNis as string) || null,
+    foto_url: (b.fotoUrl as string) || null,
+    nome_responsavel: (b.nomeResponsavel as string) || null,
+    cpf_responsavel: (b.cpfResponsavel as string) || null,
+    rg_responsavel: (b.rgResponsavel as string) || null,
+    email_responsavel: (b.emailResponsavel as string) || null,
+    nome_mae: (b.nomeMae as string) || null,
+    nome_pai: (b.nomePai as string) || null,
+    mora_com: (b.moraCom as string) || null,
+    raca: (b.raca as string) || null,
+    email: (b.email as string) || null,
+    telefone_residencial: (b.telefoneResidencial as string) || null,
+    comorbidades: (b.comorbidades as string) || null,
+    nivel_escolaridade: (b.nivelEscolaridade as string) || null,
+    ocupacao_atual: (b.ocupacaoAtual as string) || null,
+    situacao_moradia: (b.situacaoMoradia as string) || null,
+    beneficio_socioassistencial: (b.beneficioSocioassistencial as string) || null,
+    pessoas_em_casa: (b.pessoasEmCasa as string) || null,
+    razoes_inscricao: (b.razoesInscricao as string) || null,
+    observacoes: (b.observacoes as string) || null,
+    tamanho_uniforme: (b.tamanhoUniforme as string) || null,
+    uniforme_entregue: b.uniformeEntregue != null ? (b.uniformeEntregue === true || b.uniformeEntregue === 'true' || b.uniformeEntregue === 'Sim') : false,
+    rede_ensino: (b.redeEnsino as string) || null,
+    nome_escola: (b.nomeEscola as string) || null,
+    turno_escolar: ((b.turnoEscolar || b.turno) as string) || null,
+    segmento_escolar: ((b.segmentoEscolar || b.segmento) as string) || null,
+    serie: (b.serie as string) || null,
+    turma_escolar: (b.turmaEscolar as string) || null,
+    codigo_atleta: (b.codigoAtleta as string) || null,
+    origem: (b.origem as string) || 'interna',
+    anamnese_dados: (b.anamneseDados as any) ?? {},
   };
 }
 

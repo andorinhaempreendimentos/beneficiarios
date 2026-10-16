@@ -450,6 +450,7 @@ export type Database = {
       }
       beneficiarios: {
         Row: {
+          anamnese_dados: Json | null
           bairro: string | null
           beneficio_socioassistencial: string | null
           celular: string | null
@@ -510,6 +511,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          anamnese_dados?: Json | null
           bairro?: string | null
           beneficio_socioassistencial?: string | null
           celular?: string | null
@@ -570,6 +572,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          anamnese_dados?: Json | null
           bairro?: string | null
           beneficio_socioassistencial?: string | null
           celular?: string | null

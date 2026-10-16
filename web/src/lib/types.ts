@@ -433,6 +433,15 @@ export interface Beneficiario {
   emailResponsavel?: string;
   rgResponsavel?: string;
   cpfResponsavel?: string;
+  celularResponsavel?: string;
+  nomeMae?: string;
+  nomePai?: string;
+  orgaoExpedidor?: string;
+  ufExpedidor?: string;
+  pessoasEmCasa?: string;
+  razoesInscricao?: string;
+  observacoes?: string;
+  anamneseDados?: Record<string, any>;
   grupos?: VinculoGrupo[];
   turmas: VinculoTurma[];
   parQ: PerguntaParQ[];
@@ -440,6 +449,8 @@ export interface Beneficiario {
   redeEnsino?: string;
   nomeEscola?: string;
   turno?: string;
+  turnoEscolar?: string;
+  segmentoEscolar?: string;
   serie?: string;
   turmaEscolar?: string;
   codigoAtleta?: string;
