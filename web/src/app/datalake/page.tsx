@@ -451,14 +451,18 @@ export default function DatalakePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {nucleosMetas.map((n) => {
               const selecionado = filtroNucleo === n.id || filtroNucleo === n.nome;
+              const isZerado = n.totalGeral === 0;
+
               return (
                 <div
                   key={n.id}
                   onClick={() => setFiltroNucleo(selecionado ? "todos" : n.id)}
-                  className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer ${
+                  className={`p-3.5 rounded-xl text-left transition-all cursor-pointer ${
                     selecionado
-                      ? "border-blue-600 bg-blue-50/50 shadow-sm ring-2 ring-blue-500/20"
-                      : "border-zinc-200/90 hover:border-zinc-300 bg-zinc-50/50 hover:bg-zinc-50"
+                      ? "border-2 border-blue-600 bg-blue-50/50 shadow-sm ring-2 ring-blue-500/20"
+                      : isZerado
+                      ? "border-2 border-red-600 bg-red-50/30 hover:border-red-700 hover:bg-red-50/50 shadow-sm shadow-red-500/10"
+                      : "border border-zinc-200/90 hover:border-zinc-300 bg-zinc-50/50 hover:bg-zinc-50"
                   }`}
                 >
                   <div className="flex items-center justify-between gap-1 mb-1.5">
@@ -471,7 +475,7 @@ export default function DatalakePage() {
                           ? "bg-emerald-100 text-emerald-800"
                           : n.totalGeral > 0
                           ? "bg-blue-100 text-blue-800"
-                          : "bg-zinc-200 text-zinc-600"
+                          : "bg-red-100 text-red-800 border border-red-300"
                       }`}
                     >
                       {n.totalGeral}/100
