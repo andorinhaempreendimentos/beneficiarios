@@ -250,6 +250,16 @@ export interface ObjetoMeta {
   valorEsperado: number;
 }
 
+export interface ObjetoCargoPrevisto {
+  id: string;
+  objetoId: string;
+  cargoNome: string;
+  funcaoId?: string;
+  quantidadePrevista: number;
+  remuneracaoMensal?: number;
+  cargaHorariaSemanal?: string;
+}
+
 export interface Objeto {
   id: string;
   nome: string;
@@ -268,6 +278,7 @@ export interface Objeto {
   termoResponsavel?: string;
   termoParticipante?: string;
   metas?: ObjetoMeta[];
+  cargosPrevistos?: ObjetoCargoPrevisto[];
   criadoEm: string;
 }
 

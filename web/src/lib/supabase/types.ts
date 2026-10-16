@@ -1882,6 +1882,7 @@ export type Database = {
           carga_horaria_semanal: string | null
           cargo_nome: string
           created_at: string
+          funcao_id: string | null
           id: string
           objeto_id: string
           quantidade_prevista: number
@@ -1892,6 +1893,7 @@ export type Database = {
           carga_horaria_semanal?: string | null
           cargo_nome: string
           created_at?: string
+          funcao_id?: string | null
           id?: string
           objeto_id: string
           quantidade_prevista?: number
@@ -1902,6 +1904,7 @@ export type Database = {
           carga_horaria_semanal?: string | null
           cargo_nome?: string
           created_at?: string
+          funcao_id?: string | null
           id?: string
           objeto_id?: string
           quantidade_prevista?: number
@@ -1909,6 +1912,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "objeto_cargos_previstos_funcao_id_fkey"
+            columns: ["funcao_id"]
+            isOneToOne: false
+            referencedRelation: "funcoes"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "objeto_cargos_previstos_objeto_id_fkey"
             columns: ["objeto_id"]

@@ -7,8 +7,10 @@ import { z } from "zod";
 import {
   objetosApi,
   concedentesApi,
+  funcoesApi,
   type ObjetoApi,
   type ConcedenteApi,
+  type FuncaoApi,
   type ObjetoCargoPrevistoApi,
   type ObjetoMetaApi,
 } from "@/lib/api/services";
@@ -92,10 +94,13 @@ export function ObjetoForm({ objeto: o, backHref }: ObjetoFormProps) {
       ? o.cargosPrevistos
       : [
           { cargoNome: "Coordenador Geral", quantidadePrevista: 1, remuneracaoMensal: 5000, cargaHorariaSemanal: "40h/sem" },
+          { cargoNome: "Coordenador de Logística", quantidadePrevista: 2, remuneracaoMensal: 4000, cargaHorariaSemanal: "40h/sem" },
           { cargoNome: "Supervisor de Campo", quantidadePrevista: 2, remuneracaoMensal: 5000, cargaHorariaSemanal: "40h/sem" },
           { cargoNome: "Instrutor Esportivo", quantidadePrevista: 20, remuneracaoMensal: 3500, cargaHorariaSemanal: "20h/sem" },
+          { cargoNome: "Auxiliar Administrativo", quantidadePrevista: 2, remuneracaoMensal: 2500, cargaHorariaSemanal: "40h/sem" },
         ]
   );
+  const [funcoes, setFuncoes] = useState<FuncaoApi[]>([]);
 
   useEffect(() => {
     concedentesApi.list({ limit: 100 }).then((res) => {
@@ -103,6 +108,22 @@ export function ObjetoForm({ objeto: o, backHref }: ObjetoFormProps) {
       if (!concedenteId && res.data.length > 0 && !o?.id) {
         setConcedenteId(res.data[0].id);
       }
+    });
+    funcoesApi.list().then((res) => {
+      setFuncoes(res);
+      // Auto-associa funcaoId para cargos que não tiverem funcaoId
+      setCargos((prev) =>
+        prev.map((c) => {
+          if (c.funcaoId) return c;
+          const match = res.find(
+            (f) =>
+              f.nome.toLowerCase() === c.cargoNome?.toLowerCase() ||
+              (c.cargoNome?.toLowerCase().includes("instrutor") && f.nome.toLowerCase().includes("instrutor")) ||
+              (c.cargoNome?.toLowerCase().includes("auxiliar") && f.nome.toLowerCase().includes("auxiliar"))
+          );
+          return match ? { ...c, funcaoId: match.id, cargoNome: c.cargoNome || match.nome } : c;
+        })
+      );
     });
   }, [o?.id]);
 
@@ -141,9 +162,16 @@ export function ObjetoForm({ objeto: o, backHref }: ObjetoFormProps) {
   }
 
   function handleAddCargo() {
+    const firstFuncao = funcoes[0];
     setCargos((prev) => [
       ...prev,
-      { cargoNome: "", quantidadePrevista: 1, remuneracaoMensal: 0, cargaHorariaSemanal: "20h/sem" },
+      {
+        funcaoId: firstFuncao?.id,
+        cargoNome: firstFuncao?.nome ?? "",
+        quantidadePrevista: 1,
+        remuneracaoMensal: 0,
+        cargaHorariaSemanal: "20h/sem",
+      },
     ]);
   }
 
@@ -155,6 +183,12 @@ export function ObjetoForm({ objeto: o, backHref }: ObjetoFormProps) {
     setCargos((prev) => {
       const copy = [...prev];
       copy[index] = { ...copy[index], [field]: value };
+      if (field === "funcaoId") {
+        const found = funcoes.find((f) => f.id === value);
+        if (found) {
+          copy[index].cargoNome = found.nome;
+        }
+      }
       return copy;
     });
   }
@@ -193,7 +227,12 @@ export function ObjetoForm({ objeto: o, backHref }: ObjetoFormProps) {
       dataInicio: tipoDuracao === "periodo" ? ((formData.get("dataInicio") as string) || null) : null,
       dataTermino: tipoDuracao === "periodo" ? ((formData.get("dataTermino") as string) || null) : null,
       status: (formData.get("status") as string) || "ativo",
-      cargosPrevistos: cargos.filter((c) => c.cargoNome && c.cargoNome.trim() !== ""),
+      cargosPrevistos: cargos
+        .filter((c) => (c.cargoNome && c.cargoNome.trim() !== "") || c.funcaoId)
+        .map((c) => ({
+          ...c,
+          funcaoId: c.funcaoId || undefined,
+        })),
       termoGrupo: (formData.get("termoGrupo") as string)?.trim() || "Grupo",
       termoSessao: (formData.get("termoSessao") as string)?.trim() || "Sessão",
       termoResponsavel: (formData.get("termoResponsavel") as string)?.trim() || "Professor",
@@ -446,12 +485,18 @@ export function ObjetoForm({ objeto: o, backHref }: ObjetoFormProps) {
                 {cargos.map((cargo, idx) => (
                   <tr key={idx} className="hover:bg-zinc-50/50">
                     <td className="p-2">
-                      <Input
-                        value={cargo.cargoNome ?? ""}
-                        onChange={(e) => handleCargoChange(idx, "cargoNome", e.target.value)}
-                        placeholder="Ex: Instrutor Esportivo"
-                        className="text-sm"
-                      />
+                      <select
+                        value={cargo.funcaoId ?? ""}
+                        onChange={(e) => handleCargoChange(idx, "funcaoId", e.target.value)}
+                        className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-2.5 py-2 text-sm text-zinc-800 dark:text-zinc-100 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                      >
+                        <option value="">Selecione a função do RH...</option>
+                        {funcoes.map((f) => (
+                          <option key={f.id} value={f.id}>
+                            {f.nome}
+                          </option>
+                        ))}
+                      </select>
                     </td>
                     <td className="p-2">
                       <Input

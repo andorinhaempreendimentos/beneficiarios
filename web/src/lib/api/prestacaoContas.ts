@@ -658,9 +658,25 @@ export const prestacaoContasApi = {
     // Recursos Humanos - Comparativo de Cargos
     const cargosPrevistos = objeto.cargosPrevistos ?? [];
     const cargosComparativo: CargoRHItem[] = cargosPrevistos.map((cp) => {
-      const ativosNoCargo = funcionarios.filter(
-        (f: any) => f.funcao && f.funcao.toLowerCase().trim() === cp.cargoNome.toLowerCase().trim()
-      ).length;
+      const ativosNoCargo = funcionarios.filter((f: any) => {
+        const isAtivo = f.status === 'ativo' || !f.status;
+        if (!isAtivo) return false;
+
+        // Prioridade 1: Comparação estrita por ID da função (assertividade total)
+        if (cp.funcaoId && f.funcao_id) {
+          return f.funcao_id === cp.funcaoId;
+        }
+
+        // Fallback: Comparação por nome para registros legados sem vínculo de ID
+        if (cp.cargoNome && (f.funcao || f.funcoes?.nome)) {
+          const nomeCargo = cp.cargoNome.toLowerCase().trim();
+          const nomeFuncionario = (f.funcoes?.nome || f.funcao || '').toLowerCase().trim();
+          return nomeFuncionario === nomeCargo;
+        }
+
+        return false;
+      }).length;
+
       const pct = cp.quantidadePrevista > 0 ? Math.round((ativosNoCargo / cp.quantidadePrevista) * 100) : 0;
       return {
         cargoNome: cp.cargoNome,

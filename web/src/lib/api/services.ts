@@ -132,6 +132,7 @@ export interface ObjetoCargoPrevistoApi {
   id: string;
   objetoId: string;
   cargoNome: string;
+  funcaoId?: string;
   quantidadePrevista: number;
   remuneracaoMensal?: number;
   cargaHorariaSemanal?: string;
@@ -493,6 +494,7 @@ function mapObjeto(r: any): ObjetoApi {
       id: c.id,
       objetoId: c.objeto_id,
       cargoNome: c.cargo_nome,
+      funcaoId: c.funcao_id ?? undefined,
       quantidadePrevista: c.quantidade_prevista,
       remuneracaoMensal: c.remuneracao_mensal ? Number(c.remuneracao_mensal) : undefined,
       cargaHorariaSemanal: c.carga_horaria_semanal ?? undefined,
@@ -848,6 +850,7 @@ export const objetosApi = {
       const inserts = cargos.map((c) => ({
         objeto_id: objetoId,
         cargo_nome: String(c.cargoNome ?? ''),
+        funcao_id: c.funcaoId || null,
         quantidade_prevista: Number(c.quantidadePrevista ?? 1),
         remuneracao_mensal: c.remuneracaoMensal !== undefined ? Number(c.remuneracaoMensal) : null,
         carga_horaria_semanal: c.cargaHorariaSemanal ?? null,
