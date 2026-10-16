@@ -1,13 +1,25 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Building2, MapPin, Download, Trash2, Check, Power } from "lucide-react";
+import {
+  Building2,
+  MapPin,
+  Download,
+  Trash2,
+  Check,
+  Power,
+  Search,
+  SlidersHorizontal,
+  ChevronDown,
+  ChevronUp,
+  RotateCcw,
+} from "lucide-react";
 import { useToast } from "@/components/providers/ToastProvider";
 import Link from "next/link";
 import {
   Badge,
+  Button,
   Card,
-  FilterBar,
   Field,
   Input,
   Select,
@@ -64,6 +76,7 @@ export default function NucleosPage() {
   const [viewMode, setViewMode] = useState<ViewMode>("cards");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [processando, setProcessando] = useState(false);
+  const [mostrarFiltrosAvancados, setMostrarFiltrosAvancados] = useState(false);
 
   const { data: meusNucleos, loading: loadingMeusNucleos } = useQuery<NucleoApi[]>(
     () => isCoordenador ? coordenadoresApi.getMeusNucleos() : Promise.resolve([] as NucleoApi[]),
@@ -144,6 +157,24 @@ export default function NucleosPage() {
     setFiltros((f) => ({ ...f, [chave]: valor }));
   }
 
+  const qtdFiltrosAvancados = useMemo(() => {
+    return [
+      filtros.organizacaoId,
+      filtros.regiaoId,
+      filtros.cidade,
+      filtros.atividadeId,
+    ].filter(Boolean).length;
+  }, [filtros.organizacaoId, filtros.regiaoId, filtros.cidade, filtros.atividadeId]);
+
+  const temAlgumFiltro = useMemo(() => {
+    return Boolean(
+      filtros.busca ||
+      filtros.objetoId ||
+      filtros.emFuncionamento ||
+      qtdFiltrosAvancados > 0
+    );
+  }, [filtros.busca, filtros.objetoId, filtros.emFuncionamento, qtdFiltrosAvancados]);
+
   const toggleSelectAll = () => {
     if (selectedIds.length === resultado.length && resultado.length > 0) {
       setSelectedIds([]);
@@ -177,82 +208,169 @@ export default function NucleosPage() {
       />
 
 
-      <FilterBar onClear={limpar}>
-        <Field label="Busca">
-          <Input
-            placeholder="Nome ou identificação..."
-            value={filtros.busca}
-            onChange={(e) => setCampo("busca", e.target.value)}
-          />
-        </Field>
+      {/* Barra de Filtros Ágil (Opção C) */}
+      <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 shadow-sm space-y-3 transition-all">
+        {/* Linha Principal Compacta */}
+        <div className="flex flex-col lg:flex-row lg:items-center gap-3">
+          {/* Busca Textual com Ícone */}
+          <div className="relative flex-1 min-w-[220px]">
+            <Input
+              placeholder={`Buscar por nome ou identificação do ${t("local", "Núcleo").toLowerCase()}...`}
+              value={filtros.busca}
+              onChange={(e) => setCampo("busca", e.target.value)}
+              className="pl-10"
+            />
+            <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+          </div>
 
-        <Field label={t("objeto", "Objeto")}>
-          <Select
-            value={filtros.objetoId}
-            onChange={(e) => setCampo("objetoId", e.target.value)}
-          >
-            <option value="">Todos os objetos</option>
-            {objetos.map((ob) => (
-              <option key={ob.id} value={ob.id}>{ob.nome}</option>
-            ))}
-          </Select>
-        </Field>
+          {/* Select de Objeto (Parceria) */}
+          <div className="w-full lg:w-72">
+            <Select
+              value={filtros.objetoId}
+              onChange={(e) => setCampo("objetoId", e.target.value)}
+            >
+              <option value="">Todos os {t("objeto", "Objeto", true).toLowerCase()}</option>
+              {objetos.map((ob) => (
+                <option key={ob.id} value={ob.id}>
+                  {ob.nome}
+                </option>
+              ))}
+            </Select>
+          </div>
 
-        <Field label={t("organizacao", "Organização")}>
-          <Select
-            value={filtros.organizacaoId}
-            onChange={(e) => setCampo("organizacaoId", e.target.value)}
-          >
-            <option value="">Todas as organizações</option>
-            {organizacoes.map((org) => (
-              <option key={org.id} value={org.id}>{org.nome}</option>
-            ))}
-          </Select>
-        </Field>
+          {/* Chips de Status Rápido */}
+          <div className="inline-flex items-center bg-zinc-100 dark:bg-zinc-800 p-1 rounded-xl border border-zinc-200/80 dark:border-zinc-700 shrink-0 self-start lg:self-auto">
+            <button
+              type="button"
+              onClick={() => setCampo("emFuncionamento", "")}
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+                filtros.emFuncionamento === ""
+                  ? "bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-xs"
+                  : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
+              }`}
+            >
+              Todos
+            </button>
+            <button
+              type="button"
+              onClick={() => setCampo("emFuncionamento", "true")}
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+                filtros.emFuncionamento === "true"
+                  ? "bg-emerald-600 text-white shadow-xs"
+                  : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
+              }`}
+            >
+              Ativos
+            </button>
+            <button
+              type="button"
+              onClick={() => setCampo("emFuncionamento", "false")}
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+                filtros.emFuncionamento === "false"
+                  ? "bg-zinc-700 text-white shadow-xs"
+                  : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
+              }`}
+            >
+              Inativos
+            </button>
+          </div>
 
-        <Field label="Região">
-          <Select
-            value={filtros.regiaoId}
-            onChange={(e) => setCampo("regiaoId", e.target.value)}
-          >
-            <option value="">Todas as regiões</option>
-            {regioes.map((reg) => (
-              <option key={reg.id} value={reg.id}>{reg.nome}</option>
-            ))}
-          </Select>
-        </Field>
+          {/* Ações da Barra: Botão Mais Filtros e Limpar */}
+          <div className="flex items-center gap-2 shrink-0 self-end lg:self-auto">
+            <button
+              type="button"
+              onClick={() => setMostrarFiltrosAvancados((prev) => !prev)}
+              className={`inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-xl border transition-all ${
+                mostrarFiltrosAvancados || qtdFiltrosAvancados > 0
+                  ? "border-sky-300 bg-sky-50 text-sky-700 dark:bg-sky-950 dark:border-sky-800 dark:text-sky-300"
+                  : "border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700"
+              }`}
+            >
+              <SlidersHorizontal className="h-3.5 w-3.5" />
+              <span>Mais Filtros</span>
+              {qtdFiltrosAvancados > 0 && (
+                <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-sky-600 px-1 text-[10px] font-bold text-white">
+                  {qtdFiltrosAvancados}
+                </span>
+              )}
+              {mostrarFiltrosAvancados ? (
+                <ChevronUp className="h-3.5 w-3.5 text-zinc-400" />
+              ) : (
+                <ChevronDown className="h-3.5 w-3.5 text-zinc-400" />
+              )}
+            </button>
 
-        <Field label="Cidade">
-          <Input
-            placeholder="Filtrar por cidade..."
-            value={filtros.cidade}
-            onChange={(e) => setCampo("cidade", e.target.value)}
-          />
-        </Field>
+            {temAlgumFiltro && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={limpar}
+                type="button"
+                className="text-xs text-zinc-600 hover:text-red-600 border-zinc-200 dark:border-zinc-700"
+                title="Limpar todos os filtros"
+              >
+                <RotateCcw className="mr-1 h-3 w-3" />
+                Limpar
+              </Button>
+            )}
+          </div>
+        </div>
 
-        <Field label={t("atividade", "Atividade")}>
-          <Select
-            value={filtros.atividadeId}
-            onChange={(e) => setCampo("atividadeId", e.target.value)}
-          >
-            <option value="">Todas as atividades</option>
-            {atividades.map((atv) => (
-              <option key={atv.id} value={atv.id}>{atv.nome}</option>
-            ))}
-          </Select>
-        </Field>
+        {/* Gaveta de Filtros Secundários / Avançados */}
+        {mostrarFiltrosAvancados && (
+          <div className="pt-3 border-t border-zinc-100 dark:border-zinc-800 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 animate-in fade-in duration-150">
+            <Field label={t("organizacao", "Organização Executora")}>
+              <Select
+                value={filtros.organizacaoId}
+                onChange={(e) => setCampo("organizacaoId", e.target.value)}
+              >
+                <option value="">Todas as organizações</option>
+                {organizacoes.map((org) => (
+                  <option key={org.id} value={org.id}>
+                    {org.nome}
+                  </option>
+                ))}
+              </Select>
+            </Field>
 
-        <Field label="Status">
-          <Select
-            value={filtros.emFuncionamento}
-            onChange={(e) => setCampo("emFuncionamento", e.target.value)}
-          >
-            <option value="">Todos os status</option>
-            <option value="true">Em funcionamento (Ativo)</option>
-            <option value="false">Inativo</option>
-          </Select>
-        </Field>
-      </FilterBar>
+            <Field label="Região">
+              <Select
+                value={filtros.regiaoId}
+                onChange={(e) => setCampo("regiaoId", e.target.value)}
+              >
+                <option value="">Todas as regiões</option>
+                {regioes.map((reg) => (
+                  <option key={reg.id} value={reg.id}>
+                    {reg.nome}
+                  </option>
+                ))}
+              </Select>
+            </Field>
+
+            <Field label="Cidade">
+              <Input
+                placeholder="Filtrar por cidade..."
+                value={filtros.cidade}
+                onChange={(e) => setCampo("cidade", e.target.value)}
+              />
+            </Field>
+
+            <Field label={t("atividade", "Modalidade Esportiva")}>
+              <Select
+                value={filtros.atividadeId}
+                onChange={(e) => setCampo("atividadeId", e.target.value)}
+              >
+                <option value="">Todas as atividades</option>
+                {atividades.map((atv) => (
+                  <option key={atv.id} value={atv.id}>
+                    {atv.nome}
+                  </option>
+                ))}
+              </Select>
+            </Field>
+          </div>
+        )}
+      </div>
 
       <Card>
         {loading && <div className="px-5 py-8 text-center text-sm text-zinc-400">Carregando núcleos…</div>}
