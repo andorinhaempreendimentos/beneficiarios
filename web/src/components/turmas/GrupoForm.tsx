@@ -63,6 +63,7 @@ export interface GrupoFormProps {
   nucleos?: NucleoApi[];
   atividades?: AtividadeApi[];
   funcionarios?: FuncionarioApi[];
+  defaultNucleoId?: string;
   backHref: string;
 }
 
@@ -72,6 +73,7 @@ export function GrupoForm({
   nucleos = [],
   atividades = [],
   funcionarios: initialFuncionarios = [],
+  defaultNucleoId,
   backHref,
 }: GrupoFormProps) {
   const t = grupo || turma;
@@ -85,7 +87,7 @@ export function GrupoForm({
     t?.identificador || extrairIdentificador(t?.nome) || "A"
   );
   const [exclusiva, setExclusiva] = useState(t?.exclusiva ?? false);
-  const [nucleoId, setNucleoId] = useState(t?.nucleoId ?? "");
+  const [nucleoId, setNucleoId] = useState(t?.nucleoId ?? defaultNucleoId ?? "");
   const [atividadeId, setAtividadeId] = useState(t?.atividadeId ?? "");
   const [idadeMinima, setIdadeMinima] = useState<number>(t?.idadeMinima ?? 6);
   const [idadeMaxima, setIdadeMaxima] = useState<number>(t?.idadeMaxima ?? 17);
@@ -109,6 +111,12 @@ export function GrupoForm({
       .then((res) => setTodasTurmas(res.data))
       .catch(() => {});
   }, [initialFuncionarios]);
+
+  useEffect(() => {
+    if (defaultNucleoId && !nucleoId) {
+      setNucleoId(defaultNucleoId);
+    }
+  }, [defaultNucleoId, nucleoId]);
 
   const nucleoSelecionado = nucleos.find((n) => n.id === nucleoId);
 

@@ -291,7 +291,7 @@ export function DetalhesNucleoView({
               </Link>
             ) : (
               <Link
-                href={`/turmas/nova?nucleoId=${nucleo.id}`}
+                href={`/turmas/novo?nucleoId=${nucleo.id}`}
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-sm font-bold shadow-sm hover:shadow-md transition-all cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
@@ -490,7 +490,7 @@ export function DetalhesNucleoView({
 
               {!isCoordenador && (
                 <Link
-                  href={`/turmas/nova?nucleoId=${nucleo.id}`}
+                  href={`/turmas/novo?nucleoId=${nucleo.id}`}
                   className="ml-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold shadow-2xs transition-all"
                 >
                   <Plus className="w-3.5 h-3.5" />
@@ -574,7 +574,7 @@ export function DetalhesNucleoView({
                         </span>
                         <div className="flex items-center gap-1.5">
                           <Link
-                            href={`/turmas/${turma.id}/chamada`}
+                            href={`/turmas/${turma.id}/presenca`}
                             className="px-2.5 py-1.5 rounded-lg text-sky-600 hover:bg-sky-50 dark:hover:bg-sky-950 font-bold transition-colors"
                           >
                             Chamada
@@ -628,7 +628,7 @@ export function DetalhesNucleoView({
                           {turma.dataInicio ? formatarData(turma.dataInicio) : "-"}
                         </td>
                         <td className="px-4 py-3.5 text-right space-x-2">
-                          <Link href={`/turmas/${turma.id}/chamada`} className="text-sky-600 hover:underline font-semibold">
+                          <Link href={`/turmas/${turma.id}/presenca`} className="text-sky-600 hover:underline font-semibold">
                             Chamada
                           </Link>
                           <Link href={`/turmas/${turma.id}`} className="text-zinc-500 hover:text-zinc-900 dark:hover:text-white font-medium">

@@ -9,10 +9,12 @@ export function NovoGrupoView({
   nucleos,
   atividades,
   funcionarios,
+  defaultNucleoId,
 }: {
   nucleos: NucleoApi[];
   atividades: AtividadeApi[];
   funcionarios: FuncionarioApi[];
+  defaultNucleoId?: string;
 }) {
   const { t } = useDicionario();
   const termoGrupo = t("turma", "Grupo");
@@ -29,6 +31,7 @@ export function NovoGrupoView({
         nucleos={nucleos}
         atividades={atividades}
         funcionarios={funcionarios}
+        defaultNucleoId={defaultNucleoId}
         backHref="/turmas"
       />
     </div>
