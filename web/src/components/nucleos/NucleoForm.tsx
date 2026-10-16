@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { MapPin } from "lucide-react";
 import { z } from "zod";
 import { Button, Field, FormSection, Input, LinkButton, Select, Switch } from "@/components/ui";
-import { nucleosApi, regioesApi, type NucleoApi, type OrganizacaoApi, type AtividadeApi, type RegiaoApi } from "@/lib/api/services";
+import { nucleosApi, regioesApi, funcionariosApi, type NucleoApi, type OrganizacaoApi, type AtividadeApi, type RegiaoApi, type FuncionarioApi } from "@/lib/api/services";
 import { obterCoordenadasEndereco } from "@/lib/geocoding";
 
 const UFS_BRASIL = [
@@ -56,10 +56,18 @@ interface NucleoFormProps {
   organizacoes?: OrganizacaoApi[];
   atividades?: AtividadeApi[];
   regioes?: RegiaoApi[];
+  funcionarios?: FuncionarioApi[];
   backHref: string;
 }
 
-export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], regioes: regioesIniciais = [], backHref }: NucleoFormProps) {
+export function NucleoForm({
+  nucleo: n,
+  organizacoes = [],
+  atividades = [],
+  regioes: regioesIniciais = [],
+  funcionarios = [],
+  backHref,
+}: NucleoFormProps) {
   const { user } = useAuth();
   const router = useRouter();
   const isCoordenador = Boolean((user as any)?.isCoordenador);
@@ -81,9 +89,41 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], regi
   const [organizacaoId, setOrganizacaoId] = useState(n?.organizacaoId ?? (organizacoes[0]?.id || ""));
   const [regiaoId, setRegiaoId] = useState(n?.regiaoId ?? "");
   const [regioesList, setRegioesList] = useState<RegiaoApi[]>(regioesIniciais);
+  const [funcionariosList, setFuncionariosList] = useState<FuncionarioApi[]>(funcionarios);
+  const [nomeResponsavel, setNomeResponsavel] = useState(n?.nomeResponsavel ?? "");
+  const [telefoneContato, setTelefoneContato] = useState(n?.telefoneContato ?? "");
   const [atividadeIds, setAtividadeIds] = useState<string[]>(
     n?.atividadeIds ?? atividades.map((a) => a.id)
   );
+
+  useEffect(() => {
+    if (funcionarios && funcionarios.length > 0) {
+      setFuncionariosList(funcionarios);
+    } else {
+      funcionariosApi
+        .list({ limit: 1000, status: "ativo" })
+        .then((res) => {
+          setFuncionariosList(res.data ?? []);
+        })
+        .catch((err) => {
+          console.error("Erro ao carregar lista de funcionários:", err);
+        });
+    }
+  }, [funcionarios]);
+
+  const funcionariosOrdenados = useMemo(() => {
+    return [...funcionariosList].sort((a, b) =>
+      a.nomeCompleto.localeCompare(b.nomeCompleto, "pt-BR", { sensitivity: "base" })
+    );
+  }, [funcionariosList]);
+
+  function handleResponsavelChange(novoNome: string) {
+    setNomeResponsavel(novoNome);
+    const func = funcionariosList.find((f) => f.nomeCompleto === novoNome);
+    if (func?.celular && (!telefoneContato || telefoneContato.trim() === "")) {
+      setTelefoneContato(func.celular);
+    }
+  }
 
   // Carrega regiões compatíveis com o Objeto da Organização
   useEffect(() => {
@@ -149,8 +189,8 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], regi
       nomeLocal: (formData.get("nomeLocal") as string) || null,
       regiaoId: regiaoId || null,
       regiao: regiaoEscolhida?.nome || (regiaoId ? null : (formData.get("regiao") as string) || null),
-      nomeResponsavel: (formData.get("nomeResponsavel") as string) || null,
-      telefoneContato: (formData.get("telefoneContato") as string) || null,
+      nomeResponsavel: (formData.get("nomeResponsavel") as string) || nomeResponsavel || null,
+      telefoneContato: (formData.get("telefoneContato") as string) || telefoneContato || null,
       cep: (formData.get("cep") as string) || null,
       endereco: (formData.get("endereco") as string) || null,
       numero: (formData.get("numero") as string) || null,
@@ -270,10 +310,34 @@ export function NucleoForm({ nucleo: n, organizacoes = [], atividades = [], regi
             )}
           </Field>
           <Field label="Nome do responsável">
-            <Input name="nomeResponsavel" defaultValue={n?.nomeResponsavel} />
+            <Select
+              name="nomeResponsavel"
+              value={nomeResponsavel}
+              onChange={(e) => handleResponsavelChange(e.target.value)}
+            >
+              <option value="">Selecione o funcionário responsável...</option>
+              {n?.nomeResponsavel && !funcionariosList.some((f) => f.nomeCompleto === n.nomeResponsavel) && (
+                <option value={n.nomeResponsavel}>
+                  {n.nomeResponsavel} (Texto atual)
+                </option>
+              )}
+              {funcionariosOrdenados.map((f) => (
+                <option key={f.id} value={f.nomeCompleto}>
+                  {f.nomeCompleto}
+                  {f.funcao ? ` — ${f.funcao}` : ""}
+                  {f.matricula ? ` (${f.matricula})` : ""}
+                </option>
+              ))}
+            </Select>
           </Field>
           <Field label="Telefone de contato">
-            <Input name="telefoneContato" defaultValue={n?.telefoneContato} placeholder="(00) 00000-0000" />
+            <Input
+              name="telefoneContato"
+              value={telefoneContato}
+              onChange={(e) => setTelefoneContato(e.target.value)}
+              placeholder="(00) 00000-0000"
+              mask="telefone"
+            />
           </Field>
         </div>
       </FormSection>
