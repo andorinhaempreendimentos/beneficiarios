@@ -832,7 +832,7 @@ export const objetosApi = {
   async list(p?: QP): Promise<Paginated<ObjetoApi>> {
     const sb = await getSupabase();
     const { page, limit, from, to } = paginar(num(p?.page), num(p?.limit));
-    let q = sb.from('objetos').select('*, concedentes(*), organizacoes(*), objeto_cargos_previstos(*), objeto_metas(*)', { count: 'exact' }).is('deleted_at', null);
+    let q = sb.from('objetos').select('*, concedentes(*), organizacoes:objetos_organizacao_id_fkey(*), objeto_cargos_previstos(*), objeto_metas(*)', { count: 'exact' }).is('deleted_at', null);
     if (p?.busca) q = q.ilike('nome', `%${p.busca}%`);
     if (p?.status) q = q.eq('status', String(p.status));
     if (p?.concedenteId) q = q.eq('concedente_id', String(p.concedenteId));
@@ -843,13 +843,13 @@ export const objetosApi = {
   },
   async get(id: string): Promise<ObjetoApi> {
     const sb = await getSupabase();
-    const { data, error } = await sb.from('objetos').select('*, concedentes(*), organizacoes(*), objeto_cargos_previstos(*), objeto_metas(*)').eq('id', id).single();
+    const { data, error } = await sb.from('objetos').select('*, concedentes(*), organizacoes:objetos_organizacao_id_fkey(*), objeto_cargos_previstos(*), objeto_metas(*)').eq('id', id).single();
     if (error) throw error;
     return mapObjeto(data);
   },
   async create(body: Record<string, unknown>): Promise<ObjetoApi> {
     const sb = createClient();
-    const { data, error } = await sb.from('objetos').insert(toObjetoRow(body)).select('*, concedentes(*), organizacoes(*), objeto_cargos_previstos(*), objeto_metas(*)').single();
+    const { data, error } = await sb.from('objetos').insert(toObjetoRow(body)).select('*, concedentes(*), organizacoes:objetos_organizacao_id_fkey(*), objeto_cargos_previstos(*), objeto_metas(*)').single();
     if (error) throw error;
     if (Array.isArray(body.cargosPrevistos) && data?.id) {
       await objetosApi.syncCargos(data.id, body.cargosPrevistos as Partial<ObjetoCargoPrevistoApi>[]);
@@ -864,7 +864,7 @@ export const objetosApi = {
   },
   async update(id: string, body: Record<string, unknown>): Promise<ObjetoApi> {
     const sb = createClient();
-    const { data, error } = await sb.from('objetos').update(toObjetoRow(body)).eq('id', id).select('*, concedentes(*), organizacoes(*), objeto_cargos_previstos(*), objeto_metas(*)').single();
+    const { data, error } = await sb.from('objetos').update(toObjetoRow(body)).eq('id', id).select('*, concedentes(*), organizacoes:objetos_organizacao_id_fkey(*), objeto_cargos_previstos(*), objeto_metas(*)').single();
     if (error) throw error;
     if (Array.isArray(body.cargosPrevistos)) {
       await objetosApi.syncCargos(id, body.cargosPrevistos as Partial<ObjetoCargoPrevistoApi>[]);
