@@ -1,10 +1,9 @@
-import { ChevronRight, MapPin } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { redirect } from "next/navigation";
 import { nucleosApi } from "@/lib/api/services";
-import { InscricaoPublicaForm } from "@/components/inscricao-publica/InscricaoPublicaForm";
-import { InstrucoesInscricaoBanner } from "@/components/inscricao-publica/InstrucoesInscricaoBanner";
+import { InscricaoNucleoSimplificadaWizard } from "@/components/inscricao-publica/InscricaoNucleoSimplificadaWizard";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 interface InscricaoNucleoCadastroPageProps {
@@ -17,11 +16,11 @@ export default async function InscricaoNucleoCadastroPage({ params }: InscricaoN
 
   if (!nucleo || nucleo.emFuncionamento === false) redirect("/");
 
-  const breadcrumb = ["Núcleo", nucleo.identificacao, "Cadastro"];
+  const breadcrumb = ["Inscrição", nucleo.identificacao, "Cadastro de Beneficiários"];
 
   return (
-    <div className="flex flex-col gap-6">
-      <nav aria-label="Hierarquia da inscrição">
+    <div className="flex flex-col gap-4 max-w-xl mx-auto w-full pb-8">
+      <nav aria-label="Hierarquia da inscrição" className="px-2">
         <ol className="flex flex-wrap items-center gap-1 text-xs text-zinc-400">
           {breadcrumb.map((item, i) => (
             <li key={i} className="flex items-center gap-1">
@@ -34,35 +33,7 @@ export default async function InscricaoNucleoCadastroPage({ params }: InscricaoN
         </ol>
       </nav>
 
-      <InstrucoesInscricaoBanner nucleo={nucleo} tipoLink="nucleo" etapaAtual={1} />
-
-      <div className="rounded-xl border border-zinc-200 bg-white p-6">
-        <span className="inline-block rounded-md bg-violet-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-violet-700 mb-2">
-          Núcleo
-        </span>
-        <h1 className="text-xl font-bold text-zinc-900">{nucleo.identificacao}</h1>
-        {nucleo.nomeLocal && (
-          <p className="mt-1 text-sm text-zinc-500">{nucleo.nomeLocal}</p>
-        )}
-        <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-zinc-400">
-          <MapPin className="h-4 w-4 shrink-0" />
-          <span>{[nucleo.bairro, nucleo.cidade, nucleo.regiao].filter(Boolean).join(" · ")}</span>
-        </div>
-
-        <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-          Após sua inscrição, o seu professor definirá sua turma.
-        </div>
-      </div>
-
-      <div>
-        <h2 className="text-lg font-semibold text-zinc-900">Formulário de Cadastro</h2>
-        <p className="mt-1 text-sm text-zinc-500">
-          Preencha os dados abaixo para se cadastrar. Campos marcados com{" "}
-          <span className="text-red-500">*</span> são obrigatórios.
-        </p>
-      </div>
-
-      <InscricaoPublicaForm nucleoId={nucleoId} />
+      <InscricaoNucleoSimplificadaWizard nucleo={nucleo} />
     </div>
   );
 }
