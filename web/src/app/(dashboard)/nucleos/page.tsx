@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/components/providers/ToastProvider";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Badge,
   Button,
@@ -66,6 +67,7 @@ const EMPTY = {
 };
 
 export default function NucleosPage() {
+  const router = useRouter();
   const { toast } = useToast();
   const { user } = useAuth();
   const isCoordenador = Boolean((user as any)?.isCoordenador);
@@ -388,7 +390,8 @@ export default function NucleosPage() {
                     return (
                       <div
                         key={nucleo.id}
-                        className={`group relative rounded-2xl border transition-all flex flex-col justify-between min-h-[180px] gap-3 p-4 pb-3.5 ${
+                        onClick={() => router.push(`/nucleos/${nucleo.id}/editar`)}
+                        className={`group relative rounded-2xl border transition-all flex flex-col justify-between min-h-[180px] gap-3 p-4 pb-3.5 cursor-pointer ${
                           isSelected
                             ? "border-sky-500 bg-sky-50/30 ring-2 ring-sky-500/20 shadow-xs"
                             : "border-zinc-200 bg-white hover:border-zinc-300 hover:shadow-xs"
@@ -397,6 +400,7 @@ export default function NucleosPage() {
                         {/* Checkbox em Cunha Perfeita no Vértice Superior Esquerdo (Apenas Admin) */}
                         {!isCoordenador && (
                           <label
+                            onClick={(e) => e.stopPropagation()}
                             className={`absolute -top-px -left-px z-10 flex h-8 w-9 items-center justify-center rounded-tl-2xl rounded-br-xl border-r border-b transition-all cursor-pointer ${
                               isSelected
                                 ? "bg-sky-600 border-sky-600 text-white shadow-2xs"
@@ -415,14 +419,18 @@ export default function NucleosPage() {
                         )}
 
                         {/* Topo: Status badge alinhado à direita (sem colisão com o checkbox) */}
-                        <div className="flex items-center justify-end min-h-[26px]">
+                        <div
+                          onClick={(e) => e.stopPropagation()}
+                          className="flex items-center justify-end min-h-[26px]"
+                        >
                           <StatusNucleoBadge nucleoId={nucleo.id} emFuncionamento={nucleo.emFuncionamento} />
                         </div>
 
                         {/* Título e Subtítulo com Região Integrada */}
                         <div className="flex flex-col gap-1 -mt-1">
                           <Link
-                            href={`/nucleos/${nucleo.id}`}
+                            href={`/nucleos/${nucleo.id}/editar`}
+                            onClick={(e) => e.stopPropagation()}
                             className="font-bold text-zinc-900 text-sm leading-snug hover:text-sky-600 transition-colors line-clamp-1"
                             title={nucleo.identificacao}
                           >
@@ -457,6 +465,7 @@ export default function NucleosPage() {
                           {!isCoordenador && (
                             <Link
                               href={`/nucleos/${nucleo.id}/editar`}
+                              onClick={(e) => e.stopPropagation()}
                               className="text-xs font-semibold text-zinc-600 hover:text-sky-600 transition-colors py-0.5 px-1.5 rounded-md hover:bg-zinc-50"
                             >
                               Editar
@@ -547,13 +556,9 @@ export default function NucleosPage() {
                             </td>
                             <td className="px-5 py-3 text-zinc-600 text-xs">{formatarData(nucleo.dataInicio)}</td>
                             <td className="px-5 py-3 text-right">
-                              <Link href={`/nucleos/${nucleo.id}`} className="text-sky-600 hover:underline">Acessar</Link>
-                              {!isCoordenador && (
-                                <>
-                                  <span className="mx-1.5 text-zinc-300">|</span>
-                                  <Link href={`/nucleos/${nucleo.id}/editar`} className="text-zinc-500 hover:underline">Editar</Link>
-                                </>
-                              )}
+                              <Link href={`/nucleos/${nucleo.id}/editar`} className="text-xs font-semibold text-sky-600 hover:underline">
+                                Editar
+                              </Link>
                             </td>
                           </tr>
                         );
