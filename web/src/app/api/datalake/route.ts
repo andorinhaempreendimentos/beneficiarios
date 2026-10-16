@@ -56,22 +56,35 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Erro ao buscar núcleos." }, { status: 500 });
     }
 
-    // 2. Buscar registros da view do datalake
-    const { data: alunos, error: errAlunos } = await supabase
-      .from("vw_datalake_beneficiarios")
-      .select("*")
-      .order("nucleo_nome", { ascending: true })
-      .order("nome_completo", { ascending: true });
+    // 2. Buscar TODOS os registros da view do datalake com paginação em lotes de 1.000
+    // (O Supabase/PostgREST impõe limite padrão de 1.000 registros por query)
+    let todosAlunos: any[] = [];
+    let pagina = 0;
+    const tamanhoPagina = 1000;
 
-    if (errAlunos) {
-      console.error("[Datalake API] Erro ao consultar vw_datalake_beneficiarios:", errAlunos);
-      return NextResponse.json(
-        { error: "Erro ao carregar dados do datalake." },
-        { status: 500 }
-      );
+    while (true) {
+      const { data: lote, error: errLote } = await supabase
+        .from("vw_datalake_beneficiarios")
+        .select("*")
+        .order("nucleo_nome", { ascending: true })
+        .order("nome_completo", { ascending: true })
+        .range(pagina * tamanhoPagina, (pagina + 1) * tamanhoPagina - 1);
+
+      if (errLote) {
+        console.error(`[Datalake API] Erro ao consultar lote ${pagina}:`, errLote);
+        return NextResponse.json(
+          { error: "Erro ao carregar dados do datalake." },
+          { status: 500 }
+        );
+      }
+
+      if (!lote || lote.length === 0) break;
+      todosAlunos = todosAlunos.concat(lote);
+      if (lote.length < tamanhoPagina) break;
+      pagina++;
     }
 
-    const listaAlunos = alunos || [];
+    const listaAlunos = todosAlunos;
 
     // 3. Agregar métricas por núcleo e gerais
     let totalBanco = 0;
