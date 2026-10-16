@@ -477,7 +477,7 @@ export function ObjetoForm({ objeto: o, backHref }: ObjetoFormProps) {
                   <th className="px-3 py-2">Função / Cargo</th>
                   <th className="px-3 py-2 w-24">Qtd. Vagas</th>
                   <th className="px-3 py-2 w-32">Remuneração (R$)</th>
-                  <th className="px-3 py-2 w-32">C.H. Semanal</th>
+                  <th className="px-3 py-2 w-32">C.H. Semanal (h)</th>
                   <th className="px-3 py-2 w-12 text-center">Ações</th>
                 </tr>
               </thead>
@@ -517,12 +517,27 @@ export function ObjetoForm({ objeto: o, backHref }: ObjetoFormProps) {
                       />
                     </td>
                     <td className="p-2">
-                      <Input
-                        value={cargo.cargaHorariaSemanal ?? "20h/sem"}
-                        onChange={(e) => handleCargoChange(idx, "cargaHorariaSemanal", e.target.value)}
-                        placeholder="Ex: 20h/sem"
-                        className="text-sm"
-                      />
+                      <div className="relative flex items-center">
+                        <Input
+                          type="number"
+                          min="1"
+                          max="60"
+                          value={
+                            cargo.cargaHorariaSemanal
+                              ? parseInt(String(cargo.cargaHorariaSemanal).replace(/\D/g, ""), 10) || ""
+                              : ""
+                          }
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            handleCargoChange(idx, "cargaHorariaSemanal", val ? `${val}h/sem` : "");
+                          }}
+                          placeholder="20"
+                          className="pr-12 text-sm"
+                        />
+                        <span className="pointer-events-none absolute right-2.5 text-xs font-medium text-zinc-400">
+                          h/sem
+                        </span>
+                      </div>
                     </td>
                     <td className="p-2 text-center">
                       <button
