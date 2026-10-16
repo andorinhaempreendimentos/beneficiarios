@@ -1996,6 +1996,7 @@ export type Database = {
           nome: string
           nome_programa: string | null
           numero_processo_adm: string | null
+          organizacao_id: string | null
           status: string
           termo_de_fomento: string | null
           termo_grupo: string | null
@@ -2031,6 +2032,7 @@ export type Database = {
           nome: string
           nome_programa?: string | null
           numero_processo_adm?: string | null
+          organizacao_id?: string | null
           status?: string
           termo_de_fomento?: string | null
           termo_grupo?: string | null
@@ -2066,6 +2068,7 @@ export type Database = {
           nome?: string
           nome_programa?: string | null
           numero_processo_adm?: string | null
+          organizacao_id?: string | null
           status?: string
           termo_de_fomento?: string | null
           termo_grupo?: string | null
@@ -2083,6 +2086,13 @@ export type Database = {
             referencedRelation: "concedentes"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "objetos_organizacao_id_fkey"
+            columns: ["organizacao_id"]
+            isOneToOne: false
+            referencedRelation: "organizacoes"
+            referencedColumns: ["id"]
+          },
         ]
       }
       organizacoes: {
@@ -2098,7 +2108,7 @@ export type Database = {
           id: string
           nome: string
           nome_responsavel: string | null
-          objeto_id: string
+          objeto_id: string | null
           status: string
           telefone: string | null
           tipo: string
@@ -2116,7 +2126,7 @@ export type Database = {
           id?: string
           nome: string
           nome_responsavel?: string | null
-          objeto_id: string
+          objeto_id?: string | null
           status?: string
           telefone?: string | null
           tipo?: string
@@ -2134,7 +2144,7 @@ export type Database = {
           id?: string
           nome?: string
           nome_responsavel?: string | null
-          objeto_id?: string
+          objeto_id?: string | null
           status?: string
           telefone?: string | null
           tipo?: string

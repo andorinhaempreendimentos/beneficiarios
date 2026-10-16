@@ -7,9 +7,11 @@ import { z } from "zod";
 import {
   objetosApi,
   concedentesApi,
+  organizacoesApi,
   funcoesApi,
   type ObjetoApi,
   type ConcedenteApi,
+  type OrganizacaoApi,
   type FuncaoApi,
   type ObjetoCargoPrevistoApi,
   type ObjetoMetaApi,
@@ -58,6 +60,8 @@ export function ObjetoForm({ objeto: o, backHref }: ObjetoFormProps) {
   const [tipoDuracao, setTipoDuracao] = useState<TipoDuracao>((o?.tipoDuracao as TipoDuracao) ?? "periodo");
   const [concedentes, setConcedentes] = useState<ConcedenteApi[]>([]);
   const [concedenteId, setConcedenteId] = useState<string>(o?.concedenteId ?? "");
+  const [organizacoes, setOrganizacoes] = useState<OrganizacaoApi[]>([]);
+  const [organizacaoId, setOrganizacaoId] = useState<string>(o?.organizacaoId ?? "");
   const [modalidadeParceria, setModalidadeParceria] = useState<string>(o?.modalidadeParceria ?? "termo_colaboracao");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
@@ -107,6 +111,12 @@ export function ObjetoForm({ objeto: o, backHref }: ObjetoFormProps) {
       setConcedentes(res.data);
       if (!concedenteId && res.data.length > 0 && !o?.id) {
         setConcedenteId(res.data[0].id);
+      }
+    });
+    organizacoesApi.list({ limit: 100 }).then((res) => {
+      setOrganizacoes(res.data);
+      if (!organizacaoId && res.data.length > 0 && !o?.id) {
+        setOrganizacaoId(res.data[0].id);
       }
     });
     funcoesApi.list().then((res) => {
@@ -208,6 +218,7 @@ export function ObjetoForm({ objeto: o, backHref }: ObjetoFormProps) {
       nomePrograma: (formData.get("nomePrograma") as string) || null,
       descricao: (formData.get("descricao") as string) || null,
       concedenteId: concedenteId || null,
+      organizacaoId: organizacaoId || null,
       modalidadeParceria,
       numeroProcessoAdm: (formData.get("numeroProcessoAdm") as string) || null,
       editalNumero: (formData.get("editalNumero") as string) || null,
@@ -317,9 +328,36 @@ export function ObjetoForm({ objeto: o, backHref }: ObjetoFormProps) {
         </div>
       </FormSection>
 
-      {/* 2. Órgão Concedente e Processo Administrativo */}
-      <FormSection title="2. Órgão Concedente e Processo Administrativo (MROSC)">
+      {/* 2. Organização Executora, Órgão Concedente e Processo Administrativo */}
+      <FormSection title="2. Organização Executora, Órgão Concedente e Processo (MROSC)">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <Field label="Organização da Sociedade Civil (OSC) Executora" className="sm:col-span-2">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <Select
+                name="organizacaoId"
+                value={organizacaoId}
+                onChange={(e) => setOrganizacaoId(e.target.value)}
+                className="flex-1"
+              >
+                <option value="">Nenhuma / Selecione a Organização Executora</option>
+                {organizacoes.map((org) => (
+                  <option key={org.id} value={org.id}>
+                    {org.nome} {org.cnpj ? `(${org.cnpj})` : ""}
+                  </option>
+                ))}
+              </Select>
+              <Link
+                href="/organizacoes"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs font-semibold text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 transition-colors shrink-0 shadow-2xs"
+                title="Abrir área de Organizações em nova aba"
+              >
+                <ExternalLink className="h-3.5 w-3.5 text-zinc-500" />
+                Ver Organizações
+              </Link>
+            </div>
+          </Field>
           <Field label="Órgão Concedente (Poder Público)" className="sm:col-span-2">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
               <Select

@@ -175,6 +175,13 @@ export interface ObjetoApi {
     responsavelNome?: string;
     responsavelCargo?: string;
   };
+  organizacaoId?: string;
+  organizacao?: {
+    id: string;
+    nome: string;
+    cnpj?: string;
+    tipo?: string;
+  };
   modalidadeParceria?: 'termo_colaboracao' | 'termo_fomento' | 'acordo_cooperacao';
   numeroProcessoAdm?: string;
   editalNumero?: string;
@@ -205,7 +212,13 @@ export interface OrganizacaoApi {
   endereco?: string;
   cidade?: string;
   estado?: string;
-  objetoId: string;
+  objetoId?: string;
+  objetosVinculados?: {
+    id: string;
+    nome: string;
+    termoDeFomento?: string;
+    status: string;
+  }[];
   status: string;
   criadoEm: string;
 }
@@ -477,6 +490,13 @@ function mapObjeto(r: any): ObjetoApi {
       responsavelNome: r.concedentes.responsavel_nome ?? undefined,
       responsavelCargo: r.concedentes.responsavel_cargo ?? undefined,
     } : undefined,
+    organizacaoId: r.organizacao_id ?? undefined,
+    organizacao: r.organizacoes ? {
+      id: r.organizacoes.id,
+      nome: r.organizacoes.nome,
+      cnpj: r.organizacoes.cnpj ?? undefined,
+      tipo: r.organizacoes.tipo ?? undefined,
+    } : undefined,
     modalidadeParceria: r.modalidade_parceria ?? undefined,
     numeroProcessoAdm: r.numero_processo_adm ?? undefined,
     editalNumero: r.edital_numero ?? undefined,
@@ -516,12 +536,23 @@ function mapObjeto(r: any): ObjetoApi {
 }
 
 function mapOrganizacao(r: any): OrganizacaoApi {
+  const objetosVinculados = Array.isArray(r.objetos)
+    ? r.objetos.map((ob: any) => ({
+        id: ob.id,
+        nome: ob.nome,
+        termoDeFomento: ob.termo_de_fomento ?? undefined,
+        status: ob.status,
+      }))
+    : undefined;
+
   return {
     id: r.id, nome: r.nome, tipo: r.tipo, cnpj: r.cnpj ?? undefined,
     nomeResponsavel: r.nome_responsavel ?? undefined, telefone: r.telefone ?? undefined,
     email: r.email ?? undefined, cep: r.cep ?? undefined, endereco: r.endereco ?? undefined,
     cidade: r.cidade ?? undefined, estado: r.estado ?? undefined,
-    objetoId: r.objeto_id, status: r.status, criadoEm: r.created_at,
+    objetoId: r.objeto_id ?? undefined,
+    objetosVinculados,
+    status: r.status, criadoEm: r.created_at,
   };
 }
 
@@ -801,7 +832,7 @@ export const objetosApi = {
   async list(p?: QP): Promise<Paginated<ObjetoApi>> {
     const sb = await getSupabase();
     const { page, limit, from, to } = paginar(num(p?.page), num(p?.limit));
-    let q = sb.from('objetos').select('*, concedentes(*), objeto_cargos_previstos(*), objeto_metas(*)', { count: 'exact' }).is('deleted_at', null);
+    let q = sb.from('objetos').select('*, concedentes(*), organizacoes(*), objeto_cargos_previstos(*), objeto_metas(*)', { count: 'exact' }).is('deleted_at', null);
     if (p?.busca) q = q.ilike('nome', `%${p.busca}%`);
     if (p?.status) q = q.eq('status', String(p.status));
     if (p?.concedenteId) q = q.eq('concedente_id', String(p.concedenteId));
@@ -812,13 +843,13 @@ export const objetosApi = {
   },
   async get(id: string): Promise<ObjetoApi> {
     const sb = await getSupabase();
-    const { data, error } = await sb.from('objetos').select('*, concedentes(*), objeto_cargos_previstos(*), objeto_metas(*)').eq('id', id).single();
+    const { data, error } = await sb.from('objetos').select('*, concedentes(*), organizacoes(*), objeto_cargos_previstos(*), objeto_metas(*)').eq('id', id).single();
     if (error) throw error;
     return mapObjeto(data);
   },
   async create(body: Record<string, unknown>): Promise<ObjetoApi> {
     const sb = createClient();
-    const { data, error } = await sb.from('objetos').insert(toObjetoRow(body)).select('*, concedentes(*), objeto_cargos_previstos(*), objeto_metas(*)').single();
+    const { data, error } = await sb.from('objetos').insert(toObjetoRow(body)).select('*, concedentes(*), organizacoes(*), objeto_cargos_previstos(*), objeto_metas(*)').single();
     if (error) throw error;
     if (Array.isArray(body.cargosPrevistos) && data?.id) {
       await objetosApi.syncCargos(data.id, body.cargosPrevistos as Partial<ObjetoCargoPrevistoApi>[]);
@@ -833,7 +864,7 @@ export const objetosApi = {
   },
   async update(id: string, body: Record<string, unknown>): Promise<ObjetoApi> {
     const sb = createClient();
-    const { data, error } = await sb.from('objetos').update(toObjetoRow(body)).eq('id', id).select('*, concedentes(*), objeto_cargos_previstos(*), objeto_metas(*)').single();
+    const { data, error } = await sb.from('objetos').update(toObjetoRow(body)).eq('id', id).select('*, concedentes(*), organizacoes(*), objeto_cargos_previstos(*), objeto_metas(*)').single();
     if (error) throw error;
     if (Array.isArray(body.cargosPrevistos)) {
       await objetosApi.syncCargos(id, body.cargosPrevistos as Partial<ObjetoCargoPrevistoApi>[]);
@@ -916,6 +947,7 @@ function toObjetoRow(b: Record<string, unknown>): Database['public']['Tables']['
     data_termino: (b.dataTermino as string | null | undefined) ?? null,
     status: (b.status as string) ?? 'ativo',
     concedente_id: (b.concedenteId as string | null | undefined) || null,
+    organizacao_id: (b.organizacaoId as string | null | undefined) || null,
     modalidade_parceria: (b.modalidadeParceria as string | null | undefined) || 'termo_colaboracao',
     numero_processo_adm: (b.numeroProcessoAdm as string | null | undefined) || null,
     edital_numero: (b.editalNumero as string | null | undefined) || null,
@@ -948,13 +980,61 @@ export const organizacoesApi = {
     if (p?.status) q = q.eq('status', String(p.status));
     const { data, count, error } = await q.order('created_at', { ascending: false }).range(from, to);
     if (error) throw error;
-    return { data: (data ?? []).map(mapOrganizacao), total: count ?? 0, page, limit };
+
+    const orgIds = (data ?? []).map((o: any) => o.id);
+    const objetosPorOrg: Record<string, any[]> = {};
+    if (orgIds.length > 0) {
+      const { data: objs } = await sb
+        .from('objetos')
+        .select('id, nome, termo_de_fomento, status, organizacao_id')
+        .in('organizacao_id', orgIds)
+        .is('deleted_at', null);
+      if (objs) {
+        for (const ob of objs) {
+          if (ob.organizacao_id) {
+            if (!objetosPorOrg[ob.organizacao_id]) objetosPorOrg[ob.organizacao_id] = [];
+            objetosPorOrg[ob.organizacao_id].push({
+              id: ob.id,
+              nome: ob.nome,
+              termoDeFomento: ob.termo_de_fomento ?? undefined,
+              status: ob.status,
+            });
+          }
+        }
+      }
+    }
+
+    const orgs = (data ?? []).map((d: any) => {
+      const mapped = mapOrganizacao(d);
+      if (objetosPorOrg[d.id]) {
+        mapped.objetosVinculados = objetosPorOrg[d.id];
+      }
+      return mapped;
+    });
+
+    return { data: orgs, total: count ?? 0, page, limit };
   },
   async get(id: string): Promise<OrganizacaoApi> {
     const sb = await getSupabase();
     const { data, error } = await sb.from('organizacoes').select('*').eq('id', id).single();
     if (error) throw error;
-    return mapOrganizacao(data);
+    const mapped = mapOrganizacao(data);
+
+    const orFilter = data.objeto_id ? `organizacao_id.eq.${id},id.eq.${data.objeto_id}` : `organizacao_id.eq.${id}`;
+    const { data: objs } = await sb
+      .from('objetos')
+      .select('id, nome, termo_de_fomento, status')
+      .or(orFilter)
+      .is('deleted_at', null);
+
+    mapped.objetosVinculados = (objs ?? []).map((ob: any) => ({
+      id: ob.id,
+      nome: ob.nome,
+      termoDeFomento: ob.termo_de_fomento ?? undefined,
+      status: ob.status,
+    }));
+
+    return mapped;
   },
   async create(body: Record<string, unknown>): Promise<OrganizacaoApi> {
     const sb = createClient();

@@ -59,11 +59,43 @@ export default async function DetalhesOrganizacaoPage({ params }: { params: Prom
               <p className="text-zinc-800">{o.email}</p>
             </div>
           )}
-          {objeto && (
-            <div>
-              <p className="text-zinc-500">Objeto vinculado</p>
-              <p className="text-zinc-800">{objeto.nome}</p>
+        </CardBody>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <h3 className="text-sm font-medium text-zinc-700">Parcerias / Objetos Vinculados</h3>
+        </CardHeader>
+        <CardBody>
+          {o.objetosVinculados && o.objetosVinculados.length > 0 ? (
+            <div className="divide-y divide-zinc-200">
+              {o.objetosVinculados.map((ob) => (
+                <div key={ob.id} className="flex items-center justify-between py-2.5">
+                  <div>
+                    <a href={`/objetos/${ob.id}`} className="font-medium text-sky-600 hover:underline">
+                      {ob.nome}
+                    </a>
+                    {ob.termoDeFomento && (
+                      <p className="text-xs text-zinc-500">{ob.termoDeFomento}</p>
+                    )}
+                  </div>
+                  <Badge tone={ob.status === "ativo" ? "green" : "zinc"}>
+                    {ob.status === "ativo" ? "Ativo" : ob.status}
+                  </Badge>
+                </div>
+              ))}
             </div>
+          ) : objeto ? (
+            <div className="flex items-center justify-between py-1">
+              <a href={`/objetos/${objeto.id}`} className="font-medium text-sky-600 hover:underline">
+                {objeto.nome}
+              </a>
+              <Badge tone={objeto.status === "ativo" ? "green" : "zinc"}>
+                {objeto.status === "ativo" ? "Ativo" : objeto.status}
+              </Badge>
+            </div>
+          ) : (
+            <p className="text-sm text-zinc-500">Nenhum objeto vinculado a esta organização.</p>
           )}
         </CardBody>
       </Card>

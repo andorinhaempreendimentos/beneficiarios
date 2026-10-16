@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { z } from "zod";
-import { Button, Field, FormSection, Input, LinkButton, Select } from "@/components/ui";
+import Link from "next/link";
+import { ExternalLink } from "lucide-react";
+import { Badge, Button, Field, FormSection, Input, LinkButton, Select } from "@/components/ui";
 import type { TipoOrganizacao } from "@/lib/types";
 import { organizacoesApi, type OrganizacaoApi, type ObjetoApi } from "@/lib/api/services";
 import { validarCnpj, validarCep, validarEmail } from "@/lib/mascaras";
@@ -56,7 +58,14 @@ export function OrganizacaoForm({ organizacao: o, objetos = [], backHref }: Orga
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
-  const [objetoId, setObjetoId] = useState(o?.objetoId ?? (objetos[0]?.id || ""));
+
+  const objetosVinculados = useMemo(() => {
+    if (!o?.id) return [];
+    if (o.objetosVinculados && o.objetosVinculados.length > 0) {
+      return o.objetosVinculados;
+    }
+    return objetos.filter((ob) => ob.organizacaoId === o.id || ob.id === o.objetoId);
+  }, [o, objetos]);
 
   const [cep, setCep] = useState(o?.cep ?? "");
   const [endereco, setEndereco] = useState(o?.endereco ?? "");
@@ -102,14 +111,6 @@ export function OrganizacaoForm({ organizacao: o, objetos = [], backHref }: Orga
       return;
     }
 
-    const objId = (formData.get("objetoId") as string) || objetoId;
-
-    if (!objId) {
-      setErro("Por favor, selecione um objeto vinculado.");
-      setLoading(false);
-      return;
-    }
-
     const data = {
       nome: formData.get("nome") as string,
       tipo: formData.get("tipo") as string,
@@ -117,7 +118,7 @@ export function OrganizacaoForm({ organizacao: o, objetos = [], backHref }: Orga
       nomeResponsavel: (formData.get("nomeResponsavel") as string) || null,
       telefone: (formData.get("telefone") as string) || null,
       email: email || null,
-      objetoId: objId,
+      objetoId: o?.objetoId ?? null,
       cep: cepVal || null,
       endereco: (formData.get("endereco") as string) || null,
       cidade: (formData.get("cidade") as string) || null,
@@ -184,15 +185,62 @@ export function OrganizacaoForm({ organizacao: o, objetos = [], backHref }: Orga
           <Field label="Email">
             <Input name="email" type="email" defaultValue={o?.email} placeholder="contato@org.com.br" />
           </Field>
-          <Field label="Objeto vinculado" required>
-            <Select name="objetoId" value={objetoId} onChange={(e) => setObjetoId(e.target.value)}>
-              <option value="" disabled>Selecione um objeto</option>
-              {objetos.map((ob) => (
-                <option key={ob.id} value={ob.id}>{ob.nome}</option>
-              ))}
+          <Field label="Status da organização">
+            <Select name="status" defaultValue={o?.status ?? "ativa"}>
+              <option value="ativa">Ativa</option>
+              <option value="inativa">Inativa</option>
             </Select>
           </Field>
         </div>
+      </FormSection>
+
+      {/* Seção Não Editável de Parcerias / Objetos Vinculados */}
+      <FormSection title="Parcerias / Objetos Vinculados">
+        {objetosVinculados.length > 0 ? (
+          <div className="flex flex-col gap-3">
+            <p className="text-xs text-zinc-500">
+              Esta organização está vinculada às seguintes parcerias/objetos executados no sistema (vínculo gerenciado pelo cadastro de cada Objeto):
+            </p>
+            <div className="divide-y divide-zinc-200 dark:divide-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 p-1">
+              {objetosVinculados.map((ob) => (
+                <div key={ob.id} className="flex items-center justify-between p-3">
+                  <div className="flex flex-col gap-0.5">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-sm text-zinc-900 dark:text-zinc-100">
+                        {ob.nome}
+                      </span>
+                      <Badge tone={ob.status === "ativo" ? "green" : "zinc"}>
+                        {ob.status === "ativo" ? "Ativo" : ob.status}
+                      </Badge>
+                    </div>
+                    {ob.termoDeFomento && (
+                      <span className="text-xs text-zinc-500">
+                        Termo de Fomento / Colaboração: {ob.termoDeFomento}
+                      </span>
+                    )}
+                  </div>
+                  <Link
+                    href={`/objetos/${ob.id}`}
+                    className="inline-flex items-center gap-1 text-xs font-medium text-sky-600 hover:text-sky-700 hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Ver Objeto <ExternalLink className="h-3 w-3" />
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="rounded-xl border border-dashed border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30 p-4 text-center">
+            <p className="text-sm text-zinc-600 dark:text-zinc-400">
+              Nenhum objeto da parceria vinculado a esta organização no momento.
+            </p>
+            <p className="mt-1 text-xs text-zinc-400 dark:text-zinc-500">
+              Para vincular uma parceria, selecione esta organização no campo <strong>&quot;Organização Executora (OSC)&quot;</strong> dentro do cadastro de cada Objeto da Parceria.
+            </p>
+          </div>
+        )}
       </FormSection>
 
       <FormSection title="Endereço">

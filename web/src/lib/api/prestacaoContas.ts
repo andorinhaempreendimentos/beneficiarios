@@ -289,13 +289,26 @@ export const prestacaoContasApi = {
     const objeto = await objetosApi.get(objetoId);
 
     // 2. Organização Executora
-    const { data: orgData } = await sb
-      .from('organizacoes')
-      .select('*')
-      .eq('objeto_id', objetoId)
-      .is('deleted_at', null)
-      .limit(1)
-      .single();
+    let orgData: any = null;
+    if (objeto.organizacaoId) {
+      const { data } = await sb
+        .from('organizacoes')
+        .select('*')
+        .eq('id', objeto.organizacaoId)
+        .is('deleted_at', null)
+        .maybeSingle();
+      orgData = data;
+    }
+    if (!orgData) {
+      const { data } = await sb
+        .from('organizacoes')
+        .select('*')
+        .eq('objeto_id', objetoId)
+        .is('deleted_at', null)
+        .limit(1)
+        .maybeSingle();
+      orgData = data;
+    }
 
     // 3. Núcleos do Objeto
     let qNucleos = sb

@@ -148,7 +148,10 @@ export default function OrganizacoesPage() {
                   </div>
                 ) : (
                   resultado.map((o) => {
-                    const objeto = o.objetoId ? objetos.find((ob) => ob.id === o.objetoId) : null;
+                    const orgObjetos = (o.objetosVinculados && o.objetosVinculados.length > 0)
+                      ? o.objetosVinculados
+                      : objetos.filter((ob) => ob.organizacaoId === o.id || (o.objetoId && ob.id === o.objetoId));
+                    const nomesObjetos = orgObjetos.map((ob) => ob.nome).join(", ");
                     const isSelected = selectedIds.includes(o.id);
 
                     // 1. Núcleos da Organização
@@ -210,14 +213,14 @@ export default function OrganizacoesPage() {
                           <StatusOrganizacaoBadge organizacaoId={o.id} statusAtual={o.status} />
                         </div>
 
-                        {/* Objeto Vinculado */}
+                        {/* Parcerias / Objetos Vinculados */}
                         <div className="flex flex-col gap-1.5 border-t border-zinc-100 pt-2 text-xs">
                           <div className="flex items-center gap-1.5 rounded-lg bg-zinc-50 p-2 border border-zinc-100">
                             <span className="shrink-0 rounded-md bg-amber-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-800">
-                              Objeto
+                              {orgObjetos.length > 1 ? `${orgObjetos.length} Parcerias` : "Parceria"}
                             </span>
-                            <span className="font-medium truncate text-zinc-800">
-                              {objeto?.nome || "Sem objeto cadastrado"}
+                            <span className="font-medium truncate text-zinc-800" title={nomesObjetos}>
+                              {nomesObjetos || "Sem parceria vinculada"}
                             </span>
                           </div>
                         </div>
@@ -289,7 +292,7 @@ export default function OrganizacoesPage() {
                         />
                       </th>
                       <th className="px-5 py-3">Nome</th>
-                      <th className="px-5 py-3">Objeto Vinculado</th>
+                      <th className="px-5 py-3">Parcerias Vinculadas</th>
                       <th className="px-5 py-3 text-center">Núcleos</th>
                       <th className="px-5 py-3 text-center">Turmas</th>
                       <th className="px-5 py-3 text-center">Beneficiários</th>
@@ -302,7 +305,10 @@ export default function OrganizacoesPage() {
                       <tr><td colSpan={8} className="px-5 py-8 text-center text-sm text-zinc-400">Nenhuma organização encontrada.</td></tr>
                     ) : resultado.map((o) => {
                       const isSelected = selectedIds.includes(o.id);
-                      const objeto = o.objetoId ? objetos.find((ob) => ob.id === o.objetoId) : null;
+                      const orgObjetos = (o.objetosVinculados && o.objetosVinculados.length > 0)
+                        ? o.objetosVinculados
+                        : objetos.filter((ob) => ob.organizacaoId === o.id || (o.objetoId && ob.id === o.objetoId));
+                      const nomesObjetos = orgObjetos.map((ob) => ob.nome).join(", ");
                       const nucleosDaOrg = nucleos.filter((n) => n.organizacaoId === o.id);
                       const nucleoIds = new Set(nucleosDaOrg.map((n) => n.id));
                       const turmasDaOrg = turmas.filter((t) => nucleoIds.has(t.nucleoId));
@@ -327,7 +333,7 @@ export default function OrganizacoesPage() {
                           <td className="px-5 py-3 font-medium text-zinc-900">
                             <Link href={`/organizacoes/${o.id}`} className="hover:text-sky-600">{o.nome}</Link>
                           </td>
-                          <td className="px-5 py-3 text-zinc-600">{objeto?.nome ?? "—"}</td>
+                          <td className="px-5 py-3 text-zinc-600 truncate max-w-xs" title={nomesObjetos}>{nomesObjetos || "—"}</td>
                           <td className="px-5 py-3 text-center font-semibold text-violet-700">{nucleosDaOrg.length}</td>
                           <td className="px-5 py-3 text-center font-semibold text-sky-700">{turmasDaOrg.length}</td>
                           <td className="px-5 py-3 text-center font-semibold text-amber-700">{beneficiariosDaOrg.length}</td>

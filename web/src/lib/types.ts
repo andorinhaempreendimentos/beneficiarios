@@ -264,6 +264,8 @@ export interface Objeto {
   id: string;
   nome: string;
   descricao?: string;
+  concedenteId?: string;
+  organizacaoId?: string;
   termoDeFomento?: string;
   codigoObjeto?: string;
   codigoPrograma?: string;
@@ -286,6 +288,13 @@ export type TipoOrganizacao = "Instituto" | "ONG" | "Associação" | "Fundação
 
 export type StatusOrganizacao = "ativa" | "inativa";
 
+export interface ObjetoResumoVinculado {
+  id: string;
+  nome: string;
+  termoDeFomento?: string;
+  status: string;
+}
+
 export interface Organizacao {
   id: string;
   nome: string;
@@ -299,6 +308,7 @@ export interface Organizacao {
   cidade?: string;
   estado?: string;
   objetoId?: string;
+  objetosVinculados?: ObjetoResumoVinculado[];
   status: StatusOrganizacao;
   criadoEm: string;
 }
