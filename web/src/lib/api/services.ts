@@ -285,6 +285,28 @@ export interface NucleoApi {
   criadoEm: string;
 }
 
+export interface NucleoResumoMeta {
+  id: string;
+  nome: string;
+  nomeLocal?: string;
+  cidade?: string;
+  estado?: string;
+  totalBanco: number;
+  totalVagas: number;
+  meta: number;
+  percentual: number;
+  statusMeta: 'atingida' | 'em_andamento' | 'zerado';
+  emFuncionamento: boolean;
+}
+
+export interface NucleosResumoResultado {
+  nucleos: NucleoResumoMeta[];
+  totalAlunos: number;
+  totalVagas: number;
+  totalMeta: number;
+  nucleosComMetaAtingida: number;
+}
+
 export interface AtividadeApi {
   id: string;
   nome: string;
@@ -1282,6 +1304,85 @@ export const nucleosApi = {
       .map((r: any) => r.atividades)
       .filter((a: any) => Boolean(a) && !a.deleted_at)
       .map(mapAtividade);
+  },
+  async resumoMetas(): Promise<NucleosResumoResultado> {
+    const sb = createClient();
+    const [nucleosRes, turmasRes, benefs] = await Promise.all([
+      sb
+        .from('nucleos')
+        .select('id, identificacao, nome_local, cidade, estado, em_funcionamento')
+        .is('deleted_at', null)
+        .order('identificacao', { ascending: true }),
+      sb
+        .from('grupos')
+        .select('id, nucleo_id, vagas_totais')
+        .is('deleted_at', null),
+      fetchAllInBatches((from, to) =>
+        sb
+          .from('beneficiarios')
+          .select('id, nucleo_id, beneficiario_grupos(grupos(nucleo_id))')
+          .is('deleted_at', null)
+          .eq('status', 'ativo')
+          .order('id', { ascending: true })
+          .range(from, to)
+      ),
+    ]);
+
+    if (nucleosRes.error) throw nucleosRes.error;
+    if (turmasRes.error) throw turmasRes.error;
+
+    const mapAlunos = new Map<string, number>();
+    for (const b of (benefs || [])) {
+      let nid = (b as any).nucleo_id;
+      const bgList = (b as any).beneficiario_grupos;
+      if (!nid && bgList && bgList.length > 0) {
+        nid = bgList[0]?.grupos?.nucleo_id;
+      }
+      if (nid) mapAlunos.set(nid, (mapAlunos.get(nid) ?? 0) + 1);
+    }
+
+    const mapVagas = new Map<string, number>();
+    for (const t of (turmasRes.data || [])) {
+      if (t.nucleo_id) {
+        mapVagas.set(t.nucleo_id, (mapVagas.get(t.nucleo_id) ?? 0) + (t.vagas_totais || 0));
+      }
+    }
+
+    let totalAlunos = 0;
+    let totalVagas = 0;
+    let nucleosComMetaAtingida = 0;
+    const metaPadrao = 100;
+
+    const nucleos: NucleoResumoMeta[] = (nucleosRes.data || []).map((n: any) => {
+      const alunos = mapAlunos.get(n.id) ?? 0;
+      const vagas = mapVagas.get(n.id) ?? 0;
+      const pct = Math.min(100, Math.round((alunos / metaPadrao) * 100));
+      if (alunos >= metaPadrao) nucleosComMetaAtingida++;
+      totalAlunos += alunos;
+      totalVagas += vagas;
+
+      return {
+        id: n.id,
+        nome: n.identificacao,
+        nomeLocal: n.nome_local ?? undefined,
+        cidade: n.cidade ?? undefined,
+        estado: n.estado ?? undefined,
+        totalBanco: alunos,
+        totalVagas: vagas,
+        meta: metaPadrao,
+        percentual: pct,
+        statusMeta: alunos >= metaPadrao ? 'atingida' : alunos > 0 ? 'em_andamento' : 'zerado',
+        emFuncionamento: n.em_funcionamento !== false,
+      };
+    });
+
+    return {
+      nucleos,
+      totalAlunos,
+      totalVagas,
+      totalMeta: nucleos.length * metaPadrao,
+      nucleosComMetaAtingida,
+    };
   },
 };
 

@@ -13,6 +13,8 @@ import {
   ChevronDown,
   ChevronUp,
   RotateCcw,
+  BarChart3,
+  X,
 } from "lucide-react";
 import { useToast } from "@/components/providers/ToastProvider";
 import Link from "next/link";
@@ -46,6 +48,7 @@ import {
   type ObjetoApi,
   type AtividadeApi,
   type RegiaoApi,
+  type NucleosResumoResultado,
 } from "@/lib/api/services";
 import { formatarData } from "@/lib/utils";
 
@@ -79,6 +82,13 @@ export default function NucleosPage() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [processando, setProcessando] = useState(false);
   const [mostrarFiltrosAvancados, setMostrarFiltrosAvancados] = useState(false);
+  const [mostrarResumo, setMostrarResumo] = useState(false);
+  const [nucleoSelecionadoResumo, setNucleoSelecionadoResumo] = useState<string | null>(null);
+
+  const { data: resumoMetasData, loading: loadingResumoMetas } = useQuery<NucleosResumoResultado>(
+    () => nucleosApi.resumoMetas(),
+    []
+  );
 
   const { data: meusNucleos, loading: loadingMeusNucleos } = useQuery<NucleoApi[]>(
     () => isCoordenador ? coordenadoresApi.getMeusNucleos() : Promise.resolve([] as NucleoApi[]),
@@ -86,6 +96,14 @@ export default function NucleosPage() {
   );
   const semNucleos = isCoordenador && meusNucleos != null && meusNucleos.length === 0;
   const meusNucleosIds = useMemo(() => (meusNucleos ?? []).map((n) => n.id), [meusNucleos]);
+
+  const nucleosExibidosResumo = useMemo(() => {
+    const list = resumoMetasData?.nucleos || [];
+    if (isCoordenador && meusNucleosIds.length > 0) {
+      return list.filter((n) => meusNucleosIds.includes(n.id));
+    }
+    return list;
+  }, [resumoMetasData, isCoordenador, meusNucleosIds]);
 
 
   const { data: objetosRes } = useQuery<Paginated<ObjetoApi>>(() => objetosApi.list({ limit: 100 }), []);
@@ -199,8 +217,17 @@ export default function NucleosPage() {
         title={t("local", "Núcleo", true)}
         description={`Listagem e gestão de ${t("local", "Núcleo", true).toLowerCase()}`}
         actions={
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
             <ViewToggle mode={viewMode} onChange={setViewMode} />
+            <Button
+              type="button"
+              variant={mostrarResumo ? "primary" : "outline"}
+              onClick={() => setMostrarResumo((prev) => !prev)}
+              className="inline-flex items-center gap-1.5"
+            >
+              <BarChart3 className="w-4 h-4" />
+              <span>{mostrarResumo ? "Ocultar Resumo" : "RESUMO"}</span>
+            </Button>
             <LinkButton href="/grade-semanal" variant="outline">Ver Grade Semanal</LinkButton>
             {!isCoordenador && (
               <LinkButton href="/nucleos/novo">{`Novo ${t("local", "Núcleo").toLowerCase()}`}</LinkButton>
@@ -209,6 +236,138 @@ export default function NucleosPage() {
         }
       />
 
+      {/* Grade de Resumo dos Núcleos (Metas no Banco Real) */}
+      {mostrarResumo && (
+        <section className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 sm:p-6 shadow-sm space-y-5 animate-in fade-in duration-200">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-zinc-100 dark:border-zinc-800">
+            <div>
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400">
+                  <BarChart3 className="w-5 h-5" />
+                </div>
+                <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-100">
+                  Resumo de Beneficiários por Núcleo (Banco Real)
+                </h2>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                  Meta: 100 / núcleo
+                </span>
+              </div>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+                Alocação real de alunos ativos por núcleo. Clique em um cartão para filtrar a listagem abaixo.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2 self-start sm:self-auto flex-wrap">
+              {resumoMetasData && (
+                <div className="flex items-center gap-2 text-xs flex-wrap">
+                  <span className="px-2.5 py-1 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-semibold border border-zinc-200/80 dark:border-zinc-700">
+                    Total Banco: <strong className="text-zinc-900 dark:text-zinc-100 font-bold">{resumoMetasData.totalAlunos}</strong>
+                  </span>
+                  <span className="px-2.5 py-1 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-semibold border border-zinc-200/80 dark:border-zinc-700">
+                    Vagas: <strong className="text-zinc-900 dark:text-zinc-100 font-bold">{resumoMetasData.totalVagas}</strong>
+                  </span>
+                  <span className="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 font-semibold border border-emerald-200/80 dark:border-emerald-800/60">
+                    Metas Batidas: <strong className="font-bold">{resumoMetasData.nucleosComMetaAtingida} de {resumoMetasData.nucleos.length}</strong>
+                  </span>
+                </div>
+              )}
+              {nucleoSelecionadoResumo && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setNucleoSelecionadoResumo(null);
+                    setCampo("busca", "");
+                  }}
+                  className="text-xs font-bold text-sky-600 dark:text-sky-400 hover:underline cursor-pointer"
+                >
+                  Limpar seleção
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => setMostrarResumo(false)}
+                className="p-1 rounded-lg text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+                title="Fechar resumo"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
+          {loadingResumoMetas ? (
+            <div className="py-12 flex flex-col items-center justify-center gap-2 text-zinc-400">
+              <div className="w-6 h-6 border-2 border-sky-500 border-t-transparent rounded-full animate-spin" />
+              <span className="text-xs">Carregando métricas dos núcleos...</span>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+              {nucleosExibidosResumo.map((n) => {
+                const selecionado = nucleoSelecionadoResumo === n.id;
+                const isZerado = n.totalBanco === 0;
+
+                return (
+                  <div
+                    key={n.id}
+                    onClick={() => {
+                      if (selecionado) {
+                        setNucleoSelecionadoResumo(null);
+                        setCampo("busca", "");
+                      } else {
+                        setNucleoSelecionadoResumo(n.id);
+                        setCampo("busca", n.nome);
+                      }
+                    }}
+                    className={`p-3.5 rounded-xl text-left transition-all cursor-pointer ${
+                      selecionado
+                        ? "border-2 border-sky-600 dark:border-sky-500 bg-sky-50/60 dark:bg-sky-950/30 shadow-sm ring-2 ring-sky-500/20"
+                        : isZerado
+                        ? "border-2 border-red-500/70 dark:border-red-600/70 bg-red-50/30 dark:bg-red-950/20 hover:border-red-600 hover:bg-red-50/50"
+                        : "border border-zinc-200/90 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/40 hover:bg-zinc-50 dark:hover:bg-zinc-800/60"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-1 mb-1.5">
+                      <span className="font-bold text-xs text-zinc-900 dark:text-zinc-100 truncate" title={n.nome}>
+                        {n.nome}
+                      </span>
+                      <span
+                        className={`text-[10px] font-black px-1.5 py-0.5 rounded ${
+                          n.percentual >= 100
+                            ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300"
+                            : n.totalBanco > 0
+                            ? "bg-sky-100 text-sky-800 dark:bg-sky-950/60 dark:text-sky-300"
+                            : "bg-red-100 text-red-800 dark:bg-red-950/60 dark:text-red-300 border border-red-300 dark:border-red-800"
+                        }`}
+                      >
+                        {n.totalBanco}/100
+                      </span>
+                    </div>
+
+                    {/* Barra de progresso */}
+                    <div className="w-full bg-zinc-200 dark:bg-zinc-700 h-2 rounded-full overflow-hidden mb-2">
+                      <div
+                        className={`h-full transition-all duration-500 ${
+                          n.percentual >= 100
+                            ? "bg-emerald-500"
+                            : n.totalBanco > 0
+                            ? "bg-sky-500"
+                            : "bg-zinc-300 dark:bg-zinc-600"
+                        }`}
+                        style={{ width: `${n.percentual}%` }}
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between text-[11px] text-zinc-500 dark:text-zinc-400">
+                      <span>Banco: <strong className="text-zinc-800 dark:text-zinc-200 font-semibold">{n.totalBanco}</strong></span>
+                      <span>Vagas: <strong className="text-zinc-800 dark:text-zinc-200 font-semibold">{n.totalVagas}</strong></span>
+                      <span className="font-semibold text-zinc-700 dark:text-zinc-300">{n.percentual}%</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </section>
+      )}
 
       {/* Barra de Filtros Ágil (Opção C) */}
       <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 shadow-sm space-y-3 transition-all">
