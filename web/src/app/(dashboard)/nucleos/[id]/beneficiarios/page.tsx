@@ -20,11 +20,11 @@ export default async function BeneficiariosDoNucleoPage({ params }: { params: Pr
   if (!nucleo) notFound();
 
   const [beneficiariosRes, turmasRes] = await Promise.all([
-    beneficiariosApi.list({ nucleoId: nucleo.id, limit: 100 }).catch(() => ({ data: [], total: 0 })),
+    beneficiariosApi.listAll({ nucleoId: nucleo.id }).catch(() => []),
     turmasApi.list({ nucleoId: nucleo.id, limit: 100 }).catch(() => ({ data: [] })),
   ]);
 
-  const beneficiariosDoNucleo = beneficiariosRes.data;
+  const beneficiariosDoNucleo = beneficiariosRes;
   const turmasDoNucleo = turmasRes.data;
 
   return (

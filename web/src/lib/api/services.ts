@@ -3,6 +3,7 @@ import { createClient as createBrowserClient } from '@/lib/supabase/client';
 import type { Database } from '@/lib/supabase/types';
 import type { StatusInscricao, ExecucaoSessaoApi, ExecucaoAulaApi, BeneficiarioPresencaApi } from '@/lib/types';
 import { getDataHojeBrasil, getHoraAgoraBrasil } from '@/lib/dateUtils';
+import { fetchAllInBatches } from '@/lib/supabase/fetchBatches';
 export type { ExecucaoSessaoApi, ExecucaoAulaApi, BeneficiarioPresencaApi };
 
 async function getSupabase() {
@@ -1966,6 +1967,64 @@ export const beneficiariosApi = {
     }
     return { data: (data ?? []).map(mapBeneficiario), total: count ?? 0, page, limit };
   },
+  async listAll(p?: Omit<QP, 'page' | 'limit'>): Promise<BeneficiarioApi[]> {
+    const sb = await getSupabase();
+    let beneficiarioIds: string[] | null = null;
+    if (p?.turmaId || (p as any)?.grupoId) {
+      const gid = String(p?.turmaId || (p as any)?.grupoId);
+      const vinculos = await fetchAllInBatches((from, to) =>
+        sb
+          .from('beneficiario_grupos')
+          .select('beneficiario_id')
+          .eq('grupo_id', gid)
+          .is('deleted_at', null)
+          .range(from, to)
+      );
+      beneficiarioIds = Array.from(new Set(vinculos.map((v: any) => v.beneficiario_id)));
+      if (beneficiarioIds.length === 0) return [];
+    } else if (p?.atividadeId) {
+      const { data: turmas, error: eT } = await sb.from('grupos').select('id').eq('atividade_id', String(p.atividadeId));
+      if (eT) throw eT;
+      const turmaIds = (turmas ?? []).map((t) => t.id);
+      const vinculos = await fetchAllInBatches((from, to) =>
+        sb
+          .from('beneficiario_grupos')
+          .select('beneficiario_id')
+          .in('grupo_id', turmaIds.length ? turmaIds : ['00000000-0000-0000-0000-000000000000'])
+          .range(from, to)
+      );
+      beneficiarioIds = Array.from(new Set(vinculos.map((v: any) => v.beneficiario_id)));
+      if (beneficiarioIds.length === 0) return [];
+    }
+
+    const BENEFICIARIO_FULL_SELECT = '*, nucleos(*), beneficiario_grupos(*, grupos(*, nucleos(*), atividades(*)))';
+
+    const buildQuery = (selectStr: string, from: number, to: number) => {
+      let q = sb.from('beneficiarios').select(selectStr).is('deleted_at', null);
+      if (p?.nome) q = q.ilike('nome_completo', `%${p.nome}%`);
+      if (p?.matricula) q = q.ilike('matricula', `%${p.matricula}%`);
+      if (p?.cpf) q = q.ilike('cpf', `%${p.cpf}%`);
+      if (p?.status) q = q.eq('status', String(p.status));
+      if (p?.tipoMatricula) q = q.eq('tipo_matricula', String(p.tipoMatricula));
+      if (p?.nucleoId) q = q.eq('nucleo_id', String(p.nucleoId));
+      if (p?.nucleoIds && Array.isArray(p.nucleoIds) && p.nucleoIds.length > 0) q = q.in('nucleo_id', p.nucleoIds as string[]);
+      if (beneficiarioIds) q = q.in('id', beneficiarioIds);
+      const idadeMin = num(p?.idadeMin);
+      const idadeMax = num(p?.idadeMax);
+      if (idadeMin !== undefined) q = q.lte('data_nascimento', dataNascimentoMaxima(idadeMin));
+      if (idadeMax !== undefined) q = q.gte('data_nascimento', dataNascimentoMinima(idadeMax));
+      return q.order('nome_completo', { ascending: true }).range(from, to);
+    };
+
+    try {
+      const data = await fetchAllInBatches((from, to) => buildQuery(BENEFICIARIO_FULL_SELECT, from, to));
+      return data.map(mapBeneficiario);
+    } catch (err: any) {
+      console.warn('[beneficiariosApi.listAll fallback]', err?.message);
+      const dataFallback = await fetchAllInBatches((from, to) => buildQuery('*', from, to));
+      return dataFallback.map(mapBeneficiario);
+    }
+  },
   async get(id: string): Promise<BeneficiarioApi> {
     const sb = await getSupabase();
     const BENEFICIARIO_FULL_SELECT = '*, nucleos(*), beneficiario_grupos(*, grupos(*, nucleos(*), atividades(*)))';
@@ -2949,23 +3008,38 @@ export const dashboardApi = {
     const sb = createClient();
     const [
       totalRes,
-      aprovadosRes,
+      aprovadosData,
       nucleosRes,
       funcionariosRes,
       turmasRes,
       atividadesRes,
-      matriculasRes,
+      matriculasData,
       recentesRes,
       objetosRes,
       organizacoesRes,
     ] = await Promise.all([
       sb.from('beneficiarios').select('id', { count: 'exact', head: true }).is('deleted_at', null),
-      sb.from('beneficiarios').select('id, nucleo_id, beneficiario_grupos(grupos(nucleo_id))').is('deleted_at', null).eq('status', 'ativo'),
+      fetchAllInBatches((from, to) =>
+        sb
+          .from('beneficiarios')
+          .select('id, nucleo_id, beneficiario_grupos(grupos(nucleo_id))')
+          .is('deleted_at', null)
+          .eq('status', 'ativo')
+          .order('id', { ascending: true })
+          .range(from, to)
+      ),
       sb.from('nucleos').select('id, identificacao, nome_local, cep, endereco, numero, bairro, cidade, estado, complemento, latitude, longitude, em_funcionamento, organizacao_id, organizacoes(id, nome, estado, cidade), nucleo_atividades(atividade_id)').is('deleted_at', null),
       sb.from('funcionarios').select('status, nucleo_id').is('deleted_at', null),
       sb.from('grupos').select('id, nucleo_id, atividade_id, vagas_totais').is('deleted_at', null),
       sb.from('atividades').select('id, nome, disponivel_pre_inscricao').is('deleted_at', null),
-      sb.from('beneficiario_grupos').select('grupo_id').is('deleted_at', null),
+      fetchAllInBatches((from, to) =>
+        sb
+          .from('beneficiario_grupos')
+          .select('grupo_id')
+          .is('deleted_at', null)
+          .order('id', { ascending: true })
+          .range(from, to)
+      ),
       sb.from('beneficiarios')
         .select('id, nome_completo, status, data_cadastro, created_at, nucleo_id, nucleos(identificacao), beneficiario_grupos(grupos(nucleos(identificacao)))')
         .is('deleted_at', null)
@@ -2976,20 +3050,20 @@ export const dashboardApi = {
     ]);
 
     for (const r of [
-      totalRes, aprovadosRes, nucleosRes, funcionariosRes, turmasRes,
-      atividadesRes, matriculasRes, recentesRes, objetosRes, organizacoesRes,
+      totalRes, nucleosRes, funcionariosRes, turmasRes,
+      atividadesRes, recentesRes, objetosRes, organizacoesRes,
     ]) {
       if (r.error) throw r.error;
     }
 
     return montarResumo(
       totalRes.count ?? 0,
-      aprovadosRes.data ?? [],
+      aprovadosData ?? [],
       nucleosRes.data ?? [],
       funcionariosRes.data ?? [],
       turmasRes.data ?? [],
       atividadesRes.data ?? [],
-      matriculasRes.data ?? [],
+      matriculasData ?? [],
       recentesRes.data ?? [],
       objetosRes.count ?? 0,
       organizacoesRes.count ?? 0,

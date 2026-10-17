@@ -3,6 +3,7 @@ import { createClient as createBrowserClient } from '@/lib/supabase/client';
 import type { Database } from '@/lib/supabase/types';
 import { objetosApi, type ObjetoApi } from './services';
 import { calcularIdade } from '@/lib/utils';
+import { fetchAllInBatches } from '@/lib/supabase/fetchBatches';
 
 async function getSupabase() {
   if (typeof window === 'undefined') {
@@ -222,11 +223,15 @@ export const prestacaoContasApi = {
     const alertas: AlertaProntidao[] = [];
 
     // 1. Verificar aulas sem chamada
-    const { data: aulasSemChamada } = await sb
-      .from('execucoes_sessao')
-      .select('id, data, grupos(nome, nucleo_id, nucleos(identificacao)), beneficiario_presencas(id)')
-      .gte('data', dataInicio)
-      .lte('data', dataFim);
+    const aulasSemChamada = await fetchAllInBatches((from, to) =>
+      sb
+        .from('execucoes_sessao')
+        .select('id, data, grupos(nome, nucleo_id, nucleos(identificacao)), beneficiario_presencas(id)')
+        .gte('data', dataInicio)
+        .lte('data', dataFim)
+        .order('id', { ascending: true })
+        .range(from, to)
+    );
 
     if (aulasSemChamada) {
       const pendentes = aulasSemChamada.filter((a: any) => !a.beneficiario_presencas || a.beneficiario_presencas.length === 0);
@@ -332,12 +337,15 @@ export const prestacaoContasApi = {
     const turmasIds = turmas.map((t: any) => t.id);
 
     // 5. Beneficiários
-    const { data: beneficiariosRaw } = await sb
-      .from('beneficiarios')
-      .select('*, nucleos(identificacao), beneficiario_grupos(*)')
-      .in('nucleo_id', nucleosIds.length > 0 ? nucleosIds : ['00000000-0000-0000-0000-000000000000'])
-      .is('deleted_at', null);
-    const beneficiarios = beneficiariosRaw ?? [];
+    const beneficiarios = await fetchAllInBatches((from, to) =>
+      sb
+        .from('beneficiarios')
+        .select('*, nucleos(identificacao), beneficiario_grupos(*)')
+        .in('nucleo_id', nucleosIds.length > 0 ? nucleosIds : ['00000000-0000-0000-0000-000000000000'])
+        .is('deleted_at', null)
+        .order('id', { ascending: true })
+        .range(from, to)
+    );
 
     // 6. Funcionários / RH
     const { data: funcionariosRaw } = await sb
@@ -350,14 +358,16 @@ export const prestacaoContasApi = {
     });
 
     // 7. Aulas e Presenças
-    const { data: aulasRaw } = await sb
-      .from('execucoes_sessao')
-      .select('*, grupos(*, nucleos(*), atividades(*)), atividades:atividade_id(*), funcionarios(*), beneficiario_presencas(*)')
-      .in('grupo_id', turmasIds.length > 0 ? turmasIds : ['00000000-0000-0000-0000-000000000000'])
-      .gte('data', dataInicio)
-      .lte('data', dataFim)
-      .order('data', { ascending: true });
-    const aulas = aulasRaw ?? [];
+    const aulas = await fetchAllInBatches((from, to) =>
+      sb
+        .from('execucoes_sessao')
+        .select('*, grupos(*, nucleos(*), atividades(*)), atividades:atividade_id(*), funcionarios(*), beneficiario_presencas(*)')
+        .in('grupo_id', turmasIds.length > 0 ? turmasIds : ['00000000-0000-0000-0000-000000000000'])
+        .gte('data', dataInicio)
+        .lte('data', dataFim)
+        .order('data', { ascending: true })
+        .range(from, to)
+    );
 
     // 8. Supervisões e Fotos
     const { data: supervisoesRaw } = await sb

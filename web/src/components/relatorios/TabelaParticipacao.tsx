@@ -10,12 +10,12 @@ import { statusBeneficiarioTone, statusBeneficiarioLabel, normalizarStatusBenefi
 interface Props { filtros: FiltrosState }
 
 export function TabelaParticipacao({ filtros }: Props) {
-  const { data: bRes } = useQuery(() => beneficiariosApi.list({ limit: 200 }), []);
+  const { data: bData } = useQuery(() => beneficiariosApi.listAll(), []);
   const { data: tRes } = useQuery(() => turmasApi.list({ limit: 100 }), []);
   const { data: nRes } = useQuery(() => nucleosApi.list({ limit: 100 }), []);
   const { data: aRes } = useQuery(() => atividadesApi.list({ limit: 100 }), []);
 
-  const beneficiarios = bRes?.data ?? [];
+  const beneficiarios = bData ?? [];
   const turmas = tRes?.data ?? [];
   const nucleos = nRes?.data ?? [];
   const atividades = aRes?.data ?? [];

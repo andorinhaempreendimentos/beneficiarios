@@ -55,7 +55,7 @@ export default function OrganizacoesPage() {
   const { data: objetosData } = useQuery<Paginated<ObjetoApi>>(() => objetosApi.list({ limit: 200 }), []);
   const { data: nucleosData } = useQuery<Paginated<NucleoApi>>(() => nucleosApi.list({ limit: 500 }), []);
   const { data: turmasData } = useQuery<Paginated<TurmaApi>>(() => turmasApi.list({ limit: 500 }), []);
-  const { data: beneficiariosData } = useQuery<Paginated<BeneficiarioApi>>(() => beneficiariosApi.list({ limit: 100 }), []);
+  const { data: beneficiariosData } = useQuery<BeneficiarioApi[]>(() => beneficiariosApi.listAll(), []);
 
   const resultado = pageData?.data ?? [];
   const total = pageData?.total ?? 0;
@@ -63,7 +63,7 @@ export default function OrganizacoesPage() {
   const objetos = objetosData?.data ?? [];
   const nucleos = nucleosData?.data ?? [];
   const turmas = turmasData?.data ?? [];
-  const beneficiarios = beneficiariosData?.data ?? [];
+  const beneficiarios = beneficiariosData ?? [];
 
   const aplicar = useCallback(() => { setPagina(1); setAtivos(filtros); }, [filtros]);
   const limpar = useCallback(() => { setFiltros(EMPTY); setAtivos(EMPTY); setPagina(1); }, []);

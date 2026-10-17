@@ -9,7 +9,7 @@ export default async function DetalhesNucleoPage({ params }: { params: Promise<{
 
   const [turmasRes, beneficiariosRes, categoriasRes, funcionariosRes] = await Promise.all([
     turmasApi.list({ nucleoId: nucleo.id, limit: 100 }).catch(() => ({ data: [] })),
-    beneficiariosApi.list({ nucleoId: nucleo.id, limit: 100 }).catch(() => ({ data: [], total: 0 })),
+    beneficiariosApi.list({ nucleoId: nucleo.id, limit: 500 }).catch(() => ({ data: [], total: 0 })),
     categoriaTurmasApi.list({ limit: 50 }).catch(() => ({ data: [] })),
     funcionariosApi.list({ limit: 1000, status: "ativo" }).catch(() => ({ data: [] })),
   ]);

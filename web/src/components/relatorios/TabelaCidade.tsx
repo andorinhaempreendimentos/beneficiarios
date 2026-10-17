@@ -9,8 +9,8 @@ import type { FiltrosState } from "./FiltrosRelatorio";
 interface Props { filtros: FiltrosState }
 
 export function TabelaCidade({ filtros }: Props) {
-  const { data: res } = useQuery(() => beneficiariosApi.list({ limit: 200 }), []);
-  const beneficiarios = res?.data ?? [];
+  const { data: res } = useQuery(() => beneficiariosApi.listAll(), []);
+  const beneficiarios = res ?? [];
 
   const filtrados = beneficiarios.filter((b) => {
     if (filtros.nucleoId && b.nucleoId !== filtros.nucleoId) return false;

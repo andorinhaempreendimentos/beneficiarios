@@ -58,12 +58,12 @@ export default function ObjetosPage() {
   const { data: organizacoesData } = useQuery<Paginated<OrganizacaoApi>>(() => organizacoesApi.list({ limit: 500 }), []);
   const { data: nucleosData } = useQuery<Paginated<NucleoApi>>(() => nucleosApi.list({ limit: 500 }), []);
   const { data: turmasData } = useQuery<Paginated<TurmaApi>>(() => turmasApi.list({ limit: 500 }), []);
-  const { data: beneficiariosData } = useQuery<Paginated<BeneficiarioApi>>(() => beneficiariosApi.list({ limit: 100 }), []);
+  const { data: beneficiariosData } = useQuery<BeneficiarioApi[]>(() => beneficiariosApi.listAll(), []);
 
   const organizacoes = organizacoesData?.data ?? [];
   const nucleos = nucleosData?.data ?? [];
   const turmas = turmasData?.data ?? [];
-  const beneficiarios = beneficiariosData?.data ?? [];
+  const beneficiarios = beneficiariosData ?? [];
 
   const rawResultado = pageData?.data ?? [];
   const total = pageData?.total ?? 0;

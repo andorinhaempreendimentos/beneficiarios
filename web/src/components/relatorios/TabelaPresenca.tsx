@@ -15,6 +15,7 @@ import {
   type FuncionarioApi,
 } from "@/lib/api/services";
 import { createClient } from "@/lib/supabase/client";
+import { fetchAllInBatches } from "@/lib/supabase/fetchBatches";
 import { useQuery } from "@/lib/hooks/useQuery";
 import {
   statusBeneficiarioTone,
@@ -75,8 +76,8 @@ export function TabelaPresenca({ filtros }: Props) {
   const termoAulas = t("termoSessoes", "Aulas");
 
   // ── 1. CARREGAMENTO DE DADOS ──────────────────────────────────────────────
-  const { data: bRes, loading: loadingBeneficiarios } = useQuery(
-    () => beneficiariosApi.list({ limit: 500 }),
+  const { data: bData, loading: loadingBeneficiarios } = useQuery(
+    () => beneficiariosApi.listAll(),
     []
   );
   const { data: tRes } = useQuery(() => turmasApi.list({ limit: 200 }), []);
@@ -84,7 +85,7 @@ export function TabelaPresenca({ filtros }: Props) {
   const { data: oRes } = useQuery(() => objetosApi.list({ limit: 50 }), []);
   const { data: fRes } = useQuery(() => funcionariosApi.list({ limit: 100 }), []);
 
-  const beneficiarios = bRes?.data ?? [];
+  const beneficiarios = bData ?? [];
   const turmas = tRes?.data ?? [];
   const nucleos = nRes?.data ?? [];
   const objetos = oRes?.data ?? [];
@@ -151,12 +152,13 @@ export function TabelaPresenca({ filtros }: Props) {
         // 2. Buscar presenças vinculadas a essas aulas
         let presencasMapeadas: PresencaItem[] = [];
         if (aulaIds.length > 0) {
-          const { data: presData, error: presErr } = await sb
-            .from("beneficiario_presencas")
-            .select("execucao_aula_id, beneficiario_id, status, observacao")
-            .in("execucao_aula_id", aulaIds);
-
-          if (presErr) throw presErr;
+          const presData = await fetchAllInBatches((from, to) =>
+            sb
+              .from("beneficiario_presencas")
+              .select("execucao_aula_id, beneficiario_id, status, observacao")
+              .in("execucao_aula_id", aulaIds)
+              .range(from, to)
+          );
 
           presencasMapeadas = (presData || []).map((p: any) => ({
             execucaoAulaId: p.execucao_aula_id,
@@ -167,10 +169,14 @@ export function TabelaPresenca({ filtros }: Props) {
         }
 
         // 3. Buscar matrículas reais dos beneficiários nas turmas/grupos
-        const { data: matData, error: matErr } = await sb
-          .from("beneficiario_grupos")
-          .select("beneficiario_id, grupo_id, status")
-          .is("deleted_at", null);
+        const matData = await fetchAllInBatches((from, to) =>
+          sb
+            .from("beneficiario_grupos")
+            .select("beneficiario_id, grupo_id, status")
+            .is("deleted_at", null)
+            .order("id", { ascending: true })
+            .range(from, to)
+        );
 
         const matriculasMapeadas: MatriculaItem[] = (matData || []).map((m: any) => ({
           beneficiarioId: m.beneficiario_id,

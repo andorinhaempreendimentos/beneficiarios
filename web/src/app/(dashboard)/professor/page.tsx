@@ -6,7 +6,7 @@ export default async function AreaProfessorPage() {
     funcionariosApi.list({ limit: 200 }).catch(() => ({ data: [] })),
     turmasApi.list({ limit: 100 }).catch(() => ({ data: [] })),
     nucleosApi.list({ limit: 100 }).catch(() => ({ data: [] })),
-    beneficiariosApi.list({ limit: 500 }).catch(() => ({ data: [] })),
+    beneficiariosApi.listAll().catch(() => []),
   ]);
 
   // Professor = quem tem professorResponsavel=true OU funcao exatamente "Professor / Instrutor"
@@ -31,7 +31,7 @@ export default async function AreaProfessorPage() {
       professores={listaProfessores}
       nucleos={nucleosRes.data}
       turmas={turmasRes.data}
-      todosBeneficiarios={todosBeneficiariosRes.data}
+      todosBeneficiarios={todosBeneficiariosRes}
       initialProfessorId={listaProfessores[0].id}
     />
   );

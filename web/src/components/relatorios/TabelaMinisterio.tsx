@@ -12,7 +12,7 @@ import type { FiltrosState } from "./FiltrosRelatorio";
 interface Props { filtros: FiltrosState }
 
 export function TabelaMinisterio({ filtros }: Props) {
-  const { data: bRes } = useQuery(() => beneficiariosApi.list({ limit: 200 }), []);
+  const { data: bData } = useQuery(() => beneficiariosApi.listAll(), []);
   const { data: fRes } = useQuery(() => funcionariosApi.list({ limit: 200 }), []);
   const { data: nRes } = useQuery(() => nucleosApi.list({ limit: 100 }), []);
   const { data: tRes } = useQuery(() => turmasApi.list({ limit: 100 }), []);
@@ -20,7 +20,7 @@ export function TabelaMinisterio({ filtros }: Props) {
   const { data: oRes } = useQuery(() => objetosApi.list({ limit: 10 }), []);
   const { data: orgRes } = useQuery(() => organizacoesApi.list({ limit: 10 }), []);
 
-  const beneficiarios = bRes?.data ?? [];
+  const beneficiarios = bData ?? [];
   const funcionarios = fRes?.data ?? [];
   const nucleos = nRes?.data ?? [];
   const turmas = tRes?.data ?? [];

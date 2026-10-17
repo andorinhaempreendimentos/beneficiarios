@@ -12,7 +12,7 @@ export default async function DetalhesTurmaPage({ params }: { params: Promise<{ 
     t.atividadeId ? atividadesApi.get(t.atividadeId).catch(() => null) : null,
     beneficiariosApi.list({ turmaId: t.id, limit: 200 }).catch(() => ({ data: [], total: 0, page: 1, limit: 200 })),
     turmasApi.list({ limit: 100 }).catch(() => ({ data: [], total: 0, page: 1, limit: 100 })),
-    beneficiariosApi.list({ limit: 500 }).catch(() => ({ data: [], total: 0, page: 1, limit: 500 })),
+    beneficiariosApi.listAll().catch(() => []),
   ]);
 
   const outrasTurmas = todasTurmasRes.data.filter((item) => item.id !== t.id);
@@ -25,7 +25,7 @@ export default async function DetalhesTurmaPage({ params }: { params: Promise<{ 
       matriculados={matriculadosRes.data}
       qtdOcupadas={matriculadosRes.total}
       outrasTurmas={outrasTurmas}
-      todosBeneficiarios={todosBeneficiariosRes.data}
+      todosBeneficiarios={todosBeneficiariosRes}
     />
   );
 }
