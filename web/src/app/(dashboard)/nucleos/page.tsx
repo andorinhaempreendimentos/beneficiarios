@@ -98,11 +98,11 @@ export default function NucleosPage() {
   const meusNucleosIds = useMemo(() => (meusNucleos ?? []).map((n) => n.id), [meusNucleos]);
 
   const nucleosExibidosResumo = useMemo(() => {
-    const list = resumoMetasData?.nucleos || [];
-    if (isCoordenador && meusNucleosIds.length > 0) {
-      return list.filter((n) => meusNucleosIds.includes(n.id));
-    }
-    return list;
+    const list = [...(resumoMetasData?.nucleos || [])];
+    const filtered = isCoordenador && meusNucleosIds.length > 0
+      ? list.filter((n) => meusNucleosIds.includes(n.id))
+      : list;
+    return filtered.sort((a, b) => b.totalBanco - a.totalBanco);
   }, [resumoMetasData, isCoordenador, meusNucleosIds]);
 
 
@@ -219,15 +219,18 @@ export default function NucleosPage() {
         actions={
           <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
             <ViewToggle mode={viewMode} onChange={setViewMode} />
-            <Button
+            <button
               type="button"
-              variant={mostrarResumo ? "primary" : "outline"}
               onClick={() => setMostrarResumo((prev) => !prev)}
-              className="inline-flex items-center gap-1.5"
+              className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-extrabold tracking-wide uppercase transition-all shadow-md cursor-pointer ${
+                mostrarResumo
+                  ? "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-emerald-500/30 ring-2 ring-emerald-400 ring-offset-2 ring-offset-white dark:ring-offset-zinc-950 scale-105"
+                  : "bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-600 hover:from-blue-700 hover:via-indigo-700 hover:to-sky-700 text-white shadow-blue-500/30 hover:shadow-lg hover:shadow-blue-500/40 hover:-translate-y-0.5 active:translate-y-0"
+              }`}
             >
-              <BarChart3 className="w-4 h-4" />
+              <BarChart3 className="w-5 h-5 shrink-0" />
               <span>{mostrarResumo ? "Ocultar Resumo" : "RESUMO"}</span>
-            </Button>
+            </button>
             <LinkButton href="/grade-semanal" variant="outline">Ver Grade Semanal</LinkButton>
             {!isCoordenador && (
               <LinkButton href="/nucleos/novo">{`Novo ${t("local", "Núcleo").toLowerCase()}`}</LinkButton>
@@ -260,14 +263,8 @@ export default function NucleosPage() {
             <div className="flex items-center gap-2 self-start sm:self-auto flex-wrap">
               {resumoMetasData && (
                 <div className="flex items-center gap-2 text-xs flex-wrap">
-                  <span className="px-2.5 py-1 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-semibold border border-zinc-200/80 dark:border-zinc-700">
-                    Total Banco: <strong className="text-zinc-900 dark:text-zinc-100 font-bold">{resumoMetasData.totalAlunos}</strong>
-                  </span>
-                  <span className="px-2.5 py-1 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-semibold border border-zinc-200/80 dark:border-zinc-700">
-                    Vagas: <strong className="text-zinc-900 dark:text-zinc-100 font-bold">{resumoMetasData.totalVagas}</strong>
-                  </span>
-                  <span className="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 font-semibold border border-emerald-200/80 dark:border-emerald-800/60">
-                    Metas Batidas: <strong className="font-bold">{resumoMetasData.nucleosComMetaAtingida} de {resumoMetasData.nucleos.length}</strong>
+                  <span className="px-3 py-1.5 rounded-xl bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 font-bold border border-sky-200/80 dark:border-sky-800/60 shadow-xs">
+                    Total no Banco: <strong className="text-sky-900 dark:text-sky-100 font-extrabold">{resumoMetasData.totalAlunos}</strong>
                   </span>
                 </div>
               )}
@@ -358,7 +355,6 @@ export default function NucleosPage() {
 
                     <div className="flex items-center justify-between text-[11px] text-zinc-500 dark:text-zinc-400">
                       <span>Banco: <strong className="text-zinc-800 dark:text-zinc-200 font-semibold">{n.totalBanco}</strong></span>
-                      <span>Vagas: <strong className="text-zinc-800 dark:text-zinc-200 font-semibold">{n.totalVagas}</strong></span>
                       <span className="font-semibold text-zinc-700 dark:text-zinc-300">{n.percentual}%</span>
                     </div>
                   </div>

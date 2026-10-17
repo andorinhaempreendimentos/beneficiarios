@@ -1371,10 +1371,10 @@ export const nucleosApi = {
         totalVagas: vagas,
         meta: metaPadrao,
         percentual: pct,
-        statusMeta: alunos >= metaPadrao ? 'atingida' : alunos > 0 ? 'em_andamento' : 'zerado',
+        statusMeta: (alunos >= metaPadrao ? 'atingida' : alunos > 0 ? 'em_andamento' : 'zerado') as 'atingida' | 'em_andamento' | 'zerado',
         emFuncionamento: n.em_funcionamento !== false,
       };
-    });
+    }).sort((a, b) => b.totalBanco - a.totalBanco);
 
     return {
       nucleos,
