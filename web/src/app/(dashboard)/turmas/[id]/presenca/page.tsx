@@ -162,7 +162,8 @@ export default function PresencaTurmaPage({ params }: { params: Promise<{ id: st
     if (!dataAtual && datasDisponiveis.length > 0) {
       if (sessoesExecutadas.length > 0) {
         // Seleciona a sessão executada mais recente
-        setDataAtual(sessoesExecutadas[0].data);
+        const sessoesOrdenadas = [...sessoesExecutadas].sort((a, b) => b.data.localeCompare(a.data));
+        setDataAtual(sessoesOrdenadas[0].data);
       } else {
         setDataAtual(datasDisponiveis[datasDisponiveis.length - 1]);
       }
@@ -316,7 +317,7 @@ export default function PresencaTurmaPage({ params }: { params: Promise<{ id: st
               Executar no App
             </LinkButton>
             <LinkButton href={`/turmas/${id}`} variant="outline">
-              Voltar ao {termoGrupo}
+              Voltar à {termoGrupo}
             </LinkButton>
           </div>
         }
@@ -396,7 +397,7 @@ export default function PresencaTurmaPage({ params }: { params: Promise<{ id: st
                 {termoSessoes} Realizadas ({sessoesExecutadas.length}):
               </span>
               <div className="flex flex-wrap gap-2">
-                {sessoesExecutadas.map((s) => {
+                {[...sessoesExecutadas].sort((a, b) => a.data.localeCompare(b.data)).map((s) => {
                   const isSelected = s.data === dataAtual;
                   const temFoto = Boolean(s.fotoComprovanteUrl);
                   return (
@@ -518,7 +519,7 @@ export default function PresencaTurmaPage({ params }: { params: Promise<{ id: st
                   </div>
                 </div>
                 <span className="text-[10px] text-zinc-500 mt-2 block">
-                  Previsto: {sessaoAtual.horaInicioPrevista} às {sessaoAtual.horaFimPrevista}
+                  Previsto: {parseHora(sessaoAtual.horaInicioPrevista)} às {parseHora(sessaoAtual.horaFimPrevista)}
                 </span>
               </div>
 

@@ -2953,8 +2953,14 @@ function montarResumo(
 
   const totalVagas = turmas.reduce((acc, t) => acc + (t.vagas_totais || 0), 0);
   const totalOcupadasDireta = turmas.reduce((acc, t) => acc + (ocupacaoPorTurma.get(t.id) ?? 0), 0);
-  // Se ainda não há matrículas diretas em turmas (turmas A/B/C), a ocupação real corresponde aos beneficiários ativos vinculados aos núcleos
-  const totalOcupadas = totalOcupadasDireta > 0 ? totalOcupadasDireta : beneficiariosAtivos;
+  // TODO(TEMPORÁRIO - MUDAR APÓS ENTURMAÇÃO TOTAL):
+  // Atualmente temos 1.126 beneficiários ativos cadastrados nos núcleos, mas apenas 604 estão
+  // formalmente vinculados em turmas A/B/C com pauta de chamada. Os outros 522 alunos estão nos polos
+  // aguardando a finalização da enturmação pelo coordenador.
+  // Por enquanto, consideramos o total de beneficiários ativos (1.126) como ocupação real das vagas
+  // para refletir os beneficiários que o projeto já atende, sem distorcer o dashboard com 1.806 vagas ociosas.
+  // Assim que todos os alunos forem 100% enturmados em turmas específicas, reverter para totalOcupadasDireta.
+  const totalOcupadas = Math.max(totalOcupadasDireta, beneficiariosAtivos);
   const vagasLivres = Math.max(0, totalVagas - totalOcupadas);
   const calcOcupacao = totalVagas > 0 ? (totalOcupadas / totalVagas) * 100 : 0;
   const ocupacaoGlobal = calcOcupacao < 10
@@ -3027,13 +3033,14 @@ function montarResumo(
   const mapaNucleos = nucleos.map((n) => {
     const infoTurmas = turmasPorNucleo.get(n.id) || { vagas: 0, ids: [], atividadeIds: new Set<string>() };
     const vagasDoNucleo = infoTurmas.vagas;
-    let matriculadosDoNucleo = 0;
+    let matriculadosDiretos = 0;
     for (const tid of infoTurmas.ids) {
-      matriculadosDoNucleo += ocupacaoPorTurma.get(tid) || 0;
+      matriculadosDiretos += ocupacaoPorTurma.get(tid) || 0;
     }
-    if (matriculadosDoNucleo === 0 && porNucleo.has(n.id)) {
-      matriculadosDoNucleo = porNucleo.get(n.id) || 0;
-    }
+    // TODO(TEMPORÁRIO - MUDAR APÓS ENTURMAÇÃO TOTAL):
+    // Usamos o maior valor entre os formalmente enturmados e o total de alunos ativos cadastrados no núcleo (porNucleo)
+    const totalAlunosDoNucleo = porNucleo.get(n.id) || 0;
+    const matriculadosDoNucleo = Math.max(matriculadosDiretos, totalAlunosDoNucleo);
     const taxaOcupacao = vagasDoNucleo > 0 ? (matriculadosDoNucleo / vagasDoNucleo) * 100 : 0;
 
     const ativSet = new Set<string>(infoTurmas.atividadeIds);
