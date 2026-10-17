@@ -72,17 +72,17 @@ export default function DashboardPage() {
 
     const idsFiltrados = new Set(nucleosFiltrados.map((n) => n.id));
 
+    // Mapa de núcleos filtrados
+    const mapaNucleosFiltrados = (rRaw.mapaNucleos || []).filter((n) => idsFiltrados.has(n.id));
+
     // Top núcleos filtrados
     const topNucleosFiltrados = rRaw.topNucleos.filter((tn) => idsFiltrados.has(tn.id));
-    const benefAtivosFiltrado = topNucleosFiltrados.reduce((acc, n) => acc + (n.beneficiariosAtivos || 0), 0);
+    const benefAtivosFiltrado = mapaNucleosFiltrados.reduce((acc, n) => acc + (n.totalMatriculados || 0), 0);
 
     // Recentes por nucleoId (ID, não texto)
     const recentesFiltrados = rRaw.recentes.filter(
       (rec) => rec.nucleoId && idsFiltrados.has(rec.nucleoId)
     );
-
-    // Mapa de núcleos filtrados
-    const mapaNucleosFiltrados = (rRaw.mapaNucleos || []).filter((n) => idsFiltrados.has(n.id));
 
     // Turmas e vagas filtradas (dados já existem em mapaNucleos)
     const totalVagasFiltrado = mapaNucleosFiltrados.reduce((acc, n) => acc + n.totalVagas, 0);
@@ -121,13 +121,35 @@ export default function DashboardPage() {
     for (const dist of rRaw.distribuicaoPorModalidade) {
       modalidadeMap.set(dist.id, { ...dist, total: 0 });
     }
+
+    let totalDiretaFiltrada = 0;
     for (const t of turmasFiltradas) {
       const atId = (t as any).atividadeId || (t as any).atividade_id;
-      if (atId && modalidadeMap.has(atId)) {
-        const entry = modalidadeMap.get(atId)!;
-        entry.total += matriculasPorTurma[(t as any).id] ?? 0;
+      const count = matriculasPorTurma[(t as any).id] ?? 0;
+      if (count > 0 && atId && modalidadeMap.has(atId)) {
+        modalidadeMap.get(atId)!.total += count;
+        totalDiretaFiltrada += count;
       }
     }
+
+    // Se ainda não há matrículas diretas em turmas, distribui com base nos alunos matriculados por núcleo
+    if (totalDiretaFiltrada === 0) {
+      const nucleoAtividade = new Map<string, string>();
+      for (const t of turmasFiltradas) {
+        const nid = (t as any).nucleoId || (t as any).nucleo_id;
+        const atId = (t as any).atividadeId || (t as any).atividade_id;
+        if (nid && atId && !nucleoAtividade.has(nid)) {
+          nucleoAtividade.set(nid, atId);
+        }
+      }
+      for (const n of mapaNucleosFiltrados) {
+        const atId = nucleoAtividade.get(n.id) || (n.atividadeIds && n.atividadeIds[0]);
+        if (atId && modalidadeMap.has(atId)) {
+          modalidadeMap.get(atId)!.total += n.totalMatriculados || 0;
+        }
+      }
+    }
+
     const distribuicaoFiltrada = Array.from(modalidadeMap.values())
       .filter((m) => m.total > 0)
       .sort((a, b) => b.total - a.total);
@@ -397,20 +419,31 @@ export default function DashboardPage() {
             </h3>
           </CardHeader>
           <CardBody className="flex flex-col gap-2">
-            {r.distribuicaoPorModalidade.map((m) => {
-              const pct = r.totalOcupadas > 0 ? Math.round((m.total / r.totalOcupadas) * 100) : 0;
-              return (
-                <div key={m.nome} className="flex flex-col gap-1">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-zinc-700 dark:text-zinc-300">{m.nome}</span>
-                    <span className="font-medium text-zinc-900 dark:text-zinc-100">{m.total} <span className="text-xs font-normal text-zinc-400 dark:text-zinc-500">({pct}%)</span></span>
-                  </div>
-                  <div className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800">
-                    <div className="h-full rounded-full bg-sky-400 dark:bg-sky-500" style={{ width: `${pct}%` }} />
-                  </div>
-                </div>
-              );
-            })}
+            {r.distribuicaoPorModalidade.length === 0 ? (
+              <p className="text-xs text-zinc-400 dark:text-zinc-500 py-4 text-center">
+                Nenhuma modalidade com beneficiários para a localização selecionada.
+              </p>
+            ) : (
+              (() => {
+                const totalAlunosDist = r.distribuicaoPorModalidade.reduce((acc, m) => acc + m.total, 0);
+                return r.distribuicaoPorModalidade.map((m) => {
+                  const pct = totalAlunosDist > 0 ? Math.round((m.total / totalAlunosDist) * 100) : 0;
+                  return (
+                    <div key={m.nome} className="flex flex-col gap-1">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-zinc-700 dark:text-zinc-300">{m.nome}</span>
+                        <span className="font-medium text-zinc-900 dark:text-zinc-100">
+                          {m.total} <span className="text-xs font-normal text-zinc-400 dark:text-zinc-500">({pct}%)</span>
+                        </span>
+                      </div>
+                      <div className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800">
+                        <div className="h-full rounded-full bg-sky-400 dark:bg-sky-500" style={{ width: `${pct}%` }} />
+                      </div>
+                    </div>
+                  );
+                });
+              })()
+            )}
           </CardBody>
         </Card>
 

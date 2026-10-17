@@ -2851,24 +2851,14 @@ function montarResumo(
   }
 
   const totalVagas = turmas.reduce((acc, t) => acc + (t.vagas_totais || 0), 0);
-  const totalOcupadas = turmas.reduce((acc, t) => acc + (ocupacaoPorTurma.get(t.id) ?? 0), 0);
+  const totalOcupadasDireta = turmas.reduce((acc, t) => acc + (ocupacaoPorTurma.get(t.id) ?? 0), 0);
+  // Se ainda não há matrículas diretas em turmas (turmas A/B/C), a ocupação real corresponde aos beneficiários ativos vinculados aos núcleos
+  const totalOcupadas = totalOcupadasDireta > 0 ? totalOcupadasDireta : beneficiariosAtivos;
   const vagasLivres = Math.max(0, totalVagas - totalOcupadas);
   const calcOcupacao = totalVagas > 0 ? (totalOcupadas / totalVagas) * 100 : 0;
   const ocupacaoGlobal = calcOcupacao < 10
     ? Number(calcOcupacao.toFixed(1))
     : Math.round(calcOcupacao);
-
-  const atividadesEsportivas = atividades.filter(
-    (a) => a.disponivel_pre_inscricao !== false && !a.nome.toLowerCase().includes("planejamento")
-  );
-
-  const distribuicaoPorModalidade = atividadesEsportivas
-    .map((a) => ({
-      id: a.id,
-      nome: a.nome,
-      total: turmas.filter((t) => t.atividade_id === a.id).reduce((acc, t) => acc + (ocupacaoPorTurma.get(t.id) ?? 0), 0),
-    }))
-    .sort((a, b) => b.total - a.total);
 
   const turmasPorNucleo = new Map<string, { vagas: number; ids: string[]; atividadeIds: Set<string> }>();
   for (const t of turmas) {
@@ -2880,6 +2870,58 @@ function montarResumo(
     if (t.atividade_id) atual.atividadeIds.add(t.atividade_id);
     turmasPorNucleo.set(nid, atual);
   }
+
+  // Mapear modalidade principal de cada núcleo a partir das turmas ou de nucleo_atividades
+  const nucleoAtividadeMap = new Map<string, string>();
+  for (const [nid, info] of turmasPorNucleo.entries()) {
+    const firstAtiv = Array.from(info.atividadeIds)[0];
+    if (firstAtiv) nucleoAtividadeMap.set(nid, firstAtiv);
+  }
+  for (const n of nucleos) {
+    if (!nucleoAtividadeMap.has(n.id) && Array.isArray(n.nucleo_atividades) && n.nucleo_atividades.length > 0) {
+      const atId = n.nucleo_atividades[0]?.atividade_id;
+      if (atId) nucleoAtividadeMap.set(n.id, atId);
+    }
+  }
+
+  // Contagem por modalidade
+  const contagemModalidade = new Map<string, number>();
+  if (totalOcupadasDireta > 0) {
+    for (const t of turmas) {
+      if (t.atividade_id) {
+        const count = ocupacaoPorTurma.get(t.id) ?? 0;
+        contagemModalidade.set(t.atividade_id, (contagemModalidade.get(t.atividade_id) ?? 0) + count);
+      }
+    }
+  } else {
+    // Fallback: alocação por núcleo da modalidade quando ainda não há enturmação específica (turma A/B/C)
+    for (const b of aprovados) {
+      let nid = b.nucleo_id;
+      const bgList = b.beneficiario_grupos || b.beneficiario_turmas;
+      if (!nid && bgList && bgList.length > 0) {
+        nid = bgList[0]?.grupos?.nucleo_id || bgList[0]?.turmas?.nucleo_id;
+      }
+      if (nid) {
+        const atId = nucleoAtividadeMap.get(nid);
+        if (atId) {
+          contagemModalidade.set(atId, (contagemModalidade.get(atId) ?? 0) + 1);
+        }
+      }
+    }
+  }
+
+  const atividadesEsportivas = atividades.filter(
+    (a) => a.disponivel_pre_inscricao !== false && !a.nome.toLowerCase().includes("planejamento")
+  );
+
+  const distribuicaoPorModalidade = atividadesEsportivas
+    .map((a) => ({
+      id: a.id,
+      nome: a.nome,
+      total: contagemModalidade.get(a.id) ?? 0,
+    }))
+    .filter((a) => a.total > 0)
+    .sort((a, b) => b.total - a.total);
 
   const mapaNucleos = nucleos.map((n) => {
     const infoTurmas = turmasPorNucleo.get(n.id) || { vagas: 0, ids: [], atividadeIds: new Set<string>() };
