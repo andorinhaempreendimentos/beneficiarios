@@ -876,7 +876,7 @@ export function InscricaoNucleoSimplificadaWizard({ nucleo }: Props) {
                   {[
                     { id: "Matutino", label: "Manhã", sub: "Matutino", icone: "☀️" },
                     { id: "Vespertino", label: "Tarde", sub: "Vespertino", icone: "⛅" },
-                    { id: "Integral", label: "Integral", sub: "Tempo Integral", icone: "🏫" },
+                    { id: "Noturno", label: "Noite", sub: "Noturno", icone: "🌙" },
                     { id: "Não estuda", label: "Não Estuda", sub: "Atualmente", icone: "🏠" },
                   ].map((t) => {
                     const sel = alunoTurnoEscola === t.id;
@@ -1164,10 +1164,11 @@ export function InscricaoNucleoSimplificadaWizard({ nucleo }: Props) {
                   <label className="block text-xs font-black text-slate-800 uppercase tracking-wider">
                     Turno de preferência para o treino no núcleo *
                   </label>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     {[
                       { id: "Manha", label: "☀️ Manhã" },
                       { id: "Tarde", label: "⛅ Tarde" },
+                      { id: "Noite", label: "🌙 Noite" },
                       { id: "TantoFaz", label: "🔄 Qualquer" },
                     ].map((turn) => {
                       const sel = turnoTreino === turn.id;
