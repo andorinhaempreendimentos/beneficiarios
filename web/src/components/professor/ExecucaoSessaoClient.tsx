@@ -277,15 +277,37 @@ export function ExecucaoSessaoClient({
 
   const horaInicioPrevista = useMemo(() => {
     if (!slotHoje) return "08:00";
+    if (slotHoje.horaInicio) return slotHoje.horaInicio.slice(0, 5);
     const ini = String(slotHoje.inicio);
     return ini.includes(":") ? ini.slice(0, 5) : `${ini.padStart(2, "0")}:00`;
   }, [slotHoje]);
 
   const horaFimPrevista = useMemo(() => {
     if (!slotHoje) return "10:00";
+    if (slotHoje.horaFim) return slotHoje.horaFim.slice(0, 5);
     const fim = String(slotHoje.fim);
     return fim.includes(":") ? fim.slice(0, 5) : `${fim.padStart(2, "0")}:00`;
   }, [slotHoje]);
+
+  const diaSemanaAula = useMemo(() => {
+    const [ano, mes, dia] = dataAula.split("-").map(Number);
+    const dataObj = new Date(ano, mes - 1, dia);
+    const diaNum = dataObj.getDay();
+    return DIAS_SEMANA_MAP[diaNum] || "Terça-feira";
+  }, [dataAula]);
+
+  const duracaoBlocoFormatada = useMemo(() => {
+    const [h1, m1] = horaInicioPrevista.split(":").map(Number);
+    const [h2, m2] = horaFimPrevista.split(":").map(Number);
+    if (isNaN(h1) || isNaN(h2)) return "1h";
+    let totalMin = (h2 * 60 + (m2 || 0)) - (h1 * 60 + (m1 || 0));
+    if (totalMin <= 0) totalMin += 24 * 60;
+    const horas = Math.floor(totalMin / 60);
+    const mins = totalMin % 60;
+    if (horas > 0 && mins > 0) return `${horas}h${String(mins).padStart(2, "0")}`;
+    if (horas > 0) return `${horas}h`;
+    return `${mins} min`;
+  }, [horaInicioPrevista, horaFimPrevista]);
 
   // Horários Efetivos (Regra de Ouro 3: Hora Real no Retroativo)
   const [horaInicioEfetiva, setHoraInicioEfetiva] = useState(horaInicioPrevista);
@@ -908,8 +930,11 @@ export function ExecucaoSessaoClient({
               <h2 className="text-lg sm:text-xl font-black text-zinc-900 flex items-center gap-2">
                 Conferência de {termoParticipante}s do Polo
               </h2>
-              <p className="text-xs text-zinc-500 mt-0.5">
-                Polo: <strong>{turma.nucleo?.identificacao || "Núcleo"}</strong> • Turma: <strong>{turma.nome}</strong>
+              <p className="text-xs text-zinc-600 mt-1 flex flex-wrap items-center gap-1.5 font-medium">
+                <span className="font-bold text-zinc-800">TURMA QUE TREINA</span>
+                <span>📅 {diaSemanaAula}</span>
+                <span>•</span>
+                <span>🕒 {horaInicioPrevista} às {horaFimPrevista} (Duração: {duracaoBlocoFormatada})</span>
               </p>
             </div>
 
