@@ -921,47 +921,52 @@ export function ExecucaoSessaoClient({
       {/* ETAPA 1: CONFERÊNCIA OBRIGATÓRIA DE ALUNOS & INÍCIO DE AULA (PLAY) */}
       {/* ========================================================================= */}
       {etapa === "inicio" && (
-        <Card className="p-4 sm:p-6 flex flex-col gap-5 border border-zinc-200/80 shadow-md">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-zinc-100 pb-4">
-            <div>
-              <div className="text-[10px] uppercase font-bold text-zinc-400 tracking-wider">
-                Etapa 1 • Pré-Treino
-              </div>
-              <h2 className="text-lg sm:text-xl font-black text-zinc-900 flex items-center gap-2">
-                Conferência de {termoParticipante}s do Polo
-              </h2>
-              <p className="text-xs text-zinc-600 mt-1 flex flex-wrap items-center gap-1.5 font-medium">
-                <span className="font-bold text-zinc-800">TURMA QUE TREINA</span>
-                <span>📅 {diaSemanaAula}</span>
-                <span>•</span>
-                <span>🕒 {horaInicioPrevista} às {horaFimPrevista} (Duração: {duracaoBlocoFormatada})</span>
-              </p>
-            </div>
+        <Card className="p-0 flex flex-col border border-amber-200/90 shadow-md overflow-hidden bg-white">
+          {/* HEADER COM FUNDO ÂMBAR/CREME DESTACADO */}
+          <div className="bg-gradient-to-br from-amber-50/90 via-amber-50/60 to-orange-50/40 border-b border-amber-200/80 p-5 sm:p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-extrabold uppercase tracking-wide bg-amber-200/70 text-amber-900 border border-amber-300/60">
+                    Etapa 1 • Pré-Treino
+                  </span>
+                  <span className="text-xs font-semibold text-amber-800/80">Conferência de {termoParticipante}s do Polo</span>
+                </div>
 
-            <div className="self-start sm:self-auto px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold">
-              {selecionadosIds.size} confirmados para esta turma
+                {/* LINHA GRANDE: TURMA QUE TREINA + DIA DA SEMANA */}
+                <div className="flex flex-wrap items-baseline gap-2.5 pt-0.5">
+                  <span className="text-xs sm:text-sm font-black uppercase tracking-wide text-amber-800 bg-amber-200/60 px-2.5 py-1 rounded-lg">
+                    TURMA QUE TREINA
+                  </span>
+                  <span className="text-xl sm:text-2xl font-black text-amber-950 tracking-tight">
+                    📅 {diaSemanaAula}
+                  </span>
+                </div>
+
+                {/* LINHA GRANDE: HORÁRIO + DURAÇÃO */}
+                <div className="flex flex-wrap items-center gap-2.5 pt-0.5">
+                  <span className="text-base sm:text-lg font-extrabold text-amber-900 flex items-center gap-1.5">
+                    🕒 {horaInicioPrevista} às {horaFimPrevista}
+                  </span>
+                  <span className="text-xs font-extrabold bg-white border border-amber-300 text-amber-900 px-2.5 py-0.5 rounded-md shadow-2xs">
+                    Duração: {duracaoBlocoFormatada}
+                  </span>
+                </div>
+              </div>
+
+              {/* BADGE DE CONFIRMADOS */}
+              <div className="self-start sm:self-center shrink-0">
+                <div className="px-4 py-2 rounded-xl bg-white border-2 border-emerald-500/80 text-emerald-800 text-xs font-black shadow-xs flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                  <span className="text-base font-black text-emerald-700">{selecionadosIds.size}</span>
+                  <span>confirmados</span>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* BANNER DE TEMPO TRAVADO */}
-          <div className="rounded-2xl bg-amber-500/10 border-2 border-amber-500/30 p-4 flex items-start gap-3">
-            <div className="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-700 flex items-center justify-center font-black text-base shrink-0">
-              <Clock className="w-5 h-5 text-amber-600" />
-            </div>
-            <div className="flex-1">
-              <div className="flex flex-wrap items-center gap-2">
-                <h3 className="text-sm font-black text-amber-950">
-                  Tempo de aula travado em 00:00:00
-                </h3>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-200 text-amber-900 uppercase">
-                  Conferência Mandatória
-                </span>
-              </div>
-              <p className="text-xs text-amber-900 mt-1 leading-relaxed">
-                Marque os {termoParticipante.toLowerCase()}s presentes nesta turma. Os alunos que você não marcar continuarão <strong>sem turma</strong> aguardando as outras turmas do polo.
-              </p>
-            </div>
-          </div>
+          {/* CORPO DO CARD */}
+          <div className="p-4 sm:p-6 flex flex-col gap-5">
 
           {/* PAINEL DE CONTROLE DE ACÚMULO / TABS */}
           <div className="grid grid-cols-3 gap-2 text-center">
@@ -1260,6 +1265,7 @@ export function ExecucaoSessaoClient({
                 className="font-bold text-zinc-800 bg-zinc-50 border border-zinc-200 rounded-lg px-2.5 py-1 text-xs focus:outline-none focus:border-emerald-500"
               />
             </div>
+          </div>
           </div>
 
         </Card>
