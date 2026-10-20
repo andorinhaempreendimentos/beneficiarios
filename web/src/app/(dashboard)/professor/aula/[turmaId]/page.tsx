@@ -15,16 +15,21 @@ export default async function AulaTurmaPage({ params, searchParams }: AulaTurmaP
   const sp = await searchParams;
   const dataQuery = (typeof sp?.data === "string" ? sp.data : undefined) || getDataHojeBrasil();
 
-  const [turma, beneficiariosRes, funcionariosRes, execucaoExistente] = await Promise.all([
-    turmasApi.get(turmaId).catch(() => null),
-    beneficiariosApi.list({ turmaId, limit: 200 }).catch(() => ({ data: [] })),
-    funcionariosApi.list({ limit: 200 }).catch(() => ({ data: [] })),
-    execucoesSessaoApi.getExecucao(turmaId, dataQuery).catch(() => null),
-  ]);
-
+  const turma = await turmasApi.get(turmaId).catch(() => null);
   if (!turma) {
     notFound();
   }
+
+  const nucleoId = turma.nucleoId || turma.nucleo?.id;
+
+  const [beneficiariosRes, beneficiariosPolo, funcionariosRes, execucaoExistente] = await Promise.all([
+    beneficiariosApi.list({ turmaId, limit: 200 }).catch(() => ({ data: [] })),
+    nucleoId
+      ? beneficiariosApi.listAll({ nucleoId, status: "ativo" }).catch(() => [])
+      : Promise.resolve([]),
+    funcionariosApi.list({ limit: 200 }).catch(() => ({ data: [] })),
+    execucoesSessaoApi.getExecucao(turmaId, dataQuery).catch(() => null),
+  ]);
 
   const presencasIniciais = execucaoExistente
     ? await execucoesSessaoApi.getPresencas(execucaoExistente.id).catch(() => [])
@@ -36,6 +41,7 @@ export default async function AulaTurmaPage({ params, searchParams }: AulaTurmaP
     <ExecucaoSessaoClient
       turma={turma}
       beneficiarios={beneficiariosRes.data}
+      beneficiariosPolo={beneficiariosPolo}
       funcionarios={funcionariosRes.data}
       dataQuery={dataQuery}
       execucaoInicial={execucaoExistente}

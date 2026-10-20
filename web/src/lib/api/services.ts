@@ -1824,6 +1824,38 @@ export const gruposApi = {
       .map((bt: any) => bt.beneficiarios ? mapBeneficiario(bt.beneficiarios) : null)
       .filter(Boolean) as BeneficiarioApi[];
   },
+  async sincronizarConferenciaEnturmacao(
+    turmaId: string,
+    beneficiarioIds: string[]
+  ): Promise<{ sucesso: boolean; totalConfirmados: number; totalTransferidos: number }> {
+    const sb = createClient();
+    const { data, error } = await (sb as any).rpc('conferir_e_enturmar_beneficiarios', {
+      p_turma_id: turmaId,
+      p_beneficiario_ids: beneficiarioIds,
+    });
+
+    if (error) {
+      console.warn('[sincronizarConferenciaEnturmacao RPC error, fallback]', error);
+      if (beneficiarioIds.length > 0) {
+        const rows = beneficiarioIds.map((bId) => ({
+          grupo_id: turmaId,
+          beneficiario_id: bId,
+          status: 'ativo',
+          data_matricula: getDataHojeBrasil(),
+        }));
+        await (sb.from('beneficiario_grupos') as any).upsert(rows, {
+          onConflict: 'beneficiario_id,grupo_id',
+        });
+      }
+      return { sucesso: true, totalConfirmados: beneficiarioIds.length, totalTransferidos: 0 };
+    }
+
+    return {
+      sucesso: Boolean(data?.sucesso),
+      totalConfirmados: Number(data?.total_confirmados ?? beneficiarioIds.length),
+      totalTransferidos: Number(data?.total_transferidos ?? 0),
+    };
+  },
 };
 
 export const turmasApi = gruposApi;

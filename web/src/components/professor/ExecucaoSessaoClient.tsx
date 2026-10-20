@@ -37,6 +37,7 @@ import { useAuth } from "@/components/providers/AuthProvider";
 import {
   execucoesSessaoApi,
   professoresApi,
+  turmasApi,
   type TurmaApi,
   type FuncionarioApi,
   type BeneficiarioApi,
@@ -46,6 +47,7 @@ import type { ExecucaoSessaoApi, BeneficiarioPresencaApi } from "@/lib/types/exe
 interface ExecucaoSessaoClientProps {
   turma: TurmaApi;
   beneficiarios: BeneficiarioApi[];
+  beneficiariosPolo?: BeneficiarioApi[];
   funcionarios?: FuncionarioApi[];
   dataQuery: string;
   execucaoInicial: ExecucaoSessaoApi | null;
@@ -107,6 +109,7 @@ import { formatStorageUrl } from "@/lib/storage";
 export function ExecucaoSessaoClient({
   turma,
   beneficiarios,
+  beneficiariosPolo = [],
   funcionarios = [],
   dataQuery,
   execucaoInicial,
@@ -170,6 +173,54 @@ export function ExecucaoSessaoClient({
     }
     return map;
   });
+
+  // Base unificada de alunos do polo para a conferência
+  const listaAlunosPolo = useMemo(() => {
+    if (beneficiariosPolo && beneficiariosPolo.length > 0) {
+      return beneficiariosPolo;
+    }
+    return beneficiarios;
+  }, [beneficiariosPolo, beneficiarios]);
+
+  // Alunos confirmados para esta turma (inicialmente os já matriculados ou com presença inicial)
+  const [selecionadosIds, setSelecionadosIds] = useState<Set<string>>(() => {
+    const ids = new Set<string>();
+    for (const b of beneficiarios) {
+      ids.add(b.id);
+    }
+    if (presencasIniciais && presencasIniciais.length > 0) {
+      for (const p of presencasIniciais) {
+        ids.add(p.beneficiarioId);
+      }
+    }
+    return ids;
+  });
+
+  // Alunos ativos nesta turma durante a execução da sessão
+  const [beneficiariosTurma, setBeneficiariosTurma] = useState<BeneficiarioApi[]>(() => {
+    if (beneficiarios.length > 0) return beneficiarios;
+    if (presencasIniciais && presencasIniciais.length > 0 && beneficiariosPolo && beneficiariosPolo.length > 0) {
+      const idsPres = new Set(presencasIniciais.map((p) => p.beneficiarioId));
+      return beneficiariosPolo.filter((b) => idsPres.has(b.id));
+    }
+    return beneficiarios;
+  });
+
+  // Estados de Filtro e Busca na Conferência Pré-Aula
+  const [buscaConferencia, setBuscaConferencia] = useState("");
+  const [filtroConferencia, setFiltroConferencia] = useState<"todos" | "confirmados" | "sem_turma">("todos");
+
+  const toggleConfirmacaoAluno = (id: string) => {
+    setSelecionadosIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  };
 
   // Estados de Filtro e Busca na Chamada
   const [busca, setBusca] = useState("");
@@ -295,7 +346,34 @@ export function ExecucaoSessaoClient({
     execucao?.justificativaRetroativa ||
     execucao?.statusAprovacao === "pendente_aprovacao"
   );
-  const dispensaFoto = beneficiarios.length === 0 && isModoRegularizacao;
+  const dispensaFoto = beneficiariosTurma.length === 0 && isModoRegularizacao;
+
+  // Alunos do polo filtrados para a conferência pré-aula
+  const alunosConferenciaFiltrados = useMemo(() => {
+    const termo = buscaConferencia.toLowerCase().trim();
+    return listaAlunosPolo.filter((b) => {
+      const matchBusca =
+        !termo ||
+        b.nomeCompleto.toLowerCase().includes(termo) ||
+        b.matricula.toLowerCase().includes(termo);
+      if (!matchBusca) return false;
+
+      const isSel = selecionadosIds.has(b.id);
+      if (filtroConferencia === "confirmados") return isSel;
+      if (filtroConferencia === "sem_turma") return !isSel;
+      return true;
+    }).sort((a, b) => {
+      const aSel = selecionadosIds.has(a.id);
+      const bSel = selecionadosIds.has(b.id);
+      if (aSel && !bSel) return -1;
+      if (!aSel && bSel) return 1;
+      return a.nomeCompleto.localeCompare(b.nomeCompleto, "pt-BR");
+    });
+  }, [listaAlunosPolo, buscaConferencia, filtroConferencia, selecionadosIds]);
+
+  const saldoSemTurmaConferencia = useMemo(() => {
+    return listaAlunosPolo.filter((b) => !selecionadosIds.has(b.id)).length;
+  }, [listaAlunosPolo, selecionadosIds]);
 
   // Atualização do Cronômetro ao Vivo quando a aula estiver em andamento
   useEffect(() => {
@@ -334,7 +412,7 @@ export function ExecucaoSessaoClient({
     let faltas = 0;
     let justificadas = 0;
 
-    for (const b of beneficiarios) {
+    for (const b of beneficiariosTurma) {
       const item = presencas[b.id];
       const st = item?.status || "presente";
       if (st === "presente") presentes++;
@@ -343,17 +421,17 @@ export function ExecucaoSessaoClient({
     }
 
     return {
-      total: beneficiarios.length,
+      total: beneficiariosTurma.length,
       presentes,
       faltas,
       justificadas,
-      taxaPresenca: beneficiarios.length > 0 ? Math.round((presentes / beneficiarios.length) * 100) : 0,
+      taxaPresenca: beneficiariosTurma.length > 0 ? Math.round((presentes / beneficiariosTurma.length) * 100) : 0,
     };
-  }, [beneficiarios, presencas]);
+  }, [beneficiariosTurma, presencas]);
 
   // Beneficiários filtrados para a listagem
   const beneficiariosFiltrados = useMemo(() => {
-    return beneficiarios.filter((b) => {
+    return beneficiariosTurma.filter((b) => {
       const matchBusca =
         !busca ||
         b.nomeCompleto.toLowerCase().includes(busca.toLowerCase()) ||
@@ -364,7 +442,7 @@ export function ExecucaoSessaoClient({
 
       return matchBusca && matchStatus;
     });
-  }, [beneficiarios, busca, filtroStatus, presencas]);
+  }, [beneficiariosTurma, busca, filtroStatus, presencas]);
 
   // Alterar presença de um beneficiário individual
   const handleTogglePresenca = (
@@ -395,7 +473,7 @@ export function ExecucaoSessaoClient({
   // Marcar todos com um status específico (Bulk Action)
   const handleMarcarTodos = (status: "presente" | "falta") => {
     const nextMap: Record<string, { status: "presente" | "falta" | "falta_justificada"; observacao?: string }> = {};
-    for (const b of beneficiarios) {
+    for (const b of beneficiariosTurma) {
       nextMap[b.id] = {
         ...presencas[b.id],
         status,
@@ -409,11 +487,11 @@ export function ExecucaoSessaoClient({
     );
   };
 
-  // STEP 1: Iniciar Aula (Play)
+  // STEP 1: Iniciar Aula (Play) após Conferência Obrigatória
   const handleIniciarAula = async () => {
     const isPlanejamento = turma.tipo === "operacional" || turma.nome?.toLowerCase().includes("planejamento");
-    if (beneficiarios.length === 0 && !isPlanejamento && !isModoRegularizacao) {
-      toast.error("Não é possível iniciar a aula: nenhum beneficiário matriculado nesta turma.");
+    if (selecionadosIds.size === 0 && !isPlanejamento && !isModoRegularizacao) {
+      toast.error(`Selecione ao menos 1 ${termoParticipante.toLowerCase()} presente nesta turma para iniciar.`);
       return;
     }
     if (isDataFutura) {
@@ -456,8 +534,15 @@ export function ExecucaoSessaoClient({
         throw new Error("Professor responsável não identificado para esta turma.");
       }
 
+      // 1. Sincroniza a enturmação dos selecionados no banco
+      const confirmadosIdsArray = Array.from(selecionadosIds);
+      if (confirmadosIdsArray.length > 0) {
+        await turmasApi.sincronizarConferenciaEnturmacao(turma.id, confirmadosIdsArray);
+      }
+
       const atividadeId = slotHoje?.atividadeId || turma.atividadeId || turma.atividade?.id;
 
+      // 2. Registra início da sessão
       const novaExecucao = await execucoesSessaoApi.iniciarSessao({
         turmaId: turma.id,
         nucleoId: slotHoje?.nucleoId || turma.nucleoId || turma.nucleo?.id,
@@ -473,8 +558,12 @@ export function ExecucaoSessaoClient({
 
       setExecucao(novaExecucao);
 
-      // Salva a lista de presenças inicial no banco
-      const listaPresencasParaSalvar = beneficiarios.map((b) => ({
+      // 3. Atualiza a lista de alunos da turma com os confirmados
+      const alunosConfirmadosObjetos = listaAlunosPolo.filter((b) => selecionadosIds.has(b.id));
+      setBeneficiariosTurma(alunosConfirmadosObjetos);
+
+      // 4. Salva a lista de presenças inicial no banco para os alunos confirmados
+      const listaPresencasParaSalvar = alunosConfirmadosObjetos.map((b) => ({
         beneficiarioId: b.id,
         status: presencas[b.id]?.status || ("presente" as const),
         observacao: presencas[b.id]?.observacao,
@@ -484,13 +573,22 @@ export function ExecucaoSessaoClient({
         await execucoesSessaoApi.salvarPresencas(novaExecucao.id, listaPresencasParaSalvar);
       }
 
+      // 5. Atualiza o mapa de presenças local
+      const nextMap = { ...presencas };
+      for (const b of alunosConfirmadosObjetos) {
+        if (!nextMap[b.id]) {
+          nextMap[b.id] = { status: "presente" };
+        }
+      }
+      setPresencas(nextMap);
+
       setShowJustificativaModal(false);
-      if (beneficiarios.length === 0 && isModoRegularizacao) {
+      if (alunosConfirmadosObjetos.length === 0 && isModoRegularizacao) {
         setEtapa("finalizacao");
       } else {
         setEtapa("chamada");
       }
-      toast.success(`▶ ${termoSessao} iniciado(a) com sucesso! Ponto de entrada registrado.`);
+      toast.success(`▶ ${termoSessao} iniciado(a) com sucesso! ${confirmadosIdsArray.length} ${termoParticipante.toLowerCase()}s confirmados.`);
     } catch (err: any) {
       toast.error(`Erro ao iniciar aula: ${err.message || "Tente novamente."}`);
     } finally {
@@ -527,7 +625,7 @@ export function ExecucaoSessaoClient({
     if (!execucao) return;
     setSalvandoPresencas(true);
     try {
-      const lista = beneficiarios.map((b) => ({
+      const lista = beneficiariosTurma.map((b) => ({
         beneficiarioId: b.id,
         status: presencas[b.id]?.status || ("presente" as const),
         observacao: presencas[b.id]?.observacao,
@@ -602,7 +700,7 @@ export function ExecucaoSessaoClient({
       }
 
       // Salva as presenças finais
-      const lista = beneficiarios.map((b) => ({
+      const lista = beneficiariosTurma.map((b) => ({
         beneficiarioId: b.id,
         status: presencas[b.id]?.status || ("presente" as const),
         observacao: presencas[b.id]?.observacao,
@@ -695,10 +793,10 @@ export function ExecucaoSessaoClient({
           </div>
 
           <div className="col-span-2 sm:col-span-1">
-            <span className="text-[10px] uppercase font-bold text-zinc-400 block">{termoParticipante}s Inscritos</span>
+            <span className="text-[10px] uppercase font-bold text-zinc-400 block">{termoParticipante}s na Turma</span>
             <span className="font-semibold text-white flex items-center gap-1 mt-0.5">
               <Users className="h-3.5 w-3.5 text-emerald-400" />
-              {beneficiarios.length} {termoParticipante}s
+              {etapa === "inicio" ? `${selecionadosIds.size} selecionados` : `${beneficiariosTurma.length} ${termoParticipante}s`}
             </span>
           </div>
         </div>
@@ -801,19 +899,219 @@ export function ExecucaoSessaoClient({
       </div>
 
       {/* ========================================================================= */}
-      {/* ETAPA 1: INICIAR AULA (PLAY) */}
+      {/* ETAPA 1: CONFERÊNCIA OBRIGATÓRIA DE ALUNOS & INÍCIO DE AULA (PLAY) */}
       {/* ========================================================================= */}
       {etapa === "inicio" && (
-        <Card className="p-5 sm:p-6 flex flex-col gap-6">
-          <div className="text-center flex flex-col items-center gap-2">
-            <div className="h-16 w-16 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-200 shadow-sm">
-              <Play className="h-8 w-8 fill-emerald-600 ml-1" />
+        <Card className="p-4 sm:p-6 flex flex-col gap-5 border border-zinc-200/80 shadow-md">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-zinc-100 pb-4">
+            <div>
+              <div className="text-[10px] uppercase font-bold text-zinc-400 tracking-wider">
+                Etapa 1 • Pré-Treino
+              </div>
+              <h2 className="text-lg sm:text-xl font-black text-zinc-900 flex items-center gap-2">
+                Conferência de {termoParticipante}s do Polo
+              </h2>
+              <p className="text-xs text-zinc-500 mt-0.5">
+                Polo: <strong>{turma.nucleo?.identificacao || "Núcleo"}</strong> • Turma: <strong>{turma.nome}</strong>
+              </p>
             </div>
-            <h2 className="text-xl font-bold text-zinc-900">Etapa 1: Iniciar Execução do(a) {termoSessao}</h2>
-            <p className="text-xs text-zinc-500 max-w-md">
-              Ao clicar no botão abaixo, o sistema baterá o seu <strong>ponto de entrada</strong> e liberará a chamada
-              dos {termoParticipante.toLowerCase()}s em tempo real.
-            </p>
+
+            <div className="self-start sm:self-auto px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold">
+              {selecionadosIds.size} confirmados para esta turma
+            </div>
+          </div>
+
+          {/* BANNER DE TEMPO TRAVADO */}
+          <div className="rounded-2xl bg-amber-500/10 border-2 border-amber-500/30 p-4 flex items-start gap-3">
+            <div className="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-700 flex items-center justify-center font-black text-base shrink-0">
+              <Clock className="w-5 h-5 text-amber-600" />
+            </div>
+            <div className="flex-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <h3 className="text-sm font-black text-amber-950">
+                  Tempo de aula travado em 00:00:00
+                </h3>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-200 text-amber-900 uppercase">
+                  Conferência Mandatória
+                </span>
+              </div>
+              <p className="text-xs text-amber-900 mt-1 leading-relaxed">
+                Marque os {termoParticipante.toLowerCase()}s presentes nesta <strong>{turma.nome}</strong>. Os alunos que você não marcar continuarão <strong>sem turma</strong> aguardando as outras turmas do polo.
+              </p>
+            </div>
+          </div>
+
+          {/* PAINEL DE CONTROLE DE ACÚMULO / TABS */}
+          <div className="grid grid-cols-3 gap-2 text-center">
+            <button
+              type="button"
+              onClick={() => setFiltroConferencia("todos")}
+              className={`p-2.5 rounded-xl border transition-all cursor-pointer ${
+                filtroConferencia === "todos"
+                  ? "border-2 border-zinc-800 bg-zinc-50 shadow-xs"
+                  : "border-zinc-200 bg-white hover:border-zinc-300"
+              }`}
+            >
+              <div className="text-[10px] uppercase font-bold text-zinc-500">Total no Polo</div>
+              <div className="text-base sm:text-lg font-black text-zinc-900">{listaAlunosPolo.length}</div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setFiltroConferencia("confirmados")}
+              className={`p-2.5 rounded-xl border transition-all cursor-pointer ${
+                filtroConferencia === "confirmados"
+                  ? "border-2 border-emerald-600 bg-emerald-50 shadow-xs"
+                  : "border-zinc-200 bg-white hover:border-emerald-300"
+              }`}
+            >
+              <div className="text-[10px] uppercase font-bold text-emerald-700">Nesta Turma</div>
+              <div className="text-base sm:text-lg font-black text-emerald-700">{selecionadosIds.size}</div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setFiltroConferencia("sem_turma")}
+              className={`p-2.5 rounded-xl border transition-all cursor-pointer ${
+                filtroConferencia === "sem_turma"
+                  ? "border-2 border-amber-600 bg-amber-50 shadow-xs"
+                  : "border-zinc-200 bg-white hover:border-amber-300"
+              }`}
+            >
+              <div className="text-[10px] uppercase font-bold text-amber-700">Sem Turma</div>
+              <div className="text-base sm:text-lg font-black text-amber-700">{saldoSemTurmaConferencia}</div>
+            </button>
+          </div>
+
+          {/* BUSCA RÁPIDA DE ALUNO */}
+          <div className="relative">
+            <input
+              type="text"
+              value={buscaConferencia}
+              onChange={(e) => setBuscaConferencia(e.target.value)}
+              placeholder={`Buscar ${termoParticipante.toLowerCase()} por nome ou matrícula no polo...`}
+              className="w-full pl-9 pr-8 py-2.5 rounded-xl border border-zinc-200 bg-zinc-50/70 text-xs text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition"
+            />
+            <span className="absolute left-3 top-2.5 text-xs text-zinc-400">🔍</span>
+            {buscaConferencia && (
+              <button
+                type="button"
+                onClick={() => setBuscaConferencia("")}
+                className="absolute right-3 top-2.5 text-xs text-zinc-400 hover:text-zinc-600"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+
+          {/* LISTA ROLÁVEL DE ALUNOS COM CONDIÇÃO E BOTÃO DE CONFIRMAÇÃO */}
+          <div className="space-y-2 max-h-84 overflow-y-auto pr-1">
+            {alunosConferenciaFiltrados.length === 0 ? (
+              <div className="text-center py-8 text-xs text-zinc-400 bg-zinc-50 rounded-xl border border-dashed border-zinc-200">
+                Nenhum {termoParticipante.toLowerCase()} encontrado para este filtro.
+              </div>
+            ) : (
+              alunosConferenciaFiltrados.map((b) => {
+                const isSel = selecionadosIds.has(b.id);
+                const turmasCadastradas = b.turmasInfo || b.gruposInfo || [];
+                const turmaVinculada = turmasCadastradas[0];
+                const nomeTurmaVinculada = turmaVinculada?.turmaNome || turmaVinculada?.grupoNome;
+                const idTurmaVinculada = turmaVinculada?.turmaId || turmaVinculada?.grupoId;
+                const jaEmOutra = Boolean(idTurmaVinculada && idTurmaVinculada !== turma.id);
+                const idade = calcularIdade(b.dataNascimento);
+
+                let btnClass = isSel
+                  ? "bg-emerald-600 text-white font-bold shadow-xs hover:bg-emerald-700"
+                  : jaEmOutra
+                  ? "border border-blue-300 bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white font-semibold"
+                  : "border border-zinc-300 bg-white text-zinc-800 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 font-semibold";
+
+                let btnText = isSel
+                  ? `✓ Confirmado na ${turma.nome}`
+                  : jaEmOutra
+                  ? `Mover p/ ${turma.nome}`
+                  : `+ É da ${turma.nome}`;
+
+                return (
+                  <div
+                    key={b.id}
+                    onClick={() => toggleConfirmacaoAluno(b.id)}
+                    className={`p-3 rounded-xl border transition-all flex items-center justify-between gap-3 cursor-pointer select-none ${
+                      isSel
+                        ? "border-emerald-500 bg-emerald-50/70"
+                        : "border-zinc-200 bg-white hover:border-zinc-300"
+                    }`}
+                  >
+                    {/* DADOS DO ALUNO */}
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div
+                        className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 ${
+                          isSel
+                            ? "bg-emerald-600 text-white"
+                            : "bg-zinc-100 text-zinc-700 border border-zinc-200"
+                        }`}
+                      >
+                        {isSel ? "✓" : b.nomeCompleto.charAt(0)}
+                      </div>
+
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <span className="text-xs sm:text-sm font-bold text-zinc-900 truncate">
+                            {b.nomeCompleto}
+                          </span>
+                          {isSel && (
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-600 text-white">
+                              Presente
+                            </span>
+                          )}
+                          {!isSel && !nomeTurmaVinculada && (
+                            <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-amber-100 text-amber-800">
+                              Sem turma
+                            </span>
+                          )}
+                          {jaEmOutra && !isSel && (
+                            <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-blue-100 text-blue-800">
+                              Matriculado na {nomeTurmaVinculada}
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-[11px] text-zinc-500 mt-0.5">
+                          {idade != null ? `${idade} anos` : "Idade não informada"} • Matrícula: {b.matricula}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* BOTÃO DIRETO DE CONFIRMAÇÃO */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleConfirmacaoAluno(b.id);
+                      }}
+                      className={`px-3 py-1.5 rounded-xl text-xs transition shrink-0 ${btnClass}`}
+                    >
+                      {btnText}
+                    </button>
+                  </div>
+                );
+              })
+            )}
+          </div>
+
+          {/* BARRA DE RESUMO ANTES DE INICIAR */}
+          <div className="flex items-center justify-between text-xs text-zinc-600 bg-zinc-50 p-3 rounded-xl border border-zinc-200">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+              <span>
+                <strong className="text-zinc-900">{selecionadosIds.size}</strong> confirmados para iniciar agora
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+              <span>
+                <strong className="text-zinc-900">{saldoSemTurmaConferencia}</strong> sem turma
+              </span>
+            </div>
           </div>
 
           {/* ALERTA DE DATA FUTURA — BLOQUEIO RÍGIDO */}
@@ -924,38 +1222,45 @@ export function ExecucaoSessaoClient({
             </div>
           )}
 
-          {/* BOTÃO PRINCIPAL PLAY */}
-          <button
-            type="button"
-            onClick={handleIniciarAula}
-            disabled={salvando || isDataFutura || isAntesDaJanela || turma.nucleo?.emFuncionamento === false}
-            className={`w-full font-extrabold py-5 rounded-2xl text-lg shadow-xl flex items-center justify-center gap-3 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
-              isDataFutura || isAntesDaJanela || turma.nucleo?.emFuncionamento === false
-                ? 'bg-zinc-400 text-zinc-200 shadow-none'
-                : 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 active:scale-[0.99] text-white shadow-emerald-600/25'
-            }`}
-          >
-            {salvando ? (
-              <RefreshCw className="h-6 w-6 animate-spin" />
-            ) : (
-              <>
-                <Play className="h-7 w-7 fill-white" />
-                <span>INICIAR {termoSessao.toUpperCase()} (PLAY)</span>
-              </>
-            )}
-          </button>
+          {/* BOTÃO DE CONFIRMAR E INICIAR AULA (PLAY) */}
+          <div className="flex flex-col gap-2 pt-2 border-t border-zinc-100">
+            <button
+              type="button"
+              onClick={handleIniciarAula}
+              disabled={salvando || selecionadosIds.size === 0 || isDataFutura || isAntesDaJanela || turma.nucleo?.emFuncionamento === false}
+              className={`w-full font-extrabold py-4 rounded-xl text-sm sm:text-base shadow-lg flex items-center justify-center gap-3 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
+                salvando || selecionadosIds.size === 0 || isDataFutura || isAntesDaJanela || turma.nucleo?.emFuncionamento === false
+                  ? "bg-zinc-400 text-zinc-200 shadow-none"
+                  : "bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white shadow-emerald-600/20"
+              }`}
+            >
+              {salvando ? (
+                <RefreshCw className="h-5 w-5 animate-spin" />
+              ) : (
+                <>
+                  <Play className="h-5 w-5 fill-white" />
+                  <span>
+                    {selecionadosIds.size === 0
+                      ? `Selecione ao menos 1 ${termoParticipante.toLowerCase()} para iniciar`
+                      : `Confirmar ${selecionadosIds.size} ${termoParticipante.toLowerCase()}s e Iniciar ${termoSessao} (Play) ▶`}
+                  </span>
+                </>
+              )}
+            </button>
 
-          {/* SELETOR ALTERNATIVO DE DATA */}
-          <div className="flex items-center justify-between pt-4 border-t border-zinc-100 text-xs text-zinc-500">
-            <span>Data selecionada:</span>
-            <input
-              type="date"
-              value={dataAula}
-              max={hojeStr}
-              onChange={(e) => setDataAula(e.target.value)}
-              className="font-bold text-zinc-800 bg-zinc-50 border border-zinc-200 rounded-lg px-2.5 py-1 text-xs focus:outline-none focus:border-sky-500"
-            />
+            {/* SELETOR ALTERNATIVO DE DATA */}
+            <div className="flex items-center justify-between pt-2 text-xs text-zinc-500">
+              <span>Data da sessão:</span>
+              <input
+                type="date"
+                value={dataAula}
+                max={hojeStr}
+                onChange={(e) => setDataAula(e.target.value)}
+                className="font-bold text-zinc-800 bg-zinc-50 border border-zinc-200 rounded-lg px-2.5 py-1 text-xs focus:outline-none focus:border-emerald-500"
+              />
+            </div>
           </div>
+
         </Card>
       )}
 
@@ -1062,7 +1367,7 @@ export function ExecucaoSessaoClient({
 
             {/* LISTA DE BENEFICIÁRIOS */}
             <div className="divide-y divide-zinc-100 mt-2">
-              {beneficiarios.length === 0 ? (
+              {beneficiariosTurma.length === 0 ? (
                 <div className="py-8 text-center text-xs flex flex-col items-center gap-3 bg-amber-50/60 rounded-2xl border border-amber-200 p-6">
                   <AlertCircle className="h-8 w-8 text-amber-600" />
                   <div className="max-w-md">
