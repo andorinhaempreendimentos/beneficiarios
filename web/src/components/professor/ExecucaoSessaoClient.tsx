@@ -182,13 +182,10 @@ export function ExecucaoSessaoClient({
     return beneficiarios;
   }, [beneficiariosPolo, beneficiarios]);
 
-  // Alunos confirmados para esta turma (inicialmente os já matriculados ou com presença inicial)
+  // Alunos confirmados para esta turma (inicia vazio para conferência ativa pelo professor)
   const [selecionadosIds, setSelecionadosIds] = useState<Set<string>>(() => {
     const ids = new Set<string>();
-    for (const b of beneficiarios) {
-      ids.add(b.id);
-    }
-    if (presencasIniciais && presencasIniciais.length > 0) {
+    if (execucaoInicial && presencasIniciais && presencasIniciais.length > 0) {
       for (const p of presencasIniciais) {
         ids.add(p.beneficiarioId);
       }
@@ -936,7 +933,7 @@ export function ExecucaoSessaoClient({
                 </span>
               </div>
               <p className="text-xs text-amber-900 mt-1 leading-relaxed">
-                Marque os {termoParticipante.toLowerCase()}s presentes nesta <strong>{turma.nome}</strong>. Os alunos que você não marcar continuarão <strong>sem turma</strong> aguardando as outras turmas do polo.
+                Marque os {termoParticipante.toLowerCase()}s presentes nesta turma. Os alunos que você não marcar continuarão <strong>sem turma</strong> aguardando as outras turmas do polo.
               </p>
             </div>
           </div>
@@ -1018,6 +1015,7 @@ export function ExecucaoSessaoClient({
                 const nomeTurmaVinculada = turmaVinculada?.turmaNome || turmaVinculada?.grupoNome;
                 const idTurmaVinculada = turmaVinculada?.turmaId || turmaVinculada?.grupoId;
                 const jaEmOutra = Boolean(idTurmaVinculada && idTurmaVinculada !== turma.id);
+                const jaDestaTurma = Boolean(idTurmaVinculada && idTurmaVinculada === turma.id);
                 const idade = calcularIdade(b.dataNascimento);
 
                 let btnClass = isSel
@@ -1027,10 +1025,12 @@ export function ExecucaoSessaoClient({
                   : "border border-zinc-300 bg-white text-zinc-800 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 font-semibold";
 
                 let btnText = isSel
-                  ? `✓ Confirmado na ${turma.nome}`
+                  ? "✓ Confirmado"
                   : jaEmOutra
-                  ? `Mover p/ ${turma.nome}`
-                  : `+ É da ${turma.nome}`;
+                  ? "Mover p/ Turma"
+                  : jaDestaTurma
+                  ? "Confirmar"
+                  : "+ É da Turma";
 
                 return (
                   <div
@@ -1069,9 +1069,14 @@ export function ExecucaoSessaoClient({
                               Sem turma
                             </span>
                           )}
-                          {jaEmOutra && !isSel && (
+                          {!isSel && jaEmOutra && (
                             <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-blue-100 text-blue-800">
                               Matriculado na {nomeTurmaVinculada}
+                            </span>
+                          )}
+                          {!isSel && jaDestaTurma && (
+                            <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-50 text-emerald-800 border border-emerald-200">
+                              Matriculado nesta turma
                             </span>
                           )}
                         </div>
