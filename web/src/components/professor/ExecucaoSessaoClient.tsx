@@ -1010,27 +1010,13 @@ export function ExecucaoSessaoClient({
             ) : (
               alunosConferenciaFiltrados.map((b) => {
                 const isSel = selecionadosIds.has(b.id);
-                const turmasCadastradas = b.turmasInfo || b.gruposInfo || [];
-                const turmaVinculada = turmasCadastradas[0];
-                const nomeTurmaVinculada = turmaVinculada?.turmaNome || turmaVinculada?.grupoNome;
-                const idTurmaVinculada = turmaVinculada?.turmaId || turmaVinculada?.grupoId;
-                const jaEmOutra = Boolean(idTurmaVinculada && idTurmaVinculada !== turma.id);
-                const jaDestaTurma = Boolean(idTurmaVinculada && idTurmaVinculada === turma.id);
                 const idade = calcularIdade(b.dataNascimento);
 
-                let btnClass = isSel
+                const btnClass = isSel
                   ? "bg-emerald-600 text-white font-bold shadow-xs hover:bg-emerald-700"
-                  : jaEmOutra
-                  ? "border border-blue-300 bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white font-semibold"
                   : "border border-zinc-300 bg-white text-zinc-800 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 font-semibold";
 
-                let btnText = isSel
-                  ? "✓ Confirmado"
-                  : jaEmOutra
-                  ? "Mover p/ Turma"
-                  : jaDestaTurma
-                  ? "Confirmar"
-                  : "+ É da Turma";
+                const btnText = isSel ? "✓ Confirmado" : "+ É da Turma";
 
                 return (
                   <div
@@ -1062,21 +1048,6 @@ export function ExecucaoSessaoClient({
                           {isSel && (
                             <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-600 text-white">
                               Presente
-                            </span>
-                          )}
-                          {!isSel && !nomeTurmaVinculada && (
-                            <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-amber-100 text-amber-800">
-                              Sem turma
-                            </span>
-                          )}
-                          {!isSel && jaEmOutra && (
-                            <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-blue-100 text-blue-800">
-                              Matriculado na {nomeTurmaVinculada}
-                            </span>
-                          )}
-                          {!isSel && jaDestaTurma && (
-                            <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-50 text-emerald-800 border border-emerald-200">
-                              Matriculado nesta turma
                             </span>
                           )}
                         </div>
