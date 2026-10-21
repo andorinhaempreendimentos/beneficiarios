@@ -84,6 +84,7 @@ export function NucleoForm({
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [emFuncionamento, setEmFuncionamento] = useState(n?.emFuncionamento ?? true);
   const [disponivelPreInscricao, setDisponivelPreInscricao] = useState(n?.disponivelPreInscricao ?? true);
+  const [exibirCardAguardandoTurma, setExibirCardAguardandoTurma] = useState(n?.exibirCardAguardandoTurma ?? false);
   const [tipoRestricaoChamada, setTipoRestricaoChamada] = useState<'data' | 'horario'>(n?.tipoRestricaoChamada ?? 'data');
   const [permitirChamadaRetroativa, setPermitirChamadaRetroativa] = useState(n?.permitirChamadaRetroativa ?? false);
   const [organizacaoId, setOrganizacaoId] = useState(n?.organizacaoId ?? (organizacoes[0]?.id || ""));
@@ -202,6 +203,7 @@ export function NucleoForm({
       organizacaoId: orgId,
       emFuncionamento,
       disponivelPreInscricao,
+      exibirCardAguardandoTurma,
       tipoRestricaoChamada,
       permitirChamadaRetroativa,
       toleranciaInicioMinutos: formData.get("toleranciaInicioMinutos") ? Number(formData.get("toleranciaInicioMinutos")) : null,
@@ -458,6 +460,16 @@ export function NucleoForm({
             onChange={setDisponivelPreInscricao}
             label="Disponível na pré inscrição"
           />
+          <div className="flex flex-col gap-1 pt-2 border-t border-zinc-100">
+            <Switch
+              checked={exibirCardAguardandoTurma}
+              onChange={setExibirCardAguardandoTurma}
+              label="Exibir card 'Aguardando Turma' no Painel do Professor"
+            />
+            <p className="text-xs text-zinc-500 ml-12">
+              Se ativado, os professores vinculados a este polo verão o card com a contagem de alunos sem turma e o botão de atalho '+ Atribuir' para enturmação rápida.
+            </p>
+          </div>
         </div>
       </FormSection>
 

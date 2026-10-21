@@ -281,6 +281,7 @@ export interface NucleoApi {
   toleranciaInicioMinutos?: number;
   toleranciaFimMinutos?: number;
   diasLimiteRetroativo?: number;
+  exibirCardAguardandoTurma?: boolean;
   atividadeIds?: string[];
   criadoEm: string;
 }
@@ -677,6 +678,7 @@ function mapNucleo(r: any): NucleoApi {
     toleranciaInicioMinutos: r.tolerancia_inicio_minutos ?? undefined,
     toleranciaFimMinutos: r.tolerancia_fim_minutos ?? undefined,
     diasLimiteRetroativo: r.dias_limite_retroativo ?? undefined,
+    exibirCardAguardandoTurma: r.exibir_card_aguardando_turma ?? false,
     atividadeIds: r.nucleo_atividades ? r.nucleo_atividades.map((na: any) => na.atividade_id) : undefined,
     criadoEm: r.created_at,
   };
@@ -1547,6 +1549,7 @@ function toNucleoRow(b: Record<string, unknown>): Database['public']['Tables']['
     tolerancia_inicio_minutos: b.toleranciaInicioMinutos as number | null | undefined,
     tolerancia_fim_minutos: b.toleranciaFimMinutos as number | null | undefined,
     dias_limite_retroativo: b.diasLimiteRetroativo as number | null | undefined,
+    exibir_card_aguardando_turma: b.exibirCardAguardandoTurma as boolean | undefined,
   } as any;
 }
 
