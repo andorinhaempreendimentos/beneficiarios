@@ -49,6 +49,8 @@ interface DashboardProfessorHubProps {
   slotsGrid?: SlotAulaGrid[];
   todosBeneficiarios: BeneficiarioApi[];
   pontoHoje?: { entrada?: string; saida?: string; registrado: boolean };
+  totalBeneficiariosPolo?: number;
+  totalSemTurmaPolo?: number;
   loading?: boolean;
 }
 
@@ -87,6 +89,8 @@ export function DashboardProfessorHub({
   slotsGrid = [],
   todosBeneficiarios,
   pontoHoje,
+  totalBeneficiariosPolo,
+  totalSemTurmaPolo,
   loading = false,
 }: DashboardProfessorHubProps) {
   const router = useRouter();
@@ -291,15 +295,23 @@ export function DashboardProfessorHub({
     router.push("/login");
   }
 
+  const iniciaisProfessor = useMemo(() => {
+    if (!professor?.nomeCompleto) return "P";
+    const partes = professor.nomeCompleto.trim().split(/\s+/);
+    if (partes.length === 1) return partes[0].slice(0, 2).toUpperCase();
+    return (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
+  }, [professor?.nomeCompleto]);
+
   // Estado para Modal de Gestão de Matrículas do Professor
   const [modalGestaoMatriculas, setModalGestaoMatriculas] = useState(false);
   const [showResumoSemana, setShowResumoSemana] = useState(false);
 
-  // Cálculos Dinâmicos
+  // Cálculos Dinâmicos e Unificados
   const totalTurmas = turmas.length;
-  const totalAlunos = (todosBeneficiarios ?? []).length;
+  const totalEnturmados = (todosBeneficiarios ?? []).length;
+  const totalAlunos = totalBeneficiariosPolo !== undefined ? totalBeneficiariosPolo : totalEnturmados;
 
-  // Contagem de alunos sem turma (cadastrados no núcleo, aguardando atribuição)
+  // Contagem de inscrições públicas pendentes
   const nucleoIds = [...new Set(turmas.map((t) => t.nucleoId).filter(Boolean))] as string[];
   const { data: semTurmaRes } = useQuery(
     () =>
@@ -312,7 +324,10 @@ export function DashboardProfessorHub({
         : Promise.resolve({ total: 0 }),
     [turmas]
   );
-  const totalSemTurma = semTurmaRes?.total ?? 0;
+  const totalPreInscricoes = semTurmaRes?.total ?? 0;
+  const totalSemTurma = totalSemTurmaPolo !== undefined 
+    ? totalSemTurmaPolo 
+    : Math.max(0, totalAlunos - totalEnturmados);
   
   // Cálculo Dinâmico da Carga Horária Semanal Real baseada nos Slots de Aula (turma_horarios)
   const cargaHorariaSemanal = useMemo(() => {
@@ -490,10 +505,14 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
           </div>
         )}
 
-        {/* Banner Superior com novo design e anatomia */}
-        <div className="rounded-3xl bg-gradient-to-r from-[#0d3b66] via-[#092d4f] to-[#1e1b4b] p-5 sm:p-6 text-white shadow-xl border border-sky-800/40 relative">
+        {/* Banner Superior com novo design e anatomia (Proposta A) */}
+        <div className="rounded-3xl bg-gradient-to-r from-[#0b2545] via-[#0d3b66] to-[#172554] p-5 sm:p-6 text-white shadow-xl border border-sky-800/40 relative overflow-hidden">
+          {/* Ambient glow decorativo */}
+          <div className="absolute -right-16 -top-16 w-64 h-64 bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -left-16 -bottom-16 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+
           {/* Barra superior de ações rápidas no mobile */}
-          <div className="flex items-center justify-between mb-3 md:hidden">
+          <div className="flex items-center justify-between mb-4 md:hidden relative z-10">
             <button
               type="button"
               onClick={() => router.back()}
@@ -502,63 +521,63 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
-            <span className="text-sky-200/60 text-xs font-medium">Painel do Professor</span>
+            <span className="text-sky-200/60 text-xs font-semibold uppercase tracking-wider">Painel do Professor</span>
             <div className="p-1.5 text-sky-200/80">
               <MoreVertical className="h-4 w-4" />
             </div>
           </div>
 
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-5">
             {/* Bloco de Perfil (Avatar + Informações) */}
             <div className="flex items-center gap-4 min-w-0">
-              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-700 text-3xl shadow-lg border border-blue-400/30">
-                👔
+              <div className="relative shrink-0">
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-400 to-blue-600 text-white font-black text-xl shadow-lg border-2 border-white/20 tracking-wider">
+                  {iniciaisProfessor}
+                </div>
+                <span className="absolute -bottom-1 -right-1 flex h-4 w-4">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-4 w-4 bg-emerald-500 border-2 border-[#0d3b66]" />
+                </span>
               </div>
+
               <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-1.5 text-xs text-sky-300 font-medium truncate">
+                <div className="flex items-center gap-1.5 text-xs text-sky-300 font-bold uppercase tracking-wider truncate">
                   <UserCheck className="h-3.5 w-3.5 text-sky-400 shrink-0" />
                   <span className="truncate">{professor.funcao || "Professor / Instrutor Esportivo"}</span>
                 </div>
-                <h1 className="text-xl sm:text-2xl font-bold text-white mt-0.5 tracking-tight truncate">
+                <h1 className="text-xl sm:text-2xl font-black text-white mt-0.5 tracking-tight truncate">
                   {professor.nomeCompleto}
                 </h1>
-                <p className="text-xs text-sky-200/80 flex items-center gap-1.5 mt-1 font-normal truncate">
-                  <MapPin className="h-3.5 w-3.5 text-sky-400 shrink-0" />
-                  <span className="truncate">Polo: {nucleo ? nucleo.identificacao : "Polo Esportivo"}</span>
-                </p>
+                <div className="flex flex-wrap items-center gap-2 mt-1 text-xs text-sky-200/90 font-medium">
+                  <span className="flex items-center gap-1.5 bg-black/25 px-2.5 py-1 rounded-lg border border-white/10 truncate">
+                    <MapPin className="h-3.5 w-3.5 text-sky-400 shrink-0" />
+                    <span className="truncate">Polo: <strong className="text-white font-bold ml-0.5">{nucleo ? nucleo.identificacao : "Polo Esportivo"}</strong></span>
+                  </span>
+                  <span className="hidden sm:inline text-white/30">•</span>
+                  <span className="text-sky-300/80 font-semibold">{totalTurmas} {totalTurmas === 1 ? "Turma sob coordenação" : "Turmas sob coordenação"}</span>
+                </div>
               </div>
             </div>
 
-            {/* Divisor vertical e Bloco de Matrícula + Ações no Desktop */}
-            <div className="hidden md:flex md:items-center">
-              <div className="h-12 w-px bg-white/15 mx-6" />
-
-              <div className="flex items-center gap-6">
+            {/* Bloco Direita: Widget de Ponto Hoje + Matrícula + Ações no Desktop */}
+            <div className="hidden md:flex md:items-center gap-4 shrink-0">
+              {/* Widget de Ponto Hoje Integrado */}
+              <div className="flex items-center gap-2.5 rounded-2xl bg-white/10 backdrop-blur-md px-3.5 py-2 border border-white/15 shadow-inner">
+                <div className={`h-2.5 w-2.5 rounded-full shrink-0 ${pontoHoje?.registrado ? "bg-emerald-400 shadow-[0_0_8px_#34d399]" : "bg-amber-400 shadow-[0_0_8px_#fbbf24]"}`} />
                 <div className="flex flex-col">
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-sky-200/70">
-                    Matrícula
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-sky-200/70">Ponto Hoje</span>
+                  <span className={`text-xs font-bold ${pontoHoje?.registrado ? "text-emerald-200" : "text-amber-200"} truncate`}>
+                    {pontoHoje?.registrado
+                      ? pontoHoje.saida
+                        ? `Saída às ${pontoHoje.saida}`
+                        : `Entrada às ${pontoHoje.entrada || "registrada"}`
+                      : "Aguardando Início"}
                   </span>
-                  <span className="text-base font-bold text-white tracking-wide font-mono">
-                    {professor.matricula}
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-2.5">
-                  <button
-                    type="button"
-                    onClick={handleLogout}
-                    className="flex items-center gap-2 rounded-xl border border-rose-500/80 bg-rose-500/10 px-4 py-2 text-xs font-semibold text-rose-300 hover:bg-rose-500/25 hover:text-rose-100 transition-all shadow-xs active:scale-95 cursor-pointer"
-                  >
-                    <LogOut className="h-4 w-4 text-rose-400" />
-                    <span>Sair</span>
-                  </button>
                 </div>
               </div>
-            </div>
 
-            {/* Rodapé no Mobile: Matrícula à esquerda, Botão Sair à direita */}
-            <div className="flex items-center justify-between pt-3.5 mt-2 border-t border-white/10 md:hidden">
-              <div className="flex flex-col">
+              {/* Matrícula */}
+              <div className="flex flex-col rounded-2xl bg-white/5 px-3.5 py-2 border border-white/10 text-right">
                 <span className="text-[10px] font-semibold uppercase tracking-wider text-sky-200/70">
                   Matrícula
                 </span>
@@ -567,11 +586,39 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
                 </span>
               </div>
 
-              <div className="flex items-center gap-2">
+              {/* Botão Sair */}
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="flex items-center gap-2 rounded-2xl border border-rose-500/50 bg-rose-500/15 px-3.5 py-2.5 text-xs font-bold text-rose-300 hover:bg-rose-500/30 hover:text-white transition-all shadow-xs active:scale-95 cursor-pointer"
+              >
+                <LogOut className="h-4 w-4 text-rose-400" />
+                <span>Sair</span>
+              </button>
+            </div>
+
+            {/* Rodapé no Mobile: Ponto, Matrícula e Botão Sair */}
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-3.5 mt-1 border-t border-white/10 md:hidden">
+              <div className="flex items-center gap-2 rounded-xl bg-white/10 px-3 py-1.5 border border-white/15">
+                <div className={`h-2 w-2 rounded-full shrink-0 ${pontoHoje?.registrado ? "bg-emerald-400" : "bg-amber-400"}`} />
+                <div className="flex flex-col">
+                  <span className="text-[9px] font-bold uppercase text-sky-200/70">Ponto Hoje</span>
+                  <span className={`text-[11px] font-bold ${pontoHoje?.registrado ? "text-emerald-200" : "text-amber-200"}`}>
+                    {pontoHoje?.registrado ? (pontoHoje.saida ? `Saída: ${pontoHoje.saida}` : `Entrada: ${pontoHoje.entrada || "ok"}`) : "Pendente"}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="flex flex-col text-right">
+                  <span className="text-[9px] font-semibold uppercase text-sky-200/70">Matrícula</span>
+                  <span className="text-xs font-bold text-white font-mono">{professor.matricula}</span>
+                </div>
+
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="flex items-center gap-1.5 rounded-xl border border-rose-500/80 bg-rose-500/10 px-3.5 py-2 text-xs font-semibold text-rose-300 hover:bg-rose-500/25 hover:text-rose-100 transition-all shadow-xs active:scale-95 cursor-pointer"
+                  className="flex items-center gap-1.5 rounded-xl border border-rose-500/50 bg-rose-500/15 px-3 py-1.5 text-xs font-semibold text-rose-300 hover:bg-rose-500/25 hover:text-white transition-all shadow-xs active:scale-95 cursor-pointer"
                 >
                   <LogOut className="h-3.5 w-3.5 text-rose-400" />
                   <span>Sair</span>
@@ -581,105 +628,106 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
           </div>
         </div>
 
-        {/* Régua de Métricas */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        {/* Régua de Métricas 360° (Exatamente 4 Cards Simétricos - Proposta A) */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
+          {/* Card 1: Alunos no Polo */}
           <button
             type="button"
             onClick={() => setModalGestaoMatriculas(true)}
-            className="text-left p-3.5 sm:p-4 border-l-4 border-l-sky-500 bg-white hover:bg-gradient-to-br hover:from-sky-50/70 hover:to-white rounded-2xl border border-zinc-200 shadow-sm hover:shadow-md hover:border-sky-300 transition-all active:scale-[0.98] group flex flex-col justify-between overflow-hidden"
+            className="group text-left p-4 sm:p-5 rounded-2xl bg-white hover:bg-gradient-to-br hover:from-sky-50/70 hover:to-white border border-zinc-200/90 shadow-sm hover:shadow-md hover:border-sky-300 transition-all active:scale-[0.98] flex flex-col justify-between overflow-hidden relative cursor-pointer"
           >
-            <div className="flex items-center justify-between gap-1">
-              <span className="text-[11px] font-extrabold uppercase tracking-wider text-zinc-400 group-hover:text-sky-600 transition-colors truncate">
-                Beneficiários
-              </span>
-              <span className="inline-flex items-center gap-1 rounded-lg bg-sky-600 p-1 sm:px-2 sm:py-0.5 text-[10px] font-extrabold text-white shadow-xs group-hover:bg-sky-700 transition-all shrink-0">
-                <UserPlus className="h-3 w-3" />
-                <span className="hidden sm:inline">Gerenciar</span>
-              </span>
+            <div className="absolute top-0 left-0 right-0 h-1 bg-sky-500" />
+            <div>
+              <div className="flex items-center justify-between gap-1">
+                <span className="text-[11px] font-extrabold uppercase tracking-wider text-zinc-400 group-hover:text-sky-600 transition-colors truncate">
+                  Alunos no Polo
+                </span>
+                <span className="inline-flex items-center gap-1 rounded-lg bg-sky-600 px-2 py-0.5 text-[10px] font-extrabold text-white shadow-xs group-hover:bg-sky-700 transition-all shrink-0">
+                  <UserPlus className="h-3 w-3" />
+                  <span className="hidden sm:inline">Gerenciar</span>
+                </span>
+              </div>
+              <div className="mt-2 flex items-baseline gap-1.5">
+                <span className="text-2xl sm:text-3xl font-black text-zinc-900 group-hover:text-sky-600 transition-colors tracking-tight">
+                  {totalAlunos}
+                </span>
+                <span className="text-xs text-sky-600 font-bold">Alunos Ativos</span>
+              </div>
             </div>
-
-            <div className="mt-1.5 sm:mt-2 flex items-baseline gap-1.5">
-              <span className="text-xl sm:text-2xl font-extrabold text-zinc-900 group-hover:text-sky-600 transition-colors">{totalAlunos}</span>
-              <span className="text-xs text-sky-600 font-bold">Alunos</span>
+            <div className="mt-3 pt-2.5 border-t border-zinc-100 flex items-center justify-between text-[11px]">
+              <span className="text-zinc-500 font-medium truncate">
+                <strong className="text-zinc-800 font-bold">{totalEnturmados}</strong> em turmas • <strong className="text-amber-600 font-bold">{totalSemTurma}</strong> s/ turma
+              </span>
+              <ChevronRight className="h-3.5 w-3.5 text-sky-500 shrink-0 transition-transform group-hover:translate-x-0.5" />
             </div>
-            
-            <p className="text-[10px] sm:text-[11px] text-zinc-500 font-medium mt-1 flex items-center gap-1 group-hover:text-sky-700 transition-colors truncate">
-              <span className="truncate">Matricular / transferir</span>
-              <ChevronRight className="h-3 w-3 text-sky-500 shrink-0 transition-transform group-hover:translate-x-0.5" />
-            </p>
           </button>
 
-          {/* Card: Alunos sem turma — só aparece quando há pendentes */}
-          {totalSemTurma > 0 && (
-            <button
-              type="button"
-              onClick={() => setModalGestaoMatriculas(true)}
-              className="text-left p-3.5 sm:p-4 border-l-4 border-l-amber-500 bg-amber-50 hover:bg-amber-100/70 rounded-2xl border border-amber-200 shadow-sm hover:shadow-md hover:border-amber-400 transition-all active:scale-[0.98] group flex flex-col justify-between overflow-hidden"
-            >
+          {/* Card 2: Aguardando Turma */}
+          <button
+            type="button"
+            onClick={() => setModalGestaoMatriculas(true)}
+            className="group text-left p-4 sm:p-5 rounded-2xl bg-amber-50/60 hover:bg-amber-100/70 border border-amber-200/90 shadow-sm hover:shadow-md hover:border-amber-400 transition-all active:scale-[0.98] flex flex-col justify-between overflow-hidden relative cursor-pointer"
+          >
+            <div className="absolute top-0 left-0 right-0 h-1 bg-amber-500" />
+            <div>
               <div className="flex items-center justify-between gap-1">
                 <span className="text-[11px] font-extrabold uppercase tracking-wider text-amber-700 group-hover:text-amber-800 transition-colors truncate">
-                  Sem turma
+                  Aguardando Turma
                 </span>
-                <span className="inline-flex items-center gap-1 rounded-lg bg-amber-500 p-1 sm:px-2 sm:py-0.5 text-[10px] font-extrabold text-white shadow-xs group-hover:bg-amber-600 transition-all shrink-0">
+                <span className="inline-flex items-center gap-1 rounded-lg bg-amber-500 px-2 py-0.5 text-[10px] font-extrabold text-white shadow-xs group-hover:bg-amber-600 transition-all shrink-0">
                   <UserPlus className="h-3 w-3" />
                   <span className="hidden sm:inline">Atribuir</span>
                 </span>
               </div>
-
-              <div className="mt-1.5 sm:mt-2 flex items-baseline gap-1.5">
-                <span className="text-xl sm:text-2xl font-extrabold text-amber-700 group-hover:text-amber-800 transition-colors">{totalSemTurma}</span>
-                <span className="text-xs text-amber-600 font-bold">Aluno{totalSemTurma !== 1 ? "s" : ""}</span>
+              <div className="mt-2 flex items-baseline gap-1.5">
+                <span className="text-2xl sm:text-3xl font-black text-amber-900 tracking-tight">
+                  {totalSemTurma}
+                </span>
+                <span className="text-xs text-amber-700 font-bold">
+                  {totalSemTurma === 1 ? "Aluno sem turma" : "Alunos sem turma"}
+                </span>
               </div>
-
-              <p className="text-[10px] sm:text-[11px] text-amber-600 font-medium mt-1 flex items-center gap-1 group-hover:text-amber-800 transition-colors truncate">
-                <span className="truncate">Aguardando atribuição</span>
-                <ChevronRight className="h-3 w-3 text-amber-500 shrink-0 transition-transform group-hover:translate-x-0.5" />
-              </p>
-            </button>
-          )}
-
-          <Card className="p-3.5 sm:p-4 border-l-4 border-l-indigo-500 bg-white shadow-sm flex flex-col justify-between overflow-hidden">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 truncate">Turmas Ativas</span>
-            <div className="mt-1.5 sm:mt-2 flex items-baseline gap-1.5">
-              <span className="text-xl sm:text-2xl font-extrabold text-zinc-900">{totalTurmas}</span>
-              <span className="text-xs text-indigo-600 font-semibold">Turmas</span>
             </div>
-            <p className="text-[10px] sm:text-[11px] text-zinc-500 mt-1 truncate">Sob sua coordenação</p>
+            <div className="mt-3 pt-2.5 border-t border-amber-200/70 flex items-center justify-between text-[11px]">
+              <span className="text-amber-800 font-medium truncate">
+                {totalPreInscricoes > 0 ? `+ ${totalPreInscricoes} pré-inscrições pendentes` : "Fila do polo atualizada"}
+              </span>
+              <ChevronRight className="h-3.5 w-3.5 text-amber-600 shrink-0 transition-transform group-hover:translate-x-0.5" />
+            </div>
+          </button>
+
+          {/* Card 3: Turmas Ativas */}
+          <Card className="p-4 sm:p-5 rounded-2xl bg-white border border-zinc-200/90 shadow-sm flex flex-col justify-between overflow-hidden relative">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-indigo-500" />
+            <div>
+              <span className="text-[11px] font-extrabold uppercase tracking-wider text-zinc-400 truncate block">
+                Turmas Ativas
+              </span>
+              <div className="mt-2 flex items-baseline gap-1.5">
+                <span className="text-2xl sm:text-3xl font-black text-zinc-900 tracking-tight">{totalTurmas}</span>
+                <span className="text-xs text-indigo-600 font-bold">Turmas</span>
+              </div>
+            </div>
+            <div className="mt-3 pt-2.5 border-t border-zinc-100 text-[11px] text-zinc-500 font-medium truncate">
+              {nucleo ? `${nucleo.identificacao} (Sob sua coordenação)` : "Sob sua coordenação"}
+            </div>
           </Card>
 
-          <Card className="p-3.5 sm:p-4 border-l-4 border-l-emerald-500 bg-white shadow-sm flex flex-col justify-between overflow-hidden">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 truncate">Carga Horária</span>
-            <div className="mt-1.5 sm:mt-2 flex items-baseline gap-1.5">
-              <span className="text-xl sm:text-2xl font-extrabold text-zinc-900">{cargaHorariaSemanal}h</span>
-              <span className="text-xs text-emerald-600 font-semibold">/semana</span>
+          {/* Card 4: Carga Horária */}
+          <Card className="p-4 sm:p-5 rounded-2xl bg-white border border-zinc-200/90 shadow-sm flex flex-col justify-between overflow-hidden relative">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-emerald-500" />
+            <div>
+              <span className="text-[11px] font-extrabold uppercase tracking-wider text-zinc-400 truncate block">
+                Carga Horária
+              </span>
+              <div className="mt-2 flex items-baseline gap-1.5">
+                <span className="text-2xl sm:text-3xl font-black text-zinc-900 tracking-tight">{cargaHorariaSemanal}h</span>
+                <span className="text-xs text-emerald-600 font-bold">/semana</span>
+              </div>
             </div>
-            <p className="text-[10px] sm:text-[11px] text-zinc-500 mt-1 truncate">Treinos programados</p>
-          </Card>
-
-          <Card className={`p-3.5 sm:p-4 border-l-4 ${pontoHoje?.registrado ? 'border-l-emerald-500' : 'border-l-amber-500'} bg-white shadow-sm flex flex-col justify-between overflow-hidden`}>
-            <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 truncate">Ponto Hoje</span>
-            <div className="mt-1.5 sm:mt-2 flex items-center gap-1.5 min-w-0">
-              {pontoHoje?.registrado ? (
-                <>
-                  <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
-                  <span className="text-xs sm:text-sm font-bold text-zinc-900 truncate">
-                    Entrada {pontoHoje.entrada || 'registrada'}
-                  </span>
-                </>
-              ) : (
-                <>
-                  <AlertCircle className="h-4 w-4 text-amber-500 shrink-0" />
-                  <span className="text-xs sm:text-sm font-bold text-zinc-900 truncate">Não Registrado</span>
-                </>
-              )}
+            <div className="mt-3 pt-2.5 border-t border-zinc-100 text-[11px] text-zinc-500 font-medium truncate">
+              Grade semanal de treinos programados
             </div>
-            <p className={`text-[10px] sm:text-[11px] font-semibold mt-1 truncate ${pontoHoje?.registrado ? 'text-emerald-600' : 'text-amber-600'}`}>
-              {pontoHoje?.registrado
-                ? pontoHoje.saida
-                  ? `Saída às ${pontoHoje.saida}`
-                  : "Jornada ativa"
-                : "Aguardando início"}
-            </p>
           </Card>
         </div>
 

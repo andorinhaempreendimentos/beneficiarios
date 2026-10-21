@@ -3380,6 +3380,42 @@ export const areaProfessorApi = {
       beneficiariosMapped = Array.from(bMap.values());
     }
 
+    // Contagem real e transparente de beneficiários do Polo do Professor
+    const poloId = funcionario?.nucleoId || turmasMapped[0]?.nucleoId;
+    let totalBeneficiariosPolo = beneficiariosMapped.length;
+    let totalSemTurmaPolo = 0;
+
+    if (poloId) {
+      try {
+        const { count: countTotal } = await (sb.from('beneficiarios') as any)
+          .select('*', { count: 'exact', head: true })
+          .eq('nucleo_id', poloId)
+          .eq('status', 'ativo')
+          .is('deleted_at', null);
+
+        if (typeof countTotal === 'number') {
+          totalBeneficiariosPolo = countTotal;
+        }
+
+        const { data: bSemGrupo } = await (sb.from('beneficiarios') as any)
+          .select('id, beneficiario_grupos!left(id, status, deleted_at)')
+          .eq('nucleo_id', poloId)
+          .eq('status', 'ativo')
+          .is('deleted_at', null);
+
+        if (bSemGrupo) {
+          totalSemTurmaPolo = bSemGrupo.filter((b: any) => {
+            const gruposAtivos = (b.beneficiario_grupos ?? []).filter(
+              (bg: any) => bg.status === 'ativo' && !bg.deleted_at
+            );
+            return gruposAtivos.length === 0;
+          }).length;
+        }
+      } catch (errPolo) {
+        console.warn('Erro ao consultar totais do polo do professor:', errPolo);
+      }
+    }
+
     // Buscar registro de ponto hoje para o colaborador
     let pontoHoje: { entrada?: string; saida?: string; registrado: boolean } = { registrado: false };
     if (funcionarioId) {
@@ -3407,6 +3443,8 @@ export const areaProfessorApi = {
       slotsGrid,
       beneficiarios: beneficiariosMapped,
       pontoHoje,
+      totalBeneficiariosPolo,
+      totalSemTurmaPolo,
       isAdmin,
     };
   },

@@ -120,6 +120,8 @@ export function ProfessorClientWrapper({
       slotsGrid={slotsGrid}
       todosBeneficiarios={beneficiariosDoProfessor}
       pontoHoje={dadosSupabase?.pontoHoje}
+      totalBeneficiariosPolo={dadosSupabase?.totalBeneficiariosPolo}
+      totalSemTurmaPolo={dadosSupabase?.totalSemTurmaPolo}
       loading={dbLoading}
     />
   );
