@@ -1837,6 +1837,21 @@ export const gruposApi = {
     if (error) {
       console.warn('[sincronizarConferenciaEnturmacao RPC error, fallback]', error);
       if (beneficiarioIds.length > 0) {
+        // Desativar matrículas ativas de alunos nesta turma que não foram conferidos
+        try {
+          await (sb.from('beneficiario_grupos') as any)
+            .update({
+              status: 'evadido',
+              data_evasao: getDataHojeBrasil(),
+              updated_at: new Date().toISOString(),
+            })
+            .eq('grupo_id', turmaId)
+            .eq('status', 'ativo')
+            .not('beneficiario_id', 'in', `(${beneficiarioIds.join(',')})`);
+        } catch (eDesv) {
+          console.warn('[fallback desvinculacao error]', eDesv);
+        }
+
         const rows = beneficiarioIds.map((bId) => ({
           grupo_id: turmaId,
           beneficiario_id: bId,

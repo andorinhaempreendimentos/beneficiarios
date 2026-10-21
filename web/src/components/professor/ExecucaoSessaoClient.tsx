@@ -193,12 +193,14 @@ export function ExecucaoSessaoClient({
     return ids;
   });
 
-  // Alunos ativos nesta turma durante a execução da sessão
+  // Alunos ativos nesta turma durante a execução da sessão:
+  // Se a aula já foi iniciada/conferida (presencasIniciais), lista ESTRITAMENTE os alunos conferidos!
   const [beneficiariosTurma, setBeneficiariosTurma] = useState<BeneficiarioApi[]>(() => {
-    if (beneficiarios.length > 0) return beneficiarios;
-    if (presencasIniciais && presencasIniciais.length > 0 && beneficiariosPolo && beneficiariosPolo.length > 0) {
+    const pool = (beneficiariosPolo && beneficiariosPolo.length > 0) ? beneficiariosPolo : beneficiarios;
+    if (presencasIniciais && presencasIniciais.length > 0) {
       const idsPres = new Set(presencasIniciais.map((p) => p.beneficiarioId));
-      return beneficiariosPolo.filter((b) => idsPres.has(b.id));
+      const conferidos = pool.filter((b) => idsPres.has(b.id));
+      if (conferidos.length > 0) return conferidos;
     }
     return beneficiarios;
   });
@@ -630,6 +632,14 @@ export function ExecucaoSessaoClient({
       } else {
         setEtapa((prev) => (prev === "inicio" ? "em_andamento" : prev));
       }
+      if (presencasIniciais && presencasIniciais.length > 0) {
+        const idsPres = new Set(presencasIniciais.map((p) => p.beneficiarioId));
+        const pool = (beneficiariosPolo && beneficiariosPolo.length > 0) ? beneficiariosPolo : beneficiarios;
+        const confirmados = pool.filter((b) => idsPres.has(b.id));
+        if (confirmados.length > 0) {
+          setBeneficiariosTurma(confirmados);
+        }
+      }
       if (execucaoInicial.fotoComprovanteUrl) {
         setFotoPreview(formatStorageUrl(execucaoInicial.fotoComprovanteUrl));
       }
@@ -637,7 +647,7 @@ export function ExecucaoSessaoClient({
         setObservacoes(execucaoInicial.observacoes);
       }
     }
-  }, [execucaoInicial]);
+  }, [execucaoInicial, presencasIniciais, beneficiariosPolo, beneficiarios]);
 
   // Salvar rascunho de presenças
   const handleSalvarRascunhoPresencas = async () => {
