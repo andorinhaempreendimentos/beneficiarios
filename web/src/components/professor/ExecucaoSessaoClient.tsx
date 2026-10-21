@@ -230,6 +230,7 @@ export function ExecucaoSessaoClient({
   const [fotoPreview, setFotoPreview] = useState<string | null>(
     execucaoInicial?.fotoComprovanteUrl ? formatStorageUrl(execucaoInicial.fotoComprovanteUrl) : null
   );
+  const [dispensarFotoComprovante, setDispensarFotoComprovante] = useState(false);
   const [observacoes, setObservacoes] = useState(execucaoInicial?.observacoes || "");
 
   // Estados de Controle Temporal e Retroatividade
@@ -706,8 +707,8 @@ export function ExecucaoSessaoClient({
       return;
     }
 
-    if (!dispensaFoto && !fotoFile && !fotoPreview) {
-      toast.error("A foto comprobatória da turma reunida é obrigatória para encerrar a aula.");
+    if (!dispensaFoto && !dispensarFotoComprovante && !fotoFile && !fotoPreview) {
+      toast.error("A foto comprobatória é obrigatória, ou marque a declaração de ciência para prosseguir sem foto.");
       return;
     }
 
@@ -736,8 +737,12 @@ export function ExecucaoSessaoClient({
       }));
       await execucoesSessaoApi.salvarPresencas(execucao.id, lista);
 
-      // Montar observações com identificação de regularização ou justificativa de encerramento antecipado
+      // Montar observações com identificação de regularização, dispensa de foto ou encerramento antecipado
       let obsFinais = observacoes.trim();
+      if (dispensarFotoComprovante && !fotoFile && !fotoPreview) {
+        const carimboSemFoto = "[AULA FINALIZADA SEM FOTO COMPROBATÓRIA - Professor declarou ciente de que a ausência do registro fotográfico pode impactar o processo de supervisão e homologação]";
+        obsFinais = obsFinais ? `${carimboSemFoto}\n\n${obsFinais}` : carimboSemFoto;
+      }
       if (isModoRegularizacao) {
         const motivo = justificativaRetroativa.trim() || execucao.justificativaRetroativa || "Regularização de aula anterior/offline";
         const agoraStr = new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" });
@@ -1730,8 +1735,12 @@ export function ExecucaoSessaoClient({
           ) : (
             <div className="flex flex-col gap-2">
             <label className="text-xs font-bold text-zinc-900 flex items-center justify-between">
-              <span>Foto com o(a) {termoGrupo} (Obrigatório) *</span>
-              {fotoPreview && <span className="text-[10px] text-emerald-600 font-bold">✓ Foto Anexada</span>}
+              <span>Foto com o(a) {termoGrupo} {dispensarFotoComprovante ? "(Opcional)" : "(Obrigatório) *"}</span>
+              {fotoPreview ? (
+                <span className="text-[10px] text-emerald-600 font-bold">✓ Foto Anexada</span>
+              ) : dispensarFotoComprovante ? (
+                <span className="text-[10px] text-amber-700 font-bold">Dispensada com declaração</span>
+              ) : null}
             </label>
 
             {/* INPUTS ESCONDIDOS */}
@@ -1805,6 +1814,37 @@ export function ExecucaoSessaoClient({
                 </button>
               </div>
             )}
+
+            {/* TERMO DE CIÊNCIA DE AUSÊNCIA DE FOTO COMPROBATÓRIA */}
+            <div className={`mt-1 rounded-2xl border p-3.5 transition-all ${
+              dispensarFotoComprovante
+                ? "border-amber-300 bg-amber-50/70"
+                : "border-zinc-200 bg-zinc-50/80 hover:bg-zinc-100/60"
+            }`}>
+              <label className="flex items-start gap-3 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={dispensarFotoComprovante}
+                  onChange={(e) => setDispensarFotoComprovante(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 rounded border-zinc-300 text-sky-600 focus:ring-sky-500 cursor-pointer"
+                />
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-xs font-bold text-zinc-900">
+                    Não foi possível registrar a foto comprobatória desta aula
+                  </span>
+                  <span className="text-[11px] text-zinc-600 leading-relaxed">
+                    Reconheço e estou ciente de que a ausência de foto comprobatória poderá impactar o processo de supervisão e homologação desta aula.
+                  </span>
+                </div>
+              </label>
+
+              {dispensarFotoComprovante && (
+                <div className="mt-2.5 flex items-center gap-2 rounded-xl bg-amber-100/80 border border-amber-300/80 p-2 text-[11px] text-amber-900 font-medium">
+                  <AlertTriangle className="h-4 w-4 text-amber-700 shrink-0" />
+                  <span>Atenção: A ausência de foto será devidamente registrada nas observações para a equipe de supervisão.</span>
+                </div>
+              )}
+            </div>
           </div>
           )}
 
@@ -1827,7 +1867,7 @@ export function ExecucaoSessaoClient({
           <button
             type="button"
             onClick={handleEncerrarAula}
-            disabled={salvando || uploadingFoto || (!dispensaFoto && !fotoFile && !fotoPreview)}
+            disabled={salvando || uploadingFoto || (!dispensaFoto && !dispensarFotoComprovante && !fotoFile && !fotoPreview)}
             className={`w-full font-extrabold py-5 rounded-2xl text-lg shadow-xl flex items-center justify-center gap-3 transition-all cursor-pointer disabled:opacity-50 ${
               isModoRegularizacao
                 ? "bg-gradient-to-r from-amber-600 to-emerald-600 hover:from-amber-500 hover:to-emerald-500 text-white shadow-amber-600/20 active:scale-[0.99]"
