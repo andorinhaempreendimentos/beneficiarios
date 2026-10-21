@@ -146,10 +146,10 @@ export function ExecucaoSessaoClient({
   const termoResponsavel = atividadeSessao?.termoResponsavel || turma.atividade?.termoResponsavel || "Responsável";
   const termoParticipante = atividadeSessao?.termoParticipante || turma.atividade?.termoParticipante || "Participante";
 
-  // Etapas: "inicio" (Step 1) | "chamada" (Step 2) | "finalizacao" (Step 3) | "concluida"
-  const [etapa, setEtapa] = useState<"inicio" | "chamada" | "finalizacao" | "concluida">(() => {
+  // Etapas: "inicio" (Step 1) | "chamada" (Step 2) | "em_andamento" (Step 3) | "finalizacao" (Step 4) | "concluida"
+  const [etapa, setEtapa] = useState<"inicio" | "chamada" | "em_andamento" | "finalizacao" | "concluida">(() => {
     if (execucaoInicial?.status === "concluida") return "concluida";
-    if (execucaoInicial) return "chamada";
+    if (execucaoInicial) return "em_andamento";
     return "inicio";
   });
 
@@ -628,7 +628,7 @@ export function ExecucaoSessaoClient({
       if (execucaoInicial.status === "concluida") {
         setEtapa("concluida");
       } else {
-        setEtapa((prev) => (prev === "inicio" ? "chamada" : prev));
+        setEtapa((prev) => (prev === "inicio" ? "em_andamento" : prev));
       }
       if (execucaoInicial.fotoComprovanteUrl) {
         setFotoPreview(formatStorageUrl(execucaoInicial.fotoComprovanteUrl));
@@ -837,7 +837,8 @@ export function ExecucaoSessaoClient({
       )}
 
       {/* STEPPER PROGRESS BAR (3 ETAPAS ATÔMICAS) */}
-      <div className="grid grid-cols-3 gap-2 bg-zinc-100 p-1.5 rounded-2xl border border-zinc-200">
+      {/* STEPPER DE 4 ETAPAS */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-zinc-100 p-1.5 rounded-2xl border border-zinc-200">
         <button
           type="button"
           onClick={() => {
@@ -878,7 +879,7 @@ export function ExecucaoSessaoClient({
         >
           <span
             className={`flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-extrabold ${
-              etapa === "finalizacao" || etapa === "concluida"
+              etapa === "em_andamento" || etapa === "finalizacao" || etapa === "concluida"
                 ? "bg-emerald-500 text-white"
                 : etapa === "chamada"
                 ? "bg-sky-600 text-white"
@@ -888,6 +889,34 @@ export function ExecucaoSessaoClient({
             2
           </span>
           <span className="truncate">Chamada</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            if (execucao) setEtapa("em_andamento");
+          }}
+          disabled={!execucao}
+          className={`flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-bold transition-all ${
+            etapa === "em_andamento"
+              ? "bg-white text-zinc-900 shadow-sm border border-zinc-200"
+              : execucao
+              ? "text-zinc-600 hover:text-zinc-900"
+              : "text-zinc-400 opacity-60 cursor-not-allowed"
+          }`}
+        >
+          <span
+            className={`flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-extrabold ${
+              etapa === "finalizacao" || etapa === "concluida"
+                ? "bg-emerald-500 text-white"
+                : etapa === "em_andamento"
+                ? "bg-sky-600 text-white"
+                : "bg-zinc-300 text-zinc-700"
+            }`}
+          >
+            3
+          </span>
+          <span className="truncate">Em Andamento</span>
         </button>
 
         <button
@@ -911,7 +940,7 @@ export function ExecucaoSessaoClient({
                 : "bg-zinc-300 text-zinc-700"
             }`}
           >
-            3
+            4
           </span>
           <span className="truncate">Foto & Stop</span>
         </button>
@@ -1248,7 +1277,7 @@ export function ExecucaoSessaoClient({
                   <span>
                     {selecionadosIds.size === 0
                       ? `Selecione ao menos 1 ${termoParticipante.toLowerCase()} para iniciar`
-                      : `Confirmar ${selecionadosIds.size} ${termoParticipante.toLowerCase()}s e Iniciar ${termoSessao} (Play) ▶`}
+                      : `Iniciar Aula e Ir para Chamada (${selecionadosIds.size} ${termoParticipante.toLowerCase()}s) →`}
                   </span>
                 </>
               )}
@@ -1276,28 +1305,35 @@ export function ExecucaoSessaoClient({
       {/* ========================================================================= */}
       {etapa === "chamada" && (
         <div className="flex flex-col gap-4">
-          {/* BANNER STICKY COM CRONÔMETRO AO VIVO */}
-          <div className="sticky top-2 z-20 rounded-2xl bg-zinc-900/95 backdrop-blur-md text-white p-3.5 shadow-xl border border-zinc-700/60 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex h-3 w-3 items-center justify-center relative">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-              </div>
-              <div>
-                <span className="text-[10px] uppercase font-bold text-zinc-400 block leading-none">
-                  {termoSessao} em Andamento
+          {/* HEADER DA CHAMADA: LIMPO, FOCADO E SEM CRONÔMETRO DISPUTANDO ESPAÇO */}
+          <div className="rounded-2xl bg-white p-4 border border-zinc-200/90 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] uppercase font-black text-sky-600 tracking-wider bg-sky-50 px-2 py-0.5 rounded-md border border-sky-200">
+                  Etapa 2 • Chamada Oficial
                 </span>
-                <span className="text-xs text-zinc-300 font-medium">Início: {parseHora(execucao?.horaInicioReal, "08:00")}</span>
+                <span className="text-xs text-zinc-400 font-medium">Turma: {turma.nome}</span>
               </div>
+              <h2 className="text-base sm:text-lg font-black text-zinc-900 mt-1">
+                Lista de Presença dos {termoParticipante}s
+              </h2>
+              <p className="text-xs text-zinc-500 mt-0.5">
+                Marque quem compareceu antes de dar início às atividades práticas em campo.
+              </p>
             </div>
 
-            <div className="flex items-center gap-3">
-              <div className="text-right">
-                <span className="text-[10px] uppercase font-bold text-zinc-400 block leading-none">Tempo de {termoSessao}</span>
-                <span className="text-base font-black font-mono tracking-wider text-emerald-400">
-                  {formatTimer(segundosDecorridos)}
-                </span>
-              </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={async () => {
+                  await handleSalvarRascunhoPresencas();
+                  setEtapa("em_andamento");
+                }}
+                className="w-full sm:w-auto px-4 py-2.5 bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-black rounded-xl text-xs shadow-md shadow-sky-600/20 flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 transition-all"
+              >
+                <span>Concluir Chamada e Iniciar Treino</span>
+                <ChevronRight className="h-4 w-4" />
+              </button>
             </div>
           </div>
 
@@ -1514,11 +1550,11 @@ export function ExecucaoSessaoClient({
                 type="button"
                 onClick={async () => {
                   await handleSalvarRascunhoPresencas();
-                  setEtapa("finalizacao");
+                  setEtapa("em_andamento");
                 }}
-                className="w-full sm:w-auto bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-extrabold px-6 py-3 rounded-xl text-xs shadow-lg shadow-sky-600/20 flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full sm:w-auto bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-black px-6 py-3 rounded-xl text-xs shadow-lg shadow-sky-600/20 flex items-center justify-center gap-2 cursor-pointer active:scale-95 transition-all"
               >
-                <span>Avançar para Encerramento (Foto)</span>
+                <span>Salvar Presenças e Iniciar Execução da Aula</span>
                 <ChevronRight className="h-4 w-4" />
               </button>
             </div>
@@ -1527,7 +1563,110 @@ export function ExecucaoSessaoClient({
       )}
 
       {/* ========================================================================= */}
-      {/* ETAPA 3: FINALIZAR AULA (FOTO COMPROBATÓRIA & STOP) */}
+      {/* ETAPA 3: AULA EM ANDAMENTO (CRONÔMETRO GIGANTE & EXECUÇÃO DO TREINO) */}
+      {/* ========================================================================= */}
+      {etapa === "em_andamento" && (
+        <div className="flex flex-col gap-5">
+          {/* HERO CARD COM O RELÓGIO GIGANTE, NÍTIDO E EM DESTAQUE */}
+          <div className="rounded-3xl bg-gradient-to-br from-[#091e3a] via-[#0d2f59] to-[#151933] p-6 sm:p-8 text-white shadow-2xl border border-sky-800/50 flex flex-col items-center text-center gap-6 relative overflow-hidden">
+            {/* Ambient glows decorativos */}
+            <div className="absolute -right-20 -top-20 w-72 h-72 bg-sky-500/15 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -left-20 -bottom-20 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+
+            {/* Badge de Status Ativo Pulsante */}
+            <div className="inline-flex items-center gap-2 rounded-full bg-emerald-500/15 px-4 py-1.5 border border-emerald-400/40 text-emerald-300 text-xs font-black tracking-wider uppercase shadow-inner">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400" />
+              </span>
+              <span>{termoSessao} em Andamento Oficial</span>
+            </div>
+
+            {/* Relógio Grande e Nítido */}
+            <div className="flex flex-col items-center">
+              <span className="text-xs sm:text-sm font-bold uppercase tracking-widest text-sky-200/80">
+                Tempo Decorrido de Treino
+              </span>
+              <div className="text-5xl sm:text-7xl font-black font-mono tracking-wider text-sky-300 drop-shadow-[0_0_35px_rgba(56,189,248,0.45)] my-2">
+                {formatTimer(segundosDecorridos)}
+              </div>
+            </div>
+
+            {/* Metadados da Aula */}
+            <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-3 text-xs text-sky-100">
+              <div className="bg-black/30 px-3.5 py-1.5 rounded-xl border border-white/10 font-medium">
+                Início Real: <strong className="text-white font-bold">{parseHora(execucao?.horaInicioReal, horaInicioPrevista)}</strong>
+              </div>
+              <div className="bg-black/30 px-3.5 py-1.5 rounded-xl border border-white/10 font-medium">
+                Término Previsto: <strong className="text-white font-bold">{horaFimPrevista}</strong>
+              </div>
+              <div className="bg-black/30 px-3.5 py-1.5 rounded-xl border border-white/10 font-medium">
+                Duração: <strong className="text-white font-bold">{duracaoBlocoFormatada}</strong>
+              </div>
+            </div>
+
+            {/* Resumo da Chamada Realizada */}
+            <div className="w-full max-w-lg bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-4 flex items-center justify-between gap-3 shadow-inner">
+              <div className="flex items-center gap-4">
+                <div className="flex flex-col text-left">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-sky-200/70">
+                    Presentes
+                  </span>
+                  <span className="text-lg font-black text-emerald-400">
+                    {contadores.presentes} <span className="text-xs text-emerald-200 font-medium">{termoParticipante}s</span>
+                  </span>
+                </div>
+                <div className="h-8 w-px bg-white/20" />
+                <div className="flex flex-col text-left">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-sky-200/70">
+                    Faltas
+                  </span>
+                  <span className="text-lg font-black text-rose-400">
+                    {contadores.faltas} <span className="text-xs text-rose-200 font-medium">{termoParticipante}s</span>
+                  </span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setEtapa("chamada")}
+                className="px-3.5 py-2 rounded-xl bg-white/15 hover:bg-white/25 active:scale-95 text-white text-xs font-bold border border-white/20 transition-all cursor-pointer"
+              >
+                Revisar Chamada
+              </button>
+            </div>
+
+            {/* Botão de Destaque: Encerrar e Avançar para Foto (Stop) */}
+            <div className="w-full max-w-md mt-2">
+              <button
+                type="button"
+                onClick={() => setEtapa("finalizacao")}
+                className="w-full bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 active:scale-[0.99] text-white font-black py-4 px-6 rounded-2xl text-sm sm:text-base shadow-xl shadow-rose-900/40 flex items-center justify-center gap-2.5 cursor-pointer transition-all border border-rose-400/30"
+              >
+                <Camera className="h-5 w-5" />
+                <span>Encerrar Treino e Tirar Foto (Stop)</span>
+                <ChevronRight className="h-5 w-5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Card Complementar: Informações do Treino */}
+          <Card className="p-5 flex flex-col gap-2 bg-white border border-zinc-200">
+            <div className="text-xs font-bold text-zinc-400 uppercase tracking-wider">
+              Atividade Programada
+            </div>
+            <div className="text-sm font-bold text-zinc-900">
+              {turma.atividade?.nome || "Treino Regular da Turma"}
+            </div>
+            <p className="text-xs text-zinc-600 leading-relaxed">
+              {turma.atividade?.descricao || "Sessão de treinamento esportivo conforme plano pedagógico do polo."}
+            </p>
+          </Card>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* ETAPA 4: FINALIZAR AULA (FOTO COMPROBATÓRIA & STOP) */}
       {/* ========================================================================= */}
       {etapa === "finalizacao" && (
         <Card className="p-5 sm:p-6 flex flex-col gap-6">
@@ -1535,7 +1674,7 @@ export function ExecucaoSessaoClient({
             <div>
               <h3 className="text-lg font-bold text-zinc-900 flex items-center gap-2">
                 <Camera className="h-5 w-5 text-sky-600" />
-                <span>Etapa 3: Foto Comprobatória & Fechamento</span>
+                <span>Etapa 4: Foto Comprobatória & Fechamento</span>
               </h3>
               <p className="text-xs text-zinc-500">
                 Evidência fotográfica obrigatória do(a) {termoGrupo.toLowerCase()} reunido(a) para validar a execução e a presença.
@@ -1544,10 +1683,10 @@ export function ExecucaoSessaoClient({
 
             <button
               type="button"
-              onClick={() => setEtapa("chamada")}
-              className="text-xs text-sky-600 hover:text-sky-800 font-bold flex items-center gap-1"
+              onClick={() => setEtapa("em_andamento")}
+              className="text-xs text-sky-600 hover:text-sky-800 font-bold flex items-center gap-1 cursor-pointer"
             >
-              <ChevronLeft className="h-4 w-4" /> Ajustar Chamada
+              <ChevronLeft className="h-4 w-4" /> Voltar ao Treino em Andamento
             </button>
           </div>
 
