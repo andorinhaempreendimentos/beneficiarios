@@ -3289,7 +3289,7 @@ export interface SlotAulaGrid {
 }
 
 export const areaProfessorApi = {
-  async getDadosProfessor(userId: string) {
+  async getDadosProfessor(userId: string, targetFuncionarioId?: string) {
     const sb = createClient();
 
     const { data: usuario } = await (sb.from('usuarios') as any)
@@ -3297,7 +3297,8 @@ export const areaProfessorApi = {
       .eq('id', userId)
       .maybeSingle();
 
-    const funcionarioId = usuario?.entidade_id;
+    const isAdmin = usuario?.tipo === 'admin';
+    const funcionarioId = (isAdmin && targetFuncionarioId) ? targetFuncionarioId : usuario?.entidade_id;
 
     let funcionario = null;
     if (funcionarioId) {
@@ -3308,10 +3309,8 @@ export const areaProfessorApi = {
       funcionario = f ? mapFuncionario(f) : null;
     }
 
-    const isAdmin = usuario?.tipo === 'admin';
-
     let turmaIds: string[] = [];
-    if (!isAdmin && funcionarioId) {
+    if (funcionarioId) {
       const { data: resp } = await (sb.from('grupo_responsaveis') as any)
         .select('grupo_id')
         .eq('funcionario_id', funcionarioId);
@@ -3326,9 +3325,9 @@ export const areaProfessorApi = {
       grupo_responsaveis(*, funcionarios(nome_completo))
     `).is('deleted_at', null);
 
-    if (!isAdmin && turmaIds.length > 0) {
+    if (turmaIds.length > 0) {
       queryTurmas = queryTurmas.in('id', turmaIds);
-    } else if (!isAdmin && funcionarioId) {
+    } else if (funcionarioId) {
       if (funcionario?.nucleoId) {
         queryTurmas = queryTurmas.eq('nucleo_id', funcionario.nucleoId);
       }

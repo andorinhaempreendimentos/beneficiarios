@@ -50,7 +50,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const salvo = localStorage.getItem("tema_modo");
-    if (salvo === "dark" || (!salvo && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+    if (salvo === "dark") {
       setModoEscuro(true);
       document.documentElement.classList.add("dark");
     } else {
