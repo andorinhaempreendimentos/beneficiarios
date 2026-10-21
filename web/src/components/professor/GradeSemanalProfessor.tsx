@@ -202,7 +202,7 @@ export function GradeSemanalProfessor({
                             return (
                               <div
                                 onClick={() => {
-                                  if (semBeneficiarios && !isPassado) return;
+                                  if (bloqueado) return;
                                   onSelectSlot(slot, tEncontrada, dataStr);
                                 }}
                                 className={`absolute inset-x-1 z-10 rounded-xl text-white p-2 text-xs font-semibold leading-tight shadow-md transition-all border active:scale-95 flex flex-col justify-between ${
@@ -213,7 +213,7 @@ export function GradeSemanalProfessor({
                                         ? 'bg-gradient-to-b from-amber-700 to-amber-800 hover:from-amber-600 hover:to-amber-700 border-amber-500/50 cursor-pointer'
                                         : 'bg-gradient-to-b from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 border-amber-400/40 cursor-pointer'
                                       : semBeneficiarios
-                                        ? 'bg-gradient-to-b from-zinc-300 to-zinc-400 border-zinc-200/40 cursor-not-allowed opacity-70'
+                                        ? 'bg-gradient-to-b from-sky-700 to-indigo-800 hover:from-sky-600 hover:to-indigo-700 border-sky-400/50 cursor-pointer'
                                         : 'bg-gradient-to-b from-sky-600 to-sky-700 hover:from-sky-500 hover:to-sky-600 border-sky-400/40 cursor-pointer'
                                 }`}
                                 style={{ top: 2, height: `calc(${(slot.fim - slot.inicio) * horaAlturaPx}px - 4px)` }}
@@ -228,7 +228,7 @@ export function GradeSemanalProfessor({
                                       ? permitirRetroativa
                                         ? "Sem alunos (Regularizar)"
                                         : "Sem beneficiários"
-                                      : "Sem beneficiários"}
+                                      : "Conferir Alunos"}
                                   </div>
                                 ) : (
                                   <div className="flex flex-col gap-0.5 mt-0.5">
