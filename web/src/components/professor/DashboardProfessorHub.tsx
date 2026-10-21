@@ -188,6 +188,20 @@ export function DashboardProfessorHub({
     let cancelado = false;
     async function checarPendencias() {
       try {
+        // Se nenhum polo/turma do professor permitir regularização/chamada retroativa,
+        // o professor não pode executá-las, portanto não deve buscar nem exibir pendências/banner.
+        const algumNucleoPermiteRetroativo = Boolean(
+          nucleo?.permitirChamadaRetroativa ||
+          turmas.some((t) => t.nucleo?.permitirChamadaRetroativa)
+        );
+
+        if (!algumNucleoPermiteRetroativo) {
+          if (!cancelado) {
+            setAulasPendentes([]);
+          }
+          return;
+        }
+
         const diasLimite = nucleo?.diasLimiteRetroativo ?? 7;
         const hoje = new Date();
         const hojeStr = getDataHojeBrasil();
@@ -228,6 +242,12 @@ export function DashboardProfessorHub({
             if (turma.tipo === "operacional" || turma.nome?.toLowerCase().includes("planejamento")) continue;
             if (turma.dataInicio && dataStr < turma.dataInicio) continue;
             if (turma.dataFim && dataStr > turma.dataFim) continue;
+
+            const turmaPermiteRetroativo = Boolean(
+              turma.nucleo?.permitirChamadaRetroativa ?? nucleo?.permitirChamadaRetroativa
+            );
+            // Se for aula passada e o polo/turma não permite chamada retroativa, o professor não pode executá-la
+            if (dataStr < hojeStr && !turmaPermiteRetroativo) continue;
 
             const slotsTurma = (turma.slots ?? []).filter(
               (s: any) => s.dia === siglaDia || s.dia_semana === diaSemanaNum
@@ -484,7 +504,7 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
       {/* 1. SEÇÃO DE IDENTIFICAÇÃO E RÉGUA DE MÉTRICAS 360° */}
       <div className="flex flex-col gap-4">
         {/* BANNER DE AULAS PENDENTES DE REGISTRO (OFFLINE/RETROATIVO) */}
-        {aulasPendentes.length > 0 && (
+        {aulasPendentes.length > 0 && Boolean(nucleo?.permitirChamadaRetroativa || turmas.some((t) => t.nucleo?.permitirChamadaRetroativa)) && (
           <div className="rounded-3xl border-2 border-amber-300 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 p-4 sm:p-5 shadow-md flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 animate-in fade-in">
             <div className="flex items-center gap-3.5 min-w-0">
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-amber-500 text-white shadow-sm">

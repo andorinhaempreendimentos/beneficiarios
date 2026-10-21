@@ -224,7 +224,11 @@ export function GradeSemanalProfessor({
 
                                 {semBeneficiarios ? (
                                   <div className="text-[9px] text-white/90 font-semibold mt-0.5">
-                                    {isPassado ? "Sem alunos (Regularizar)" : "Sem beneficiários"}
+                                    {isPassado
+                                      ? permitirRetroativa
+                                        ? "Sem alunos (Regularizar)"
+                                        : "Sem beneficiários"
+                                      : "Sem beneficiários"}
                                   </div>
                                 ) : (
                                   <div className="flex flex-col gap-0.5 mt-0.5">
