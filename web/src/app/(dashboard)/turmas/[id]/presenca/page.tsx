@@ -36,6 +36,7 @@ import type { StatusPresenca } from "@/lib/types";
 import { useQuery } from "@/lib/hooks/useQuery";
 import { formatStorageUrl } from "@/lib/storage";
 import { useDicionario } from "@/components/providers/DictionaryProvider";
+import { useAuth } from "@/components/providers/AuthProvider";
 
 const DIA_ABREV: Record<string, number> = {
   Dom: 0,
@@ -112,6 +113,8 @@ type MapPresenca = Record<string, { status: StatusPresenca; observacao?: string 
 
 export default function PresencaTurmaPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+  const { user } = useAuth();
+  const isProfessor = Boolean(user?.isProfessor || user?.tipo === "funcionario");
 
   const { data: turma } = useQuery(() => turmasApi.get(id), [id]);
   const { data: beneficiariosRes } = useQuery(() => turmasApi.listarBeneficiarios(id), [id]);
@@ -168,7 +171,7 @@ export default function PresencaTurmaPage({ params }: { params: Promise<{ id: st
         setDataAtual(datasDisponiveis[datasDisponiveis.length - 1]);
       }
     }
-  }, [datasDisponiveis, sessoesExecutadas, dataAtual]);
+  }, [datasDisponiveis.length, sessoesExecutadas.length, dataAtual]);
 
   // Sessão executada associada à data atual selecionada
   const sessaoAtual = useMemo(() => {
@@ -183,15 +186,17 @@ export default function PresencaTurmaPage({ params }: { params: Promise<{ id: st
   // Mapa de presenças por data: { [data]: { [beneficiarioId]: { status, observacao } } }
   const [mapas, setMapas] = useState<Record<string, MapPresenca>>({});
 
-  // Carregar presenças quando a data ou a sessão mudar
+  // Carregar presenças quando a data ou a sessão mudar de forma atômica e cancelável
   useEffect(() => {
     if (!id || !dataAtual) return;
+    let cancelado = false;
 
     if (sessaoAtual) {
       // Prioridade: carregar presenças atômicas da execução da sessão
       execucoesSessaoApi
         .getPresencas(sessaoAtual.id)
         .then((rows) => {
+          if (cancelado) return;
           if (rows && rows.length > 0) {
             const mapaData: MapPresenca = {};
             rows.forEach((r) => {
@@ -202,11 +207,12 @@ export default function PresencaTurmaPage({ params }: { params: Promise<{ id: st
             });
             setMapas((prev) => ({ ...prev, [dataAtual]: mapaData }));
           } else {
-            // Se não houver presenças na execução, carregar via professoresApi
             carregarPresencasFallback();
           }
         })
-        .catch(() => carregarPresencasFallback());
+        .catch(() => {
+          if (!cancelado) carregarPresencasFallback();
+        });
     } else {
       carregarPresencasFallback();
     }
@@ -215,6 +221,7 @@ export default function PresencaTurmaPage({ params }: { params: Promise<{ id: st
       professoresApi
         .buscarPresencasTurma(id, dataAtual)
         .then((rows: any[]) => {
+          if (cancelado) return;
           if (rows && rows.length > 0) {
             const mapaData: MapPresenca = {};
             rows.forEach((r) => {
@@ -228,7 +235,11 @@ export default function PresencaTurmaPage({ params }: { params: Promise<{ id: st
         })
         .catch((err: any) => console.error("Erro ao carregar presenças:", err));
     }
-  }, [id, dataAtual, sessaoAtual]);
+
+    return () => {
+      cancelado = true;
+    };
+  }, [id, dataAtual, sessaoAtual?.id]);
 
   const mapaAtual = mapas[dataAtual] ?? {};
   const idxAtual = datasDisponiveis.indexOf(dataAtual);
@@ -312,12 +323,14 @@ export default function PresencaTurmaPage({ params }: { params: Promise<{ id: st
         description={`${beneficiarios.length} ${termoParticipante.toLowerCase()}(s) matriculado(s) • ${turma?.nucleo?.identificacao || "Núcleo"}`}
         actions={
           <div className="flex items-center gap-2">
-            <LinkButton href={`/professor/aula/${id}?data=${dataAtual}`} variant="outline">
-              <Play className="h-4 w-4 mr-1 text-emerald-600" />
-              Executar no App
-            </LinkButton>
-            <LinkButton href={`/turmas/${id}`} variant="outline">
-              Voltar à {termoGrupo}
+            {!sessaoAtual && (
+              <LinkButton href={`/professor/aula/${id}?data=${dataAtual}`} variant="outline">
+                <Play className="h-4 w-4 mr-1 text-emerald-600" />
+                Executar no App
+              </LinkButton>
+            )}
+            <LinkButton href={isProfessor ? "/professor" : `/turmas/${id}`} variant="outline">
+              {isProfessor ? "Voltar ao Painel" : `Voltar à ${termoGrupo}`}
             </LinkButton>
           </div>
         }

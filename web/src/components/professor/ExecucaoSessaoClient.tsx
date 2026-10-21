@@ -43,6 +43,7 @@ import {
   type BeneficiarioApi,
 } from "@/lib/api/services";
 import type { ExecucaoSessaoApi, BeneficiarioPresencaApi } from "@/lib/types/execucaoAula";
+import { ModalInformacoesAula } from "./ModalInformacoesAula";
 
 interface ExecucaoSessaoClientProps {
   turma: TurmaApi;
@@ -247,6 +248,7 @@ export function ExecucaoSessaoClient({
   const [salvando, setSalvando] = useState(false);
   const [salvandoPresencas, setSalvandoPresencas] = useState(false);
   const [uploadingFoto, setUploadingFoto] = useState(false);
+  const [showInfoModal, setShowInfoModal] = useState(false);
 
   // Cronômetro ao Vivo
   const [segundosDecorridos, setSegundosDecorridos] = useState(0);
@@ -2037,12 +2039,14 @@ export function ExecucaoSessaoClient({
               Voltar ao Painel do(a) {termoResponsavel}
             </Link>
 
-            <Link
-              href={`/turmas/${turma.id}/presenca`}
-              className="w-full sm:w-auto px-6 py-3 rounded-xl bg-zinc-100 text-zinc-800 font-bold text-xs hover:bg-zinc-200 transition-colors"
+            <button
+              type="button"
+              onClick={() => setShowInfoModal(true)}
+              className="w-full sm:w-auto px-6 py-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-sm transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
             >
-              Ver Espelho de Presenças do(a) {termoGrupo}
-            </Link>
+              <FileText className="h-4 w-4" />
+              <span>Ver Informações da Aula</span>
+            </button>
           </div>
         </Card>
       )}
@@ -2132,6 +2136,17 @@ export function ExecucaoSessaoClient({
             </div>
           </div>
         </div>
+      )}
+
+      {/* MODAL DE INFORMAÇÕES DA AULA EXECUTADA */}
+      {showInfoModal && (
+        <ModalInformacoesAula
+          isOpen={showInfoModal}
+          onClose={() => setShowInfoModal(false)}
+          turma={turma}
+          dataAula={dataAula}
+          execucaoInicial={execucao}
+        />
       )}
     </div>
   );

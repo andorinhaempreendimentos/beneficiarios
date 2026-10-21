@@ -36,6 +36,7 @@ import { useToast } from "@/components/providers/ToastProvider";
 import { GestaoMatriculasProfessor } from "./GestaoMatriculasProfessor";
 import { getDataHojeBrasil, formatDateBrasil } from "@/lib/dateUtils";
 import { GradeSemanalProfessor } from "./GradeSemanalProfessor";
+import { ModalInformacoesAula } from "./ModalInformacoesAula";
 import type { FuncionarioApi, TurmaApi, NucleoApi, BeneficiarioApi, SlotAulaGrid, ExecucaoAulaApi } from "@/lib/api/services";
 import { areaProfessorApi, execucoesAulaApi, professoresApi, inscricoesApi } from "@/lib/api/services";
 import { useQuery } from "@/lib/hooks/useQuery";
@@ -128,7 +129,14 @@ export function DashboardProfessorHub({
   const [execucaoAtiva, setExecucaoAtiva] = useState<ExecucaoAulaApi | null>(null);
   const [verificandoExecucao, setVerificandoExecucao] = useState(false);
 
-  // Verificar se existe aula em andamento ao abrir modal
+  // Estado para Modal de Informações da Aula Executada
+  const [showInfoModal, setShowInfoModal] = useState(false);
+  const [turmaInfoModal, setTurmaInfoModal] = useState<TurmaApi | null>(null);
+  const [dataInfoModal, setDataInfoModal] = useState<string>("");
+  const [execucaoInfoModal, setExecucaoInfoModal] = useState<ExecucaoAulaApi | null>(null);
+  const [mapaExecucoes, setMapaExecucoes] = useState<Record<string, ExecucaoAulaApi>>({});
+
+  // Verificar se existe aula em andamento ou concluída ao abrir modal
   useEffect(() => {
     if (!turmaModal) {
       setExecucaoAtiva(null);
@@ -136,9 +144,9 @@ export function DashboardProfessorHub({
     }
     let cancelled = false;
     setVerificandoExecucao(true);
-    execucoesAulaApi.getExecucao(turmaModal.id).then((exec) => {
+    execucoesAulaApi.getExecucao(turmaModal.id, dataAula).then((exec) => {
       if (!cancelled) {
-        setExecucaoAtiva(exec?.status === "em_andamento" ? exec : null);
+        setExecucaoAtiva(exec);
         setVerificandoExecucao(false);
       }
     }).catch(() => {
@@ -148,7 +156,7 @@ export function DashboardProfessorHub({
       }
     });
     return () => { cancelled = true; };
-  }, [turmaModal]);
+  }, [turmaModal, dataAula]);
 
   // Auto-encerradas pendentes de confirmação
   const [autoEncerradas, setAutoEncerradas] = useState<ExecucaoAulaApi[]>([]);
@@ -193,11 +201,14 @@ export function DashboardProfessorHub({
         if (cancelado) return;
 
         const execucoesSet = new Set<string>();
+        const mapa: Record<string, ExecucaoAulaApi> = {};
         execucoes.forEach((e) => {
           if (e.status !== "rejeitada") {
             execucoesSet.add(`${e.turmaId}-${e.data}`);
+            mapa[`${e.turmaId}-${e.data}`] = e;
           }
         });
+        setMapaExecucoes(mapa);
 
         const pendentes: AulaPendente[] = [];
         const agora = new Date();
@@ -843,11 +854,18 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {turmasHoje.map((turma) => {
                 const isPlanejamento = turma.tipo === "operacional" || turma.nome?.toLowerCase().includes("planejamento");
+                const hojeISO = getDataHojeBrasil();
+                const chaveHoje = `${turma.id}-${hojeISO}`;
+                const execHoje = mapaExecucoes[chaveHoje];
+                const foiExecutada = execHoje?.status === "concluida" || execHoje?.status === "pendente_aprovacao";
+
                 return (
                   <div
                     key={turma.id}
                     className={`flex flex-col gap-4 rounded-2xl border-2 p-5 shadow-sm transition-all ${
-                      isPlanejamento
+                      foiExecutada
+                        ? "border-amber-400 bg-amber-50/50 hover:border-amber-500 hover:shadow-md"
+                        : isPlanejamento
                         ? "border-amber-400/40 bg-amber-50/30 hover:border-amber-400 hover:shadow-md"
                         : "border-emerald-500/30 bg-emerald-50/20 hover:border-emerald-500 hover:shadow-md"
                     }`}
@@ -855,11 +873,15 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <h3 className="font-bold text-zinc-900 truncate text-base">{turma.nome}</h3>
-                        {isPlanejamento && (
+                        {foiExecutada ? (
+                          <span className="text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full border border-amber-300 shrink-0">
+                            ✓ Aula Executada
+                          </span>
+                        ) : isPlanejamento ? (
                           <span className="text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full border border-amber-300 shrink-0">
                             Planejamento
                           </span>
-                        )}
+                        ) : null}
                       </div>
                       <p className="text-xs text-zinc-500 mt-1 line-clamp-2">
                         {turma.nucleo?.identificacao || nucleo?.identificacao || "Polo não especificado"}
@@ -869,7 +891,9 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
                           <span
                             key={idx}
                             className={`px-2 py-0.5 rounded-md font-bold ${
-                              isPlanejamento
+                              foiExecutada
+                                ? "bg-amber-100 text-amber-900 border border-amber-200"
+                                : isPlanejamento
                                 ? "bg-amber-100 text-amber-800"
                                 : "bg-emerald-100 text-emerald-800"
                             }`}
@@ -879,7 +903,21 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
                         ))}
                       </div>
                     </div>
-                    {(turma.vagasOcupadas ?? 0) === 0 && !isPlanejamento ? (
+                    {foiExecutada ? (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setTurmaInfoModal(turma);
+                          setDataInfoModal(hojeISO);
+                          setExecucaoInfoModal(execHoje);
+                          setShowInfoModal(true);
+                        }}
+                        className="flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold text-white shadow-sm transition-colors active:scale-95 w-full bg-amber-600 hover:bg-amber-700 cursor-pointer"
+                      >
+                        <FileText className="h-5 w-5" />
+                        <span>INFORMAÇÕES DA AULA</span>
+                      </button>
+                    ) : (turma.vagasOcupadas ?? 0) === 0 && !isPlanejamento ? (
                       <div className="flex flex-col items-center gap-1.5 rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-center w-full">
                         <span className="text-xs font-semibold text-zinc-400">Sem beneficiários matriculados</span>
                         <span className="text-[11px] text-zinc-400">Não é possível iniciar a aula.</span>
@@ -1047,20 +1085,51 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
               </div>
             </div>
 
-            <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 flex flex-col gap-3">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-1.5">
-                <PlayCircle className="h-4 w-4 text-emerald-600" />
-                <span>Fluxo Unificado de Aula</span>
-              </h4>
-              <p className="text-xs text-emerald-700 mb-2">
-                Inicie o fluxo unificado para registrar o seu ponto, enviar o relatório fotográfico e realizar a chamada de uma só vez.
-              </p>
-
-              {verificandoExecucao ? (
-                <div className="w-full flex items-center justify-center gap-2 rounded-xl bg-zinc-100 px-4 py-3 text-sm font-medium text-zinc-500">
-                  <span className="animate-pulse">Verificando aula...</span>
+            {verificandoExecucao ? (
+              <div className="w-full flex items-center justify-center gap-2 rounded-xl bg-zinc-100 px-4 py-3 text-sm font-medium text-zinc-500">
+                <span className="animate-pulse">Verificando aula...</span>
+              </div>
+            ) : execucaoAtiva && (execucaoAtiva.status === "concluida" || execucaoAtiva.status === "pendente_aprovacao") ? (
+              <div className="rounded-2xl border border-amber-300 bg-amber-50/80 p-4 flex flex-col gap-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-amber-900 flex items-center gap-1.5">
+                    <CheckCircle2 className="h-4 w-4 text-amber-700" />
+                    <span>Aula Concluída</span>
+                  </h4>
+                  <span className="text-[10px] font-black uppercase text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full border border-amber-300">
+                    ✓ Executada
+                  </span>
                 </div>
-              ) : execucaoAtiva ? (
+                <p className="text-xs text-amber-800">
+                  Esta aula já foi realizada e registrada com sucesso. Clique abaixo para consultar o espelho da chamada, ponto e fotos.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const t = turmaModal;
+                    const d = dataAula;
+                    const ex = execucaoAtiva;
+                    setTurmaModal(null);
+                    setTurmaInfoModal(t);
+                    setDataInfoModal(d);
+                    setExecucaoInfoModal(ex);
+                    setShowInfoModal(true);
+                  }}
+                  className="w-full justify-center flex items-center gap-2 rounded-xl bg-amber-600 px-4 py-3 text-sm font-bold text-white shadow-sm hover:bg-amber-700 transition-colors active:scale-95 cursor-pointer"
+                >
+                  <FileText className="h-5 w-5" />
+                  <span>INFORMAÇÕES DA AULA</span>
+                </button>
+              </div>
+            ) : execucaoAtiva && execucaoAtiva.status === "em_andamento" ? (
+              <div className="rounded-2xl border border-sky-200 bg-sky-50 p-4 flex flex-col gap-3">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-sky-800 flex items-center gap-1.5">
+                  <PlayCircle className="h-4 w-4 text-sky-600" />
+                  <span>Aula em Andamento</span>
+                </h4>
+                <p className="text-xs text-sky-700 mb-2">
+                  Esta aula já foi iniciada e está com o cronômetro em andamento.
+                </p>
                 <Link
                   href={`/professor/aula/${turmaModal.id}`}
                   className="w-full justify-center flex items-center gap-2 rounded-xl bg-sky-600 px-4 py-3 text-sm font-bold text-white shadow-sm hover:bg-sky-700 transition-colors active:scale-95"
@@ -1068,7 +1137,16 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
                   <StopCircle className="h-5 w-5" />
                   <span>⏩ CONTINUAR AULA EM ANDAMENTO</span>
                 </Link>
-              ) : (
+              </div>
+            ) : (
+              <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 flex flex-col gap-3">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-1.5">
+                  <PlayCircle className="h-4 w-4 text-emerald-600" />
+                  <span>Fluxo Unificado de Aula</span>
+                </h4>
+                <p className="text-xs text-emerald-700 mb-2">
+                  Inicie o fluxo unificado para registrar o seu ponto, enviar o relatório fotográfico e realizar a chamada de uma só vez.
+                </p>
                 <Link
                   href={`/professor/aula/${turmaModal.id}`}
                   className="w-full justify-center flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-bold text-white shadow-sm hover:bg-emerald-700 transition-colors active:scale-95"
@@ -1076,8 +1154,8 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
                   <PlayCircle className="h-5 w-5" />
                   <span>▶ INICIAR AULA (Ponto, Relatório e Chamada)</span>
                 </Link>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -1374,6 +1452,20 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
           </div>
         );
       })()}
+
+      {/* MODAL DE INFORMAÇÕES DA AULA EXECUTADA */}
+      {turmaInfoModal && (
+        <ModalInformacoesAula
+          isOpen={showInfoModal}
+          onClose={() => {
+            setShowInfoModal(false);
+            setTurmaInfoModal(null);
+          }}
+          turma={turmaInfoModal}
+          dataAula={dataInfoModal}
+          execucaoInicial={execucaoInfoModal as any}
+        />
+      )}
     </div>
   );
 }
