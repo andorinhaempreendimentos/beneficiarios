@@ -11,6 +11,7 @@ import {
   Users,
   UserCheck,
   UserX,
+  UserPlus,
   AlertTriangle,
   Camera,
   Upload,
@@ -175,24 +176,56 @@ export function ExecucaoSessaoClient({
     return map;
   });
 
-  // Base unificada de alunos do polo para a conferência
-  const listaAlunosPolo = useMemo(() => {
-    if (beneficiariosPolo && beneficiariosPolo.length > 0) {
-      return beneficiariosPolo;
-    }
-    return beneficiarios;
-  }, [beneficiariosPolo, beneficiarios]);
+  // Alunos JÁ MATRICULADOS oficialmente nesta turma
+  const idsJaEnturmados = useMemo(() => {
+    return new Set(beneficiarios.map((b) => b.id));
+  }, [beneficiarios]);
 
-  // Alunos confirmados para esta turma (inicia vazio para conferência ativa pelo professor)
-  const [selecionadosIds, setSelecionadosIds] = useState<Set<string>>(() => {
+  // Alunos do polo DISPONÍVEIS para nova conferência/admissão (NÃO inclui quem já é da mesma turma)
+  const alunosDisponiveisPolo = useMemo(() => {
+    const pool = (beneficiariosPolo && beneficiariosPolo.length > 0) ? beneficiariosPolo : [];
+    if (beneficiarios.length > 0) {
+      return pool.filter((b) => !idsJaEnturmados.has(b.id));
+    }
+    return pool.length > 0 ? pool : beneficiarios;
+  }, [beneficiariosPolo, beneficiarios, idsJaEnturmados]);
+
+  // Novos alunos do polo selecionados/adicionados pelo professor nesta aula
+  const [novosSelecionadosIds, setNovosSelecionadosIds] = useState<Set<string>>(() => {
     const ids = new Set<string>();
     if (execucaoInicial && presencasIniciais && presencasIniciais.length > 0) {
       for (const p of presencasIniciais) {
-        ids.add(p.beneficiarioId);
+        if (!idsJaEnturmados.has(p.beneficiarioId)) {
+          ids.add(p.beneficiarioId);
+        }
       }
     }
     return ids;
   });
+
+  // Conjunto unificado de alunos confirmados para a aula:
+  // Se a turma já tem matriculados, eles já estão garantidos! Soma-se aos novos adicionados.
+  const todosConfirmadosIds = useMemo(() => {
+    const todos = new Set<string>(idsJaEnturmados);
+    novosSelecionadosIds.forEach((id) => todos.add(id));
+    return todos;
+  }, [idsJaEnturmados, novosSelecionadosIds]);
+
+  // Total de alunos confirmados para a aula
+  const totalConfirmadosParaAula = todosConfirmadosIds.size;
+
+  // Toggle de novo aluno do polo
+  const toggleNovoAlunoPolo = (id: string) => {
+    setNovosSelecionadosIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  };
 
   // Alunos ativos nesta turma durante a execução da sessão:
   // Se a aula já foi iniciada/conferida (presencasIniciais), lista ESTRITAMENTE os alunos conferidos!
@@ -209,18 +242,7 @@ export function ExecucaoSessaoClient({
   // Estados de Filtro e Busca na Conferência Pré-Aula
   const [buscaConferencia, setBuscaConferencia] = useState("");
   const [filtroConferencia, setFiltroConferencia] = useState<"todos" | "confirmados" | "sem_turma">("todos");
-
-  const toggleConfirmacaoAluno = (id: string) => {
-    setSelecionadosIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
-      return next;
-    });
-  };
+  const [mostrarAlunosMatriculados, setMostrarAlunosMatriculados] = useState(false);
 
   // Estados de Filtro e Busca na Chamada
   const [busca, setBusca] = useState("");
@@ -372,32 +394,32 @@ export function ExecucaoSessaoClient({
   );
   const dispensaFoto = beneficiariosTurma.length === 0 && isModoRegularizacao;
 
-  // Alunos do polo filtrados para a conferência pré-aula
+  // Alunos do polo disponíveis filtrados para a conferência/admissão (NÃO inclui os já enturmados)
   const alunosConferenciaFiltrados = useMemo(() => {
     const termo = buscaConferencia.toLowerCase().trim();
-    return listaAlunosPolo.filter((b) => {
+    return alunosDisponiveisPolo.filter((b) => {
       const matchBusca =
         !termo ||
         b.nomeCompleto.toLowerCase().includes(termo) ||
         b.matricula.toLowerCase().includes(termo);
       if (!matchBusca) return false;
 
-      const isSel = selecionadosIds.has(b.id);
+      const isSel = novosSelecionadosIds.has(b.id);
       if (filtroConferencia === "confirmados") return isSel;
       if (filtroConferencia === "sem_turma") return !isSel;
       return true;
     }).sort((a, b) => {
-      const aSel = selecionadosIds.has(a.id);
-      const bSel = selecionadosIds.has(b.id);
+      const aSel = novosSelecionadosIds.has(a.id);
+      const bSel = novosSelecionadosIds.has(b.id);
       if (aSel && !bSel) return -1;
       if (!aSel && bSel) return 1;
       return a.nomeCompleto.localeCompare(b.nomeCompleto, "pt-BR");
     });
-  }, [listaAlunosPolo, buscaConferencia, filtroConferencia, selecionadosIds]);
+  }, [alunosDisponiveisPolo, buscaConferencia, filtroConferencia, novosSelecionadosIds]);
 
   const saldoSemTurmaConferencia = useMemo(() => {
-    return listaAlunosPolo.filter((b) => !selecionadosIds.has(b.id)).length;
-  }, [listaAlunosPolo, selecionadosIds]);
+    return alunosDisponiveisPolo.filter((b) => !novosSelecionadosIds.has(b.id)).length;
+  }, [alunosDisponiveisPolo, novosSelecionadosIds]);
 
   // Atualização do Cronômetro ao Vivo quando a aula estiver em andamento
   useEffect(() => {
@@ -514,8 +536,8 @@ export function ExecucaoSessaoClient({
   // STEP 1: Iniciar Aula (Play) após Conferência Obrigatória
   const handleIniciarAula = async () => {
     const isPlanejamento = turma.tipo === "operacional" || turma.nome?.toLowerCase().includes("planejamento");
-    if (selecionadosIds.size === 0 && !isPlanejamento && !isModoRegularizacao) {
-      toast.error(`Selecione ao menos 1 ${termoParticipante.toLowerCase()} presente nesta turma para iniciar.`);
+    if (totalConfirmadosParaAula === 0 && !isPlanejamento && !isModoRegularizacao) {
+      toast.error(`A turma precisa de ao menos 1 ${termoParticipante.toLowerCase()} para iniciar.`);
       return;
     }
     if (isDataFutura) {
@@ -558,8 +580,8 @@ export function ExecucaoSessaoClient({
         throw new Error("Professor responsável não identificado para esta turma.");
       }
 
-      // 1. Sincroniza a enturmação dos selecionados no banco
-      const confirmadosIdsArray = Array.from(selecionadosIds);
+      // 1. Sincroniza a enturmação no banco (mantendo os já matriculados + novos do polo)
+      const confirmadosIdsArray = Array.from(todosConfirmadosIds);
       if (confirmadosIdsArray.length > 0) {
         await turmasApi.sincronizarConferenciaEnturmacao(turma.id, confirmadosIdsArray);
       }
@@ -582,8 +604,13 @@ export function ExecucaoSessaoClient({
 
       setExecucao(novaExecucao);
 
-      // 3. Atualiza a lista de alunos da turma com os confirmados
-      const alunosConfirmadosObjetos = listaAlunosPolo.filter((b) => selecionadosIds.has(b.id));
+      // 3. Atualiza a lista de alunos da turma com todos os confirmados
+      const poolMap = new Map<string, BeneficiarioApi>();
+      (beneficiariosPolo ?? []).forEach((b) => poolMap.set(b.id, b));
+      beneficiarios.forEach((b) => poolMap.set(b.id, b));
+      const alunosConfirmadosObjetos = confirmadosIdsArray
+        .map((id) => poolMap.get(id))
+        .filter(Boolean) as BeneficiarioApi[];
       setBeneficiariosTurma(alunosConfirmadosObjetos);
 
       // 4. Salva a lista de presenças inicial no banco para os alunos confirmados
@@ -832,7 +859,7 @@ export function ExecucaoSessaoClient({
             <span className="text-[10px] uppercase font-bold text-zinc-400 block">{termoParticipante}s na Turma</span>
             <span className="font-semibold text-white flex items-center gap-1 mt-0.5">
               <Users className="h-3.5 w-3.5 text-emerald-400" />
-              {etapa === "inicio" ? `${selecionadosIds.size} selecionados` : `${beneficiariosTurma.length} ${termoParticipante}s`}
+              {etapa === "inicio" ? `${totalConfirmadosParaAula} confirmados` : `${beneficiariosTurma.length} ${termoParticipante}s`}
             </span>
           </div>
         </div>
@@ -1004,8 +1031,8 @@ export function ExecucaoSessaoClient({
               <div className="self-start sm:self-center shrink-0">
                 <div className="px-4 py-2 rounded-xl bg-white border-2 border-emerald-500/80 text-emerald-800 text-xs font-black shadow-xs flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                  <span className="text-base font-black text-emerald-700">{selecionadosIds.size}</span>
-                  <span>confirmados</span>
+                  <span className="text-base font-black text-emerald-700">{totalConfirmadosParaAula}</span>
+                  <span>{beneficiarios.length > 0 ? "no treino" : "confirmados"}</span>
                 </div>
               </div>
             </div>
@@ -1014,156 +1041,251 @@ export function ExecucaoSessaoClient({
           {/* CORPO DO CARD */}
           <div className="p-4 sm:p-6 flex flex-col gap-5">
 
-          {/* PAINEL DE CONTROLE DE ACÚMULO / TABS */}
-          <div className="grid grid-cols-3 gap-2 text-center">
-            <button
-              type="button"
-              onClick={() => setFiltroConferencia("todos")}
-              className={`p-2.5 rounded-xl border transition-all cursor-pointer ${
-                filtroConferencia === "todos"
-                  ? "border-2 border-zinc-800 bg-zinc-50 shadow-xs"
-                  : "border-zinc-200 bg-white hover:border-zinc-300"
-              }`}
-            >
-              <div className="text-[10px] uppercase font-bold text-zinc-500">Total no Polo</div>
-              <div className="text-base sm:text-lg font-black text-zinc-900">{listaAlunosPolo.length}</div>
-            </button>
+          {/* CASO 1: A TURMA JÁ POSSUI ALUNOS MATRICULADOS */}
+          {beneficiarios.length > 0 ? (
+            <div className="flex flex-col gap-4">
+              {/* CARD DE ALUNOS JÁ ENTURMADOS (GARANTIDOS NA CHAMADA) */}
+              <div className="rounded-2xl border-2 border-emerald-400/80 bg-emerald-50/60 p-4 sm:p-5 flex flex-col gap-3 shadow-xs">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-bold text-sm shadow-xs shrink-0">
+                      <UserCheck className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h4 className="text-sm font-black text-emerald-950 uppercase tracking-tight">
+                          {termoParticipante}s Matriculados Nesta Turma
+                        </h4>
+                        <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-emerald-200 text-emerald-900 border border-emerald-300">
+                          {beneficiarios.length} Enturmados
+                        </span>
+                      </div>
+                      <p className="text-xs text-emerald-800 mt-0.5">
+                        Estes alunos já pertencem a esta turma e entrarão diretamente na <strong>Chamada Oficial</strong>.
+                      </p>
+                    </div>
+                  </div>
 
-            <button
-              type="button"
-              onClick={() => setFiltroConferencia("confirmados")}
-              className={`p-2.5 rounded-xl border transition-all cursor-pointer ${
-                filtroConferencia === "confirmados"
-                  ? "border-2 border-emerald-600 bg-emerald-50 shadow-xs"
-                  : "border-zinc-200 bg-white hover:border-emerald-300"
-              }`}
-            >
-              <div className="text-[10px] uppercase font-bold text-emerald-700">Nesta Turma</div>
-              <div className="text-base sm:text-lg font-black text-emerald-700">{selecionadosIds.size}</div>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setFiltroConferencia("sem_turma")}
-              className={`p-2.5 rounded-xl border transition-all cursor-pointer ${
-                filtroConferencia === "sem_turma"
-                  ? "border-2 border-amber-600 bg-amber-50 shadow-xs"
-                  : "border-zinc-200 bg-white hover:border-amber-300"
-              }`}
-            >
-              <div className="text-[10px] uppercase font-bold text-amber-700">Sem Turma</div>
-              <div className="text-base sm:text-lg font-black text-amber-700">{saldoSemTurmaConferencia}</div>
-            </button>
-          </div>
-
-          {/* BUSCA RÁPIDA DE ALUNO */}
-          <div className="relative">
-            <input
-              type="text"
-              value={buscaConferencia}
-              onChange={(e) => setBuscaConferencia(e.target.value)}
-              placeholder={`Buscar ${termoParticipante.toLowerCase()} por nome ou matrícula no polo...`}
-              className="w-full pl-9 pr-8 py-2.5 rounded-xl border border-zinc-200 bg-zinc-50/70 text-xs text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition"
-            />
-            <span className="absolute left-3 top-2.5 text-xs text-zinc-400">🔍</span>
-            {buscaConferencia && (
-              <button
-                type="button"
-                onClick={() => setBuscaConferencia("")}
-                className="absolute right-3 top-2.5 text-xs text-zinc-400 hover:text-zinc-600"
-              >
-                ✕
-              </button>
-            )}
-          </div>
-
-          {/* LISTA ROLÁVEL DE ALUNOS COM CONDIÇÃO E BOTÃO DE CONFIRMAÇÃO */}
-          <div className="space-y-2 max-h-84 overflow-y-auto pr-1">
-            {alunosConferenciaFiltrados.length === 0 ? (
-              <div className="text-center py-8 text-xs text-zinc-400 bg-zinc-50 rounded-xl border border-dashed border-zinc-200">
-                Nenhum {termoParticipante.toLowerCase()} encontrado para este filtro.
-              </div>
-            ) : (
-              alunosConferenciaFiltrados.map((b) => {
-                const isSel = selecionadosIds.has(b.id);
-                const idade = calcularIdade(b.dataNascimento);
-
-                const btnClass = isSel
-                  ? "bg-emerald-600 text-white font-bold shadow-xs hover:bg-emerald-700"
-                  : "border border-zinc-300 bg-white text-zinc-800 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 font-semibold";
-
-                const btnText = isSel ? "✓ Confirmado" : "+ É da Turma";
-
-                return (
-                  <div
-                    key={b.id}
-                    onClick={() => toggleConfirmacaoAluno(b.id)}
-                    className={`p-3 rounded-xl border transition-all flex items-center justify-between gap-3 cursor-pointer select-none ${
-                      isSel
-                        ? "border-emerald-500 bg-emerald-50/70"
-                        : "border-zinc-200 bg-white hover:border-zinc-300"
-                    }`}
+                  <button
+                    type="button"
+                    onClick={() => setMostrarAlunosMatriculados(!mostrarAlunosMatriculados)}
+                    className="self-start sm:self-auto px-3 py-1.5 rounded-xl border border-emerald-300 bg-white text-emerald-900 text-xs font-bold hover:bg-emerald-100 transition-colors cursor-pointer shadow-2xs"
                   >
-                    {/* DADOS DO ALUNO */}
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div
-                        className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 ${
-                          isSel
-                            ? "bg-emerald-600 text-white"
-                            : "bg-zinc-100 text-zinc-700 border border-zinc-200"
-                        }`}
-                      >
-                        {isSel ? "✓" : b.nomeCompleto.charAt(0)}
-                      </div>
+                    {mostrarAlunosMatriculados ? "Ocultar Alunos" : `Ver Alunos (${beneficiarios.length})`}
+                  </button>
+                </div>
 
-                      <div className="min-w-0">
-                        <div className="flex flex-wrap items-center gap-1.5">
-                          <span className="text-xs sm:text-sm font-bold text-zinc-900 truncate">
-                            {b.nomeCompleto}
-                          </span>
-                          {isSel && (
-                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-600 text-white">
-                              Presente
-                            </span>
-                          )}
+                {/* LISTA EXPANSÍVEL DOS ALUNOS JÁ MATRICULADOS */}
+                {mostrarAlunosMatriculados && (
+                  <div className="mt-2 max-h-56 overflow-y-auto divide-y divide-emerald-100 bg-white rounded-xl border border-emerald-200/80 p-2 shadow-inner">
+                    {beneficiarios.map((b) => (
+                      <div key={b.id} className="py-2 px-2.5 flex items-center justify-between text-xs hover:bg-emerald-50/50 rounded-lg">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                          <span className="font-bold text-zinc-900 truncate">{b.nomeCompleto}</span>
+                          {b.pcd && <span className="text-[9px] bg-sky-100 text-sky-800 font-extrabold px-1.5 py-0.2 rounded">PcD</span>}
                         </div>
-                        <div className="text-[11px] text-zinc-500 mt-0.5">
-                          {idade != null ? `${idade} anos` : "Idade não informada"} • Matrícula: {b.matricula}
-                        </div>
+                        <span className="text-[10px] font-mono text-zinc-400 shrink-0">Matrícula: {b.matricula}</span>
                       </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* SEÇÃO OPCIONAL: ADICIONAR NOVOS ALUNOS DO POLO (SEM MOSTRAR QUEM JÁ É DA TURMA) */}
+              {alunosDisponiveisPolo.length > 0 && (
+                <div className="rounded-2xl border border-zinc-200 bg-zinc-50/80 p-4 sm:p-5 flex flex-col gap-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div>
+                      <h4 className="text-xs font-extrabold text-zinc-900 uppercase tracking-wide flex items-center gap-1.5">
+                        <UserPlus className="h-4 w-4 text-sky-600" />
+                        <span>Adicionar Novos Alunos do Polo à Turma (Opcional)</span>
+                      </h4>
+                      <p className="text-[11px] text-zinc-500 mt-0.5">
+                        Alunos do polo que ainda <strong>não pertencem a esta turma</strong> ({alunosDisponiveisPolo.length} disponíveis):
+                      </p>
                     </div>
 
-                    {/* BOTÃO DIRETO DE CONFIRMAÇÃO */}
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleConfirmacaoAluno(b.id);
-                      }}
-                      className={`px-3 py-1.5 rounded-xl text-xs transition shrink-0 ${btnClass}`}
-                    >
-                      {btnText}
-                    </button>
+                    {novosSelecionadosIds.size > 0 && (
+                      <span className="self-start sm:self-auto text-xs font-black bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full border border-emerald-300">
+                        +{novosSelecionadosIds.size} novo(s) adicionado(s)
+                      </span>
+                    )}
                   </div>
-                );
-              })
-            )}
-          </div>
+
+                  {/* BUSCA RÁPIDA DE NOVOS ALUNOS */}
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={buscaConferencia}
+                      onChange={(e) => setBuscaConferencia(e.target.value)}
+                      placeholder="Buscar aluno do polo para adicionar por nome ou matrícula..."
+                      className="w-full pl-9 pr-8 py-2 rounded-xl border border-zinc-200 bg-white text-xs text-zinc-900 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                    />
+                    <span className="absolute left-3 top-2 text-xs text-zinc-400">🔍</span>
+                    {buscaConferencia && (
+                      <button
+                        type="button"
+                        onClick={() => setBuscaConferencia("")}
+                        className="absolute right-3 top-2 text-xs text-zinc-400 hover:text-zinc-600"
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
+
+                  {/* LISTA ROLÁVEL APENAS DE ALUNOS DISPONÍVEIS DO POLO */}
+                  <div className="space-y-1.5 max-h-56 overflow-y-auto pr-1">
+                    {alunosConferenciaFiltrados.length === 0 ? (
+                      <div className="text-center py-6 text-xs text-zinc-400 bg-white rounded-xl border border-dashed border-zinc-200">
+                        Nenhum aluno encontrado para adicionar.
+                      </div>
+                    ) : (
+                      alunosConferenciaFiltrados.map((b) => {
+                        const isSel = novosSelecionadosIds.has(b.id);
+                        const idade = calcularIdade(b.dataNascimento);
+
+                        return (
+                          <div
+                            key={b.id}
+                            onClick={() => toggleNovoAlunoPolo(b.id)}
+                            className={`p-2.5 rounded-xl border transition-all flex items-center justify-between gap-3 cursor-pointer select-none ${
+                              isSel
+                                ? "border-emerald-500 bg-emerald-50/70"
+                                : "border-zinc-200 bg-white hover:border-zinc-300"
+                            }`}
+                          >
+                            <div className="min-w-0">
+                              <span className="text-xs font-bold text-zinc-900 truncate block">
+                                {b.nomeCompleto}
+                              </span>
+                              <span className="text-[10px] text-zinc-500">
+                                {idade != null ? `${idade} anos` : "Idade N/I"} • Matrícula: {b.matricula}
+                              </span>
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleNovoAlunoPolo(b.id);
+                              }}
+                              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition shrink-0 ${
+                                isSel
+                                  ? "bg-emerald-600 text-white"
+                                  : "border border-zinc-300 bg-zinc-50 text-zinc-700 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300"
+                              }`}
+                            >
+                              {isSel ? "✓ Adicionado" : "+ Adicionar à Turma"}
+                            </button>
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            /* CASO 2: TURMA AINDA SEM NENHUM ALUNO MATRICULADO (PRIMEIRA ENTURMAÇÃO) */
+            <div className="flex flex-col gap-4">
+              <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-xs text-amber-900">
+                <p className="font-bold">Primeira Enturmação da Turma</p>
+                <p className="text-[11px] text-amber-800 mt-0.5">
+                  Esta turma ainda não possui beneficiários matriculados. Selecione os alunos presentes no polo abaixo para enturmá-los:
+                </p>
+              </div>
+
+              {/* BUSCA RÁPIDA DE ALUNO */}
+              <div className="relative">
+                <input
+                  type="text"
+                  value={buscaConferencia}
+                  onChange={(e) => setBuscaConferencia(e.target.value)}
+                  placeholder={`Buscar ${termoParticipante.toLowerCase()} por nome ou matrícula no polo...`}
+                  className="w-full pl-9 pr-8 py-2.5 rounded-xl border border-zinc-200 bg-zinc-50/70 text-xs text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition"
+                />
+                <span className="absolute left-3 top-2.5 text-xs text-zinc-400">🔍</span>
+                {buscaConferencia && (
+                  <button
+                    type="button"
+                    onClick={() => setBuscaConferencia("")}
+                    className="absolute right-3 top-2.5 text-xs text-zinc-400 hover:text-zinc-600"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+
+              {/* LISTA ROLÁVEL */}
+              <div className="space-y-2 max-h-84 overflow-y-auto pr-1">
+                {alunosConferenciaFiltrados.length === 0 ? (
+                  <div className="text-center py-8 text-xs text-zinc-400 bg-zinc-50 rounded-xl border border-dashed border-zinc-200">
+                    Nenhum {termoParticipante.toLowerCase()} encontrado no polo.
+                  </div>
+                ) : (
+                  alunosConferenciaFiltrados.map((b) => {
+                    const isSel = novosSelecionadosIds.has(b.id);
+                    const idade = calcularIdade(b.dataNascimento);
+
+                    return (
+                      <div
+                        key={b.id}
+                        onClick={() => toggleNovoAlunoPolo(b.id)}
+                        className={`p-3 rounded-xl border transition-all flex items-center justify-between gap-3 cursor-pointer select-none ${
+                          isSel
+                            ? "border-emerald-500 bg-emerald-50/70"
+                            : "border-zinc-200 bg-white hover:border-zinc-300"
+                        }`}
+                      >
+                        <div className="min-w-0">
+                          <span className="text-xs sm:text-sm font-bold text-zinc-900 truncate block">
+                            {b.nomeCompleto}
+                          </span>
+                          <span className="text-[11px] text-zinc-500">
+                            {idade != null ? `${idade} anos` : "Idade não informada"} • Matrícula: {b.matricula}
+                          </span>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleNovoAlunoPolo(b.id);
+                          }}
+                          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition shrink-0 ${
+                            isSel
+                              ? "bg-emerald-600 text-white"
+                              : "border border-zinc-300 bg-white text-zinc-800 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300"
+                          }`}
+                        >
+                          {isSel ? "✓ Confirmado" : "+ É da Turma"}
+                        </button>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+          )}
 
           {/* BARRA DE RESUMO ANTES DE INICIAR */}
           <div className="flex items-center justify-between text-xs text-zinc-600 bg-zinc-50 p-3 rounded-xl border border-zinc-200">
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
               <span>
-                <strong className="text-zinc-900">{selecionadosIds.size}</strong> confirmados para iniciar agora
+                <strong className="text-zinc-900">{totalConfirmadosParaAula}</strong> alunos confirmados para o treino
+                {novosSelecionadosIds.size > 0 && ` (${beneficiarios.length} da turma + ${novosSelecionadosIds.size} novos)`}
               </span>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
-              <span>
-                <strong className="text-zinc-900">{saldoSemTurmaConferencia}</strong> sem turma
-              </span>
-            </div>
+            {alunosDisponiveisPolo.length > 0 && (
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                <span>
+                  <strong className="text-zinc-900">{saldoSemTurmaConferencia}</strong> outros no polo
+                </span>
+              </div>
+            )}
           </div>
 
           {/* ALERTA DE DATA FUTURA — BLOQUEIO RÍGIDO */}
@@ -1279,9 +1401,9 @@ export function ExecucaoSessaoClient({
             <button
               type="button"
               onClick={handleIniciarAula}
-              disabled={salvando || selecionadosIds.size === 0 || isDataFutura || isAntesDaJanela || turma.nucleo?.emFuncionamento === false}
+              disabled={salvando || totalConfirmadosParaAula === 0 || isDataFutura || isAntesDaJanela || turma.nucleo?.emFuncionamento === false}
               className={`w-full font-extrabold py-4 rounded-xl text-sm sm:text-base shadow-lg flex items-center justify-center gap-3 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
-                salvando || selecionadosIds.size === 0 || isDataFutura || isAntesDaJanela || turma.nucleo?.emFuncionamento === false
+                salvando || totalConfirmadosParaAula === 0 || isDataFutura || isAntesDaJanela || turma.nucleo?.emFuncionamento === false
                   ? "bg-zinc-400 text-zinc-200 shadow-none"
                   : "bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white shadow-emerald-600/20"
               }`}
@@ -1292,9 +1414,9 @@ export function ExecucaoSessaoClient({
                 <>
                   <Play className="h-5 w-5 fill-white" />
                   <span>
-                    {selecionadosIds.size === 0
+                    {totalConfirmadosParaAula === 0
                       ? `Selecione ao menos 1 ${termoParticipante.toLowerCase()} para iniciar`
-                      : `Iniciar Aula e Ir para Chamada (${selecionadosIds.size} ${termoParticipante.toLowerCase()}s) →`}
+                      : `Iniciar Aula e Ir para Chamada (${totalConfirmadosParaAula} ${termoParticipante.toLowerCase()}s) →`}
                   </span>
                 </>
               )}
