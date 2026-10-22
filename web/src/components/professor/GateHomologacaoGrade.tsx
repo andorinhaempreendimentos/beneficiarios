@@ -932,7 +932,7 @@ export function GateHomologacaoGrade({
                             </button>
                           </div>
 
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                          <div className="grid grid-cols-2 gap-3 pt-1">
                             <div>
                               <label className="text-xs font-bold text-slate-600 block mb-1.5">
                                 Idade Mínima:
@@ -1172,7 +1172,7 @@ export function GateHomologacaoGrade({
             </div>
 
             {/* Grid dos Dias da Semana (TODOS DESMARCADOS NO INÍCIO) */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+            <div className="grid grid-cols-2 gap-3">
               {["seg", "ter", "qua", "qui", "sex", "sab"].map((diaKey) => {
                 const ativo = diasSelecionados.includes(diaKey);
                 return (
@@ -1288,27 +1288,36 @@ export function GateHomologacaoGrade({
             </div>
 
             {/* O Calendário da Semana com Colunas para Cada Dia Selecionado */}
-            <div className="w-full">
-              <div
-                className={`gap-3 ${
-                  diasOrdenados.length === 1
-                    ? "grid grid-cols-1"
-                    : diasOrdenados.length === 2
-                    ? "grid grid-cols-1 sm:grid-cols-2"
-                    : diasOrdenados.length === 3
-                    ? "grid grid-cols-1 sm:grid-cols-3"
-                    : "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6"
-                }`}
-              >
-                {diasOrdenados.map((diaKey) => {
-                  const info = DIAS_MAP[diaKey];
-                  const slotsDoDia = distribuicaoHorarios.filter((s) => s.dia === diaKey);
+            <div className="w-full space-y-2.5">
+              {diasOrdenados.length > 3 && (
+                <div className="flex items-center justify-between text-xs text-slate-500 font-medium px-1">
+                  <span>Grade com {diasOrdenados.length} dias de treino:</span>
+                  <span className="flex items-center gap-1 text-sky-800 font-bold bg-sky-100/80 px-2.5 py-1 rounded-xl border border-sky-200">
+                    <ArrowRight className="w-3.5 h-3.5 text-sky-600 animate-pulse" />
+                    Passe para o lado para ver todos os dias
+                  </span>
+                </div>
+              )}
 
-                  return (
-                    <div
-                      key={diaKey}
-                      className="bg-white border border-slate-200 rounded-2xl flex flex-col min-h-[340px] overflow-hidden shadow-xs"
-                    >
+              <div className="w-full overflow-x-auto pb-4 pt-1">
+                <div
+                  className={`flex gap-3.5 ${
+                    diasOrdenados.length <= 3 ? "flex-wrap md:flex-nowrap" : "min-w-max"
+                  }`}
+                >
+                  {diasOrdenados.map((diaKey) => {
+                    const info = DIAS_MAP[diaKey];
+                    const slotsDoDia = distribuicaoHorarios.filter((s) => s.dia === diaKey);
+
+                    return (
+                      <div
+                        key={diaKey}
+                        className={`bg-white border border-slate-200 rounded-2xl flex flex-col min-h-[360px] overflow-hidden shadow-xs ${
+                          diasOrdenados.length <= 3
+                            ? "flex-1 min-w-[280px]"
+                            : "w-[280px] sm:w-[310px] md:w-[320px] shrink-0"
+                        }`}
+                      >
                       {/* Header do Dia */}
                       <div className="bg-gradient-to-b from-sky-700 to-sky-800 text-white p-2.5 text-center">
                         <div className="text-[10px] font-black tracking-wider uppercase opacity-80">
@@ -1417,6 +1426,7 @@ export function GateHomologacaoGrade({
                 })}
               </div>
             </div>
+          </div>
 
             {/* Botão Finalizar e Homologar Grade */}
             <div className="pt-3 space-y-2">
