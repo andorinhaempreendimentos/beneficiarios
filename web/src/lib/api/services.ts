@@ -3653,145 +3653,33 @@ export const areaProfessorApi = {
   }> {
     const sb = createClient();
 
-    // 1. Buscar grupos existentes no núcleo para atualizar ou criar
-    const { data: gruposExistentes } = await (sb.from('grupos') as any)
-      .select('id, nome, identificador, nucleo_id')
-      .eq('nucleo_id', params.nucleoId)
-      .is('deleted_at', null);
+    const gruposPayload = params.turmas.map((t) => ({
+      id: t.id,
+      identificador: t.identificador,
+      min: t.min,
+      max: t.max,
+      label: t.label || `Turma ${t.identificador}`,
+    }));
 
-    const mapaClienteParaDb = new Map<string, string>();
-    const turmasCriadas: any[] = [];
-
-    for (const t of params.turmas) {
-      const nomeTurma = t.label || `Turma ${t.identificador}`;
-      const existente = (gruposExistentes || []).find(
-        (g: any) =>
-          g.identificador === t.identificador ||
-          (g.nome && g.nome.toLowerCase() === nomeTurma.toLowerCase())
-      );
-
-      let grupoId: string;
-
-      if (existente) {
-        grupoId = existente.id;
-        await (sb.from('grupos') as any)
-          .update({
-            nome: nomeTurma,
-            identificador: t.identificador,
-            idade_minima: t.min,
-            idade_maxima: t.max,
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', grupoId);
-        turmasCriadas.push({ ...existente, idade_minima: t.min, idade_maxima: t.max });
-      } else {
-        const { data: novo, error: errIns } = await (sb.from('grupos') as any)
-          .insert({
-            nome: nomeTurma,
-            identificador: t.identificador,
-            nucleo_id: params.nucleoId,
-            idade_minima: t.min,
-            idade_maxima: t.max,
-            vagas_totais: 30,
-            status_inicial: 'aprovada',
-            tipo: 'regular',
-          })
-          .select()
-          .single();
-
-        if (errIns) throw errIns;
-        grupoId = novo.id;
-        turmasCriadas.push(novo);
-      }
-
-      mapaClienteParaDb.set(t.id, grupoId);
-
-      // Vincular professor como responsável pelo grupo
-      if (params.funcionarioId) {
-        const { data: respExistente } = await (sb.from('grupo_responsaveis') as any)
-          .select('id')
-          .eq('grupo_id', grupoId)
-          .eq('funcionario_id', params.funcionarioId)
-          .maybeSingle();
-
-        if (!respExistente) {
-          await (sb.from('grupo_responsaveis') as any).insert({
-            grupo_id: grupoId,
-            funcionario_id: params.funcionarioId,
-          });
-        }
-      }
-    }
-
-    // 2. Limpar horários anteriores deste núcleo para homologar a nova grade
-    await (sb.from('grupo_horarios') as any)
-      .delete()
-      .eq('nucleo_id', params.nucleoId);
-
-    // 3. Inserir os novos horários da grade semanal
-    const KEY_TO_DIA: Record<string, number> = {
-      dom: 0,
-      seg: 1,
-      ter: 2,
-      qua: 3,
-      qui: 4,
-      sex: 5,
-      sab: 6,
-    };
-
-    const rowsHorarios = params.gradeHorarios.map((slot) => {
-      const diaNum = KEY_TO_DIA[slot.dia.toLowerCase()] ?? 1;
-      const realTurmasIds = slot.turmasIds
-        .map((cid) => mapaClienteParaDb.get(cid))
-        .filter(Boolean) as string[];
-
-      const primaryGrupoId = realTurmasIds[0] || null;
-      const adicionaisIds = realTurmasIds.slice(1);
-
-      const horaInicio = slot.inicio.length === 5 ? `${slot.inicio}:00` : slot.inicio;
-      const horaFim = slot.fim.length === 5 ? `${slot.fim}:00` : slot.fim;
-
-      return {
-        nucleo_id: params.nucleoId,
-        grupo_id: primaryGrupoId,
-        grupos_adicionais_ids: adicionaisIds.length > 0 ? adicionaisIds : null,
-        responsavel_id: params.funcionarioId,
-        dia_semana: diaNum,
-        hora_inicio: horaInicio,
-        hora_fim: horaFim,
-        tipo_recorrencia: 'semanal' as const,
-      };
+    const { data: rpcRes, error: rpcErr } = await (sb as any).rpc('homologar_grade_grupos', {
+      p_nucleo_id: params.nucleoId,
+      p_responsavel_id: params.funcionarioId || null,
+      p_grupos: gruposPayload,
+      p_dias_selecionados: params.diasSelecionados,
+      p_grade_horarios: params.gradeHorarios,
     });
 
-    let horariosCriados: any[] = [];
-    if (rowsHorarios.length > 0) {
-      const { data: hData, error: hErr } = await (sb.from('grupo_horarios') as any)
-        .insert(rowsHorarios)
-        .select();
-
-      if (hErr) throw hErr;
-      horariosCriados = hData || [];
+    if (rpcErr) {
+      console.error('Erro na RPC homologar_grade_grupos:', rpcErr);
+      throw new Error(rpcErr.message || 'Erro ao homologar a grade de grupos no banco de dados.');
     }
 
-    // 4. Gravar flag oficial de homologação da grade no núcleo
-    await (sb.from('configuracoes') as any).upsert(
-      {
-        chave: `grade_homologada_${params.nucleoId}`,
-        valor: new Date().toISOString(),
-        descricao: `Grade semanal homologada pelo professor ${params.funcionarioId}`,
-        updated_at: new Date().toISOString(),
-      },
-      { onConflict: 'chave' }
-    );
-
-    // Determinar a primeira turma do dia (ou primeira turma criada)
-    const hojeNum = new Date().getDay();
-    const horarioHoje = horariosCriados.find((h: any) => h.dia_semana === hojeNum);
-    const primeiraTurmaId = horarioHoje?.grupo_id || turmasCriadas[0]?.id || null;
+    const grupos = rpcRes?.grupos || [];
+    const primeiraTurmaId = grupos[0]?.id || null;
 
     return {
-      turmasCriadas,
-      horariosCriados,
+      turmasCriadas: grupos,
+      horariosCriados: params.gradeHorarios,
       primeiraTurmaId,
     };
   },
