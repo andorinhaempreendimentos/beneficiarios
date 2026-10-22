@@ -3453,6 +3453,18 @@ export const areaProfessorApi = {
       }
     }
 
+    // Verificar se o polo possui homologação oficial gravada
+    let gradeHomologadaOficial = false;
+    const nucleoIdAlvo = funcionario?.nucleoId || (turmasMapped[0]?.nucleoId);
+    if (nucleoIdAlvo) {
+      const { data: configGrade } = await (sb.from('configuracoes') as any)
+        .select('id, valor')
+        .eq('chave', `grade_homologada_${nucleoIdAlvo}`)
+        .maybeSingle();
+
+      gradeHomologadaOficial = Boolean(configGrade);
+    }
+
     return {
       usuario,
       funcionario,
@@ -3463,6 +3475,8 @@ export const areaProfessorApi = {
       totalBeneficiariosPolo,
       totalSemTurmaPolo,
       isAdmin,
+      targetFuncionarioId: funcionarioId,
+      gradeHomologada: gradeHomologadaOficial,
     };
   },
 
@@ -3758,6 +3772,17 @@ export const areaProfessorApi = {
       if (hErr) throw hErr;
       horariosCriados = hData || [];
     }
+
+    // 4. Gravar flag oficial de homologação da grade no núcleo
+    await (sb.from('configuracoes') as any).upsert(
+      {
+        chave: `grade_homologada_${params.nucleoId}`,
+        valor: new Date().toISOString(),
+        descricao: `Grade semanal homologada pelo professor ${params.funcionarioId}`,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: 'chave' }
+    );
 
     // Determinar a primeira turma do dia (ou primeira turma criada)
     const hojeNum = new Date().getDay();

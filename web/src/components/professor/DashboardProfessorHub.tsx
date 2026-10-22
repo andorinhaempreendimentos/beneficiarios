@@ -53,6 +53,7 @@ interface DashboardProfessorHubProps {
   pontoHoje?: { entrada?: string; saida?: string; registrado: boolean };
   totalBeneficiariosPolo?: number;
   totalSemTurmaPolo?: number;
+  gradeHomologada?: boolean;
   loading?: boolean;
 }
 
@@ -93,6 +94,7 @@ export function DashboardProfessorHub({
   pontoHoje,
   totalBeneficiariosPolo,
   totalSemTurmaPolo,
+  gradeHomologada: gradeHomologadaProp,
   loading = false,
 }: DashboardProfessorHubProps) {
   const router = useRouter();
@@ -103,15 +105,22 @@ export function DashboardProfessorHub({
   // Controle de exibição do Gate de Homologação de Grade
   const [exibindoGateGrade, setExibindoGateGrade] = useState(false);
 
-  // Grade é considerada homologada se tiver turmas E slots de horários cadastrados
-  const gradeHomologada = useMemo(() => {
-    return turmas.length > 0 && (slotsGrid ?? []).length > 0;
-  }, [turmas, slotsGrid]);
+  // Grade é considerada homologada se tiver confirmação explícita gravada no banco
+  const gradeEstaHomologada = useMemo(() => {
+    return Boolean(gradeHomologadaProp);
+  }, [gradeHomologadaProp]);
 
-  const deveExibirGate = exibindoGateGrade || (!loading && !gradeHomologada);
+  // Se o polo não tiver homologação oficial, o Gate é 100% mandatório
+  const deveExibirGate = exibindoGateGrade || (!loading && !gradeEstaHomologada);
 
   async function handleConcluirHomologacao(dados: {
-    turmas: TurmaMontada[];
+    turmas: Array<{
+      id: string;
+      identificador: string;
+      min: number;
+      max: number;
+      label: string;
+    }>;
     diasSelecionados: string[];
     gradeHorarios: SlotHorarioGrade[];
   }) {
@@ -523,12 +532,15 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
 
   if (deveExibirGate) {
     return (
-      <GateHomologacaoGrade
-        professor={professor}
-        nucleo={nucleo}
-        onConcluirHomologacao={handleConcluirHomologacao}
-        onCancelar={gradeHomologada ? () => setExibindoGateGrade(false) : undefined}
-      />
+      <div className="py-6 px-3 min-h-screen bg-slate-900/90 backdrop-blur-md flex items-center justify-center">
+        <GateHomologacaoGrade
+          professor={professor}
+          nucleo={nucleo}
+          totalAlunosPolo={totalBeneficiariosPolo ?? 92}
+          onConcluirHomologacao={handleConcluirHomologacao}
+          onCancelar={gradeEstaHomologada ? () => setExibindoGateGrade(false) : undefined}
+        />
+      </div>
     );
   }
 

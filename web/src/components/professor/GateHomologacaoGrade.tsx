@@ -16,14 +16,20 @@ import {
   Sparkles,
   Info,
   Flag,
+  Lock,
+  Check,
+  CheckSquare,
+  Shield,
+  HelpCircle,
+  Trophy,
 } from "lucide-react";
 import type { FuncionarioApi, NucleoApi } from "@/lib/api/services";
 
 export interface TurmaMontada {
   id: string;
   identificador: string;
-  min: number;
-  max: number;
+  min: number | null;
+  max: number | null;
   label: string;
   cor: string;
 }
@@ -40,25 +46,32 @@ export interface SlotHorarioGrade {
 export interface GateHomologacaoGradeProps {
   professor: FuncionarioApi;
   nucleo?: NucleoApi;
+  totalAlunosPolo?: number;
   onConcluirHomologacao: (dados: {
-    turmas: TurmaMontada[];
+    turmas: Array<{
+      id: string;
+      identificador: string;
+      min: number;
+      max: number;
+      label: string;
+    }>;
     diasSelecionados: string[];
     gradeHorarios: SlotHorarioGrade[];
   }) => Promise<void>;
   onCancelar?: () => void;
 }
 
-const DIAS_MAP: Record<string, { nome: string; curto: string; order: number }> = {
-  seg: { nome: "Segunda-feira", curto: "SEG", order: 1 },
-  ter: { nome: "Terça-feira", curto: "TER", order: 2 },
-  qua: { nome: "Quarta-feira", curto: "QUA", order: 3 },
-  qui: { nome: "Quinta-feira", curto: "QUI", order: 4 },
-  sex: { nome: "Sexta-feira", curto: "SEX", order: 5 },
-  sab: { nome: "Sábado", curto: "SÁB", order: 6 },
-  dom: { nome: "Domingo", curto: "DOM", order: 7 },
+const DIAS_MAP: Record<string, { id: string; nome: string; curto: string; order: number }> = {
+  seg: { id: "seg", nome: "Segunda-feira", curto: "Seg", order: 1 },
+  ter: { id: "ter", nome: "Terça-feira", curto: "Ter", order: 2 },
+  qua: { id: "qua", nome: "Quarta-feira", curto: "Qua", order: 3 },
+  qui: { id: "qui", nome: "Quinta-feira", curto: "Qui", order: 4 },
+  sex: { id: "sex", nome: "Sexta-feira", curto: "Sex", order: 5 },
+  sab: { id: "sab", nome: "Sábado", curto: "Sáb", order: 6 },
 };
 
-const CORES_TURMAS = ["sky", "indigo", "emerald", "amber", "purple", "rose", "teal", "cyan"];
+const TODAS_AS_IDADES = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
+const LETRAS_TURMAS = ["A", "B", "C", "D", "E", "F", "G", "H"];
 
 function horaParaMinutos(str: string): number {
   if (!str) return 0;
@@ -77,18 +90,17 @@ function horariosColidem(i1: string, f1: string, i2: string, f2: string): boolea
 export function GateHomologacaoGrade({
   professor,
   nucleo,
+  totalAlunosPolo = 92,
   onConcluirHomologacao,
   onCancelar,
 }: GateHomologacaoGradeProps) {
-  // Stepper: 1 = Turmas, 2 = Dias, 3 = Calendário/Grade
+  // Stepper: 1 = Minhas Turmas, 2 = Dias da Semana, 3 = Calendário & Grade
   const [etapa, setEtapa] = useState<1 | 2 | 3>(1);
 
   // 1ª Etapa: Turmas Montadas (inicia 100% vazia)
   const [turmasMontadas, setTurmasMontadas] = useState<TurmaMontada[]>([]);
-  const [novaIdadeMin, setNovaIdadeMin] = useState<number>(8);
-  const [novaIdadeMax, setNovaIdadeMax] = useState<number>(11);
 
-  // 2ª Etapa: Dias da Semana Selecionados (inicia 100% limpa)
+  // 2ª Etapa: Dias da Semana Selecionados (inicia 100% limpa, zero pré-marcado)
   const [diasSelecionados, setDiasSelecionados] = useState<string[]>([]);
 
   // 3ª Etapa: Distribuição da Grade no Calendário
@@ -103,11 +115,16 @@ export function GateHomologacaoGrade({
   const [turmasMarcadasModal, setTurmasMarcadasModal] = useState<string[]>([]);
   const [diasReplicacaoModal, setDiasReplicacaoModal] = useState<string[]>([]);
   const [bannerAvisoAjusteCompleto, setBannerAvisoAjusteCompleto] = useState(false);
+  const [highlightFim, setHighlightFim] = useState(false);
 
   // Modal Confirmação Duplicidade de Horário no mesmo dia
   const [modalDuplicidadeAberto, setModalDuplicidadeAberto] = useState(false);
   const [pendenteTurmaDuplicadaId, setPendenteTurmaDuplicadaId] = useState<string | null>(null);
-  const [infoDuplicidade, setInfoDuplicidade] = useState<{ turmaNome: string; diaNome: string; horarioStr: string } | null>(null);
+  const [infoDuplicidade, setInfoDuplicidade] = useState<{
+    turmaNome: string;
+    diaNome: string;
+    horarioStr: string;
+  } | null>(null);
   const [turmasDuplicadasAprovadas, setTurmasDuplicadasAprovadas] = useState<Set<string>>(new Set());
 
   // Modal de Confirmação de Duração / Horário Completo em Bloco Multiturma
@@ -118,102 +135,181 @@ export function GateHomologacaoGrade({
   const [salvando, setSalvando] = useState(false);
 
   // -------------------------------------------------------------
-  // VALIDAÇÕES DA ETAPA 1 (FAIXAS ETÁRIAS CONTÍGUAS E SEM OVERLAP)
+  // FUNÇÃO: CARREGAR EXEMPLO COMPLETO REAL (CAPADÓCIA) COM 1 TOQUE
   // -------------------------------------------------------------
-  const analiseFaixas = useMemo(() => {
-    if (turmasMontadas.length === 0) {
-      return { contigua: false, gaps: [], overlaps: [], pronta: false };
-    }
+  function carregarExemploCompletoCapadocia() {
+    setTurmasMontadas([
+      { id: "t1", identificador: "A", min: 8, max: 11, label: "Turma A", cor: "sky" },
+      { id: "t2", identificador: "B", min: 12, max: 16, label: "Turma B", cor: "indigo" },
+    ]);
+    setDiasSelecionados(["seg", "qua", "sab"]);
+    setDistribuicaoHorarios([
+      { id: "s1", dia: "seg", inicio: "08:00", fim: "09:30", turmasIds: ["t1"], grupoId: "grp_1" },
+      { id: "s2", dia: "seg", inicio: "09:30", fim: "11:00", turmasIds: ["t2"], grupoId: "grp_2" },
+      { id: "s3", dia: "qua", inicio: "08:00", fim: "09:30", turmasIds: ["t1"], grupoId: "grp_1" },
+      { id: "s4", dia: "qua", inicio: "09:30", fim: "11:00", turmasIds: ["t2"], grupoId: "grp_2" },
+      { id: "s5", dia: "sab", inicio: "08:00", fim: "11:00", turmasIds: ["t1", "t2"], grupoId: "grp_conjunto" },
+    ]);
+    setEtapa(3);
+  }
 
-    const ordenadas = [...turmasMontadas].sort((a, b) => a.min - b.min);
-    const gaps: string[] = [];
-    const overlaps: string[] = [];
+  // -------------------------------------------------------------
+  // VALIDAÇÕES DA ETAPA 1 (FAIXAS CONTÍGUAS, SEM OVERLAP E SEM LACUNAS)
+  // -------------------------------------------------------------
+  const conflitosIdade = useMemo(() => {
+    const conflitos: Array<{
+      turma1: TurmaMontada;
+      turma2: TurmaMontada;
+      sobreposicao: string;
+    }> = [];
 
-    for (let i = 0; i < ordenadas.length - 1; i++) {
-      const atual = ordenadas[i];
-      const proxima = ordenadas[i + 1];
+    for (let i = 0; i < turmasMontadas.length; i++) {
+      for (let j = i + 1; j < turmasMontadas.length; j++) {
+        const t1 = turmasMontadas[i];
+        const t2 = turmasMontadas[j];
 
-      if (atual.max >= proxima.min) {
-        overlaps.push(
-          `Sobreposição entre Turma ${atual.identificador} (${atual.min}-${atual.max}) e Turma ${proxima.identificador} (${proxima.min}-${proxima.max})`
-        );
-      } else if (atual.max + 1 < proxima.min) {
-        const gapInicio = atual.max + 1;
-        const gapFim = proxima.min - 1;
-        const gapStr = gapInicio === gapFim ? `${gapInicio} anos` : `${gapInicio} a ${gapFim} anos`;
-        gaps.push(`Lacuna desatendida entre as turmas: ${gapStr}`);
+        if (t1.min === null || t1.max === null || t2.min === null || t2.max === null) {
+          continue;
+        }
+
+        const inicioMax = Math.max(t1.min, t2.min);
+        const fimMin = Math.min(t1.max, t2.max);
+
+        if (inicioMax <= fimMin) {
+          conflitos.push({
+            turma1: t1,
+            turma2: t2,
+            sobreposicao: `${inicioMax} a ${fimMin} anos`,
+          });
+        }
       }
     }
 
-    return {
-      contigua: gaps.length === 0 && overlaps.length === 0,
-      gaps,
-      overlaps,
-      pronta: turmasMontadas.length > 0 && gaps.length === 0 && overlaps.length === 0,
-    };
+    return conflitos;
   }, [turmasMontadas]);
 
-  function adicionarTurma() {
-    if (novaIdadeMin >= novaIdadeMax) {
-      alert("A idade mínima deve ser menor que a idade máxima.");
-      return;
+  const lacunasIdade = useMemo(() => {
+    const completas = turmasMontadas.filter((t) => t.min !== null && t.max !== null);
+    if (completas.length < 2) return [];
+
+    const ordenadas = [...completas].sort((a, b) => (a.min ?? 0) - (b.min ?? 0));
+    const lacunas: Array<{
+      turmaAnterior: TurmaMontada;
+      turmaProxima: TurmaMontada;
+      idades: number[];
+      descricao: string;
+    }> = [];
+
+    for (let i = 0; i < ordenadas.length - 1; i++) {
+      const tAtual = ordenadas[i];
+      const tProx = ordenadas[i + 1];
+
+      if (tAtual.max !== null && tProx.min !== null && tProx.min > tAtual.max + 1) {
+        const idades: number[] = [];
+        for (let age = tAtual.max + 1; age < tProx.min; age++) {
+          idades.push(age);
+        }
+        lacunas.push({
+          turmaAnterior: tAtual,
+          turmaProxima: tProx,
+          idades,
+          descricao:
+            idades.length === 1 ? `${idades[0]} anos` : `${idades[0]} a ${idades[idades.length - 1]} anos`,
+        });
+      }
+    }
+    return lacunas;
+  }, [turmasMontadas]);
+
+  const todasCompletas = useMemo(() => {
+    return turmasMontadas.length > 0 && turmasMontadas.every((t) => t.min !== null && t.max !== null);
+  }, [turmasMontadas]);
+
+  const ultimaTurmaCompleta = useMemo(() => {
+    if (turmasMontadas.length === 0) return true;
+    const ultima = turmasMontadas[turmasMontadas.length - 1];
+    return ultima.min !== null && ultima.max !== null;
+  }, [turmasMontadas]);
+
+  const podeAvancarEtapa1 =
+    todasCompletas && conflitosIdade.length === 0 && lacunasIdade.length === 0;
+
+  function adicionarNovaTurma() {
+    if (turmasMontadas.length > 0) {
+      const ultima = turmasMontadas[turmasMontadas.length - 1];
+      if (ultima.min === null || ultima.max === null) {
+        alert(
+          `Por favor, configure a idade mínima e máxima da Turma ${ultima.identificador} antes de adicionar outra.`
+        );
+        return;
+      }
     }
 
-    // Verifica sobreposição com turmas existentes
-    const overlap = turmasMontadas.find(
-      (t) => Math.max(t.min, novaIdadeMin) <= Math.min(t.max, novaIdadeMax)
-    );
+    const nextId = `t_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+    const letra = LETRAS_TURMAS[turmasMontadas.length % LETRAS_TURMAS.length];
 
-    if (overlap) {
-      alert(
-        `Esta faixa (${novaIdadeMin} a ${novaIdadeMax} anos) sobrepõe a Turma ${overlap.identificador} (${overlap.min} a ${overlap.max} anos). Ajuste as idades para não sobrepor.`
-      );
-      return;
-    }
-
-    const letrasUsadas = new Set(turmasMontadas.map((t) => t.identificador));
-    const todasLetras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-    const proximaLetra = todasLetras.find((l) => !letrasUsadas.has(l)) || `T${turmasMontadas.length + 1}`;
-
-    const nova: TurmaMontada = {
-      id: `turma_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
-      identificador: proximaLetra,
-      min: novaIdadeMin,
-      max: novaIdadeMax,
-      label: `Turma ${proximaLetra}`,
-      cor: CORES_TURMAS[turmasMontadas.length % CORES_TURMAS.length],
-    };
-
-    const atualizada = [...turmasMontadas, nova].sort((a, b) => a.min - b.min);
-    setTurmasMontadas(atualizada);
-
-    // Sugere a próxima faixa contígua
-    if (novaIdadeMax < 20) {
-      setNovaIdadeMin(novaIdadeMax + 1);
-      setNovaIdadeMax(Math.min(novaIdadeMax + 4, 21));
-    }
+    setTurmasMontadas((prev) => [
+      ...prev,
+      {
+        id: nextId,
+        identificador: letra,
+        min: null,
+        max: null,
+        label: `Turma ${letra}`,
+        cor: "sky",
+      },
+    ]);
   }
 
-  function removerTurma(id: string) {
-    setTurmasMontadas((prev) => prev.filter((t) => t.id !== id));
-    // Remove também de qualquer bloco de horário onde estava vinculada
+  function removerTurma(turmaId: string) {
+    setTurmasMontadas((prev) => prev.filter((x) => x.id !== turmaId));
     setDistribuicaoHorarios((prev) =>
       prev
         .map((slot) => ({
           ...slot,
-          turmasIds: slot.turmasIds.filter((tId) => tId !== id),
+          turmasIds: slot.turmasIds.filter((id) => id !== turmaId),
         }))
         .filter((slot) => slot.turmasIds.length > 0)
     );
   }
 
+  function atualizarIdadeTurma(turmaId: string, campo: "min" | "max", valor: number | null) {
+    setTurmasMontadas((prev) =>
+      prev.map((t) => {
+        if (t.id !== turmaId) return t;
+        const clone = { ...t, [campo]: valor };
+
+        if (campo === "min") {
+          if (clone.max !== null && (valor === null || clone.max < valor)) {
+            clone.max = null;
+          }
+          const outrasSuperiores = prev.filter(
+            (o) => o.id !== t.id && o.min !== null && valor !== null && o.min > valor
+          );
+          if (outrasSuperiores.length > 0) {
+            const menorInicio = Math.min(...outrasSuperiores.map((o) => o.min as number));
+            if (clone.max !== null && clone.max >= menorInicio) {
+              clone.max = null;
+            }
+          }
+        }
+        return clone;
+      })
+    );
+  }
+
+  function avancarParaEtapa2() {
+    if (!podeAvancarEtapa1) return;
+    setEtapa(2);
+  }
+
   // -------------------------------------------------------------
   // VALIDAÇÕES DA ETAPA 2 (DIAS DA SEMANA)
   // -------------------------------------------------------------
-  function toggleDiaSemana(diaKey: string) {
+  function toggleDiaEtapa2(diaKey: string) {
     setDiasSelecionados((prev) => {
       if (prev.includes(diaKey)) {
-        // Ao desmarcar dia, remove os slots agendados naquele dia
+        // Remove horários agendados naquele dia desmarcado
         setDistribuicaoHorarios((slots) => slots.filter((s) => s.dia !== diaKey));
         return prev.filter((d) => d !== diaKey);
       } else {
@@ -222,8 +318,13 @@ export function GateHomologacaoGrade({
     });
   }
 
+  function avancarParaEtapa3() {
+    if (diasSelecionados.length === 0) return;
+    setEtapa(3);
+  }
+
   // -------------------------------------------------------------
-  // VALIDAÇÕES DA ETAPA 3 (CALENDÁRIO & MODAL DE BLOCOS)
+  // VALIDAÇÕES DA ETAPA 3 (CALENDÁRIO & CHECKLIST DE ALOCAÇÃO)
   // -------------------------------------------------------------
   const statusAlocacaoTurmas = useMemo(() => {
     return turmasMontadas.map((t) => {
@@ -236,20 +337,27 @@ export function GateHomologacaoGrade({
     });
   }, [turmasMontadas, distribuicaoHorarios]);
 
-  const todasTurmasAlocadas =
-    turmasMontadas.length > 0 && statusAlocacaoTurmas.every((s) => s.alocada);
+  const turmasPendentes = useMemo(() => {
+    return statusAlocacaoTurmas.filter((s) => !s.alocada);
+  }, [statusAlocacaoTurmas]);
 
-  function abrirModalNovoBloco(dia: string) {
+  const todasTurmasDistribuidas =
+    turmasMontadas.length > 0 && turmasPendentes.length === 0;
+
+  const diasOrdenados = useMemo(() => {
+    return [...diasSelecionados].sort((a, b) => (DIAS_MAP[a]?.order ?? 0) - (DIAS_MAP[b]?.order ?? 0));
+  }, [diasSelecionados]);
+
+  function abrirModalNovoBloco(diaEscolhido?: string) {
     setSlotEmEdicaoId(null);
-    setDiaAlvoModal(dia);
-    setBannerAvisoAjusteCompleto(false);
-    setTurmasDuplicadasAprovadas(new Set());
     setDuracaoConfirmada(false);
-    setTurmasMarcadasModal([]);
-    // NUNCA PRÉ-MARCADO: INICIA 100% DESMARCADO
-    setDiasReplicacaoModal([]);
+    setTurmasDuplicadasAprovadas(new Set());
+    setBannerAvisoAjusteCompleto(false);
 
-    // Sugere horário inteligente
+    const dia = diaEscolhido || diasOrdenados[0] || "seg";
+    setDiaAlvoModal(dia);
+
+    // Sugere horário inteligente (subsequente aos blocos já criados naquele dia)
     const slotsDoDia = distribuicaoHorarios
       .filter((s) => s.dia === dia)
       .sort((a, b) => horaParaMinutos(a.fim) - horaParaMinutos(b.fim));
@@ -258,29 +366,33 @@ export function GateHomologacaoGrade({
     let defFim = dia === "sab" ? "11:00" : "09:30";
 
     if (slotsDoDia.length > 0) {
-      const ultimo = slotsDoDia[slotsDoDia.length - 1];
-      const minFim = horaParaMinutos(ultimo.fim);
+      const ultimoSlot = slotsDoDia[slotsDoDia.length - 1];
+      const minFim = horaParaMinutos(ultimoSlot.fim);
       if (minFim < 18 * 60) {
-        defInicio = ultimo.fim;
-        const dur = dia === "sab" ? 180 : 90;
-        const novoFimMin = Math.min(minFim + dur, 19 * 60);
-        const hF = String(Math.floor(novoFimMin / 60)).padStart(2, "0");
-        const mF = String(novoFimMin % 60).padStart(2, "0");
-        defFim = `${hF}:${mF}`;
+        defInicio = ultimoSlot.fim;
+        const duracaoMin = dia === "sab" ? 180 : 90;
+        const novoMinFim = Math.min(minFim + duracaoMin, 19 * 60);
+        const hFim = String(Math.floor(novoMinFim / 60)).padStart(2, "0");
+        const mFim = String(novoMinFim % 60).padStart(2, "0");
+        defFim = `${hFim}:${mFim}`;
       }
     }
 
     setModalInicio(defInicio);
     setModalFim(defFim);
+    setTurmasMarcadasModal([]);
+    // NUNCA PRÉ-MARCADO: INICIA 100% DESMARCADO
+    setDiasReplicacaoModal([]);
     setModalBlocoAberto(true);
   }
 
   function abrirModalEditarBloco(slot: SlotHorarioGrade) {
     setSlotEmEdicaoId(slot.id);
     setDiaAlvoModal(slot.dia);
-    setBannerAvisoAjusteCompleto(false);
     setTurmasDuplicadasAprovadas(new Set(slot.turmasIds));
     setDuracaoConfirmada(slot.turmasIds.length >= 2);
+    setBannerAvisoAjusteCompleto(false);
+
     setModalInicio(slot.inicio);
     setModalFim(slot.fim);
     setTurmasMarcadasModal([...slot.turmasIds]);
@@ -289,35 +401,35 @@ export function GateHomologacaoGrade({
     setModalBlocoAberto(true);
   }
 
-  // Verificação de conflito estritamente isolada no dia aberto
+  // Conflito de slot no dia atual (estritamente isolado no diaAlvoModal)
   const conflitoSlotNoDia = useMemo(() => {
     if (!modalBlocoAberto) return null;
     if (!modalInicio || !modalFim || horaParaMinutos(modalInicio) >= horaParaMinutos(modalFim)) {
       return null;
     }
 
-    const colidente = distribuicaoHorarios.find(
+    const slotExistente = distribuicaoHorarios.find(
       (s) =>
         s.id !== slotEmEdicaoId &&
         s.dia === diaAlvoModal &&
         horariosColidem(modalInicio, modalFim, s.inicio, s.fim)
     );
 
-    if (colidente) {
+    if (slotExistente) {
       return {
         diaNome: DIAS_MAP[diaAlvoModal]?.nome || diaAlvoModal,
-        inicio: colidente.inicio,
-        fim: colidente.fim,
+        inicio: slotExistente.inicio,
+        fim: slotExistente.fim,
       };
     }
     return null;
   }, [modalBlocoAberto, modalInicio, modalFim, slotEmEdicaoId, diaAlvoModal, distribuicaoHorarios]);
 
-  function toggleCheckboxTurmaModal(turmaId: string) {
+  function aoAlternarCheckboxTurma(turmaId: string) {
     const isMarcada = turmasMarcadasModal.includes(turmaId);
 
     if (!isMarcada) {
-      // 1. REGRA: A MESMA TURMA JAMAIS PODE SER ADICIONADA NO MESMO HORÁRIO NO MESMO DIA
+      // 1. REGRA ESTRITA: A mesma turma jamais pode ser adicionada no mesmo horário no mesmo dia
       const colidente = distribuicaoHorarios.find(
         (s) =>
           s.id !== slotEmEdicaoId &&
@@ -328,13 +440,14 @@ export function GateHomologacaoGrade({
 
       if (colidente) {
         const t = turmasMontadas.find((x) => x.id === turmaId);
+        const nomeT = t ? `Turma ${t.identificador}` : "Esta turma";
         alert(
-          `Atenção: A ${t ? `Turma ${t.identificador}` : "turma"} jamais poderá ser adicionada no mesmo horário no mesmo dia (${DIAS_MAP[diaAlvoModal].nome} das ${colidente.inicio} às ${colidente.fim}). Mude o horário do bloco para adicioná-la.`
+          `Atenção: A ${nomeT} jamais poderá ser adicionada no mesmo horário no mesmo dia (${DIAS_MAP[diaAlvoModal].nome} das ${colidente.inicio} às ${colidente.fim}).\n\nMude o horário do bloco para poder adicionar esta turma.`
         );
         return;
       }
 
-      // 2. SE FOR EM OUTRO HORÁRIO NO MESMO DIA: PERGUNTA CONFIRMAÇÃO
+      // 2. Se for em outro horário no mesmo dia (sem colisão): pergunta confirmação
       if (!turmasDuplicadasAprovadas.has(turmaId)) {
         const outroSlot = distribuicaoHorarios.find(
           (s) =>
@@ -356,11 +469,11 @@ export function GateHomologacaoGrade({
         }
       }
 
-      const novasMarcadas = [...turmasMarcadasModal, turmaId];
-      setTurmasMarcadasModal(novasMarcadas);
+      const novas = [...turmasMarcadasModal, turmaId];
+      setTurmasMarcadasModal(novas);
 
-      // 3. SE FICOU COM >= 2 TURMAS: ABRE OVERLAY DE DESTAQUE DO TÉRMINO
-      if (novasMarcadas.length >= 2 && !duracaoConfirmada) {
+      // 3. Se agora tem >= 2 turmas marcadas: sobrepõe com destaque de término e duração!
+      if (novas.length >= 2 && !duracaoConfirmada) {
         setModalDuracaoAberta(true);
       }
     } else {
@@ -392,20 +505,21 @@ export function GateHomologacaoGrade({
     setPendenteTurmaDuplicadaId(null);
   }
 
-  function confirmarDuracaoModal() {
+  function confirmarDuracaoConjunta() {
     setDuracaoConfirmada(true);
     setModalDuracaoAberta(false);
     setBannerAvisoAjusteCompleto(false);
   }
 
-  function recusarDuracaoModal() {
-    // Opção 1: Ambas as turmas permanecem no bloco, e o professor ajusta o horário completo!
-    setDuracaoConfirmada(true);
+  function recusarDuracaoConjunta() {
     setModalDuracaoAberta(false);
+    setDuracaoConfirmada(true);
     setBannerAvisoAjusteCompleto(true);
+    setHighlightFim(true);
+    setTimeout(() => setHighlightFim(false), 3500);
   }
 
-  function toggleReplicacaoDia(dia: string) {
+  function togglePillReplicacao(dia: string) {
     setDiasReplicacaoModal((prev) =>
       prev.includes(dia) ? prev.filter((d) => d !== dia) : [...prev, dia]
     );
@@ -413,7 +527,7 @@ export function GateHomologacaoGrade({
 
   function salvarBlocoModal() {
     if (!modalInicio || !modalFim) {
-      alert("Por favor, informe o horário de início e término.");
+      alert("Por favor, informe o horário de início e término do bloco.");
       return;
     }
 
@@ -423,37 +537,51 @@ export function GateHomologacaoGrade({
     }
 
     if (turmasMarcadasModal.length === 0) {
-      alert("Selecione ao menos 1 turma para este bloco.");
+      alert("Selecione ao menos 1 turma para treinar neste bloco.");
       return;
     }
 
-    if (conflitoSlotNoDia) {
-      alert("Já existe outro bloco cadastrado neste mesmo horário para este dia.");
-      return;
-    }
+    const diasParaInserir = [diaAlvoModal, ...diasReplicacaoModal];
 
-    const diasAlvo = [diaAlvoModal, ...diasReplicacaoModal];
-
-    // Validação nos outros dias selecionados para replicação
-    for (const dia of diasAlvo) {
-      const colidente = distribuicaoHorarios.find(
+    // Validações estritas por dia
+    for (const dia of diasParaInserir) {
+      const slotExistente = distribuicaoHorarios.find(
         (s) =>
           s.id !== slotEmEdicaoId &&
           s.dia === dia &&
           horariosColidem(modalInicio, modalFim, s.inicio, s.fim)
       );
 
-      if (colidente) {
+      if (slotExistente) {
         alert(
-          `Conflito em ${DIAS_MAP[dia].nome}: Já existe um bloco das ${colidente.inicio} às ${colidente.fim}. Não é possível replicar para este dia.`
+          `Nenhum slot pode ter o mesmo horário no mesmo dia!\n\nJá existe outro bloco cadastrado em ${DIAS_MAP[dia].nome} no horário das ${slotExistente.inicio} às ${slotExistente.fim}.\n\nSe mais de uma turma treina neste horário, edite o bloco existente e selecione todas as turmas que treinam juntas.`
         );
         return;
       }
+
+      for (const turmaId of turmasMarcadasModal) {
+        const conflitoTurma = distribuicaoHorarios.find(
+          (s) =>
+            s.id !== slotEmEdicaoId &&
+            s.dia === dia &&
+            s.turmasIds.includes(turmaId) &&
+            horariosColidem(modalInicio, modalFim, s.inicio, s.fim)
+        );
+        if (conflitoTurma) {
+          const t = turmasMontadas.find((x) => x.id === turmaId);
+          const nomeT = t ? `Turma ${t.identificador}` : "A turma";
+          alert(
+            `Bloqueio de Horário:\n\n${nomeT} JAMAIS poderá ser adicionada no mesmo horário no mesmo dia!\n\nEla já possui aula em ${DIAS_MAP[dia].nome} das ${conflitoTurma.inicio} às ${conflitoTurma.fim}. Mude o horário para adicioná-la.`
+          );
+          return;
+        }
+      }
     }
 
-    const grupoId = slotEmEdicaoId
-      ? distribuicaoHorarios.find((s) => s.id === slotEmEdicaoId)?.grupoId || `grp_${Date.now()}`
-      : `grp_${Date.now()}`;
+    const slotEditando = slotEmEdicaoId
+      ? distribuicaoHorarios.find((s) => s.id === slotEmEdicaoId)
+      : null;
+    const grupoIdAlvo = slotEditando?.grupoId || `grp_${Date.now()}`;
 
     setDistribuicaoHorarios((prev) => {
       let novaLista = [...prev];
@@ -467,19 +595,24 @@ export function GateHomologacaoGrade({
                 inicio: modalInicio,
                 fim: modalFim,
                 turmasIds: [...turmasMarcadasModal],
-                grupoId,
+                grupoId: grupoIdAlvo,
               }
             : s
         );
 
-        // Se replicou para outros dias, cria ou atualiza nos outros dias
+        // Replica nos outros dias marcados
         diasReplicacaoModal.forEach((dia) => {
           const existenteOutroDia = novaLista.find(
-            (s) => s.dia === dia && s.inicio === modalInicio && s.fim === modalFim
+            (s) =>
+              s.dia === dia &&
+              ((slotEditando?.grupoId && s.grupoId === slotEditando.grupoId) ||
+                (s.inicio === modalInicio && s.fim === modalFim))
           );
           if (existenteOutroDia) {
+            existenteOutroDia.inicio = modalInicio;
+            existenteOutroDia.fim = modalFim;
             existenteOutroDia.turmasIds = [...turmasMarcadasModal];
-            existenteOutroDia.grupoId = grupoId;
+            existenteOutroDia.grupoId = grupoIdAlvo;
           } else {
             novaLista.push({
               id: `slot_${Date.now()}_${dia}_${Math.random().toString(36).substring(2, 6)}`,
@@ -487,20 +620,19 @@ export function GateHomologacaoGrade({
               inicio: modalInicio,
               fim: modalFim,
               turmasIds: [...turmasMarcadasModal],
-              grupoId,
+              grupoId: grupoIdAlvo,
             });
           }
         });
       } else {
-        // Criação de novos blocos
-        diasAlvo.forEach((dia) => {
+        diasParaInserir.forEach((dia) => {
           novaLista.push({
             id: `slot_${Date.now()}_${dia}_${Math.random().toString(36).substring(2, 6)}`,
             dia,
             inicio: modalInicio,
             fim: modalFim,
             turmasIds: [...turmasMarcadasModal],
-            grupoId,
+            grupoId: grupoIdAlvo,
           });
         });
       }
@@ -511,315 +643,667 @@ export function GateHomologacaoGrade({
     setModalBlocoAberto(false);
   }
 
-  function removerBloco(id: string) {
+  function removerSlotDistribuicao(id: string) {
     setDistribuicaoHorarios((prev) => prev.filter((s) => s.id !== id));
   }
 
   // -------------------------------------------------------------
-  // FINALIZAÇÃO E HOMOLOGAÇÃO
+  // CONFIRMAÇÃO FINAL E PERSISTÊNCIA MANDATÓRIA
   // -------------------------------------------------------------
-  async function handleFinalizarHomologacao() {
-    if (!todasTurmasAlocadas) {
-      alert("Atenção: Todas as turmas criadas precisam estar alocadas em ao menos 1 bloco da semana.");
+  async function finalizarHomologacao() {
+    if (!todasTurmasDistribuidas) {
+      alert(
+        "Atenção: Não é possível confirmar a grade pois existem turmas que ainda não foram alocadas em nenhum horário da semana."
+      );
+      return;
+    }
+
+    if (distribuicaoHorarios.length === 0) {
+      alert("Coloque ao menos 1 bloco de aula no calendário antes de confirmar.");
       return;
     }
 
     try {
       setSalvando(true);
+      const turmasSanitizadas = turmasMontadas.map((t) => ({
+        id: t.id,
+        identificador: t.identificador,
+        min: t.min ?? 8,
+        max: t.max ?? 11,
+        label: t.label || `Turma ${t.identificador}`,
+      }));
+
       await onConcluirHomologacao({
-        turmas: turmasMontadas,
+        turmas: turmasSanitizadas,
         diasSelecionados,
         gradeHorarios: distribuicaoHorarios,
       });
     } catch (err: any) {
-      alert(`Erro ao salvar grade: ${err.message || "Tente novamente."}`);
+      console.error("Erro na homologação:", err);
+      alert(err?.message || "Ocorreu um erro ao gravar a grade. Tente novamente.");
     } finally {
       setSalvando(false);
     }
   }
 
+  // Iniciais do Professor
+  const iniciaisProfessor = (professor.nomeCompleto || "PR")
+    .split(" ")
+    .slice(0, 2)
+    .map((p) => p[0])
+    .join("")
+    .toUpperCase();
+
+  // Duração calculada do modal de término
+  const duracaoMinTotalModal = horaParaMinutos(modalFim) - horaParaMinutos(modalInicio);
+  const horasTotModal = Math.floor(duracaoMinTotalModal / 60);
+  const minsTotModal = duracaoMinTotalModal % 60;
+  const duracaoStrTotModal =
+    minsTotModal > 0 ? `${horasTotModal}h${minsTotModal}m` : `${horasTotModal} horas`;
+
   return (
-    <div className="w-full max-w-lg mx-auto bg-slate-50 min-h-screen pb-12 flex flex-col font-sans">
-      {/* HEADER FIXO DO GATE */}
-      <header className="bg-sky-800 text-white px-5 pt-6 pb-5 shadow-md">
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <span className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center text-sm font-bold text-sky-200">
-              <Calendar className="w-4 h-4" />
-            </span>
+    <div className="w-full max-w-2xl mx-auto bg-slate-50 rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col min-h-[850px] relative">
+      {/* ============================================================== */}
+      {/* HEADER DO PROFESSOR (ANATOMIA FIEL AO HTML)                    */}
+      {/* ============================================================== */}
+      <div className="bg-gradient-to-r from-sky-800 via-sky-700 to-indigo-800 text-white p-4 shadow-md">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-full bg-white/20 border border-white/30 flex items-center justify-center font-black text-sm">
+              {iniciaisProfessor}
+            </div>
             <div>
-              <h1 className="text-sm font-black uppercase tracking-wider">Homologação da Grade</h1>
-              <p className="text-[11px] text-sky-200">
-                {nucleo?.identificacao || nucleo?.nomeLocal || "Meu Núcleo"} • {professor.nomeCompleto}
-              </p>
+              <div className="text-[11px] text-sky-200 font-medium">Professor Responsável</div>
+              <div className="text-sm font-bold leading-tight">{professor.nomeCompleto}</div>
             </div>
           </div>
-          {onCancelar && (
+
+          <div className="flex items-center gap-2">
+            {/* Botão Carregar Exemplo Real */}
             <button
-              onClick={onCancelar}
-              className="text-sky-200 hover:text-white text-xs font-bold px-2 py-1"
+              type="button"
+              onClick={carregarExemploCompletoCapadocia}
+              className="bg-white/15 hover:bg-white/25 active:scale-95 text-sky-100 text-[11px] font-bold py-1.5 px-3 rounded-xl border border-white/20 flex items-center gap-1.5 transition cursor-pointer"
+              title="Carregar cenário de Capadócia com 1 clique"
             >
-              Cancelar
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Exemplo Real</span>
             </button>
-          )}
+
+            {onCancelar && (
+              <button
+                type="button"
+                onClick={onCancelar}
+                className="text-sky-200 hover:text-white text-xs font-bold px-2 py-1"
+              >
+                Voltar
+              </button>
+            )}
+          </div>
         </div>
 
-        {/* STEPPER PROGRESS */}
-        <div className="space-y-1.5">
-          <div className="flex justify-between text-[11px] font-bold text-sky-200">
+        {/* Polo Info */}
+        <div className="mt-3 bg-white/10 rounded-xl p-2.5 backdrop-blur-sm border border-white/10 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-lg bg-sky-500/30 flex items-center justify-center text-sky-200">
+              <Trophy className="w-4 h-4" />
+            </div>
+            <div>
+              <div className="text-xs font-bold text-white">
+                {nucleo?.identificacao || "Núcleo Capadócia"}
+              </div>
+              <div className="text-[10px] text-sky-200">
+                {totalAlunosPolo} alunos cadastrados no Data Lake
+              </div>
+            </div>
+          </div>
+          <span className="text-[10px] bg-amber-400/20 text-amber-300 border border-amber-400/30 px-2 py-0.5 rounded-full font-bold">
+            Homologação Mandatória
+          </span>
+        </div>
+
+        {/* Barra de Progresso das 3 Etapas */}
+        <div className="mt-4 space-y-1">
+          <div className="grid grid-cols-3 gap-1.5">
+            <div
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                etapa >= 1 ? "bg-white" : "bg-white/30"
+              }`}
+            />
+            <div
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                etapa >= 2 ? "bg-white" : "bg-white/30"
+              }`}
+            />
+            <div
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                etapa >= 3 ? "bg-white" : "bg-white/30"
+              }`}
+            />
+          </div>
+          <div className="flex justify-between items-center text-[10px] text-sky-200 font-medium">
             <span>
               {etapa === 1 && "Etapa 1 de 3: Minhas Turmas"}
               {etapa === 2 && "Etapa 2 de 3: Dias da Semana"}
               {etapa === 3 && "Etapa 3 de 3: Calendário de Horários"}
             </span>
-            <span>{etapa === 1 ? "33%" : etapa === 2 ? "66%" : "100%"}</span>
-          </div>
-          <div className="grid grid-cols-3 gap-1.5">
-            <div className={`h-1.5 rounded-full transition-all duration-300 ${etapa >= 1 ? "bg-white" : "bg-white/30"}`} />
-            <div className={`h-1.5 rounded-full transition-all duration-300 ${etapa >= 2 ? "bg-white" : "bg-white/30"}`} />
-            <div className={`h-1.5 rounded-full transition-all duration-300 ${etapa >= 3 ? "bg-white" : "bg-white/30"}`} />
+            <span>
+              {etapa === 1 && "33%"}
+              {etapa === 2 && "66%"}
+              {etapa === 3 && "100%"}
+            </span>
           </div>
         </div>
-      </header>
+      </div>
 
-      {/* CONTEÚDO DAS ETAPAS */}
-      <main className="p-4 flex-1">
-        {/* ========================================================= */}
-        {/* ETAPA 1: MINHAS TURMAS */}
-        {/* ========================================================= */}
+      {/* ============================================================== */}
+      {/* CONTEÚDO ROLÁVEL PRINCIPAL                                     */}
+      {/* ============================================================== */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {/* ============================================================ */}
+        {/* ETAPA 1: DEFINIR AS TURMAS (SELECTS + LINHA CONTÍNUA)        */}
+        {/* ============================================================ */}
         {etapa === 1 && (
           <div className="space-y-4">
-            <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-1">
-              <h2 className="text-sm font-black text-slate-900 flex items-center gap-2">
-                <Users className="w-4 h-4 text-sky-700" />
-                Definição das Turmas por Idade
+            <div>
+              <div className="flex items-center gap-1.5 text-sky-800 text-[11px] font-bold uppercase tracking-wider mb-1">
+                <Users className="w-3.5 h-3.5" /> 1ª Etapa
+              </div>
+              <h2 className="text-sm font-black text-slate-900">
+                Quais turmas você atende neste polo?
               </h2>
-              <p className="text-xs text-slate-500 leading-relaxed">
-                Crie as turmas do seu núcleo informando as faixas etárias. As idades devem ser contínuas e sem sobreposição.
+              <p className="text-xs text-slate-500 mt-0.5">
+                Defina a idade mínima e máxima de cada turma (ainda sem horários):
               </p>
             </div>
 
-            {/* FORMULÁRIO DE ADIÇÃO DE TURMA */}
-            <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
-              <label className="text-xs font-black text-slate-800 uppercase tracking-wide block">
-                + Nova Turma
-              </label>
-
-              <div className="grid grid-cols-2 gap-2.5">
-                <div>
-                  <span className="text-[11px] font-bold text-slate-500 block mb-1">Idade Mínima:</span>
-                  <select
-                    value={novaIdadeMin}
-                    onChange={(e) => setNovaIdadeMin(Number(e.target.value))}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-800"
-                  >
-                    {[5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].map((num) => (
-                      <option key={num} value={num}>
-                        {num} anos
-                      </option>
-                    ))}
-                  </select>
+            {/* Regras de Validação das Faixas */}
+            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-3 flex items-start gap-2.5">
+              <Shield className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+              <div>
+                <div className="text-xs font-bold text-amber-950">
+                  Regras de Validação das Faixas:
                 </div>
-                <div>
-                  <span className="text-[11px] font-bold text-slate-500 block mb-1">Idade Máxima:</span>
-                  <select
-                    value={novaIdadeMax}
-                    onChange={(e) => setNovaIdadeMax(Number(e.target.value))}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-800"
-                  >
-                    {[6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21].map((num) => (
-                      <option key={num} value={num}>
-                        {num} anos
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <ul className="text-[11px] text-amber-900 leading-snug mt-1 space-y-1">
+                  <li>• Nenhuma turma tem idade predefinida automaticamente; você escolhe a mínima e máxima.</li>
+                  <li>• As idades <strong>não podem se cruzar</strong>. Se a Turma A vai até 11 anos, a próxima começa em 12 anos.</li>
+                  <li>• <strong>Linha contínua:</strong> nenhuma idade pode ficar de fora (buraco/lacuna) entre as turmas.</li>
+                </ul>
               </div>
-
-              <button
-                type="button"
-                onClick={adicionarTurma}
-                className="w-full py-3 px-4 rounded-xl bg-sky-700 hover:bg-sky-800 text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <Plus className="w-4 h-4" />
-                Adicionar Turma
-              </button>
             </div>
 
-            {/* LISTA DAS TURMAS CRIADAS */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-xs font-black text-slate-800 px-1">
-                <span>Turmas Criadas ({turmasMontadas.length})</span>
-                {turmasMontadas.length === 0 && (
-                  <span className="text-[11px] text-amber-600 font-bold">Nenhuma criada ainda</span>
-                )}
+            {/* Banner Dinâmico de Alerta (Sobreposição ou Lacuna) */}
+            {conflitosIdade.length > 0 && (
+              <div className="rounded-2xl p-3.5 text-xs font-bold flex items-start gap-2.5 bg-rose-50 border-2 border-rose-400 text-rose-950 animate-pulse">
+                <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
+                <div>
+                  <span className="block font-black">Conflito de Sobreposição de Idades:</span>
+                  <span className="text-[11px] font-medium block mt-0.5">
+                    A <strong>Turma {conflitosIdade[0].turma1.identificador}</strong> e a{" "}
+                    <strong>Turma {conflitosIdade[0].turma2.identificador}</strong> possuem idades
+                    sobrepostas ({conflitosIdade[0].sobreposicao}). Corrija para continuar.
+                  </span>
+                </div>
               </div>
+            )}
 
+            {conflitosIdade.length === 0 && lacunasIdade.length > 0 && (
+              <div className="rounded-2xl p-3.5 text-xs font-bold flex items-start gap-2.5 bg-amber-50 border-2 border-amber-400 text-amber-950">
+                <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                <div>
+                  <span className="block font-black">
+                    Idade fora da linha de turmas ({lacunasIdade[0].descricao} sem atendimento):
+                  </span>
+                  <span className="text-[11px] font-medium block mt-0.5">
+                    Ficou um buraco entre a{" "}
+                    <strong>
+                      Turma {lacunasIdade[0].turmaAnterior.identificador} (até{" "}
+                      {lacunasIdade[0].turmaAnterior.max} anos)
+                    </strong>{" "}
+                    e a{" "}
+                    <strong>
+                      Turma {lacunasIdade[0].turmaProxima.identificador} (começa em{" "}
+                      {lacunasIdade[0].turmaProxima.min} anos)
+                    </strong>
+                    . Ajuste as faixas para que nenhuma idade fique sem turma.
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Lista de Turmas Montadas */}
+            <div className="space-y-3">
               {turmasMontadas.length === 0 ? (
-                <div className="bg-white border-2 border-dashed border-slate-200 rounded-2xl p-6 text-center text-xs text-slate-400">
-                  Adicione ao menos 1 turma com sua faixa etária para prosseguir.
+                <div className="py-8 px-4 text-center border-2 border-dashed border-slate-300 rounded-2xl bg-white space-y-2">
+                  <div className="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto text-base">
+                    <Users className="w-5 h-5" />
+                  </div>
+                  <div className="text-xs font-bold text-slate-700">
+                    Nenhuma turma adicionada ainda
+                  </div>
+                  <p className="text-[11px] text-slate-400 max-w-xs mx-auto">
+                    Toque no botão abaixo para adicionar a <strong>Turma A</strong> e escolher a faixa
+                    de idade dela do zero.
+                  </p>
                 </div>
               ) : (
-                <div className="space-y-2">
-                  {turmasMontadas.map((t) => (
-                    <div
-                      key={t.id}
-                      className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between"
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="w-8 h-8 rounded-xl bg-sky-100 text-sky-800 font-black text-xs flex items-center justify-center border border-sky-200">
-                          {t.identificador}
-                        </span>
-                        <div>
-                          <div className="text-xs font-black text-slate-900 leading-tight">
-                            Turma {t.identificador}
+                turmasMontadas
+                  .slice()
+                  .sort((a, b) => {
+                    if (a.min === null) return 1;
+                    if (b.min === null) return -1;
+                    return a.min - b.min;
+                  })
+                  .map((t) => {
+                    const emConflito = conflitosIdade.some(
+                      (c) => c.turma1.id === t.id || c.turma2.id === t.id
+                    );
+                    const incompleta = t.min === null || t.max === null;
+                    const lacunaAposEsta = lacunasIdade.find(
+                      (l) => l.turmaAnterior.id === t.id
+                    );
+
+                    let cardBorder = "border-emerald-200 bg-white";
+                    if (emConflito) {
+                      cardBorder = "border-rose-400 bg-rose-50/20 ring-2 ring-rose-300";
+                    } else if (lacunaAposEsta) {
+                      cardBorder = "border-amber-400 bg-amber-50/15";
+                    } else if (incompleta) {
+                      cardBorder = "border-amber-300 bg-amber-50/15";
+                    }
+
+                    return (
+                      <div key={t.id} className="space-y-2">
+                        <div className={`p-4 rounded-2xl border-2 transition shadow-xs space-y-3 ${cardBorder}`}>
+                          <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                            <div className="flex items-center gap-2.5">
+                              <span
+                                className={`w-8 h-8 rounded-xl font-black text-sm flex items-center justify-center ${
+                                  emConflito
+                                    ? "bg-rose-600 text-white"
+                                    : lacunaAposEsta
+                                    ? "bg-amber-500 text-white"
+                                    : incompleta
+                                    ? "bg-slate-200 text-slate-700"
+                                    : "bg-sky-700 text-white"
+                                }`}
+                              >
+                                {t.identificador}
+                              </span>
+                              <div>
+                                <h4 className="text-xs font-black text-slate-800 flex items-center gap-1.5">
+                                  Turma {t.identificador}
+                                  {emConflito && (
+                                    <span className="text-[9px] bg-rose-100 text-rose-700 border border-rose-300 px-1.5 py-0.5 rounded font-bold">
+                                      Idade Sobreposta
+                                    </span>
+                                  )}
+                                  {!emConflito && lacunaAposEsta && (
+                                    <span className="text-[9px] bg-amber-100 text-amber-800 border border-amber-300 px-1.5 py-0.5 rounded font-bold flex items-center gap-1">
+                                      <AlertTriangle className="w-2.5 h-2.5 text-amber-600" /> Lacuna: falta {lacunaAposEsta.descricao}
+                                    </span>
+                                  )}
+                                  {!emConflito && !lacunaAposEsta && incompleta && (
+                                    <span className="text-[9px] bg-amber-100 text-amber-800 border border-amber-300 px-1.5 py-0.5 rounded font-bold">
+                                      Configurando...
+                                    </span>
+                                  )}
+                                  {!emConflito && !lacunaAposEsta && !incompleta && (
+                                    <span className="text-[9px] bg-emerald-100 text-emerald-800 border border-emerald-300 px-1.5 py-0.5 rounded font-bold flex items-center gap-1">
+                                      <Check className="w-2.5 h-2.5" /> Pronta
+                                    </span>
+                                  )}
+                                </h4>
+                                <div>
+                                  {t.min === null && t.max === null ? (
+                                    <span className="text-[10px] text-slate-400 font-medium">
+                                      Selecione a idade mínima e máxima
+                                    </span>
+                                  ) : t.min !== null && t.max === null ? (
+                                    <span className="text-[10px] text-amber-700 font-bold">
+                                      Mínima: {t.min} anos • Selecione a máxima
+                                    </span>
+                                  ) : (
+                                    <span
+                                      className={`text-[10px] ${
+                                        lacunaAposEsta ? "text-amber-800 font-black" : "text-emerald-700 font-bold"
+                                      }`}
+                                    >
+                                      Faixa: {t.min} a {t.max} anos
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => removerTurma(t.id)}
+                              className="text-[10px] text-rose-500 hover:underline font-bold cursor-pointer"
+                            >
+                              Excluir
+                            </button>
                           </div>
-                          <div className="text-[11px] text-slate-500 font-bold mt-0.5">
-                            {t.min} a {t.max} anos
+
+                          <div className="grid grid-cols-2 gap-2 pt-1">
+                            <div>
+                              <label className="text-[10px] font-bold text-slate-500 block mb-1">
+                                Idade Mínima:
+                              </label>
+                              <select
+                                value={t.min ?? ""}
+                                onChange={(e) =>
+                                  atualizarIdadeTurma(
+                                    t.id,
+                                    "min",
+                                    e.target.value ? parseInt(e.target.value, 10) : null
+                                  )
+                                }
+                                className={`w-full bg-slate-50 border rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-800 cursor-pointer ${
+                                  emConflito
+                                    ? "border-rose-400 focus:ring-rose-500"
+                                    : "border-slate-200 focus:ring-sky-500"
+                                }`}
+                              >
+                                <option value="" disabled>
+                                  -- Selecione a Mínima --
+                                </option>
+                                {TODAS_AS_IDADES.map((a) => {
+                                  const ocupante = turmasMontadas.find(
+                                    (o) =>
+                                      o.id !== t.id &&
+                                      o.min !== null &&
+                                      o.max !== null &&
+                                      a >= o.min &&
+                                      a <= o.max
+                                  );
+
+                                  if (ocupante) {
+                                    return (
+                                      <option key={a} value={a} disabled className="text-slate-300 font-normal bg-slate-50">
+                                        {a} anos (Ocupado na Turma {ocupante.identificador})
+                                      </option>
+                                    );
+                                  }
+                                  return (
+                                    <option key={a} value={a}>
+                                      {a} anos
+                                    </option>
+                                  );
+                                })}
+                              </select>
+                            </div>
+
+                            <div>
+                              <label className="text-[10px] font-bold text-slate-500 block mb-1">
+                                Idade Máxima:
+                              </label>
+                              <select
+                                value={t.max ?? ""}
+                                disabled={t.min === null}
+                                onChange={(e) =>
+                                  atualizarIdadeTurma(
+                                    t.id,
+                                    "max",
+                                    e.target.value ? parseInt(e.target.value, 10) : null
+                                  )
+                                }
+                                className={`w-full bg-slate-50 border rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-800 ${
+                                  t.min === null ? "opacity-60 cursor-not-allowed" : "cursor-pointer"
+                                } ${
+                                  emConflito
+                                    ? "border-rose-400 focus:ring-rose-500"
+                                    : "border-slate-200 focus:ring-sky-500"
+                                }`}
+                              >
+                                {t.min === null ? (
+                                  <option value="" disabled>
+                                    -- Escolha a mínima primeiro --
+                                  </option>
+                                ) : (
+                                  <>
+                                    <option value="" disabled>
+                                      -- Selecione a Máxima --
+                                    </option>
+                                    {(() => {
+                                      const outrasSuperiores = turmasMontadas.filter(
+                                        (o) => o.id !== t.id && o.min !== null && o.min > (t.min ?? 0)
+                                      );
+                                      const menorInicioSuperior =
+                                        outrasSuperiores.length > 0
+                                          ? Math.min(...outrasSuperiores.map((o) => o.min as number))
+                                          : 999;
+                                      const turmaBloqueadora = outrasSuperiores.find(
+                                        (o) => o.min === menorInicioSuperior
+                                      );
+
+                                      return TODAS_AS_IDADES.filter((a) => a >= (t.min ?? 0)).map((a) => {
+                                        if (a >= menorInicioSuperior) {
+                                          return (
+                                            <option
+                                              key={a}
+                                              value={a}
+                                              disabled
+                                              className="text-slate-300 font-normal bg-slate-50"
+                                            >
+                                              {a} anos (Ocupado na Turma{" "}
+                                              {turmaBloqueadora ? turmaBloqueadora.identificador : ""})
+                                            </option>
+                                          );
+                                        }
+                                        return (
+                                          <option key={a} value={a}>
+                                            {a} anos
+                                          </option>
+                                        );
+                                      });
+                                    })()}
+                                  </>
+                                )}
+                              </select>
+                            </div>
                           </div>
                         </div>
+
+                        {/* Gap Card Inserido Diretamente Entre as Duas Turmas com Buraco */}
+                        {lacunaAposEsta && (
+                          <div className="bg-amber-50/90 border-2 border-dashed border-amber-400 rounded-2xl p-3 text-center space-y-1 shadow-2xs">
+                            <div className="text-xs font-black text-amber-950 flex items-center justify-center gap-1.5">
+                              <AlertTriangle className="w-4 h-4 text-amber-600" />
+                              Buraco na linha de idades: <strong>{lacunaAposEsta.descricao}</strong> sem atendimento!
+                            </div>
+                            <p className="text-[11px] text-amber-800 leading-snug">
+                              Entre a <strong>Turma {lacunaAposEsta.turmaAnterior.identificador} ({lacunaAposEsta.turmaAnterior.max} anos)</strong> e a{" "}
+                              <strong>Turma {lacunaAposEsta.turmaProxima.identificador} ({lacunaAposEsta.turmaProxima.min} anos)</strong> não há nenhuma turma.
+                            </p>
+                            <div className="text-[10px] text-amber-900 font-bold bg-amber-100 rounded-lg py-1 px-2.5 inline-block mt-0.5">
+                              Ajuste para cobrir a idade de {lacunaAposEsta.descricao} e poder avançar.
+                            </div>
+                          </div>
+                        )}
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => removerTurma(t.id)}
-                        className="text-rose-500 hover:text-rose-700 p-2 rounded-lg text-xs"
-                        title="Remover turma"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
+                    );
+                  })
               )}
             </div>
 
-            {/* AVISOS DE GAPS E OVERLAPS */}
-            {analiseFaixas.overlaps.length > 0 && (
-              <div className="bg-rose-50 border border-rose-300 rounded-2xl p-3.5 text-xs text-rose-900 space-y-1">
-                <div className="font-bold flex items-center gap-1.5">
-                  <AlertCircle className="w-4 h-4 text-rose-600" />
-                  Sobreposição de idades detectada:
-                </div>
-                {analiseFaixas.overlaps.map((msg, i) => (
-                  <div key={i} className="text-[11px] text-rose-800 pl-5">
-                    • {msg}
-                  </div>
-                ))}
-              </div>
-            )}
+            {/* Bloco Adicionar Próxima Turma */}
+            <div>
+              <button
+                type="button"
+                onClick={adicionarNovaTurma}
+                disabled={!ultimaTurmaCompleta}
+                className={`w-full py-3.5 px-4 rounded-2xl border-2 border-dashed font-black text-xs flex items-center justify-center gap-2 transition cursor-pointer ${
+                  !ultimaTurmaCompleta
+                    ? "border-slate-200 bg-slate-100 text-slate-400 cursor-not-allowed"
+                    : "border-sky-500 bg-sky-50/60 hover:bg-sky-100 text-sky-800"
+                }`}
+              >
+                <Plus className="w-4 h-4" />
+                <span>
+                  {turmasMontadas.length === 0
+                    ? "+ Adicionar Turma A"
+                    : !ultimaTurmaCompleta
+                    ? "+ Adicionar Próxima Turma (Bloqueado)"
+                    : `+ Adicionar Turma ${LETRAS_TURMAS[turmasMontadas.length % LETRAS_TURMAS.length]}`}
+                </span>
+              </button>
+              <p className="text-[11px] text-slate-400 text-center mt-1.5 font-medium">
+                {turmasMontadas.length === 0
+                  ? "Nenhuma idade vem preenchida; você definirá a mínima e a máxima."
+                  : !ultimaTurmaCompleta
+                  ? "Configure a idade mínima e máxima da turma atual para liberar a próxima."
+                  : "Faixas anteriores preenchidas. Você pode adicionar a próxima turma."}
+              </p>
+            </div>
 
-            {analiseFaixas.gaps.length > 0 && (
-              <div className="bg-amber-50 border border-amber-300 rounded-2xl p-3.5 text-xs text-amber-900 space-y-1">
-                <div className="font-bold flex items-center gap-1.5">
-                  <AlertTriangle className="w-4 h-4 text-amber-600" />
-                  Lacuna etária entre as turmas:
-                </div>
-                {analiseFaixas.gaps.map((msg, i) => (
-                  <div key={i} className="text-[11px] text-amber-800 pl-5">
-                    • {msg}
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* BOTÃO AVANÇAR */}
+            {/* Botão Avançar para Etapa 2 */}
             <div className="pt-2">
               <button
                 type="button"
-                disabled={!analiseFaixas.pronta}
-                onClick={() => setEtapa(2)}
-                className={`w-full py-3.5 px-4 rounded-xl font-black text-xs uppercase tracking-wide flex items-center justify-center gap-2 transition shadow-md ${
-                  analiseFaixas.pronta
-                    ? "bg-sky-700 hover:bg-sky-800 text-white cursor-pointer"
-                    : "bg-slate-300 text-slate-500 cursor-not-allowed"
+                onClick={avancarParaEtapa2}
+                disabled={!podeAvancarEtapa1}
+                className={`w-full py-4 px-4 rounded-2xl font-black text-xs uppercase tracking-wide flex items-center justify-center gap-2 transition duration-200 ${
+                  !podeAvancarEtapa1
+                    ? "bg-slate-300 text-slate-500 cursor-not-allowed"
+                    : "bg-sky-700 hover:bg-sky-800 text-white cursor-pointer shadow-md"
                 }`}
               >
-                <span>Avançar para Dias da Semana</span>
-                <ArrowRight className="w-4 h-4" />
+                {!podeAvancarEtapa1 && <Lock className="w-3.5 h-3.5" />}
+                <span>
+                  {turmasMontadas.length === 0
+                    ? "Adicione ao menos 1 turma para continuar"
+                    : conflitosIdade.length > 0
+                    ? "Corrija as faixas sobrepostas para avançar"
+                    : lacunasIdade.length > 0
+                    ? `Preencha a lacuna de ${lacunasIdade[0].descricao} para avançar`
+                    : !todasCompletas
+                    ? "Complete as idades mínima e máxima de todas as turmas"
+                    : `Avançar para Escolher os Dias da Semana (${turmasMontadas.length} ${
+                        turmasMontadas.length === 1 ? "Turma" : "Turmas"
+                      })`}
+                </span>
+                {podeAvancarEtapa1 && <ArrowRight className="w-4 h-4" />}
               </button>
             </div>
           </div>
         )}
 
-        {/* ========================================================= */}
-        {/* ETAPA 2: DIAS DA SEMANA */}
-        {/* ========================================================= */}
+        {/* ============================================================ */}
+        {/* ETAPA 2: DIAS DA SEMANA (100% LIMPA / ZERO PRÉ-MARCADO)       */}
+        {/* ============================================================ */}
         {etapa === 2 && (
           <div className="space-y-4">
-            <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-1">
-              <h2 className="text-sm font-black text-slate-900 flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-sky-700" />
-                Dias em que você atende este núcleo
+            <div>
+              <button
+                type="button"
+                onClick={() => setEtapa(1)}
+                className="text-xs text-sky-700 font-bold flex items-center gap-1 mb-2 hover:underline cursor-pointer"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" /> Voltar para Turmas
+              </button>
+              <div className="flex items-center gap-1.5 text-sky-800 text-[11px] font-bold uppercase tracking-wider mb-1">
+                <Calendar className="w-3.5 h-3.5" /> 2ª Etapa
+              </div>
+              <h2 className="text-sm font-black text-slate-800">
+                Em quais dias da semana você dá aula neste polo?
               </h2>
-              <p className="text-xs text-slate-500 leading-relaxed">
-                Selecione os dias da semana em que você dá aulas neste polo. O calendário da próxima etapa mostrará apenas os dias marcados.
+              <p className="text-xs text-slate-500 mt-0.5">
+                Marque os dias em que haverá treino no campo (nada vem pré-marcado):
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-2.5">
-              {Object.entries(DIAS_MAP).map(([diaKey, info]) => {
+            <div className="bg-blue-50 border border-blue-200 rounded-2xl p-3.5 flex items-start gap-3">
+              <Info className="w-5 h-5 text-sky-600 shrink-0 mt-0.5" />
+              <div>
+                <div className="text-xs font-bold text-sky-950">Selecione seus dias:</div>
+                <p className="text-[11px] text-sky-800 leading-snug mt-0.5">
+                  Toque nos dias em que você atende. Na próxima etapa, o sistema montará um{" "}
+                  <strong>calendário exclusivo com apenas esses dias</strong> para você colocar os blocos de aula.
+                </p>
+              </div>
+            </div>
+
+            {/* Grid dos Dias da Semana (TODOS DESMARCADOS NO INÍCIO) */}
+            <div className="grid grid-cols-2 gap-2">
+              {["seg", "ter", "qua", "qui", "sex", "sab"].map((diaKey) => {
                 const ativo = diasSelecionados.includes(diaKey);
                 return (
                   <button
                     key={diaKey}
                     type="button"
-                    onClick={() => toggleDiaSemana(diaKey)}
-                    className={`p-3.5 rounded-2xl border text-left transition flex items-center justify-between ${
+                    onClick={() => toggleDiaEtapa2(diaKey)}
+                    className={`p-3.5 rounded-2xl border flex items-center justify-between font-bold text-xs transition cursor-pointer ${
                       ativo
-                        ? "bg-sky-50 border-sky-600 text-sky-950 font-black shadow-xs ring-1 ring-sky-500"
-                        : "bg-white border-slate-200 text-slate-700 font-bold hover:border-slate-300"
+                        ? "bg-sky-600 text-white border-sky-600 shadow-md"
+                        : "bg-white text-slate-700 border-slate-200 hover:border-sky-300"
                     }`}
                   >
-                    <div>
-                      <div className="text-[10px] uppercase font-black tracking-wider text-slate-400">
-                        {info.curto}
-                      </div>
-                      <div className="text-xs mt-0.5">{info.nome.split("-")[0]}</div>
-                    </div>
-                    {ativo && <CheckCircle2 className="w-4 h-4 text-sky-700 shrink-0" />}
+                    <span>{DIAS_MAP[diaKey]?.nome}</span>
+                    <Check
+                      className={`w-4 h-4 transition-opacity ${
+                        ativo ? "opacity-100 text-white" : "opacity-0"
+                      }`}
+                    />
                   </button>
                 );
               })}
             </div>
 
-            <div className="flex gap-2.5 pt-2">
+            <div className="pt-4">
               <button
                 type="button"
-                onClick={() => setEtapa(1)}
-                className="flex-1 py-3.5 px-4 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 font-bold text-xs text-slate-700 flex items-center justify-center gap-1.5"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                <span>Voltar</span>
-              </button>
-              <button
-                type="button"
+                onClick={avancarParaEtapa3}
                 disabled={diasSelecionados.length === 0}
-                onClick={() => setEtapa(3)}
-                className={`flex-2 py-3.5 px-4 rounded-xl font-black text-xs uppercase tracking-wide flex items-center justify-center gap-2 transition shadow-md ${
-                  diasSelecionados.length > 0
-                    ? "bg-sky-700 hover:bg-sky-800 text-white cursor-pointer"
-                    : "bg-slate-300 text-slate-500 cursor-not-allowed"
+                className={`w-full py-4 px-4 rounded-2xl font-black text-xs uppercase tracking-wide flex items-center justify-center gap-2 transition duration-200 ${
+                  diasSelecionados.length === 0
+                    ? "bg-slate-300 text-slate-500 cursor-not-allowed"
+                    : "bg-sky-700 hover:bg-sky-800 text-white cursor-pointer shadow-md"
                 }`}
               >
-                <span>Avançar para Calendário</span>
+                <span>
+                  {diasSelecionados.length === 0
+                    ? "Selecione ao menos 1 dia para continuar"
+                    : `Avançar para o Calendário de Horários (${diasSelecionados.length} ${
+                        diasSelecionados.length === 1 ? "dia" : "dias"
+                      })`}
+                </span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           </div>
         )}
 
-        {/* ========================================================= */}
-        {/* ETAPA 3: CALENDÁRIO DE HORÁRIOS */}
-        {/* ========================================================= */}
+        {/* ============================================================ */}
+        {/* ETAPA 3: O CALENDÁRIOZINHO (COLUNAS EXCLUSIVAS + BLOCOS)     */}
+        {/* ============================================================ */}
         {etapa === 3 && (
           <div className="space-y-4">
-            {/* WIDGET DE CHECKLIST DE TURMAS ALOCADAS */}
+            <div>
+              <button
+                type="button"
+                onClick={() => setEtapa(2)}
+                className="text-xs text-sky-700 font-bold flex items-center gap-1 mb-2 hover:underline cursor-pointer"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" /> Voltar para dias
+              </button>
+              <div className="flex items-center gap-1.5 text-sky-800 text-[11px] font-bold uppercase tracking-wider mb-1">
+                <CheckSquare className="w-3.5 h-3.5" /> 3ª Etapa
+              </div>
+              <h2 className="text-sm font-black text-slate-900">Calendário Semanal de Aulas</h2>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Distribua todas as suas turmas nos blocos de horários (toque num bloco para editar):
+              </p>
+            </div>
+
+            {/* Widget de Checklist: Alocação Obrigatória de TODAS as Turmas */}
             <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-black text-slate-900">Alocação das Turmas na Semana</span>
+                <span className="text-xs font-black text-slate-800 flex items-center gap-1.5">
+                  <CheckSquare className="w-3.5 h-3.5 text-sky-600" /> Alocação das Turmas na Grade:
+                </span>
                 <span
                   className={`text-[10px] font-black px-2 py-0.5 rounded-full border ${
-                    todasTurmasAlocadas
+                    todasTurmasDistribuidas
                       ? "bg-emerald-100 text-emerald-800 border-emerald-300"
                       : "bg-amber-100 text-amber-900 border-amber-300"
                   }`}
@@ -827,120 +1311,139 @@ export function GateHomologacaoGrade({
                   {statusAlocacaoTurmas.filter((s) => s.alocada).length} de {turmasMontadas.length} alocadas
                 </span>
               </div>
-
-              <div className="flex flex-wrap gap-1.5">
+              <p className="text-[11px] text-slate-500 leading-snug">
+                Todas as turmas criadas precisam ter pelo menos um bloco na semana para você confirmar a grade:
+              </p>
+              <div className="flex flex-wrap gap-1.5 pt-0.5">
                 {statusAlocacaoTurmas.map((st) => (
                   <span
                     key={st.turma.id}
                     className={`text-[10px] px-2 py-0.5 rounded-lg font-bold flex items-center gap-1 border ${
                       st.alocada
                         ? "bg-emerald-50 text-emerald-800 border-emerald-200"
-                        : "bg-rose-50 text-rose-800 border-rose-300 animate-pulse"
+                        : "bg-rose-50 text-rose-800 border-rose-300 font-black animate-pulse"
                     }`}
                   >
                     {st.alocada ? (
-                      <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                      <Check className="w-2.5 h-2.5 text-emerald-600" />
                     ) : (
-                      <AlertTriangle className="w-3 h-3 text-rose-600" />
+                      <AlertTriangle className="w-2.5 h-2.5 text-rose-600" />
                     )}
-                    Turma {st.turma.identificador} ({st.totalSlots} {st.totalSlots === 1 ? "bloco" : "blocos"})
+                    <span>
+                      Turma {st.turma.identificador} ({st.alocada ? `${st.totalSlots} ${st.totalSlots === 1 ? "bloco" : "blocos"}` : "Sem horário"})
+                    </span>
                   </span>
                 ))}
               </div>
             </div>
 
-            {/* GRID DO MINI-CALENDÁRIO COM OS DIAS SELECIONADOS */}
-            <div className="grid grid-cols-1 gap-3">
-              {[...diasSelecionados]
-                .sort((a, b) => DIAS_MAP[a].order - DIAS_MAP[b].order)
-                .map((diaKey) => {
+            {/* O CALENDÁRIOZINHO: COLUNAS APENAS DOS DIAS SELECIONADOS */}
+            <div className="w-full">
+              <div
+                className={`gap-2.5 ${
+                  diasOrdenados.length === 1
+                    ? "grid grid-cols-1"
+                    : diasOrdenados.length === 2
+                    ? "grid grid-cols-2"
+                    : diasOrdenados.length === 3
+                    ? "grid grid-cols-3"
+                    : "flex overflow-x-auto pb-2 snap-x"
+                }`}
+              >
+                {diasOrdenados.map((diaKey) => {
                   const info = DIAS_MAP[diaKey];
                   const slotsDoDia = distribuicaoHorarios.filter((s) => s.dia === diaKey);
 
                   return (
                     <div
                       key={diaKey}
-                      className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs"
+                      className={`bg-white border border-slate-200 rounded-2xl flex flex-col min-h-[340px] overflow-hidden shadow-xs ${
+                        diasOrdenados.length > 3 ? "w-[140px] shrink-0 snap-start" : "w-full"
+                      }`}
                     >
-                      <div className="bg-sky-800 text-white px-3.5 py-2 flex items-center justify-between">
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-[10px] font-black uppercase tracking-wider bg-white/20 px-1.5 py-0.5 rounded">
-                            {info.curto}
-                          </span>
-                          <span className="text-xs font-bold">{info.nome.split("-")[0]}</span>
+                      {/* Header da Coluna */}
+                      <div className="bg-gradient-to-b from-sky-600 to-sky-700 text-white p-2 text-center">
+                        <div className="text-[10px] font-black tracking-wider uppercase opacity-90">
+                          {info.curto}
                         </div>
-                        <span className="text-[10px] opacity-80">
+                        <div className="text-[11px] font-bold leading-tight">
+                          {info.nome.split("-")[0]}
+                        </div>
+                        <div className="text-[9px] opacity-80 mt-0.5">
                           {slotsDoDia.length} {slotsDoDia.length === 1 ? "bloco" : "blocos"}
-                        </span>
+                        </div>
                       </div>
 
-                      <div className="p-3 space-y-2">
+                      {/* Corpo da Coluna */}
+                      <div className="bg-slate-50/70 flex-1 p-2 flex flex-col gap-2">
                         {slotsDoDia.map((slot) => {
                           const turmasAlocadas = turmasMontadas.filter((t) =>
                             slot.turmasIds.includes(t.id)
                           );
-                          const isMulti = turmasAlocadas.length > 1;
-                          const durMin = horaParaMinutos(slot.fim) - horaParaMinutos(slot.inicio);
-                          const horas = Math.floor(durMin / 60);
-                          const mins = durMin % 60;
-                          const durStr = mins > 0 ? `${horas}h${mins}m` : `${horas}h`;
+                          const isConjunta = turmasAlocadas.length > 1;
+                          const duracaoMin =
+                            horaParaMinutos(slot.fim) - horaParaMinutos(slot.inicio);
+                          const horas = Math.floor(duracaoMin / 60);
+                          const mins = duracaoMin % 60;
+                          const duracaoStr = mins > 0 ? `${horas}h${mins}m` : `${horas}h`;
 
                           return (
                             <div
                               key={slot.id}
                               onClick={() => abrirModalEditarBloco(slot)}
-                              className={`p-3 rounded-xl border transition cursor-pointer hover:shadow-md ${
-                                isMulti
-                                  ? "border-amber-400 bg-amber-50/40"
-                                  : "border-sky-300 bg-white"
+                              title="Toque para editar este bloco"
+                              className={`p-2 rounded-xl border-l-4 border transition cursor-pointer hover:shadow-md ${
+                                isConjunta
+                                  ? "border-l-amber-500 border-amber-300 bg-amber-50/50"
+                                  : "border-l-sky-600 border-slate-200 bg-white"
                               }`}
                             >
-                              <div className="flex items-center justify-between pb-1.5 border-b border-slate-100 mb-2">
-                                <span className="text-[10px] font-black text-slate-800 bg-slate-100 px-2 py-0.5 rounded flex items-center gap-1">
-                                  <Clock className="w-3 h-3 text-sky-600" />
-                                  {slot.inicio} - {slot.fim}
+                              <div className="flex items-center justify-between border-b border-slate-100 pb-1 mb-1.5">
+                                <span className="text-[9px] font-black text-slate-800 bg-slate-100 px-1.5 py-0.5 rounded flex items-center gap-1">
+                                  <Clock className="w-2.5 h-2.5 text-sky-600" /> {slot.inicio}-{slot.fim}
                                 </span>
                                 <button
                                   type="button"
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    removerBloco(slot.id);
+                                    removerSlotDistribuicao(slot.id);
                                   }}
-                                  className="text-rose-400 hover:text-rose-600 p-1 text-xs"
                                   title="Remover bloco"
+                                  className="text-rose-400 hover:text-rose-600 text-[10px] font-bold px-1"
                                 >
-                                  <Trash2 className="w-3.5 h-3.5" />
+                                  <X className="w-3 h-3" />
                                 </button>
                               </div>
 
-                              {/* DESTAQUE DE TÉRMINO SE MULTI-TURMA */}
-                              {isMulti && (
-                                <div className="mb-2 space-y-1">
+                              {isConjunta && (
+                                <div className="mb-1.5 space-y-1">
                                   <div className="flex items-center justify-between">
-                                    <span className="text-[9px] font-black uppercase tracking-wider bg-amber-200 text-amber-950 border border-amber-300 px-1.5 py-0.5 rounded flex items-center gap-1">
-                                      <Users className="w-2.5 h-2.5" /> Multi-turmas
+                                    <span className="text-[8px] font-black uppercase tracking-wider bg-amber-200 text-amber-950 border border-amber-300 px-1.5 py-0.5 rounded flex items-center gap-1">
+                                      <Users className="w-2 h-2" /> Multi-turmas
                                     </span>
-                                    <span className="text-[9px] font-black text-amber-900 bg-amber-100 border border-amber-300 px-1.5 py-0.5 rounded">
-                                      {durStr}
+                                    <span className="text-[8px] font-black text-amber-900 bg-amber-100 border border-amber-300 px-1.5 py-0.5 rounded">
+                                      {duracaoStr}
                                     </span>
                                   </div>
-                                  <div className="text-[10px] font-black text-amber-950 bg-amber-100/90 border border-amber-300/80 rounded px-1.5 py-0.5 flex items-center gap-1">
-                                    <Flag className="w-3 h-3 text-amber-700" /> Término: {slot.fim} (bloco com {turmasAlocadas.length} turmas)
+                                  <div className="text-[9px] font-black text-amber-950 bg-amber-100/90 border border-amber-300/80 rounded px-1.5 py-0.5 flex items-center gap-1">
+                                    <Flag className="w-2 h-2 text-amber-700" /> Término: {slot.fim} ({turmasAlocadas.length} turmas)
                                   </div>
                                 </div>
                               )}
 
-                              {/* LISTA VERTICAL DE TODAS AS TURMAS COM NOME E IDADE */}
+                              {/* Cards Verticais Separados para Cada Turma */}
                               <div className="space-y-1">
                                 {turmasAlocadas.map((t) => (
                                   <div
                                     key={t.id}
-                                    className="bg-white border border-slate-200 rounded-lg p-2 flex items-center justify-between text-xs"
+                                    className="bg-white border border-slate-200/90 rounded-md p-1.5 shadow-2xs"
                                   >
-                                    <span className="font-black text-slate-800">Turma {t.identificador}</span>
-                                    <span className="text-[11px] text-slate-500 font-bold bg-slate-50 px-2 py-0.5 rounded border border-slate-100">
+                                    <div className="text-[10px] font-black text-slate-800 leading-tight">
+                                      Turma {t.identificador}
+                                    </div>
+                                    <div className="text-[9px] text-slate-500 font-bold mt-0.5">
                                       {t.min} a {t.max} anos
-                                    </span>
+                                    </div>
                                   </div>
                                 ))}
                               </div>
@@ -948,98 +1451,109 @@ export function GateHomologacaoGrade({
                           );
                         })}
 
-                        {/* BOTÃO ADICIONAR BLOCO NO DIA */}
+                        {/* Dropzone para Adicionar Novo Bloco no Dia */}
                         <button
                           type="button"
                           onClick={() => abrirModalNovoBloco(diaKey)}
-                          className="w-full py-2.5 rounded-xl border-2 border-dashed border-sky-300 bg-sky-50/50 hover:bg-sky-100/60 text-sky-800 font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer"
+                          className="mt-auto border-2 border-dashed border-sky-300 bg-sky-50/50 hover:bg-sky-100/80 rounded-xl p-2.5 text-center transition cursor-pointer"
                         >
-                          <Plus className="w-3.5 h-3.5" />
-                          <span>+ Adicionar Bloco em {info.nome.split("-")[0]}</span>
+                          <Plus className="w-3.5 h-3.5 text-sky-600 mx-auto" />
+                          <div className="text-[10px] font-black text-sky-800 mt-0.5 leading-tight">
+                            + Bloco
+                          </div>
+                          <div className="text-[8px] text-sky-600">Toque aqui</div>
                         </button>
                       </div>
                     </div>
                   );
                 })}
+              </div>
             </div>
 
-            {/* BOTÕES DE VOLTAR E CONFIRMAR GRADE */}
-            <div className="space-y-2 pt-2">
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => setEtapa(2)}
-                  className="py-3 px-4 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 font-bold text-xs text-slate-700 flex items-center justify-center gap-1"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                  <span>Voltar</span>
-                </button>
-
-                <button
-                  type="button"
-                  disabled={!todasTurmasAlocadas || salvando}
-                  onClick={handleFinalizarHomologacao}
-                  className={`flex-1 py-3.5 px-4 rounded-xl font-black text-xs uppercase tracking-wide flex items-center justify-center gap-2 transition shadow-lg ${
-                    todasTurmasAlocadas && !salvando
-                      ? "bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer"
-                      : "bg-slate-300 text-slate-500 cursor-not-allowed"
-                  }`}
-                >
-                  {salvando ? (
-                    <span>Homologando Grade...</span>
-                  ) : (
-                    <>
-                      <CheckCircle2 className="w-4 h-4" />
-                      <span>Confirmar Grade Completa e Ir para Chamada</span>
-                    </>
-                  )}
-                </button>
-              </div>
-
-              {!todasTurmasAlocadas && (
-                <p className="text-[11px] text-rose-600 text-center font-bold">
-                  Você precisa alocar todas as turmas criadas em pelo menos um horário antes de homologar a grade.
-                </p>
-              )}
+            {/* Botão Finalizar e Homologar Grade */}
+            <div className="pt-2 space-y-2">
+              <button
+                type="button"
+                onClick={finalizarHomologacao}
+                disabled={!todasTurmasDistribuidas || salvando}
+                className={`w-full py-4 px-4 rounded-2xl font-black text-xs uppercase tracking-wide flex items-center justify-center gap-2 transition duration-200 ${
+                  !todasTurmasDistribuidas || salvando
+                    ? "bg-slate-300 text-slate-500 cursor-not-allowed"
+                    : "bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer shadow-lg"
+                }`}
+              >
+                {!todasTurmasDistribuidas ? (
+                  <Lock className="w-3.5 h-3.5" />
+                ) : (
+                  <CheckCircle2 className="w-4 h-4" />
+                )}
+                <span>
+                  {salvando
+                    ? "Homologando grade..."
+                    : !todasTurmasDistribuidas
+                    ? `Distribua todas as turmas para confirmar (${turmasPendentes
+                        .map((p) => `Turma ${p.turma.identificador}`)
+                        .join(", ")} sem horário)`
+                    : "Confirmar Grade Completa e Ir para Chamada"}
+                </span>
+              </button>
+              <p className="text-[10px] text-slate-400 text-center font-medium">
+                {!todasTurmasDistribuidas ? (
+                  <span className="text-rose-600 font-bold">
+                    Você precisa alocar todas as turmas em algum bloco da semana antes de homologar a grade.
+                  </span>
+                ) : (
+                  <span className="text-emerald-700 font-bold">
+                    Todas as turmas estão alocadas! Toque acima para homologar e iniciar a aula.
+                  </span>
+                )}
+              </p>
             </div>
           </div>
         )}
-      </main>
+      </div>
 
-      {/* ========================================================= */}
-      {/* MODAL: CRIAR / EDITAR BLOCO DE HORÁRIO */}
-      {/* ========================================================= */}
+      {/* ============================================================== */}
+      {/* MODAL INSERIR / EDITAR BLOCO (BOTTOM SHEET FIEL AO HTML)        */}
+      {/* ============================================================== */}
       {modalBlocoAberto && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-end justify-center p-0">
           <div
             onClick={() => setModalBlocoAberto(false)}
             className="absolute inset-0 bg-slate-900/60 backdrop-blur-xs"
           />
 
-          <div className="relative bg-white rounded-3xl p-5 shadow-2xl max-w-sm w-full space-y-4 max-h-[90vh] overflow-y-auto border border-slate-100">
-            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-              <div>
-                <h3 className="text-xs font-black text-slate-900 uppercase tracking-wide">
-                  {slotEmEdicaoId ? "Editar Bloco em" : "Novo Bloco em"}{" "}
-                  <span className="text-sky-700">{DIAS_MAP[diaAlvoModal]?.nome}</span>
-                </h3>
-                <p className="text-[11px] text-slate-500">Escolha o horário e marque as turmas participantes</p>
+          <div className="relative w-full max-w-lg bg-white rounded-t-3xl p-5 shadow-2xl max-h-[90vh] overflow-y-auto space-y-4 animate-in slide-in-from-bottom duration-200">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2.5">
+                <span className="w-8 h-8 rounded-xl bg-sky-100 text-sky-800 flex items-center justify-center text-sm font-bold">
+                  <Clock className="w-4 h-4" />
+                </span>
+                <div>
+                  <h3 className="text-xs font-black text-slate-800 uppercase tracking-wide">
+                    {slotEmEdicaoId ? "Editar Bloco em " : "Novo Bloco em "}
+                    <span className="text-sky-700">{DIAS_MAP[diaAlvoModal]?.nome}</span>
+                  </h3>
+                  <p className="text-[11px] text-slate-400">
+                    Escolha o horário e marque quais turmas treinam neste bloco
+                  </p>
+                </div>
               </div>
               <button
                 type="button"
                 onClick={() => setModalBlocoAberto(false)}
-                className="text-slate-400 hover:text-slate-600 p-1"
+                className="w-7 h-7 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center text-xs"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            {/* HORÁRIOS */}
+            {/* 1. Horários do Bloco */}
             <div className="space-y-1.5">
               <label className="text-xs font-black text-slate-800">1. Horário do Bloco:</label>
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <span className="text-[10px] text-slate-500 font-bold block mb-1">Início:</span>
+                  <span className="text-[10px] text-slate-400 font-bold block mb-1">Início:</span>
                   <input
                     type="time"
                     value={modalInicio}
@@ -1048,52 +1562,80 @@ export function GateHomologacaoGrade({
                   />
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-500 font-bold block mb-1">Término:</span>
+                  <span className="text-[10px] text-slate-400 font-bold block mb-1">Término:</span>
                   <input
                     type="time"
                     value={modalFim}
                     onChange={(e) => setModalFim(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800"
+                    className={`w-full bg-slate-50 border rounded-xl px-3 py-2 text-xs font-bold text-slate-800 transition ${
+                      highlightFim ? "ring-4 ring-sky-500 bg-sky-50 border-sky-400" : "border-slate-200"
+                    }`}
                   />
                 </div>
               </div>
             </div>
 
-            {/* BANNER INFORMATIVO SE HORÁRIOS DIVIDIDOS */}
+            {/* Banner Informativo se Horários Divididos */}
             {bannerAvisoAjusteCompleto && (
-              <div className="rounded-2xl p-3 bg-amber-50 border border-amber-300 text-xs text-amber-950 font-medium flex items-start gap-2.5">
+              <div className="rounded-2xl p-3 bg-amber-50 border border-amber-300 text-xs text-amber-950 font-medium flex items-start gap-2.5 animate-in fade-in">
                 <Clock className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                 <div>
-                  <div className="font-black text-amber-950 text-xs">Ajuste o horário completo deste bloco</div>
+                  <div className="font-black text-amber-950 text-xs">
+                    Ajuste o horário completo deste bloco
+                  </div>
                   <div className="text-[11px] text-amber-800 mt-0.5 leading-snug">
-                    Como as turmas dividem o tempo, informe o horário completo de início e término em que você estará em atividade com elas (ex: 08:00 às 11:00). Ambas permanecerão neste mesmo bloco.
+                    Como as turmas dividem o tempo, informe o horário completo de início e término em que
+                    você estará em atividade com elas (ex: 08:00 às 11:00). Ambas permanecerão cadastradas neste mesmo bloco.
                   </div>
                 </div>
               </div>
             )}
 
-            {/* AVISO DE CONFLITO NO MESMO DIA */}
+            {/* Alerta de Conflito no Mesmo Dia */}
             {conflitoSlotNoDia && (
-              <div className="rounded-2xl p-3 bg-rose-50 border border-rose-300 text-xs text-rose-950 font-bold flex items-start gap-2">
-                <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+              <div className="rounded-2xl p-3.5 bg-rose-50 border-2 border-rose-400 text-xs text-rose-950 font-bold flex items-start gap-2.5">
+                <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
                 <div>
                   <div className="font-black text-rose-900 text-xs">Horário já ocupado neste dia!</div>
-                  <div className="text-[11px] text-rose-800 font-normal mt-0.5 leading-snug">
-                    Já existe outro bloco cadastrado em {conflitoSlotNoDia.diaNome} das {conflitoSlotNoDia.inicio} às {conflitoSlotNoDia.fim}. Nenhum slot pode ter o mesmo horário no mesmo dia.
+                  <div className="font-normal text-[11px] text-rose-800 mt-0.5 leading-snug">
+                    Nenhum slot pode ter o mesmo horário no mesmo dia ({conflitoSlotNoDia.diaNome} das{" "}
+                    {conflitoSlotNoDia.inicio} às {conflitoSlotNoDia.fim}). Se mais de uma turma treina
+                    neste horário (ex: aulão conjunto), edite o bloco existente para marcar as turmas conjuntas.
                   </div>
                 </div>
               </div>
             )}
 
-            {/* SELEÇÃO DE TURMAS PARTICIPANTES */}
-            <div className="space-y-2">
-              <label className="text-xs font-black text-slate-800">2. Turmas que treinam neste bloco:</label>
-              <div className="space-y-1.5">
+            {/* 2. Seleção de Turmas Participantes */}
+            <div className="bg-sky-50/70 border border-sky-200 rounded-2xl p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-black text-sky-950 flex items-center gap-1.5">
+                  <Users className="w-4 h-4 text-sky-600" />
+                  2. Quais turmas treinam neste bloco?
+                </label>
+                {duracaoConfirmada && turmasMarcadasModal.length >= 2 && (
+                  <span className="text-[10px] bg-amber-500 text-white font-black px-2 py-0.5 rounded-full shadow-xs flex items-center gap-1">
+                    <Flag className="w-2.5 h-2.5" /> Conjunto até as {modalFim}
+                  </span>
+                )}
+              </div>
+              <p className="text-[11px] text-sky-800 leading-snug">
+                Marque as turmas deste horário. A mesma turma não pode ter o mesmo horário no mesmo dia:
+              </p>
+
+              <div className="space-y-2 pt-1">
                 {turmasMontadas.map((t) => {
                   const marcada = turmasMarcadasModal.includes(t.id);
 
-                  // Verifica se essa turma já tem outro horário no mesmo dia (sem colisão direta)
-                  const outroSlot = distribuicaoHorarios.find(
+                  const slotColidenteMesmoHorario = distribuicaoHorarios.find(
+                    (s) =>
+                      s.id !== slotEmEdicaoId &&
+                      s.dia === diaAlvoModal &&
+                      s.turmasIds.includes(t.id) &&
+                      horariosColidem(modalInicio, modalFim, s.inicio, s.fim)
+                  );
+
+                  const outroSlotNoDiaDiferente = distribuicaoHorarios.find(
                     (s) =>
                       s.id !== slotEmEdicaoId &&
                       s.dia === diaAlvoModal &&
@@ -1101,32 +1643,48 @@ export function GateHomologacaoGrade({
                       !horariosColidem(modalInicio, modalFim, s.inicio, s.fim)
                   );
 
+                  const desabilitada = Boolean(conflitoSlotNoDia || slotColidenteMesmoHorario);
+
                   return (
                     <label
                       key={t.id}
-                      className={`flex items-center justify-between p-3 rounded-xl border transition cursor-pointer ${
-                        marcada
-                          ? "border-sky-500 bg-sky-50/40"
-                          : "border-slate-200 bg-white hover:border-slate-300"
+                      className={`flex items-center justify-between p-3 rounded-xl border transition ${
+                        desabilitada
+                          ? "border-rose-200 bg-rose-50/40 opacity-70 cursor-not-allowed"
+                          : marcada
+                          ? "border-sky-500 bg-sky-50/70 cursor-pointer"
+                          : outroSlotNoDiaDiferente
+                          ? "border-amber-200 bg-amber-50/20 cursor-pointer hover:border-amber-400"
+                          : "border-slate-200 bg-white cursor-pointer hover:border-sky-400"
                       }`}
                     >
                       <div className="flex items-center gap-2.5">
                         <input
                           type="checkbox"
                           checked={marcada}
-                          onChange={() => toggleCheckboxTurmaModal(t.id)}
-                          className="w-4 h-4 text-sky-600 rounded"
+                          disabled={desabilitada}
+                          onChange={() => aoAlternarCheckboxTurma(t.id)}
+                          className="w-4 h-4 text-sky-600 rounded cursor-pointer"
                         />
-                        <div>
-                          <span className="text-xs font-bold text-slate-800">Turma {t.identificador}</span>
-                          {outroSlot && (
-                            <span className="text-[9px] ml-2 bg-amber-100 text-amber-800 border border-amber-300 font-bold px-1.5 py-0.5 rounded">
-                              Também às {outroSlot.inicio}-{outroSlot.fim}
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-bold text-slate-800">
+                            Turma {t.identificador}
+                          </span>
+                          {slotColidenteMesmoHorario && (
+                            <span className="text-[9px] bg-rose-100 text-rose-700 border border-rose-300 font-bold px-1.5 py-0.5 rounded">
+                              Já tem aula neste horário ({slotColidenteMesmoHorario.inicio}-{slotColidenteMesmoHorario.fim})
+                            </span>
+                          )}
+                          {!slotColidenteMesmoHorario && outroSlotNoDiaDiferente && (
+                            <span className="text-[9px] bg-amber-100 text-amber-800 border border-amber-300 font-bold px-1.5 py-0.5 rounded">
+                              {marcada
+                                ? `Também às ${outroSlotNoDiaDiferente.inicio}-${outroSlotNoDiaDiferente.fim}`
+                                : `Já em ${outroSlotNoDiaDiferente.inicio}-${outroSlotNoDiaDiferente.fim}`}
                             </span>
                           )}
                         </div>
                       </div>
-                      <span className="text-[11px] bg-slate-100 text-slate-700 font-bold px-2 py-0.5 rounded-lg border border-slate-200">
+                      <span className="text-[11px] bg-sky-50 text-sky-800 font-bold px-2 py-0.5 rounded-lg border border-sky-200">
                         {t.min}-{t.max} anos
                       </span>
                     </label>
@@ -1135,136 +1693,82 @@ export function GateHomologacaoGrade({
               </div>
             </div>
 
-            {/* REPLICAR EM OUTROS DIAS (SEMPRE DESMARCADAS POR PADRÃO) */}
-            <div className="space-y-2 pt-1 border-t border-slate-100">
+            {/* 3. Replicar este Bloco em Outros Dias (100% DESMARCADAS) */}
+            <div className="space-y-2">
               <label className="text-xs font-black text-slate-800">
-                3. Replicar este bloco em outros dias? (opcional)
+                3. Replicar este bloco em outros dias do calendário?
               </label>
-              <div className="grid grid-cols-3 gap-1.5">
-                {diasSelecionados
-                  .filter((d) => d !== diaAlvoModal)
-                  .map((diaKey) => {
-                    const ativo = diasReplicacaoModal.includes(diaKey);
+              <div className="grid grid-cols-4 gap-1.5">
+                {diasOrdenados
+                  .filter((dia) => dia !== diaAlvoModal)
+                  .map((dia) => {
+                    const ativo = diasReplicacaoModal.includes(dia);
                     return (
                       <button
-                        key={diaKey}
+                        key={dia}
                         type="button"
-                        onClick={() => toggleReplicacaoDia(diaKey)}
-                        className={`py-2 rounded-xl border text-xs font-bold transition ${
+                        onClick={() => togglePillReplicacao(dia)}
+                        className={`py-2 rounded-xl border text-xs font-bold transition cursor-pointer ${
                           ativo
                             ? "bg-sky-600 text-white border-sky-600 shadow-xs"
                             : "bg-white text-slate-700 border-slate-200 hover:border-slate-300"
                         }`}
                       >
-                        {DIAS_MAP[diaKey].curto}
+                        {DIAS_MAP[dia]?.curto}
                       </button>
                     );
                   })}
               </div>
             </div>
 
-            {/* BOTÕES MODAL */}
+            {/* Botões do Modal */}
             <div className="pt-2 flex gap-2">
               <button
                 type="button"
                 onClick={() => setModalBlocoAberto(false)}
-                className="flex-1 py-3 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50"
+                className="flex-1 py-3 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 cursor-pointer"
               >
                 Cancelar
               </button>
               <button
                 type="button"
-                disabled={Boolean(conflitoSlotNoDia)}
                 onClick={salvarBlocoModal}
-                className={`flex-2 py-3 px-4 rounded-xl font-bold text-xs shadow-md flex items-center justify-center gap-2 ${
+                disabled={Boolean(conflitoSlotNoDia)}
+                className={`flex-2 py-3 px-4 rounded-xl font-bold text-xs shadow-md flex items-center justify-center gap-2 cursor-pointer ${
                   conflitoSlotNoDia
-                    ? "bg-slate-300 text-slate-500 cursor-not-allowed"
-                    : "bg-sky-700 hover:bg-sky-800 text-white cursor-pointer"
+                    ? "bg-slate-300 text-slate-500 cursor-not-allowed shadow-none"
+                    : "bg-sky-700 hover:bg-sky-800 text-white"
                 }`}
               >
-                <span>{slotEmEdicaoId ? "Salvar Alterações" : "Colocar Bloco no Calendário"}</span>
+                <Check className="w-4 h-4" />
+                <span>
+                  {slotEmEdicaoId ? "Salvar Alterações" : "Colocar Bloco no Calendário"}
+                </span>
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* ========================================================= */}
-      {/* MODAL: CONFIRMAÇÃO DE DURAÇÃO (SOBREPÕE TUDO) */}
-      {/* ========================================================= */}
-      {modalDuracaoAberta && (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
-          <div
-            onClick={recusarDuracaoModal}
-            className="absolute inset-0 bg-slate-950/80 backdrop-blur-md"
-          />
-
-          <div className="relative bg-white rounded-3xl p-6 shadow-2xl max-w-sm w-full text-center space-y-4 border-2 border-amber-400">
-            {/* BANNER GIGANTE DE TÉRMINO */}
-            <div className="bg-gradient-to-br from-amber-500 via-amber-600 to-orange-600 text-white p-5 rounded-2xl shadow-xl space-y-1 border border-amber-300/40">
-              <div className="text-[11px] uppercase font-black text-amber-100 tracking-wider flex items-center justify-center gap-1.5">
-                <Flag className="w-3.5 h-3.5" /> Horário de Término do Bloco
-              </div>
-              <div className="text-4xl font-black tracking-tight drop-shadow-sm">{modalFim}</div>
-              <div className="text-xs font-bold text-amber-100 bg-black/20 rounded-lg py-1 px-3 inline-block mt-1">
-                Duração total: das {modalInicio} às {modalFim}
-              </div>
-            </div>
-
-            <div className="space-y-1.5">
-              <h3 className="text-sm font-black text-slate-900 leading-snug">
-                Mais de uma turma neste mesmo bloco
-              </h3>
-              <p className="text-xs text-slate-700 leading-relaxed font-medium">
-                O tempo de duração informado ({modalInicio} às {modalFim}) cobre todo o horário deste bloco com as turmas selecionadas?
-              </p>
-            </div>
-
-            <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-[11px] text-amber-950 font-medium text-left space-y-1.5">
-              <div className="flex items-center gap-1.5 font-bold text-amber-900">
-                <Info className="w-3.5 h-3.5 text-amber-600" /> Como funciona:
-              </div>
-              <div className="text-amber-800 leading-snug space-y-1">
-                <div>• Se todas treinam juntas neste mesmo horário, clique em <strong>"Sim, o horário está correto"</strong>.</div>
-                <div>• Se os horários forem divididos entre as turmas, clique em <strong>"Não, os horários são divididos"</strong> para informar o início e término total do bloco (ex: 08:00 às 11:00). Ambas as turmas continuarão neste mesmo bloco único.</div>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-2 pt-1">
-              <button
-                type="button"
-                onClick={confirmarDuracaoModal}
-                className="w-full py-3 px-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-black shadow-lg transition flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <CheckCircle2 className="w-4 h-4" />
-                <span>Sim, o horário do bloco está correto</span>
-              </button>
-              <button
-                type="button"
-                onClick={recusarDuracaoModal}
-                className="w-full py-2.5 px-3 rounded-xl border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-100 transition cursor-pointer"
-              >
-                Não, os horários são divididos (ajustar horário completo)
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================= */}
-      {/* MODAL: CONFIRMAR DUPLICIDADE DE TURMA NO DIA */}
-      {/* ========================================================= */}
+      {/* ============================================================== */}
+      {/* MODAL: CONFIRMAÇÃO DE DUPLICIDADE NO DIA                       */}
+      {/* ============================================================== */}
       {modalDuplicidadeAberto && infoDuplicidade && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-          <div onClick={cancelarTurmaDuplicada} className="absolute inset-0 bg-slate-900/60" />
-          <div className="relative bg-white rounded-3xl p-5 shadow-2xl max-w-xs w-full text-center space-y-3.5 border border-slate-100">
-            <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center mx-auto text-xl">
-              <AlertTriangle className="w-6 h-6" />
+          <div
+            onClick={cancelarTurmaDuplicada}
+            className="absolute inset-0 bg-slate-900/60 backdrop-blur-xs"
+          />
+          <div className="relative bg-white rounded-3xl p-5 shadow-2xl max-w-[340px] w-full text-center space-y-3.5 border border-slate-100 animate-in fade-in zoom-in-95 duration-150">
+            <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center mx-auto text-xl shadow-inner">
+              <HelpCircle className="w-6 h-6" />
             </div>
             <div className="space-y-1">
               <h3 className="text-sm font-black text-slate-800">Turma já adicionada no dia</h3>
               <p className="text-xs text-slate-600 leading-relaxed pt-1">
-                A <strong>{infoDuplicidade.turmaNome}</strong> já foi adicionada em <strong>{infoDuplicidade.horarioStr}</strong> ({infoDuplicidade.diaNome}).
+                A <strong>{infoDuplicidade.turmaNome}</strong> já foi adicionada em{" "}
+                <strong>{infoDuplicidade.horarioStr}</strong> ({infoDuplicidade.diaNome}).
+                <br />
                 <br />
                 <span className="font-bold text-slate-800">É isso mesmo que você deseja fazer?</span>
               </p>
@@ -1273,16 +1777,85 @@ export function GateHomologacaoGrade({
               <button
                 type="button"
                 onClick={cancelarTurmaDuplicada}
-                className="flex-1 py-2.5 px-3 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50"
+                className="flex-1 py-2.5 px-3 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition cursor-pointer"
               >
                 Não, cancelar
               </button>
               <button
                 type="button"
                 onClick={confirmarTurmaDuplicada}
-                className="flex-1 py-2.5 px-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold shadow-md"
+                className="flex-1 py-2.5 px-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold shadow-md transition cursor-pointer"
               >
                 Sim, é isso mesmo
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ============================================================== */}
+      {/* MODAL: DESTAQUE DE DURAÇÃO CONJUNTA (SOBREPONDO TUDO)          */}
+      {/* ============================================================== */}
+      {modalDuracaoAberta && (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+          <div
+            onClick={recusarDuracaoConjunta}
+            className="absolute inset-0 bg-slate-950/80 backdrop-blur-md"
+          />
+          <div className="relative bg-white rounded-3xl p-6 shadow-2xl max-w-[380px] w-full text-center space-y-4 border-2 border-amber-400 animate-in fade-in zoom-in-95 duration-150">
+            {/* Banner Gigante de Término */}
+            <div className="bg-gradient-to-br from-amber-500 via-amber-600 to-orange-600 text-white p-5 rounded-2xl shadow-xl space-y-1 border border-amber-300/40">
+              <div className="text-[11px] uppercase font-black text-amber-100 tracking-wider flex items-center justify-center gap-1.5">
+                <Flag className="w-3.5 h-3.5" /> Horário de Término do Bloco
+              </div>
+              <div className="text-4xl font-black tracking-tight drop-shadow-sm">{modalFim}</div>
+              <div className="text-xs font-bold text-amber-100 bg-black/20 rounded-lg py-1 px-3 inline-block mt-1">
+                Duração total: {duracaoStrTotModal} (das {modalInicio} às {modalFim})
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <h3 className="text-sm font-black text-slate-900 leading-snug">
+                Mais de uma turma neste mesmo bloco
+              </h3>
+              <p className="text-xs text-slate-700 leading-relaxed font-medium">
+                O tempo de duração informado ({modalInicio} às {modalFim}) cobre todo o horário deste
+                bloco com as turmas selecionadas?
+              </p>
+            </div>
+
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-[11px] text-amber-950 font-medium text-left space-y-1.5">
+              <div className="flex items-center gap-1.5 font-bold text-amber-900">
+                <Info className="w-3.5 h-3.5 text-amber-600" /> Como funciona:
+              </div>
+              <div className="text-amber-800 leading-snug space-y-1">
+                <div>
+                  • Se todas treinam juntas neste mesmo horário, clique em{" "}
+                  <strong>&quot;Sim, o horário do bloco está correto&quot;</strong>.
+                </div>
+                <div>
+                  • Se os horários forem divididos entre as turmas, clique em{" "}
+                  <strong>&quot;Não, os horários são divididos&quot;</strong> para informar o início e
+                  término total do bloco (ex: 08:00 às 11:00). Ambas as turmas continuarão neste mesmo bloco único.
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2 pt-1">
+              <button
+                type="button"
+                onClick={confirmarDuracaoConjunta}
+                className="w-full py-3 px-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-black shadow-lg transition flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <CheckCircle2 className="w-4 h-4" />
+                <span>Sim, o horário do bloco está correto (término às {modalFim})</span>
+              </button>
+              <button
+                type="button"
+                onClick={recusarDuracaoConjunta}
+                className="w-full py-2.5 px-3 rounded-xl border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-100 transition cursor-pointer"
+              >
+                Não, os horários são divididos (ajustar horário completo)
               </button>
             </div>
           </div>

@@ -108,6 +108,7 @@ export function ProfessorClientWrapper({
       pontoHoje={dadosSupabase?.pontoHoje}
       totalBeneficiariosPolo={dadosSupabase?.totalBeneficiariosPolo}
       totalSemTurmaPolo={dadosSupabase?.totalSemTurmaPolo}
+      gradeHomologada={dadosSupabase?.gradeHomologada}
       loading={dbLoading}
     />
   );
