@@ -37,6 +37,7 @@ import { GestaoMatriculasProfessor } from "./GestaoMatriculasProfessor";
 import { getDataHojeBrasil, formatDateBrasil } from "@/lib/dateUtils";
 import { GradeSemanalProfessor } from "./GradeSemanalProfessor";
 import { ModalInformacoesAula } from "./ModalInformacoesAula";
+import { GateHomologacaoGrade, type TurmaMontada, type SlotHorarioGrade } from "./GateHomologacaoGrade";
 import type { FuncionarioApi, TurmaApi, NucleoApi, BeneficiarioApi, SlotAulaGrid, ExecucaoAulaApi } from "@/lib/api/services";
 import { areaProfessorApi, execucoesAulaApi, professoresApi, inscricoesApi } from "@/lib/api/services";
 import { useQuery } from "@/lib/hooks/useQuery";
@@ -98,6 +99,50 @@ export function DashboardProfessorHub({
   const { logout } = useAuth();
   const { toast } = useToast();
   const [slideAtual, setSlideAtual] = useState(0);
+
+  // Controle de exibição do Gate de Homologação de Grade
+  const [exibindoGateGrade, setExibindoGateGrade] = useState(false);
+
+  // Grade é considerada homologada se tiver turmas E slots de horários cadastrados
+  const gradeHomologada = useMemo(() => {
+    return turmas.length > 0 && (slotsGrid ?? []).length > 0;
+  }, [turmas, slotsGrid]);
+
+  const deveExibirGate = exibindoGateGrade || (!loading && !gradeHomologada);
+
+  async function handleConcluirHomologacao(dados: {
+    turmas: TurmaMontada[];
+    diasSelecionados: string[];
+    gradeHorarios: SlotHorarioGrade[];
+  }) {
+    const nucleoIdAlvo = nucleo?.id || professor.nucleoId || turmas[0]?.nucleoId;
+    if (!nucleoIdAlvo) {
+      toast.error("Não foi possível identificar o polo esportivo vinculado ao professor.");
+      return;
+    }
+
+    try {
+      const res = await areaProfessorApi.homologarGradeSemanal({
+        nucleoId: nucleoIdAlvo,
+        funcionarioId: professor.id,
+        turmas: dados.turmas,
+        diasSelecionados: dados.diasSelecionados,
+        gradeHorarios: dados.gradeHorarios,
+      });
+
+      toast.success("Grade semanal homologada com sucesso!");
+      setExibindoGateGrade(false);
+
+      if (res.primeiraTurmaId) {
+        router.push(`/professor/aula/${res.primeiraTurmaId}`);
+      } else {
+        router.refresh();
+      }
+    } catch (err: any) {
+      console.error("Erro ao homologar grade:", err);
+      toast.error(err?.message || "Ocorreu um erro ao gravar a grade no sistema.");
+    }
+  }
 
   // Data da aula selecionada para aplicacao/ponto (padrao YYYY-MM-DD hoje no Brasil)
   const [dataAula, setDataAula] = useState<string>(getDataHojeBrasil());
@@ -465,6 +510,28 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
   const turmasHoje = turmasOrdenadas.filter(t => t.slots?.some((s: any) => s.dia === SIGLAS_DIA[hojeIndice]));
   const outrasTurmas = turmasOrdenadas.filter(t => !t.slots?.some((s: any) => s.dia === SIGLAS_DIA[hojeIndice]));
 
+  if (loading) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-sky-600 border-t-transparent" />
+          <span className="text-xs text-zinc-400 font-medium">Carregando painel do professor...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (deveExibirGate) {
+    return (
+      <GateHomologacaoGrade
+        professor={professor}
+        nucleo={nucleo}
+        onConcluirHomologacao={handleConcluirHomologacao}
+        onCancelar={gradeHomologada ? () => setExibindoGateGrade(false) : undefined}
+      />
+    );
+  }
+
   return (
     <div className="flex flex-col gap-8 max-w-6xl mx-auto py-2">
       {/* SELETOR DE VISUALIZAÇÃO PARA ADMINISTRADORES */}
@@ -617,6 +684,17 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
                 </span>
               </div>
 
+              {/* Botão Ajustar Grade */}
+              <button
+                type="button"
+                onClick={() => setExibindoGateGrade(true)}
+                className="flex items-center gap-2 rounded-2xl border border-sky-400/40 bg-sky-500/20 px-3.5 py-2.5 text-xs font-bold text-sky-200 hover:bg-sky-500/35 hover:text-white transition-all shadow-xs active:scale-95 cursor-pointer"
+                title="Configurar turmas e grade semanal"
+              >
+                <Calendar className="h-4 w-4 text-sky-300" />
+                <span>Grade Semanal</span>
+              </button>
+
               {/* Botão Sair */}
               <button
                 type="button"
@@ -640,11 +718,21 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
                 </div>
               </div>
 
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 <div className="flex flex-col text-right">
                   <span className="text-[9px] font-semibold uppercase text-sky-200/70">Matrícula</span>
                   <span className="text-xs font-bold text-white font-mono">{professor.matricula}</span>
                 </div>
+
+                <button
+                  type="button"
+                  onClick={() => setExibindoGateGrade(true)}
+                  className="flex items-center gap-1.5 rounded-xl border border-sky-400/40 bg-sky-500/20 px-2.5 py-1.5 text-xs font-semibold text-sky-200 hover:bg-sky-500/30 hover:text-white transition-all shadow-xs active:scale-95 cursor-pointer"
+                  title="Ajustar Grade"
+                >
+                  <Calendar className="h-3.5 w-3.5 text-sky-300" />
+                  <span>Grade</span>
+                </button>
 
                 <button
                   type="button"
@@ -1034,6 +1122,14 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
             >
               <FileText className="h-3.5 w-3.5" />
               <span>Resumo da Semana</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setExibindoGateGrade(true)}
+              className="flex items-center gap-1.5 rounded-lg bg-sky-600 hover:bg-sky-700 text-white px-3 py-1.5 text-xs font-bold transition-all shadow-xs self-start sm:self-auto shrink-0 cursor-pointer active:scale-95"
+            >
+              <Calendar className="h-3.5 w-3.5" />
+              <span>Ajustar Grade</span>
             </button>
           </div>
         </div>
