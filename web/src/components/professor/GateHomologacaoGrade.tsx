@@ -669,75 +669,77 @@ export function GateHomologacaoGrade({
     minsTotModal > 0 ? `${horasTotModal}h${minsTotModal}m` : `${horasTotModal} horas`;
 
   return (
-    <div className="w-full max-w-4xl mx-auto bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden flex flex-col">
+    <div className="w-full min-h-screen bg-slate-50 flex flex-col">
       {/* ============================================================== */}
       {/* HEADER INTEGRADO DO PORTAL DO PROFESSOR                        */}
       {/* ============================================================== */}
-      <div className="bg-gradient-to-r from-sky-900 via-sky-800 to-indigo-900 text-white p-5 sm:p-6 shadow-md">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-white/15 border border-white/20 flex items-center justify-center font-black text-base shadow-sm">
-              {iniciaisProfessor}
-            </div>
-            <div>
-              <div className="text-xs text-sky-200 font-semibold uppercase tracking-wider">
-                Professor(a) Responsável
+      <div className="w-full bg-gradient-to-r from-sky-950 via-sky-900 to-indigo-950 text-white shadow-md border-b border-sky-800/40">
+        <div className="max-w-7xl mx-auto w-full p-5 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex items-center gap-3.5">
+              <div className="w-12 h-12 rounded-2xl bg-white/15 border border-white/20 flex items-center justify-center font-black text-base shadow-sm">
+                {iniciaisProfessor}
               </div>
-              <h1 className="text-lg sm:text-xl font-black text-white leading-tight">
-                {professor.nomeCompleto}
-              </h1>
-              <div className="flex items-center gap-2 mt-1 text-xs text-sky-200">
-                <span className="flex items-center gap-1 font-medium">
-                  <MapPin className="w-3.5 h-3.5 text-sky-300" />
-                  {nucleo?.identificacao || "Polo Esportivo"}
-                </span>
-                <span>•</span>
-                <span>{totalAlunosPolo} alunos vinculados ao polo</span>
+              <div>
+                <div className="text-xs text-sky-200 font-semibold uppercase tracking-wider">
+                  Professor(a) Responsável
+                </div>
+                <h1 className="text-lg sm:text-xl font-black text-white leading-tight">
+                  {professor.nomeCompleto}
+                </h1>
+                <div className="flex items-center gap-2 mt-1 text-xs text-sky-200">
+                  <span className="flex items-center gap-1 font-medium">
+                    <MapPin className="w-3.5 h-3.5 text-sky-300" />
+                    {nucleo?.identificacao || "Polo Esportivo"}
+                  </span>
+                  <span>•</span>
+                  <span>{totalAlunosPolo} alunos vinculados ao polo</span>
+                </div>
               </div>
             </div>
+
+            {onCancelar && (
+              <button
+                type="button"
+                onClick={onCancelar}
+                className="self-start sm:self-auto text-xs font-bold text-sky-200 hover:text-white bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-xl border border-white/15 transition cursor-pointer"
+              >
+                Cancelar e Voltar ao Painel
+              </button>
+            )}
           </div>
 
-          {onCancelar && (
-            <button
-              type="button"
-              onClick={onCancelar}
-              className="self-start sm:self-auto text-xs font-bold text-sky-200 hover:text-white bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-xl border border-white/15 transition cursor-pointer"
-            >
-              Cancelar e Voltar ao Painel
-            </button>
-          )}
-        </div>
-
-        {/* Stepper Integrado das 3 Etapas */}
-        <div className="mt-5 pt-4 border-t border-white/10 space-y-2">
-          <div className="grid grid-cols-3 gap-2">
-            <div
-              className={`h-2 rounded-full transition-all duration-300 ${
-                etapa >= 1 ? "bg-sky-400" : "bg-white/20"
-              }`}
-            />
-            <div
-              className={`h-2 rounded-full transition-all duration-300 ${
-                etapa >= 2 ? "bg-sky-400" : "bg-white/20"
-              }`}
-            />
-            <div
-              className={`h-2 rounded-full transition-all duration-300 ${
-                etapa >= 3 ? "bg-sky-400" : "bg-white/20"
-              }`}
-            />
-          </div>
-          <div className="flex justify-between items-center text-xs text-sky-200 font-medium">
-            <span className="font-bold text-white">
-              {etapa === 1 && "Etapa 1 de 3: Minhas Turmas"}
-              {etapa === 2 && "Etapa 2 de 3: Dias de Treino"}
-              {etapa === 3 && "Etapa 3 de 3: Grade Semanal"}
-            </span>
-            <span className="text-sky-300 font-mono">
-              {etapa === 1 && "Passo 1/3 (33%)"}
-              {etapa === 2 && "Passo 2/3 (66%)"}
-              {etapa === 3 && "Passo 3/3 (100%)"}
-            </span>
+          {/* Stepper Integrado das 3 Etapas */}
+          <div className="mt-5 pt-4 border-t border-white/10 space-y-2">
+            <div className="grid grid-cols-3 gap-2">
+              <div
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  etapa >= 1 ? "bg-sky-400" : "bg-white/20"
+                }`}
+              />
+              <div
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  etapa >= 2 ? "bg-sky-400" : "bg-white/20"
+                }`}
+              />
+              <div
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  etapa >= 3 ? "bg-sky-400" : "bg-white/20"
+                }`}
+              />
+            </div>
+            <div className="flex justify-between items-center text-xs text-sky-200 font-medium">
+              <span className="font-bold text-white">
+                {etapa === 1 && "Etapa 1 de 3: Minhas Turmas"}
+                {etapa === 2 && "Etapa 2 de 3: Dias de Treino"}
+                {etapa === 3 && "Etapa 3 de 3: Grade Semanal"}
+              </span>
+              <span className="text-sky-300 font-mono">
+                {etapa === 1 && "Passo 1/3 (33%)"}
+                {etapa === 2 && "Passo 2/3 (66%)"}
+                {etapa === 3 && "Passo 3/3 (100%)"}
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -745,7 +747,7 @@ export function GateHomologacaoGrade({
       {/* ============================================================== */}
       {/* CONTEÚDO DA ÁREA ÚTIL                                          */}
       {/* ============================================================== */}
-      <div className="p-5 sm:p-7 space-y-6">
+      <div className="w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 flex-1 flex flex-col space-y-6">
         {/* ============================================================ */}
         {/* ETAPA 1: DEFINIR AS TURMAS (SELECTS + LINHA CONTÍNUA)        */}
         {/* ============================================================ */}
@@ -1463,7 +1465,7 @@ export function GateHomologacaoGrade({
       {/* MODAL INSERIR / EDITAR BLOCO (BOTTOM SHEET / DIALOG)            */}
       {/* ============================================================== */}
       {modalBlocoAberto && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div className="fixed inset-0 z-[110] flex items-end sm:items-center justify-center p-0 sm:p-4">
           <div
             onClick={() => setModalBlocoAberto(false)}
             className="absolute inset-0 bg-slate-900/60 backdrop-blur-xs"
@@ -1700,7 +1702,7 @@ export function GateHomologacaoGrade({
       {/* MODAL: CONFIRMAÇÃO DE DUPLICIDADE NO DIA                       */}
       {/* ============================================================== */}
       {modalDuplicidadeAberto && infoDuplicidade && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4">
           <div
             onClick={cancelarTurmaDuplicada}
             className="absolute inset-0 bg-slate-900/60 backdrop-blur-xs"
@@ -1743,7 +1745,7 @@ export function GateHomologacaoGrade({
       {/* MODAL: DESTAQUE DE DURAÇÃO CONJUNTA (SOBREPONDO TUDO)          */}
       {/* ============================================================== */}
       {modalDuracaoAberta && (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[130] flex items-center justify-center p-4">
           <div
             onClick={recusarDuracaoConjunta}
             className="absolute inset-0 bg-slate-950/80 backdrop-blur-md"

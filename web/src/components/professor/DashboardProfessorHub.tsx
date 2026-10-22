@@ -532,7 +532,7 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
 
   if (deveExibirGate) {
     return (
-      <div className="py-6 px-3 sm:px-6 max-w-5xl mx-auto">
+      <div className="fixed inset-0 z-[100] w-full h-full bg-slate-50 overflow-y-auto">
         <GateHomologacaoGrade
           professor={professor}
           nucleo={nucleo}
