@@ -1452,7 +1452,7 @@ export function GateHomologacaoGrade({
                     ? `Distribua todas as turmas para confirmar (${turmasPendentes
                         .map((p) => `Turma ${p.turma.identificador}`)
                         .join(", ")} sem horário)`
-                    : "Confirmar Grade e Iniciar Aula"}
+                    : "Salvar Grade e Voltar ao Painel"}
                 </span>
               </button>
               <p className="text-xs text-slate-400 text-center font-medium">
@@ -1462,7 +1462,7 @@ export function GateHomologacaoGrade({
                   </span>
                 ) : (
                   <span className="text-emerald-700 font-bold">
-                    Todas as turmas estão alocadas! Ao confirmar, a grade será gravada e a 1ª aula do dia será iniciada.
+                    Todas as turmas estão alocadas! Ao confirmar, suas turmas e horários serão salvos e você voltará ao painel inicial para iniciar as aulas.
                   </span>
                 )}
               </p>

@@ -25,7 +25,7 @@ export default async function AulaTurmaPage({ params, searchParams }: AulaTurmaP
   const [beneficiariosRes, beneficiariosPolo, funcionariosRes, execucaoExistente] = await Promise.all([
     beneficiariosApi.list({ turmaId, limit: 200 }).catch(() => ({ data: [] })),
     nucleoId
-      ? beneficiariosApi.listAll({ nucleoId, status: "ativo" }).catch(() => [])
+      ? beneficiariosApi.listAll({ nucleoId }).catch(() => [])
       : Promise.resolve([]),
     funcionariosApi.list({ limit: 200 }).catch(() => ({ data: [] })),
     execucoesSessaoApi.getExecucao(turmaId, dataQuery).catch(() => null),

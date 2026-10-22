@@ -139,14 +139,11 @@ export function DashboardProfessorHub({
         gradeHorarios: dados.gradeHorarios,
       });
 
-      toast.success("Grade semanal homologada com sucesso!");
+      toast.success("Grade semanal homologada com sucesso! Turmas e horários configurados.");
       setExibindoGateGrade(false);
 
-      if (res.primeiraTurmaId) {
-        router.push(`/professor/aula/${res.primeiraTurmaId}`);
-      } else {
-        router.refresh();
-      }
+      // Recarrega o painel para exibir as turmas recém-criadas/editadas prontas para aula
+      window.location.reload();
     } catch (err: any) {
       console.error("Erro ao homologar grade:", err);
       toast.error(err?.message || "Ocorreu um erro ao gravar a grade no sistema.");

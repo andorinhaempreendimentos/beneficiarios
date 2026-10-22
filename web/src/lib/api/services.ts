@@ -3693,7 +3693,7 @@ export const areaProfessorApi = {
             idade_minima: t.min,
             idade_maxima: t.max,
             vagas_totais: 30,
-            status_inicial: 'pendente_documentos',
+            status_inicial: 'aprovada',
             tipo: 'regular',
           })
           .select()
