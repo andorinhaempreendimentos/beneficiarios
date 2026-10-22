@@ -6,14 +6,12 @@ import {
   Calendar,
   Clock,
   Plus,
-  Trash2,
   CheckCircle2,
   AlertCircle,
   AlertTriangle,
   ArrowRight,
   ArrowLeft,
   X,
-  Sparkles,
   Info,
   Flag,
   Lock,
@@ -21,7 +19,8 @@ import {
   CheckSquare,
   Shield,
   HelpCircle,
-  Trophy,
+  MapPin,
+  Sparkles,
 } from "lucide-react";
 import type { FuncionarioApi, NucleoApi } from "@/lib/api/services";
 
@@ -90,11 +89,11 @@ function horariosColidem(i1: string, f1: string, i2: string, f2: string): boolea
 export function GateHomologacaoGrade({
   professor,
   nucleo,
-  totalAlunosPolo = 92,
+  totalAlunosPolo = 0,
   onConcluirHomologacao,
   onCancelar,
 }: GateHomologacaoGradeProps) {
-  // Stepper: 1 = Minhas Turmas, 2 = Dias da Semana, 3 = Calendário & Grade
+  // Stepper: 1 = Minhas Turmas, 2 = Dias de Treino, 3 = Grade Semanal
   const [etapa, setEtapa] = useState<1 | 2 | 3>(1);
 
   // 1ª Etapa: Turmas Montadas (inicia 100% vazia)
@@ -133,25 +132,6 @@ export function GateHomologacaoGrade({
 
   // Estado de envio
   const [salvando, setSalvando] = useState(false);
-
-  // -------------------------------------------------------------
-  // FUNÇÃO: CARREGAR EXEMPLO COMPLETO REAL (CAPADÓCIA) COM 1 TOQUE
-  // -------------------------------------------------------------
-  function carregarExemploCompletoCapadocia() {
-    setTurmasMontadas([
-      { id: "t1", identificador: "A", min: 8, max: 11, label: "Turma A", cor: "sky" },
-      { id: "t2", identificador: "B", min: 12, max: 16, label: "Turma B", cor: "indigo" },
-    ]);
-    setDiasSelecionados(["seg", "qua", "sab"]);
-    setDistribuicaoHorarios([
-      { id: "s1", dia: "seg", inicio: "08:00", fim: "09:30", turmasIds: ["t1"], grupoId: "grp_1" },
-      { id: "s2", dia: "seg", inicio: "09:30", fim: "11:00", turmasIds: ["t2"], grupoId: "grp_2" },
-      { id: "s3", dia: "qua", inicio: "08:00", fim: "09:30", turmasIds: ["t1"], grupoId: "grp_1" },
-      { id: "s4", dia: "qua", inicio: "09:30", fim: "11:00", turmasIds: ["t2"], grupoId: "grp_2" },
-      { id: "s5", dia: "sab", inicio: "08:00", fim: "11:00", turmasIds: ["t1", "t2"], grupoId: "grp_conjunto" },
-    ]);
-    setEtapa(3);
-  }
 
   // -------------------------------------------------------------
   // VALIDAÇÕES DA ETAPA 1 (FAIXAS CONTÍGUAS, SEM OVERLAP E SEM LACUNAS)
@@ -309,7 +289,6 @@ export function GateHomologacaoGrade({
   function toggleDiaEtapa2(diaKey: string) {
     setDiasSelecionados((prev) => {
       if (prev.includes(diaKey)) {
-        // Remove horários agendados naquele dia desmarcado
         setDistribuicaoHorarios((slots) => slots.filter((s) => s.dia !== diaKey));
         return prev.filter((d) => d !== diaKey);
       } else {
@@ -357,7 +336,6 @@ export function GateHomologacaoGrade({
     const dia = diaEscolhido || diasOrdenados[0] || "seg";
     setDiaAlvoModal(dia);
 
-    // Sugere horário inteligente (subsequente aos blocos já criados naquele dia)
     const slotsDoDia = distribuicaoHorarios
       .filter((s) => s.dia === dia)
       .sort((a, b) => horaParaMinutos(a.fim) - horaParaMinutos(b.fim));
@@ -381,7 +359,6 @@ export function GateHomologacaoGrade({
     setModalInicio(defInicio);
     setModalFim(defFim);
     setTurmasMarcadasModal([]);
-    // NUNCA PRÉ-MARCADO: INICIA 100% DESMARCADO
     setDiasReplicacaoModal([]);
     setModalBlocoAberto(true);
   }
@@ -396,12 +373,10 @@ export function GateHomologacaoGrade({
     setModalInicio(slot.inicio);
     setModalFim(slot.fim);
     setTurmasMarcadasModal([...slot.turmasIds]);
-    // NUNCA PRÉ-MARCADO: INICIA 100% DESMARCADO NA EDIÇÃO
     setDiasReplicacaoModal([]);
     setModalBlocoAberto(true);
   }
 
-  // Conflito de slot no dia atual (estritamente isolado no diaAlvoModal)
   const conflitoSlotNoDia = useMemo(() => {
     if (!modalBlocoAberto) return null;
     if (!modalInicio || !modalFim || horaParaMinutos(modalInicio) >= horaParaMinutos(modalFim)) {
@@ -429,7 +404,6 @@ export function GateHomologacaoGrade({
     const isMarcada = turmasMarcadasModal.includes(turmaId);
 
     if (!isMarcada) {
-      // 1. REGRA ESTRITA: A mesma turma jamais pode ser adicionada no mesmo horário no mesmo dia
       const colidente = distribuicaoHorarios.find(
         (s) =>
           s.id !== slotEmEdicaoId &&
@@ -447,7 +421,6 @@ export function GateHomologacaoGrade({
         return;
       }
 
-      // 2. Se for em outro horário no mesmo dia (sem colisão): pergunta confirmação
       if (!turmasDuplicadasAprovadas.has(turmaId)) {
         const outroSlot = distribuicaoHorarios.find(
           (s) =>
@@ -472,7 +445,6 @@ export function GateHomologacaoGrade({
       const novas = [...turmasMarcadasModal, turmaId];
       setTurmasMarcadasModal(novas);
 
-      // 3. Se agora tem >= 2 turmas marcadas: sobrepõe com destaque de término e duração!
       if (novas.length >= 2 && !duracaoConfirmada) {
         setModalDuracaoAberta(true);
       }
@@ -543,7 +515,6 @@ export function GateHomologacaoGrade({
 
     const diasParaInserir = [diaAlvoModal, ...diasReplicacaoModal];
 
-    // Validações estritas por dia
     for (const dia of diasParaInserir) {
       const slotExistente = distribuicaoHorarios.find(
         (s) =>
@@ -587,7 +558,6 @@ export function GateHomologacaoGrade({
       let novaLista = [...prev];
 
       if (slotEmEdicaoId) {
-        // Atualiza o bloco atual
         novaLista = novaLista.map((s) =>
           s.id === slotEmEdicaoId
             ? {
@@ -600,7 +570,6 @@ export function GateHomologacaoGrade({
             : s
         );
 
-        // Replica nos outros dias marcados
         diasReplicacaoModal.forEach((dia) => {
           const existenteOutroDia = novaLista.find(
             (s) =>
@@ -686,7 +655,6 @@ export function GateHomologacaoGrade({
     }
   }
 
-  // Iniciais do Professor
   const iniciaisProfessor = (professor.nomeCompleto || "PR")
     .split(" ")
     .slice(0, 2)
@@ -694,7 +662,6 @@ export function GateHomologacaoGrade({
     .join("")
     .toUpperCase();
 
-  // Duração calculada do modal de término
   const duracaoMinTotalModal = horaParaMinutos(modalFim) - horaParaMinutos(modalInicio);
   const horasTotModal = Math.floor(duracaoMinTotalModal / 60);
   const minsTotModal = duracaoMinTotalModal % 60;
@@ -702,143 +669,122 @@ export function GateHomologacaoGrade({
     minsTotModal > 0 ? `${horasTotModal}h${minsTotModal}m` : `${horasTotModal} horas`;
 
   return (
-    <div className="w-full max-w-2xl mx-auto bg-slate-50 rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col min-h-[850px] relative">
+    <div className="w-full max-w-4xl mx-auto bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden flex flex-col">
       {/* ============================================================== */}
-      {/* HEADER DO PROFESSOR (ANATOMIA FIEL AO HTML)                    */}
+      {/* HEADER INTEGRADO DO PORTAL DO PROFESSOR                        */}
       {/* ============================================================== */}
-      <div className="bg-gradient-to-r from-sky-800 via-sky-700 to-indigo-800 text-white p-4 shadow-md">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-full bg-white/20 border border-white/30 flex items-center justify-center font-black text-sm">
+      <div className="bg-gradient-to-r from-sky-900 via-sky-800 to-indigo-900 text-white p-5 sm:p-6 shadow-md">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex items-center gap-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-white/15 border border-white/20 flex items-center justify-center font-black text-base shadow-sm">
               {iniciaisProfessor}
             </div>
             <div>
-              <div className="text-[11px] text-sky-200 font-medium">Professor Responsável</div>
-              <div className="text-sm font-bold leading-tight">{professor.nomeCompleto}</div>
+              <div className="text-xs text-sky-200 font-semibold uppercase tracking-wider">
+                Professor(a) Responsável
+              </div>
+              <h1 className="text-lg sm:text-xl font-black text-white leading-tight">
+                {professor.nomeCompleto}
+              </h1>
+              <div className="flex items-center gap-2 mt-1 text-xs text-sky-200">
+                <span className="flex items-center gap-1 font-medium">
+                  <MapPin className="w-3.5 h-3.5 text-sky-300" />
+                  {nucleo?.identificacao || "Polo Esportivo"}
+                </span>
+                <span>•</span>
+                <span>{totalAlunosPolo} alunos vinculados ao polo</span>
+              </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            {/* Botão Carregar Exemplo Real */}
+          {onCancelar && (
             <button
               type="button"
-              onClick={carregarExemploCompletoCapadocia}
-              className="bg-white/15 hover:bg-white/25 active:scale-95 text-sky-100 text-[11px] font-bold py-1.5 px-3 rounded-xl border border-white/20 flex items-center gap-1.5 transition cursor-pointer"
-              title="Carregar cenário de Capadócia com 1 clique"
+              onClick={onCancelar}
+              className="self-start sm:self-auto text-xs font-bold text-sky-200 hover:text-white bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-xl border border-white/15 transition cursor-pointer"
             >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Exemplo Real</span>
+              Cancelar e Voltar ao Painel
             </button>
-
-            {onCancelar && (
-              <button
-                type="button"
-                onClick={onCancelar}
-                className="text-sky-200 hover:text-white text-xs font-bold px-2 py-1"
-              >
-                Voltar
-              </button>
-            )}
-          </div>
+          )}
         </div>
 
-        {/* Polo Info */}
-        <div className="mt-3 bg-white/10 rounded-xl p-2.5 backdrop-blur-sm border border-white/10 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-sky-500/30 flex items-center justify-center text-sky-200">
-              <Trophy className="w-4 h-4" />
-            </div>
-            <div>
-              <div className="text-xs font-bold text-white">
-                {nucleo?.identificacao || "Núcleo Capadócia"}
-              </div>
-              <div className="text-[10px] text-sky-200">
-                {totalAlunosPolo} alunos cadastrados no Data Lake
-              </div>
-            </div>
-          </div>
-          <span className="text-[10px] bg-amber-400/20 text-amber-300 border border-amber-400/30 px-2 py-0.5 rounded-full font-bold">
-            Homologação Mandatória
-          </span>
-        </div>
-
-        {/* Barra de Progresso das 3 Etapas */}
-        <div className="mt-4 space-y-1">
-          <div className="grid grid-cols-3 gap-1.5">
+        {/* Stepper Integrado das 3 Etapas */}
+        <div className="mt-5 pt-4 border-t border-white/10 space-y-2">
+          <div className="grid grid-cols-3 gap-2">
             <div
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                etapa >= 1 ? "bg-white" : "bg-white/30"
+              className={`h-2 rounded-full transition-all duration-300 ${
+                etapa >= 1 ? "bg-sky-400" : "bg-white/20"
               }`}
             />
             <div
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                etapa >= 2 ? "bg-white" : "bg-white/30"
+              className={`h-2 rounded-full transition-all duration-300 ${
+                etapa >= 2 ? "bg-sky-400" : "bg-white/20"
               }`}
             />
             <div
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                etapa >= 3 ? "bg-white" : "bg-white/30"
+              className={`h-2 rounded-full transition-all duration-300 ${
+                etapa >= 3 ? "bg-sky-400" : "bg-white/20"
               }`}
             />
           </div>
-          <div className="flex justify-between items-center text-[10px] text-sky-200 font-medium">
-            <span>
+          <div className="flex justify-between items-center text-xs text-sky-200 font-medium">
+            <span className="font-bold text-white">
               {etapa === 1 && "Etapa 1 de 3: Minhas Turmas"}
-              {etapa === 2 && "Etapa 2 de 3: Dias da Semana"}
-              {etapa === 3 && "Etapa 3 de 3: Calendário de Horários"}
+              {etapa === 2 && "Etapa 2 de 3: Dias de Treino"}
+              {etapa === 3 && "Etapa 3 de 3: Grade Semanal"}
             </span>
-            <span>
-              {etapa === 1 && "33%"}
-              {etapa === 2 && "66%"}
-              {etapa === 3 && "100%"}
+            <span className="text-sky-300 font-mono">
+              {etapa === 1 && "Passo 1/3 (33%)"}
+              {etapa === 2 && "Passo 2/3 (66%)"}
+              {etapa === 3 && "Passo 3/3 (100%)"}
             </span>
           </div>
         </div>
       </div>
 
       {/* ============================================================== */}
-      {/* CONTEÚDO ROLÁVEL PRINCIPAL                                     */}
+      {/* CONTEÚDO DA ÁREA ÚTIL                                          */}
       {/* ============================================================== */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="p-5 sm:p-7 space-y-6">
         {/* ============================================================ */}
         {/* ETAPA 1: DEFINIR AS TURMAS (SELECTS + LINHA CONTÍNUA)        */}
         {/* ============================================================ */}
         {etapa === 1 && (
-          <div className="space-y-4">
+          <div className="space-y-5">
             <div>
-              <div className="flex items-center gap-1.5 text-sky-800 text-[11px] font-bold uppercase tracking-wider mb-1">
-                <Users className="w-3.5 h-3.5" /> 1ª Etapa
+              <div className="flex items-center gap-1.5 text-sky-800 text-xs font-bold uppercase tracking-wider mb-1">
+                <Users className="w-4 h-4" /> 1ª Etapa • Estruturação das Turmas
               </div>
-              <h2 className="text-sm font-black text-slate-900">
+              <h2 className="text-base sm:text-lg font-black text-slate-900">
                 Quais turmas você atende neste polo?
               </h2>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Defina a idade mínima e máxima de cada turma (ainda sem horários):
+              <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+                Defina a idade mínima e máxima de cada turma. Nenhuma faixa pode sobrepor ou deixar idades sem atendimento.
               </p>
             </div>
 
             {/* Regras de Validação das Faixas */}
-            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-3 flex items-start gap-2.5">
+            <div className="bg-amber-50/80 border border-amber-200 rounded-2xl p-4 flex items-start gap-3">
               <Shield className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
               <div>
                 <div className="text-xs font-bold text-amber-950">
-                  Regras de Validação das Faixas:
+                  Regras de Validação das Faixas Etárias:
                 </div>
-                <ul className="text-[11px] text-amber-900 leading-snug mt-1 space-y-1">
-                  <li>• Nenhuma turma tem idade predefinida automaticamente; você escolhe a mínima e máxima.</li>
-                  <li>• As idades <strong>não podem se cruzar</strong>. Se a Turma A vai até 11 anos, a próxima começa em 12 anos.</li>
-                  <li>• <strong>Linha contínua:</strong> nenhuma idade pode ficar de fora (buraco/lacuna) entre as turmas.</li>
+                <ul className="text-xs text-amber-900 leading-snug mt-1.5 space-y-1">
+                  <li>• Você escolhe livremente a idade mínima e máxima de cada turma atendida no polo.</li>
+                  <li>• As idades <strong>não podem se cruzar</strong>. Se a Turma A vai até 11 anos, a próxima turma deve iniciar em 12 anos.</li>
+                  <li>• <strong>Linha contínua:</strong> nenhuma idade pode ficar de fora (buraco/lacuna) entre as turmas do polo.</li>
                 </ul>
               </div>
             </div>
 
             {/* Banner Dinâmico de Alerta (Sobreposição ou Lacuna) */}
             {conflitosIdade.length > 0 && (
-              <div className="rounded-2xl p-3.5 text-xs font-bold flex items-start gap-2.5 bg-rose-50 border-2 border-rose-400 text-rose-950 animate-pulse">
+              <div className="rounded-2xl p-4 text-xs font-bold flex items-start gap-2.5 bg-rose-50 border-2 border-rose-400 text-rose-950 animate-pulse">
                 <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
                 <div>
-                  <span className="block font-black">Conflito de Sobreposição de Idades:</span>
-                  <span className="text-[11px] font-medium block mt-0.5">
+                  <span className="block font-black text-sm">Conflito de Sobreposição de Idades:</span>
+                  <span className="text-xs font-medium block mt-0.5">
                     A <strong>Turma {conflitosIdade[0].turma1.identificador}</strong> e a{" "}
                     <strong>Turma {conflitosIdade[0].turma2.identificador}</strong> possuem idades
                     sobrepostas ({conflitosIdade[0].sobreposicao}). Corrija para continuar.
@@ -848,14 +794,14 @@ export function GateHomologacaoGrade({
             )}
 
             {conflitosIdade.length === 0 && lacunasIdade.length > 0 && (
-              <div className="rounded-2xl p-3.5 text-xs font-bold flex items-start gap-2.5 bg-amber-50 border-2 border-amber-400 text-amber-950">
+              <div className="rounded-2xl p-4 text-xs font-bold flex items-start gap-2.5 bg-amber-50 border-2 border-amber-400 text-amber-950">
                 <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
                 <div>
-                  <span className="block font-black">
+                  <span className="block font-black text-sm">
                     Idade fora da linha de turmas ({lacunasIdade[0].descricao} sem atendimento):
                   </span>
-                  <span className="text-[11px] font-medium block mt-0.5">
-                    Ficou um buraco entre a{" "}
+                  <span className="text-xs font-medium block mt-0.5">
+                    Ficou uma lacuna entre a{" "}
                     <strong>
                       Turma {lacunasIdade[0].turmaAnterior.identificador} (até{" "}
                       {lacunasIdade[0].turmaAnterior.max} anos)
@@ -865,7 +811,7 @@ export function GateHomologacaoGrade({
                       Turma {lacunasIdade[0].turmaProxima.identificador} (começa em{" "}
                       {lacunasIdade[0].turmaProxima.min} anos)
                     </strong>
-                    . Ajuste as faixas para que nenhuma idade fique sem turma.
+                    . Ajuste as faixas para que nenhuma idade fique sem atendimento.
                   </span>
                 </div>
               </div>
@@ -874,16 +820,16 @@ export function GateHomologacaoGrade({
             {/* Lista de Turmas Montadas */}
             <div className="space-y-3">
               {turmasMontadas.length === 0 ? (
-                <div className="py-8 px-4 text-center border-2 border-dashed border-slate-300 rounded-2xl bg-white space-y-2">
-                  <div className="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto text-base">
-                    <Users className="w-5 h-5" />
+                <div className="py-10 px-4 text-center border-2 border-dashed border-slate-300 rounded-3xl bg-slate-50 space-y-2">
+                  <div className="w-12 h-12 rounded-2xl bg-white text-slate-400 flex items-center justify-center mx-auto text-lg shadow-xs">
+                    <Users className="w-6 h-6 text-slate-400" />
                   </div>
-                  <div className="text-xs font-bold text-slate-700">
+                  <div className="text-sm font-bold text-slate-700">
                     Nenhuma turma adicionada ainda
                   </div>
-                  <p className="text-[11px] text-slate-400 max-w-xs mx-auto">
-                    Toque no botão abaixo para adicionar a <strong>Turma A</strong> e escolher a faixa
-                    de idade dela do zero.
+                  <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                    Toque no botão abaixo para adicionar a <strong>Turma A</strong> e definir a faixa
+                    etária atendida no polo esportivo.
                   </p>
                 </div>
               ) : (
@@ -914,11 +860,11 @@ export function GateHomologacaoGrade({
 
                     return (
                       <div key={t.id} className="space-y-2">
-                        <div className={`p-4 rounded-2xl border-2 transition shadow-xs space-y-3 ${cardBorder}`}>
-                          <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                            <div className="flex items-center gap-2.5">
+                        <div className={`p-4 sm:p-5 rounded-2xl border-2 transition shadow-xs space-y-3.5 ${cardBorder}`}>
+                          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                            <div className="flex items-center gap-3">
                               <span
-                                className={`w-8 h-8 rounded-xl font-black text-sm flex items-center justify-center ${
+                                className={`w-9 h-9 rounded-xl font-black text-sm flex items-center justify-center shadow-xs ${
                                   emConflito
                                     ? "bg-rose-600 text-white"
                                     : lacunaAposEsta
@@ -931,45 +877,45 @@ export function GateHomologacaoGrade({
                                 {t.identificador}
                               </span>
                               <div>
-                                <h4 className="text-xs font-black text-slate-800 flex items-center gap-1.5">
+                                <h4 className="text-sm font-black text-slate-800 flex items-center gap-2">
                                   Turma {t.identificador}
                                   {emConflito && (
-                                    <span className="text-[9px] bg-rose-100 text-rose-700 border border-rose-300 px-1.5 py-0.5 rounded font-bold">
+                                    <span className="text-[10px] bg-rose-100 text-rose-700 border border-rose-300 px-2 py-0.5 rounded font-bold">
                                       Idade Sobreposta
                                     </span>
                                   )}
                                   {!emConflito && lacunaAposEsta && (
-                                    <span className="text-[9px] bg-amber-100 text-amber-800 border border-amber-300 px-1.5 py-0.5 rounded font-bold flex items-center gap-1">
-                                      <AlertTriangle className="w-2.5 h-2.5 text-amber-600" /> Lacuna: falta {lacunaAposEsta.descricao}
+                                    <span className="text-[10px] bg-amber-100 text-amber-800 border border-amber-300 px-2 py-0.5 rounded font-bold flex items-center gap-1">
+                                      <AlertTriangle className="w-3 h-3 text-amber-600" /> Falta {lacunaAposEsta.descricao}
                                     </span>
                                   )}
                                   {!emConflito && !lacunaAposEsta && incompleta && (
-                                    <span className="text-[9px] bg-amber-100 text-amber-800 border border-amber-300 px-1.5 py-0.5 rounded font-bold">
-                                      Configurando...
+                                    <span className="text-[10px] bg-amber-100 text-amber-800 border border-amber-300 px-2 py-0.5 rounded font-bold">
+                                      Configurando faixa...
                                     </span>
                                   )}
                                   {!emConflito && !lacunaAposEsta && !incompleta && (
-                                    <span className="text-[9px] bg-emerald-100 text-emerald-800 border border-emerald-300 px-1.5 py-0.5 rounded font-bold flex items-center gap-1">
-                                      <Check className="w-2.5 h-2.5" /> Pronta
+                                    <span className="text-[10px] bg-emerald-100 text-emerald-800 border border-emerald-300 px-2 py-0.5 rounded font-bold flex items-center gap-1">
+                                      <Check className="w-3 h-3" /> Faixa Definida
                                     </span>
                                   )}
                                 </h4>
                                 <div>
                                   {t.min === null && t.max === null ? (
-                                    <span className="text-[10px] text-slate-400 font-medium">
-                                      Selecione a idade mínima e máxima
+                                    <span className="text-xs text-slate-400 font-medium">
+                                      Selecione a idade mínima e máxima da turma
                                     </span>
                                   ) : t.min !== null && t.max === null ? (
-                                    <span className="text-[10px] text-amber-700 font-bold">
-                                      Mínima: {t.min} anos • Selecione a máxima
+                                    <span className="text-xs text-amber-700 font-bold">
+                                      Mínima: {t.min} anos • Selecione a idade máxima
                                     </span>
                                   ) : (
                                     <span
-                                      className={`text-[10px] ${
+                                      className={`text-xs ${
                                         lacunaAposEsta ? "text-amber-800 font-black" : "text-emerald-700 font-bold"
                                       }`}
                                     >
-                                      Faixa: {t.min} a {t.max} anos
+                                      Faixa etária: {t.min} a {t.max} anos
                                     </span>
                                   )}
                                 </div>
@@ -978,15 +924,15 @@ export function GateHomologacaoGrade({
                             <button
                               type="button"
                               onClick={() => removerTurma(t.id)}
-                              className="text-[10px] text-rose-500 hover:underline font-bold cursor-pointer"
+                              className="text-xs text-rose-500 hover:text-rose-700 hover:underline font-bold cursor-pointer"
                             >
                               Excluir
                             </button>
                           </div>
 
-                          <div className="grid grid-cols-2 gap-2 pt-1">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                             <div>
-                              <label className="text-[10px] font-bold text-slate-500 block mb-1">
+                              <label className="text-xs font-bold text-slate-600 block mb-1.5">
                                 Idade Mínima:
                               </label>
                               <select
@@ -998,7 +944,7 @@ export function GateHomologacaoGrade({
                                     e.target.value ? parseInt(e.target.value, 10) : null
                                   )
                                 }
-                                className={`w-full bg-slate-50 border rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-800 cursor-pointer ${
+                                className={`w-full bg-slate-50 border rounded-xl px-3 py-2 text-xs font-bold text-slate-800 cursor-pointer ${
                                   emConflito
                                     ? "border-rose-400 focus:ring-rose-500"
                                     : "border-slate-200 focus:ring-sky-500"
@@ -1034,7 +980,7 @@ export function GateHomologacaoGrade({
                             </div>
 
                             <div>
-                              <label className="text-[10px] font-bold text-slate-500 block mb-1">
+                              <label className="text-xs font-bold text-slate-600 block mb-1.5">
                                 Idade Máxima:
                               </label>
                               <select
@@ -1047,7 +993,7 @@ export function GateHomologacaoGrade({
                                     e.target.value ? parseInt(e.target.value, 10) : null
                                   )
                                 }
-                                className={`w-full bg-slate-50 border rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-800 ${
+                                className={`w-full bg-slate-50 border rounded-xl px-3 py-2 text-xs font-bold text-slate-800 ${
                                   t.min === null ? "opacity-60 cursor-not-allowed" : "cursor-pointer"
                                 } ${
                                   emConflito
@@ -1106,17 +1052,17 @@ export function GateHomologacaoGrade({
 
                         {/* Gap Card Inserido Diretamente Entre as Duas Turmas com Buraco */}
                         {lacunaAposEsta && (
-                          <div className="bg-amber-50/90 border-2 border-dashed border-amber-400 rounded-2xl p-3 text-center space-y-1 shadow-2xs">
+                          <div className="bg-amber-50/90 border-2 border-dashed border-amber-400 rounded-2xl p-3.5 text-center space-y-1 shadow-2xs">
                             <div className="text-xs font-black text-amber-950 flex items-center justify-center gap-1.5">
                               <AlertTriangle className="w-4 h-4 text-amber-600" />
                               Buraco na linha de idades: <strong>{lacunaAposEsta.descricao}</strong> sem atendimento!
                             </div>
-                            <p className="text-[11px] text-amber-800 leading-snug">
+                            <p className="text-xs text-amber-800 leading-snug">
                               Entre a <strong>Turma {lacunaAposEsta.turmaAnterior.identificador} ({lacunaAposEsta.turmaAnterior.max} anos)</strong> e a{" "}
                               <strong>Turma {lacunaAposEsta.turmaProxima.identificador} ({lacunaAposEsta.turmaProxima.min} anos)</strong> não há nenhuma turma.
                             </p>
-                            <div className="text-[10px] text-amber-900 font-bold bg-amber-100 rounded-lg py-1 px-2.5 inline-block mt-0.5">
-                              Ajuste para cobrir a idade de {lacunaAposEsta.descricao} e poder avançar.
+                            <div className="text-[11px] text-amber-900 font-bold bg-amber-100 rounded-lg py-1 px-3 inline-block mt-0.5">
+                              Ajuste as faixas para cobrir a idade de {lacunaAposEsta.descricao} e poder avançar.
                             </div>
                           </div>
                         )}
@@ -1132,7 +1078,7 @@ export function GateHomologacaoGrade({
                 type="button"
                 onClick={adicionarNovaTurma}
                 disabled={!ultimaTurmaCompleta}
-                className={`w-full py-3.5 px-4 rounded-2xl border-2 border-dashed font-black text-xs flex items-center justify-center gap-2 transition cursor-pointer ${
+                className={`w-full py-4 px-4 rounded-2xl border-2 border-dashed font-black text-xs sm:text-sm flex items-center justify-center gap-2 transition cursor-pointer ${
                   !ultimaTurmaCompleta
                     ? "border-slate-200 bg-slate-100 text-slate-400 cursor-not-allowed"
                     : "border-sky-500 bg-sky-50/60 hover:bg-sky-100 text-sky-800"
@@ -1147,9 +1093,9 @@ export function GateHomologacaoGrade({
                     : `+ Adicionar Turma ${LETRAS_TURMAS[turmasMontadas.length % LETRAS_TURMAS.length]}`}
                 </span>
               </button>
-              <p className="text-[11px] text-slate-400 text-center mt-1.5 font-medium">
+              <p className="text-xs text-slate-400 text-center mt-2 font-medium">
                 {turmasMontadas.length === 0
-                  ? "Nenhuma idade vem preenchida; você definirá a mínima e a máxima."
+                  ? "Defina as idades mínima e máxima de cada turma atendida no polo."
                   : !ultimaTurmaCompleta
                   ? "Configure a idade mínima e máxima da turma atual para liberar a próxima."
                   : "Faixas anteriores preenchidas. Você pode adicionar a próxima turma."}
@@ -1157,18 +1103,18 @@ export function GateHomologacaoGrade({
             </div>
 
             {/* Botão Avançar para Etapa 2 */}
-            <div className="pt-2">
+            <div className="pt-3">
               <button
                 type="button"
                 onClick={avancarParaEtapa2}
                 disabled={!podeAvancarEtapa1}
-                className={`w-full py-4 px-4 rounded-2xl font-black text-xs uppercase tracking-wide flex items-center justify-center gap-2 transition duration-200 ${
+                className={`w-full py-4 px-4 rounded-2xl font-black text-xs sm:text-sm uppercase tracking-wide flex items-center justify-center gap-2 transition duration-200 ${
                   !podeAvancarEtapa1
                     ? "bg-slate-300 text-slate-500 cursor-not-allowed"
                     : "bg-sky-700 hover:bg-sky-800 text-white cursor-pointer shadow-md"
                 }`}
               >
-                {!podeAvancarEtapa1 && <Lock className="w-3.5 h-3.5" />}
+                {!podeAvancarEtapa1 && <Lock className="w-4 h-4" />}
                 <span>
                   {turmasMontadas.length === 0
                     ? "Adicione ao menos 1 turma para continuar"
@@ -1178,7 +1124,7 @@ export function GateHomologacaoGrade({
                     ? `Preencha a lacuna de ${lacunasIdade[0].descricao} para avançar`
                     : !todasCompletas
                     ? "Complete as idades mínima e máxima de todas as turmas"
-                    : `Avançar para Escolher os Dias da Semana (${turmasMontadas.length} ${
+                    : `Avançar para Escolher os Dias de Treino (${turmasMontadas.length} ${
                         turmasMontadas.length === 1 ? "Turma" : "Turmas"
                       })`}
                 </span>
@@ -1192,7 +1138,7 @@ export function GateHomologacaoGrade({
         {/* ETAPA 2: DIAS DA SEMANA (100% LIMPA / ZERO PRÉ-MARCADO)       */}
         {/* ============================================================ */}
         {etapa === 2 && (
-          <div className="space-y-4">
+          <div className="space-y-5">
             <div>
               <button
                 type="button"
@@ -1201,30 +1147,30 @@ export function GateHomologacaoGrade({
               >
                 <ArrowLeft className="w-3.5 h-3.5" /> Voltar para Turmas
               </button>
-              <div className="flex items-center gap-1.5 text-sky-800 text-[11px] font-bold uppercase tracking-wider mb-1">
-                <Calendar className="w-3.5 h-3.5" /> 2ª Etapa
+              <div className="flex items-center gap-1.5 text-sky-800 text-xs font-bold uppercase tracking-wider mb-1">
+                <Calendar className="w-4 h-4" /> 2ª Etapa • Dias de Atividade
               </div>
-              <h2 className="text-sm font-black text-slate-800">
-                Em quais dias da semana você dá aula neste polo?
+              <h2 className="text-base sm:text-lg font-black text-slate-800">
+                Em quais dias da semana você atende neste polo?
               </h2>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Marque os dias em que haverá treino no campo (nada vem pré-marcado):
+              <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+                Selecione apenas os dias em que haverá treinos no campo (nada vem pré-marcado):
               </p>
             </div>
 
-            <div className="bg-blue-50 border border-blue-200 rounded-2xl p-3.5 flex items-start gap-3">
+            <div className="bg-sky-50 border border-sky-200 rounded-2xl p-4 flex items-start gap-3">
               <Info className="w-5 h-5 text-sky-600 shrink-0 mt-0.5" />
               <div>
-                <div className="text-xs font-bold text-sky-950">Selecione seus dias:</div>
-                <p className="text-[11px] text-sky-800 leading-snug mt-0.5">
-                  Toque nos dias em que você atende. Na próxima etapa, o sistema montará um{" "}
-                  <strong>calendário exclusivo com apenas esses dias</strong> para você colocar os blocos de aula.
+                <div className="text-xs font-bold text-sky-950">Selecione seus dias de atendimento:</div>
+                <p className="text-xs text-sky-800 leading-snug mt-1">
+                  Toque nos dias em que você realiza os treinos. Na próxima etapa, o sistema montará a{" "}
+                  <strong>grade semanal exclusivamente com os dias selecionados</strong> para você distribuir os horários.
                 </p>
               </div>
             </div>
 
             {/* Grid dos Dias da Semana (TODOS DESMARCADOS NO INÍCIO) */}
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
               {["seg", "ter", "qua", "qui", "sex", "sab"].map((diaKey) => {
                 const ativo = diasSelecionados.includes(diaKey);
                 return (
@@ -1232,7 +1178,7 @@ export function GateHomologacaoGrade({
                     key={diaKey}
                     type="button"
                     onClick={() => toggleDiaEtapa2(diaKey)}
-                    className={`p-3.5 rounded-2xl border flex items-center justify-between font-bold text-xs transition cursor-pointer ${
+                    className={`p-4 rounded-2xl border flex items-center justify-between font-bold text-xs sm:text-sm transition cursor-pointer ${
                       ativo
                         ? "bg-sky-600 text-white border-sky-600 shadow-md"
                         : "bg-white text-slate-700 border-slate-200 hover:border-sky-300"
@@ -1254,7 +1200,7 @@ export function GateHomologacaoGrade({
                 type="button"
                 onClick={avancarParaEtapa3}
                 disabled={diasSelecionados.length === 0}
-                className={`w-full py-4 px-4 rounded-2xl font-black text-xs uppercase tracking-wide flex items-center justify-center gap-2 transition duration-200 ${
+                className={`w-full py-4 px-4 rounded-2xl font-black text-xs sm:text-sm uppercase tracking-wide flex items-center justify-center gap-2 transition duration-200 ${
                   diasSelecionados.length === 0
                     ? "bg-slate-300 text-slate-500 cursor-not-allowed"
                     : "bg-sky-700 hover:bg-sky-800 text-white cursor-pointer shadow-md"
@@ -1263,8 +1209,8 @@ export function GateHomologacaoGrade({
                 <span>
                   {diasSelecionados.length === 0
                     ? "Selecione ao menos 1 dia para continuar"
-                    : `Avançar para o Calendário de Horários (${diasSelecionados.length} ${
-                        diasSelecionados.length === 1 ? "dia" : "dias"
+                    : `Avançar para a Grade de Horários (${diasSelecionados.length} ${
+                        diasSelecionados.length === 1 ? "dia selecionado" : "dias selecionados"
                       })`}
                 </span>
                 <ArrowRight className="w-4 h-4" />
@@ -1274,60 +1220,62 @@ export function GateHomologacaoGrade({
         )}
 
         {/* ============================================================ */}
-        {/* ETAPA 3: O CALENDÁRIOZINHO (COLUNAS EXCLUSIVAS + BLOCOS)     */}
+        {/* ETAPA 3: GRADE SEMANAL (CALENDÁRIO & BLOCOS DE HORÁRIO)      */}
         {/* ============================================================ */}
         {etapa === 3 && (
-          <div className="space-y-4">
+          <div className="space-y-5">
             <div>
               <button
                 type="button"
                 onClick={() => setEtapa(2)}
                 className="text-xs text-sky-700 font-bold flex items-center gap-1 mb-2 hover:underline cursor-pointer"
               >
-                <ArrowLeft className="w-3.5 h-3.5" /> Voltar para dias
+                <ArrowLeft className="w-3.5 h-3.5" /> Voltar para Dias de Treino
               </button>
-              <div className="flex items-center gap-1.5 text-sky-800 text-[11px] font-bold uppercase tracking-wider mb-1">
-                <CheckSquare className="w-3.5 h-3.5" /> 3ª Etapa
+              <div className="flex items-center gap-1.5 text-sky-800 text-xs font-bold uppercase tracking-wider mb-1">
+                <CheckSquare className="w-4 h-4" /> 3ª Etapa • Distribuição da Grade
               </div>
-              <h2 className="text-sm font-black text-slate-900">Calendário Semanal de Aulas</h2>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Distribua todas as suas turmas nos blocos de horários (toque num bloco para editar):
+              <h2 className="text-base sm:text-lg font-black text-slate-900">
+                Grade Semanal de Treinos
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+                Distribua todas as suas turmas nos horários da semana. Toque em qualquer bloco para editar:
               </p>
             </div>
 
-            {/* Widget de Checklist: Alocação Obrigatória de TODAS as Turmas */}
-            <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs space-y-2">
+            {/* Checklist de Alocação de 100% das Turmas */}
+            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 shadow-xs space-y-2.5">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-black text-slate-800 flex items-center gap-1.5">
-                  <CheckSquare className="w-3.5 h-3.5 text-sky-600" /> Alocação das Turmas na Grade:
+                <span className="text-xs sm:text-sm font-black text-slate-800 flex items-center gap-2">
+                  <CheckSquare className="w-4 h-4 text-sky-600" /> Status de Alocação das Turmas:
                 </span>
                 <span
-                  className={`text-[10px] font-black px-2 py-0.5 rounded-full border ${
+                  className={`text-xs font-black px-2.5 py-1 rounded-full border ${
                     todasTurmasDistribuidas
                       ? "bg-emerald-100 text-emerald-800 border-emerald-300"
                       : "bg-amber-100 text-amber-900 border-amber-300"
                   }`}
                 >
-                  {statusAlocacaoTurmas.filter((s) => s.alocada).length} de {turmasMontadas.length} alocadas
+                  {statusAlocacaoTurmas.filter((s) => s.alocada).length} de {turmasMontadas.length} turmas alocadas
                 </span>
               </div>
-              <p className="text-[11px] text-slate-500 leading-snug">
-                Todas as turmas criadas precisam ter pelo menos um bloco na semana para você confirmar a grade:
+              <p className="text-xs text-slate-500 leading-snug">
+                Todas as turmas cadastradas na Etapa 1 precisam ter pelo menos um bloco na semana para homologar a grade:
               </p>
-              <div className="flex flex-wrap gap-1.5 pt-0.5">
+              <div className="flex flex-wrap gap-2 pt-1">
                 {statusAlocacaoTurmas.map((st) => (
                   <span
                     key={st.turma.id}
-                    className={`text-[10px] px-2 py-0.5 rounded-lg font-bold flex items-center gap-1 border ${
+                    className={`text-xs px-2.5 py-1 rounded-xl font-bold flex items-center gap-1.5 border ${
                       st.alocada
                         ? "bg-emerald-50 text-emerald-800 border-emerald-200"
                         : "bg-rose-50 text-rose-800 border-rose-300 font-black animate-pulse"
                     }`}
                   >
                     {st.alocada ? (
-                      <Check className="w-2.5 h-2.5 text-emerald-600" />
+                      <Check className="w-3 h-3 text-emerald-600" />
                     ) : (
-                      <AlertTriangle className="w-2.5 h-2.5 text-rose-600" />
+                      <AlertTriangle className="w-3 h-3 text-rose-600" />
                     )}
                     <span>
                       Turma {st.turma.identificador} ({st.alocada ? `${st.totalSlots} ${st.totalSlots === 1 ? "bloco" : "blocos"}` : "Sem horário"})
@@ -1337,17 +1285,17 @@ export function GateHomologacaoGrade({
               </div>
             </div>
 
-            {/* O CALENDÁRIOZINHO: COLUNAS APENAS DOS DIAS SELECIONADOS */}
+            {/* O Calendário da Semana com Colunas para Cada Dia Selecionado */}
             <div className="w-full">
               <div
-                className={`gap-2.5 ${
+                className={`gap-3 ${
                   diasOrdenados.length === 1
                     ? "grid grid-cols-1"
                     : diasOrdenados.length === 2
-                    ? "grid grid-cols-2"
+                    ? "grid grid-cols-1 sm:grid-cols-2"
                     : diasOrdenados.length === 3
-                    ? "grid grid-cols-3"
-                    : "flex overflow-x-auto pb-2 snap-x"
+                    ? "grid grid-cols-1 sm:grid-cols-3"
+                    : "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6"
                 }`}
               >
                 {diasOrdenados.map((diaKey) => {
@@ -1357,25 +1305,23 @@ export function GateHomologacaoGrade({
                   return (
                     <div
                       key={diaKey}
-                      className={`bg-white border border-slate-200 rounded-2xl flex flex-col min-h-[340px] overflow-hidden shadow-xs ${
-                        diasOrdenados.length > 3 ? "w-[140px] shrink-0 snap-start" : "w-full"
-                      }`}
+                      className="bg-white border border-slate-200 rounded-2xl flex flex-col min-h-[340px] overflow-hidden shadow-xs"
                     >
-                      {/* Header da Coluna */}
-                      <div className="bg-gradient-to-b from-sky-600 to-sky-700 text-white p-2 text-center">
-                        <div className="text-[10px] font-black tracking-wider uppercase opacity-90">
+                      {/* Header do Dia */}
+                      <div className="bg-gradient-to-b from-sky-700 to-sky-800 text-white p-2.5 text-center">
+                        <div className="text-[10px] font-black tracking-wider uppercase opacity-80">
                           {info.curto}
                         </div>
-                        <div className="text-[11px] font-bold leading-tight">
+                        <div className="text-xs font-bold leading-tight">
                           {info.nome.split("-")[0]}
                         </div>
-                        <div className="text-[9px] opacity-80 mt-0.5">
+                        <div className="text-[10px] opacity-80 mt-0.5">
                           {slotsDoDia.length} {slotsDoDia.length === 1 ? "bloco" : "blocos"}
                         </div>
                       </div>
 
-                      {/* Corpo da Coluna */}
-                      <div className="bg-slate-50/70 flex-1 p-2 flex flex-col gap-2">
+                      {/* Blocos de Horário do Dia */}
+                      <div className="bg-slate-50/70 flex-1 p-2.5 flex flex-col gap-2.5">
                         {slotsDoDia.map((slot) => {
                           const turmasAlocadas = turmasMontadas.filter((t) =>
                             slot.turmasIds.includes(t.id)
@@ -1392,15 +1338,15 @@ export function GateHomologacaoGrade({
                               key={slot.id}
                               onClick={() => abrirModalEditarBloco(slot)}
                               title="Toque para editar este bloco"
-                              className={`p-2 rounded-xl border-l-4 border transition cursor-pointer hover:shadow-md ${
+                              className={`p-2.5 rounded-xl border-l-4 border transition cursor-pointer hover:shadow-md ${
                                 isConjunta
                                   ? "border-l-amber-500 border-amber-300 bg-amber-50/50"
                                   : "border-l-sky-600 border-slate-200 bg-white"
                               }`}
                             >
-                              <div className="flex items-center justify-between border-b border-slate-100 pb-1 mb-1.5">
-                                <span className="text-[9px] font-black text-slate-800 bg-slate-100 px-1.5 py-0.5 rounded flex items-center gap-1">
-                                  <Clock className="w-2.5 h-2.5 text-sky-600" /> {slot.inicio}-{slot.fim}
+                              <div className="flex items-center justify-between border-b border-slate-100 pb-1.5 mb-1.5">
+                                <span className="text-[10px] font-black text-slate-800 bg-slate-100 px-2 py-0.5 rounded-lg flex items-center gap-1">
+                                  <Clock className="w-3 h-3 text-sky-600" /> {slot.inicio}-{slot.fim}
                                 </span>
                                 <button
                                   type="button"
@@ -1409,24 +1355,24 @@ export function GateHomologacaoGrade({
                                     removerSlotDistribuicao(slot.id);
                                   }}
                                   title="Remover bloco"
-                                  className="text-rose-400 hover:text-rose-600 text-[10px] font-bold px-1"
+                                  className="text-rose-400 hover:text-rose-600 p-1 rounded hover:bg-rose-50 cursor-pointer"
                                 >
-                                  <X className="w-3 h-3" />
+                                  <X className="w-3.5 h-3.5" />
                                 </button>
                               </div>
 
                               {isConjunta && (
-                                <div className="mb-1.5 space-y-1">
+                                <div className="mb-2 space-y-1">
                                   <div className="flex items-center justify-between">
-                                    <span className="text-[8px] font-black uppercase tracking-wider bg-amber-200 text-amber-950 border border-amber-300 px-1.5 py-0.5 rounded flex items-center gap-1">
-                                      <Users className="w-2 h-2" /> Multi-turmas
+                                    <span className="text-[9px] font-black uppercase tracking-wider bg-amber-200 text-amber-950 border border-amber-300 px-1.5 py-0.5 rounded flex items-center gap-1">
+                                      <Users className="w-2.5 h-2.5" /> Multi-turmas
                                     </span>
-                                    <span className="text-[8px] font-black text-amber-900 bg-amber-100 border border-amber-300 px-1.5 py-0.5 rounded">
+                                    <span className="text-[9px] font-black text-amber-900 bg-amber-100 border border-amber-300 px-1.5 py-0.5 rounded">
                                       {duracaoStr}
                                     </span>
                                   </div>
                                   <div className="text-[9px] font-black text-amber-950 bg-amber-100/90 border border-amber-300/80 rounded px-1.5 py-0.5 flex items-center gap-1">
-                                    <Flag className="w-2 h-2 text-amber-700" /> Término: {slot.fim} ({turmasAlocadas.length} turmas)
+                                    <Flag className="w-2.5 h-2.5 text-amber-700" /> Término: {slot.fim} ({turmasAlocadas.length} turmas)
                                   </div>
                                 </div>
                               )}
@@ -1436,7 +1382,7 @@ export function GateHomologacaoGrade({
                                 {turmasAlocadas.map((t) => (
                                   <div
                                     key={t.id}
-                                    className="bg-white border border-slate-200/90 rounded-md p-1.5 shadow-2xs"
+                                    className="bg-white border border-slate-200 rounded-lg p-1.5 shadow-2xs"
                                   >
                                     <div className="text-[10px] font-black text-slate-800 leading-tight">
                                       Turma {t.identificador}
@@ -1455,13 +1401,13 @@ export function GateHomologacaoGrade({
                         <button
                           type="button"
                           onClick={() => abrirModalNovoBloco(diaKey)}
-                          className="mt-auto border-2 border-dashed border-sky-300 bg-sky-50/50 hover:bg-sky-100/80 rounded-xl p-2.5 text-center transition cursor-pointer"
+                          className="mt-auto border-2 border-dashed border-sky-300 bg-sky-50/60 hover:bg-sky-100/90 rounded-xl p-3 text-center transition cursor-pointer"
                         >
-                          <Plus className="w-3.5 h-3.5 text-sky-600 mx-auto" />
-                          <div className="text-[10px] font-black text-sky-800 mt-0.5 leading-tight">
-                            + Bloco
+                          <Plus className="w-4 h-4 text-sky-600 mx-auto" />
+                          <div className="text-[11px] font-black text-sky-800 mt-0.5 leading-tight">
+                            + Adicionar Bloco
                           </div>
-                          <div className="text-[8px] text-sky-600">Toque aqui</div>
+                          <div className="text-[9px] text-sky-600">Toque aqui</div>
                         </button>
                       </div>
                     </div>
@@ -1471,19 +1417,19 @@ export function GateHomologacaoGrade({
             </div>
 
             {/* Botão Finalizar e Homologar Grade */}
-            <div className="pt-2 space-y-2">
+            <div className="pt-3 space-y-2">
               <button
                 type="button"
                 onClick={finalizarHomologacao}
                 disabled={!todasTurmasDistribuidas || salvando}
-                className={`w-full py-4 px-4 rounded-2xl font-black text-xs uppercase tracking-wide flex items-center justify-center gap-2 transition duration-200 ${
+                className={`w-full py-4 px-4 rounded-2xl font-black text-xs sm:text-sm uppercase tracking-wide flex items-center justify-center gap-2 transition duration-200 ${
                   !todasTurmasDistribuidas || salvando
                     ? "bg-slate-300 text-slate-500 cursor-not-allowed"
-                    : "bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer shadow-lg"
+                    : "bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer shadow-lg active:scale-95"
                 }`}
               >
                 {!todasTurmasDistribuidas ? (
-                  <Lock className="w-3.5 h-3.5" />
+                  <Lock className="w-4 h-4" />
                 ) : (
                   <CheckCircle2 className="w-4 h-4" />
                 )}
@@ -1494,17 +1440,17 @@ export function GateHomologacaoGrade({
                     ? `Distribua todas as turmas para confirmar (${turmasPendentes
                         .map((p) => `Turma ${p.turma.identificador}`)
                         .join(", ")} sem horário)`
-                    : "Confirmar Grade Completa e Ir para Chamada"}
+                    : "Confirmar Grade e Iniciar Aula"}
                 </span>
               </button>
-              <p className="text-[10px] text-slate-400 text-center font-medium">
+              <p className="text-xs text-slate-400 text-center font-medium">
                 {!todasTurmasDistribuidas ? (
                   <span className="text-rose-600 font-bold">
-                    Você precisa alocar todas as turmas em algum bloco da semana antes de homologar a grade.
+                    Você precisa alocar todas as turmas criadas em pelo menos um bloco da semana antes de homologar.
                   </span>
                 ) : (
                   <span className="text-emerald-700 font-bold">
-                    Todas as turmas estão alocadas! Toque acima para homologar e iniciar a aula.
+                    Todas as turmas estão alocadas! Ao confirmar, a grade será gravada e a 1ª aula do dia será iniciada.
                   </span>
                 )}
               </p>
@@ -1514,35 +1460,35 @@ export function GateHomologacaoGrade({
       </div>
 
       {/* ============================================================== */}
-      {/* MODAL INSERIR / EDITAR BLOCO (BOTTOM SHEET FIEL AO HTML)        */}
+      {/* MODAL INSERIR / EDITAR BLOCO (BOTTOM SHEET / DIALOG)            */}
       {/* ============================================================== */}
       {modalBlocoAberto && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center p-0">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
           <div
             onClick={() => setModalBlocoAberto(false)}
             className="absolute inset-0 bg-slate-900/60 backdrop-blur-xs"
           />
 
-          <div className="relative w-full max-w-lg bg-white rounded-t-3xl p-5 shadow-2xl max-h-[90vh] overflow-y-auto space-y-4 animate-in slide-in-from-bottom duration-200">
+          <div className="relative w-full max-w-lg bg-white rounded-t-3xl sm:rounded-3xl p-5 sm:p-6 shadow-2xl max-h-[90vh] overflow-y-auto space-y-4 animate-in slide-in-from-bottom duration-200">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2.5">
-                <span className="w-8 h-8 rounded-xl bg-sky-100 text-sky-800 flex items-center justify-center text-sm font-bold">
+                <span className="w-9 h-9 rounded-xl bg-sky-100 text-sky-800 flex items-center justify-center text-sm font-bold">
                   <Clock className="w-4 h-4" />
                 </span>
                 <div>
-                  <h3 className="text-xs font-black text-slate-800 uppercase tracking-wide">
+                  <h3 className="text-xs sm:text-sm font-black text-slate-800 uppercase tracking-wide">
                     {slotEmEdicaoId ? "Editar Bloco em " : "Novo Bloco em "}
                     <span className="text-sky-700">{DIAS_MAP[diaAlvoModal]?.nome}</span>
                   </h3>
-                  <p className="text-[11px] text-slate-400">
-                    Escolha o horário e marque quais turmas treinam neste bloco
+                  <p className="text-xs text-slate-400">
+                    Defina o horário e marque quais turmas treinam neste bloco
                   </p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setModalBlocoAberto(false)}
-                className="w-7 h-7 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center text-xs"
+                className="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center text-xs cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -1551,7 +1497,7 @@ export function GateHomologacaoGrade({
             {/* 1. Horários do Bloco */}
             <div className="space-y-1.5">
               <label className="text-xs font-black text-slate-800">1. Horário do Bloco:</label>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-2.5">
                 <div>
                   <span className="text-[10px] text-slate-400 font-bold block mb-1">Início:</span>
                   <input
@@ -1600,7 +1546,7 @@ export function GateHomologacaoGrade({
                   <div className="font-normal text-[11px] text-rose-800 mt-0.5 leading-snug">
                     Nenhum slot pode ter o mesmo horário no mesmo dia ({conflitoSlotNoDia.diaNome} das{" "}
                     {conflitoSlotNoDia.inicio} às {conflitoSlotNoDia.fim}). Se mais de uma turma treina
-                    neste horário (ex: aulão conjunto), edite o bloco existente para marcar as turmas conjuntas.
+                    neste horário, edite o bloco existente para marcar as turmas conjuntas.
                   </div>
                 </div>
               </div>
@@ -1619,7 +1565,7 @@ export function GateHomologacaoGrade({
                   </span>
                 )}
               </div>
-              <p className="text-[11px] text-sky-800 leading-snug">
+              <p className="text-xs text-sky-800 leading-snug">
                 Marque as turmas deste horário. A mesma turma não pode ter o mesmo horário no mesmo dia:
               </p>
 
@@ -1684,7 +1630,7 @@ export function GateHomologacaoGrade({
                           )}
                         </div>
                       </div>
-                      <span className="text-[11px] bg-sky-50 text-sky-800 font-bold px-2 py-0.5 rounded-lg border border-sky-200">
+                      <span className="text-xs bg-sky-50 text-sky-800 font-bold px-2 py-0.5 rounded-lg border border-sky-200">
                         {t.min}-{t.max} anos
                       </span>
                     </label>
@@ -1696,7 +1642,7 @@ export function GateHomologacaoGrade({
             {/* 3. Replicar este Bloco em Outros Dias (100% DESMARCADAS) */}
             <div className="space-y-2">
               <label className="text-xs font-black text-slate-800">
-                3. Replicar este bloco em outros dias do calendário?
+                3. Replicar este bloco em outros dias de treino? (opcional)
               </label>
               <div className="grid grid-cols-4 gap-1.5">
                 {diasOrdenados
@@ -1742,7 +1688,7 @@ export function GateHomologacaoGrade({
               >
                 <Check className="w-4 h-4" />
                 <span>
-                  {slotEmEdicaoId ? "Salvar Alterações" : "Colocar Bloco no Calendário"}
+                  {slotEmEdicaoId ? "Salvar Alterações" : "Colocar Bloco na Grade"}
                 </span>
               </button>
             </div>
@@ -1759,7 +1705,7 @@ export function GateHomologacaoGrade({
             onClick={cancelarTurmaDuplicada}
             className="absolute inset-0 bg-slate-900/60 backdrop-blur-xs"
           />
-          <div className="relative bg-white rounded-3xl p-5 shadow-2xl max-w-[340px] w-full text-center space-y-3.5 border border-slate-100 animate-in fade-in zoom-in-95 duration-150">
+          <div className="relative bg-white rounded-3xl p-6 shadow-2xl max-w-sm w-full text-center space-y-4 border border-slate-100 animate-in fade-in zoom-in-95 duration-150">
             <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center mx-auto text-xl shadow-inner">
               <HelpCircle className="w-6 h-6" />
             </div>
@@ -1773,7 +1719,7 @@ export function GateHomologacaoGrade({
                 <span className="font-bold text-slate-800">É isso mesmo que você deseja fazer?</span>
               </p>
             </div>
-            <div className="flex gap-2 pt-2">
+            <div className="flex gap-2.5 pt-2">
               <button
                 type="button"
                 onClick={cancelarTurmaDuplicada}
@@ -1802,7 +1748,7 @@ export function GateHomologacaoGrade({
             onClick={recusarDuracaoConjunta}
             className="absolute inset-0 bg-slate-950/80 backdrop-blur-md"
           />
-          <div className="relative bg-white rounded-3xl p-6 shadow-2xl max-w-[380px] w-full text-center space-y-4 border-2 border-amber-400 animate-in fade-in zoom-in-95 duration-150">
+          <div className="relative bg-white rounded-3xl p-6 shadow-2xl max-w-sm w-full text-center space-y-4 border-2 border-amber-400 animate-in fade-in zoom-in-95 duration-150">
             {/* Banner Gigante de Término */}
             <div className="bg-gradient-to-br from-amber-500 via-amber-600 to-orange-600 text-white p-5 rounded-2xl shadow-xl space-y-1 border border-amber-300/40">
               <div className="text-[11px] uppercase font-black text-amber-100 tracking-wider flex items-center justify-center gap-1.5">
