@@ -22,7 +22,7 @@ import {
   MapPin,
   Sparkles,
 } from "lucide-react";
-import type { FuncionarioApi, NucleoApi } from "@/lib/api/services";
+import type { FuncionarioApi, NucleoApi, TurmaApi } from "@/lib/api/services";
 
 export interface TurmaMontada {
   id: string;
@@ -46,6 +46,7 @@ export interface GateHomologacaoGradeProps {
   professor: FuncionarioApi;
   nucleo?: NucleoApi;
   totalAlunosPolo?: number;
+  turmasExistentes?: TurmaApi[];
   onConcluirHomologacao: (dados: {
     turmas: Array<{
       id: string;
@@ -90,20 +91,104 @@ export function GateHomologacaoGrade({
   professor,
   nucleo,
   totalAlunosPolo = 0,
+  turmasExistentes,
   onConcluirHomologacao,
   onCancelar,
 }: GateHomologacaoGradeProps) {
   // Stepper: 1 = Minhas Turmas, 2 = Dias de Treino, 3 = Grade Semanal
   const [etapa, setEtapa] = useState<1 | 2 | 3>(1);
 
-  // 1ª Etapa: Turmas Montadas (inicia 100% vazia)
-  const [turmasMontadas, setTurmasMontadas] = useState<TurmaMontada[]>([]);
+  // 1ª Etapa: Turmas Montadas (se houver turmas existentes no polo, inicializa pré-carregado)
+  const [turmasMontadas, setTurmasMontadas] = useState<TurmaMontada[]>(() => {
+    if (turmasExistentes && turmasExistentes.length > 0) {
+      return turmasExistentes.map((t, idx) => {
+        const letra = t.identificador || LETRAS_TURMAS[idx] || String(idx + 1);
+        const min = t.idadeMinima ?? t.faixaEtaria?.idadeMinima ?? null;
+        const max = t.idadeMaxima ?? t.faixaEtaria?.idadeMaxima ?? null;
+        return {
+          id: t.id,
+          identificador: letra,
+          min,
+          max,
+          label: t.nome || `Turma ${letra}`,
+          cor: "sky",
+        };
+      });
+    }
+    return [];
+  });
 
-  // 2ª Etapa: Dias da Semana Selecionados (inicia 100% limpa, zero pré-marcado)
-  const [diasSelecionados, setDiasSelecionados] = useState<string[]>([]);
+  // 2ª Etapa: Dias da Semana Selecionados (extrai os dias já configurados nas turmas)
+  const [diasSelecionados, setDiasSelecionados] = useState<string[]>(() => {
+    if (turmasExistentes && turmasExistentes.length > 0) {
+      const diasEncontrados = new Set<string>();
+      const diaNumParaKey: Record<number, string> = { 1: "seg", 2: "ter", 3: "qua", 4: "qui", 5: "sex", 6: "sab" };
+      turmasExistentes.forEach((t) => {
+        (t.slots ?? []).forEach((s) => {
+          if (s.dia_semana && diaNumParaKey[s.dia_semana]) {
+            diasEncontrados.add(diaNumParaKey[s.dia_semana]);
+          } else if (s.dia) {
+            const dLower = s.dia.toLowerCase();
+            if (dLower.startsWith("seg")) diasEncontrados.add("seg");
+            else if (dLower.startsWith("ter")) diasEncontrados.add("ter");
+            else if (dLower.startsWith("qua")) diasEncontrados.add("qua");
+            else if (dLower.startsWith("qui")) diasEncontrados.add("qui");
+            else if (dLower.startsWith("sex")) diasEncontrados.add("sex");
+            else if (dLower.startsWith("sab") || dLower.startsWith("sáb")) diasEncontrados.add("sab");
+          }
+        });
+      });
+      if (diasEncontrados.size > 0) {
+        return Array.from(diasEncontrados);
+      }
+    }
+    return [];
+  });
 
-  // 3ª Etapa: Distribuição da Grade no Calendário
-  const [distribuicaoHorarios, setDistribuicaoHorarios] = useState<SlotHorarioGrade[]>([]);
+  // 3ª Etapa: Distribuição da Grade no Calendário (pré-popula blocos de horários já salvos)
+  const [distribuicaoHorarios, setDistribuicaoHorarios] = useState<SlotHorarioGrade[]>(() => {
+    if (turmasExistentes && turmasExistentes.length > 0) {
+      const slots: SlotHorarioGrade[] = [];
+      const diaNumParaKey: Record<number, string> = { 1: "seg", 2: "ter", 3: "qua", 4: "qui", 5: "sex", 6: "sab" };
+      turmasExistentes.forEach((t) => {
+        (t.slots ?? []).forEach((s) => {
+          let diaKey = "seg";
+          if (s.dia_semana && diaNumParaKey[s.dia_semana]) {
+            diaKey = diaNumParaKey[s.dia_semana];
+          } else if (s.dia) {
+            const dLower = s.dia.toLowerCase();
+            if (dLower.startsWith("seg")) diaKey = "seg";
+            else if (dLower.startsWith("ter")) diaKey = "ter";
+            else if (dLower.startsWith("qua")) diaKey = "qua";
+            else if (dLower.startsWith("qui")) diaKey = "qui";
+            else if (dLower.startsWith("sex")) diaKey = "sex";
+            else if (dLower.startsWith("sab") || dLower.startsWith("sáb")) diaKey = "sab";
+          }
+
+          const hIni = s.horaInicio ? s.horaInicio.slice(0, 5) : `${String(s.inicio || 8).padStart(2, "0")}:00`;
+          const hFim = s.horaFim ? s.horaFim.slice(0, 5) : `${String(s.fim || 10).padStart(2, "0")}:00`;
+
+          const existente = slots.find((sl) => sl.dia === diaKey && sl.inicio === hIni && sl.fim === hFim);
+          if (existente) {
+            if (!existente.turmasIds.includes(t.id)) {
+              existente.turmasIds.push(t.id);
+            }
+          } else {
+            slots.push({
+              id: s.id || `slot-init-${t.id}-${diaKey}-${hIni}`,
+              dia: diaKey,
+              inicio: hIni,
+              fim: hFim,
+              turmasIds: [t.id],
+              grupoId: t.id,
+            });
+          }
+        });
+      });
+      return slots;
+    }
+    return [];
+  });
 
   // Modal de Criação / Edição de Bloco
   const [modalBlocoAberto, setModalBlocoAberto] = useState(false);

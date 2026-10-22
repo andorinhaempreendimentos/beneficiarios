@@ -105,10 +105,11 @@ export function DashboardProfessorHub({
   // Controle de exibição do Gate de Homologação de Grade
   const [exibindoGateGrade, setExibindoGateGrade] = useState(false);
 
-  // Grade é considerada homologada se tiver confirmação explícita gravada no banco
+  // Grade é considerada homologada se tiver confirmação explícita gravada no banco OU turmas com horários configurados
   const gradeEstaHomologada = useMemo(() => {
-    return Boolean(gradeHomologadaProp);
-  }, [gradeHomologadaProp]);
+    const temHorariosConfigurados = turmas.some((t) => t.slots && t.slots.length > 0);
+    return Boolean(gradeHomologadaProp) || temHorariosConfigurados;
+  }, [gradeHomologadaProp, turmas]);
 
   // Se o polo não tiver homologação oficial, o Gate é 100% mandatório
   const deveExibirGate = exibindoGateGrade || (!loading && !gradeEstaHomologada);
@@ -534,6 +535,7 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
           professor={professor}
           nucleo={nucleo}
           totalAlunosPolo={totalBeneficiariosPolo ?? 0}
+          turmasExistentes={turmas}
           onConcluirHomologacao={handleConcluirHomologacao}
           onCancelar={gradeEstaHomologada ? () => setExibindoGateGrade(false) : undefined}
         />

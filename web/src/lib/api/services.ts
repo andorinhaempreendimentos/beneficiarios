@@ -3457,12 +3457,22 @@ export const areaProfessorApi = {
     let gradeHomologadaOficial = false;
     const nucleoIdAlvo = funcionario?.nucleoId || (turmasMapped[0]?.nucleoId);
     if (nucleoIdAlvo) {
-      const { data: configGrade } = await (sb.from('configuracoes') as any)
-        .select('id, valor')
-        .eq('chave', `grade_homologada_${nucleoIdAlvo}`)
-        .maybeSingle();
+      try {
+        const { data: configGrade } = await (sb.from('configuracoes') as any)
+          .select('id, valor')
+          .eq('chave', `grade_homologada_${nucleoIdAlvo}`)
+          .maybeSingle();
 
-      gradeHomologadaOficial = Boolean(configGrade);
+        gradeHomologadaOficial = Boolean(configGrade);
+      } catch (err) {
+        console.warn('Erro ao consultar configuracao de grade homologada:', err);
+      }
+    }
+
+    // Salvaguarda adicional: se o polo já possui turmas com horários mapeados, a grade é tratada como homologada
+    const temTurmasComHorario = turmasMapped.length > 0 && turmasMapped.some((t: any) => (t.slots?.length ?? 0) > 0);
+    if (temTurmasComHorario) {
+      gradeHomologadaOficial = true;
     }
 
     return {
