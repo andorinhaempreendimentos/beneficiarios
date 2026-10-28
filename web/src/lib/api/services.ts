@@ -3302,10 +3302,14 @@ export const areaProfessorApi = {
 
     let funcionario = null;
     if (funcionarioId) {
-      const { data: f } = await (sb.from('funcionarios') as any)
-        .select('*, nucleos(*)')
+      const { data: f, error: errF } = await (sb.from('funcionarios') as any)
+        .select('*, nucleos:nucleo_id(*)')
         .eq('id', funcionarioId)
         .maybeSingle();
+
+      if (errF) {
+        console.warn('Erro ao carregar dados do funcionario:', errF);
+      }
       funcionario = f ? mapFuncionario(f) : null;
     }
 
@@ -3327,10 +3331,12 @@ export const areaProfessorApi = {
 
     if (turmaIds.length > 0) {
       queryTurmas = queryTurmas.in('id', turmaIds);
-    } else if (funcionarioId) {
-      if (funcionario?.nucleoId) {
-        queryTurmas = queryTurmas.eq('nucleo_id', funcionario.nucleoId);
-      }
+    } else if (funcionario?.nucleoId) {
+      queryTurmas = queryTurmas.eq('nucleo_id', funcionario.nucleoId);
+    } else {
+      // Trava de segurança hermética: se o professor não tem turmas e nem polo vinculado,
+      // NUNCA disparar select sem filtro para não vazar turmas de outros polos do sistema!
+      queryTurmas = queryTurmas.eq('id', '00000000-0000-0000-0000-000000000000');
     }
 
     const { data: turmasRaw } = await queryTurmas;

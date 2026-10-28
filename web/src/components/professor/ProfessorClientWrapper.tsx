@@ -84,13 +84,13 @@ export function ProfessorClientWrapper({
   const nucleoAtual = nucleos.find((n) => n.id === professorAtual.nucleoId);
   const listaProfessoresDisponiveis = isAdmin ? professores : [professorAtual];
 
-  const turmasDoProfessor = dadosSupabase?.turmas ?? turmas.filter((t) => {
+  const turmasDoProfessor = dadosSupabase?.turmas ?? (dbLoading ? [] : turmas.filter((t) => {
     const nomeProfLower = professorAtual.nomeCompleto.toLowerCase();
     const responsavelDireto = (t.responsaveis ?? []).some((r) => r === professorAtual.id || r.toLowerCase().includes(nomeProfLower));
     const responsavelNome = (t.responsaveisNomes ?? []).some((r) => r.toLowerCase().includes(nomeProfLower));
     const mesmoNucleo = professorAtual.nucleoId && t.nucleoId === professorAtual.nucleoId;
     return responsavelDireto || responsavelNome || mesmoNucleo;
-  });
+  }));
 
   const beneficiariosDoProfessor = dadosSupabase?.beneficiarios ?? [];
 

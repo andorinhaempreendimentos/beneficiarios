@@ -1,10 +1,9 @@
 import { ProfessorClientWrapper } from "@/components/professor/ProfessorClientWrapper";
-import { funcionariosApi, turmasApi, nucleosApi } from "@/lib/api/services";
+import { funcionariosApi, nucleosApi } from "@/lib/api/services";
 
 export default async function AreaProfessorPage() {
-  const [funcionariosRes, turmasRes, nucleosRes] = await Promise.all([
+  const [funcionariosRes, nucleosRes] = await Promise.all([
     funcionariosApi.list({ limit: 200 }).catch(() => ({ data: [] })),
-    turmasApi.list({ limit: 100 }).catch(() => ({ data: [] })),
     nucleosApi.list({ limit: 100 }).catch(() => ({ data: [] })),
   ]);
 
@@ -29,7 +28,7 @@ export default async function AreaProfessorPage() {
     <ProfessorClientWrapper
       professores={listaProfessores}
       nucleos={nucleosRes.data}
-      turmas={turmasRes.data}
+      turmas={[]}
       todosBeneficiarios={[]}
       initialProfessorId={listaProfessores[0].id}
     />
