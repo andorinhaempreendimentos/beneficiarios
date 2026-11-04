@@ -354,7 +354,7 @@ export default function TutorialProfessoresPage() {
                   </div>
                 </div>
 
-                <div className="w-full aspect-video bg-black rounded-xl overflow-hidden shadow-inner" style={{ aspectRatio: "16 / 9" }}>
+                <div className="w-full max-w-[240px] sm:max-w-[270px] aspect-[9/16] bg-black rounded-xl overflow-hidden shadow-inner mx-auto" style={{ aspectRatio: "9 / 16" }}>
                   <iframe
                     className="w-full h-full block"
                     src="https://www.youtube.com/embed/d4JDELOl4R8"
