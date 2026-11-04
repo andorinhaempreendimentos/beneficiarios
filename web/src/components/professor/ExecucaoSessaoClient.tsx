@@ -214,17 +214,29 @@ export function ExecucaoSessaoClient({
   // Total de alunos confirmados para a aula
   const totalConfirmadosParaAula = todosConfirmadosIds.size;
 
-  // Toggle de novo aluno do polo
-  const toggleNovoAlunoPolo = (id: string) => {
-    setNovosSelecionadosIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) {
+  // Estado para confirmação obrigatória de enturmação de novo aluno
+  const [alunoPendenteConfirmacao, setAlunoPendenteConfirmacao] = useState<BeneficiarioApi | null>(null);
+
+  // Toggle de novo aluno do polo (exige confirmação obrigatória antes de adicionar)
+  const toggleNovoAlunoPolo = (alunoOuId: BeneficiarioApi | string) => {
+    const id = typeof alunoOuId === "string" ? alunoOuId : alunoOuId.id;
+    if (novosSelecionadosIds.has(id)) {
+      setNovosSelecionadosIds((prev) => {
+        const next = new Set(prev);
         next.delete(id);
+        return next;
+      });
+    } else {
+      const obj =
+        typeof alunoOuId === "object"
+          ? alunoOuId
+          : (beneficiariosPolo?.find((x) => x.id === id) || beneficiarios.find((x) => x.id === id) || null);
+      if (obj) {
+        setAlunoPendenteConfirmacao(obj);
       } else {
-        next.add(id);
+        setNovosSelecionadosIds((prev) => new Set(prev).add(id));
       }
-      return next;
-    });
+    }
   };
 
   // Alunos ativos nesta turma durante a execução da sessão:
@@ -1148,7 +1160,7 @@ export function ExecucaoSessaoClient({
                         return (
                           <div
                             key={b.id}
-                            onClick={() => toggleNovoAlunoPolo(b.id)}
+                            onClick={() => toggleNovoAlunoPolo(b)}
                             className={`p-2.5 rounded-xl border transition-all flex items-center justify-between gap-3 cursor-pointer select-none ${
                               isSel
                                 ? "border-emerald-500 bg-emerald-50/70"
@@ -1168,7 +1180,7 @@ export function ExecucaoSessaoClient({
                               type="button"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                toggleNovoAlunoPolo(b.id);
+                                toggleNovoAlunoPolo(b);
                               }}
                               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition shrink-0 ${
                                 isSel
@@ -1231,7 +1243,7 @@ export function ExecucaoSessaoClient({
                     return (
                       <div
                         key={b.id}
-                        onClick={() => toggleNovoAlunoPolo(b.id)}
+                        onClick={() => toggleNovoAlunoPolo(b)}
                         className={`p-3 rounded-xl border transition-all flex items-center justify-between gap-3 cursor-pointer select-none ${
                           isSel
                             ? "border-emerald-500 bg-emerald-50/70"
@@ -1251,7 +1263,7 @@ export function ExecucaoSessaoClient({
                           type="button"
                           onClick={(e) => {
                             e.stopPropagation();
-                            toggleNovoAlunoPolo(b.id);
+                            toggleNovoAlunoPolo(b);
                           }}
                           className={`px-3 py-1.5 rounded-xl text-xs font-bold transition shrink-0 ${
                             isSel
@@ -2255,6 +2267,97 @@ export function ExecucaoSessaoClient({
               >
                 {salvando ? "Iniciando..." : "Confirmar e Iniciar"}
               </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL DE CONFIRMAÇÃO OBRIGATÓRIA DE ENTURMAÇÃO */}
+      {alunoPendenteConfirmacao && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-zinc-200 flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-150">
+            {/* Cabeçalho do Modal */}
+            <div className="flex items-start gap-3.5">
+              <div className="w-11 h-11 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0 border border-amber-200">
+                <AlertTriangle className="w-5 h-5 text-amber-600" />
+              </div>
+              <div>
+                <h3 className="text-base font-black text-zinc-900 leading-tight">
+                  Confirmação de Enturmação
+                </h3>
+                <p className="text-xs text-zinc-500 mt-1">
+                  Verifique se o {termoParticipante.toLowerCase()} realmente pertence a esta turma e horário.
+                </p>
+              </div>
+            </div>
+
+            {/* Detalhes do Aluno e da Turma */}
+            <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-4 space-y-3 text-xs">
+              <div>
+                <span className="text-[10px] font-black uppercase text-zinc-400 tracking-wider block">
+                  {termoParticipante} a Adicionar
+                </span>
+                <span className="font-bold text-zinc-900 text-sm block">
+                  {alunoPendenteConfirmacao.nomeCompleto}
+                </span>
+                <div className="flex items-center gap-2 mt-0.5 text-zinc-500 font-mono text-[11px]">
+                  <span>Matrícula: {alunoPendenteConfirmacao.matricula}</span>
+                  {alunoPendenteConfirmacao.dataNascimento && (
+                    <>
+                      <span>•</span>
+                      <span>{calcularIdade(alunoPendenteConfirmacao.dataNascimento)} anos</span>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              <div className="pt-2.5 border-t border-zinc-200/80 grid grid-cols-2 gap-2">
+                <div>
+                  <span className="text-[10px] font-black uppercase text-zinc-400 tracking-wider block">
+                    {termoGrupo} Destino
+                  </span>
+                  <span className="font-bold text-sky-900 truncate block">{turma.nome}</span>
+                </div>
+                <div>
+                  <span className="text-[10px] font-black uppercase text-zinc-400 tracking-wider block">
+                    Horário e Dias
+                  </span>
+                  <span className="font-bold text-sky-900 block">
+                    {diaSemanaAula} • {horaInicioPrevista} às {horaFimPrevista}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Alerta Específico de Regra de Enturmação */}
+            <div className="p-3 bg-amber-50 border border-amber-300 rounded-xl text-xs text-amber-950 flex items-start gap-2.5">
+              <span className="text-base shrink-0">🛑</span>
+              <div className="leading-relaxed">
+                <strong>Atenção:</strong> Certifique-se de que este {termoParticipante.toLowerCase()} pertence <u>oficialmente</u> a esta turma e horário. Não adicione participantes de outros horários apenas porque estão no núcleo agora.
+              </div>
+            </div>
+
+            {/* Botões de Ação */}
+            <div className="flex flex-col-reverse sm:flex-row items-center gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setAlunoPendenteConfirmacao(null)}
+                className="w-full sm:w-1/2 py-3 px-4 rounded-xl border border-zinc-300 bg-white hover:bg-zinc-100 text-zinc-700 text-xs font-bold transition cursor-pointer text-center"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (alunoPendenteConfirmacao) {
+                    setNovosSelecionadosIds((prev) => new Set(prev).add(alunoPendenteConfirmacao.id));
+                    setAlunoPendenteConfirmacao(null);
+                  }
+                }}
+                className="w-full sm:w-1/2 py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black shadow-md shadow-emerald-600/20 transition cursor-pointer text-center flex items-center justify-center gap-1.5"
+              >
+                <span>✓ Sim, é desta turma</span>
+              </button>
             </div>
           </div>
         </div>

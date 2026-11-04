@@ -1416,8 +1416,20 @@ export function GateHomologacaoGrade({
                         </div>
                       </div>
 
+                      {/* Botão Adicionar Bloco (Perto do nome do dia da semana) */}
+                      <div className="p-2 bg-white border-b border-slate-100">
+                        <button
+                          type="button"
+                          onClick={() => abrirModalNovoBloco(diaKey)}
+                          className="w-full border-2 border-dashed border-sky-300 bg-sky-50/70 hover:bg-sky-100/90 rounded-xl p-2.5 text-center transition cursor-pointer flex items-center justify-center gap-1.5"
+                        >
+                          <Plus className="w-4 h-4 text-sky-600" />
+                          <span className="text-[11px] font-black text-sky-800">+ Adicionar Bloco</span>
+                        </button>
+                      </div>
+
                       {/* Blocos de Horário do Dia */}
-                      <div className="bg-slate-50/70 flex-1 p-2.5 flex flex-col gap-2.5">
+                      <div className="bg-slate-50/70 flex-1 p-2.5 flex flex-col gap-2.5 overflow-y-auto max-h-[420px]">
                         {slotsDoDia.map((slot) => {
                           const turmasAlocadas = turmasMontadas.filter((t) =>
                             slot.turmasIds.includes(t.id)
@@ -1492,19 +1504,6 @@ export function GateHomologacaoGrade({
                             </div>
                           );
                         })}
-
-                        {/* Dropzone para Adicionar Novo Bloco no Dia */}
-                        <button
-                          type="button"
-                          onClick={() => abrirModalNovoBloco(diaKey)}
-                          className="mt-auto border-2 border-dashed border-sky-300 bg-sky-50/60 hover:bg-sky-100/90 rounded-xl p-3 text-center transition cursor-pointer"
-                        >
-                          <Plus className="w-4 h-4 text-sky-600 mx-auto" />
-                          <div className="text-[11px] font-black text-sky-800 mt-0.5 leading-tight">
-                            + Adicionar Bloco
-                          </div>
-                          <div className="text-[9px] text-sky-600">Toque aqui</div>
-                        </button>
                       </div>
                     </div>
                   );
