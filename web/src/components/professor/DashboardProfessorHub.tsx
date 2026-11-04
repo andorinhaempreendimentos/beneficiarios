@@ -767,24 +767,18 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
           return (
             <div className={`grid gap-3.5 sm:gap-4 ${exibirCardAguardando ? "grid-cols-2 lg:grid-cols-4" : "grid-cols-1 sm:grid-cols-3"}`}>
               {/* Card 1: Alunos no Polo */}
-              <button
-                type="button"
-                onClick={() => setModalGestaoMatriculas(true)}
-                className="group text-left p-4 sm:p-5 rounded-2xl bg-white hover:bg-gradient-to-br hover:from-sky-50/70 hover:to-white border border-zinc-200/90 shadow-sm hover:shadow-md hover:border-sky-300 transition-all active:scale-[0.98] flex flex-col justify-between overflow-hidden relative cursor-pointer"
+              <div
+                className="p-4 sm:p-5 rounded-2xl bg-white border border-zinc-200/90 shadow-sm flex flex-col justify-between overflow-hidden relative"
               >
                 <div className="absolute top-0 left-0 right-0 h-1 bg-sky-500" />
                 <div>
                   <div className="flex items-center justify-between gap-1">
-                    <span className="text-[11px] font-extrabold uppercase tracking-wider text-zinc-400 group-hover:text-sky-600 transition-colors truncate">
+                    <span className="text-[11px] font-extrabold uppercase tracking-wider text-zinc-400 truncate">
                       Alunos no Polo
-                    </span>
-                    <span className="inline-flex items-center gap-1 rounded-lg bg-sky-600 px-2 py-0.5 text-[10px] font-extrabold text-white shadow-xs group-hover:bg-sky-700 transition-all shrink-0">
-                      <UserPlus className="h-3 w-3" />
-                      <span className="hidden sm:inline">Gerenciar</span>
                     </span>
                   </div>
                   <div className="mt-2 flex items-baseline gap-1.5">
-                    <span className="text-2xl sm:text-3xl font-black text-zinc-900 group-hover:text-sky-600 transition-colors tracking-tight">
+                    <span className="text-2xl sm:text-3xl font-black text-zinc-900 tracking-tight">
                       {totalAlunos}
                     </span>
                     <span className="text-xs text-sky-600 font-bold">Alunos Ativos</span>
@@ -794,26 +788,19 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
                   <span className="text-zinc-500 font-medium truncate">
                     <strong className="text-zinc-800 font-bold">{totalEnturmados}</strong> em turmas • <strong className="text-amber-600 font-bold">{totalSemTurma}</strong> s/ turma
                   </span>
-                  <ChevronRight className="h-3.5 w-3.5 text-sky-500 shrink-0 transition-transform group-hover:translate-x-0.5" />
                 </div>
-              </button>
+              </div>
 
               {/* Card 2: Aguardando Turma */}
               {exibirCardAguardando && (
-                <button
-                  type="button"
-                  onClick={() => setModalGestaoMatriculas(true)}
-                  className="group text-left p-4 sm:p-5 rounded-2xl bg-amber-50/60 hover:bg-amber-100/70 border border-amber-200/90 shadow-sm hover:shadow-md hover:border-amber-400 transition-all active:scale-[0.98] flex flex-col justify-between overflow-hidden relative cursor-pointer"
+                <div
+                  className="p-4 sm:p-5 rounded-2xl bg-amber-50/60 border border-amber-200/90 shadow-sm flex flex-col justify-between overflow-hidden relative"
                 >
                   <div className="absolute top-0 left-0 right-0 h-1 bg-amber-500" />
                   <div>
                     <div className="flex items-center justify-between gap-1">
-                      <span className="text-[11px] font-extrabold uppercase tracking-wider text-amber-700 group-hover:text-amber-800 transition-colors truncate">
+                      <span className="text-[11px] font-extrabold uppercase tracking-wider text-amber-700 truncate">
                         Aguardando Turma
-                      </span>
-                      <span className="inline-flex items-center gap-1 rounded-lg bg-amber-500 px-2 py-0.5 text-[10px] font-extrabold text-white shadow-xs group-hover:bg-amber-600 transition-all shrink-0">
-                        <UserPlus className="h-3 w-3" />
-                        <span className="hidden sm:inline">Atribuir</span>
                       </span>
                     </div>
                     <div className="mt-2 flex items-baseline gap-1.5">
@@ -829,9 +816,8 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
                     <span className="text-amber-800 font-medium truncate">
                       {totalPreInscricoes > 0 ? `+ ${totalPreInscricoes} pré-inscrições pendentes` : "Fila do polo atualizada"}
                     </span>
-                    <ChevronRight className="h-3.5 w-3.5 text-amber-600 shrink-0 transition-transform group-hover:translate-x-0.5" />
                   </div>
-                </button>
+                </div>
               )}
 
               {/* Card 3: Turmas Ativas */}
@@ -1181,13 +1167,13 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
         />
       </div>
 
-      {/* 3. MODAL DE GESTÃO DE MATRÍCULAS DO PROFESSOR */}
-      <GestaoMatriculasProfessor
+      {/* 3. MODAL DE GESTÃO DE MATRÍCULAS DO PROFESSOR (Desativada temporariamente) */}
+      {/* <GestaoMatriculasProfessor
         turmas={turmas}
         todosBeneficiarios={todosBeneficiarios}
         isOpen={modalGestaoMatriculas}
         onClose={() => setModalGestaoMatriculas(false)}
-      />
+      /> */}
 
 
       {/* MODAL INTELIGENTE DE AÇÕES DA ATIVIDADE / TURMA */}
