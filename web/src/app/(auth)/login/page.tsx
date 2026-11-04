@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
@@ -18,9 +18,16 @@ function LoginForm() {
   const [erro, setErro] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
+  const [email, setEmail] = useState(() => searchParams.get("email") ?? "");
+  const [senha, setSenha] = useState(() => searchParams.get("senha") ?? searchParams.get("password") ?? "");
   const [showSenha, setShowSenha] = useState(false);
+
+  useEffect(() => {
+    const emailParam = searchParams.get("email");
+    const senhaParam = searchParams.get("senha") ?? searchParams.get("password");
+    if (emailParam) setEmail(emailParam);
+    if (senhaParam) setSenha(senhaParam);
+  }, [searchParams]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

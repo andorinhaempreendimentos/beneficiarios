@@ -1,0 +1,182 @@
+[
+  {
+    "id": "taquari",
+    "polo": "Campo T31 - Taquari",
+    "professor": "Aleksandro Soares Santos",
+    "partes": ["Aleksandro", "Soares", "Santos"],
+    "telefones": ["63981431806", "6381431806", "5563981431806"],
+    "email": "aleksandrosoaresdesousa@gmail.com",
+    "senha": "AleksandroSoares774@"
+  },
+  {
+    "id": "flamboyant",
+    "polo": "Escolinha Flamboyant",
+    "professor": "Vagno Rodrigues de Souza",
+    "partes": ["Vagno", "Rodrigues", "de Souza"],
+    "telefones": ["63984735777", "6384735777", "5563984735777"],
+    "email": "vagnoaraujo78@gmail.com",
+    "senha": "VagnoRodrigues367!"
+  },
+  {
+    "id": "taquarucu",
+    "polo": "Escolinha Esportiva de Taquaruçu",
+    "professor": "Hallid Luz Husein",
+    "partes": ["Hallid", "Luz", "Husein"],
+    "telefones": ["63992283235", "6392283235", "5563992283235"],
+    "email": "luzhuseinh@gmail.com",
+    "senha": "HallidLuz524$"
+  },
+  {
+    "id": "906sul",
+    "polo": "Núcleo Quadra 906 Sul",
+    "professor": "João Vitor Mendonça",
+    "partes": ["João", "Vitor", "Mendonça"],
+    "telefones": ["63992668338", "6392668338", "5563992668338"],
+    "email": "rodriguesjvr14@gmail.com",
+    "senha": "JoaoVitor716$"
+  },
+  {
+    "id": "1303sul",
+    "polo": "Núcleo Quadra 1303 Sul",
+    "professor": "Carlos Henrique Araújo Lima",
+    "partes": ["Carlos", "Henrique", "Araújo", "Lima"],
+    "telefones": ["63993028501", "6393028501", "5563993028501"],
+    "email": "carloshenrique002@icloud.com",
+    "senha": "CarlosHenrique230@"
+  },
+  {
+    "id": "lagonorte",
+    "polo": "Núcleo Lago Norte",
+    "professor": "Paulo Roberto Nogueira",
+    "partes": ["Paulo", "Roberto", "Nogueira"],
+    "telefones": ["63984870094", "639984870094", "6384870094", "5563984870094"],
+    "email": "paulopenedo83@gmail.com",
+    "senha": "PauloRoberto310@"
+  },
+  {
+    "id": "607norte",
+    "polo": "Núcleo Quadra 607 Norte",
+    "professor": "Sthefferson Mafra Vieira",
+    "partes": ["Sthefferson", "Mafra", "Vieira"],
+    "telefones": ["63981091611", "639981091611", "6381091611", "5563981091611"],
+    "email": "saotefin@hotmail.com",
+    "senha": "StheffersonMafra156$"
+  },
+  {
+    "id": "capadocia",
+    "polo": "Núcleo Capadócia",
+    "professor": "Caíque Cirilo Costa",
+    "partes": ["Caíque", "Cirilo", "Costa"],
+    "telefones": ["63984194155", "6384194155", "5563984194155"],
+    "email": "caiquecirilo0909@gmail.com",
+    "senha": "CaiqueCirilo887!"
+  },
+  {
+    "id": "aureny3",
+    "polo": "Núcleo Aureny III",
+    "professor": "Jorge Martins Silva",
+    "partes": ["Jorge", "Martins", "Silva"],
+    "telefones": ["63992470421", "639992470421", "6392470421", "5563992470421"],
+    "email": "jorgeprofessor0711@gmail.com",
+    "senha": "JorgeMartins868$"
+  },
+  {
+    "id": "santoamaro",
+    "polo": "Núcleo Santo Amaro",
+    "professor": "Renato Gomes de Castro",
+    "partes": ["Renato", "Gomes", "de Castro"],
+    "telefones": ["63984843391", "6384843391", "5563984843391"],
+    "email": "renato_brunes@hotmail.com",
+    "senha": "RenatoGomes384$"
+  },
+  {
+    "id": "208sul",
+    "polo": "Quadra Esportiva Praça 208 Sul",
+    "professor": "Felipe Ribeiro Alves",
+    "partes": ["Felipe", "Ribeiro", "Alves"],
+    "telefones": ["63984017924", "6384017924", "5563984017924"],
+    "email": "felipepmw@hotmail.com",
+    "senha": "FelipeRibeiro964$"
+  },
+  {
+    "id": "buritirana",
+    "polo": "Núcleo Buritirana",
+    "professor": "Luiz Carlos Oliveira",
+    "partes": ["Luiz", "Carlos", "Oliveira"],
+    "telefones": ["63992253977", "6392253977", "5563992253977"],
+    "email": "92253977carlos@gmail.com",
+    "senha": "LuizCarlos419!"
+  },
+  {
+    "id": "lagosul",
+    "polo": "Núcleo Lago Sul",
+    "professor": "Ramon Batista Ribeiro",
+    "partes": ["Ramon", "Batista", "Ribeiro"],
+    "telefones": ["63991104399", "6391104399", "5563991104399"],
+    "email": "ramonbatistalustosa@gmail.com",
+    "senha": "RamonBatista703!"
+  },
+  {
+    "id": "arno51",
+    "polo": "Complexo ARNO 51",
+    "professor": "Alexandre Silva Santos",
+    "partes": ["Alexandre", "Silva", "Santos"],
+    "telefones": ["63981239654", "6381239654", "5563981239654"],
+    "email": "mande.paraensee@gmail.com",
+    "senha": "AlexandreSilva964$"
+  },
+  {
+    "id": "1206sul",
+    "polo": "Núcleo Quadra 1206 Sul",
+    "professor": "Kaio Henrique Ferreira",
+    "partes": ["Kaio", "Henrique", "Ferreira"],
+    "telefones": ["63984460788", "639984460788", "6384460788", "5563984460788"],
+    "email": "kaio.vivoinfo@gmail.com",
+    "senha": "KaioHenrique215!"
+  },
+  {
+    "id": "polinesia",
+    "polo": "Centro Desenv. Futebol Palmas",
+    "professor": "Marcos Sousa Rocha",
+    "partes": ["Marcos", "Sousa", "Rocha"],
+    "telefones": ["63981061822", "6381061822", "5563981061822"],
+    "email": "marcosterreco1972@gmail.com",
+    "senha": "MarcosSousa759!"
+  },
+  {
+    "id": "harasrr",
+    "polo": "Haras RR",
+    "professor": "Romário Souza Dias",
+    "partes": ["Romário", "Souza", "Dias"],
+    "telefones": ["63992934040", "6392934040", "63992152771", "5563992934040"],
+    "email": "romarioribeiro0827@gmail.com",
+    "senha": "RomarioSouza947!"
+  },
+  {
+    "id": "solnascente2",
+    "polo": "Escolinha do Sol Nascente",
+    "professor": "Wilton Alves de Oliveira",
+    "partes": ["Wilton", "Alves", "de Oliveira"],
+    "telefones": ["63981091611", "63984460788", "63984843391"],
+    "email": "pereirawiltom498@gmail.com",
+    "senha": "WiltonAlves744$"
+  },
+  {
+    "id": "agrotins",
+    "polo": "Núcleo Vila Agrotins",
+    "professor": "Rivaldo Pereira da Silva",
+    "partes": ["Rivaldo", "Pereira", "da Silva"],
+    "telefones": ["63992640643", "639992640643", "6392640643", "5563992640643"],
+    "email": "monteirorivaldo217@gmail.com",
+    "senha": "RivaldoPereira159!"
+  },
+  {
+    "id": "solnascente1",
+    "polo": "Núcleo Sol Nascente I",
+    "professor": "Rolnan Ferreira Lima",
+    "partes": ["Rolnan", "Ferreira", "Lima"],
+    "telefones": ["63984344822", "639984344822", "6384344822", "5563984344822"],
+    "email": "rolnancosta10@gmail.com",
+    "senha": "RolnanFerreira760$"
+  }
+]
