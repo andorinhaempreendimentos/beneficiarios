@@ -736,8 +736,8 @@ export function InscricaoNucleoSimplificadaWizard({ nucleo }: Props) {
                   type="date"
                   value={alunoDataNasc}
                   onChange={(e) => handleMudarDataNasc(e.target.value)}
-                  min="2007-01-01"
-                  max="2022-12-31"
+                  min="1990-01-01"
+                  max={new Date().toISOString().split("T")[0]}
                   className="w-full h-12 px-3.5 rounded-xl border-2 border-slate-300 text-xs font-bold text-slate-900 bg-white focus:border-sky-500 focus:outline-none cursor-pointer"
                 />
               </div>
