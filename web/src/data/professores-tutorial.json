@@ -154,9 +154,9 @@
   },
   {
     "id": "solnascente2",
-    "polo": "Escolinha do Sol Nascente",
-    "professor": "Wilton Alves de Oliveira",
-    "partes": ["Wilton", "Alves", "de Oliveira"],
+    "polo": "Núcleo Sol Nascente II",
+    "professor": "Wiltom Pereira Dias",
+    "partes": ["Wiltom", "Pereira", "Dias"],
     "telefones": ["63992582916", "6392582916", "5563992582916", "63981091611", "63984460788"],
     "email": "pereirawiltom498@gmail.com",
     "senha": "WiltonAlves744$"
@@ -173,8 +173,8 @@
   {
     "id": "solnascente1",
     "polo": "Núcleo Sol Nascente I",
-    "professor": "Rolnan Ferreira Lima",
-    "partes": ["Rolnan", "Ferreira", "Lima"],
+    "professor": "Rolnan Costa Santos",
+    "partes": ["Rolnan", "Costa", "Santos"],
     "telefones": ["63984344822", "639984344822", "6384344822", "5563984344822"],
     "email": "rolnancosta10@gmail.com",
     "senha": "RolnanFerreira760$"
