@@ -27,7 +27,7 @@ const POOL_SEGUNDOS_NOMES = [
 ];
 
 const POOL_TERCEIROS_NOMES = [
-  "Santos", "de Souza", "Husein", "Mendonça", "Araújo", "Nogueira",
+  "Santos", "dos Santos", "Rodrigues", "de Souza", "Husein", "Mendonça", "Araújo", "Nogueira",
   "Vieira", "Costa", "Silva", "de Castro", "Alves", "Oliveira",
   "Ribeiro", "Ferreira", "Rocha", "Dias", "de Oliveira", "da Silva", "Lima"
 ];
