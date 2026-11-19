@@ -20,6 +20,8 @@ dist/
 */.vercel/
 *.tsbuildinfo
 next-env.d.ts
+__pycache__/
+relatorios_saida/
 
 # ==========================================
 # 3. Segredos, Credenciais e Ambiente
@@ -49,6 +51,7 @@ yarn-error.log*
 pnpm-debug.log*
 *_output.txt
 docx_text.txt
+gerar_relatorio*.py
 
 # ==========================================
 # 6. Tipos de Arquivo Ignorados (HTML, MD, Mídias, Compactados)
