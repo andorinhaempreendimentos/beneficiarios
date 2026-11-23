@@ -146,11 +146,11 @@
   {
     "id": "harasrr",
     "polo": "Haras RR",
-    "professor": "Romário Souza Dias",
-    "partes": ["Romário", "Souza", "Dias"],
+    "professor": "Romario Ribeiro Brito",
+    "partes": ["Romario", "Ribeiro", "Brito"],
     "telefones": ["63992934040", "6392934040", "63992152771", "5563992934040"],
     "email": "romarioribeiro0827@gmail.com",
-    "senha": "RomarioSouza947!"
+    "senha": "RomarioRibeiro947!"
   },
   {
     "id": "solnascente2",
@@ -177,6 +177,6 @@
     "partes": ["Rolnan", "Costa", "Santos"],
     "telefones": ["63984344822", "639984344822", "6384344822", "5563984344822"],
     "email": "rolnancosta10@gmail.com",
-    "senha": "RolnanFerreira760$"
+    "senha": "RolnanCosta760$"
   }
 ]
