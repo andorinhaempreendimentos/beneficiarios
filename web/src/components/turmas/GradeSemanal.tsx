@@ -1291,16 +1291,16 @@ export function GradeSemanal({
     }
   }, [slots]);
 
-  // Faixa dinâmica de horários
+  // Faixa dinâmica de horários (mantém janela mínima de 07h às 22h/23h para manhã, tarde e noite)
   const horasVisiveis = useMemo(() => {
     if (items.length === 0) {
-      return Array.from({ length: 13 }, (_, i) => i + 7);
+      return Array.from({ length: 16 }, (_, i) => i + 7);
     }
     const maisCedo = Math.min(...items.map((s) => s.inicio));
     const maisTarde = Math.max(...items.map((s) => s.fim));
 
-    const inicioGrade = Math.max(0, maisCedo - 1);
-    const fimGrade = Math.min(23, maisTarde + 1);
+    const inicioGrade = Math.max(0, Math.min(7, maisCedo - 1));
+    const fimGrade = Math.min(22, Math.max(22, maisTarde));
 
     const totalHoras = Math.max(1, fimGrade - inicioGrade + 1);
     return Array.from({ length: totalHoras }, (_, i) => i + inicioGrade);

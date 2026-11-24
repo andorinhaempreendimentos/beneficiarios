@@ -24,6 +24,8 @@ import {
 } from "lucide-react";
 import type { FuncionarioApi, NucleoApi, TurmaApi } from "@/lib/api/services";
 
+export type TurnoTurma = "manha" | "tarde" | "noite" | "misto";
+
 export interface TurmaMontada {
   id: string;
   identificador: string;
@@ -31,6 +33,7 @@ export interface TurmaMontada {
   max: number | null;
   label: string;
   cor: string;
+  turno: TurnoTurma;
 }
 
 export interface SlotHorarioGrade {
@@ -71,12 +74,51 @@ const DIAS_MAP: Record<string, { id: string; nome: string; curto: string; order:
 };
 
 const TODAS_AS_IDADES = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
-const LETRAS_TURMAS = ["A", "B", "C", "D", "E", "F", "G", "H"];
+const LETRAS_TURMAS = [
+  "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+  "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
+];
+
+const TURNOS_OPCOES: Array<{ id: TurnoTurma; label: string; order: number; badgeClass: string }> = [
+  { id: "manha", label: "Manhã", order: 1, badgeClass: "bg-sky-100 text-sky-800 border-sky-200" },
+  { id: "tarde", label: "Tarde", order: 2, badgeClass: "bg-amber-100 text-amber-800 border-amber-200" },
+  { id: "noite", label: "Noite", order: 3, badgeClass: "bg-indigo-100 text-indigo-800 border-indigo-200" },
+  { id: "misto", label: "Misto", order: 4, badgeClass: "bg-slate-100 text-slate-700 border-slate-200" },
+];
+
+const TURNO_LABEL_MAP: Record<TurnoTurma, string> = {
+  manha: "Manhã",
+  tarde: "Tarde",
+  noite: "Noite",
+  misto: "Misto",
+};
+
+const TURNO_ORDER_MAP: Record<TurnoTurma, number> = {
+  manha: 1,
+  tarde: 2,
+  noite: 3,
+  misto: 4,
+};
+
+function inferirTurnoPorSlots(slots?: TurmaApi["slots"]): TurnoTurma {
+  if (!slots || slots.length === 0) return "manha";
+  const turnosEncontrados = new Set<TurnoTurma>();
+  for (const s of slots) {
+    const hIni = s.horaInicio ? parseInt(s.horaInicio.split(":")[0], 10) : Number(s.inicio ?? 8);
+    if (hIni < 12) turnosEncontrados.add("manha");
+    else if (hIni < 18) turnosEncontrados.add("tarde");
+    else turnosEncontrados.add("noite");
+  }
+  if (turnosEncontrados.size === 1) {
+    return Array.from(turnosEncontrados)[0];
+  }
+  return turnosEncontrados.size > 1 ? "misto" : "manha";
+}
 
 function horaParaMinutos(str: string): number {
   if (!str) return 0;
   const parts = str.split(":");
-  return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+  return parseInt(parts[0] || "0", 10) * 60 + parseInt(parts[1] || "0", 10);
 }
 
 function horariosColidem(i1: string, f1: string, i2: string, f2: string): boolean {
@@ -112,6 +154,7 @@ export function GateHomologacaoGrade({
           max,
           label: t.nome || `Turma ${letra}`,
           cor: "sky",
+          turno: inferirTurnoPorSlots(t.slots),
         };
       });
     }
@@ -219,13 +262,14 @@ export function GateHomologacaoGrade({
   const [salvando, setSalvando] = useState(false);
 
   // -------------------------------------------------------------
-  // VALIDAÇÕES DA ETAPA 1 (FAIXAS CONTÍGUAS, SEM OVERLAP E SEM LACUNAS)
+  // VALIDAÇÕES DA ETAPA 1 (POR TURNO, PERMITINDO MESMA IDADE EM TURNOS DIFERENTES)
   // -------------------------------------------------------------
   const conflitosIdade = useMemo(() => {
     const conflitos: Array<{
       turma1: TurmaMontada;
       turma2: TurmaMontada;
       sobreposicao: string;
+      turnoLabel: string;
     }> = [];
 
     for (let i = 0; i < turmasMontadas.length; i++) {
@@ -237,6 +281,11 @@ export function GateHomologacaoGrade({
           continue;
         }
 
+        // Turnos distintos (ex.: Manhã vs Tarde vs Noite) podem atender exatamente a mesma faixa etária
+        if (t1.turno === "misto" || t2.turno === "misto" || t1.turno !== t2.turno) {
+          continue;
+        }
+
         const inicioMax = Math.max(t1.min, t2.min);
         const fimMin = Math.min(t1.max, t2.max);
 
@@ -245,6 +294,7 @@ export function GateHomologacaoGrade({
             turma1: t1,
             turma2: t2,
             sobreposicao: `${inicioMax} a ${fimMin} anos`,
+            turnoLabel: TURNO_LABEL_MAP[t1.turno],
           });
         }
       }
@@ -254,40 +304,50 @@ export function GateHomologacaoGrade({
   }, [turmasMontadas]);
 
   const lacunasIdade = useMemo(() => {
-    const completas = turmasMontadas.filter((t) => t.min !== null && t.max !== null);
-    if (completas.length < 2) return [];
-
-    const ordenadas = [...completas].sort((a, b) => (a.min ?? 0) - (b.min ?? 0));
     const lacunas: Array<{
       turmaAnterior: TurmaMontada;
       turmaProxima: TurmaMontada;
       idades: number[];
       descricao: string;
+      turnoLabel: string;
     }> = [];
 
-    for (let i = 0; i < ordenadas.length - 1; i++) {
-      const tAtual = ordenadas[i];
-      const tProx = ordenadas[i + 1];
+    const turnosParaChecar: TurnoTurma[] = ["manha", "tarde", "noite"];
+    for (const turnoAlvo of turnosParaChecar) {
+      const completasDoTurno = turmasMontadas.filter(
+        (t) => t.turno === turnoAlvo && t.min !== null && t.max !== null
+      );
+      if (completasDoTurno.length < 2) continue;
 
-      if (tAtual.max !== null && tProx.min !== null && tProx.min > tAtual.max + 1) {
-        const idades: number[] = [];
-        for (let age = tAtual.max + 1; age < tProx.min; age++) {
-          idades.push(age);
+      const ordenadas = [...completasDoTurno].sort((a, b) => (a.min ?? 0) - (b.min ?? 0));
+      for (let i = 0; i < ordenadas.length - 1; i++) {
+        const tAtual = ordenadas[i];
+        const tProx = ordenadas[i + 1];
+
+        if (tAtual.max !== null && tProx.min !== null && tProx.min > tAtual.max + 1) {
+          const idades: number[] = [];
+          for (let age = tAtual.max + 1; age < tProx.min; age++) {
+            idades.push(age);
+          }
+          lacunas.push({
+            turmaAnterior: tAtual,
+            turmaProxima: tProx,
+            idades,
+            descricao:
+              idades.length === 1 ? `${idades[0]} anos` : `${idades[0]} a ${idades[idades.length - 1]} anos`,
+            turnoLabel: TURNO_LABEL_MAP[turnoAlvo],
+          });
         }
-        lacunas.push({
-          turmaAnterior: tAtual,
-          turmaProxima: tProx,
-          idades,
-          descricao:
-            idades.length === 1 ? `${idades[0]} anos` : `${idades[0]} a ${idades[idades.length - 1]} anos`,
-        });
       }
     }
     return lacunas;
   }, [turmasMontadas]);
 
   const todasCompletas = useMemo(() => {
-    return turmasMontadas.length > 0 && turmasMontadas.every((t) => t.min !== null && t.max !== null);
+    return (
+      turmasMontadas.length > 0 &&
+      turmasMontadas.every((t) => t.min !== null && t.max !== null && t.min <= t.max)
+    );
   }, [turmasMontadas]);
 
   const ultimaTurmaCompleta = useMemo(() => {
@@ -296,8 +356,15 @@ export function GateHomologacaoGrade({
     return ultima.min !== null && ultima.max !== null;
   }, [turmasMontadas]);
 
-  const podeAvancarEtapa1 =
-    todasCompletas && conflitosIdade.length === 0 && lacunasIdade.length === 0;
+  const proximaLetraDisponivel = useMemo(() => {
+    const usadas = new Set(turmasMontadas.map((t) => t.identificador.toUpperCase()));
+    return (
+      LETRAS_TURMAS.find((l) => !usadas.has(l)) ||
+      `T${turmasMontadas.length + 1}`
+    );
+  }, [turmasMontadas]);
+
+  const podeAvancarEtapa1 = todasCompletas;
 
   function adicionarNovaTurma() {
     if (turmasMontadas.length > 0) {
@@ -311,7 +378,7 @@ export function GateHomologacaoGrade({
     }
 
     const nextId = `t_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
-    const letra = LETRAS_TURMAS[turmasMontadas.length % LETRAS_TURMAS.length];
+    const letra = proximaLetraDisponivel;
 
     setTurmasMontadas((prev) => [
       ...prev,
@@ -322,6 +389,7 @@ export function GateHomologacaoGrade({
         max: null,
         label: `Turma ${letra}`,
         cor: "sky",
+        turno: "manha",
       },
     ]);
   }
@@ -348,18 +416,15 @@ export function GateHomologacaoGrade({
           if (clone.max !== null && (valor === null || clone.max < valor)) {
             clone.max = null;
           }
-          const outrasSuperiores = prev.filter(
-            (o) => o.id !== t.id && o.min !== null && valor !== null && o.min > valor
-          );
-          if (outrasSuperiores.length > 0) {
-            const menorInicio = Math.min(...outrasSuperiores.map((o) => o.min as number));
-            if (clone.max !== null && clone.max >= menorInicio) {
-              clone.max = null;
-            }
-          }
         }
         return clone;
       })
+    );
+  }
+
+  function atualizarTurnoTurma(turmaId: string, turno: TurnoTurma) {
+    setTurmasMontadas((prev) =>
+      prev.map((t) => (t.id === turmaId ? { ...t, turno } : t))
     );
   }
 
@@ -431,10 +496,10 @@ export function GateHomologacaoGrade({
     if (slotsDoDia.length > 0) {
       const ultimoSlot = slotsDoDia[slotsDoDia.length - 1];
       const minFim = horaParaMinutos(ultimoSlot.fim);
-      if (minFim < 18 * 60) {
+      if (minFim < 22 * 60) {
         defInicio = ultimoSlot.fim;
         const duracaoMin = dia === "sab" ? 180 : 90;
-        const novoMinFim = Math.min(minFim + duracaoMin, 19 * 60);
+        const novoMinFim = Math.min(minFim + duracaoMin, 23 * 60);
         const hFim = String(Math.floor(novoMinFim / 60)).padStart(2, "0");
         const mFim = String(novoMinFim % 60).padStart(2, "0");
         defFim = `${hFim}:${mFim}`;
@@ -846,59 +911,53 @@ export function GateHomologacaoGrade({
                 Quais turmas você atende neste polo?
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
-                Defina a idade mínima e máxima de cada turma. Nenhuma faixa pode sobrepor ou deixar idades sem atendimento.
+                Defina o turno e a faixa etária de cada turma. Você pode ter turmas com a mesma idade em turnos diferentes (Manhã, Tarde ou Noite).
               </p>
             </div>
 
-            {/* Regras de Validação das Faixas */}
-            <div className="bg-amber-50/80 border border-amber-200 rounded-2xl p-4 flex items-start gap-3">
-              <Shield className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+            {/* Orientações das Faixas e Turnos */}
+            <div className="bg-sky-50/80 border border-sky-200 rounded-2xl p-4 flex items-start gap-3">
+              <Shield className="w-5 h-5 text-sky-600 shrink-0 mt-0.5" />
               <div>
-                <div className="text-xs font-bold text-amber-950">
-                  Regras de Validação das Faixas Etárias:
+                <div className="text-xs font-bold text-sky-950">
+                  Organização por Turnos e Faixas Etárias:
                 </div>
-                <ul className="text-xs text-amber-900 leading-snug mt-1.5 space-y-1">
-                  <li>• Você escolhe livremente a idade mínima e máxima de cada turma atendida no polo.</li>
-                  <li>• As idades <strong>não podem se cruzar</strong>. Se a Turma A vai até 11 anos, a próxima turma deve iniciar em 12 anos.</li>
-                  <li>• <strong>Linha contínua:</strong> nenhuma idade pode ficar de fora (buraco/lacuna) entre as turmas do polo.</li>
+                <ul className="text-xs text-sky-900 leading-snug mt-1.5 space-y-1">
+                  <li>• Você escolhe livremente a idade mínima, máxima e o turno (<strong>Manhã</strong>, <strong>Tarde</strong>, <strong>Noite</strong> ou <strong>Misto</strong>) de cada turma.</li>
+                  <li>• <strong>Turnos diferentes podem repetir idades:</strong> por exemplo, Turma A (6 a 13 anos) de manhã e Turma B (6 a 13 anos) à tarde.</li>
+                  <li>• Na Etapa 3 você definirá os horários exatos de cada turma (das 06:00 até as 23:00).</li>
                 </ul>
               </div>
             </div>
 
-            {/* Banner Dinâmico de Alerta (Sobreposição ou Lacuna) */}
+            {/* Avisos Informativos Não-Bloqueantes (Sobreposição no mesmo turno ou Lacuna) */}
             {conflitosIdade.length > 0 && (
-              <div className="rounded-2xl p-4 text-xs font-bold flex items-start gap-2.5 bg-rose-50 border-2 border-rose-400 text-rose-950 animate-pulse">
-                <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
+              <div className="rounded-2xl p-4 text-xs font-bold flex items-start gap-2.5 bg-amber-50 border border-amber-300 text-amber-950">
+                <Info className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
                 <div>
-                  <span className="block font-black text-sm">Conflito de Sobreposição de Idades:</span>
+                  <span className="block font-black text-sm">
+                    Idades em comum no mesmo turno ({conflitosIdade[0].turnoLabel}):
+                  </span>
                   <span className="text-xs font-medium block mt-0.5">
                     A <strong>Turma {conflitosIdade[0].turma1.identificador}</strong> e a{" "}
-                    <strong>Turma {conflitosIdade[0].turma2.identificador}</strong> possuem idades
-                    sobrepostas ({conflitosIdade[0].sobreposicao}). Corrija para continuar.
+                    <strong>Turma {conflitosIdade[0].turma2.identificador}</strong> atendem idades em comum (
+                    {conflitosIdade[0].sobreposicao}) no turno {conflitosIdade[0].turnoLabel}. Se forem horários ou grupos distintos, pode avançar normalmente.
                   </span>
                 </div>
               </div>
             )}
 
-            {conflitosIdade.length === 0 && lacunasIdade.length > 0 && (
-              <div className="rounded-2xl p-4 text-xs font-bold flex items-start gap-2.5 bg-amber-50 border-2 border-amber-400 text-amber-950">
+            {lacunasIdade.length > 0 && (
+              <div className="rounded-2xl p-4 text-xs font-bold flex items-start gap-2.5 bg-amber-50/70 border border-amber-200 text-amber-950">
                 <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
                 <div>
                   <span className="block font-black text-sm">
-                    Idade fora da linha de turmas ({lacunasIdade[0].descricao} sem atendimento):
+                    Aviso no turno {lacunasIdade[0].turnoLabel} ({lacunasIdade[0].descricao} sem turma neste turno):
                   </span>
                   <span className="text-xs font-medium block mt-0.5">
-                    Ficou uma lacuna entre a{" "}
-                    <strong>
-                      Turma {lacunasIdade[0].turmaAnterior.identificador} (até{" "}
-                      {lacunasIdade[0].turmaAnterior.max} anos)
-                    </strong>{" "}
-                    e a{" "}
-                    <strong>
-                      Turma {lacunasIdade[0].turmaProxima.identificador} (começa em{" "}
-                      {lacunasIdade[0].turmaProxima.min} anos)
-                    </strong>
-                    . Ajuste as faixas para que nenhuma idade fique sem atendimento.
+                    Entre a <strong>Turma {lacunasIdade[0].turmaAnterior.identificador}</strong> e a{" "}
+                    <strong>Turma {lacunasIdade[0].turmaProxima.identificador}</strong> ficou a faixa de{" "}
+                    {lacunasIdade[0].descricao}. Se for intencional, você pode avançar normalmente.
                   </span>
                 </div>
               </div>
@@ -915,7 +974,7 @@ export function GateHomologacaoGrade({
                     Nenhuma turma adicionada ainda
                   </div>
                   <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                    Toque no botão abaixo para adicionar a <strong>Turma A</strong> e definir a faixa
+                    Toque no botão abaixo para adicionar a <strong>Turma A</strong> e definir o turno e a faixa
                     etária atendida no polo esportivo.
                   </p>
                 </div>
@@ -923,26 +982,25 @@ export function GateHomologacaoGrade({
                 turmasMontadas
                   .slice()
                   .sort((a, b) => {
-                    if (a.min === null) return 1;
-                    if (b.min === null) return -1;
-                    return a.min - b.min;
+                    const diffTurno = (TURNO_ORDER_MAP[a.turno] ?? 9) - (TURNO_ORDER_MAP[b.turno] ?? 9);
+                    if (diffTurno !== 0) return diffTurno;
+                    if (a.min === null && b.min !== null) return 1;
+                    if (a.min !== null && b.min === null) return -1;
+                    if (a.min !== null && b.min !== null && a.min !== b.min) return a.min - b.min;
+                    return a.identificador.localeCompare(b.identificador);
                   })
                   .map((t) => {
-                    const emConflito = conflitosIdade.some(
+                    const emConflitoMesmoTurno = conflitosIdade.some(
                       (c) => c.turma1.id === t.id || c.turma2.id === t.id
                     );
                     const incompleta = t.min === null || t.max === null;
-                    const lacunaAposEsta = lacunasIdade.find(
-                      (l) => l.turmaAnterior.id === t.id
-                    );
+                    const turnoInfo = TURNOS_OPCOES.find((op) => op.id === t.turno) ?? TURNOS_OPCOES[0];
 
                     let cardBorder = "border-emerald-200 bg-white";
-                    if (emConflito) {
-                      cardBorder = "border-rose-400 bg-rose-50/20 ring-2 ring-rose-300";
-                    } else if (lacunaAposEsta) {
-                      cardBorder = "border-amber-400 bg-amber-50/15";
-                    } else if (incompleta) {
+                    if (incompleta) {
                       cardBorder = "border-amber-300 bg-amber-50/15";
+                    } else if (emConflitoMesmoTurno) {
+                      cardBorder = "border-amber-300 bg-white";
                     }
 
                     return (
@@ -952,36 +1010,22 @@ export function GateHomologacaoGrade({
                             <div className="flex items-center gap-3">
                               <span
                                 className={`w-9 h-9 rounded-xl font-black text-sm flex items-center justify-center shadow-xs ${
-                                  emConflito
-                                    ? "bg-rose-600 text-white"
-                                    : lacunaAposEsta
-                                    ? "bg-amber-500 text-white"
-                                    : incompleta
-                                    ? "bg-slate-200 text-slate-700"
-                                    : "bg-sky-700 text-white"
+                                  incompleta ? "bg-slate-200 text-slate-700" : "bg-sky-700 text-white"
                                 }`}
                               >
                                 {t.identificador}
                               </span>
                               <div>
-                                <h4 className="text-sm font-black text-slate-800 flex items-center gap-2">
-                                  Turma {t.identificador}
-                                  {emConflito && (
-                                    <span className="text-[10px] bg-rose-100 text-rose-700 border border-rose-300 px-2 py-0.5 rounded font-bold">
-                                      Idade Sobreposta
-                                    </span>
-                                  )}
-                                  {!emConflito && lacunaAposEsta && (
-                                    <span className="text-[10px] bg-amber-100 text-amber-800 border border-amber-300 px-2 py-0.5 rounded font-bold flex items-center gap-1">
-                                      <AlertTriangle className="w-3 h-3 text-amber-600" /> Falta {lacunaAposEsta.descricao}
-                                    </span>
-                                  )}
-                                  {!emConflito && !lacunaAposEsta && incompleta && (
+                                <h4 className="text-sm font-black text-slate-800 flex flex-wrap items-center gap-2">
+                                  <span>Turma {t.identificador}</span>
+                                  <span className={`text-[10px] border px-2 py-0.5 rounded font-bold ${turnoInfo.badgeClass}`}>
+                                    {turnoInfo.label}
+                                  </span>
+                                  {incompleta ? (
                                     <span className="text-[10px] bg-amber-100 text-amber-800 border border-amber-300 px-2 py-0.5 rounded font-bold">
                                       Configurando faixa...
                                     </span>
-                                  )}
-                                  {!emConflito && !lacunaAposEsta && !incompleta && (
+                                  ) : (
                                     <span className="text-[10px] bg-emerald-100 text-emerald-800 border border-emerald-300 px-2 py-0.5 rounded font-bold flex items-center gap-1">
                                       <Check className="w-3 h-3" /> Faixa Definida
                                     </span>
@@ -997,12 +1041,8 @@ export function GateHomologacaoGrade({
                                       Mínima: {t.min} anos • Selecione a idade máxima
                                     </span>
                                   ) : (
-                                    <span
-                                      className={`text-xs ${
-                                        lacunaAposEsta ? "text-amber-800 font-black" : "text-emerald-700 font-bold"
-                                      }`}
-                                    >
-                                      Faixa etária: {t.min} a {t.max} anos
+                                    <span className="text-xs text-emerald-700 font-bold">
+                                      Faixa etária: {t.min} a {t.max} anos ({turnoInfo.label})
                                     </span>
                                   )}
                                 </div>
@@ -1015,6 +1055,32 @@ export function GateHomologacaoGrade({
                             >
                               Excluir
                             </button>
+                          </div>
+
+                          {/* Seletor de Turno da Turma */}
+                          <div>
+                            <label className="text-xs font-bold text-slate-600 block mb-1.5">
+                              Turno / Período da Turma:
+                            </label>
+                            <div className="grid grid-cols-4 gap-1.5">
+                              {TURNOS_OPCOES.map((op) => {
+                                const ativo = t.turno === op.id;
+                                return (
+                                  <button
+                                    key={op.id}
+                                    type="button"
+                                    onClick={() => atualizarTurnoTurma(t.id, op.id)}
+                                    className={`py-2 px-2 rounded-xl border text-xs font-bold transition cursor-pointer ${
+                                      ativo
+                                        ? "bg-sky-700 text-white border-sky-700 shadow-xs"
+                                        : "bg-slate-50 text-slate-600 border-slate-200 hover:border-sky-300"
+                                    }`}
+                                  >
+                                    {op.label}
+                                  </button>
+                                );
+                              })}
+                            </div>
                           </div>
 
                           <div className="grid grid-cols-2 gap-3 pt-1">
@@ -1031,35 +1097,27 @@ export function GateHomologacaoGrade({
                                     e.target.value ? parseInt(e.target.value, 10) : null
                                   )
                                 }
-                                className={`w-full bg-slate-50 border rounded-xl px-3 py-2 text-xs font-bold text-slate-800 cursor-pointer ${
-                                  emConflito
-                                    ? "border-rose-400 focus:ring-rose-500"
-                                    : "border-slate-200 focus:ring-sky-500"
-                                }`}
+                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 cursor-pointer focus:ring-sky-500"
                               >
                                 <option value="" disabled>
                                   -- Selecione a Mínima --
                                 </option>
                                 {TODAS_AS_IDADES.map((a) => {
-                                  const ocupante = turmasMontadas.find(
+                                  const ocupanteMesmoTurno = turmasMontadas.find(
                                     (o) =>
                                       o.id !== t.id &&
+                                      o.turno !== "misto" &&
+                                      t.turno !== "misto" &&
+                                      o.turno === t.turno &&
                                       o.min !== null &&
                                       o.max !== null &&
                                       a >= o.min &&
                                       a <= o.max
                                   );
 
-                                  if (ocupante) {
-                                    return (
-                                      <option key={a} value={a} disabled className="text-slate-300 font-normal bg-slate-50">
-                                        {a} anos (Ocupado na Turma {ocupante.identificador})
-                                      </option>
-                                    );
-                                  }
                                   return (
                                     <option key={a} value={a}>
-                                      {a} anos
+                                      {a} anos{ocupanteMesmoTurno ? ` (também na Turma ${ocupanteMesmoTurno.identificador})` : ""}
                                     </option>
                                   );
                                 })}
@@ -1080,12 +1138,8 @@ export function GateHomologacaoGrade({
                                     e.target.value ? parseInt(e.target.value, 10) : null
                                   )
                                 }
-                                className={`w-full bg-slate-50 border rounded-xl px-3 py-2 text-xs font-bold text-slate-800 ${
+                                className={`w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:ring-sky-500 ${
                                   t.min === null ? "opacity-60 cursor-not-allowed" : "cursor-pointer"
-                                } ${
-                                  emConflito
-                                    ? "border-rose-400 focus:ring-rose-500"
-                                    : "border-slate-200 focus:ring-sky-500"
                                 }`}
                               >
                                 {t.min === null ? (
@@ -1097,62 +1151,30 @@ export function GateHomologacaoGrade({
                                     <option value="" disabled>
                                       -- Selecione a Máxima --
                                     </option>
-                                    {(() => {
-                                      const outrasSuperiores = turmasMontadas.filter(
-                                        (o) => o.id !== t.id && o.min !== null && o.min > (t.min ?? 0)
+                                    {TODAS_AS_IDADES.filter((a) => a >= (t.min ?? 0)).map((a) => {
+                                      const ocupanteMesmoTurno = turmasMontadas.find(
+                                        (o) =>
+                                          o.id !== t.id &&
+                                          o.turno !== "misto" &&
+                                          t.turno !== "misto" &&
+                                          o.turno === t.turno &&
+                                          o.min !== null &&
+                                          o.max !== null &&
+                                          a >= o.min &&
+                                          a <= o.max
                                       );
-                                      const menorInicioSuperior =
-                                        outrasSuperiores.length > 0
-                                          ? Math.min(...outrasSuperiores.map((o) => o.min as number))
-                                          : 999;
-                                      const turmaBloqueadora = outrasSuperiores.find(
-                                        (o) => o.min === menorInicioSuperior
+                                      return (
+                                        <option key={a} value={a}>
+                                          {a} anos{ocupanteMesmoTurno ? ` (também na Turma ${ocupanteMesmoTurno.identificador})` : ""}
+                                        </option>
                                       );
-
-                                      return TODAS_AS_IDADES.filter((a) => a >= (t.min ?? 0)).map((a) => {
-                                        if (a >= menorInicioSuperior) {
-                                          return (
-                                            <option
-                                              key={a}
-                                              value={a}
-                                              disabled
-                                              className="text-slate-300 font-normal bg-slate-50"
-                                            >
-                                              {a} anos (Ocupado na Turma{" "}
-                                              {turmaBloqueadora ? turmaBloqueadora.identificador : ""})
-                                            </option>
-                                          );
-                                        }
-                                        return (
-                                          <option key={a} value={a}>
-                                            {a} anos
-                                          </option>
-                                        );
-                                      });
-                                    })()}
+                                    })}
                                   </>
                                 )}
                               </select>
                             </div>
                           </div>
                         </div>
-
-                        {/* Gap Card Inserido Diretamente Entre as Duas Turmas com Buraco */}
-                        {lacunaAposEsta && (
-                          <div className="bg-amber-50/90 border-2 border-dashed border-amber-400 rounded-2xl p-3.5 text-center space-y-1 shadow-2xs">
-                            <div className="text-xs font-black text-amber-950 flex items-center justify-center gap-1.5">
-                              <AlertTriangle className="w-4 h-4 text-amber-600" />
-                              Buraco na linha de idades: <strong>{lacunaAposEsta.descricao}</strong> sem atendimento!
-                            </div>
-                            <p className="text-xs text-amber-800 leading-snug">
-                              Entre a <strong>Turma {lacunaAposEsta.turmaAnterior.identificador} ({lacunaAposEsta.turmaAnterior.max} anos)</strong> e a{" "}
-                              <strong>Turma {lacunaAposEsta.turmaProxima.identificador} ({lacunaAposEsta.turmaProxima.min} anos)</strong> não há nenhuma turma.
-                            </p>
-                            <div className="text-[11px] text-amber-900 font-bold bg-amber-100 rounded-lg py-1 px-3 inline-block mt-0.5">
-                              Ajuste as faixas para cobrir a idade de {lacunaAposEsta.descricao} e poder avançar.
-                            </div>
-                          </div>
-                        )}
                       </div>
                     );
                   })
@@ -1177,15 +1199,15 @@ export function GateHomologacaoGrade({
                     ? "+ Adicionar Turma A"
                     : !ultimaTurmaCompleta
                     ? "+ Adicionar Próxima Turma (Bloqueado)"
-                    : `+ Adicionar Turma ${LETRAS_TURMAS[turmasMontadas.length % LETRAS_TURMAS.length]}`}
+                    : `+ Adicionar Turma ${proximaLetraDisponivel}`}
                 </span>
               </button>
               <p className="text-xs text-slate-400 text-center mt-2 font-medium">
                 {turmasMontadas.length === 0
-                  ? "Defina as idades mínima e máxima de cada turma atendida no polo."
+                  ? "Defina o turno e as idades mínima e máxima de cada turma atendida no polo."
                   : !ultimaTurmaCompleta
                   ? "Configure a idade mínima e máxima da turma atual para liberar a próxima."
-                  : "Faixas anteriores preenchidas. Você pode adicionar a próxima turma."}
+                  : "Você pode adicionar quantas turmas precisar (inclusive para outros turnos com a mesma idade)."}
               </p>
             </div>
 
@@ -1205,10 +1227,6 @@ export function GateHomologacaoGrade({
                 <span>
                   {turmasMontadas.length === 0
                     ? "Adicione ao menos 1 turma para continuar"
-                    : conflitosIdade.length > 0
-                    ? "Corrija as faixas sobrepostas para avançar"
-                    : lacunasIdade.length > 0
-                    ? `Preencha a lacuna de ${lacunasIdade[0].descricao} para avançar`
                     : !todasCompletas
                     ? "Complete as idades mínima e máxima de todas as turmas"
                     : `Avançar para Escolher os Dias de Treino (${turmasMontadas.length} ${
@@ -1492,8 +1510,11 @@ export function GateHomologacaoGrade({
                                     key={t.id}
                                     className="bg-white border border-slate-200 rounded-lg p-1.5 shadow-2xs"
                                   >
-                                    <div className="text-[10px] font-black text-slate-800 leading-tight">
-                                      Turma {t.identificador}
+                                    <div className="flex items-center justify-between gap-1 text-[10px] font-black text-slate-800 leading-tight">
+                                      <span>Turma {t.identificador}</span>
+                                      <span className="text-[8px] font-bold uppercase text-slate-500">
+                                        {TURNO_LABEL_MAP[t.turno]}
+                                      </span>
                                     </div>
                                     <div className="text-[9px] text-slate-500 font-bold mt-0.5">
                                       {t.min} a {t.max} anos
@@ -1591,7 +1612,7 @@ export function GateHomologacaoGrade({
             </div>
 
             {/* 1. Horários do Bloco */}
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               <label className="text-xs font-black text-slate-800">1. Horário do Bloco:</label>
               <div className="grid grid-cols-2 gap-2.5">
                 <div>
@@ -1614,6 +1635,26 @@ export function GateHomologacaoGrade({
                     }`}
                   />
                 </div>
+              </div>
+              <div className="flex flex-wrap gap-1.5 pt-0.5">
+                {[
+                  { label: "Manhã 08:00–09:30", ini: "08:00", fim: "09:30" },
+                  { label: "Tarde 15:30–17:00", ini: "15:30", fim: "17:00" },
+                  { label: "Noite 19:30–21:00", ini: "19:30", fim: "21:00" },
+                  { label: "Noite 20:00–22:00", ini: "20:00", fim: "22:00" },
+                ].map((preset) => (
+                  <button
+                    key={preset.label}
+                    type="button"
+                    onClick={() => {
+                      setModalInicio(preset.ini);
+                      setModalFim(preset.fim);
+                    }}
+                    className="text-[10px] font-bold px-2 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-sky-50 hover:border-sky-300 text-slate-600 hover:text-sky-800 transition cursor-pointer"
+                  >
+                    {preset.label}
+                  </button>
+                ))}
               </div>
             </div>
 
@@ -1668,6 +1709,7 @@ export function GateHomologacaoGrade({
               <div className="space-y-2 pt-1">
                 {turmasMontadas.map((t) => {
                   const marcada = turmasMarcadasModal.includes(t.id);
+                  const turnoInfo = TURNOS_OPCOES.find((op) => op.id === t.turno) ?? TURNOS_OPCOES[0];
 
                   const slotColidenteMesmoHorario = distribuicaoHorarios.find(
                     (s) =>
@@ -1708,9 +1750,12 @@ export function GateHomologacaoGrade({
                           onChange={() => aoAlternarCheckboxTurma(t.id)}
                           className="w-4 h-4 text-sky-600 rounded cursor-pointer"
                         />
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-1.5">
                           <span className="text-xs font-bold text-slate-800">
                             Turma {t.identificador}
+                          </span>
+                          <span className={`text-[9px] border font-bold px-1.5 py-0.5 rounded ${turnoInfo.badgeClass}`}>
+                            {turnoInfo.label}
                           </span>
                           {slotColidenteMesmoHorario && (
                             <span className="text-[9px] bg-rose-100 text-rose-700 border border-rose-300 font-bold px-1.5 py-0.5 rounded">
@@ -1726,7 +1771,7 @@ export function GateHomologacaoGrade({
                           )}
                         </div>
                       </div>
-                      <span className="text-xs bg-sky-50 text-sky-800 font-bold px-2 py-0.5 rounded-lg border border-sky-200">
+                      <span className="text-xs bg-sky-50 text-sky-800 font-bold px-2 py-0.5 rounded-lg border border-sky-200 shrink-0">
                         {t.min}-{t.max} anos
                       </span>
                     </label>

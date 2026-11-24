@@ -40,7 +40,7 @@ const DIA_NUM_TO_KEY: Record<number, string> = {
   0: "Dom", 1: "Seg", 2: "Ter", 3: "Qua", 4: "Qui", 5: "Sex", 6: "Sáb",
 };
 
-const HORAS_PADRAO = Array.from({ length: 13 }, (_, i) => i + 7); // 07h–19h padrão se vazio
+const HORAS_PADRAO = Array.from({ length: 16 }, (_, i) => i + 7); // 07h–22h padrão se vazio
 
 function formatH(h: number) {
   return `${String(h).padStart(2, "0")}:00`;

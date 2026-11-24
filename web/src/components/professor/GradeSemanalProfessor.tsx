@@ -22,7 +22,7 @@ const DIAS_COLUNA = [
   { key: "Sáb", label: "Sábado", num: 6 },
 ];
 
-const HORAS_GRADE = [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21];
+const HORAS_GRADE_PADRAO = Array.from({ length: 16 }, (_, i) => i + 7); // 07h–22h (cobre aulas até 23:00)
 
 function formatHora(h: number) {
   return `${String(h).padStart(2, "0")}:00`;
@@ -91,6 +91,13 @@ export function GradeSemanalProfessor({
   // Slots reais vindos do banco
   const items: SlotAulaGrid[] = slotsGrid ?? [];
 
+  const horasGrade = useMemo(() => {
+    if (items.length === 0) return HORAS_GRADE_PADRAO;
+    const inicio = Math.max(0, Math.min(7, ...items.map((s) => s.inicio)));
+    const fim = Math.min(23, Math.max(22, ...items.map((s) => Math.max(s.inicio, s.fim - 1))));
+    return Array.from({ length: Math.max(1, fim - inicio + 1) }, (_, i) => i + inicio);
+  }, [items]);
+
   function getSlot(dia: string, hora: number) {
     return items.find((s) => s.dia === dia && hora >= s.inicio && hora < s.fim);
   }
@@ -147,7 +154,7 @@ export function GradeSemanalProfessor({
             <div className={`${horaAlturaClass} w-16 border-b border-zinc-100 flex items-center justify-center text-[10px] font-bold text-zinc-400 uppercase`}>
               Hora
             </div>
-            {HORAS_GRADE.map((h) => (
+            {horasGrade.map((h) => (
               <div key={h} className={`flex ${horaAlturaClass} w-16 items-start justify-end pr-2 pt-1`}>
                 <span className="text-[11px] font-mono text-zinc-400 font-medium">{formatHora(h)}</span>
               </div>
@@ -170,7 +177,7 @@ export function GradeSemanalProfessor({
                 </div>
 
                 <div className="relative">
-                  {HORAS_GRADE.map((hora) => {
+                  {horasGrade.map((hora) => {
                     const slot = getSlot(key, hora);
                     const isStart = isSlotStart(key, hora);
 
@@ -216,7 +223,7 @@ export function GradeSemanalProfessor({
                                         ? 'bg-gradient-to-b from-sky-700 to-indigo-800 hover:from-sky-600 hover:to-indigo-700 border-sky-400/50 cursor-pointer'
                                         : 'bg-gradient-to-b from-sky-600 to-sky-700 hover:from-sky-500 hover:to-sky-600 border-sky-400/40 cursor-pointer'
                                 }`}
-                                style={{ top: 2, height: `calc(${(slot.fim - slot.inicio) * horaAlturaPx}px - 4px)` }}
+                                style={{ top: 2, height: `calc(${Math.max(1, slot.fim - slot.inicio) * horaAlturaPx}px - 4px)` }}
                               >
                                 <div className="truncate font-bold text-white">
                                   <span className="truncate block">{slot.turmaNome}</span>
@@ -238,7 +245,9 @@ export function GradeSemanalProfessor({
                                       </div>
                                     )}
                                     <div className="text-[9px] bg-white/20 px-1.5 py-0.5 rounded font-mono font-normal w-fit">
-                                      {formatHora(slot.inicio)} – {formatHora(slot.fim)}
+                                      {slot.horaInicioRaw && slot.horaFimRaw
+                                        ? `${slot.horaInicioRaw} – ${slot.horaFimRaw}`
+                                        : `${formatHora(slot.inicio)} – ${formatHora(slot.fim)}`}
                                     </div>
                                   </div>
                                 )}

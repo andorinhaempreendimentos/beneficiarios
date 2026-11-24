@@ -96,10 +96,10 @@ export function GradeNucleoWidget({ turmas, categorias }: GradeNucleoWidgetProps
   }, [slots]);
 
   const horasVisiveis = useMemo(() => {
-    if (slots.length === 0) return Array.from({ length: 14 }, (_, i) => i + 7);
-    const min = Math.max(6, Math.min(...slots.map((s) => s.inicio)));
-    const max = Math.min(22, Math.max(...slots.map((s) => s.fim)));
-    return Array.from({ length: max - min }, (_, i) => i + min);
+    if (slots.length === 0) return Array.from({ length: 16 }, (_, i) => i + 7);
+    const min = Math.max(6, Math.min(7, ...slots.map((s) => s.inicio)));
+    const max = Math.min(23, Math.max(22, ...slots.map((s) => s.fim)));
+    return Array.from({ length: Math.max(1, max - min) }, (_, i) => i + min);
   }, [slots]);
 
   function getSlotsAt(dia: string, hora: number): Slot[] {
