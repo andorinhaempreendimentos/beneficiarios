@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { turmasApi, beneficiariosApi, funcionariosApi, execucoesSessaoApi } from "@/lib/api/services";
+import { areaProfessorApi, turmasApi, beneficiariosApi, funcionariosApi, execucoesSessaoApi } from "@/lib/api/services";
 import { ExecucaoSessaoClient } from "@/components/professor/ExecucaoSessaoClient";
 import { getDataHojeBrasil } from "@/lib/dateUtils";
 
@@ -15,9 +15,21 @@ export default async function AulaTurmaPage({ params, searchParams }: AulaTurmaP
   const sp = await searchParams;
   const dataQuery = (typeof sp?.data === "string" ? sp.data : undefined) || getDataHojeBrasil();
 
-  const turma = await turmasApi.get(turmaId).catch(() => null);
+  const [turma, slotsAdicionais] = await Promise.all([
+    turmasApi.get(turmaId).catch(() => null),
+    areaProfessorApi.getHorariosAdicionaisTurma(turmaId).catch(() => []),
+  ]);
   if (!turma) {
     notFound();
+  }
+
+  if (slotsAdicionais.length > 0) {
+    const existentes = turma.slots ?? [];
+    const idsExistentes = new Set(existentes.map((s) => s.id).filter(Boolean));
+    turma.slots = [
+      ...existentes,
+      ...slotsAdicionais.filter((s) => !s.id || !idsExistentes.has(s.id)),
+    ];
   }
 
   const nucleoId = turma.nucleoId || turma.nucleo?.id;

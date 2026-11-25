@@ -708,42 +708,44 @@ const DIA_KEY_MAP: Record<number, string> = {
   0: 'Dom', 1: 'Seg', 2: 'Ter', 3: 'Qua', 4: 'Qui', 5: 'Sex', 6: 'Sáb'
 };
 
+function mapGrupoHorarioSlot(th: any, fallbackGroup?: any): HorarioTurmaApi {
+  const inicioHour = parseInt(String(th.hora_inicio || '').split(':')[0], 10);
+  const fimHour = parseInt(String(th.hora_fim || '').split(':')[0], 10);
+  const duracaoHoras = (!isNaN(fimHour) && !isNaN(inicioHour) && fimHour > inicioHour) ? (fimHour - inicioHour) : 1;
+  return {
+    id: th.id,
+    dia: th.dia_semana != null ? (DIA_KEY_MAP[th.dia_semana] || 'Seg') : 'Seg',
+    diaSemana: th.dia_semana ?? undefined,
+    dia_semana: th.dia_semana ?? undefined,
+    inicio: isNaN(inicioHour) ? 8 : inicioHour,
+    fim: isNaN(fimHour) ? 10 : fimHour,
+    horaInicio: th.hora_inicio || undefined,
+    horaFim: th.hora_fim || undefined,
+    duracaoHoras,
+    duracaoMinutos: duracaoHoras * 60,
+    grupoId: th.grupo_id || fallbackGroup?.id || undefined,
+    grupoNome: th.grupos?.nome || fallbackGroup?.nome || undefined,
+    turmaId: th.grupo_id || fallbackGroup?.id || undefined,
+    turmaNome: th.grupos?.nome || fallbackGroup?.nome || undefined,
+    nucleoId: th.nucleo_id || fallbackGroup?.nucleo_id || undefined,
+    nucleoNome: th.nucleos?.identificacao || fallbackGroup?.nucleos?.identificacao || undefined,
+    atividadeId: th.atividade_id || fallbackGroup?.atividade_id || undefined,
+    atividadeNome: th.atividades?.nome || fallbackGroup?.atividades?.nome || undefined,
+    atividade: th.atividades ? mapAtividade(th.atividades) : undefined,
+    responsavelId: th.responsavel_id || undefined,
+    responsavelNome: th.funcionarios?.nome_completo || undefined,
+    tipoRecorrencia: (th.tipo_recorrencia as TipoRecorrencia) || 'semanal',
+    diaMes: th.dia_mes ?? undefined,
+    ordemSemanaMes: th.ordem_semana_mes ?? undefined,
+    ajusteFimDeSemana: (th.ajuste_fim_de_semana as AjusteFimDeSemana) || 'manter',
+    dataEspecifica: th.data_especifica || undefined,
+    gruposAdicionaisIds: Array.isArray(th.grupos_adicionais_ids) ? th.grupos_adicionais_ids : [],
+  };
+}
+
 function mapTurma(r: any): TurmaApi {
   const horarios = r.grupo_horarios ?? r.turma_horarios ?? [];
-  const slots = horarios.map((th: any) => {
-    const inicioHour = parseInt(String(th.hora_inicio || '').split(':')[0], 10);
-    const fimHour = parseInt(String(th.hora_fim || '').split(':')[0], 10);
-    const duracaoHoras = (!isNaN(fimHour) && !isNaN(inicioHour) && fimHour > inicioHour) ? (fimHour - inicioHour) : 1;
-    return {
-      id: th.id,
-      dia: th.dia_semana != null ? (DIA_KEY_MAP[th.dia_semana] || 'Seg') : 'Seg',
-      diaSemana: th.dia_semana ?? undefined,
-      dia_semana: th.dia_semana ?? undefined,
-      inicio: isNaN(inicioHour) ? 8 : inicioHour,
-      fim: isNaN(fimHour) ? 10 : fimHour,
-      horaInicio: th.hora_inicio || undefined,
-      horaFim: th.hora_fim || undefined,
-      duracaoHoras,
-      duracaoMinutos: duracaoHoras * 60,
-      grupoId: th.grupo_id || r.id || undefined,
-      grupoNome: th.grupos?.nome || r.nome || undefined,
-      turmaId: th.grupo_id || r.id || undefined,
-      turmaNome: th.grupos?.nome || r.nome || undefined,
-      nucleoId: th.nucleo_id || r.nucleo_id || undefined,
-      nucleoNome: th.nucleos?.identificacao || r.nucleos?.identificacao || undefined,
-      atividadeId: th.atividade_id || r.atividade_id || undefined,
-      atividadeNome: th.atividades?.nome || r.atividades?.nome || undefined,
-      atividade: th.atividades ? mapAtividade(th.atividades) : undefined,
-      responsavelId: th.responsavel_id || undefined,
-      responsavelNome: th.funcionarios?.nome_completo || undefined,
-      tipoRecorrencia: (th.tipo_recorrencia as TipoRecorrencia) || 'semanal',
-      diaMes: th.dia_mes ?? undefined,
-      ordemSemanaMes: th.ordem_semana_mes ?? undefined,
-      ajusteFimDeSemana: (th.ajuste_fim_de_semana as AjusteFimDeSemana) || 'manter',
-      dataEspecifica: th.data_especifica || undefined,
-      gruposAdicionaisIds: Array.isArray(th.grupos_adicionais_ids) ? th.grupos_adicionais_ids : [],
-    };
-  });
+  const slots = horarios.map((th: any) => mapGrupoHorarioSlot(th, r));
 
   const vagasTotais = r.vagas_totais ?? 0;
   const vagasOcupadas = typeof r._vagasOcupadas === 'number' ? r._vagasOcupadas : 0;
@@ -3275,7 +3277,9 @@ export interface SlotAulaGrid {
   id: string;
   turmaId: string;
   turmaNome: string;
-  dia: 'Seg' | 'Ter' | 'Qua' | 'Qui' | 'Sex' | 'Sáb';
+  turmasIds?: string[];
+  turmasNomes?: string[];
+  dia: 'Dom' | 'Seg' | 'Ter' | 'Qua' | 'Qui' | 'Sex' | 'Sáb';
   diaSemanaNum: number;
   inicio: number;
   fim: number;
@@ -3342,34 +3346,102 @@ export const areaProfessorApi = {
     const { data: turmasRaw } = await queryTurmas;
     const turmasMapped = (turmasRaw ?? []).map(mapTurma);
 
-    const slotsGrid: SlotAulaGrid[] = [];
+    const turmaMap = new Map<string, { raw: any; mapped: TurmaApi }>();
+    (turmasRaw ?? []).forEach((t: any, idx: number) => {
+      const mapped = turmasMapped[idx];
+      if (t?.id && mapped) {
+        turmaMap.set(t.id, { raw: t, mapped });
+      }
+    });
+
+    // Reunir blocos onde as turmas do professor são titulares OU participantes adicionais
+    const horariosUnicosMap = new Map<string, { th: any; fallbackGroup?: any }>();
     (turmasRaw ?? []).forEach((t: any) => {
       const horarios = t.grupo_horarios ?? t.turma_horarios ?? [];
       horarios.forEach((th: any) => {
-        const hInicioStr = String(th.hora_inicio || '08:00');
-        const hFimStr = String(th.hora_fim || '10:00');
-        const [hIn, mIn] = hInicioStr.split(':').map(Number);
-        const [hFim, mFim] = hFimStr.split(':').map(Number);
-        const inicioDec = (hIn || 0) + ((mIn || 0) / 60);
-        const fimDec = (hFim || 0) + ((mFim || 0) / 60);
-        const duracao = Math.max(0.5, fimDec - inicioDec);
+        if (!th?.id) return;
+        if (!horariosUnicosMap.has(th.id)) {
+          horariosUnicosMap.set(th.id, { th, fallbackGroup: t });
+        }
+      });
+    });
 
-        slotsGrid.push({
-          id: th.id || `${t.id}-${th.dia_semana}`,
-          turmaId: t.id,
-          turmaNome: t.nome,
-          dia: (DIA_KEY_MAP[th.dia_semana] as any) || 'Seg',
-          diaSemanaNum: th.dia_semana,
-          inicio: isNaN(hIn) ? 8 : hIn,
-          fim: isNaN(hFim) ? 10 : hFim,
-          horaInicioRaw: hInicioStr.slice(0, 5),
-          horaFimRaw: hFimStr.slice(0, 5),
-          duracaoHoras: Number(duracao.toFixed(2)),
-          atividadeId: t.atividade_id,
-          atividadeNome: t.atividades?.nome,
-          nucleoId: t.nucleo_id,
-          nucleoNome: t.nucleos?.identificacao,
-        });
+    const targetIdsHorarios = turmasMapped.map((t) => t.id);
+    if (targetIdsHorarios.length > 0) {
+      const { data: horariosExtras } = await (sb.from('grupo_horarios') as any)
+        .select('*, nucleos(id, identificacao), atividades(*), funcionarios(id, nome_completo)')
+        .overlaps('grupos_adicionais_ids', targetIdsHorarios);
+
+      (horariosExtras ?? []).forEach((th: any) => {
+        if (th?.id && !horariosUnicosMap.has(th.id)) {
+          horariosUnicosMap.set(th.id, { th });
+        }
+      });
+    }
+
+    const slotsGrid: SlotAulaGrid[] = [];
+    horariosUnicosMap.forEach(({ th, fallbackGroup }) => {
+      const adicionais: string[] = Array.isArray(th.grupos_adicionais_ids)
+        ? th.grupos_adicionais_ids.filter(Boolean)
+        : [];
+      const participantesIds = Array.from(
+        new Set([th.grupo_id, ...adicionais].filter(Boolean))
+      ) as string[];
+
+      const turmasDoBlocoIds = participantesIds.filter((pid) => turmaMap.has(pid));
+      if (turmasDoBlocoIds.length === 0) return;
+
+      // Propagar o bloco em memória para todas as turmas participantes na área do professor
+      for (const pid of turmasDoBlocoIds) {
+        const entry = turmaMap.get(pid);
+        if (!entry) continue;
+        const jaPossui = (entry.mapped.slots ?? []).some(
+          (s) =>
+            (th.id && s.id === th.id) ||
+            (s.diaSemana === th.dia_semana &&
+              s.horaInicio === th.hora_inicio &&
+              s.horaFim === th.hora_fim)
+        );
+        if (!jaPossui) {
+          entry.mapped.slots = [
+            ...(entry.mapped.slots ?? []),
+            mapGrupoHorarioSlot(th, entry.raw),
+          ];
+        }
+      }
+
+      const turmaPrincipalId =
+        th.grupo_id && turmaMap.has(th.grupo_id) ? th.grupo_id : turmasDoBlocoIds[0];
+      const turmaPrincipal = turmaMap.get(turmaPrincipalId)!;
+      const turmasDoBlocoNomes = turmasDoBlocoIds.map(
+        (pid) => turmaMap.get(pid)!.mapped.nome
+      );
+
+      const hInicioStr = String(th.hora_inicio || '08:00');
+      const hFimStr = String(th.hora_fim || '10:00');
+      const [hIn, mIn] = hInicioStr.split(':').map(Number);
+      const [hFim, mFim] = hFimStr.split(':').map(Number);
+      const inicioDec = (hIn || 0) + ((mIn || 0) / 60);
+      const fimDec = (hFim || 0) + ((mFim || 0) / 60);
+      const duracao = Math.max(0.5, fimDec - inicioDec);
+
+      slotsGrid.push({
+        id: th.id || `${turmaPrincipalId}-${th.dia_semana}`,
+        turmaId: turmaPrincipalId,
+        turmaNome: turmaPrincipal.mapped.nome,
+        turmasIds: turmasDoBlocoIds,
+        turmasNomes: turmasDoBlocoNomes,
+        dia: (DIA_KEY_MAP[th.dia_semana] as any) || 'Seg',
+        diaSemanaNum: th.dia_semana,
+        inicio: isNaN(hIn) ? 8 : hIn,
+        fim: isNaN(hFim) ? 10 : hFim,
+        horaInicioRaw: hInicioStr.slice(0, 5),
+        horaFimRaw: hFimStr.slice(0, 5),
+        duracaoHoras: Number(duracao.toFixed(2)),
+        atividadeId: th.atividade_id || turmaPrincipal.raw.atividade_id || fallbackGroup?.atividade_id,
+        atividadeNome: th.atividades?.nome || turmaPrincipal.raw.atividades?.nome || fallbackGroup?.atividades?.nome,
+        nucleoId: th.nucleo_id || turmaPrincipal.raw.nucleo_id || fallbackGroup?.nucleo_id,
+        nucleoNome: th.nucleos?.identificacao || turmaPrincipal.raw.nucleos?.identificacao || fallbackGroup?.nucleos?.identificacao,
       });
     });
 
@@ -3698,6 +3770,21 @@ export const areaProfessorApi = {
       horariosCriados: params.gradeHorarios,
       primeiraTurmaId,
     };
+  },
+
+  async getHorariosAdicionaisTurma(turmaId: string): Promise<HorarioTurmaApi[]> {
+    if (!turmaId) return [];
+    const sb = await getSupabase();
+    const { data, error } = await (sb.from('grupo_horarios') as any)
+      .select('*, nucleos(id, identificacao), atividades(*), funcionarios(id, nome_completo)')
+      .contains('grupos_adicionais_ids', [turmaId]);
+
+    if (error) {
+      console.warn('Erro ao buscar horários adicionais da turma:', error);
+      return [];
+    }
+
+    return (data ?? []).map((th: any) => mapGrupoHorarioSlot(th, { id: turmaId }));
   },
 };
 

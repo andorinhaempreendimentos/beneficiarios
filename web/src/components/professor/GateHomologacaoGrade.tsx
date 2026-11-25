@@ -192,6 +192,7 @@ export function GateHomologacaoGrade({
   const [distribuicaoHorarios, setDistribuicaoHorarios] = useState<SlotHorarioGrade[]>(() => {
     if (turmasExistentes && turmasExistentes.length > 0) {
       const slots: SlotHorarioGrade[] = [];
+      const idsExistentes = new Set(turmasExistentes.map((te) => te.id));
       const diaNumParaKey: Record<number, string> = { 1: "seg", 2: "ter", 3: "qua", 4: "qui", 5: "sex", 6: "sab" };
       turmasExistentes.forEach((t) => {
         (t.slots ?? []).forEach((s) => {
@@ -211,10 +212,22 @@ export function GateHomologacaoGrade({
           const hIni = s.horaInicio ? s.horaInicio.slice(0, 5) : `${String(s.inicio || 8).padStart(2, "0")}:00`;
           const hFim = s.horaFim ? s.horaFim.slice(0, 5) : `${String(s.fim || 10).padStart(2, "0")}:00`;
 
+          const idsNoSlot = Array.from(
+            new Set(
+              [
+                s.grupoId || t.id,
+                t.id,
+                ...(Array.isArray(s.gruposAdicionaisIds) ? s.gruposAdicionaisIds : []),
+              ].filter((id): id is string => Boolean(id) && idsExistentes.has(id))
+            )
+          );
+
           const existente = slots.find((sl) => sl.dia === diaKey && sl.inicio === hIni && sl.fim === hFim);
           if (existente) {
-            if (!existente.turmasIds.includes(t.id)) {
-              existente.turmasIds.push(t.id);
+            for (const id of idsNoSlot) {
+              if (!existente.turmasIds.includes(id)) {
+                existente.turmasIds.push(id);
+              }
             }
           } else {
             slots.push({
@@ -222,8 +235,8 @@ export function GateHomologacaoGrade({
               dia: diaKey,
               inicio: hIni,
               fim: hFim,
-              turmasIds: [t.id],
-              grupoId: t.id,
+              turmasIds: idsNoSlot,
+              grupoId: s.grupoId || t.id,
             });
           }
         });

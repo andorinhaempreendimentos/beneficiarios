@@ -412,10 +412,14 @@ export function DashboardProfessorHub({
     ? totalSemTurmaPolo 
     : Math.max(0, totalAlunos - totalEnturmados);
   
-  // Cálculo Dinâmico da Carga Horária Semanal Real baseada nos Slots de Aula (turma_horarios)
+  // Cálculo Dinâmico da Carga Horária Semanal Real baseada nos Blocos de Aula (sem duplicar blocos multi-turma)
   const cargaHorariaSemanal = useMemo(() => {
     if (!slotsGrid || slotsGrid.length === 0) return 0;
+    const blocosVistos = new Set<string>();
     const total = slotsGrid.reduce((acc, slot) => {
+      const chaveBloco = `${slot.dia}-${slot.horaInicioRaw ?? slot.inicio}-${slot.horaFimRaw ?? slot.fim}`;
+      if (blocosVistos.has(chaveBloco)) return acc;
+      blocosVistos.add(chaveBloco);
       if (slot.duracaoHoras && slot.duracaoHoras > 0) {
         return acc + slot.duracaoHoras;
       }
@@ -1517,7 +1521,7 @@ function checarHorarioEncerrou(turma: TurmaApi): { encerrado: boolean; motivo?: 
         // Agrupar por turma
         const blocosPorTurma = turmas.map(t => {
           const nucleoNome = t.nucleo?.identificacao || nucleo?.identificacao || "Polo";
-          const diasDaTurma = (t.slots ?? [])
+          const diasDaTurma = [...(t.slots ?? [])]
             .sort((a: any, b: any) => {
               const ordem: Record<string, number> = { Dom: 0, Seg: 1, Ter: 2, Qua: 3, Qui: 4, Sex: 5, "Sáb": 6 };
               return (ordem[a.dia] ?? 9) - (ordem[b.dia] ?? 9);

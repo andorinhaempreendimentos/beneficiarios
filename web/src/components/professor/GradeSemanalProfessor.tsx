@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Users, X, Clock } from "lucide-react";
 import type { TurmaApi, SlotAulaGrid, NucleoApi } from "@/lib/api/services";
 import { getDataHojeBrasil, formatDateBrasil } from "@/lib/dateUtils";
 
@@ -45,6 +45,11 @@ export function GradeSemanalProfessor({
   nucleo,
 }: GradeSemanalProfessorProps) {
   const [semanaOffset, setSemanaOffset] = useState(0);
+  const [blocoEscolhaTurma, setBlocoEscolhaTurma] = useState<{
+    slot: SlotAulaGrid;
+    dataStr: string;
+    turmas: TurmaApi[];
+  } | null>(null);
 
   // Config de retroatividade
   const permitirRetroativa = nucleo?.permitirChamadaRetroativa === true;
@@ -98,12 +103,29 @@ export function GradeSemanalProfessor({
     return Array.from({ length: Math.max(1, fim - inicio + 1) }, (_, i) => i + inicio);
   }, [items]);
 
-  function getSlot(dia: string, hora: number) {
-    return items.find((s) => s.dia === dia && hora >= s.inicio && hora < s.fim);
+  function getStartingSlots(dia: string, hora: number) {
+    return items.filter((s) => s.dia === dia && s.inicio === hora);
   }
 
-  function isSlotStart(dia: string, hora: number) {
-    return items.find((s) => s.dia === dia && s.inicio === hora);
+  function resolverTurmasDoSlot(slot: SlotAulaGrid): TurmaApi[] {
+    const ids = slot.turmasIds && slot.turmasIds.length > 0 ? slot.turmasIds : [slot.turmaId];
+    return ids.map((tid, idx) => {
+      const encontrada = turmas.find((t) => t.id === tid);
+      if (encontrada) return encontrada;
+      return {
+        id: tid,
+        nome: slot.turmasNomes?.[idx] || slot.turmaNome,
+        tipo: "regular",
+        vagasTotais: 0,
+        vagasOcupadas: 0,
+        vagasLivres: 0,
+        exclusiva: false,
+        criadoEm: new Date().toISOString(),
+        nucleoId: slot.nucleoId || "",
+        atividadeId: slot.atividadeId || "",
+        responsaveis: [],
+      };
+    });
   }
 
   // Se algum slot tiver menos de 2h, usar célula maior para melhor visualização
@@ -178,8 +200,7 @@ export function GradeSemanalProfessor({
 
                 <div className="relative">
                   {horasGrade.map((hora) => {
-                    const slot = getSlot(key, hora);
-                    const isStart = isSlotStart(key, hora);
+                    const startingSlots = getStartingSlots(key, hora);
 
                     return (
                       <div
@@ -188,76 +209,91 @@ export function GradeSemanalProfessor({
                           bloqueado ? 'bg-zinc-50/30' : 'hover:bg-sky-50/50'
                         }`}
                       >
-                        {isStart && slot && (
-                          (() => {
-                            const tEncontrada: TurmaApi = turmas.find((t) => t.id === slot.turmaId) || {
-                              id: slot.turmaId,
-                              nome: slot.turmaNome,
-                              tipo: "regular",
-                              vagasTotais: 0,
-                              vagasOcupadas: 0,
-                              vagasLivres: 0,
-                              exclusiva: false,
-                              criadoEm: new Date().toISOString(),
-                              nucleoId: slot.nucleoId || "",
-                              atividadeId: slot.atividadeId || "",
-                              responsaveis: [],
-                            };
-                            const isPlanejamento = tEncontrada.tipo === "operacional" || slot.turmaNome?.toLowerCase().includes("planejamento");
-                            const semBeneficiarios = !isPlanejamento && (tEncontrada.vagasOcupadas ?? 0) === 0;
+                        {startingSlots.length > 0 && (
+                          <div
+                            className="absolute inset-x-1 z-10 flex gap-1"
+                            style={{
+                              top: 2,
+                              height: `calc(${Math.max(1, Math.max(...startingSlots.map((s) => s.fim - s.inicio))) * horaAlturaPx}px - 4px)`,
+                            }}
+                          >
+                            {startingSlots.map((slot) => {
+                              const turmasDoBloco = resolverTurmasDoSlot(slot);
+                              const isMultiTurma = turmasDoBloco.length > 1;
+                              const isPlanejamento = turmasDoBloco.every(
+                                (t) => t.tipo === "operacional" || t.nome?.toLowerCase().includes("planejamento")
+                              );
+                              const semBeneficiarios =
+                                !isPlanejamento && turmasDoBloco.every((t) => (t.vagasOcupadas ?? 0) === 0);
+                              const tituloCard = isMultiTurma
+                                ? turmasDoBloco.map((t) => t.nome).join(" + ")
+                                : turmasDoBloco[0]?.nome || slot.turmaNome;
 
-                            return (
-                              <div
-                                onClick={() => {
-                                  if (bloqueado) return;
-                                  onSelectSlot(slot, tEncontrada, dataStr);
-                                }}
-                                className={`absolute inset-x-1 z-10 rounded-xl text-white p-2 text-xs font-semibold leading-tight shadow-md transition-all border active:scale-95 flex flex-col justify-between ${
-                                  bloqueado
-                                    ? 'bg-gradient-to-b from-zinc-400 to-zinc-500 border-zinc-300/40 cursor-not-allowed opacity-60'
-                                    : isPassado
-                                      ? semBeneficiarios
-                                        ? 'bg-gradient-to-b from-amber-700 to-amber-800 hover:from-amber-600 hover:to-amber-700 border-amber-500/50 cursor-pointer'
-                                        : 'bg-gradient-to-b from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 border-amber-400/40 cursor-pointer'
-                                      : semBeneficiarios
-                                        ? 'bg-gradient-to-b from-sky-700 to-indigo-800 hover:from-sky-600 hover:to-indigo-700 border-sky-400/50 cursor-pointer'
-                                        : 'bg-gradient-to-b from-sky-600 to-sky-700 hover:from-sky-500 hover:to-sky-600 border-sky-400/40 cursor-pointer'
-                                }`}
-                                style={{ top: 2, height: `calc(${Math.max(1, slot.fim - slot.inicio) * horaAlturaPx}px - 4px)` }}
-                              >
-                                <div className="truncate font-bold text-white">
-                                  <span className="truncate block">{slot.turmaNome}</span>
-                                </div>
-
-                                {semBeneficiarios ? (
-                                  <div className="text-[9px] text-white/90 font-semibold mt-0.5">
-                                    {isPassado
-                                      ? permitirRetroativa
-                                        ? "Sem alunos (Regularizar)"
-                                        : "Sem beneficiários"
-                                      : "Conferir Alunos"}
-                                  </div>
-                                ) : (
-                                  <div className="flex flex-col gap-0.5 mt-0.5">
-                                    {slot.atividadeNome && (
-                                      <div className="text-[9px] text-white/90 truncate font-semibold uppercase tracking-wide">
-                                        {slot.atividadeNome}
-                                      </div>
+                              return (
+                                <div
+                                  key={slot.id}
+                                  onClick={() => {
+                                    if (bloqueado) return;
+                                    if (turmasDoBloco.length > 1) {
+                                      setBlocoEscolhaTurma({ slot, dataStr, turmas: turmasDoBloco });
+                                    } else {
+                                      onSelectSlot(slot, turmasDoBloco[0], dataStr);
+                                    }
+                                  }}
+                                  className={`flex-1 min-w-0 h-full rounded-xl text-white p-2 text-xs font-semibold leading-tight shadow-md transition-all border active:scale-95 flex flex-col justify-between overflow-hidden ${
+                                    bloqueado
+                                      ? 'bg-gradient-to-b from-zinc-400 to-zinc-500 border-zinc-300/40 cursor-not-allowed opacity-60'
+                                      : isPassado
+                                        ? semBeneficiarios
+                                          ? 'bg-gradient-to-b from-amber-700 to-amber-800 hover:from-amber-600 hover:to-amber-700 border-amber-500/50 cursor-pointer'
+                                          : 'bg-gradient-to-b from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 border-amber-400/40 cursor-pointer'
+                                        : semBeneficiarios
+                                          ? 'bg-gradient-to-b from-sky-700 to-indigo-800 hover:from-sky-600 hover:to-indigo-700 border-sky-400/50 cursor-pointer'
+                                          : 'bg-gradient-to-b from-sky-600 to-sky-700 hover:from-sky-500 hover:to-sky-600 border-sky-400/40 cursor-pointer'
+                                  }`}
+                                >
+                                  <div className="min-w-0">
+                                    {isMultiTurma && (
+                                      <span className="inline-flex items-center gap-1 rounded bg-white/20 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide mb-0.5">
+                                        <Users className="h-2.5 w-2.5" />
+                                        {turmasDoBloco.length} turmas
+                                      </span>
                                     )}
-                                    <div className="text-[9px] bg-white/20 px-1.5 py-0.5 rounded font-mono font-normal w-fit">
-                                      {slot.horaInicioRaw && slot.horaFimRaw
-                                        ? `${slot.horaInicioRaw} – ${slot.horaFimRaw}`
-                                        : `${formatHora(slot.inicio)} – ${formatHora(slot.fim)}`}
+                                    <div className="truncate font-bold text-white">
+                                      <span className="truncate block">{tituloCard}</span>
                                     </div>
                                   </div>
-                                )}
 
-                                <div className="text-[10px] text-white/80 truncate flex items-center gap-1 font-medium">
-                                  <span>📍 {slot.nucleoNome || "Polo Esportivo"}</span>
+                                  {semBeneficiarios ? (
+                                    <div className="text-[9px] text-white/90 font-semibold mt-0.5">
+                                      {isPassado
+                                        ? permitirRetroativa
+                                          ? "Sem alunos (Regularizar)"
+                                          : "Sem beneficiários"
+                                        : "Conferir Alunos"}
+                                    </div>
+                                  ) : (
+                                    <div className="flex flex-col gap-0.5 mt-0.5">
+                                      {slot.atividadeNome && (
+                                        <div className="text-[9px] text-white/90 truncate font-semibold uppercase tracking-wide">
+                                          {slot.atividadeNome}
+                                        </div>
+                                      )}
+                                      <div className="text-[9px] bg-white/20 px-1.5 py-0.5 rounded font-mono font-normal w-fit">
+                                        {slot.horaInicioRaw && slot.horaFimRaw
+                                          ? `${slot.horaInicioRaw} – ${slot.horaFimRaw}`
+                                          : `${formatHora(slot.inicio)} – ${formatHora(slot.fim)}`}
+                                      </div>
+                                    </div>
+                                  )}
+
+                                  <div className="text-[10px] text-white/80 truncate flex items-center gap-1 font-medium">
+                                    <span>📍 {slot.nucleoNome || "Polo Esportivo"}</span>
+                                  </div>
                                 </div>
-                              </div>
-                            );
-                          })()
+                              );
+                            })}
+                          </div>
                         )}
                       </div>
                     );
@@ -268,6 +304,72 @@ export function GradeSemanalProfessor({
           })}
         </div>
       </div>
+
+      {/* Modal de escolha de turma para blocos multi-turmas */}
+      {blocoEscolhaTurma && (
+        <div
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 p-0 sm:p-4 backdrop-blur-xs"
+          onClick={() => setBlocoEscolhaTurma(null)}
+        >
+          <div
+            className="w-full max-w-md rounded-t-3xl sm:rounded-3xl bg-white p-5 sm:p-6 shadow-2xl border border-zinc-200 flex flex-col gap-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+              <div>
+                <span className="text-[10px] font-bold uppercase text-sky-600 tracking-wider flex items-center gap-1">
+                  <Users className="h-3.5 w-3.5" /> Bloco Multi-Turmas
+                </span>
+                <h3 className="text-base font-extrabold text-zinc-900 mt-0.5">
+                  Selecione a turma para acessar
+                </h3>
+                <p className="text-xs text-zinc-500 flex items-center gap-1 mt-0.5">
+                  <Clock className="h-3.5 w-3.5 text-zinc-400" />
+                  <span>
+                    {blocoEscolhaTurma.slot.horaInicioRaw && blocoEscolhaTurma.slot.horaFimRaw
+                      ? `${blocoEscolhaTurma.slot.horaInicioRaw} – ${blocoEscolhaTurma.slot.horaFimRaw}`
+                      : `${formatHora(blocoEscolhaTurma.slot.inicio)} – ${formatHora(blocoEscolhaTurma.slot.fim)}`}
+                  </span>
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setBlocoEscolhaTurma(null)}
+                className="rounded-full p-1 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600 cursor-pointer"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              {blocoEscolhaTurma.turmas.map((t) => (
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => {
+                    const { slot, dataStr } = blocoEscolhaTurma;
+                    setBlocoEscolhaTurma(null);
+                    onSelectSlot(slot, t, dataStr);
+                  }}
+                  className="flex items-center justify-between gap-3 rounded-2xl border border-zinc-200 bg-zinc-50/70 hover:bg-sky-50 hover:border-sky-300 p-3.5 text-left transition-all cursor-pointer"
+                >
+                  <div className="min-w-0">
+                    <div className="font-bold text-sm text-zinc-900 truncate">{t.nome}</div>
+                    <div className="text-[11px] text-zinc-500 mt-0.5">
+                      {t.idadeMinima != null && t.idadeMaxima != null
+                        ? `${t.idadeMinima} a ${t.idadeMaxima} anos`
+                        : "Faixa etária não informada"}
+                      {" · "}
+                      {t.vagasOcupadas ?? 0} aluno(s)
+                    </div>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-sky-600 shrink-0" />
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
